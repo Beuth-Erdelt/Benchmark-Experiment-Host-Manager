@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service-jdbc
+  labels:
+    app: dbmsbenchmarker
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+  selector:
+    app: dbmsbenchmarker
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    app: dbmsbenchmarker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dbmsbenchmarker
+  template:
+    metadata:
+      labels:
+        app: dbmsbenchmarker
+    spec:
+      containers:
+        - name: postgres-container
+          image: registry.docker.com/demo/dbms/postgres:latest
+          resources:
+            requests:
+              memory: "64Gi"
+              cpu: "16000m"
+            limits:
+              memory: "64Gi"
+              cpu: "16000m"
+          ports:
+            - containerPort: 5432
+            - containerPort: 9000
+          volumeMounts:
+            - name: benchmark-data-volume
+              mountPath: /data
+      imagePullSecrets:
+        - name: private-registry-auth
+      volumes:
+        - name: benchmark-data-volume
+          persistentVolumeClaim:
+           claimName: benchmarker-data
