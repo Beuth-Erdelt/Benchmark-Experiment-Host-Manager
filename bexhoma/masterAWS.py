@@ -472,7 +472,7 @@ class testdesign():
             return ""
         command = "du -h "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
-        stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
+        stdin, stdout, stderr = self.executeDocker(cmd['disk_space_used'])
         return stdout.replace('\n','')
     def getGPUs(self):
         print("getGPUs")
