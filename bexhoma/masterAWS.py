@@ -470,8 +470,8 @@ class testdesign():
             #datadir = '/var/lib/mysql'
         else:
             return ""
-        command = "docker exec -it benchmark bash -c 'du -h /omnisci-storage/data/mapd_data/' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
-        command = "du -h "+datadir+" | awk 'END{print $1}'"
+        command = "docker exec -it benchmark bash -c 'du -h "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
+        #command = "du -h "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
         return stdout.replace('\n','')
