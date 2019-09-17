@@ -390,6 +390,18 @@ class testdesign():
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         cuda = os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
+    def getDiskSpaceUsedData(self):
+        print("getDiskSpaceUsedData")
+        cmd = {}
+        if 'datadir' in self.docker:
+            datadir = self.docker['datadir']
+            #datadir = '/var/lib/mysql'
+        else:
+            return ""
+        command = "du -h "+datadir+" | awk 'END{print $1}'"
+        cmd['disk_space_used'] = command
+        stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
+        return stdout.replace('\n','')
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
@@ -432,6 +444,7 @@ class testdesign():
         c['hostsystem']['Cores'] = cores
         c['hostsystem']['host'] = host
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
+        c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
         #c['hostsystem']['instance'] = self.instance['type']
         if len(cuda) > 0:
             c['hostsystem']['CUDA'] = cuda
