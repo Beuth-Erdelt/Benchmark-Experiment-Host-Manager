@@ -130,6 +130,8 @@ class testdesign():
         return stdin, stdout, stderr
     def executeSSH(self, command):
         print("executeSSH: "+command)
+        if self.ssh is None:
+            self.connectSSH()
         stdin, stdout, stderr = self.ssh.exec_command(command)
         outlines=stdout.readlines()
         if len(outlines) > 0 and len(''.join(outlines)) > 0:
@@ -460,6 +462,19 @@ class testdesign():
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
         return stdout.replace('\n','')
+    def getDiskSpaceUsedData(self):
+        print("getDiskSpaceUsedData")
+        cmd = {}
+        if 'datadir' in self.docker:
+            datadir = self.docker['datadir']
+            #datadir = '/var/lib/mysql'
+        else:
+            return ""
+        command = "docker exec -i benchmark bash -c 'du -h "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
+        #command = "du -h "+datadir+" | awk 'END{print $1}'"
+        cmd['disk_space_used'] = command
+        stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
+        return stdout.replace('\n','')
     def getGPUs(self):
         print("getGPUs")
         cmd = {}
@@ -527,6 +542,7 @@ class testdesign():
         c['hostsystem']['Cores'] = cores
         c['hostsystem']['host'] = host
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
+        c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
         c['hostsystem']['instance'] = self.instance['type']
         if len(cuda) > 0:
             c['hostsystem']['CUDA'] = cuda
