@@ -346,7 +346,7 @@ class testdesign():
         command = 'cat /sys/fs/cgroup/memory/memory.limit_in_bytes'
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
-        mem = int(result)/1024/1024/1024
+        mem = int(result)#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
@@ -398,17 +398,17 @@ class testdesign():
             #datadir = '/var/lib/mysql'
         else:
             return ""
-        command = "du -h "+datadir+" | awk 'END{print $1}'"
+        command = "du "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'])
-        return stdout.replace('\n','')
+        return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df -h / | awk 'NR == 2{print $3}'"
+        command = "df / | awk 'NR == 2{print $3}'"
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         disk = os.popen(fullcommand).read()
-        return disk.replace('\n','')
+        return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
     def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder=''):

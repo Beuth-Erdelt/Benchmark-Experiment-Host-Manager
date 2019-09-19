@@ -430,7 +430,7 @@ class testdesign():
         command = 'cat /sys/fs/cgroup/memory/memory.limit_in_bytes'
         cmd['check_mem'] = command
         stdin, stdout, stderr = self.executeDocker(cmd['check_mem'])
-        mem = int(stdout)/1024/1024/1024
+        mem = int(stdout)#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
@@ -458,10 +458,10 @@ class testdesign():
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df -h / | awk 'NR == 2{print $3}'"
+        command = "df / | awk 'NR == 2{print $3}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
-        return stdout.replace('\n','')
+        return int(stdout.replace('\n',''))
     def getDiskSpaceUsedData(self):
         print("getDiskSpaceUsedData")
         cmd = {}
@@ -470,11 +470,11 @@ class testdesign():
             #datadir = '/var/lib/mysql'
         else:
             return ""
-        command = "docker exec -i benchmark bash -c 'du -h "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
+        command = "docker exec -i benchmark bash -c 'du "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
         #command = "du -h "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
-        return stdout.replace('\n','')
+        return int(stdout.replace('\n',''))
     def getGPUs(self):
         print("getGPUs")
         cmd = {}
