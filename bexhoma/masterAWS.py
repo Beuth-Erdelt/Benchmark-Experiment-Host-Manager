@@ -427,10 +427,10 @@ class testdesign():
     def getMemory(self):
         print("getMemory")
         cmd = {}
-        command = 'cat /sys/fs/cgroup/memory/memory.limit_in_bytes'
+        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
         cmd['check_mem'] = command
         stdin, stdout, stderr = self.executeDocker(cmd['check_mem'])
-        mem = int(stdout)#/1024/1024/1024
+        mem = int(stdout)*1024#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")

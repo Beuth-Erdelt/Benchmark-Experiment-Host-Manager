@@ -343,10 +343,10 @@ class testdesign():
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def getMemory(self):
         print("getMemory")
-        command = 'cat /sys/fs/cgroup/memory/memory.limit_in_bytes'
+        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
-        mem = int(result)#/1024/1024/1024
+        mem = int(result)*1024#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
