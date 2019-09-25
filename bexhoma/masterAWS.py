@@ -427,9 +427,9 @@ class testdesign():
     def getMemory(self):
         print("getMemory")
         cmd = {}
-        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
+        command = "docker exec -i benchmark bash -c \"grep MemTotal /proc/meminfo\" | awk '{print $2}'"
         cmd['check_mem'] = command
-        stdin, stdout, stderr = self.executeDocker(cmd['check_mem'])
+        stdin, stdout, stderr = self.executeSSH(cmd['check_mem'])
         mem = int(stdout)*1024#/1024/1024/1024
         return mem
     def getCPU(self):
