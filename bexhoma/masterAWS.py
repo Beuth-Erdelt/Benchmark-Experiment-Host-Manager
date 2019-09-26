@@ -340,6 +340,29 @@ class testdesign():
         #cmd['unmount_volume'] = 'sudo umount /dev/'+device
         cmd['unmount_volume'] = 'sudo umount /data'
         stdin, stdout, stderr = self.executeSSH(cmd['unmount_volume'])
+    def unparkExperiment(self):
+        print("unparkExperiment")
+        cmd = {}
+        cmd['rename_docker_container'] = "docker rename "+self.getConnectionName()+" benchmark"
+        stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
+        self.restartDocker()
+    def parkExperiment(self, connection):
+        print("parkExperiment")
+        self.stopDocker()
+        cmd = {}
+        cmd['rename_docker_container'] = "docker rename benchmark "+self.getConnectionName()
+        stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
+    def listDocker(self):
+        print("listDocker")
+        cmd = {}
+        cmd['list_docker_container'] = "docker ps -a --format '{{.Names}}' | awk '{print $1}'"
+        stdin, stdout, stderr = self.executeSSH(cmd['list_docker_container'])
+        benchmarks = []
+        l=stdout.split('\n')
+        for i in l:
+           if 'benchmark' in i:
+             benchmarks.append(i)
+        return benchmarks
     def restartDocker(self):
         print("restartDocker")
         cmd = {}
