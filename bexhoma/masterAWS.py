@@ -340,17 +340,17 @@ class testdesign():
         #cmd['unmount_volume'] = 'sudo umount /dev/'+device
         cmd['unmount_volume'] = 'sudo umount /data'
         stdin, stdout, stderr = self.executeSSH(cmd['unmount_volume'])
-    def unparkExperiment(self):
+    def unparkExperiment(self, connection):
         print("unparkExperiment")
         cmd = {}
-        cmd['rename_docker_container'] = "docker rename "+self.getConnectionName()+" benchmark"
+        cmd['rename_docker_container'] = "docker rename benchmark-"+connection+" benchmark"
         stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
         self.restartDocker()
-    def parkExperiment(self, connection):
+    def parkExperiment(self):
         print("parkExperiment")
         self.stopDocker()
         cmd = {}
-        cmd['rename_docker_container'] = "docker rename benchmark "+self.getConnectionName()
+        cmd['rename_docker_container'] = "docker rename benchmark benchmark-"+self.getConnectionName()
         stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
     def listDocker(self):
         print("listDocker")
