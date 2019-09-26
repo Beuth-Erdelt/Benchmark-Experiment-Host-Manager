@@ -585,7 +585,7 @@ cluster.downloadLog()
 ```
 
 Most of these run inside the docker container:
-* `cluster.getMemory()`: Collects `cat /sys/fs/cgroup/memory/memory.limit_in_bytes`
+* `cluster.getMemory()`: Collects `grep MemTotal /proc/meminfo | awk '{print $2}'` and multiplies by 1024
 * `cluster.getCPU()`: Collects `cat /proc/cpuinfo | grep \'model name\' | head -n 1`
 * `cluster.getCores()`: Collects `grep -c ^processor /proc/cpuinfo`
 * `cluster.getHostsystem()`: Collects `uname -r`
