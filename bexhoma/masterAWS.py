@@ -343,7 +343,7 @@ class testdesign():
     def unparkExperiment(self, connection):
         print("unparkExperiment")
         cmd = {}
-        cmd['rename_docker_container'] = "docker rename benchmark-"+connection+" benchmark"
+        cmd['rename_docker_container'] = "docker rename "+connection+" benchmark"
         stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
         self.restartDocker()
     def parkExperiment(self):
