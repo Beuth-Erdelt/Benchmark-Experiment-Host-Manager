@@ -11,6 +11,7 @@ from tqdm import tqdm
 import socket
 from scp import SCPClient
 from collections import Counter
+import pprint
 
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None):
@@ -601,7 +602,8 @@ class testdesign():
         tools.dbms.jars = [d['template']['JDBC']['jar'] for c,d in self.config['dockers'].items()]
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
-            f.write(str(self.benchmark.connections))
+            #f.write(str(self.benchmark.connections))
+            pprint.pprint(self.benchmark.connections, f)
         self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         if code is not None:
