@@ -343,6 +343,7 @@ class testdesign():
         stdin, stdout, stderr = self.executeSSH(cmd['unmount_volume'])
     def unparkExperiment(self, connection=None):
         print("unparkExperiment")
+        self.removeDocker()
         if connection is None:
             connection = 'benchmark-'+self.getConnectionName()
         cmd = {}
