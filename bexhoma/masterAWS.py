@@ -353,6 +353,8 @@ class testdesign():
         print("parkExperiment")
         self.stopDocker()
         cmd = {}
+        cmd['remove_docker_container'] = 'docker rm benchmark-'+self.getConnectionName()
+        stdin, stdout, stderr = self.executeSSH(cmd['remove_docker_container'])
         cmd['rename_docker_container'] = "docker rename benchmark benchmark-"+self.getConnectionName()
         stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
     def listDocker(self):
