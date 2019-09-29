@@ -350,7 +350,7 @@ class testdesign():
         cmd['rename_docker_container'] = "docker rename "+connection+" benchmark"
         stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
         self.restartDocker()
-        self.wait(10)
+        self.wait(30)
     def parkExperiment(self):
         print("parkExperiment")
         self.stopDocker()
