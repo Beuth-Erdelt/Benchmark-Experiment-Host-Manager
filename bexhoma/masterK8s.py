@@ -323,7 +323,6 @@ class testdesign():
         return found
     def prepareInit(self):
         print("prepareInit")
-        self.connectSSH()
         cmd = {}
         cmd['prepare_init'] = 'mkdir -p /data/'+self.configfolder+'/'+self.d
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'])
