@@ -18,6 +18,8 @@ This document
   * [Stop an Experiment](#stop-experiment)
   * [Clean an Experiment](#clean-experiment)
 
+This module has been tested with docker images of Brytlyt, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
+
 ## Concepts
 
 An **experiment** is a benchmark of a DBMS in a certain **host setting** and a specific **benchmark setting**.
