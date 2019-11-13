@@ -11,6 +11,7 @@ from tqdm import tqdm
 import socket
 from scp import SCPClient
 from collections import Counter
+import pprint
 
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None):
@@ -340,6 +341,35 @@ class testdesign():
         #cmd['unmount_volume'] = 'sudo umount /dev/'+device
         cmd['unmount_volume'] = 'sudo umount /data'
         stdin, stdout, stderr = self.executeSSH(cmd['unmount_volume'])
+    def unparkExperiment(self, connection=None):
+        print("unparkExperiment")
+        self.removeDocker()
+        if connection is None:
+            connection = 'benchmark-'+self.getConnectionName()
+        cmd = {}
+        cmd['rename_docker_container'] = "docker rename "+connection+" benchmark"
+        stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
+        self.restartDocker()
+        self.wait(30)
+    def parkExperiment(self):
+        print("parkExperiment")
+        self.stopDocker()
+        cmd = {}
+        cmd['remove_docker_container'] = 'docker rm benchmark-'+self.getConnectionName()
+        stdin, stdout, stderr = self.executeSSH(cmd['remove_docker_container'])
+        cmd['rename_docker_container'] = "docker rename benchmark benchmark-"+self.getConnectionName()
+        stdin, stdout, stderr = self.executeSSH(cmd['rename_docker_container'])
+    def listDocker(self):
+        print("listDocker")
+        cmd = {}
+        cmd['list_docker_container'] = "docker ps -a --format '{{.Names}}' | awk '{print $1}'"
+        stdin, stdout, stderr = self.executeSSH(cmd['list_docker_container'])
+        benchmarks = []
+        l=stdout.split('\n')
+        for i in l:
+           if 'benchmark' in i:
+             benchmarks.append(i)
+        return benchmarks
     def restartDocker(self):
         print("restartDocker")
         cmd = {}
@@ -427,10 +457,10 @@ class testdesign():
     def getMemory(self):
         print("getMemory")
         cmd = {}
-        command = 'cat /sys/fs/cgroup/memory/memory.limit_in_bytes'
+        command = "docker exec -i benchmark bash -c \"grep MemTotal /proc/meminfo\" | awk '{print $2}'"
         cmd['check_mem'] = command
-        stdin, stdout, stderr = self.executeDocker(cmd['check_mem'])
-        mem = int(stdout)/1024/1024/1024
+        stdin, stdout, stderr = self.executeSSH(cmd['check_mem'])
+        mem = int(stdout)*1024#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
@@ -458,10 +488,10 @@ class testdesign():
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df -h / | awk 'NR == 2{print $3}'"
+        command = "df / | awk 'NR == 2{print $3}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
-        return stdout.replace('\n','')
+        return int(stdout.replace('\n',''))
     def getDiskSpaceUsedData(self):
         print("getDiskSpaceUsedData")
         cmd = {}
@@ -470,11 +500,11 @@ class testdesign():
             #datadir = '/var/lib/mysql'
         else:
             return ""
-        command = "docker exec -i benchmark bash -c 'du -h "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
+        command = "docker exec -i benchmark bash -c 'du "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
         #command = "du -h "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
-        return stdout.replace('\n','')
+        return int(stdout.replace('\n',''))
     def getGPUs(self):
         print("getGPUs")
         cmd = {}
@@ -578,7 +608,8 @@ class testdesign():
         tools.dbms.jars = [d['template']['JDBC']['jar'] for c,d in self.config['dockers'].items()]
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
-            f.write(str(self.benchmark.connections))
+            #f.write(str(self.benchmark.connections))
+            pprint.pprint(self.benchmark.connections, f)
         self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         if code is not None:

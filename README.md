@@ -18,6 +18,8 @@ This document
   * [Stop an Experiment](#stop-experiment)
   * [Clean an Experiment](#clean-experiment)
 
+This module has been tested with docker images of Brytlyt, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
+
 ## Concepts
 
 An **experiment** is a benchmark of a DBMS in a certain **host setting** and a specific **benchmark setting**.
@@ -294,7 +296,8 @@ Information about the **DBMS** to use:
             }
         },
         'logfile': '/omnisci-storage/data/mapd_log/omnisci_server.INFO', # DBMS: Path to Log File on Server
-        'priceperhourdollar': 0.0,
+        'datadir': '/omnisci-storage/data/mapd_data/', # DBMS: Path to directory containing data storage
+        'priceperhourdollar': 0.0, # DBMS: Price per hour in USD if DBMS is rented
     }
 }
 ```
@@ -577,6 +580,7 @@ cluster.getCPU()
 cluster.getCores()
 cluster.getHostsystem()
 cluster.getDiskSpaceUsed()
+cluster.getDiskSpaceUsedData()
 cluster.getCUDA()
 cluster.getGPUs()
 cluster.copyInits()
@@ -585,11 +589,12 @@ cluster.downloadLog()
 ```
 
 Most of these run inside the docker container:
-* `cluster.getMemory()`: Collects `cat /sys/fs/cgroup/memory/memory.limit_in_bytes`
+* `cluster.getMemory()`: Collects `grep MemTotal /proc/meminfo | awk '{print $2}'` and multiplies by 1024
 * `cluster.getCPU()`: Collects `cat /proc/cpuinfo | grep \'model name\' | head -n 1`
 * `cluster.getCores()`: Collects `grep -c ^processor /proc/cpuinfo`
 * `cluster.getHostsystem()`: Collects `uname -r`
-* `cluster.getDiskSpaceUsed()`: Collects `df -h / | awk 'NR == 2{print $3}'`
+* `cluster.getDiskSpaceUsed()`: Collects `df / | awk 'NR == 2{print $3}'`
+* `cluster.getDiskSpaceUsedData()`: Collects `du datadir | awk 'END{ FS=OFS=\"\t\" }END{print $1}'` inside docker container, where `datadir` is set in config of DBMS
 * `cluster.getCUDA()`: Collects `nvidia-smi | grep \'CUDA\'`
 * `cluster.getGPUs()`: Collects `nvidia-smi -L` and then aggregates the type using `Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])`
 * `cluster.copyInits()`: Copy init scripts to benchmark result folder on host
