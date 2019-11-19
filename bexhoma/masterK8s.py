@@ -335,9 +335,10 @@ class testdesign():
         self.prepareInit()
         print("loadData")
         self.timeLoadingStart = default_timer()
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         commands = self.initscript
         for c in commands:
-            self.executeCTL(self.docker['loadData'].format(scriptname=c))
+            self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c))
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def getMemory(self):
@@ -509,8 +510,10 @@ class testdesign():
         cmd = {}
         cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'])
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
+            #cmd['copy_init_scripts'] = 'cp {scriptname} /data/{code}/{connection}_init_{nr}.log'.format(scriptname=scriptfolder+script, code=self.code, connection=self.connection, nr=i)
             cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
             i = i + 1
