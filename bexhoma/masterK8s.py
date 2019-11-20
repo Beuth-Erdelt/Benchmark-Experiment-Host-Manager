@@ -397,7 +397,7 @@ class testdesign():
             datadir = self.docker['datadir']
             #datadir = '/var/lib/mysql'
         else:
-            return ""
+            return 0
         command = "du "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'])

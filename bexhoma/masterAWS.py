@@ -499,7 +499,7 @@ class testdesign():
             datadir = self.docker['datadir']
             #datadir = '/var/lib/mysql'
         else:
-            return ""
+            return 0
         command = "docker exec -i benchmark bash -c 'du "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
         #command = "du -h "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
