@@ -13,11 +13,13 @@ import socket
 import yaml
 from tqdm import tqdm
 from collections import Counter
+import shutil
 
 from dbmsbenchmarker import *
 
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None):
+        self.experiments = []
         kubernetes.config.load_kube_config()
         with open(clusterconfig) as f:
             configfile=f.read()
@@ -411,7 +413,7 @@ class testdesign():
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder=''):
+    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias=''):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -432,8 +434,11 @@ class testdesign():
         info = []
         self.connection = connection
         c = self.docker['template'].copy()
+        if len(alias) > 0:
+            c['alias'] = alias
         c['active'] = True
         c['name'] = connection
+        c['docker'] = self.d
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.docker['priceperhourdollar']
@@ -478,13 +483,31 @@ class testdesign():
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
+        # store experiment
+        experiment = {}
+        experiment['clustertype'] = "K8s"
+        experiment['connection'] = connection
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.volume
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.experiments.append(experiment)
+        filename = self.benchmark.path+'/experiments.config'
+        with open(filename, 'w') as f:
+            f.write(str(self.experiments))
+        if os.path.isfile(self.yamlfolder+self.deployment):
+            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path)
+        # append necessary reporters
         self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
+        # run or continue benchmarking
         if code is not None:
             self.benchmark.continueBenchmarks(overwrite = True)
         else:
             self.benchmark.runBenchmarks()
         self.code = self.benchmark.code
+        # prepare reporting
         self.copyInits()
         self.copyLog()
         self.downloadLog()
@@ -494,9 +517,9 @@ class testdesign():
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        self.benchmark.generateReportsAll()
-        self.downloadLog()
         return self.code
+    def runReporting(self):
+        self.benchmark.generateReportsAll()
     def copyLog(self):
         print("copyLog")
         if len(self.docker['logfile']):
@@ -519,5 +542,5 @@ class testdesign():
             i = i + 1
     def downloadLog(self):
         print("downloadLog")
-        self.kubectl('kubectl cp '+self.activepod+':/data/'+str(self.code)+' '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
+        self.kubectl('kubectl cp '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
 
