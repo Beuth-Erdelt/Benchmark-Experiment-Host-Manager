@@ -626,8 +626,9 @@ class testdesign():
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        self.benchmark.generateReportsAll()
         return self.code
+    def runReporting(self):
+        self.benchmark.generateReportsAll()
     def copyLog(self):
         print("copyLog")
         if len(self.docker['logfile']):
