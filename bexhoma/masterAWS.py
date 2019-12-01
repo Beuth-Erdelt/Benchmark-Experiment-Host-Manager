@@ -306,13 +306,17 @@ class testdesign():
     def startMonitoring(self):
         print("startMonitoring")
         cmd = {}
-        cmd['start_monitoring_dcgm'] = 'docker run --runtime=nvidia --name gpu_monitor_dcgm --rm -d --publish 8000:8000 673132930689.dkr.ecr.eu-central-1.amazonaws.com/perdelt/dcgm:latest'
-        cmd['start_monitoring_nvlink'] = 'docker run --runtime=nvidia --name gpu_monitor_nvlink --rm -d --publish 8001:8001 673132930689.dkr.ecr.eu-central-1.amazonaws.com/perdelt/nvlink:latest'
-        cmd['start_monitoring_node'] = 'docker run --name cpu_monitor_prom --rm -d --publish 9100:9100 prom/node-exporter:latest'
-        if self.instance['GPU'] is not None and len(self.instance['GPU']) > 0:
-            self.executeSSH(cmd['start_monitoring_dcgm'])
-            self.executeSSH(cmd['start_monitoring_nvlink'])
-        self.executeSSH(cmd['start_monitoring_node'])
+        exporter = self.config['credentials']['AWS']['monitor']['exporter']
+        for n, e in exporter.items():
+            #cmd['start_monitoring_'+n] = e
+            self.executeSSH(e)
+            #cmd['start_monitoring_dcgm'] = 'docker run --runtime=nvidia --name gpu_monitor_dcgm --rm -d --publish 8000:8000 673132930689.dkr.ecr.eu-central-1.amazonaws.com/perdelt/dcgm:latest'
+            #cmd['start_monitoring_nvlink'] = 'docker run --runtime=nvidia --name gpu_monitor_nvlink --rm -d --publish 8001:8001 673132930689.dkr.ecr.eu-central-1.amazonaws.com/perdelt/nvlink:latest'
+            #cmd['start_monitoring_node'] = 'docker run --name cpu_monitor_prom --rm -d --publish 9100:9100 prom/node-exporter:latest'
+        #if self.instance['GPU'] is not None and len(self.instance['GPU']) > 0:
+        #    self.executeSSH(cmd['start_monitoring_dcgm'])
+        #    self.executeSSH(cmd['start_monitoring_nvlink'])
+        #self.executeSSH(cmd['start_monitoring_node'])
     def getMountDevice(self):
         print("getMountDevice")
         cmd = {}
