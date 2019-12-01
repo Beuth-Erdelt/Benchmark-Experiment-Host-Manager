@@ -18,7 +18,7 @@ import shutil
 from dbmsbenchmarker import *
 
 class testdesign():
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiments = []
         kubernetes.config.load_kube_config()
         with open(clusterconfig) as f:
@@ -26,12 +26,14 @@ class testdesign():
             self.config = eval(configfile)
         #self.config = config
         self.configfolder = configfolder
+        self.queryfile = queryfile
         self.code = code
         self.timeLoading = 0
         self.connectionmanagement = {}
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
         self.connectionmanagement['timeout'] = None
+        self.workload = {}
         self.host = 'localhost'
         self.port = self.config['credentials']['k8s']['port']
         # k8s:
@@ -471,7 +473,14 @@ class testdesign():
             batch=True,
             working='connection'
             )
-        self.benchmark.getConfig(configfolder=configfolder)
+        # read config for benchmarker
+        connectionfile = configfolder+'/connections.config'
+        if self.queryfile is not None:
+            queryfile = configfolder+'/'+self.queryfile
+        else:
+            queryfile = configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        #self.benchmark.getConfig(configfolder=configfolder, connectionfile=connectionfile, queryfile=queryfile)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)
         else:
@@ -479,10 +488,17 @@ class testdesign():
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
         # we must know all jars upfront
         tools.dbms.jars = [d['template']['JDBC']['jar'] for c,d in self.config['dockers'].items()]
-        #print(tools.dbms.jars)
+        # write appended connection config
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
+        # write appended query config
+        if len(self.workload) > 0:
+            for k,v in self.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
         # store experiment
         experiment = {}
         experiment['clustertype'] = "K8s"
