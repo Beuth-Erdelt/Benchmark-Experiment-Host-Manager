@@ -64,7 +64,7 @@ class testdesign():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None):
+    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
         self.createDeployment()
@@ -76,7 +76,22 @@ class testdesign():
             status = self.getPodStatus(self.activepod)
         self.startPortforwarding()
         self.getChildProcesses()
-    def startExperiment(self, instance=None, volume=None, docker=None, script=None):
+        # store experiment
+        experiment = {}
+        experiment['clustertype'] = "K8s"
+        experiment['delay'] = delay
+        experiment['step'] = "prepare"
+        experiment['connection'] = connection
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.volume
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        # store experiment list
+        self.experiments.append(experiment)
+        if delay > 0:
+            self.delay(delay)
+    def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
         self.getInfo()
         status = self.getPodStatus(self.activepod)
@@ -91,6 +106,21 @@ class testdesign():
             dbmsactive = self.checkDBMS(self.host, self.port)
         self.wait(10)
         self.loadData()
+        # store experiment
+        experiment = {}
+        experiment['clustertype'] = "K8s"
+        experiment['delay'] = delay
+        experiment['step'] = "start"
+        experiment['connection'] = connection
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.volume
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        # store experiment list
+        self.experiments.append(experiment)
+        if delay > 0:
+            self.delay(delay)
     def stopExperiment(self):
         self.getInfo()
         self.stopPortforwarding()
@@ -123,6 +153,19 @@ class testdesign():
         intervalLength = 1
         for i in tqdm(range(intervals)):
             time.sleep(intervalLength)
+    def delay(self, sec):
+        # store experiment
+        #experiment = {}
+        #experiment['clustertype'] = "K8s"
+        #experiment['connection'] = connection
+        #experiment['docker'] = {self.d: self.docker.copy()}
+        #experiment['volume'] = self.volume
+        #experiment['initscript'] = {self.s: self.initscript.copy()}
+        #experiment['instance'] = self.i
+        #experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        # store experiment list
+        #self.experiments.append({'delay': sec})
+        self.wait(sec)
     def generateDeployment(self):
         print("generateDeployment")
         instance = self.i
@@ -499,19 +542,11 @@ class testdesign():
             filename = self.benchmark.path+'/queries.config'
             with open(filename, 'w') as f:
                 f.write(str(self.benchmark.queryconfig))
-        # store experiment
-        experiment = {}
-        experiment['clustertype'] = "K8s"
-        experiment['connection'] = connection
-        experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.volume
-        experiment['initscript'] = {self.s: self.initscript.copy()}
-        experiment['instance'] = self.i
-        experiment['connectionmanagement'] = self.connectionmanagement.copy()
-        self.experiments.append(experiment)
+        # store experiment list
         filename = self.benchmark.path+'/experiments.config'
         with open(filename, 'w') as f:
             f.write(str(self.experiments))
+        # copy deployments
         if os.path.isfile(self.yamlfolder+self.deployment):
             shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path)
         # append necessary reporters
