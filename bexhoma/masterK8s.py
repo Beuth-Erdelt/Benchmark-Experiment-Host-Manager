@@ -474,7 +474,7 @@ class testdesign():
             connection = self.getConnectionName()
         if code is None:
             code = self.code
-        self.configfolder = configfolder
+        #self.configfolder = configfolder
         print("runBenchmarks")
         self.getInfo()
         mem = self.getMemory()
