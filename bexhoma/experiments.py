@@ -8,23 +8,25 @@ class workflow():
             configfile=f.read()
             self.config = eval(configfile)
         if len(resultfolder) == 0:
-	        self.resultfolder = self.config['benchmarker']['resultfolder']
-	    else:
-	        self.resultfolder = resultfolder
+            self.resultfolder = self.config['benchmarker']['resultfolder']
+        else:
+            self.resultfolder = resultfolder
         self.clusterconfig = clusterconfig
-        filename = self.resultfolder+'/'+str(code)+'/experiments.config'
+        self.code = code
+        filename = self.resultfolder+'/'+str(self.code)+'/experiments.config'
         if path.isfile(filename):
             with open(filename,'r') as inp:
-                experiments = ast.literal_eval(inp.read())
-        if experiments[0]['clustertype'] == 'K8s':
+                self.experiments = ast.literal_eval(inp.read())
+        if self.experiments[0]['clustertype'] == 'K8s':
             self.cluster = masterK8s.testdesign(
                 clusterconfig=clusterconfig,#experiments[0]['clusterconfig'],
-                configfolder=self.resultfolder,#experiments[0]['configfolder'],
-                yamlfolder=self.resultfolder,#experiments[0]['yamlfolder'],
+                configfolder=self.experiments[0]['configfolder'],
+                #configfolder=self.resultfolder+'/'+code+'/',#experiments[0]['configfolder'],
+                yamlfolder=self.resultfolder+'/'+self.code+'/',#experiments[0]['yamlfolder'],
                 #queryfile=experiments[0]['queryfile']
                 )
-    def runWorkflow():
-        for i,e in enumerate(experiments):
+    def runWorkflow(self):
+        for i,e in enumerate(self.experiments):
             print(e['step'])
             step = e['step']
             if step == 'prepareExperiment':
@@ -54,6 +56,8 @@ class workflow():
             if step == 'cleanExperiment':
                 self.cluster.cleanExperiment()
             if step == 'runBenchmarks':
-            	self.cluster.connectionmanagement = e['connectionmanagement']
-                self.cluster.runBenchmarks(connection=e['connection'])
+                self.cluster.connectionmanagement = e['connectionmanagement']
+                self.cluster.runBenchmarks(
+                    connection=e['connection'],
+                    configfolder=self.resultfolder+'/'+str(self.code))
 

@@ -89,7 +89,7 @@ class testdesign():
         experiment['delay'] = delay
         experiment['step'] = "prepareExperiment"
         experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.volume
+        experiment['volume'] = self.v
         experiment['initscript'] = {self.s: self.initscript.copy()}
         experiment['instance'] = self.i
         self.logExperiment(experiment)
@@ -115,7 +115,7 @@ class testdesign():
         experiment['delay'] = delay
         experiment['step'] = "startExperiment"
         experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.volume
+        experiment['volume'] = self.v
         experiment['initscript'] = {self.s: self.initscript.copy()}
         experiment['instance'] = self.i
         self.logExperiment(experiment)
@@ -371,8 +371,18 @@ class testdesign():
         cmd['prepare_init'] = 'mkdir -p /data/'+self.configfolder+'/'+self.d
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'])
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
+        # the inits are in the result folder?
+        #i = 0
+        #for script in self.initscript:
+        #    #cmd['copy_init_scripts'] = 'cp {scriptname} /data/{code}/{connection}_init_{nr}.log'.format(scriptname=scriptfolder+script, code=self.code, connection=self.connection, nr=i)
+        #    cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
+        #    stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
+        #    i = i + 1
         for script in self.initscript:
-            self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+'/'+self.d+'/'+script, to_name=self.activepod+':'+scriptfolder+script))
+            filename = self.d+'/'+script
+            if os.path.isfile(self.configfolder+'/'+filename):
+                self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+filename, to_name=self.activepod+':'+scriptfolder+script))
+            #else:
             #':/data/'+str(self.code)+' '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
             #scp.put(, scriptfolder+script)
     def loadData(self):
