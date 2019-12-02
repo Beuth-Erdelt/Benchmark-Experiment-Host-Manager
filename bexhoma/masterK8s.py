@@ -607,5 +607,5 @@ class testdesign():
             i = i + 1
     def downloadLog(self):
         print("downloadLog")
-        self.kubectl('kubectl cp '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
+        self.kubectl('kubectl cp '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
 
