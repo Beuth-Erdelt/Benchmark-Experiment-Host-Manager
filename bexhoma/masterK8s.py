@@ -27,6 +27,7 @@ class testdesign():
         #self.config = config
         self.configfolder = configfolder
         self.queryfile = queryfile
+        self.clusterconfig = clusterconfig
         self.code = code
         self.timeLoading = 0
         self.connectionmanagement = {}
@@ -46,6 +47,13 @@ class testdesign():
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
+    def logExperiment(self, experiment):
+        experiment['clusterconfig'] = self.clusterconfig
+        experiment['configfolder'] = self.configfolder
+        experiment['yamlfolder'] = self.yamlfolder
+        experiment['queryfile'] = self.queryfile
+        experiment['clustertype'] = "K8s"
+        self.experiments.append(experiment)
     def setExperiments(self, instances=None, volumes=None, dockers=None):
         self.instance = None
         self.instances = instances
@@ -78,17 +86,13 @@ class testdesign():
         self.getChildProcesses()
         # store experiment
         experiment = {}
-        experiment['clustertype'] = "K8s"
         experiment['delay'] = delay
-        experiment['step'] = "prepare"
-        experiment['connection'] = connection
+        experiment['step'] = "prepareExperiment"
         experiment['docker'] = {self.d: self.docker.copy()}
         experiment['volume'] = self.volume
         experiment['initscript'] = {self.s: self.initscript.copy()}
         experiment['instance'] = self.i
-        experiment['connectionmanagement'] = self.connectionmanagement.copy()
-        # store experiment list
-        self.experiments.append(experiment)
+        self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
     def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
@@ -108,17 +112,13 @@ class testdesign():
         self.loadData()
         # store experiment
         experiment = {}
-        experiment['clustertype'] = "K8s"
         experiment['delay'] = delay
-        experiment['step'] = "start"
-        experiment['connection'] = connection
+        experiment['step'] = "startExperiment"
         experiment['docker'] = {self.d: self.docker.copy()}
         experiment['volume'] = self.volume
         experiment['initscript'] = {self.s: self.initscript.copy()}
         experiment['instance'] = self.i
-        experiment['connectionmanagement'] = self.connectionmanagement.copy()
-        # store experiment list
-        self.experiments.append(experiment)
+        self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
     def stopExperiment(self):
@@ -126,6 +126,10 @@ class testdesign():
         self.stopPortforwarding()
         for p in self.pods:
             self.deletePod(p)
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "stopExperiment"
+        self.logExperiment(experiment)
     def cleanExperiment(self):
         self.getInfo()
         self.stopPortforwarding()
@@ -141,6 +145,10 @@ class testdesign():
                 print(status)
                 self.wait(5)
                 status = self.getPodStatus(p)
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "cleanExperiment"
+        self.logExperiment(experiment)
     def runExperiment(self, instance=None, volume=None, docker=None, script=None):
         self.prepareExperiment(instance, volume, docker, script)
         self.startExperiment()
@@ -154,17 +162,6 @@ class testdesign():
         for i in tqdm(range(intervals)):
             time.sleep(intervalLength)
     def delay(self, sec):
-        # store experiment
-        #experiment = {}
-        #experiment['clustertype'] = "K8s"
-        #experiment['connection'] = connection
-        #experiment['docker'] = {self.d: self.docker.copy()}
-        #experiment['volume'] = self.volume
-        #experiment['initscript'] = {self.s: self.initscript.copy()}
-        #experiment['instance'] = self.i
-        #experiment['connectionmanagement'] = self.connectionmanagement.copy()
-        # store experiment list
-        #self.experiments.append({'delay': sec})
         self.wait(sec)
     def generateDeployment(self):
         print("generateDeployment")
@@ -542,6 +539,13 @@ class testdesign():
             filename = self.benchmark.path+'/queries.config'
             with open(filename, 'w') as f:
                 f.write(str(self.benchmark.queryconfig))
+        # store experiment
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "runBenchmarks"
+        experiment['connection'] = connection
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.logExperiment(experiment)
         # store experiment list
         filename = self.benchmark.path+'/experiments.config'
         with open(filename, 'w') as f:
