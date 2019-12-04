@@ -17,8 +17,11 @@ This document
   * [Run Benchmarks](#run-benchmarks)
   * [Stop an Experiment](#stop-experiment)
   * [Clean an Experiment](#clean-experiment)
+* shows [alternative workflows](#alternative-workflows)
+  * [Parking DBMS at AWS](#parking-dbms-at-aws)
+  * [Rerun a List of Experiments](#rerun-a-list-of-experiments)
 
-This module has been tested with docker images of Brytlyt, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
+This module has been tested with docker images of Brytlyt, MariaDB, MemSQL, MonetDB, OmniSci and PostgreSQL.
 
 ## Concepts
 
@@ -602,10 +605,12 @@ For more information about that, please consult the docs of the benchmark tool: 
 
 The result folder also contains
 * Copies of deployment yaml used to prepare K8s pods
-* A list of dicts in a file `experiment.config`, which lists the experiments as
+* A list of dicts in a file `experiment.config`, which lists all experiment steps and
   * Cluster information
   * Host settings: Instances, volumes, init scripts and DBMS docker data
   * Benchmark settings: Connectionmanagement
+
+  and that allow to [rerun the experiments](#rerun-a-list-of-experiments).
 
 **Note this means it stores confidential informations**
 
@@ -728,4 +733,38 @@ cluster.stopInstance()
 * `cluster.stopInstance()`: Stops the instance
 
 
+## Alternative Workflows
 
+### Parking DBMS at AWS
+
+An alternative workflow is to not (un)install the DBMS every time they are used, but to park the docker containers:
+
+```
+cluster.setExperiment()
+cluster.prepareExperiment()
+cluster.unparkExperiment()
+cluster.runBenchmarks()
+cluster.parkExperiment()
+cluster.cleanExperiment()
+```
+
+* `parkExperiment()`: The docker container is stopped and renamed from `bechmark` to `benchmark-connectionname`, where `connectionname` is the name given for benchmarking.
+* `unparkExperiment()`: The docker container is renamed from `benchmark-connectionname` to `benchmark` and restarted
+
+This allows to keep the prepared docker containers including loaded data.
+We can retrieve a lost of all parked containers using `cluster.listDocker()`.
+To remove all parked containers we can invoke `cluster.stopExperiment()`.
+
+This only works for AWS since in K8s the DBMS is essential part of the instance (pod).
+
+### Rerun a List of Experiments
+
+When we run a workflow using `runExperiment()` or the composing methods, all steps are logged and stored as a Python dict in the result folder of DBMSBenchmarker.
+
+We may want to rerun the same experiment in all steps.
+This needs the cluster config file and the name (`code`) of the result folder:  
+```
+workflow = experiments.workflow(clusterconfig='cluster.config', code=code)
+workflow.runWorkflow()
+workflow.cluster.runReporting()
+```
