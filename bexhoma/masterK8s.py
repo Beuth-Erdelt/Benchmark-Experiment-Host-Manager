@@ -381,7 +381,7 @@ class testdesign():
         for script in self.initscript:
             filename = self.d+'/'+script
             if os.path.isfile(self.configfolder+'/'+filename):
-                self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+filename, to_name=self.activepod+':'+scriptfolder+script))
+                self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
             #else:
             #':/data/'+str(self.code)+' '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
             #scp.put(, scriptfolder+script)
