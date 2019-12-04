@@ -149,9 +149,9 @@ class testdesign():
         experiment['delay'] = 0
         experiment['step'] = "cleanExperiment"
         self.logExperiment(experiment)
-    def runExperiment(self, instance=None, volume=None, docker=None, script=None):
-        self.prepareExperiment(instance, volume, docker, script)
-        self.startExperiment()
+    def runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        self.prepareExperiment(instance, volume, docker, script, delay)
+        self.startExperiment(delay=delay)
         self.runBenchmarks()
         self.stopExperiment()
         self.cleanExperiment()
