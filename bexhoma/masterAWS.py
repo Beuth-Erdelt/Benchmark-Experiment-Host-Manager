@@ -14,13 +14,15 @@ from collections import Counter
 import pprint
 
 class testdesign():
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiments = []
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
         #self.config = config
         self.configfolder = configfolder
+        self.queryfile = queryfile
+        self.clusterconfig = clusterconfig
         self.code = code
         self.timeLoading = 0
         self.connectionmanagement = {}
@@ -38,7 +40,7 @@ class testdesign():
     def logExperiment(self, experiment):
         experiment['clusterconfig'] = self.clusterconfig
         experiment['configfolder'] = self.configfolder
-        experiment['yamlfolder'] = self.yamlfolder
+        #experiment['yamlfolder'] = self.yamlfolder
         experiment['queryfile'] = self.queryfile
         experiment['clustertype'] = "AWS"
         self.experiments.append(experiment)
@@ -583,7 +585,7 @@ class testdesign():
             #connection = self.s+"-"+self.i+'-AWS'
         if code is None:
             code = self.code
-        self.configfolder = configfolder
+        #self.configfolder = configfolder
         print("runBenchmarks")
         if len(info) == 0:
             info = str(self.s)
@@ -643,7 +645,14 @@ class testdesign():
         #if self.configqueries is not None:
         #    self.benchmark.getConfig(connectionfile=configfolder+'/connections.config', queryfile=configfolder+"/"+self.configqueries)
         #else:
-        self.benchmark.getConfig(configfolder=configfolder)
+        # read config for benchmarker
+        connectionfile = configfolder+'/connections.config'
+        if self.queryfile is not None:
+            queryfile = configfolder+'/'+self.queryfile
+        else:
+            queryfile = configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        #self.benchmark.getConfig(configfolder=configfolder)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)
         else:
