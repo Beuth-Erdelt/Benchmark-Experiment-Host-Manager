@@ -752,10 +752,10 @@ cluster.cleanExperiment()
 * `unparkExperiment()`: The docker container is renamed from `benchmark-connectionname` to `benchmark` and restarted
 
 This allows to keep the prepared docker containers including loaded data.
-We can retrieve a lost of all parked containers using `cluster.listDocker()`.
+We can retrieve a list of all parked containers using `cluster.listDocker()`.
 To remove all parked containers we can invoke `cluster.stopExperiment()`.
 
-This only works for AWS since in K8s the DBMS is essential part of the instance (pod).
+This only works for AWS since in K8s the DBMS is an essential part of the instance (pod).
 
 ### Rerun a List of Experiments
 
