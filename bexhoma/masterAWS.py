@@ -573,7 +573,7 @@ class testdesign():
         return stdout.replace('|', '').replace('\n','').strip()
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-AWS'
-    def runBenchmarks(self, connection=None, code=None, info='', resultfolder='', configfolder='', numClients=1, runsPerConnection=1):
+    def runBenchmarks(self, connection=None, code=None, info='', resultfolder='', configfolder='', numClients=1, runsPerConnection=1, alias=''):
         if self.ssh is None:
             self.connectSSH()
         if len(resultfolder) == 0:
@@ -607,6 +607,8 @@ class testdesign():
         #info = "loaded in {:,.2f}ms ".format(1000.0*self.timeLoading)+info
         self.connection = connection
         c = self.docker['template'].copy()
+        if len(alias) > 0:
+            c['alias'] = alias
         c['active'] = True
         c['name'] = connection
         c['info'] = info
