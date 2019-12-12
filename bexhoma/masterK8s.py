@@ -300,8 +300,9 @@ class testdesign():
             forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], str(self.port)+':'+str(self.docker['port'])]
             your_command = " ".join(forward)
             #your_command = " ".join(self.docker['portforward'])
-            print(your_command) 
-            subprocess.Popen(your_command, stdout=subprocess.PIPE)
+            print(your_command)
+            #subprocess.Popen(your_command, stdout=subprocess.PIPE)
+            subprocess.Popen(forward, stdout=subprocess.PIPE)
     def getChildProcesses(self):
         print("getChildProcesses")
         current_process = psutil.Process()
@@ -338,7 +339,9 @@ class testdesign():
     def executeCTL(self, command):
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        execcommand = ['kubectl','exec',self.activepod,'bash','-c "'+command+'"']
+        #proc = subprocess.popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.popen(execcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
