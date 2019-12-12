@@ -403,7 +403,7 @@ class testdesign():
         command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
-        mem = int(result)*1024#/1024/1024/1024
+        mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
