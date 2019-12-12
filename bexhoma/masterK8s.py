@@ -339,9 +339,9 @@ class testdesign():
     def executeCTL(self, command):
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         print(fullcommand)
-        execcommand = ['kubectl','exec',self.activepod,'bash','-c "'+command+'"']
-        #proc = subprocess.popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        proc = subprocess.Popen(execcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #execcommand = ['kubectl','exec',self.activepod,'bash','-c "'+command+'"']
+        proc = subprocess.popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #proc = subprocess.Popen(execcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
