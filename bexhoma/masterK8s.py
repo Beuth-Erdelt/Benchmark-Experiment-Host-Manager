@@ -321,7 +321,7 @@ class testdesign():
             print(child.cmdline())
             command = child.cmdline()
             #command[0] = 'kubectl'
-            if command[1] == 'port-forward':#self.docker['portforward']:
+            if len(command) > 0 and command[1] == 'port-forward':#self.docker['portforward']:
                 print("FOUND")
                 child.terminate()
     def getInfo(self):
