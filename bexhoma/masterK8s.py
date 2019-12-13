@@ -400,7 +400,7 @@ class testdesign():
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def getMemory(self):
         print("getMemory")
-        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
+        command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
         mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
@@ -455,16 +455,19 @@ class testdesign():
             #datadir = '/var/lib/mysql'
         else:
             return 0
-        command = "du "+datadir+" | awk 'END{print $1}'"
+        command = "du "+datadir+" | awk 'END{print \\$1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'])
+        #return int(disk.split('\t')[0])
         return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df / | awk 'NR == 2{print $3}'"
+        command = "df / | awk 'NR == 2{print \\$3}'"
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         disk = os.popen(fullcommand).read()
+        # pipe to awk sometimes does not work
+        #return int(disk.split('\t')[0])
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
