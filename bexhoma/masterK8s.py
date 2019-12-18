@@ -14,6 +14,7 @@ import yaml
 from tqdm import tqdm
 from collections import Counter
 import shutil
+import json
 
 from dbmsbenchmarker import *
 
@@ -426,6 +427,17 @@ class testdesign():
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         host = os.popen(fullcommand).read()
         return host.replace('\n','')
+    def getNode(self):
+        print("getNode")
+        cmd = {}
+        fullcommand = 'kubectl get pods/'+self.activepod+' -o=json'
+        result = os.popen(fullcommand).read()
+        datastore = json.loads(result)
+        if self.appname == datastore['metadata']['labels']:
+            if self.deployments[0] in datastore['metadata']['name']:
+                node = datastore['spec']['nodeName']
+                return node
+        return node
     def getGPUs(self):
         print("getGPUs")
         cmd = {}
@@ -439,6 +451,19 @@ class testdesign():
         result = ""
         for i,j in c.items():
             result += str(j)+" x "+i
+        return result
+    def getGPUIDs(self):
+        print("getGPUIDs")
+        cmd = {}
+        command = 'nvidia-smi -L'
+        fullcommand = 'kubectl exec '+cluster.activepod+' -- bash -c "'+command+'"'
+        gpus = os.popen(fullcommand).read()
+        l = gpus.split("\n")
+        result = []
+        for i,gpu in enumerate(l):
+            id = gpu[gpu.find('UUID: ')+6:gpu.find(')', gpu.find('UUID: '))]
+            if len(id) > 0:
+                result.append(id)
         return result
     def getCUDA(self):
         print("getCUDA")
@@ -504,8 +529,10 @@ class testdesign():
         c['hostsystem']['RAM'] = mem
         c['hostsystem']['CPU'] = cpu
         c['hostsystem']['GPU'] = gpu
+        c['hostsystem']['GPUIDs'] = self.getGPUIDs()
         c['hostsystem']['Cores'] = cores
         c['hostsystem']['host'] = host
+        c['hostsystem']['node'] = self.getNode()
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
         c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
         #c['hostsystem']['instance'] = self.instance['type']
