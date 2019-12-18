@@ -555,7 +555,7 @@ class testdesign():
                     gpuid = ""
                 node = c['hostsystem']['node']
                 for metricname, metricdata in self.config['credentials']['k8s']['monitor']['metrics'].items():
-                    c['monitoring']['metrics'][metricname] = metricdata
+                    c['monitoring']['metrics'][metricname] = metricdata.copy()
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v)
         if code is not None:
