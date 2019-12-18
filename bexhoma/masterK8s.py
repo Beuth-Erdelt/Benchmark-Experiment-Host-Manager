@@ -560,7 +560,7 @@ class testdesign():
             c['monitoring']['metrics'] = {}
             if 'metrics' in self.config['credentials']['k8s']['monitor']:
                 if len(c['hostsystem']['GPUIDs']) > 0:
-                    gpuid = c['hostsystem']['GPUIDs'][0]
+                    gpuid = '|'.join(c['hostsystem']['GPUIDs'])
                 else:
                     gpuid = ""
                 node = c['hostsystem']['node']
