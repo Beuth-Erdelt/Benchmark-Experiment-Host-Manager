@@ -456,7 +456,7 @@ class testdesign():
         print("getGPUIDs")
         cmd = {}
         command = 'nvidia-smi -L'
-        fullcommand = 'kubectl exec '+cluster.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         gpus = os.popen(fullcommand).read()
         l = gpus.split("\n")
         result = []
