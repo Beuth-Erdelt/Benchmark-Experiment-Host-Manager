@@ -433,11 +433,11 @@ class testdesign():
         fullcommand = 'kubectl get pods/'+self.activepod+' -o=json'
         result = os.popen(fullcommand).read()
         datastore = json.loads(result)
-        if self.appname == datastore['metadata']['labels']:
+        if self.appname == datastore['metadata']['labels']['app']:
             if self.deployments[0] in datastore['metadata']['name']:
                 node = datastore['spec']['nodeName']
                 return node
-        return node
+        return ""
     def getGPUs(self):
         print("getGPUs")
         cmd = {}
