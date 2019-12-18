@@ -547,6 +547,15 @@ class testdesign():
             c['monitoring']['grafanatoken'] = self.config['credentials']['k8s']['monitor']['grafanatoken']
             c['monitoring']['grafanaurl'] = self.config['credentials']['k8s']['monitor']['grafanaurl']
             c['monitoring']['grafanaextend'] = 1
+            c['monitoring']['metrics'] = {}
+            if 'metrics' in self.config['credentials']['k8s']['monitor']:
+                if len(c['hostsystem']['GPUIDs'] > 0):
+                    gpuid = c['hostsystem']['GPUIDs'][0]
+                else:
+                    gpuid = ""
+                for metricname, metricdata in self.config['credentials']['k8s']['monitor']['metrics'].items():
+                    c['monitoring']['metrics'][metricname] = metricdata
+                    c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=c['hostsystem']['node'], gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v)
         if code is not None:
             resultfolder += '/'+str(code)
