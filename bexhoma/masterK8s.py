@@ -472,6 +472,16 @@ class testdesign():
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         cuda = os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
+    def getTimediff(self):
+        print("getTimediff")
+        cmd = {}
+        command = 'date +"%s"'
+        fullcommand = 'kubectl exec '+cluster.activepod+' -- bash -c "'+command+'"'
+        timestamp_remote = os.popen(fullcommand).read()
+        timestamp_local = os.popen(command).read()
+        #print(timestamp_remote)
+        #print(timestamp_local)
+        return int(timestamp_remote)-int(timestamp_local)
     def getDiskSpaceUsedData(self):
         print("getDiskSpaceUsedData")
         cmd = {}
