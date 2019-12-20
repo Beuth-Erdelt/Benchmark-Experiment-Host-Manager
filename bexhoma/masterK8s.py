@@ -29,7 +29,6 @@ class testdesign():
         self.configfolder = configfolder
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
-        self.code = code
         self.timeLoading = 0
         self.connectionmanagement = {}
         self.connectionmanagement['numProcesses'] = None
@@ -48,6 +47,18 @@ class testdesign():
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
+        self.setCode(code)
+    def setCode(self, code):
+        self.code = code
+        if self.code is not None:
+            resultfolder = self.config['benchmarker']['resultfolder']
+            resultfolder += '/'+str(self.code)
+            # store experiment list
+            filename = resultfolder+'/experiments.config'
+            if path.isfile(filename):
+                print("experiments found")
+                with open(filename, 'r') as f:
+                    self.experiments = ast.literal_eval(f.read())
     def logExperiment(self, experiment):
         experiment['clusterconfig'] = self.clusterconfig
         experiment['configfolder'] = self.configfolder
