@@ -12,6 +12,7 @@ import socket
 from scp import SCPClient
 from collections import Counter
 import pprint
+import os
 
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
@@ -44,7 +45,7 @@ class testdesign():
             resultfolder += '/'+str(self.code)
             # store experiment list
             filename = resultfolder+'/experiments.config'
-            if path.isfile(filename):
+            if os.path.isfile(filename):
                 print("experiments found")
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())

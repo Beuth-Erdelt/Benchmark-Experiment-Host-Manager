@@ -55,7 +55,7 @@ class testdesign():
             resultfolder += '/'+str(self.code)
             # store experiment list
             filename = resultfolder+'/experiments.config'
-            if path.isfile(filename):
+            if os.path.isfile(filename):
                 print("experiments found")
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
