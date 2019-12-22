@@ -13,6 +13,7 @@ from scp import SCPClient
 from collections import Counter
 import pprint
 import os
+import ast
 
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):

@@ -15,6 +15,7 @@ from tqdm import tqdm
 from collections import Counter
 import shutil
 import json
+import ast
 
 from dbmsbenchmarker import *
 
