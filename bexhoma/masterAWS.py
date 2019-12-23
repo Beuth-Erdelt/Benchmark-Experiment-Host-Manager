@@ -577,6 +577,19 @@ class testdesign():
         for i,j in c.items():
             result += str(j)+" x "+i
         return result
+    def getGPUIDs(self):
+        print("getGPUIDs")
+        cmd = {}
+        command = 'nvidia-smi -L'
+        cmd['gpu_driver'] = command
+        stdin, stdout, stderr = self.executeDocker(cmd['gpu_driver'])
+        l = stdout.split("\n")
+        result = []
+        for i,gpu in enumerate(l):
+            id = gpu[gpu.find('UUID: ')+6:gpu.find(')', gpu.find('UUID: '))]
+            if len(id) > 0:
+                result.append(id)
+        return result
     def getCUDA(self):
         print("getCUDA")
         cmd = {}
@@ -631,6 +644,7 @@ class testdesign():
         c['hostsystem']['RAM'] = mem
         c['hostsystem']['CPU'] = cpu
         c['hostsystem']['GPU'] = gpu
+        c['hostsystem']['GPUIDs'] = self.getGPUIDs()
         c['hostsystem']['Cores'] = cores
         c['hostsystem']['host'] = host
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
