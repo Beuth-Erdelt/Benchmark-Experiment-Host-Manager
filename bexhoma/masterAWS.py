@@ -30,6 +30,7 @@ class testdesign():
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
         self.connectionmanagement['timeout'] = None
+        self.querymanagement = {}
         self.workload = {}
         self.host = self.config['credentials']['AWS']['worker']['ip']
         self.port = 9091
@@ -611,7 +612,7 @@ class testdesign():
             #connection = self.s+"-"+self.i+'-AWS'
         if code is None:
             code = self.code
-        #self.configfolder = configfolder
+        tools.query.template = self.querymanagement
         print("runBenchmarks")
         if len(info) == 0:
             info = str(self.s)

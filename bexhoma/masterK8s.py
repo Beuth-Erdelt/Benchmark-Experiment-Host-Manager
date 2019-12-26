@@ -35,6 +35,7 @@ class testdesign():
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
         self.connectionmanagement['timeout'] = None
+        self.querymanagement = {}
         self.workload = {}
         self.host = 'localhost'
         self.port = self.config['credentials']['k8s']['port']
@@ -527,7 +528,7 @@ class testdesign():
             connection = self.getConnectionName()
         if code is None:
             code = self.code
-        #self.configfolder = configfolder
+        tools.query.template = self.querymanagement
         print("runBenchmarks")
         self.getInfo()
         mem = self.getMemory()
