@@ -22,6 +22,7 @@ from dbmsbenchmarker import *
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiments = []
+        self.benchmark = None
         kubernetes.config.load_kube_config()
         with open(clusterconfig) as f:
             configfile=f.read()
@@ -68,6 +69,11 @@ class testdesign():
         experiment['queryfile'] = self.queryfile
         experiment['clustertype'] = "K8s"
         self.experiments.append(experiment)
+        # store experiment list
+        if self.benchmark is not None and self.benchmark.path is not None:
+            filename = self.benchmark.path+'/experiments.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.experiments))
     def setExperiments(self, instances=None, volumes=None, dockers=None):
         self.instance = None
         self.instances = instances
@@ -622,10 +628,6 @@ class testdesign():
         experiment['connection'] = connection
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.logExperiment(experiment)
-        # store experiment list
-        filename = self.benchmark.path+'/experiments.config'
-        with open(filename, 'w') as f:
-            f.write(str(self.experiments))
         # copy deployments
         if os.path.isfile(self.yamlfolder+self.deployment):
             shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path)

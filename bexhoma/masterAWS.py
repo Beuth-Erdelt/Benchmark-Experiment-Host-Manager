@@ -18,6 +18,7 @@ import ast
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiments = []
+        self.benchmark = None
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
@@ -58,6 +59,11 @@ class testdesign():
         experiment['queryfile'] = self.queryfile
         experiment['clustertype'] = "AWS"
         self.experiments.append(experiment)
+        # store experiment list
+        if self.benchmark is not None and self.benchmark.path is not None:
+            filename = self.benchmark.path+'/experiments.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.experiments))
     def setExperiments(self, instances, volumes, dockers):
         self.instance = None
         self.instances = instances
@@ -709,10 +715,6 @@ class testdesign():
         experiment['connection'] = connection
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.logExperiment(experiment)
-        # store experiment list
-        filename = self.benchmark.path+'/experiments.config'
-        with open(filename, 'w') as f:
-            f.write(str(self.experiments))
         self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         if code is not None:
