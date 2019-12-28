@@ -122,7 +122,7 @@ class testdesign():
         experiment['delay'] = delay
         experiment['step'] = "startExperiment"
         experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.volume
+        experiment['volume'] = self.v#self.volume
         experiment['initscript'] = {self.s: self.initscript.copy()}
         experiment['instance'] = self.i
         self.logExperiment(experiment)
