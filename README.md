@@ -17,8 +17,11 @@ This document
   * [Run Benchmarks](#run-benchmarks)
   * [Stop an Experiment](#stop-experiment)
   * [Clean an Experiment](#clean-experiment)
+* shows [alternative workflows](#alternative-workflows)
+  * [Parking DBMS at AWS](#parking-dbms-at-aws)
+  * [Rerun a List of Experiments](#rerun-a-list-of-experiments)
 
-This module has been tested with docker images of Brytlyt, MariaDB, MemSQL, Mariadb, MonetDB, OmniSci and PostgreSQL.
+This module has been tested with docker images of Brytlyt, MariaDB, MemSQL, MonetDB, OmniSci and PostgreSQL.
 
 ## Concepts
 
@@ -360,6 +363,11 @@ We additionally need
         'monitor': {
             'grafanatoken': 'Bearer 46363756756756476754756745', # Grafana: Access Token
             'grafanaurl': 'http://127.0.0.1:3000/api/datasources/proxy/1/api/v1/', # Grafana: API URL
+            'exporter': {
+                'dcgm': docker run --runtime=nvidia --name gpu_monitor_dcgm --rm -d --publish 8000:8000 1234.dkr.ecr.eu-central-1.amazonaws.com/name/dcgm:latest',
+                'nvlink': 'docker run --runtime=nvidia --name gpu_monitor_nvlink --rm -d --publish 8001:8001 1234.dkr.ecr.eu-central-1.amazonaws.com/name/nvlink:latest',
+                'node': 'docker run --name cpu_monitor_prom --rm -d --publish 9100:9100 prom/node-exporter:latest'
+            } 
         },
         'worker': {
             'ip': '127.1.2.3', # Elastic IP: IP Address
@@ -423,7 +431,19 @@ This requires
   * required ports open
 * EIP for attaching to the current experiment host
 * EBS volumes containing raw data
-* ECR for simple docker registry
+* Optionally: ECR for simple docker registry
+
+#### Monitoring
+
+Monitoring requires
+* A server having Prometheus installed
+  * With Prometheus scraping the fixed EIP for a fixed list of ports
+* A server (the same) having Grafana installed
+  * With Grafana importing metrics from Prometheus
+  * `grafanatoken` and `grafanaurl` to access this from DBMSBenchmarker
+* A dict of exporters given as docker commands
+  * Will be installed and activated automatically at each instance when `cluster.prepareExperiment()` is invoked.
+
 
 ## API Details
 
@@ -554,6 +574,8 @@ The command `cluster.runBenchmarks()` runs an [external benchmark tool](https://
     <img src="https://github.com/Beuth-Erdelt/DBMS-Benchmarker/raw/master/docs/Concept-Benchmarking.png" width="320">
 </p>
 
+#### Connectionname and Client Configurations
+
 This tool provides the benchmark tool information about the installed experiment host.
 This information is packed into a so called connection, which is identified by it's name.  
 The default connection name is given as `cluster.docker+"-"+cluster.script+"-"+cluster.instance+'-'+cluster.name`.  
@@ -571,7 +593,28 @@ cluster.connectionmanagement['numProcesses'] = 8
 cluster.connectionmanagement['runsPerConnection'] = 5
 cluster.connectionmanagement['timeout'] = 1200
 ```
+
+#### Collect Results
+
+For each setup of experiments there is a unique code for identification.
+DBMSBenchmarker generates this code when the first experiment is run.
+All experiments belonging together will be stored in a folder having this code as name.
+It is also possible to continue an experiment by giving `cluster.code`.
+
 For more information about that, please consult the docs of the benchmark tool: https://github.com/Beuth-Erdelt/DBMS-Benchmarker#connection-file
+
+The result folder also contains
+* Copies of deployment yaml used to prepare K8s pods
+* A list of dicts in a file `experiment.config`, which lists all experiment steps and
+  * Cluster information
+  * Host settings: Instances, volumes, init scripts and DBMS docker data
+  * Benchmark settings: Connectionmanagement
+
+  and that allow to [rerun the experiments](#rerun-a-list-of-experiments).
+
+**Note this means it stores confidential informations**
+
+#### Collect Host Informations
 
 Some information is given by configuration (JDBC data e.g.), some is collected from the experiment host:
 ```
@@ -598,10 +641,14 @@ Most of these run inside the docker container:
 * `cluster.getCUDA()`: Collects `nvidia-smi | grep \'CUDA\'`
 * `cluster.getGPUs()`: Collects `nvidia-smi -L` and then aggregates the type using `Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])`
 * `cluster.copyInits()`: Copy init scripts to benchmark result folder on host
-* `cluster.copyLog()`: Copy dbms logs to benchmark result folder on host
+* `cluster.copyLog()`: Copy DBMS logs to benchmark result folder on host
 * `cluster.downloadLog()`: Downloads the benchmark result folder from host to local result folder
 
-The external tool also does the reporting, and it uses these informations among others.
+#### Reporting
+
+The external tool also does reporting, and it uses the host informations among others.
+Reporting can be started by `cluster.runReporting()`.
+This generates reports about all experiments that have been stored in the same code.
 
 ### Stop Experiment
 
@@ -686,4 +733,38 @@ cluster.stopInstance()
 * `cluster.stopInstance()`: Stops the instance
 
 
+## Alternative Workflows
 
+### Parking DBMS at AWS
+
+An alternative workflow is to not (un)install the DBMS every time they are used, but to park the docker containers:
+
+```
+cluster.setExperiment()
+cluster.prepareExperiment()
+cluster.unparkExperiment()
+cluster.runBenchmarks()
+cluster.parkExperiment()
+cluster.cleanExperiment()
+```
+
+* `parkExperiment()`: The docker container is stopped and renamed from `bechmark` to `benchmark-connectionname`, where `connectionname` is the name given for benchmarking.
+* `unparkExperiment()`: The docker container is renamed from `benchmark-connectionname` to `benchmark` and restarted
+
+This allows to keep the prepared docker containers including loaded data.
+We can retrieve a list of all parked containers using `cluster.listDocker()`.
+To remove all parked containers we can invoke `cluster.stopExperiment()`.
+
+This only works for AWS since in K8s the DBMS is an essential part of the instance (pod).
+
+### Rerun a List of Experiments
+
+When we run a workflow using `runExperiment()` or the composing methods, all steps are logged and stored as a Python dict in the result folder of DBMSBenchmarker.
+
+We may want to rerun the same experiment in all steps.
+This needs the cluster config file and the name (`code`) of the result folder:  
+```
+workflow = experiments.workflow(clusterconfig='cluster.config', code=code)
+workflow.runWorkflow()
+workflow.cluster.runReporting()
+```

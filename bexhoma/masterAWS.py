@@ -12,20 +12,26 @@ import socket
 from scp import SCPClient
 from collections import Counter
 import pprint
+import os
+import ast
 
 class testdesign():
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.experiments = []
+        self.benchmark = None
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
-        #self.config = config
         self.configfolder = configfolder
-        self.code = code
+        self.queryfile = queryfile
+        self.clusterconfig = clusterconfig
         self.timeLoading = 0
         self.connectionmanagement = {}
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
         self.connectionmanagement['timeout'] = None
+        self.querymanagement = {}
+        self.workload = {}
         self.host = self.config['credentials']['AWS']['worker']['ip']
         self.port = 9091
         # AWS:
@@ -33,6 +39,29 @@ class testdesign():
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
+        self.setCode(code)
+    def setCode(self, code):
+        self.code = code
+        if self.code is not None:
+            resultfolder = self.config['benchmarker']['resultfolder']
+            resultfolder += '/'+str(self.code)
+            # store experiment list
+            filename = resultfolder+'/experiments.config'
+            if os.path.isfile(filename):
+                print("experiments found")
+                with open(filename, 'r') as f:
+                    self.experiments = ast.literal_eval(f.read())
+    def logExperiment(self, experiment):
+        experiment['clusterconfig'] = self.clusterconfig
+        experiment['configfolder'] = self.configfolder
+        experiment['queryfile'] = self.queryfile
+        experiment['clustertype'] = "AWS"
+        self.experiments.append(experiment)
+        # store experiment list
+        if self.benchmark is not None and self.benchmark.path is not None:
+            filename = self.benchmark.path+'/experiments.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.experiments))
     def setExperiments(self, instances, volumes, dockers):
         self.instance = None
         self.instances = instances
@@ -52,7 +81,7 @@ class testdesign():
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
         self.connectEC2()
-    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None):
+    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
         self.startInstance()
         self.wait(10)
@@ -67,13 +96,21 @@ class testdesign():
         self.startMonitoring()
         self.wait(10)
         self.mountVolume()
-    def startExperiment(self, instance=None, volume=None, docker=None, script=None):
+        # store experiment
+        experiment = {}
+        experiment['delay'] = delay
+        experiment['step'] = "prepareExperiment"
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.v#self.volume
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        self.logExperiment(experiment)
+        if delay > 0:
+            self.delay(delay)
+    def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
         self.connectSSH()
         self.checkGPUs()
-        #self.restartDocker()
-        #self.stopDocker()
-        #self.removeDocker()
         self.startDocker()
         self.wait(30)
         dbmsactive = self.checkDBMS(self.host, 9091)
@@ -81,6 +118,17 @@ class testdesign():
             self.wait(10)
             dbmsactive = self.checkDBMS(self.host, 9091)
         self.loadData()
+        # store experiment
+        experiment = {}
+        experiment['delay'] = delay
+        experiment['step'] = "startExperiment"
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.v#self.volume
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        self.logExperiment(experiment)
+        if delay > 0:
+            self.delay(delay)
     def runExperiment(self, instance=None, volume=None, docker=None, script=None):
         self.prepareExperiment(instance, volume, docker, script)
         self.startExperiment()
@@ -92,6 +140,10 @@ class testdesign():
         self.stopDocker()
         self.removeDocker()
         self.cleanDocker()
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "stopExperiment"
+        self.logExperiment(experiment)
     def cleanExperiment(self):
         self.unmountVolume()
         self.wait(10)
@@ -99,6 +151,10 @@ class testdesign():
         self.wait(10)
         self.stopInstance()
         self.wait(10)
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "cleanExperiment"
+        self.logExperiment(experiment)
     def stopAllExperiments(self):
         self.connectEC2()
         for self.i, self.instance in self.instances.items():
@@ -118,6 +174,8 @@ class testdesign():
         intervalLength = 1
         for i in tqdm(range(intervals)):
             time.sleep(intervalLength)
+    def delay(self, sec):
+        self.wait(sec)
     def printResponse(self, response):
         logging.debug(json.dumps(response, indent=4, sort_keys=True))
     def connectSSH(self):
@@ -306,13 +364,9 @@ class testdesign():
     def startMonitoring(self):
         print("startMonitoring")
         cmd = {}
-        cmd['start_monitoring_dcgm'] = 'docker run --runtime=nvidia --name gpu_monitor_dcgm --rm -d --publish 8000:8000 673132930689.dkr.ecr.eu-central-1.amazonaws.com/perdelt/dcgm:latest'
-        cmd['start_monitoring_nvlink'] = 'docker run --runtime=nvidia --name gpu_monitor_nvlink --rm -d --publish 8001:8001 673132930689.dkr.ecr.eu-central-1.amazonaws.com/perdelt/nvlink:latest'
-        cmd['start_monitoring_node'] = 'docker run --name cpu_monitor_prom --rm -d --publish 9100:9100 prom/node-exporter:latest'
-        if self.instance['GPU'] is not None and len(self.instance['GPU']) > 0:
-            self.executeSSH(cmd['start_monitoring_dcgm'])
-            self.executeSSH(cmd['start_monitoring_nvlink'])
-        self.executeSSH(cmd['start_monitoring_node'])
+        exporter = self.config['credentials']['AWS']['monitor']['exporter']
+        for n, e in exporter.items():
+            self.executeSSH(e)
     def getMountDevice(self):
         print("getMountDevice")
         cmd = {}
@@ -333,12 +387,7 @@ class testdesign():
         stdin, stdout, stderr = self.executeSSH(cmd['mount_volume'])
     def unmountVolume(self):
         print("unmountVolume")
-        #if 'deviceMount' in self.instance:
-        #    device = self.instance['deviceMount']
-        #else:
-        #    device = self.instance['device']
         cmd = {}
-        #cmd['unmount_volume'] = 'sudo umount /dev/'+device
         cmd['unmount_volume'] = 'sudo umount /data'
         stdin, stdout, stderr = self.executeSSH(cmd['unmount_volume'])
     def unparkExperiment(self, connection=None):
@@ -407,13 +456,8 @@ class testdesign():
         try:
             s.connect((ip, port))
             found = True
-            #print("OK")
-            # originally, it was 
-            # except Exception, e: 
-            # but this syntax is not supported anymore. 
         except Exception as e: 
             print("Nobody is answering yet at %s:%d" % (ip, port))
-            #print("something's wrong with %s:%d. Exception is %s" % (ip, port, e))
         finally:
             s.close()
         return found
@@ -476,7 +520,6 @@ class testdesign():
         command = 'grep -c ^processor /proc/cpuinfo'
         cmd['check_cores'] = command
         stdin, stdout, stderr = self.executeDocker(cmd['check_cores'])
-        #cpu = stdout.replace('model name\t', 'CPU')
         return int(stdout)
     def getHostsystem(self):
         print("getHostsystem")
@@ -497,11 +540,9 @@ class testdesign():
         cmd = {}
         if 'datadir' in self.docker:
             datadir = self.docker['datadir']
-            #datadir = '/var/lib/mysql'
         else:
-            return ""
+            return 0
         command = "docker exec -i benchmark bash -c 'du "+datadir+"' | awk 'END{ FS=OFS=\"\t\" }END{print $1}'"
-        #command = "du -h "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeSSH(cmd['disk_space_used'])
         return int(stdout.replace('\n',''))
@@ -517,6 +558,19 @@ class testdesign():
         for i,j in c.items():
             result += str(j)+" x "+i
         return result
+    def getGPUIDs(self):
+        print("getGPUIDs")
+        cmd = {}
+        command = 'nvidia-smi -L'
+        cmd['gpu_driver'] = command
+        stdin, stdout, stderr = self.executeDocker(cmd['gpu_driver'])
+        l = stdout.split("\n")
+        result = []
+        for i,gpu in enumerate(l):
+            id = gpu[gpu.find('UUID: ')+6:gpu.find(')', gpu.find('UUID: '))]
+            if len(id) > 0:
+                result.append(id)
+        return result
     def getCUDA(self):
         print("getCUDA")
         cmd = {}
@@ -526,7 +580,7 @@ class testdesign():
         return stdout.replace('|', '').replace('\n','').strip()
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-AWS'
-    def runBenchmarks(self, connection=None, code=None, info='', resultfolder='', configfolder='', numClients=1, runsPerConnection=1):
+    def runBenchmarks(self, connection=None, code=None, info='', resultfolder='', configfolder='', numClients=1, runsPerConnection=1, alias=''):
         if self.ssh is None:
             self.connectSSH()
         if len(resultfolder) == 0:
@@ -534,11 +588,10 @@ class testdesign():
         if len(configfolder) == 0:
             configfolder = self.configfolder
         if connection is None:
-            connection = self.getConnectionName() #self.d+"-"+self.s+"-"+self.i+'-AWS'
-            #connection = self.s+"-"+self.i+'-AWS'
+            connection = self.getConnectionName()
         if code is None:
             code = self.code
-        self.configfolder = configfolder
+        tools.query.template = self.querymanagement
         print("runBenchmarks")
         if len(info) == 0:
             info = str(self.s)
@@ -548,18 +601,11 @@ class testdesign():
         host = self.getHostsystem()
         cuda = self.getCUDA()
         gpu = self.getGPUs()
-        #c['info'] += " "+str(mem)+"GB RAM "+cpu
         info = []
-        #info.append("loaded in {:,.2f}ms ".format(1000.0*self.timeLoading))
-        #info.append("RAM: "+str(mem)+" GB")
-        #info.append(cpu)
-        #info.append('Host System: '+host)
-        #if len(cuda):
-        #    info.append('CUDA: '+cuda)
-        #info.append('Instance type: '+self.instance['type'])
-        #info = "loaded in {:,.2f}ms ".format(1000.0*self.timeLoading)+info
         self.connection = connection
         c = self.docker['template'].copy()
+        if len(alias) > 0:
+            c['alias'] = alias
         c['active'] = True
         c['name'] = connection
         c['info'] = info
@@ -569,6 +615,7 @@ class testdesign():
         c['hostsystem']['RAM'] = mem
         c['hostsystem']['CPU'] = cpu
         c['hostsystem']['GPU'] = gpu
+        c['hostsystem']['GPUIDs'] = self.getGPUIDs()
         c['hostsystem']['Cores'] = cores
         c['hostsystem']['host'] = host
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
@@ -595,10 +642,14 @@ class testdesign():
             batch=True,
             working='connection'
             )
-        #if self.configqueries is not None:
-        #    self.benchmark.getConfig(connectionfile=configfolder+'/connections.config', queryfile=configfolder+"/"+self.configqueries)
-        #else:
-        self.benchmark.getConfig(configfolder=configfolder)
+        # read config for benchmarker
+        connectionfile = configfolder+'/connections.config'
+        if self.queryfile is not None:
+            queryfile = configfolder+'/'+self.queryfile
+        else:
+            queryfile = configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        #self.benchmark.getConfig(configfolder=configfolder)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)
         else:
@@ -606,10 +657,25 @@ class testdesign():
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
         # we must know all jars upfront
         tools.dbms.jars = [d['template']['JDBC']['jar'] for c,d in self.config['dockers'].items()]
+        # write appended connection config
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             #f.write(str(self.benchmark.connections))
             pprint.pprint(self.benchmark.connections, f)
+        # write appended query config
+        if len(self.workload) > 0:
+            for k,v in self.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
+        # store experiment
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "runBenchmarks"
+        experiment['connection'] = connection
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.logExperiment(experiment)
         self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         if code is not None:
@@ -626,8 +692,9 @@ class testdesign():
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        self.benchmark.generateReportsAll()
         return self.code
+    def runReporting(self):
+        self.benchmark.generateReportsAll()
     def copyLog(self):
         print("copyLog")
         if len(self.docker['logfile']):
@@ -646,7 +713,6 @@ class testdesign():
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         for script in self.initscript:
             cmd['copy_init_scripts'] = 'cp {scriptname} /data/{code}/{connection}_init_{nr}.log'.format(scriptname=scriptfolder+script, code=self.code, connection=self.connection, nr=i)
-            #cmd['copy_init_scripts'] = 'docker exec -i benchmark bash -c "cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log"'
             stdin, stdout, stderr = self.executeSSH(cmd['copy_init_scripts'])
             i = i + 1
     def downloadLog(self):

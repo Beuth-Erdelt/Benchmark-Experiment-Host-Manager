@@ -13,23 +13,30 @@ import socket
 import yaml
 from tqdm import tqdm
 from collections import Counter
+import shutil
+import json
+import ast
 
 from dbmsbenchmarker import *
 
 class testdesign():
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.experiments = []
+        self.benchmark = None
         kubernetes.config.load_kube_config()
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
-        #self.config = config
         self.configfolder = configfolder
-        self.code = code
+        self.queryfile = queryfile
+        self.clusterconfig = clusterconfig
         self.timeLoading = 0
         self.connectionmanagement = {}
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
         self.connectionmanagement['timeout'] = None
+        self.querymanagement = {}
+        self.workload = {}
         self.host = 'localhost'
         self.port = self.config['credentials']['k8s']['port']
         # k8s:
@@ -42,6 +49,30 @@ class testdesign():
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
+        self.setCode(code)
+    def setCode(self, code):
+        self.code = code
+        if self.code is not None:
+            resultfolder = self.config['benchmarker']['resultfolder']
+            resultfolder += '/'+str(self.code)
+            # store experiment list
+            filename = resultfolder+'/experiments.config'
+            if os.path.isfile(filename):
+                print("experiments found")
+                with open(filename, 'r') as f:
+                    self.experiments = ast.literal_eval(f.read())
+    def logExperiment(self, experiment):
+        experiment['clusterconfig'] = self.clusterconfig
+        experiment['configfolder'] = self.configfolder
+        experiment['yamlfolder'] = self.yamlfolder
+        experiment['queryfile'] = self.queryfile
+        experiment['clustertype'] = "K8s"
+        self.experiments.append(experiment)
+        # store experiment list
+        if self.benchmark is not None and self.benchmark.path is not None:
+            filename = self.benchmark.path+'/experiments.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.experiments))
     def setExperiments(self, instances=None, volumes=None, dockers=None):
         self.instance = None
         self.instances = instances
@@ -60,7 +91,7 @@ class testdesign():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None):
+    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
         self.createDeployment()
@@ -72,7 +103,18 @@ class testdesign():
             status = self.getPodStatus(self.activepod)
         self.startPortforwarding()
         self.getChildProcesses()
-    def startExperiment(self, instance=None, volume=None, docker=None, script=None):
+        # store experiment
+        experiment = {}
+        experiment['delay'] = delay
+        experiment['step'] = "prepareExperiment"
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.v
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        self.logExperiment(experiment)
+        if delay > 0:
+            self.delay(delay)
+    def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
         self.getInfo()
         status = self.getPodStatus(self.activepod)
@@ -87,11 +129,26 @@ class testdesign():
             dbmsactive = self.checkDBMS(self.host, self.port)
         self.wait(10)
         self.loadData()
+        # store experiment
+        experiment = {}
+        experiment['delay'] = delay
+        experiment['step'] = "startExperiment"
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.v
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        self.logExperiment(experiment)
+        if delay > 0:
+            self.delay(delay)
     def stopExperiment(self):
         self.getInfo()
         self.stopPortforwarding()
         for p in self.pods:
             self.deletePod(p)
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "stopExperiment"
+        self.logExperiment(experiment)
     def cleanExperiment(self):
         self.getInfo()
         self.stopPortforwarding()
@@ -107,9 +164,13 @@ class testdesign():
                 print(status)
                 self.wait(5)
                 status = self.getPodStatus(p)
-    def runExperiment(self, instance=None, volume=None, docker=None, script=None):
-        self.prepareExperiment(instance, volume, docker, script)
-        self.startExperiment()
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "cleanExperiment"
+        self.logExperiment(experiment)
+    def runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        self.prepareExperiment(instance, volume, docker, script, delay)
+        self.startExperiment(delay=delay)
         self.runBenchmarks()
         self.stopExperiment()
         self.cleanExperiment()
@@ -119,6 +180,8 @@ class testdesign():
         intervalLength = 1
         for i in tqdm(range(intervals)):
             time.sleep(intervalLength)
+    def delay(self, sec):
+        self.wait(sec)
     def generateDeployment(self):
         print("generateDeployment")
         instance = self.i
@@ -153,12 +216,6 @@ class testdesign():
                 if len(specs) > 2:
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
-                    #print(dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'])
-                    #print(dep['spec']['template']['spec']['nodeSelector']['gpu'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
@@ -255,9 +312,8 @@ class testdesign():
         if len(self.deployments) > 0:
             forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], str(self.port)+':'+str(self.docker['port'])]
             your_command = " ".join(forward)
-            #your_command = " ".join(self.docker['portforward'])
-            print(your_command) 
-            subprocess.Popen(your_command, stdout=subprocess.PIPE)
+            print(your_command)
+            subprocess.Popen(forward, stdout=subprocess.PIPE)
     def getChildProcesses(self):
         print("getChildProcesses")
         current_process = psutil.Process()
@@ -267,16 +323,12 @@ class testdesign():
             print(child.cmdline())
     def stopPortforwarding(self):
         print("stopPortforwarding")
-        #current_process = psutil.Process()
-        #children = current_process.children(recursive=False)
         children = [p for p in psutil.process_iter(attrs=['pid', 'name']) if 'kubectl' in p.info['name']]
         for child in children:
             print('Child pid is {} {}'.format(child.pid, child.name))
-            #p = psutil.Process(child.pid)
             print(child.cmdline())
             command = child.cmdline()
-            #command[0] = 'kubectl'
-            if command[1] == 'port-forward':#self.docker['portforward']:
+            if len(command) > 0 and command[1] == 'port-forward':
                 print("FOUND")
                 child.terminate()
     def getInfo(self):
@@ -294,7 +346,7 @@ class testdesign():
     def executeCTL(self, command):
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
@@ -311,13 +363,8 @@ class testdesign():
             s.connect((ip, port))
             found = True
             print("Somebody is answering at %s:%d" % (ip, port))
-            #print("OK")
-            # originally, it was 
-            # except Exception, e: 
-            # but this syntax is not supported anymore. 
         except Exception as e:
             print("Nobody is answering yet at %s:%d" % (ip, port))
-            #print("something's wrong with %s:%d. Exception is %s" % (ip, port, e))
         finally:
             s.close()
         return found
@@ -327,25 +374,33 @@ class testdesign():
         cmd['prepare_init'] = 'mkdir -p /data/'+self.configfolder+'/'+self.d
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'])
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
+        # the inits are in the result folder?
+        #i = 0
+        #for script in self.initscript:
+        #    #cmd['copy_init_scripts'] = 'cp {scriptname} /data/{code}/{connection}_init_{nr}.log'.format(scriptname=scriptfolder+script, code=self.code, connection=self.connection, nr=i)
+        #    cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
+        #    stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
+        #    i = i + 1
         for script in self.initscript:
-            self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+'/'+self.d+'/'+script, to_name=self.activepod+':'+scriptfolder+script))
-            #':/data/'+str(self.code)+' '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
-            #scp.put(, scriptfolder+script)
+            filename = self.d+'/'+script
+            if os.path.isfile(self.configfolder+'/'+filename):
+                self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
     def loadData(self):
         self.prepareInit()
         print("loadData")
         self.timeLoadingStart = default_timer()
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         commands = self.initscript
         for c in commands:
-            self.executeCTL(self.docker['loadData'].format(scriptname=c))
+            self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c))
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def getMemory(self):
         print("getMemory")
-        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
+        command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
-        mem = int(result)*1024#/1024/1024/1024
+        mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
@@ -368,19 +423,41 @@ class testdesign():
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         host = os.popen(fullcommand).read()
         return host.replace('\n','')
+    def getNode(self):
+        print("getNode")
+        cmd = {}
+        fullcommand = 'kubectl get pods/'+self.activepod+' -o=json'
+        result = os.popen(fullcommand).read()
+        datastore = json.loads(result)
+        if self.appname == datastore['metadata']['labels']['app']:
+            if self.deployments[0] in datastore['metadata']['name']:
+                node = datastore['spec']['nodeName']
+                return node
+        return ""
     def getGPUs(self):
         print("getGPUs")
         cmd = {}
         command = 'nvidia-smi -L'
-        #cmd['gpu_types'] = 'docker exec -i benchmark bash -c "'+command+'"'
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         gpus = os.popen(fullcommand).read()
-        #stdin, stdout, stderr = self.executeSSH(cmd['gpu_types'])
         l = gpus.split("\n")
         c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
         result = ""
         for i,j in c.items():
             result += str(j)+" x "+i
+        return result
+    def getGPUIDs(self):
+        print("getGPUIDs")
+        cmd = {}
+        command = 'nvidia-smi -L'
+        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        gpus = os.popen(fullcommand).read()
+        l = gpus.split("\n")
+        result = []
+        for i,gpu in enumerate(l):
+            id = gpu[gpu.find('UUID: ')+6:gpu.find(')', gpu.find('UUID: '))]
+            if len(id) > 0:
+                result.append(id)
         return result
     def getCUDA(self):
         print("getCUDA")
@@ -389,28 +466,39 @@ class testdesign():
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         cuda = os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
+    def getTimediff(self):
+        print("getTimediff")
+        cmd = {}
+        command = 'date +"%s"'
+        fullcommand = 'kubectl exec '+cluster.activepod+' -- bash -c "'+command+'"'
+        timestamp_remote = os.popen(fullcommand).read()
+        timestamp_local = os.popen(command).read()
+        #print(timestamp_remote)
+        #print(timestamp_local)
+        return int(timestamp_remote)-int(timestamp_local)
     def getDiskSpaceUsedData(self):
         print("getDiskSpaceUsedData")
         cmd = {}
         if 'datadir' in self.docker:
             datadir = self.docker['datadir']
-            #datadir = '/var/lib/mysql'
         else:
-            return ""
-        command = "du "+datadir+" | awk 'END{print $1}'"
+            return 0
+        command = "du "+datadir+" | awk 'END{print \\$1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'])
         return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df / | awk 'NR == 2{print $3}'"
+        command = "df / | awk 'NR == 2{print \\$3}'"
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         disk = os.popen(fullcommand).read()
+        # pipe to awk sometimes does not work
+        #return int(disk.split('\t')[0])
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder=''):
+    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias=''):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -419,7 +507,7 @@ class testdesign():
             connection = self.getConnectionName()
         if code is None:
             code = self.code
-        self.configfolder = configfolder
+        tools.query.template = self.querymanagement
         print("runBenchmarks")
         self.getInfo()
         mem = self.getMemory()
@@ -431,8 +519,11 @@ class testdesign():
         info = []
         self.connection = connection
         c = self.docker['template'].copy()
+        if len(alias) > 0:
+            c['alias'] = alias
         c['active'] = True
         c['name'] = connection
+        c['docker'] = self.d
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.docker['priceperhourdollar']
@@ -440,8 +531,10 @@ class testdesign():
         c['hostsystem']['RAM'] = mem
         c['hostsystem']['CPU'] = cpu
         c['hostsystem']['GPU'] = gpu
+        c['hostsystem']['GPUIDs'] = self.getGPUIDs()
         c['hostsystem']['Cores'] = cores
         c['hostsystem']['host'] = host
+        c['hostsystem']['node'] = self.getNode()
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
         c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
         #c['hostsystem']['instance'] = self.instance['type']
@@ -456,6 +549,16 @@ class testdesign():
             c['monitoring']['grafanatoken'] = self.config['credentials']['k8s']['monitor']['grafanatoken']
             c['monitoring']['grafanaurl'] = self.config['credentials']['k8s']['monitor']['grafanaurl']
             c['monitoring']['grafanaextend'] = 1
+            c['monitoring']['metrics'] = {}
+            if 'metrics' in self.config['credentials']['k8s']['monitor']:
+                if len(c['hostsystem']['GPUIDs']) > 0:
+                    gpuid = '|'.join(c['hostsystem']['GPUIDs'])
+                else:
+                    gpuid = ""
+                node = c['hostsystem']['node']
+                for metricname, metricdata in self.config['credentials']['k8s']['monitor']['metrics'].items():
+                    c['monitoring']['metrics'][metricname] = metricdata.copy()
+                    c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v)
         if code is not None:
             resultfolder += '/'+str(code)
@@ -465,7 +568,13 @@ class testdesign():
             batch=True,
             working='connection'
             )
-        self.benchmark.getConfig(configfolder=configfolder)
+        # read config for benchmarker
+        connectionfile = configfolder+'/connections.config'
+        if self.queryfile is not None:
+            queryfile = configfolder+'/'+self.queryfile
+        else:
+            queryfile = configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)
         else:
@@ -473,17 +582,37 @@ class testdesign():
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
         # we must know all jars upfront
         tools.dbms.jars = [d['template']['JDBC']['jar'] for c,d in self.config['dockers'].items()]
-        #print(tools.dbms.jars)
+        # write appended connection config
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
+        # write appended query config
+        if len(self.workload) > 0:
+            for k,v in self.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
+        # store experiment
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "runBenchmarks"
+        experiment['connection'] = connection
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.logExperiment(experiment)
+        # copy deployments
+        if os.path.isfile(self.yamlfolder+self.deployment):
+            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path)
+        # append necessary reporters
         self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
+        # run or continue benchmarking
         if code is not None:
             self.benchmark.continueBenchmarks(overwrite = True)
         else:
             self.benchmark.runBenchmarks()
         self.code = self.benchmark.code
+        # prepare reporting
         self.copyInits()
         self.copyLog()
         self.downloadLog()
@@ -493,9 +622,9 @@ class testdesign():
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        self.benchmark.generateReportsAll()
-        self.downloadLog()
         return self.code
+    def runReporting(self):
+        self.benchmark.generateReportsAll()
     def copyLog(self):
         print("copyLog")
         if len(self.docker['logfile']):
@@ -509,12 +638,13 @@ class testdesign():
         cmd = {}
         cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'])
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
-            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
+            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
             i = i + 1
     def downloadLog(self):
         print("downloadLog")
-        self.kubectl('kubectl cp '+self.activepod+':/data/'+str(self.code)+' '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
+        self.kubectl('kubectl cp '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
 
