@@ -27,7 +27,6 @@ class testdesign():
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
-        #self.config = config
         self.configfolder = configfolder
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
@@ -217,12 +216,6 @@ class testdesign():
                 if len(specs) > 2:
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
-                    #print(dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'])
-                    #print(dep['spec']['template']['spec']['nodeSelector']['gpu'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'])
-                #print(dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
@@ -319,9 +312,7 @@ class testdesign():
         if len(self.deployments) > 0:
             forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], str(self.port)+':'+str(self.docker['port'])]
             your_command = " ".join(forward)
-            #your_command = " ".join(self.docker['portforward'])
             print(your_command)
-            #subprocess.Popen(your_command, stdout=subprocess.PIPE)
             subprocess.Popen(forward, stdout=subprocess.PIPE)
     def getChildProcesses(self):
         print("getChildProcesses")
@@ -332,16 +323,12 @@ class testdesign():
             print(child.cmdline())
     def stopPortforwarding(self):
         print("stopPortforwarding")
-        #current_process = psutil.Process()
-        #children = current_process.children(recursive=False)
         children = [p for p in psutil.process_iter(attrs=['pid', 'name']) if 'kubectl' in p.info['name']]
         for child in children:
             print('Child pid is {} {}'.format(child.pid, child.name))
-            #p = psutil.Process(child.pid)
             print(child.cmdline())
             command = child.cmdline()
-            #command[0] = 'kubectl'
-            if len(command) > 0 and command[1] == 'port-forward':#self.docker['portforward']:
+            if len(command) > 0 and command[1] == 'port-forward':
                 print("FOUND")
                 child.terminate()
     def getInfo(self):
@@ -359,9 +346,7 @@ class testdesign():
     def executeCTL(self, command):
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         print(fullcommand)
-        #execcommand = ['kubectl','exec',self.activepod,'bash','-c "'+command+'"']
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        #proc = subprocess.Popen(execcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
@@ -378,13 +363,8 @@ class testdesign():
             s.connect((ip, port))
             found = True
             print("Somebody is answering at %s:%d" % (ip, port))
-            #print("OK")
-            # originally, it was 
-            # except Exception, e: 
-            # but this syntax is not supported anymore. 
         except Exception as e:
             print("Nobody is answering yet at %s:%d" % (ip, port))
-            #print("something's wrong with %s:%d. Exception is %s" % (ip, port, e))
         finally:
             s.close()
         return found
@@ -405,9 +385,6 @@ class testdesign():
             filename = self.d+'/'+script
             if os.path.isfile(self.configfolder+'/'+filename):
                 self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
-            #else:
-            #':/data/'+str(self.code)+' '+self.config['benchmarker']['resultfolder'].replace("\\", "/")+"/"+str(self.code))
-            #scp.put(, scriptfolder+script)
     def loadData(self):
         self.prepareInit()
         print("loadData")
@@ -461,10 +438,8 @@ class testdesign():
         print("getGPUs")
         cmd = {}
         command = 'nvidia-smi -L'
-        #cmd['gpu_types'] = 'docker exec -i benchmark bash -c "'+command+'"'
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         gpus = os.popen(fullcommand).read()
-        #stdin, stdout, stderr = self.executeSSH(cmd['gpu_types'])
         l = gpus.split("\n")
         c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
         result = ""
@@ -506,13 +481,11 @@ class testdesign():
         cmd = {}
         if 'datadir' in self.docker:
             datadir = self.docker['datadir']
-            #datadir = '/var/lib/mysql'
         else:
             return 0
         command = "du "+datadir+" | awk 'END{print \\$1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'])
-        #return int(disk.split('\t')[0])
         return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
@@ -602,7 +575,6 @@ class testdesign():
         else:
             queryfile = configfolder+'/queries.config'
         self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
-        #self.benchmark.getConfig(configfolder=configfolder, connectionfile=connectionfile, queryfile=queryfile)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)
         else:
@@ -669,7 +641,6 @@ class testdesign():
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
-            #cmd['copy_init_scripts'] = 'cp {scriptname} /data/{code}/{connection}_init_{nr}.log'.format(scriptname=scriptfolder+script, code=self.code, connection=self.connection, nr=i)
             cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
             i = i + 1
