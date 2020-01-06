@@ -214,6 +214,8 @@ class testdesign():
                 dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = mem
                 dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = mem
                 if len(specs) > 2:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = {}
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
             if dep['kind'] == 'Service':
