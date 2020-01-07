@@ -546,6 +546,7 @@ class testdesign():
         c['connectionmanagement']['numProcesses'] = self.connectionmanagement['numProcesses']
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
+        c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection']
         c['monitoring'] = {}
         if 'monitor' in self.config['credentials']['k8s']:
             c['monitoring']['grafanatoken'] = self.config['credentials']['k8s']['monitor']['grafanatoken']
