@@ -35,6 +35,7 @@ class testdesign():
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
         self.connectionmanagement['timeout'] = None
+        self.connectionmanagement['singleConnection'] = False
         self.querymanagement = {}
         self.workload = {}
         self.host = 'localhost'
