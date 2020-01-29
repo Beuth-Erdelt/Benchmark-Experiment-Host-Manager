@@ -626,7 +626,7 @@ class testdesign():
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.hist(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
         return self.code
     def runReporting(self):
         self.benchmark.generateReportsAll()
