@@ -550,9 +550,15 @@ class testdesign():
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection']
         c['monitoring'] = {}
         if 'monitor' in self.config['credentials']['k8s']:
-            c['monitoring']['grafanatoken'] = self.config['credentials']['k8s']['monitor']['grafanatoken']
-            c['monitoring']['grafanaurl'] = self.config['credentials']['k8s']['monitor']['grafanaurl']
-            c['monitoring']['grafanaextend'] = 1
+            if 'grafanatoken' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanatoken'] = self.config['credentials']['AWS']['monitor']['grafanatoken']
+            if 'grafanaurl' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanaurl'] = self.config['credentials']['AWS']['monitor']['grafanaurl']
+            if 'grafanashift' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanashift'] = self.config['credentials']['AWS']['monitor']['grafanashift']
+            if 'grafanaextend' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanaextend'] = self.config['credentials']['AWS']['monitor']['grafanaextend']
+            #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in self.config['credentials']['k8s']['monitor']:
                 if len(c['hostsystem']['GPUIDs']) > 0:
