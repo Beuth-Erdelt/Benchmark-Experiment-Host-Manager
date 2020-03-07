@@ -629,9 +629,15 @@ class testdesign():
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['monitoring'] = {}
         if 'monitor' in self.config['credentials']['AWS']:
-            c['monitoring']['grafanatoken'] = self.config['credentials']['AWS']['monitor']['grafanatoken']
-            c['monitoring']['grafanaurl'] = self.config['credentials']['AWS']['monitor']['grafanaurl']
-            c['monitoring']['grafanaextend'] = 1
+            if 'grafanatoken' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanatoken'] = self.config['credentials']['AWS']['monitor']['grafanatoken']
+            if 'grafanaurl' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanaurl'] = self.config['credentials']['AWS']['monitor']['grafanaurl']
+            if 'grafanashift' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanashift'] = self.config['credentials']['AWS']['monitor']['grafanashift']
+            if 'grafanaextend' in self.config['credentials']['AWS']['monitor']:
+                c['monitoring']['grafanaextend'] = self.config['credentials']['AWS']['monitor']['grafanaextend']
+            #c['monitoring']['grafanaextend'] = 1
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=self.host, dbname=self.v)
         print(c['JDBC']['url'])
         if code is not None:
