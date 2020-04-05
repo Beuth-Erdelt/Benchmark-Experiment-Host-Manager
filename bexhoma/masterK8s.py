@@ -501,7 +501,7 @@ class testdesign():
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias=''):
+    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', query=None):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -574,6 +574,7 @@ class testdesign():
             resultfolder += '/'+str(code)
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
+            fixedQuery=query,
             result_path=resultfolder,
             batch=True,
             working='connection'
@@ -634,7 +635,7 @@ class testdesign():
         self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
-    def continueBenchmarks(self, connection=None):
+    def continueBenchmarks(self, connection=None, query=None):
         #configfolder='experiments/gdelt'
         self.getInfo()
         self.deployment = self.getDeployments()[0]
@@ -645,6 +646,7 @@ class testdesign():
         queryfile = resultfolder+'/queries.config'
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
+            query=fixedQuery,
             result_path=resultfolder,
             batch=True,
             working='connection'
