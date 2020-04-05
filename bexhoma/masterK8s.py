@@ -636,6 +636,8 @@ class testdesign():
         return self.code
     def continueBenchmarks(self, connection=None):
         #configfolder='experiments/gdelt'
+        self.getInfo()
+        self.deployment = self.getDeployments()[0]
         self.connection = connection
         self.resultfolder = self.config['benchmarker']['resultfolder']
         resultfolder = self.resultfolder+ '/'+str(self.code)
