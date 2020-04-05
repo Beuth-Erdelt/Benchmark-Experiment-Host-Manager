@@ -626,13 +626,13 @@ class testdesign():
         self.copyInits()
         self.copyLog()
         self.downloadLog()
+        self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
     def continueBenchmarks(self, connection=None):
         #configfolder='experiments/gdelt'
@@ -658,13 +658,13 @@ class testdesign():
         self.copyInits()
         self.copyLog()
         self.downloadLog()
+        self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
     def runReporting(self):
         self.benchmark.generateReportsAll()
