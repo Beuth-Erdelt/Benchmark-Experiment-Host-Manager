@@ -634,6 +634,35 @@ class testdesign():
         self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
         return self.code
+    def continueBenchmarks(self, connection=None):
+        #configfolder='experiments/gdelt'
+        #cluster.resultfolder=cluster.config['benchmarker']['resultfolder']
+        resultfolder = self.resultfolder+ '/'+str(self.code)
+        connectionfile = resultfolder+'/connections.config'
+        queryfile = resultfolder+'/queries.config'
+        self.benchmark = benchmarker.benchmarker(
+            fixedConnection=connection,
+            result_path=resultfolder,
+            batch=True,
+            working='connection'
+            )
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        self.startPortforwarding()
+        self.stopPortforwarding()
+        self.benchmark.continueBenchmarks(overwrite = False)
+        self.code = self.benchmark.code
+        # prepare reporting
+        self.copyInits()
+        self.copyLog()
+        self.downloadLog()
+        self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
+        self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
+        self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
+        return self.code
     def runReporting(self):
         self.benchmark.generateReportsAll()
     def copyLog(self):
