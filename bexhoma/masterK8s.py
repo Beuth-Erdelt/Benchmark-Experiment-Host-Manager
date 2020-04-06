@@ -646,7 +646,7 @@ class testdesign():
         queryfile = resultfolder+'/queries.config'
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
-            query=fixedQuery,
+            fixedQuery=query,
             result_path=resultfolder,
             batch=True,
             working='connection'
