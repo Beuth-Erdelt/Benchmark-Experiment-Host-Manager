@@ -31,6 +31,7 @@ class testdesign():
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
         self.timeLoading = 0
+        self.resources = {}
         self.connectionmanagement = {}
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
@@ -210,6 +211,13 @@ class testdesign():
                 appname = dep['spec']['template']['metadata']['labels']['app']
                 #print(deployment)
                 #print(appname)
+                self.resources = {}
+                self.resources['requests'] = {}
+                self.resources['requests']['cpu'] = cpu
+                self.resources['requests']['memory'] = mem
+                self.resources['limits'] = {}
+                self.resources['limits']['cpu'] = cpu
+                self.resources['limits']['memory'] = mem
                 dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = cpu
                 dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = cpu
                 dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = mem
@@ -540,6 +548,7 @@ class testdesign():
         c['hostsystem']['node'] = self.getNode()
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
         c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
+        c['hostsystem']['resources'] = self.resources
         #c['hostsystem']['instance'] = self.instance['type']
         if len(cuda) > 0:
             c['hostsystem']['CUDA'] = cuda
