@@ -238,8 +238,8 @@ class testdesign():
         return appname
     def createDeployment(self):
         self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
-        if not os.path.isfile(self.yamlfolder+self.deployment):
-            self.generateDeployment()
+        #if not os.path.isfile(self.yamlfolder+self.deployment):
+        self.generateDeployment()
         print("Deploy "+self.deployment)
         self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
     def deleteDeployment(self, deployment):
