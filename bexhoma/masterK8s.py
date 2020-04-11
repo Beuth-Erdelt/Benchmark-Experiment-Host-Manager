@@ -418,7 +418,7 @@ class testdesign():
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
         fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
         cpu = os.popen(fullcommand).read()
-        cpu = cpu.replace('model name\t', 'CPU')
+        cpu = cpu.replace('model name\t: ', 'CPU: ')
         return cpu.replace('\n','')
     def getCores(self):
         print("getCores")
