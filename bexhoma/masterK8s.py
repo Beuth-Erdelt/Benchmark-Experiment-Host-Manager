@@ -548,8 +548,20 @@ class testdesign():
         c['hostsystem']['node'] = self.getNode()
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
         c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
-        c['hostsystem']['resources'] = self.resources
         #c['hostsystem']['instance'] = self.instance['type']
+        #c['hostsystem']['resources'] = self.resources
+        if 'requests' in self.resources:
+            c['hostsystem']['requests_cpu'] = self.resources['requests']['cpu']
+            c['hostsystem']['requests_memory'] = self.resources['requests']['memory']
+        else:
+            c['hostsystem']['requests_cpu'] = 0
+            c['hostsystem']['requests_memory'] = 0
+        if 'limits' in self.resources:
+            c['hostsystem']['limits_cpu'] = self.resources['limits']['cpu']
+            c['hostsystem']['limits_memory'] = self.resources['limits']['memory']
+        else:
+            c['hostsystem']['limits_cpu'] = 0
+            c['hostsystem']['limits_memory'] = 0
         if len(cuda) > 0:
             c['hostsystem']['CUDA'] = cuda
         c['connectionmanagement'] = {}
