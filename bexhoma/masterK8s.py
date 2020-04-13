@@ -211,17 +211,41 @@ class testdesign():
                 appname = dep['spec']['template']['metadata']['labels']['app']
                 #print(deployment)
                 #print(appname)
+                # parameter from instance name
+                # request = limit
+                req_cpu = cpu
+                limit_cpu = cpu
+                req_mem = mem
+                limit_mem = mem
+                # should be overwritten by resources dict?
+                #if 'requests' in self.resources and 'cpu' in self.resources['requests']:
+                #    req_cpu = self.resources['requests']['cpu']
+                #if 'requests' in self.resources and 'memory' in self.resources['requests']:
+                #    req_mem = self.resources['requests']['memory']
+                if 'limits' in self.resources and 'cpu' in self.resources['limits']:
+                    limit_cpu = self.resources['limits']['cpu']
+                if 'limits' in self.resources and 'memory' in self.resources['limits']:
+                    limit_mem = self.resources['limits']['memory']
+                # we want to have a resource dict anyway!
                 self.resources = {}
                 self.resources['requests'] = {}
-                self.resources['requests']['cpu'] = cpu
-                self.resources['requests']['memory'] = mem
+                self.resources['requests']['cpu'] = req_cpu
+                self.resources['requests']['memory'] = req_mem
                 self.resources['limits'] = {}
-                self.resources['limits']['cpu'] = cpu
-                self.resources['limits']['memory'] = mem
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = mem
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = mem
+                self.resources['limits']['cpu'] = limit_cpu
+                self.resources['limits']['memory'] = limit_mem
+                #print(self.resources)
+                # put resources to yaml file
+                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = req_cpu
+                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = limit_cpu
+                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = req_mem
+                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = limit_mem
+                # remove limits if = 0
+                if limit_cpu == 0:
+                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu']
+                if limit_mem == 0:
+                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory']
+                # add resource gpu
                 if len(specs) > 2:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = {}
@@ -550,6 +574,8 @@ class testdesign():
         c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
         #c['hostsystem']['instance'] = self.instance['type']
         #c['hostsystem']['resources'] = self.resources
+        # take latest resources
+        # TODO: read from yaml file
         if 'requests' in self.resources:
             c['hostsystem']['requests_cpu'] = self.resources['requests']['cpu']
             c['hostsystem']['requests_memory'] = self.resources['requests']['memory']
