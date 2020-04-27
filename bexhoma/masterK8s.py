@@ -344,8 +344,14 @@ class testdesign():
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
     def startPortforwarding(self):
         print("startPortforwarding")
+        ports = {
+            str(self.port): str(self.docker['port']),
+            "9300": "9300",
+            "9400": "9400"
+        }
+        portstring = " ".join([str(k)+":"+str(v) for k,v in ports.items()])
         if len(self.deployments) > 0:
-            forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], str(self.port)+':'+str(self.docker['port'])]
+            forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
             your_command = " ".join(forward)
             print(your_command)
             subprocess.Popen(forward, stdout=subprocess.PIPE)
