@@ -351,7 +351,9 @@ class testdesign():
         }
         portstring = " ".join([str(k)+":"+str(v) for k,v in ports.items()])
         if len(self.deployments) > 0:
-            forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
+            forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300', '9400']
+            #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
+            #forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
             your_command = " ".join(forward)
             print(your_command)
             subprocess.Popen(forward, stdout=subprocess.PIPE)
