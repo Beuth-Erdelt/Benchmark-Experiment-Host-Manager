@@ -457,14 +457,14 @@ class testdesign():
     def getMemory(self):
         print("getMemory")
         command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
         mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         cpu = os.popen(fullcommand).read()
         cpu = cpu.replace('model name\t: ', '')
         #cpu = cpu.replace('model name\t: ', 'CPU: ')
@@ -473,14 +473,14 @@ class testdesign():
         print("getCores")
         cmd = {}
         command = 'grep -c ^processor /proc/cpuinfo'
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         cores = os.popen(fullcommand).read()
         return int(cores)
     def getHostsystem(self):
         print("getHostsystem")
         cmd = {}
         command = 'uname -r'
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         host = os.popen(fullcommand).read()
         return host.replace('\n','')
     def getNode(self):
@@ -498,7 +498,7 @@ class testdesign():
         print("getGPUs")
         cmd = {}
         command = 'nvidia-smi -L'
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         gpus = os.popen(fullcommand).read()
         l = gpus.split("\n")
         c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
@@ -510,7 +510,7 @@ class testdesign():
         print("getGPUIDs")
         cmd = {}
         command = 'nvidia-smi -L'
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         gpus = os.popen(fullcommand).read()
         l = gpus.split("\n")
         result = []
@@ -523,14 +523,14 @@ class testdesign():
         print("getCUDA")
         cmd = {}
         command = 'nvidia-smi | grep \'CUDA\''
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         cuda = os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
     def getTimediff(self):
         print("getTimediff")
         cmd = {}
         command = 'date +"%s"'
-        fullcommand = 'kubectl exec '+cluster.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+cluster.activepod+' --container=dbms -- bash -c "'+command+'"'
         timestamp_remote = os.popen(fullcommand).read()
         timestamp_local = os.popen(command).read()
         #print(timestamp_remote)
@@ -551,7 +551,7 @@ class testdesign():
         print("getDiskSpaceUsed")
         cmd = {}
         command = "df / | awk 'NR == 2{print \\$3}'"
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         disk = os.popen(fullcommand).read()
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
