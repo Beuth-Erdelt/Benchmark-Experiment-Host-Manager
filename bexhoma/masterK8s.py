@@ -217,6 +217,8 @@ class testdesign():
                 limit_cpu = cpu
                 req_mem = mem
                 limit_mem = mem
+                node_cpu = ''
+                node_gpu = node
                 # should be overwritten by resources dict?
                 #if 'requests' in self.resources and 'cpu' in self.resources['requests']:
                 #    req_cpu = self.resources['requests']['cpu']
@@ -239,6 +241,9 @@ class testdesign():
                 self.resources['limits'] = {}
                 self.resources['limits']['cpu'] = limit_cpu
                 self.resources['limits']['memory'] = limit_mem
+                self.resources['nodeSelector'] = {}
+                self.resources['nodeSelector']['cpu'] = node_cpu
+                self.resources['nodeSelector']['gpu'] = node_gpu
                 #print(self.resources)
                 # put resources to yaml file
                 dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = req_cpu
@@ -251,10 +256,11 @@ class testdesign():
                 if limit_mem == 0:
                     del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory']
                 # add resource gpu
-                if len(specs) > 2:
+                #if len(specs) > 2:
+                if node_gpu:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = {}
-                    dep['spec']['template']['spec']['nodeSelector']['gpu'] = node
+                    dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
                 # add resource cpu
                 if node_cpu:
@@ -397,7 +403,7 @@ class testdesign():
         print(command)
         os.system(command)
     def executeCTL(self, command):
-        fullcommand = 'kubectl exec '+self.activepod+' -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
