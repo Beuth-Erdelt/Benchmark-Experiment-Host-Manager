@@ -226,6 +226,11 @@ class testdesign():
                     limit_cpu = self.resources['limits']['cpu']
                 if 'limits' in self.resources and 'memory' in self.resources['limits']:
                     limit_mem = self.resources['limits']['memory']
+                #nodeSelector: {cpu: epyc-7542}
+                if 'nodeSelector' in self.resources and 'cpu' in self.resources['nodeSelector']:
+                    node_cpu = self.resources['nodeSelector']['cpu']
+                if 'nodeSelector' in self.resources and 'gpu' in self.resources['nodeSelector']:
+                    node_gpu = self.resources['nodeSelector']['gpu']
                 # we want to have a resource dict anyway!
                 self.resources = {}
                 self.resources['requests'] = {}
@@ -251,6 +256,11 @@ class testdesign():
                         dep['spec']['template']['spec']['nodeSelector'] = {}
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
+                # add resource cpu
+                if node_cpu:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = {}
+                    dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
