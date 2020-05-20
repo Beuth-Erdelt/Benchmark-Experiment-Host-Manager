@@ -263,10 +263,12 @@ class testdesign():
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
                 # add resource cpu
-                if node_cpu:
-                    if not 'nodeSelector' in dep['spec']['template']['spec']:
-                        dep['spec']['template']['spec']['nodeSelector'] = {}
-                    dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
+                #if node_cpu:
+                if not 'nodeSelector' in dep['spec']['template']['spec']:
+                    dep['spec']['template']['spec']['nodeSelector'] = {}
+                dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
+                if node_cpu == '':
+                    del dep['spec']['template']['spec']['nodeSelector']['cpu']
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
