@@ -365,11 +365,11 @@ class testdesign():
         ports = {
             str(self.port): str(self.docker['port']),
             "9300": "9300",
-            "9400": "9400"
+            #"9400": "9400"
         }
         portstring = " ".join([str(k)+":"+str(v) for k,v in ports.items()])
         if len(self.deployments) > 0:
-            forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300', '9400']
+            forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
             #forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
             your_command = " ".join(forward)
@@ -702,12 +702,13 @@ class testdesign():
         self.copyLog()
         self.downloadLog()
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
+        evaluator.evaluator(self.benchmark, load=False, force=True)
+        #self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
     def continueBenchmarks(self, connection=None, query=None):
         #configfolder='experiments/gdelt'
@@ -735,12 +736,13 @@ class testdesign():
         self.copyLog()
         self.downloadLog()
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
-        self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
+        evaluator.evaluator(self.benchmark, load=False, force=True)
+        #self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
+        #self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
     def runReporting(self):
         self.benchmark.generateReportsAll()
