@@ -326,6 +326,16 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
+    def getPorts(self):
+        try: 
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector='app='+self.appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.port for p in api_response.items[0].spec.ports]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
     def getPVCs(self):
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector='app='+self.appname)
@@ -362,14 +372,17 @@ class testdesign():
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
     def startPortforwarding(self):
         print("startPortforwarding")
-        ports = {
-            str(self.port): str(self.docker['port']),
-            "9300": "9300",
-            #"9400": "9400"
-        }
-        portstring = " ".join([str(k)+":"+str(v) for k,v in ports.items()])
+        ports = self.getPorts()
+        #ports = {
+        #    str(self.port): str(self.docker['port']),
+        #    "9300": "9300",
+        #    #"9400": "9400"
+        #}
+        #portstring = " ".join([str(k)+":"+str(v) for k,v in ports.items()])
         if len(self.deployments) > 0:
-            forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
+            forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker']#, '9091', '9300']#, '9400']
+            forward.extend(ports)
+            #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
             #forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
             your_command = " ".join(forward)
@@ -745,6 +758,7 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
     def runReporting(self):
+        evaluator.evaluator(self.benchmark, load=False, force=True)
         self.benchmark.generateReportsAll()
     def copyLog(self):
         print("copyLog")
