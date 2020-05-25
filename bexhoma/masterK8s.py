@@ -333,7 +333,7 @@ class testdesign():
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector='app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
-                return [p.port for p in api_response.items[0].spec.ports]
+                return [str(p.port) for p in api_response.items[0].spec.ports]
             else:
                 return []
         except ApiException as e:
