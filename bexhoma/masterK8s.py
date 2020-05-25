@@ -192,6 +192,8 @@ class testdesign():
         print(specs)
         cpu = specs[0]
         mem = specs[1]
+        node = ''
+        gpu = ''
         if len(specs) > 2:
             gpu = specs[2]
             node= specs[3]
