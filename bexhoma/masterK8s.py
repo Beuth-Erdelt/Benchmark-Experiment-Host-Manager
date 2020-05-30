@@ -702,7 +702,7 @@ class testdesign():
         self.logExperiment(experiment)
         # copy deployments
         if os.path.isfile(self.yamlfolder+self.deployment):
-            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path)
+            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # append necessary reporters
         self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
