@@ -142,16 +142,18 @@ class testdesign():
         self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
-    def stopExperiment(self):
+    def stopExperiment(self, delay=0):
         self.getInfo()
         self.stopPortforwarding()
         for p in self.pods:
             self.deletePod(p)
         experiment = {}
-        experiment['delay'] = 0
+        experiment['delay'] = delay
         experiment['step'] = "stopExperiment"
         self.logExperiment(experiment)
-    def cleanExperiment(self):
+        if delay > 0:
+            self.delay(delay)
+    def cleanExperiment(self, delay=0):
         self.getInfo()
         self.stopPortforwarding()
         for p in self.pvcs:
@@ -167,9 +169,11 @@ class testdesign():
                 self.wait(5)
                 status = self.getPodStatus(p)
         experiment = {}
-        experiment['delay'] = 0
+        experiment['delay'] = delay
         experiment['step'] = "cleanExperiment"
         self.logExperiment(experiment)
+        if delay > 0:
+            self.delay(delay)
     def runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.prepareExperiment(instance, volume, docker, script, delay)
         self.startExperiment(delay=delay)
