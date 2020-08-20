@@ -476,7 +476,7 @@ class testdesign():
         for script in self.initscript:
             filename = self.d+'/'+script
             if os.path.isfile(self.configfolder+'/'+filename):
-                self.kubectl('kubectl cp {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
+                self.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
     def loadData(self):
         self.prepareInit()
         print("loadData")
@@ -784,7 +784,7 @@ class testdesign():
             cmd = {}
             cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
             stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'])
-            cmd['save_log'] = 'cp '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
+            cmd['save_log'] = 'cp --container dbms '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['save_log'])
     def copyInits(self):
         print("copyInits")
@@ -794,10 +794,10 @@ class testdesign():
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
-            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
+            cmd['copy_init_scripts'] = 'cp --container dbms {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
             i = i + 1
     def downloadLog(self):
         print("downloadLog")
-        self.kubectl('kubectl cp '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+        self.kubectl('kubectl cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
 
