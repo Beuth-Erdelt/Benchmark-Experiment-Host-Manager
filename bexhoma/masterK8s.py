@@ -52,6 +52,16 @@ class testdesign():
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
+    def set_workload(self, **kwargs):
+        self.workload = kwargs
+    def set_connectionmanagement(self, **kwargs):
+        self.connectionmanagement = kwargs
+    def set_querymanagement(self, **kwargs):
+        self.querymanagement = kwargs
+    def set_resources(self, **kwargs):
+        self.resources = kwargs
+    def set_code(self, code):
+        return self.setCode(code)
     def setCode(self, code):
         self.code = code
         if self.code is not None:
@@ -80,6 +90,8 @@ class testdesign():
         self.instances = instances
         self.volumes = volumes
         self.dockers = dockers
+    def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+        return self.setExperiment(instance, volume, docker, script)
     def setExperiment(self, instance=None, volume=None, docker=None, script=None):
         self.bChangeInstance = True
         if instance is not None:
