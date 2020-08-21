@@ -784,7 +784,7 @@ class testdesign():
             cmd = {}
             cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
             stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'])
-            cmd['save_log'] = 'cp --container dbms '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
+            cmd['save_log'] = 'cp '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['save_log'])
     def copyInits(self):
         print("copyInits")
@@ -794,7 +794,7 @@ class testdesign():
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
-            cmd['copy_init_scripts'] = 'cp --container dbms {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
+            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
             i = i + 1
     def downloadLog(self):
