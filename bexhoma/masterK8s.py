@@ -614,7 +614,7 @@ class testdesign():
         c = self.docker['template'].copy()
         if len(alias) > 0:
             c['alias'] = alias
-        c['docker_alias'] = self.docker['docker_alias']
+        #c['docker_alias'] = self.docker['docker_alias']
         c['active'] = True
         c['name'] = connection
         c['docker'] = self.d
