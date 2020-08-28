@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="bexhoma",
-    version="0.3.10",
+    version="0.3.11",
     author="Patrick Erdelt",
     author_email="perdelt@beuth-hochschule.de",
     description="DBMS-Benchmarker is an application-level blackbox benchmark tool for Database Management Systems (DBMS). It aims at easily measuring and evaluation of the performance the user receives even in complex benchmark situations.",
