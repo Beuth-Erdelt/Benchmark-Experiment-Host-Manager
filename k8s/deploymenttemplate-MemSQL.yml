@@ -5,7 +5,8 @@ metadata:
   name: bexhoma-service
 spec:
   ports:
-  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 3306}
+  #- {port: 9000, protocol: TCP, name: port-web, targetPort: 8080}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma}
 ---
@@ -13,7 +14,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma}
-  name: bexhoma-deployment-postgres
+  name: bexhoma-deployment-memsql
 spec:
   replicas: 1
   selector:
@@ -26,15 +27,18 @@ spec:
       nodeSelector: {cpu: epyc-7542}
       containers:
       - name: dbms
-        image: postgres:11.4
+        image: memsql/cluster-in-a-box
         ports:
-        - {containerPort: 5432}
+        - containerPort: 3306 # MemSQL db
+        - containerPort: 8080 # MemSQL Studio
+        env:
+        - {name: START_AFTER_INIT, value: \'Y\'}
+        - {name: LICENSE_KEY, value: BDA4ZTU0N2I5NTI3MDRjZWZiMTIyNmUxMzljMDM3MTY22uzuXgAAAAAAAAAAAAAAAAkwNQIZANccMwoaLiCY2T4gGbxOrHjUyorY1pCp1AIYNGuZl9fVD4LpfOYMu98fPLPHYwzczWH3AA==}
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 16000m, memory: 128Gi}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
-        - {mountPath: /dev/shm, name: dshm}
       - name: cadvisor
         image: k8s.gcr.io/cadvisor:v0.30.2
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
@@ -84,6 +88,3 @@ spec:
       - name: proc
         hostPath:
           path: /proc
-      - emptyDir:
-          medium: Memory
-        name: dshm
