@@ -7,7 +7,8 @@ This tool supports AWS and kubernetes (k8s) based clusters.
 
 This documentation
 * illustrates the [concepts](docs/Concept.md)
-* provides [basic examples](docs/Examples.md)
+* provides a basic [TPC-H like example](docs/Example-TPC-H.md)
+* provides [more detailed examples](docs/Examples.md)
   * [Example: TPC-H Benchmark for 3 DBMS on 1 Virtual Machine](docs/Examples.md#example-tpc-h-benchmark-for-3-dbms-on-1-virtual-machine)
   * [Example: TPC-H Benchmark for 1 DBMS on 3 Virtual Machines](docs/Examples.md#example-tpc-h-benchmark-for-1-dbms-on-3-virtual-machines)
 * defines [how to configure an experiment setup](docs/Config.md)
