@@ -5,7 +5,8 @@ metadata:
   name: bexhoma-service
 spec:
   ports:
-  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 6274}
+  - {port: 9400, protocol: TCP, name: port-dcgm, targetPort: 9400}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma}
 ---
@@ -13,7 +14,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma}
-  name: bexhoma-deployment-postgres
+  name: bexhoma-deployment-omnisci
 spec:
   replicas: 1
   selector:
@@ -23,18 +24,36 @@ spec:
       labels: {app: bexhoma}
     spec:
       automountServiceAccountToken: false
-      nodeSelector: {cpu: epyc-7542}
+      nodeSelector: {gpu: k80}
       containers:
-      - name: dbms
-        image: postgres:11.4
+      - env:
+        - {name: CUDA_CACHE_DISABLE, value: '0'}
+        - {name: CUDA_CACHE_MAXSIZE, value: '4294967296'}
+        image: omnisci/core-os-cuda:latest
+        name: dbms
         ports:
-        - {containerPort: 5432}
+        - {containerPort: 6274}
         resources:
-          limits: {cpu: 16000m, memory: 128Gi}
+          limits: {cpu: 16000m, memory: 128Gi, nvidia.com/gpu: 1}
           requests: {cpu: 16000m, memory: 128Gi}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
-        - {mountPath: /dev/shm, name: dshm}
+      - image: nvidia/dcgm-exporter:1.7.2
+        name: dcgm-exporter
+        env:
+        - name: "DCGM_EXPORTER_PORT"
+          value: "9400"
+        ports:
+        - name: gpu-metrics
+          containerPort: 9400
+          hostPort: 9400
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+        volumeMounts:
+        - name: pod-gpu-resources
+          readOnly: true
+          mountPath: /var/lib/kubelet/pod-resources
       - name: cadvisor
         image: k8s.gcr.io/cadvisor:v0.30.2
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
@@ -84,6 +103,12 @@ spec:
       - name: proc
         hostPath:
           path: /proc
-      - emptyDir:
-          medium: Memory
-        name: dshm
+      - name: pod-gpu-resources
+        hostPath:
+          path: /var/lib/kubelet/pod-resources
+      #- name: gpu-metrics
+      #  emptyDir:
+      #    medium: Memory
+      #- name: collector-textfiles
+      #  emptyDir:
+      #    medium: Memory

@@ -5,7 +5,7 @@ metadata:
   name: bexhoma-service
 spec:
   ports:
-  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 3306}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma}
 ---
@@ -13,7 +13,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma}
-  name: bexhoma-deployment-postgres
+  name: bexhoma-deployment-mysql
 spec:
   replicas: 1
   selector:
@@ -26,15 +26,17 @@ spec:
       nodeSelector: {cpu: epyc-7542}
       containers:
       - name: dbms
-        image: postgres:11.4
+        image: perdelt/dbms:mysql
+        args: ["--secure-file-priv", "/data/"]
+        env:
+          - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
         ports:
-        - {containerPort: 5432}
+        - {containerPort: 3306}
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 16000m, memory: 128Gi}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
-        - {mountPath: /dev/shm, name: dshm}
       - name: cadvisor
         image: k8s.gcr.io/cadvisor:v0.30.2
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
@@ -84,6 +86,3 @@ spec:
       - name: proc
         hostPath:
           path: /proc
-      - emptyDir:
-          medium: Memory
-        name: dshm
