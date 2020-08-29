@@ -8,13 +8,13 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="bexhoma",
-    version="0.3.11",
+    version="0.4.0",
     author="Patrick Erdelt",
     author_email="perdelt@beuth-hochschule.de",
-    description="DBMS-Benchmarker is an application-level blackbox benchmark tool for Database Management Systems (DBMS). It aims at easily measuring and evaluation of the performance the user receives even in complex benchmark situations.",
+    description="This Python tools helps managing DBMS Benchmarking experiments in a HPC cluster environment. It supports AWS and Kubernetes (K8s).",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Beuth-Erdelt/DBMS-Benchmarker",
+    url="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
