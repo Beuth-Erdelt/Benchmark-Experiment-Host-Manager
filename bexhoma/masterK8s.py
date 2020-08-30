@@ -174,8 +174,8 @@ class testdesign():
     def stopExperiment(self, delay=0):
         self.getInfo()
         self.stopPortforwarding()
-        for p in self.pods:
-            self.deletePod(p)
+        #for p in self.pods:
+        #    self.deletePod(p)
         experiment = {}
         experiment['delay'] = delay
         experiment['step'] = "stopExperiment"
