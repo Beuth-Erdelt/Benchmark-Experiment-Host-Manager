@@ -635,6 +635,7 @@ class testdesign():
         c['active'] = True
         c['name'] = connection
         c['docker'] = self.d
+        c['script'] = self.s
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.docker['priceperhourdollar']
