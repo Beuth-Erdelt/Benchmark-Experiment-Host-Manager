@@ -296,6 +296,7 @@ for p in cluster.pods:
 * `cluster.stopPortforwarding()`: Disconnects network from current pod
 * `cluster.deletePod()`: Deletes all pods belonging to namespace / matching label app. Note that the deployment will automatically start a new (clean) pod. Also note that the pod nevertheless will keep data if the storage device has been mounted.
 
+**Note: The pod is not deleted anymore**
 
 ### On AWS
 
