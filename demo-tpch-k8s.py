@@ -67,8 +67,7 @@ cluster.set_workload(
 cluster.set_connectionmanagement(
 	numProcesses = 1,
 	runsPerConnection = 0,
-	timeout = 600,
-	singleConnection = False)
+	timeout = 600)
 
 # set query parameters - this overwrites infos given in the query file
 cluster.set_querymanagement(numRun = 1)
@@ -84,7 +83,7 @@ cluster.set_resources(
 		'memory': 0
 	},
 	nodeSelector = {
-		'cpu': cpu_type,
+		#'cpu': cpu_type,
 	})
 
 
@@ -97,8 +96,8 @@ def run_experiments(docker, alias):
 	for i in range(1,numExperiments+1):
 		connection = cluster.getConnectionName()
 		cluster.runBenchmarks(connection=connection+"-"+str(i), alias=alias+'-'+str(i))
-	cluster.stopExperiment()
-	cluster.cleanExperiment()
+	cluster.stopExperiment(delay=60)
+	cluster.cleanExperiment(delay=60)
 	del gc.garbage[:]
 
 
