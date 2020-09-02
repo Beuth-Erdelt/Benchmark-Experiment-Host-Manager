@@ -453,7 +453,7 @@ class testdesign():
         print(command)
         os.system(command)
     def executeCTL(self, command):
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
