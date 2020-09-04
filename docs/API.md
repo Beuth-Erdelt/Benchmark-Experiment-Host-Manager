@@ -12,7 +12,25 @@ This document contains API details about
 
 ## Set Code
 
+Sets a code for the collection of experiments.
+This is used by the benchmarking package https://github.com/Beuth-Erdelt/DBMS-Benchmarker
+
+For a new experiment the code is `None`.
+
 ## Set Experiment
+
+```
+cluster.setExperiment(instance, volume, docker, script)
+```
+This sets (up to) four central parameter of an experiment
+* `instance`: Name of virtual machine
+* `volume`: Name of Storage Device
+* `docker`: Name of DBMS docker image
+* `script`: Name of collection of init scripts
+
+The four parameter are given as keys to improve usability, for example `script="SF1-indexes"` and `instance="4000m-16Gi"`.
+Most of these keys are translated into technical details using a configuration file, c.f. an [example](../k8s-cluster.config).
+Instances in a Kubernetes cluster are translated using [YAML files](#deployments).
 
 ## Run Experiment
 
@@ -46,21 +64,41 @@ cluster.setExperiment(instance, volume, docker, script)
 cluster.createDeployment()
 cluster.startPortforwarding()
 ```
-* `cluster.createDeployment()`: Creates a deployment of a docker image (pod and services) to k8s  
+* `cluster.createDeployment()`: Creates a deployment (pod and services) of Docker images to k8s
+* Setup Network `cluster.startPortforwarding()`: Forwards the port of the DBMS in the pod to localhost:fixedport (same for all containers) 
+
+#### Deployments
+
 The deployment is expected to be given as a file named `'deployment-'+docker+'-'+instance+'.yml'`  
 If no such file exists, a file named `'deploymenttemplate-"+docker+".yml'` is loaded and
-  * the instance name is understood as `cpu-mem-gpu-node`
+  * the instance name is understood as `cpu-mem-gpu-gputype`
   * the yaml file is changed as
   ```  
   dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = cpu  
   dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = cpu  
   dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = mem  
   dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = mem  
-  dep['spec']['template']['spec']['nodeSelector']['gpu'] = node  
+  dep['spec']['template']['spec']['nodeSelector']['gpu'] = gputype  
   dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
    ```
    * saved as `'deployment-'+docker+'-'+instance+'.yml'`
-* Setup Network `cluster.startPortforwarding()`: Forwards the port of the DBMS in the pod to localhost:fixedport (same for all containers) 
+
+The resources (requests, limits and nodeSelector) can also be set explicitly using
+```
+cluster.set_resources(
+  requests = {
+    'cpu': cpu,
+    'memory': mem
+  },
+  limits = {
+    'cpu': 0,     # unlimited
+    'memory': 0   # unlimited
+  },
+  nodeSelector = {
+    'cpu': cpu_type,
+    'gpu': gpu_type,
+  })
+```
 
 ### On AWS
 
@@ -156,9 +194,26 @@ cluster.runBenchmarks(connection=connectionname+"-2clients")
 
 Simulated clients can optionally be configured via a connection manager:
 ```
-cluster.connectionmanagement['numProcesses'] = 8
-cluster.connectionmanagement['runsPerConnection'] = 5
-cluster.connectionmanagement['timeout'] = 1200
+cluster.set_connectionmanagement(
+  numProcesses = 2,
+  runsPerConnection = 0,
+  timeout = 600)
+```
+
+### Workload Configurations
+
+The workload is set in the configuration of the experiment
+```
+cluster = testdesign(queryfile = queryfile)
+```
+
+The workload can be further manipulated:
+```
+cluster.set_workload(
+  name = 'TPC-H Queries',
+  info = 'This experiment compares instances of different DBMS on different machines.')
+
+cluster.set_querymanagement(numRun = 64)
 ```
 
 ### Collect Results
@@ -180,6 +235,8 @@ The result folder also contains
   and that allow to [rerun the experiments](#rerun-a-list-of-experiments).
 
 **Note this means it stores confidential informations**
+
+Results are inspected best using the [dashboard](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.md)
 
 ### Collect Host Informations
 
@@ -232,13 +289,14 @@ The command `cluster.stopExperiment()` (basically) is short for:
 ```
 cluster.getInfo()
 cluster.stopPortforwarding()
-for p in cluster.pods:
-    cluster.deletePod(p)
+#for p in cluster.pods:
+#    cluster.deletePod(p)
 ```
 
 * `cluster.stopPortforwarding()`: Disconnects network from current pod
-* `cluster.deletePod()`: Deletes all pods belonging to namespace / matching label app. Note that the deployment will automatically start a new (clean) pod. Also note that the pod nevertheless will keep data if the storage device has been mounted.
+* ~~`cluster.deletePod()`: Deletes all pods belonging to namespace / matching label app. Note that the deployment will automatically start a new (clean) pod. Also note that the pod nevertheless will keep data if the storage device has been mounted.~~
 
+**Note: The pod is not deleted anymore**
 
 ### On AWS
 

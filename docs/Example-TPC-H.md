@@ -15,6 +15,8 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 
 We need configuration file containing the following informations in a predefined format, c.f. [demo file](../k8s-cluster.config).
 We may adjust the configuration to match the actual environment.
+This in particular holds for `imagePullSecrets`, `tolerations` and `nodeSelector` in the YAML files.
+
 The demo also includes the necessary settings for some DBMS: MariaDB, MonetDB, MySQL, OmniSci and PostgreSQL.
 
 For basic execution of benchmarking we need

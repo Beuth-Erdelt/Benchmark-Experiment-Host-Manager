@@ -174,8 +174,8 @@ class testdesign():
     def stopExperiment(self, delay=0):
         self.getInfo()
         self.stopPortforwarding()
-        for p in self.pods:
-            self.deletePod(p)
+        #for p in self.pods:
+        #    self.deletePod(p)
         experiment = {}
         experiment['delay'] = delay
         experiment['step'] = "stopExperiment"
@@ -453,7 +453,7 @@ class testdesign():
         print(command)
         os.system(command)
     def executeCTL(self, command):
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
@@ -635,6 +635,7 @@ class testdesign():
         c['active'] = True
         c['name'] = connection
         c['docker'] = self.d
+        c['script'] = self.s
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.docker['priceperhourdollar']
@@ -670,7 +671,7 @@ class testdesign():
         c['connectionmanagement']['numProcesses'] = self.connectionmanagement['numProcesses']
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
-        c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection']
+        c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else False
         c['monitoring'] = {}
         if 'monitor' in self.config['credentials']['k8s']:
             if 'grafanatoken' in self.config['credentials']['k8s']['monitor']:
