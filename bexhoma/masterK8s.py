@@ -49,6 +49,7 @@ class testdesign():
         self.clusterconfig = clusterconfig
         self.timeLoading = 0
         self.resources = {}
+        self.ddl_parameters = {}
         self.connectionmanagement = {}
         self.connectionmanagement['numProcesses'] = None
         self.connectionmanagement['runsPerConnection'] = None
@@ -77,6 +78,8 @@ class testdesign():
         self.querymanagement = kwargs
     def set_resources(self, **kwargs):
         self.resources = kwargs
+    def set_ddl_parameters(self, **kwargs):
+        self.ddl_parameters = kwargs
     def set_code(self, code):
         return self.setCode(code)
     def setCode(self, code):
@@ -490,10 +493,22 @@ class testdesign():
         #    cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
         #    stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
         #    i = i + 1
-        for script in self.initscript:
-            filename = self.d+'/'+script
-            if os.path.isfile(self.configfolder+'/'+filename):
-                self.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
+        if len(self.ddl_parameters):
+            for script in self.initscript:
+                filename_template = self.d+'/'+script
+                if os.path.isfile(self.configfolder+'/'+filename_template):
+                    with open(self.configfolder+'/'+filename_template, "r") as initscript_template:
+                        data = initscript_template.read()
+                        data = data.format(**self.ddl_parameters)
+                        filename_filled = self.d+'/filled_'+script
+                        with open(self.configfolder+'/'+filename_filled, "w") as initscript_filled:
+                            initscript_filled.write(data)
+                        self.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename_filled, to_name=self.activepod+':'+scriptfolder+script))
+        else:
+            for script in self.initscript:
+                filename = self.d+'/'+script
+                if os.path.isfile(self.configfolder+'/'+filename):
+                    self.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
     def loadData(self):
         self.prepareInit()
         print("loadData")
