@@ -1,8 +1,13 @@
 # API Details
 
 This document contains API details about
-* [`setCode()`](#set-code)
-* [`setExperiment()`](#set-experiment)
+* [`set_code()`](#set-code)
+* [`set_experiment()`](#set-experiment)
+* [`set_workload()`](#set-workload)
+* [`set_connectionmanagement()`](#set-connection-management)
+* [`set_querymanagement()`](#set-query-management)
+* [`set_resources()`](#set-resources)
+* [`set_ddl_paramters()`](#set-ddl-parameters)
 * [`runExperiment()`](#run-experiment)
 * [`prepareExperiment()`](#prepare-experiment)
 * [`startExperiment()`](#start-experiment)
@@ -31,6 +36,82 @@ This sets (up to) four central parameter of an experiment
 The four parameter are given as keys to improve usability, for example `script="SF1-indexes"` and `instance="4000m-16Gi"`.
 Most of these keys are translated into technical details using a configuration file, c.f. an [example](../k8s-cluster.config).
 Instances in a Kubernetes cluster are translated using [YAML files](#deployments).
+
+## Set Workload
+
+Specify details about the following experiment. This overwrites infos given in the query file.
+
+```
+cluster.set_workload(
+  name = 'TPC-H Queries',
+  info = 'This experiment compares instances of different DBMS on different machines.'
+  )
+```
+
+* `name`: Name of experiment
+* `info`: Arbitrary string
+
+These infos are used in reporting.
+
+## Set Connection Management
+
+Specify details about the following experiment. This overwrites infos given in the query file.
+
+```
+cluster.set_connectionmanagement(
+  numProcesses = 1,
+  runsPerConnection = 0,
+  timeout = 600
+  )
+```
+
+* `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
+* `numProcesses`: Number of parallel client processes. Default is 1.
+* `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
+
+These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#extended-query-file).
+
+## Set Query Management
+
+Specify details about the following experiment. This overwrites infos given in the query file.
+
+```
+cluster.set_querymanagement(numRun = 1)
+```
+
+* `numRun`: Number of runs each query is run for benchmarking
+
+These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#extended-query-file), c.f. for more options.
+
+## Set Resources
+
+Specify details about the following experiment. This overwrites infos given in the instance description (YAML) in [deployments](Deployments.md) for Kubernetes.
+
+```
+cluster.set_resources(
+  requests = {
+    'cpu': '4000m',
+    'memory': '16Gi'
+  },
+  limits = {
+    'cpu': 0,
+    'memory': 0
+  },
+  nodeSelector = {
+    'gpu': 'v100',
+  })
+```
+
+## Set DDL Parameters
+
+Specify details about the DDL scripts. This replaces placeholders in the scripts.
+
+```
+cluster.set_ddl_parameters(
+  shard_count = '2'
+)
+```
+All occurrences of `{shard_count}` in the DDL scripts of the following experiment will be replaces by `2`.
 
 ## Run Experiment
 
@@ -67,38 +148,7 @@ cluster.startPortforwarding()
 * `cluster.createDeployment()`: Creates a deployment (pod and services) of Docker images to k8s
 * Setup Network `cluster.startPortforwarding()`: Forwards the port of the DBMS in the pod to localhost:fixedport (same for all containers) 
 
-#### Deployments
-
-The deployment is expected to be given as a file named `'deployment-'+docker+'-'+instance+'.yml'`  
-If no such file exists, a file named `'deploymenttemplate-"+docker+".yml'` is loaded and
-  * the instance name is understood as `cpu-mem-gpu-gputype`
-  * the yaml file is changed as
-  ```  
-  dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = cpu  
-  dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = cpu  
-  dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = mem  
-  dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = mem  
-  dep['spec']['template']['spec']['nodeSelector']['gpu'] = gputype  
-  dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
-   ```
-   * saved as `'deployment-'+docker+'-'+instance+'.yml'`
-
-The resources (requests, limits and nodeSelector) can also be set explicitly using
-```
-cluster.set_resources(
-  requests = {
-    'cpu': cpu,
-    'memory': mem
-  },
-  limits = {
-    'cpu': 0,     # unlimited
-    'memory': 0   # unlimited
-  },
-  nodeSelector = {
-    'cpu': cpu_type,
-    'gpu': gpu_type,
-  })
-```
+See the documentation for more information about [deployments](Deployments.md).
 
 ### On AWS
 

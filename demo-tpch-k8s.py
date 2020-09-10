@@ -1,6 +1,6 @@
 """
     Demo for bexhoma
-    This compares MonetDB and PostgreSQL performing some some TPC-H queries.
+    This compares MonetDB and PostgreSQL performing some TPC-H queries.
     The cluster is managed using Kubernetes.
     Copyright (C) 2020  Patrick Erdelt
 

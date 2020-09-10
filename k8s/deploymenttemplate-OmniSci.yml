@@ -29,7 +29,7 @@ spec:
       - env:
         - {name: CUDA_CACHE_DISABLE, value: '0'}
         - {name: CUDA_CACHE_MAXSIZE, value: '4294967296'}
-        image: omnisci/core-os-cuda:latest
+        image: omnisci/core-os-cuda:v5.4.0
         name: dbms
         ports:
         - {containerPort: 6274}
