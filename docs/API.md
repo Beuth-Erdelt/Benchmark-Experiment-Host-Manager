@@ -84,7 +84,7 @@ These values are handed over to the [benchmarker](https://github.com/Beuth-Erdel
 
 ## Set Resources
 
-Specify details about the following experiment. This overwrites infos given in the instance description (YAML) for Kubernetes.
+Specify details about the following experiment. This overwrites infos given in the instance description (YAML) in [deployments](Deployments.md) for Kubernetes.
 
 ```
 cluster.set_resources(
@@ -101,7 +101,6 @@ cluster.set_resources(
   })
 ```
 
-[Meaning](#prepare-experiment)
 
 ## Run Experiment
 
@@ -138,38 +137,7 @@ cluster.startPortforwarding()
 * `cluster.createDeployment()`: Creates a deployment (pod and services) of Docker images to k8s
 * Setup Network `cluster.startPortforwarding()`: Forwards the port of the DBMS in the pod to localhost:fixedport (same for all containers) 
 
-#### Deployments
-
-The deployment is expected to be given as a file named `'deployment-'+docker+'-'+instance+'.yml'`  
-If no such file exists, a file named `'deploymenttemplate-"+docker+".yml'` is loaded and
-  * the instance name is understood as `cpu-mem-gpu-gputype`
-  * the yaml file is changed as
-  ```  
-  dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = cpu  
-  dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = cpu  
-  dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = mem  
-  dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = mem  
-  dep['spec']['template']['spec']['nodeSelector']['gpu'] = gputype  
-  dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
-   ```
-   * saved as `'deployment-'+docker+'-'+instance+'.yml'`
-
-The resources (requests, limits and nodeSelector) can also be set explicitly using
-```
-cluster.set_resources(
-  requests = {
-    'cpu': cpu,
-    'memory': mem
-  },
-  limits = {
-    'cpu': 0,     # unlimited
-    'memory': 0   # unlimited
-  },
-  nodeSelector = {
-    'cpu': cpu_type,
-    'gpu': gpu_type,
-  })
-```
+See the documentation for more information about [deployments](Deployments.md).
 
 ### On AWS
 
