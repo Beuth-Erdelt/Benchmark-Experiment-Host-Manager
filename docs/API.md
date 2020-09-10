@@ -7,6 +7,7 @@ This document contains API details about
 * [`set_connectionmanagement()`](#set-connection-management)
 * [`set_querymanagement()`](#set-query-management)
 * [`set_resources()`](#set-resources)
+* [`set_ddl_paramters()`](#set-ddl-parameters)
 * [`runExperiment()`](#run-experiment)
 * [`prepareExperiment()`](#prepare-experiment)
 * [`startExperiment()`](#start-experiment)
@@ -101,6 +102,16 @@ cluster.set_resources(
   })
 ```
 
+## Set DDL Parameters
+
+Specify details about the DDL scripts. This replaces placeholders in the scripts.
+
+```
+cluster.set_ddl_parameters(
+  shard_count = '2'
+)
+```
+All occurrences of `{shard_count}` in the DDL scripts of the following experiment will be replaces by `2`.
 
 ## Run Experiment
 
