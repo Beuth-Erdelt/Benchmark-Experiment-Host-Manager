@@ -1,8 +1,12 @@
 # API Details
 
 This document contains API details about
-* [`setCode()`](#set-code)
-* [`setExperiment()`](#set-experiment)
+* [`set_code()`](#set-code)
+* [`set_experiment()`](#set-experiment)
+* [`set_workload()`](#set-workload)
+* [`set_connectionmanagement()`](#set-connection-management)
+* [`set_querymanagement()`](#set-query-management)
+* [`set_resources()`](#set-resources)
 * [`runExperiment()`](#run-experiment)
 * [`prepareExperiment()`](#prepare-experiment)
 * [`startExperiment()`](#start-experiment)
@@ -31,6 +35,73 @@ This sets (up to) four central parameter of an experiment
 The four parameter are given as keys to improve usability, for example `script="SF1-indexes"` and `instance="4000m-16Gi"`.
 Most of these keys are translated into technical details using a configuration file, c.f. an [example](../k8s-cluster.config).
 Instances in a Kubernetes cluster are translated using [YAML files](#deployments).
+
+## Set Workload
+
+Specify details about the following experiment. This overwrites infos given in the query file.
+
+```
+cluster.set_workload(
+  name = 'TPC-H Queries',
+  info = 'This experiment compares instances of different DBMS on different machines.'
+  )
+```
+
+* `name`: Name of experiment
+* `info`: Arbitrary string
+
+These infos are used in reporting.
+
+## Set Connection Management
+
+Specify details about the following experiment. This overwrites infos given in the query file.
+
+```
+cluster.set_connectionmanagement(
+  numProcesses = 1,
+  runsPerConnection = 0,
+  timeout = 600
+  )
+```
+
+* `timeout`: Maximum lifespan of a connection. Default is None, i.e. no limit.
+* `numProcesses`: Number of parallel client processes. Default is 1.
+* `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
+
+These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#extended-query-file).
+
+## Set Query Management
+
+Specify details about the following experiment. This overwrites infos given in the query file.
+
+```
+cluster.set_querymanagement(numRun = 1)
+```
+
+* `numRun`: Number of runs each query is run for benchmarking
+
+These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#extended-query-file), c.f. for more options.
+
+## Set Resources
+
+Specify details about the following experiment. This overwrites infos given in the instance description (YAML) for Kubernetes.
+
+```
+cluster.set_resources(
+  requests = {
+    'cpu': '4000m',
+    'memory': '16Gi'
+  },
+  limits = {
+    'cpu': 0,
+    'memory': 0
+  },
+  nodeSelector = {
+    'gpu': 'v100',
+  })
+```
+
+[Meaning](#prepare-experiment)
 
 ## Run Experiment
 
