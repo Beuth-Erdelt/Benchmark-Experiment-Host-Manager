@@ -326,7 +326,7 @@ class testdesign():
         self.kubectl('kubectl delete deployment '+deployment)
     def getDeployments(self):
         try: 
-            api_response = self.v1beta.list_namespaced_deployment(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector='app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
