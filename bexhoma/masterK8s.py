@@ -45,6 +45,7 @@ class testdesign():
             configfile=f.read()
             self.config = eval(configfile)
         self.configfolder = configfolder
+        self.resultfolder = self.config['benchmarker']['resultfolder']
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
         self.timeLoading = 0
