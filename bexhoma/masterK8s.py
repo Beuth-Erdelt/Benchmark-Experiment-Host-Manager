@@ -256,6 +256,7 @@ class testdesign():
                 limit_cpu = cpu
                 req_mem = mem
                 limit_mem = mem
+                req_gpu = gpu
                 node_cpu = ''
                 node_gpu = node
                 # should be overwritten by resources dict?
@@ -277,6 +278,7 @@ class testdesign():
                 self.resources['requests'] = {}
                 self.resources['requests']['cpu'] = req_cpu
                 self.resources['requests']['memory'] = req_mem
+                self.resources['requests']['gpu'] = req_gpu
                 self.resources['limits'] = {}
                 self.resources['limits']['cpu'] = limit_cpu
                 self.resources['limits']['memory'] = limit_mem
@@ -300,7 +302,7 @@ class testdesign():
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = {}
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
-                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
+                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
                 # add resource cpu
                 #if node_cpu:
                 if not 'nodeSelector' in dep['spec']['template']['spec']:
