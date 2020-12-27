@@ -517,9 +517,14 @@ class testdesign():
         print("loadData")
         self.timeLoadingStart = default_timer()
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
+        shellcommand = 'sh {scriptname}'
         commands = self.initscript
         for c in commands:
-            self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c))
+            filename, file_extension = os.path.splitext(c)
+            if file_extension.lower() == '.sql':
+                self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c))
+            elif file_extension.lower() == '.sh':
+                self.executeCTL(shellcommand.format(scriptname=scriptfolder+c))
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def getMemory(self):
