@@ -679,7 +679,12 @@ class testdesign():
             self.benchmark.connections.append(c)
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
         # we must know all jars upfront
-        tools.dbms.jars = [d['template']['JDBC']['jar'] for c,d in self.config['dockers'].items()]
+        tools.dbms.jars = []
+        for c,d in self.config['dockers'].items():
+            if isinstance(d['template']['JDBC']['jar'], list):
+                tools.dbms.jars.extend(d['template']['JDBC']['jar'])
+            else:
+                tools.dbms.jars.append(d['template']['JDBC']['jar'])
         # write appended connection config
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
