@@ -60,6 +60,7 @@ class testdesign():
         self.workload = {}
         self.host = 'localhost'
         self.port = self.config['credentials']['k8s']['port']
+        self.monitoring_active = True
         # k8s:
         self.namespace = self.config['credentials']['k8s']['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
@@ -696,7 +697,7 @@ class testdesign():
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else False
         c['monitoring'] = {}
-        if 'monitor' in self.config['credentials']['k8s']:
+        if self.monitoring_active and 'monitor' in self.config['credentials']['k8s']:
             if 'grafanatoken' in self.config['credentials']['k8s']['monitor']:
                 c['monitoring']['grafanatoken'] = self.config['credentials']['k8s']['monitor']['grafanatoken']
             if 'grafanaurl' in self.config['credentials']['k8s']['monitor']:
