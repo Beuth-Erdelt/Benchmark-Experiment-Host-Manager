@@ -717,7 +717,7 @@ class testdesign():
                 for metricname, metricdata in self.config['credentials']['k8s']['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v)
+        c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v, DBNAME=self.v.upper())
         if code is not None:
             resultfolder += '/'+str(code)
         self.benchmark = benchmarker.benchmarker(
