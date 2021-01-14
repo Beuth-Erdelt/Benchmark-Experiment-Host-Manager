@@ -14,7 +14,7 @@ CREATE TABLE [dbo].[CUSTOMER](
   [C_ADDRESS] [varchar](40) NULL,
   [C_NATIONKEY] [bigint] NOT NULL,
   [C_PHONE] [char](15) NULL,
-  [C_ACCTBAL] [decimal](18, 0) NULL,
+  [C_ACCTBAL] [decimal](16, 2) NULL,
   [C_MKTSEGMENT] [char](10) NULL,
   [C_COMMENT] [varchar](117) NULL
 ) ON [PRIMARY]
@@ -29,10 +29,10 @@ CREATE TABLE [dbo].[LINEITEM](
   [L_PARTKEY] [bigint] NOT NULL,
   [L_SUPPKEY] [bigint] NOT NULL,
   [L_LINENUMBER] [int] NOT NULL,
-  [L_QUANTITY] [decimal](18, 0) NULL,
-  [L_EXTENDEDPRICE] [decimal](18, 0) NULL,
-  [L_DISCOUNT] [decimal](18, 0) NULL,
-  [L_TAX] [decimal](18, 0) NULL,
+  [L_QUANTITY] [decimal](16, 2) NULL,
+  [L_EXTENDEDPRICE] [decimal](16, 2) NULL,
+  [L_DISCOUNT] [decimal](16, 2) NULL,
+  [L_TAX] [decimal](16, 2) NULL,
   [L_RETURNFLAG] [char](1) NULL,
   [L_LINESTATUS] [char](1) NULL,
   [L_SHIPDATE] [date] NULL,
@@ -73,7 +73,7 @@ CREATE TABLE [dbo].[ORDERS](
   [O_ORDERKEY] [int] NOT NULL,
   [O_CUSTKEY] [bigint] NOT NULL,
   [O_ORDERSTATUS] [char](1) NULL,
-  [O_TOTALPRICE] [decimal](18, 0) NULL,
+  [O_TOTALPRICE] [decimal](16, 2) NULL,
   [O_ORDERDATE] [date] NULL,
   [O_ORDERPRIORITY] [char](15) NULL,
   [O_CLERK] [char](15) NULL,
@@ -98,7 +98,7 @@ CREATE TABLE [dbo].[PART](
   [P_TYPE] [varchar](25) NULL,
   [P_SIZE] [int] NULL,
   [P_CONTAINER] [char](10) NULL,
-  [P_RETAILPRICE] [decimal](18, 0) NULL,
+  [P_RETAILPRICE] [decimal](16, 2) NULL,
   [P_COMMENT] [varchar](23) NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -115,7 +115,7 @@ CREATE TABLE [dbo].[PARTSUPP](
   [PS_PARTKEY] [bigint] NOT NULL,
   [PS_SUPPKEY] [bigint] NOT NULL,
   [PS_AVAILQTY] [int] NULL,
-  [PS_SUPPLYCOST] [decimal](18, 0) NULL,
+  [PS_SUPPLYCOST] [decimal](16, 2) NULL,
   [PS_COMMENT] [varchar](199) NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -150,7 +150,7 @@ CREATE TABLE [dbo].[SUPPLIER](
   [S_ADDRESS] [varchar](40) NULL,
   [S_NATIONKEY] [bigint] NOT NULL,
   [S_PHONE] [char](15) NULL,
-  [S_ACCTBAL] [decimal](18, 0) NULL,
+  [S_ACCTBAL] [decimal](16, 2) NULL,
   [S_COMMENT] [varchar](101) NULL,
 PRIMARY KEY CLUSTERED 
 (

@@ -1,6 +1,10 @@
 USE [tpch]
 GO
 
+ALTER DATABASE tpch SET RECOVERY BULK_LOGGED;
+
+GO
+
 BULK INSERT customer
     FROM '/data/tpch/SF1/customer.tbl'
     WITH
@@ -94,6 +98,10 @@ BULK INSERT supplier
     ROWTERMINATOR = '\n',   --Use to shift the control to next row
     TABLOCK
     )
+
+GO
+
+ALTER DATABASE tpch SET RECOVERY FULL;
 
 GO
 

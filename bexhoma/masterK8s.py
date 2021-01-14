@@ -45,6 +45,7 @@ class testdesign():
             configfile=f.read()
             self.config = eval(configfile)
         self.configfolder = configfolder
+        self.resultfolder = self.config['benchmarker']['resultfolder']
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
         self.timeLoading = 0
@@ -59,6 +60,7 @@ class testdesign():
         self.workload = {}
         self.host = 'localhost'
         self.port = self.config['credentials']['k8s']['port']
+        self.monitoring_active = True
         # k8s:
         self.namespace = self.config['credentials']['k8s']['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
@@ -255,6 +257,7 @@ class testdesign():
                 limit_cpu = cpu
                 req_mem = mem
                 limit_mem = mem
+                req_gpu = gpu
                 node_cpu = ''
                 node_gpu = node
                 # should be overwritten by resources dict?
@@ -276,6 +279,7 @@ class testdesign():
                 self.resources['requests'] = {}
                 self.resources['requests']['cpu'] = req_cpu
                 self.resources['requests']['memory'] = req_mem
+                self.resources['requests']['gpu'] = req_gpu
                 self.resources['limits'] = {}
                 self.resources['limits']['cpu'] = limit_cpu
                 self.resources['limits']['memory'] = limit_mem
@@ -299,7 +303,7 @@ class testdesign():
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = {}
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
-                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(gpu)
+                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
                 # add resource cpu
                 #if node_cpu:
                 if not 'nodeSelector' in dep['spec']['template']['spec']:
@@ -326,7 +330,7 @@ class testdesign():
         self.kubectl('kubectl delete deployment '+deployment)
     def getDeployments(self):
         try: 
-            api_response = self.v1beta.list_namespaced_deployment(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector='app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -514,9 +518,14 @@ class testdesign():
         print("loadData")
         self.timeLoadingStart = default_timer()
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
+        shellcommand = 'sh {scriptname}'
         commands = self.initscript
         for c in commands:
-            self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c))
+            filename, file_extension = os.path.splitext(c)
+            if file_extension.lower() == '.sql':
+                self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c))
+            elif file_extension.lower() == '.sh':
+                self.executeCTL(shellcommand.format(scriptname=scriptfolder+c))
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def getMemory(self):
@@ -688,7 +697,7 @@ class testdesign():
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else False
         c['monitoring'] = {}
-        if 'monitor' in self.config['credentials']['k8s']:
+        if self.monitoring_active and 'monitor' in self.config['credentials']['k8s']:
             if 'grafanatoken' in self.config['credentials']['k8s']['monitor']:
                 c['monitoring']['grafanatoken'] = self.config['credentials']['k8s']['monitor']['grafanatoken']
             if 'grafanaurl' in self.config['credentials']['k8s']['monitor']:
@@ -708,7 +717,7 @@ class testdesign():
                 for metricname, metricdata in self.config['credentials']['k8s']['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v)
+        c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v, DBNAME=self.v.upper())
         if code is not None:
             resultfolder += '/'+str(code)
         self.benchmark = benchmarker.benchmarker(
@@ -730,8 +739,15 @@ class testdesign():
         else:
             self.benchmark.connections.append(c)
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
-        # we must know all jars upfront
-        tools.dbms.jars = [d['template']['JDBC']['jar'] for c,d in self.config['dockers'].items()]
+        # DEPRECATED: we must know all jars upfront
+        """
+        tools.dbms.jars = []
+        for c,d in self.config['dockers'].items():
+            if isinstance(d['template']['JDBC']['jar'], list):
+                tools.dbms.jars.extend(d['template']['JDBC']['jar'])
+            else:
+                tools.dbms.jars.append(d['template']['JDBC']['jar'])
+        """
         # write appended connection config
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
