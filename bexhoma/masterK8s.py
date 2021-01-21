@@ -632,7 +632,7 @@ class testdesign():
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', query=None):
+    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -655,6 +655,8 @@ class testdesign():
         c = self.docker['template'].copy()
         if len(alias) > 0:
             c['alias'] = alias
+        if len(dialect) > 0:
+            c['dialect'] = dialect
         #c['docker_alias'] = self.docker['docker_alias']
         c['active'] = True
         c['name'] = connection
