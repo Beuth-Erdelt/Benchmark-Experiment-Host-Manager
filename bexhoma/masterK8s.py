@@ -72,6 +72,10 @@ class testdesign():
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
+    def set_queryfile(self, queryfile):
+        self.queryfile = queryfile
+    def set_configfolder(self, configfolder):
+        self.configfolder = configfolder
     def set_workload(self, **kwargs):
         self.workload = kwargs
     def set_connectionmanagement(self, **kwargs):
