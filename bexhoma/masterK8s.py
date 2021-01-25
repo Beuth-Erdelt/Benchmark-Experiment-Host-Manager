@@ -943,10 +943,10 @@ class testdesign():
         stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.kubectl('kubectl cp '+client_pod_name+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/data/'+str(self.code)+'/queries.config')
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.kubectl('kubectl cp '+client_pod_name+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/data/'+str(self.code)+'/connections.config')
         self.wait(10)
         while not self.getJobStatus('bexhoma-client'):
             print("job running")
@@ -1021,3 +1021,5 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
 
+
+# kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
