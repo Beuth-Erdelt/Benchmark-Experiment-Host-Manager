@@ -886,6 +886,11 @@ class testdesign():
         tools.query.template = self.querymanagement
         # get connection config
         c = self.get_connection_config(connection, alias, dialect, serverip=self.config['credentials']['k8s']['ip'])
+        if isinstance(c['JDBC']['jar'], list):
+            for i, j in enumerate(c['JDBC']['jar']):
+                c['JDBC']['jar'][i] = j.replace("/home/perdelt/", "./")
+        elif isinstance(c['JDBC']['jar'], str):
+            c['JDBC']['jar'] = c['JDBC']['jar'].replace("/home/perdelt/", "./")
         print("run_benchmarker_pod")
         if code is not None:
             resultfolder += '/'+str(code)
