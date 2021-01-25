@@ -644,7 +644,7 @@ class testdesign():
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def get_connection_config(self, connection=None, alias='', dialect='', serverip):
+    def get_connection_config(self, connection=None, alias='', dialect='', serverip='localhost'):
         if connection is None:
             connection = self.getConnectionName()
         print("get_connection_config")
@@ -724,7 +724,7 @@ class testdesign():
                 for metricname, metricdata in self.config['credentials']['k8s']['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v, DBNAME=self.v.upper())
+        c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.v, DBNAME=self.v.upper())
         return c
     def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
         if len(resultfolder) == 0:
