@@ -68,6 +68,7 @@ class testdesign():
         self.v1core = client.CoreV1Api()
         self.v1beta = kubernetes.client.ExtensionsV1beta1Api()
         self.v1apps = kubernetes.client.AppsV1Api()
+        self.v1batches = kubernetes.client.BatchV1Api()
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
@@ -470,6 +471,13 @@ class testdesign():
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    def executeCTL_client(self, command):
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
     def checkGPUs(self):
         print("checkGPUs")
         cmd = {}
@@ -784,6 +792,9 @@ class testdesign():
         # append necessary reporters
         #self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         #self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
+        # restart network
+        self.stopPortforwarding()
+        self.startPortforwarding()
         # run or continue benchmarking
         if code is not None:
             self.benchmark.continueBenchmarks(overwrite = True)
@@ -862,4 +873,147 @@ class testdesign():
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('kubectl cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
+        if len(resultfolder) == 0:
+            resultfolder = self.config['benchmarker']['resultfolder']
+        if len(configfolder) == 0:
+            configfolder = self.configfolder
+        if connection is None:
+            connection = self.getConnectionName()
+        if code is None:
+            code = self.code
+        # set query management for new query file
+        tools.query.template = self.querymanagement
+        # get connection config
+        c = self.get_connection_config(connection, alias, dialect)
+        print("run_benchmarker_pod")
+        if code is not None:
+            resultfolder += '/'+str(code)
+        self.benchmark = benchmarker.benchmarker(
+            fixedConnection=connection,
+            fixedQuery=query,
+            result_path=resultfolder,
+            batch=True,
+            working='connection'
+            )
+        self.code = self.benchmark.code
+        # read config for benchmarker
+        connectionfile = configfolder+'/connections.config'
+        if self.queryfile is not None:
+            queryfile = configfolder+'/'+self.queryfile
+        else:
+            queryfile = configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        if c['name'] in self.benchmark.dbms:
+            print("Rerun connection "+connection)
+        else:
+            self.benchmark.connections.append(c)
+        self.benchmark.dbms[c['name']] = tools.dbms(c, False)
+        # copy or generate config folder (query and connection)
+        # add connection to existing list
+        # or: generate new connection list
+        filename = self.benchmark.path+'/connections.config'
+        with open(filename, 'w') as f:
+            f.write(str(self.benchmark.connections))
+        # write appended query config
+        if len(self.workload) > 0:
+            for k,v in self.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
+        # store experiment
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "runBenchmarks"
+        experiment['connection'] = connection
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.logExperiment(experiment)
+        # copy deployments
+        if os.path.isfile(self.yamlfolder+self.deployment):
+            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
+        # start pod
+        self.kubectl('kubectl create -f '+self.yamlfolder+'job-dbmsbenchmarker.yml')
+        self.wait(10)
+        # copy config to pod
+        cmd = {}
+        cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
+        stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
+        cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
+        stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
+        stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        self.wait(10)
+        while not self.getJobStatus('bexhoma-client'):
+            print("job running")
+            self.wait(60)
+        #self.deleteJob('bexhoma-client')
+        #self.deleteJobPod()
+        # prepare reporting
+        #self.copy_results()
+        #self.copyInits()
+        #self.copyLog()
+        #self.downloadLog()
+        #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
+        #evaluator.evaluator(self.benchmark, load=False, force=True)
+        return self.code
+    def getJobs(self):
+        print("getJobs")
+        try: 
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector='app='+self.appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+    def getJobStatus(self, jobname=''):
+        print("getJobStatus")
+        try: 
+            if len(jobname) == 0:
+                jobs = self.getJobs()
+                jobname = jobs[0]
+            api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
+            #pprint(api_response)
+            #pprint(api_response.status.succeeded)
+            return api_response.status.succeeded
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
+            return 1
+    def deleteJob(self, jobname=''):
+        print("deleteJob")
+        try: 
+            if len(jobname) == 0:
+                jobs = self.getJobs()
+                jobname = jobs[0]
+            api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
+            #pprint(api_response)
+            #pprint(api_response.status.succeeded)
+            return True
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
+            return False
+    def deleteJobPod(self, name):
+        print("deleteJobPod")
+            if len(name) == 0:
+                pods = self.getJobPods()
+                name = pods[0]
+        body = kubernetes.client.V1DeleteOptions()
+        try: 
+            api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
+            #pprint(api_response)
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
+    def getJobPods(self, appname):
+        print("getJobPods")
+        try: 
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
 
