@@ -996,11 +996,11 @@ class testdesign():
             return False
     def deleteJobPod(self, name):
         print("deleteJobPod")
+        body = kubernetes.client.V1DeleteOptions()
+        try: 
             if len(name) == 0:
                 pods = self.getJobPods()
                 name = pods[0]
-        body = kubernetes.client.V1DeleteOptions()
-        try: 
             api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
             #pprint(api_response)
         except ApiException as e:
