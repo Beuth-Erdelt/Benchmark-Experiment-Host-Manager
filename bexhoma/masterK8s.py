@@ -885,7 +885,7 @@ class testdesign():
         # set query management for new query file
         tools.query.template = self.querymanagement
         # get connection config
-        c = self.get_connection_config(connection, alias, dialect, serverip=self.config['credentials']['k8s']['monitor'])
+        c = self.get_connection_config(connection, alias, dialect, serverip=self.config['credentials']['k8s']['ip'])
         print("run_benchmarker_pod")
         if code is not None:
             resultfolder += '/'+str(code)
@@ -897,6 +897,7 @@ class testdesign():
             working='connection'
             )
         self.code = self.benchmark.code
+        print("Code", self.code)
         # read config for benchmarker
         connectionfile = configfolder+'/connections.config'
         if self.queryfile is not None:
