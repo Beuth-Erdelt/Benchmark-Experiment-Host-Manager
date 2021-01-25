@@ -644,7 +644,7 @@ class testdesign():
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def get_connection_config(self, connection=None, alias='', dialect=''):
+    def get_connection_config(self, connection=None, alias='', dialect='', serverip):
         if connection is None:
             connection = self.getConnectionName()
         print("get_connection_config")
@@ -885,7 +885,7 @@ class testdesign():
         # set query management for new query file
         tools.query.template = self.querymanagement
         # get connection config
-        c = self.get_connection_config(connection, alias, dialect)
+        c = self.get_connection_config(connection, alias, dialect, serverip=self.config['credentials']['k8s']['monitor'])
         print("run_benchmarker_pod")
         if code is not None:
             resultfolder += '/'+str(code)
@@ -939,14 +939,14 @@ class testdesign():
         pods = self.getJobPods()
         client_pod_name = pods[0]
         cmd = {}
-        cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
+        cmd['prepare_log'] = 'mkdir /results/'+str(self.code)
         stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/result/'+str(self.code)+'/queries.config')
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/result/'+str(self.code)+'/connections.config')
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.wait(10)
         while not self.getJobStatus('bexhoma-client'):
             print("job running")
