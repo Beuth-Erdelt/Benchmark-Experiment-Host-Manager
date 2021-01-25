@@ -936,13 +936,17 @@ class testdesign():
         self.kubectl('kubectl create -f '+self.yamlfolder+'job-dbmsbenchmarker.yml')
         self.wait(10)
         # copy config to pod
+        pods = self.getJobPods()
+        client_pod_name = pods[0]
         cmd = {}
         cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
         stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
-        cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
-        stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
-        stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
+        #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        self.kubectl('kubectl cp '+client_pod_name+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+        #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
+        #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        self.kubectl('kubectl cp '+client_pod_name+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
         self.wait(10)
         while not self.getJobStatus('bexhoma-client'):
             print("job running")
@@ -1005,7 +1009,7 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
-    def getJobPods(self, appname):
+    def getJobPods(self, appname='bexhoma-client'):
         print("getJobPods")
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+appname)
