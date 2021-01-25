@@ -962,8 +962,8 @@ class testdesign():
         while not self.getJobStatus('bexhoma-client'):
             print("job running")
             self.wait(60)
-        #self.deleteJob('bexhoma-client')
-        #self.deleteJobPod()
+        self.deleteJob('bexhoma-client')
+        self.deleteJobPod()
         # prepare reporting
         #self.copy_results()
         #self.copyInits()
@@ -1009,7 +1009,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             return False
-    def deleteJobPod(self, name):
+    def deleteJobPod(self, name=''):
         print("deleteJobPod")
         body = kubernetes.client.V1DeleteOptions()
         try: 
