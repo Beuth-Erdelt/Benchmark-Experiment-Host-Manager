@@ -939,8 +939,10 @@ class testdesign():
         # copy deployments
         if os.path.isfile(self.yamlfolder+self.deployment):
             shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
+        # create pod
+        yamlfile = self.create_job(self.code, connection)
         # start pod
-        self.kubectl('kubectl create -f '+self.yamlfolder+'job-dbmsbenchmarker.yml')
+        self.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
         # copy config to pod
         pods = self.getJobPods()
@@ -1032,6 +1034,31 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+    def create_job(self, code, connection):
+        yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+            except yaml.YAMLError as exc:
+                print(exc)
+        for dep in result:
+            if dep['kind'] == 'Job':
+                job = dep['metadata']['name']
+                envs = dep['spec']['template']['spec']['containers'][0]['env']
+                for i,e in enumerate(envs):
+                    if e['name'] == 'DBMSBENCHMARKER_CODE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
+                    if e['name'] == 'DBMSBENCHMARKER_CONNECTION':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                    print(e)
+        with open(yamlfile,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        return yamlfile
 
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
