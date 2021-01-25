@@ -961,10 +961,10 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
-    def getJobs(self):
+    def getJobs(self, appname='bexhoma-client'):
         print("getJobs")
         try: 
-            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector='app='+appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
