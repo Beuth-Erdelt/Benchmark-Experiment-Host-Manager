@@ -901,7 +901,7 @@ class testdesign():
             batch=True,
             working='connection'
             )
-        self.benchmark.code = '1611607321'
+        #self.benchmark.code = '1611607321'
         self.code = self.benchmark.code
         print("Code", self.code)
         # read config for benchmarker
