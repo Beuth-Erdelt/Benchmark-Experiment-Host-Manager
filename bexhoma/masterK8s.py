@@ -1061,7 +1061,7 @@ class testdesign():
                     if e['name'] == 'DBMSBENCHMARKER_CONNECTION':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
                     if e['name'] == 'DBMSBENCHMARKER_SLEEP':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 30
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                     print(e)
         with open(yamlfile,"w+") as stream:
             try:
