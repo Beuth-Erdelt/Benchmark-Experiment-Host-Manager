@@ -975,6 +975,7 @@ class testdesign():
             self.wait(60)
         self.deleteJob('bexhoma-client')
         self.deleteJobPod()
+        self.wait(60)
         # prepare reporting
         #self.copy_results()
         #self.copyInits()
