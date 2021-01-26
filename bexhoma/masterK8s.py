@@ -949,8 +949,9 @@ class testdesign():
         pods = self.getJobPods()
         client_pod_name = pods[0]
         status = self.getPodStatus(client_pod_name)
+        print(client_pod_name, status)
         while status != "Running":
-            print(status)
+            print(client_pod_name, status)
             self.wait(10)
             status = self.getPodStatus(client_pod_name)
         # copy config to pod
@@ -1059,6 +1060,8 @@ class testdesign():
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
                     if e['name'] == 'DBMSBENCHMARKER_CONNECTION':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                    if e['name'] == 'DBMSBENCHMARKER_SLEEP':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 30
                     print(e)
         with open(yamlfile,"w+") as stream:
             try:
