@@ -353,9 +353,11 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
-    def getPodStatus(self, pod):
+    def getPodStatus(self, pod, appname=''):
         try:
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+self.appname)
+            if len(appname) == 0:
+                appname = self.appname
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return api_response.items[0].status.phase
@@ -944,9 +946,14 @@ class testdesign():
         # start pod
         self.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
-        # copy config to pod
         pods = self.getJobPods()
         client_pod_name = pods[0]
+        status = self.getPodStatus(client_pod_name)
+        while status != "Running":
+            print(status)
+            self.wait(10)
+            status = self.getPodStatus(client_pod_name)
+        # copy config to pod
         cmd = {}
         cmd['prepare_log'] = 'mkdir /results/'+str(self.code)
         fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
