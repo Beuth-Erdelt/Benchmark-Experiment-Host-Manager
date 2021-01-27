@@ -1,13 +1,15 @@
 # API Details
 
-This document contains API details about
+This document contains API details about methods for **parameters**
 * [`set_code()`](#set-code)
 * [`set_experiment()`](#set-experiment)
 * [`set_workload()`](#set-workload)
 * [`set_connectionmanagement()`](#set-connection-management)
 * [`set_querymanagement()`](#set-query-management)
 * [`set_resources()`](#set-resources)
-* [`set_ddl_paramters()`](#set-ddl-parameters)
+* [`set_ddl_parameters()`](#set-ddl-parameters)
+
+and methods for the **workflow**
 * [`runExperiment()`](#run-experiment)
 * [`prepareExperiment()`](#prepare-experiment)
 * [`startExperiment()`](#start-experiment)
