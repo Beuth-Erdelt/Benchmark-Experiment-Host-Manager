@@ -220,11 +220,15 @@ class testdesign():
         self.stopExperiment()
         self.cleanExperiment()
     def wait(self, sec):
-        print("Waiting "+str(sec)+"s")
+        print("Waiting "+str(sec)+"s   ", end="", flush=True)
         intervals = int(sec)
-        intervalLength = 1
-        for i in tqdm(range(intervals)):
-            time.sleep(intervalLength)
+        time.sleep(intervals)
+        print("done")
+        #print("Waiting "+str(sec)+"s")
+        #intervals = int(sec)
+        #intervalLength = 1
+        #for i in tqdm(range(intervals)):
+        #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
     def generateDeployment(self):
