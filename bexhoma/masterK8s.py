@@ -429,7 +429,7 @@ class testdesign():
         self.getInfo()
         if len(self.deployments) > 0:
             forward = ['kubectl', 'port-forward', 'service/bexhoma-service']#, '9091', '9300']#, '9400']
-            forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
+            #forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
             forward.extend(ports)
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
