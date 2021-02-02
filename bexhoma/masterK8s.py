@@ -220,7 +220,7 @@ class testdesign():
         self.stopExperiment()
         self.cleanExperiment()
     def wait(self, sec):
-        print("Waiting "+str(sec)+"s   ", end="", flush=True)
+        print("Waiting "+str(sec)+"s...", end="", flush=True)
         intervals = int(sec)
         time.sleep(intervals)
         print("done")
@@ -715,6 +715,8 @@ class testdesign():
                 c['monitoring']['grafanashift'] = self.config['credentials']['k8s']['monitor']['grafanashift']
             if 'grafanaextend' in self.config['credentials']['k8s']['monitor']:
                 c['monitoring']['grafanaextend'] = self.config['credentials']['k8s']['monitor']['grafanaextend']
+            if 'prometheus_url' in self.config['credentials']['k8s']['monitor']:
+                c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['prometheus_url']
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in self.config['credentials']['k8s']['monitor']:
