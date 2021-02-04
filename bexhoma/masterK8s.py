@@ -337,9 +337,20 @@ class testdesign():
         self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
     def deleteDeployment(self, deployment):
         self.kubectl('kubectl delete deployment '+deployment)
-    def getDeployments(self):
+    def getDeployments(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -347,9 +358,21 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling v1beta->list_namespaced_deployment: %s\n" % e)
-    def getPods(self):
+    def getPods(self, app='', component='', experiment='', configuration=''):
+        # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -369,9 +392,20 @@ class testdesign():
                 return ""
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
-    def getServices(self):
+    def getServices(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -379,9 +413,20 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
-    def getPorts(self):
+    def getPorts(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [str(p.port) for p in api_response.items[0].spec.ports]
@@ -949,7 +994,7 @@ class testdesign():
         # start pod
         self.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
-        pods = self.getJobPods()
+        pods = self.getJobPods(component='benchmarker')
         client_pod_name = pods[0]
         status = self.getPodStatus(client_pod_name)
         print(client_pod_name, status)
@@ -973,11 +1018,12 @@ class testdesign():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.wait(10)
-        while not self.getJobStatus('bexhoma-client'):
+        job = self.getJobs(component='benchmarker')
+        while not self.getJobStatus(component='benchmarker'):
             print("job running")
             self.wait(60)
-        self.deleteJob('bexhoma-client')
-        self.deleteJobPod()
+        self.deleteJob(job)
+        self.deleteJobPod(component='benchmarker')
         self.wait(60)
         # prepare reporting
         #self.copy_results()
@@ -987,10 +1033,21 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
-    def getJobs(self, appname='bexhoma-client'):
+    def getJobs(self, app='', component='', experiment='', configuration=''):
         print("getJobs")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector='app='+appname)
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -998,11 +1055,22 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
-    def getJobStatus(self, jobname=''):
+    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration=''):
         print("getJobStatus")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
             if len(jobname) == 0:
-                jobs = self.getJobs()
+                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
@@ -1011,11 +1079,11 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
             return 1
-    def deleteJob(self, jobname=''):
+    def deleteJob(self, jobname='', app='', component='', experiment='', configuration=''):
         print("deleteJob")
         try: 
             if len(jobname) == 0:
-                jobs = self.getJobs()
+                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
                 jobname = jobs[0]
             api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
@@ -1024,21 +1092,32 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             return False
-    def deleteJobPod(self, name=''):
+    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration=''):
         print("deleteJobPod")
         body = kubernetes.client.V1DeleteOptions()
         try: 
-            if len(name) == 0:
-                pods = self.getJobPods()
-                name = pods[0]
-            api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
+            if len(jobname) == 0:
+                pods = self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
+                jobname = pods[0]
+            api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
-    def getJobPods(self, appname='bexhoma-client'):
+    def getJobPods(self, app='', component='', experiment='', configuration=''):
         print("getJobPods")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+appname)
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
