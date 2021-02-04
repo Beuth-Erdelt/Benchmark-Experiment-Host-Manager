@@ -886,6 +886,7 @@ class testdesign():
             connection = self.getConnectionName()
         if code is None:
             code = self.code
+        self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
         # get connection config
