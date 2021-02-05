@@ -90,10 +90,10 @@ class testdesign():
     def set_code(self, code):
         return self.setCode(code)
     def setCode(self, code):
-        self.code = code
+        self.code = int(code)
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
-            resultfolder += '/'+str(int(self.code))
+            resultfolder += '/'+str(self.code)
             # store experiment list
             filename = resultfolder+'/experiments.config'
             if os.path.isfile(filename):
@@ -810,7 +810,7 @@ class testdesign():
         c = self.get_connection_config(connection, alias, dialect)
         print("runBenchmarks")
         if code is not None:
-            resultfolder += '/'+str(int(code))
+            resultfolder += '/'+str(code)
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
             fixedQuery=query,
@@ -952,7 +952,7 @@ class testdesign():
         if connection is None:
             connection = self.getConnectionName()
         if code is None:
-            code = int(self.code)
+            code = self.code
         self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
