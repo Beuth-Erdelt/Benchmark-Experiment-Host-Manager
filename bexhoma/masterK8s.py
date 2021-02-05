@@ -22,6 +22,7 @@ from pprint import pprint
 from kubernetes import client, config
 import subprocess
 import os
+from os import makedirs, path
 import time
 from timeit import default_timer #as timer
 import psutil
@@ -1229,14 +1230,37 @@ class testdesign():
         deployments = self.getDeployments(app=app, component=component)
         for deployment in deployments:
             self.deleteDeployment(deployment)
+        services = self.getServices(app=app, component=component)
+        for service in services:
+            self.deleteService(service)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.deleteDeployment(deployment)
+        services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        for service in services:
+            self.deleteService(service)
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.deleteDeployment(deployment)
+        services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        for service in services:
+            self.deleteService(service)
 
+
+class cluster(testdesign):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.code = code
+        if self.code is None:
+            self.code = str(round(time.time()))
+        # list of configurations (connections, docker)
+        # per configuration: sut+service
+        # per configuration: monitoring+service
+        # per configuration: list of benchmarker
+        testdesign.__init__(self, clusterconfig, configfolder, yamlfolder, code=self.code, instance, volume, docker, script, queryfile)
+        self.path = self.resultfolder+"/"+self.code
+        if not path.isdir(self.path):
+            makedirs(self.path)
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
