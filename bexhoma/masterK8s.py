@@ -1217,9 +1217,44 @@ class testdesign():
         print(name)
         return name
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        print("start_monitoring")
+        if len(app) == 0:
+            app = self.appname
+        if len(experiment) == 0:
+            experiment = self.code
         deployment ='deploymenttemplate-bexhoma-prometheus.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
+        deployment_experiment = self.cluster.path+'deployment-{name}.yml'.format(name=name)
+        with open(self.yamlfolder+deployment) as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+                for dep in result:
+                    if dep['kind'] == 'Service':
+                        #service = dep['metadata']['name']
+                        dep['metadata']['labels']['app'] = app
+                        dep['metadata']['labels']['component'] = component
+                        dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['experiment'] = experiment
+                        dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    if dep['kind'] == 'Deployment':
+                        #deployment = dep['metadata']['name']
+                        dep['metadata']['labels']['app'] = app
+                        dep['metadata']['labels']['component'] = component
+                        dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['experiment'] = str(experiment)
+                        dep['metadata']['labels']['client'] = str(client)
+                        dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
+                        dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
+            except yaml.YAMLError as exc:
+                print(exc)
+        with open(deployment_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
         print("Deploy "+deployment)
         self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
     def start_dashboard(self, app='', component='dashboard'):
