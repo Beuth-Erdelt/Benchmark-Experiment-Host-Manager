@@ -525,13 +525,17 @@ class testdesign():
                 print("FOUND")
                 child.terminate()
     def getInfo(self, app='', component='', experiment='', configuration=''):
+        print("getPods", app, component, experiment, configuration)
         self.pods = self.getPods(app, component, experiment, configuration)
+        print(self.pods)
         if len(self.pods) > 0:
             self.activepod = self.pods[0]
         else:
             self.activepod = None
         self.deployments = self.getDeployments(app, component, experiment, configuration)
+        print(self.deployments)
         self.services = self.getServices(app, component, experiment, configuration)
+        print(self.services)
         self.pvcs = self.getPVCs()
     def kubectl(self, command):
         print(command)
@@ -1154,6 +1158,7 @@ class testdesign():
         print("create_job")
         if len(app) == 0:
             app = self.appname
+        code = experiment
         jobname = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
