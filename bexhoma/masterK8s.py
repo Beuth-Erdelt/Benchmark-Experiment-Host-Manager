@@ -1012,11 +1012,11 @@ class testdesign():
         if os.path.isfile(self.yamlfolder+self.deployment):
             shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
-        yamlfile = self.create_job(self.code, connection)
+        yamlfile = self.create_job(self.code, configuration=connection)
         # start pod
         self.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
-        pods = self.getJobPods(component='benchmarker')
+        pods = self.getJobPods(component='benchmarker', configuration=connection)
         client_pod_name = pods[0]
         status = self.getPodStatus(client_pod_name)
         print(client_pod_name, status)
@@ -1040,12 +1040,12 @@ class testdesign():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.wait(10)
-        job = self.getJobs(component='benchmarker')
-        while not self.getJobStatus(component='benchmarker'):
+        job = self.getJobs(component='benchmarker', configuration=connection)
+        while not self.getJobStatus(component='benchmarker', configuration=connection):
             print("job running")
             self.wait(60)
         self.deleteJob(job)
-        self.deleteJobPod(component='benchmarker')
+        self.deleteJobPod(component='benchmarker', configuration=connection)
         self.wait(60)
         # prepare reporting
         #self.copy_results()
