@@ -1158,7 +1158,7 @@ class testdesign():
         print("create_job")
         if len(app) == 0:
             app = self.appname
-        code = experiment
+        code = str(int(experiment))
         connection = configuration
         jobname = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
         print(jobname)
@@ -1175,12 +1175,12 @@ class testdesign():
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
-                dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
-                dep['spec']['template']['metadata']['labels']['experiment'] = experiment
+                dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 job = dep['metadata']['name']
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
