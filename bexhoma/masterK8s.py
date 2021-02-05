@@ -231,8 +231,12 @@ class testdesign():
         #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
-    def generateDeployment(self):
+    def generateDeployment(self, app='', component='sut', experiment='default', configuration='default'):
         print("generateDeployment")
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.d
         instance = self.i
         template = "deploymenttemplate-"+self.d+".yml"
         specs = instance.split("-")
@@ -255,7 +259,21 @@ class testdesign():
             if dep['kind'] == 'PersistentVolumeClaim':
                 pvc = dep['metadata']['name']
                 #print(pvc)
+            if dep['kind'] == 'Service':
+                service = dep['metadata']['name']
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                #print(pvc)
             if dep['kind'] == 'Deployment':
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
+                dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
                 #print(deployment)
