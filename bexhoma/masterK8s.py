@@ -90,7 +90,8 @@ class testdesign():
     def set_code(self, code):
         return self.setCode(code)
     def setCode(self, code):
-        self.code = int(code)
+        if code is not None:
+            self.code = int(code)
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
             resultfolder += '/'+str(self.code)
