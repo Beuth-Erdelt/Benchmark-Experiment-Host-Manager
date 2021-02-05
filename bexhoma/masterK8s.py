@@ -1047,11 +1047,12 @@ class testdesign():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.wait(10)
-        jobname = self.getJobs(component='benchmarker', configuration=connection, experiment=self.code)
-        while not self.getJobStatus(component='benchmarker', configuration=connection, experiment=self.code):
+        jobs = self.getJobs(component='benchmarker', configuration=connection, experiment=self.code)
+        jobname = jobs[0]
+        while not self.getJobStatus(jobname=jobname, component='benchmarker', configuration=connection, experiment=self.code):
             print("job running")
             self.wait(60)
-        self.deleteJob(jobname)
+        self.deleteJob(jobname=jobname)
         self.deleteJobPod(component='benchmarker', configuration=connection, experiment=self.code)
         self.wait(60)
         # prepare reporting
