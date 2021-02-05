@@ -1220,7 +1220,7 @@ class testdesign():
     def start_dashboard(self, app='', component='dashboard'):
         deployment ='deploymenttemplate-bexhoma-dashboard.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
-        name = self.create_dashboard(code, app, component, experiment, configuration)
+        name = self.create_dashboard(app, component)
         print("Deploy "+deployment)
         self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
 
