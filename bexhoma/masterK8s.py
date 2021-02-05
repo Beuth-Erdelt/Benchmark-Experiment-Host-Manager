@@ -1149,13 +1149,13 @@ class testdesign():
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
     def create_job(self, code, connection, app='', component='benchmarker', experiment='', configuration='', client=1):
         print("create_job")
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
         if len(configuration) == 0:
             configuration = connection
         if len(experiment) == 0:
             experiment = code
-        job_name = "{app}_{component}_{configuration}_{experiment}_{client}".format(app, component, configuration, experiment, client)
+        job_name = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
         print(job_name)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
@@ -1193,6 +1193,29 @@ class testdesign():
             except yaml.YAMLError as exc:
                 print(exc)
         return yamlfile
+    def create_monitoring(self, code='', app='', component='monitoring', experiment='', configuration=''):
+        print("create_monitoring")
+        if len(app) == 0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = connection
+        if len(experiment) == 0:
+            experiment = code
+        name = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
+        print(name)
+        return name
+    def start_monitoring(self, code='', app='', component='monitoring', experiment='', configuration=''):
+        deployment ='deploymenttemplate-bexhoma-prometheus.yml'
+        #if not os.path.isfile(self.yamlfolder+self.deployment):
+        name = self.create_monitoring(code, app, component, experiment, configuration)
+        print("Deploy "+deployment)
+        self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
+    def start_dashboard(self, app='', component='dashboard'):
+        deployment ='deploymenttemplate-bexhoma-dashboard.yml'
+        #if not os.path.isfile(self.yamlfolder+self.deployment):
+        name = self.create_monitoring(code, app, component, experiment, configuration)
+        print("Deploy "+deployment)
+        self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
 
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
