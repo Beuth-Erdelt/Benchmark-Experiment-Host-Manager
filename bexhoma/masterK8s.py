@@ -1125,7 +1125,16 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
-    def create_job(self, code, connection):
+    def create_job(self, code, connection, app='', component='benchmarker', experiment='', configuration='', client=1):
+        print("create_job")
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = connection
+        if len(experiment) == 0:
+            experiment = code
+        job_name = "{app}_{component}_{configuration}_{experiment}_{client}".format(app, component, configuration, experiment, client)
+        print(job_name)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
             try:
@@ -1136,6 +1145,16 @@ class testdesign():
                 print(exc)
         for dep in result:
             if dep['kind'] == 'Job':
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['client'] = client
+                dep['spec']['template']['metadata']['labels']['app'] = app
+                dep['spec']['template']['metadata']['labels']['component'] = component
+                dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['experiment'] = experiment
+                dep['spec']['template']['metadata']['labels']['client'] = client
                 job = dep['metadata']['name']
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
