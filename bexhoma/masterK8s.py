@@ -260,7 +260,7 @@ class testdesign():
                 pvc = dep['metadata']['name']
                 #print(pvc)
             if dep['kind'] == 'Service':
-                service = dep['metadata']['name']
+                self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
@@ -486,12 +486,16 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
-    def startPortforwarding(self):
+    def startPortforwarding(self, service=''):
         print("startPortforwarding")
         ports = self.getPorts()
+        if len(service) == 0:
+            service = self.service
+        if len(service) == 0:
+            service = 'bexhoma-service'
         self.getInfo()
         if len(self.deployments) > 0:
-            forward = ['kubectl', 'port-forward', 'service/bexhoma-service']#, '9091', '9300']#, '9400']
+            forward = ['kubectl', 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             #forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
             forward.extend(ports)
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
