@@ -139,7 +139,7 @@ class testdesign():
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
         self.createDeployment()
-        self.getInfo()
+        self.getInfo(component='sut')
         status = self.getPodStatus(self.activepod)
         while status != "Running":
             print(status)
@@ -160,7 +160,7 @@ class testdesign():
             self.delay(delay)
     def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
-        self.getInfo()
+        self.getInfo(component='sut')
         status = self.getPodStatus(self.activepod)
         while status != "Running":
             print(status)
@@ -185,7 +185,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def stopExperiment(self, delay=0):
-        self.getInfo()
+        self.getInfo(component='sut')
         self.stopPortforwarding()
         #for p in self.pods:
         #    self.deletePod(p)
@@ -196,7 +196,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def cleanExperiment(self, delay=0):
-        self.getInfo()
+        self.getInfo(component='sut')
         self.stopPortforwarding()
         for p in self.pvcs:
             self.deletePVC(p)
@@ -496,7 +496,7 @@ class testdesign():
             service = self.service
         if len(service) == 0:
             service = 'bexhoma-service'
-        self.getInfo()
+        self.getInfo(component='sut')
         if len(self.deployments) > 0:
             forward = ['kubectl', 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             #forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
@@ -524,7 +524,7 @@ class testdesign():
             if len(command) > 0 and command[1] == 'port-forward':
                 print("FOUND")
                 child.terminate()
-    def getInfo(self, app='', component='sut', experiment='default', configuration='default'):
+    def getInfo(self, app='', component='', experiment='', configuration=''):
         self.pods = self.getPods(app, component, experiment, configuration)
         if len(self.pods) > 0:
             self.activepod = self.pods[0]
@@ -720,7 +720,7 @@ class testdesign():
         if connection is None:
             connection = self.getConnectionName()
         print("get_connection_config")
-        self.getInfo()
+        self.getInfo(component='sut')
         mem = self.getMemory()
         cpu = self.getCPU()
         cores = self.getCores()
@@ -890,7 +890,7 @@ class testdesign():
         return self.code
     def continueBenchmarks(self, connection=None, query=None):
         #configfolder='experiments/gdelt'
-        self.getInfo()
+        self.getInfo(component='sut')
         self.deployment = self.getDeployments()[0]
         self.connection = connection
         self.resultfolder = self.config['benchmarker']['resultfolder']
@@ -1231,6 +1231,10 @@ class testdesign():
         for deployment in deployments:
             self.deleteDeployment(deployment)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        for deployment in deployments:
+            self.deleteDeployment(deployment)
+    def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.deleteDeployment(deployment)
