@@ -1258,7 +1258,7 @@ class cluster(testdesign):
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
-        testdesign.__init__(self, clusterconfig, configfolder, yamlfolder, code=self.code, instance, volume, docker, script, queryfile)
+        testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
         self.path = self.resultfolder+"/"+self.code
         if not path.isdir(self.path):
             makedirs(self.path)
