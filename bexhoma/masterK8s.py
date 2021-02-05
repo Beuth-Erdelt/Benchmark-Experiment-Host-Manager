@@ -93,7 +93,7 @@ class testdesign():
         self.code = code
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
-            resultfolder += '/'+str(self.code)
+            resultfolder += '/'+str(int(self.code))
             # store experiment list
             filename = resultfolder+'/experiments.config'
             if os.path.isfile(filename):
@@ -521,14 +521,14 @@ class testdesign():
             if len(command) > 0 and command[1] == 'port-forward':
                 print("FOUND")
                 child.terminate()
-    def getInfo(self):
-        self.pods = self.getPods()
+    def getInfo(self, app='', component='sut', experiment='default', configuration='default'):
+        self.pods = self.getPods(app, component, experiment, configuration)
         if len(self.pods) > 0:
             self.activepod = self.pods[0]
         else:
             self.activepod = None
-        self.deployments = self.getDeployments()
-        self.services = self.getServices()
+        self.deployments = self.getDeployments(app, component, experiment, configuration)
+        self.services = self.getServices(app, component, experiment, configuration)
         self.pvcs = self.getPVCs()
     def kubectl(self, command):
         print(command)
@@ -805,12 +805,12 @@ class testdesign():
         if connection is None:
             connection = self.getConnectionName()
         if code is None:
-            code = self.code
+            code = int(self.code)
         tools.query.template = self.querymanagement
         c = self.get_connection_config(connection, alias, dialect)
         print("runBenchmarks")
         if code is not None:
-            resultfolder += '/'+str(code)
+            resultfolder += '/'+str(int(code))
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
             fixedQuery=query,
@@ -952,7 +952,7 @@ class testdesign():
         if connection is None:
             connection = self.getConnectionName()
         if code is None:
-            code = self.code
+            code = int(self.code)
         self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
@@ -965,7 +965,7 @@ class testdesign():
             c['JDBC']['jar'] = c['JDBC']['jar'].replace("/home/perdelt/", "./")
         print("run_benchmarker_pod")
         if code is not None:
-            resultfolder += '/'+str(code)
+            resultfolder += '/'+str(int(code))
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
             fixedQuery=query,
