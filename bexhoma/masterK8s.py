@@ -489,9 +489,9 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
-    def startPortforwarding(self, service=''):
+    def startPortforwarding(self, service='', app='', component='sut'):
         print("startPortforwarding")
-        ports = self.getPorts()
+        ports = self.getPorts(app=app, component=component)
         if len(service) == 0:
             service = self.service
         if len(service) == 0:
@@ -1015,11 +1015,11 @@ class testdesign():
         if os.path.isfile(self.yamlfolder+self.deployment):
             shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
-        yamlfile = self.create_job(self.code, configuration=connection)
+        yamlfile = self.create_job(component='benchmarker', configuration=connection, experiment=self.code)
         # start pod
         self.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
-        pods = self.getJobPods(component='benchmarker', configuration=connection)
+        pods = self.getJobPods(component='benchmarker', configuration=connection, experiment=self.code)
         client_pod_name = pods[0]
         status = self.getPodStatus(client_pod_name)
         print(client_pod_name, status)
@@ -1043,12 +1043,12 @@ class testdesign():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.wait(10)
-        job = self.getJobs(component='benchmarker', configuration=connection)
-        while not self.getJobStatus(component='benchmarker', configuration=connection):
+        jobname = self.getJobs(component='benchmarker', configuration=connection, experiment=self.code)
+        while not self.getJobStatus(component='benchmarker', configuration=connection, experiment=self.code):
             print("job running")
             self.wait(60)
-        self.deleteJob(job)
-        self.deleteJobPod(component='benchmarker', configuration=connection)
+        self.deleteJob(jobname)
+        self.deleteJobPod(component='benchmarker', configuration=connection, experiment=self.code)
         self.wait(60)
         # prepare reporting
         #self.copy_results()
@@ -1150,16 +1150,12 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
-    def create_job(self, code, connection, app='', component='benchmarker', experiment='', configuration='', client=1):
+    def create_job(self, app='', component='benchmarker', experiment='', configuration='', client=1):
         print("create_job")
         if len(app) == 0:
             app = self.appname
-        if len(configuration) == 0:
-            configuration = connection
-        if len(experiment) == 0:
-            experiment = code
-        job_name = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
-        print(job_name)
+        jobname = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
+        print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
             try:
@@ -1196,14 +1192,10 @@ class testdesign():
             except yaml.YAMLError as exc:
                 print(exc)
         return yamlfile
-    def create_monitoring(self, code='', app='', component='monitoring', experiment='', configuration=''):
+    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         print("create_monitoring")
         if len(app) == 0:
             app = self.appname
-        if len(configuration) == 0:
-            configuration = connection
-        if len(experiment) == 0:
-            experiment = code
         name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
         print(name)
         return name
@@ -1214,7 +1206,7 @@ class testdesign():
         name = "{app}_{component}".format(app=app, component=component)
         print(name)
         return name
-    def start_monitoring(self, code='', app='', component='monitoring', experiment='', configuration=''):
+    def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployment ='deploymenttemplate-bexhoma-prometheus.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(code, app, component, experiment, configuration)
