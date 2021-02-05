@@ -232,7 +232,7 @@ class testdesign():
         #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
-    def generateDeployment(self, app='', component='sut', experiment='default', configuration=''):
+    def generateDeployment(self, app='', component='sut', experiment='', configuration=''):
         print("generateDeployment")
         if len(app)==0:
             app = self.appname
