@@ -1176,12 +1176,12 @@ class testdesign():
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
-                dep['metadata']['labels']['client'] = client
+                dep['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = experiment
-                dep['spec']['template']['metadata']['labels']['client'] = client
+                dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 job = dep['metadata']['name']
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
