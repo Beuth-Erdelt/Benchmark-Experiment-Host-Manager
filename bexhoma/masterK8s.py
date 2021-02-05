@@ -1201,7 +1201,14 @@ class testdesign():
             configuration = connection
         if len(experiment) == 0:
             experiment = code
-        name = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
+        name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
+        print(name)
+        return name
+    def create_dashboard(self, app='', component='dashboard'):
+        print("create_dashboard")
+        if len(app) == 0:
+            app = self.appname
+        name = "{app}_{component}".format(app=app, component=component)
         print(name)
         return name
     def start_monitoring(self, code='', app='', component='monitoring', experiment='', configuration=''):
@@ -1213,7 +1220,7 @@ class testdesign():
     def start_dashboard(self, app='', component='dashboard'):
         deployment ='deploymenttemplate-bexhoma-dashboard.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
-        name = self.create_monitoring(code, app, component, experiment, configuration)
+        name = self.create_dashboard(code, app, component, experiment, configuration)
         print("Deploy "+deployment)
         self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
 
