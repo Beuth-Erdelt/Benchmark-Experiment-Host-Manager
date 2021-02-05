@@ -969,8 +969,8 @@ class testdesign():
         elif isinstance(c['JDBC']['jar'], str):
             c['JDBC']['jar'] = c['JDBC']['jar'].replace("/home/perdelt/", "./")
         print("run_benchmarker_pod")
-        if code is not None:
-            resultfolder += '/'+str(int(code))
+        #if code is not None:
+        #    resultfolder += '/'+str(int(code))
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
             fixedQuery=query,
