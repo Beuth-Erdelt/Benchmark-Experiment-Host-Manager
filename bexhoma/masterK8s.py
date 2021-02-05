@@ -1245,7 +1245,6 @@ class testdesign():
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
                         dep['metadata']['labels']['experiment'] = str(experiment)
-                        dep['metadata']['labels']['client'] = str(client)
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
             except yaml.YAMLError as exc:
