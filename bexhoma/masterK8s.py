@@ -1225,7 +1225,7 @@ class testdesign():
         deployment ='deploymenttemplate-bexhoma-prometheus.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
-        deployment_experiment = self.cluster.path+'deployment-{name}.yml'.format(name=name)
+        deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
         with open(self.yamlfolder+deployment) as stream:
             try:
                 result=yaml.safe_load_all(stream)
