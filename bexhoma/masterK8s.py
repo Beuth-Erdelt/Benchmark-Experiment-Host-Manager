@@ -92,6 +92,8 @@ class testdesign():
     def setCode(self, code):
         if code is not None:
             self.code = int(code)
+        else:
+            self.code = code
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
             resultfolder += '/'+str(self.code)
@@ -1224,6 +1226,14 @@ class testdesign():
         name = self.create_dashboard(app, component)
         print("Deploy "+deployment)
         self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
+    def stop_dashboard(self, app='', component='dashboard'):
+        deployments = self.getDeployments(app=app, component=component)
+        for deployment in deployments:
+            self.deleteDeployment(deployment)
+    def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        for deployment in deployments:
+            self.deleteDeployment(deployment)
 
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
