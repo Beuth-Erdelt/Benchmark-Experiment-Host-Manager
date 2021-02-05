@@ -1256,7 +1256,7 @@ class testdesign():
             except yaml.YAMLError as exc:
                 print(exc)
         print("Deploy "+deployment)
-        self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
+        self.kubectl('kubectl create -f '+deployment_experiment)#self.yamlfolder+deployment)
     def start_dashboard(self, app='', component='dashboard'):
         deployment ='deploymenttemplate-bexhoma-dashboard.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
