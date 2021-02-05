@@ -238,6 +238,8 @@ class testdesign():
             app = self.appname
         if len(configuration) == 0:
             configuration = self.d
+        if len(experiment) == 0:
+            experiment = self.code
         instance = self.i
         template = "deploymenttemplate-"+self.d+".yml"
         specs = instance.split("-")
@@ -1202,6 +1204,8 @@ class testdesign():
         print("create_monitoring")
         if len(app) == 0:
             app = self.appname
+        if len(experiment) == 0:
+            experiment = self.code
         name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
         print(name)
         return name
