@@ -976,7 +976,8 @@ class testdesign():
             fixedQuery=query,
             result_path=resultfolder,
             batch=True,
-            working='connection'
+            working='connection',
+            code=code
             )
         #self.benchmark.code = '1611607321'
         self.code = self.benchmark.code
