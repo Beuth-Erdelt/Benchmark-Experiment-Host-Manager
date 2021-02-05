@@ -1159,6 +1159,7 @@ class testdesign():
         if len(app) == 0:
             app = self.appname
         code = experiment
+        connection = configuration
         jobname = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
@@ -1214,7 +1215,7 @@ class testdesign():
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployment ='deploymenttemplate-bexhoma-prometheus.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
-        name = self.create_monitoring(code, app, component, experiment, configuration)
+        name = self.create_monitoring(app, component, experiment, configuration)
         print("Deploy "+deployment)
         self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
     def start_dashboard(self, app='', component='dashboard'):
