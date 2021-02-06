@@ -1091,7 +1091,7 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
-    def getJobs(self, app='', component='', experiment='', configuration=''):
+    def getJobs(self, app='', component='', experiment='', configuration='', client='1'):
         print("getJobs")
         label = ''
         if len(app)==0:
@@ -1103,6 +1103,8 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
         print(label)
         try: 
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
@@ -1113,7 +1115,7 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
-    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration=''):
+    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
         print("getJobStatus")
         label = ''
         if len(app)==0:
@@ -1125,6 +1127,8 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
         print(label)
         try: 
             if len(jobname) == 0:
@@ -1137,11 +1141,11 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
             return 1
-    def deleteJob(self, jobname='', app='', component='', experiment='', configuration=''):
+    def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
         print("deleteJob")
         try: 
             if len(jobname) == 0:
-                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
+                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 jobname = jobs[0]
             api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
@@ -1150,22 +1154,22 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             return False
-    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration=''):
+    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
         print("deleteJobPod")
         body = kubernetes.client.V1DeleteOptions()
         try: 
             if len(jobname) == 0:
-                pods = self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
+                pods = self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 if len(pods) > 0:
                     for pod in pods:
-                        self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration)
+                        self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client)
                     return
                 #jobname = pods[0]
             api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
-    def getJobPods(self, app='', component='', experiment='', configuration=''):
+    def getJobPods(self, app='', component='', experiment='', configuration='', client='1'):
         print("getJobPods")
         label = ''
         if len(app)==0:
@@ -1177,6 +1181,8 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
         print(label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
@@ -1187,7 +1193,7 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
-    def create_job(self, app='', component='benchmarker', experiment='', configuration='', client=1):
+    def create_job(self, app='', component='benchmarker', experiment='', configuration='', client='1'):
         print("create_job")
         if len(app) == 0:
             app = self.appname
