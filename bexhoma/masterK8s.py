@@ -985,7 +985,11 @@ class testdesign():
         # set query management for new query file
         tools.query.template = self.querymanagement
         # get connection config
-        c = self.get_connection_config(connection, alias, dialect, serverip=self.config['credentials']['k8s']['ip'])
+        service_name = self.generate_component_name(component='sut', configuration=connection, experiment=self.code)
+        service_namespace = self.config['credentials']['k8s']['namespace']
+        service_host = self.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
+        #service_port = self.config['credentials']['k8s']['port']
+        c = self.get_connection_config(connection, alias, dialect, serverip=service_host)#self.config['credentials']['k8s']['ip'])
         if isinstance(c['JDBC']['jar'], list):
             for i, j in enumerate(c['JDBC']['jar']):
                 c['JDBC']['jar'][i] = j.replace("/home/perdelt/", "./")
