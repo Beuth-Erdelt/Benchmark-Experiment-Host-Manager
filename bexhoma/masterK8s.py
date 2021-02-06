@@ -972,20 +972,22 @@ class testdesign():
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('kubectl cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
-    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
+    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
             configfolder = self.configfolder
         if connection is None:
             connection = self.getConnectionName()
+        if len(configuration) == 0:
+            configuration = connection
         if code is None:
             code = self.code
         self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
         # get connection config
-        service_name = self.generate_component_name(component='sut', configuration=connection, experiment=self.code)
+        service_name = self.generate_component_name(component=component, configuration=configuration, experiment=self.code)
         service_namespace = self.config['credentials']['k8s']['namespace']
         service_host = self.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
         #service_port = self.config['credentials']['k8s']['port']
@@ -1045,11 +1047,11 @@ class testdesign():
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
-        yamlfile = self.create_job(component='benchmarker', configuration=connection, experiment=self.code)
+        yamlfile = self.create_job(component=component, configuration=configuration, experiment=self.code, client=client)
         # start pod
         self.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
-        pods = self.getJobPods(component='benchmarker', configuration=connection, experiment=self.code)
+        pods = self.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
         status = self.getPodStatus(client_pod_name)
         print(client_pod_name, status)
@@ -1073,13 +1075,13 @@ class testdesign():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.wait(10)
-        jobs = self.getJobs(component='benchmarker', configuration=connection, experiment=self.code)
+        jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code)
         jobname = jobs[0]
-        while not self.getJobStatus(jobname=jobname, component='benchmarker', configuration=connection, experiment=self.code):
+        while not self.getJobStatus(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
             print("job running")
             self.wait(60)
         self.deleteJob(jobname=jobname)
-        self.deleteJobPod(component='benchmarker', configuration=connection, experiment=self.code)
+        self.deleteJobPod(component=component, configuration=configuration, experiment=self.code, client=client)
         self.wait(60)
         # prepare reporting
         #self.copy_results()
