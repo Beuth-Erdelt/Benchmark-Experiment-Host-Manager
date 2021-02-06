@@ -1154,7 +1154,11 @@ class testdesign():
         try: 
             if len(jobname) == 0:
                 pods = self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
-                jobname = pods[0]
+                if len(pods) > 0:
+                    for pod in pods:
+                        self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration)
+                    return
+                #jobname = pods[0]
             api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
             #pprint(api_response)
         except ApiException as e:
