@@ -1047,7 +1047,7 @@ class testdesign():
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
-        yamlfile = self.create_job(component=component, configuration=configuration, experiment=self.code, client=client)
+        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client)
         # start pod
         self.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
@@ -1193,12 +1193,12 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
-    def create_job(self, app='', component='benchmarker', experiment='', configuration='', client='1'):
+    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         print("create_job")
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
-        connection = configuration
+        #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
