@@ -986,8 +986,8 @@ class testdesign():
         self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
-        # get connection config
-        service_name = self.generate_component_name(component=component, configuration=configuration, experiment=self.code)
+        # get connection config (sut)
+        service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
         service_namespace = self.config['credentials']['k8s']['namespace']
         service_host = self.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
         #service_port = self.config['credentials']['k8s']['port']
