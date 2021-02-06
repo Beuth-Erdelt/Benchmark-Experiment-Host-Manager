@@ -1075,7 +1075,7 @@ class testdesign():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.wait(10)
-        jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code)
+        jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
         jobname = jobs[0]
         while not self.getJobStatus(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
             print("job running")
@@ -1132,7 +1132,7 @@ class testdesign():
         print(label)
         try: 
             if len(jobname) == 0:
-                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
+                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
@@ -1162,7 +1162,7 @@ class testdesign():
                 pods = self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 if len(pods) > 0:
                     for pod in pods:
-                        self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client)
+                        self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                     return
                 #jobname = pods[0]
             api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
