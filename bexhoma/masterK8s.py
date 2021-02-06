@@ -242,6 +242,9 @@ class testdesign():
             experiment = self.code
         instance = self.i
         template = "deploymenttemplate-"+self.d+".yml"
+        name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
+        deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
+        # resources
         specs = instance.split("-")
         print(specs)
         cpu = specs[0]
@@ -344,18 +347,22 @@ class testdesign():
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
-        with open(self.yamlfolder+"deployment-"+self.d+"-"+instance+".yml","w+") as stream:
+        #with open(self.yamlfolder+"deployment-"+self.d+"-"+instance+".yml","w+") as stream:
+        with open(deployment_experiment,"w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
                 print(exc)
-        return appname
-    def createDeployment(self):
-        self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
+        #return appname
+        return deployment_experiment
+    def createDeployment(self, app='', component='sut', experiment='', configuration=''):
+        #self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
-        self.generateDeployment()
-        print("Deploy "+self.deployment)
-        self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
+        yamlfile = self.generateDeployment(app=app, component=component, experiment=experiment, configuration=configuration)
+        #print("Deploy "+self.deployment)
+        print("Deploy "+yamlfile)
+        #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
+        self.kubectl('kubectl create -f '+yamlfile)
     def deleteDeployment(self, deployment):
         self.kubectl('kubectl delete deployment '+deployment)
     def getDeployments(self, app='', component='', experiment='', configuration=''):
@@ -865,8 +872,8 @@ class testdesign():
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.logExperiment(experiment)
         # copy deployments
-        if os.path.isfile(self.yamlfolder+self.deployment):
-            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
+        #if os.path.isfile(self.yamlfolder+self.deployment):
+        #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # append necessary reporters
         #self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         #self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
@@ -1017,8 +1024,8 @@ class testdesign():
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.logExperiment(experiment)
         # copy deployments
-        if os.path.isfile(self.yamlfolder+self.deployment):
-            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
+        #if os.path.isfile(self.yamlfolder+self.deployment):
+        #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
         yamlfile = self.create_job(component='benchmarker', configuration=connection, experiment=self.code)
         # start pod
