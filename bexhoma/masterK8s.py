@@ -266,6 +266,7 @@ class testdesign():
                 pvc = dep['metadata']['name']
                 #print(pvc)
             if dep['kind'] == 'Service':
+                dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
@@ -274,6 +275,7 @@ class testdesign():
                 dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 #print(pvc)
             if dep['kind'] == 'Deployment':
+                dep['metadata']['name'] = name
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
