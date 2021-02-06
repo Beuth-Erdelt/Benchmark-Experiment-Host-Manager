@@ -232,6 +232,18 @@ class testdesign():
         #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
+    def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.d
+        if len(experiment) == 0:
+            experiment = self.code
+        if len(client) > 0:
+            name = "{app}-{component}-{configuration}-{experiment}-{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client).lower()
+        else:
+            name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
+        return name
     def generateDeployment(self, app='', component='sut', experiment='', configuration=''):
         print("generateDeployment")
         if len(app)==0:
@@ -242,7 +254,7 @@ class testdesign():
             experiment = self.code
         instance = self.i
         template = "deploymenttemplate-"+self.d+".yml"
-        name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
+        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
         # resources
         specs = instance.split("-")
@@ -1171,7 +1183,7 @@ class testdesign():
             app = self.appname
         code = str(int(experiment))
         connection = configuration
-        jobname = "{app}_{component}_{configuration}_{experiment}_{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client)
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
@@ -1183,6 +1195,8 @@ class testdesign():
                 print(exc)
         for dep in result:
             if dep['kind'] == 'Job':
+                dep['metadata']['name'] = jobname
+                job = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
@@ -1193,7 +1207,6 @@ class testdesign():
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
-                job = dep['metadata']['name']
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CODE':
