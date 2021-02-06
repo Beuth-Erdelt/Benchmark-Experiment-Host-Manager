@@ -242,7 +242,7 @@ class testdesign():
             experiment = self.code
         instance = self.i
         template = "deploymenttemplate-"+self.d+".yml"
-        name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
+        name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
         deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
         # resources
         specs = instance.split("-")
