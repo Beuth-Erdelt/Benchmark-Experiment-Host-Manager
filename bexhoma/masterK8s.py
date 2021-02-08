@@ -1242,11 +1242,12 @@ class testdesign():
         return yamlfile
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         print("create_monitoring")
-        if len(app) == 0:
-            app = self.appname
-        if len(experiment) == 0:
-            experiment = self.code
-        name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
+        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        #if len(app) == 0:
+        #    app = self.appname
+        #if len(experiment) == 0:
+        #    experiment = self.code
+        #name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
         print(name)
         return name
     def create_dashboard(self, app='', component='dashboard'):
@@ -1265,6 +1266,7 @@ class testdesign():
         deployment ='deploymenttemplate-bexhoma-prometheus.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
+        name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
         deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
         with open(self.yamlfolder+deployment) as stream:
             try:
@@ -1273,20 +1275,27 @@ class testdesign():
                 #print(result)
                 for dep in result:
                     if dep['kind'] == 'Service':
-                        #service = dep['metadata']['name']
+                        service = dep['metadata']['name'] = name
                         dep['metadata']['labels']['app'] = app
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
                         dep['metadata']['labels']['experiment'] = experiment
                         dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     if dep['kind'] == 'Deployment':
-                        #deployment = dep['metadata']['name']
+                        deployment = dep['metadata']['name'] = name
                         dep['metadata']['labels']['app'] = app
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
                         dep['metadata']['labels']['experiment'] = str(experiment)
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
+                        envs = dep['spec']['template']['spec']['containers'][0]['env']
+                        for i,e in enumerate(envs):
+                            if e['name'] == 'BEXHOMA_SERVICE':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
+                            if e['name'] == 'DBMSBENCHMARKER_CONFIGURATION':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                            print(e)
             except yaml.YAMLError as exc:
                 print(exc)
         with open(deployment_experiment,"w+") as stream:
