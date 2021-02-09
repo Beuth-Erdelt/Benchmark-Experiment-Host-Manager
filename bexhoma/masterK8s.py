@@ -355,6 +355,8 @@ class testdesign():
                 #if node_cpu:
                 if not 'nodeSelector' in dep['spec']['template']['spec']:
                     dep['spec']['template']['spec']['nodeSelector'] = {}
+                if dep['spec']['template']['spec']['nodeSelector'] is None:
+                    dep['spec']['template']['spec']['nodeSelector'] = {}
                 dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
                 if node_cpu == '':
                     del dep['spec']['template']['spec']['nodeSelector']['cpu']
