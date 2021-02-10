@@ -745,7 +745,7 @@ class testdesign():
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def get_connection_config(self, connection=None, alias='', dialect='', serverip='localhost'):
+    def get_connection_config(self, connection=None, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         if connection is None:
             connection = self.getConnectionName()
         print("get_connection_config")
@@ -816,6 +816,8 @@ class testdesign():
                 c['monitoring']['grafanaextend'] = self.config['credentials']['k8s']['monitor']['grafanaextend']
             if 'prometheus_url' in self.config['credentials']['k8s']['monitor']:
                 c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['prometheus_url']
+            if 'service_monitoring' in self.config['credentials']['k8s']['monitor']:
+                c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.config['credentials']['k8s']['namespace'])
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in self.config['credentials']['k8s']['monitor']:
@@ -991,11 +993,12 @@ class testdesign():
         # set query management for new query file
         tools.query.template = self.querymanagement
         # get connection config (sut)
+        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
         service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
         service_namespace = self.config['credentials']['k8s']['namespace']
         service_host = self.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
         #service_port = self.config['credentials']['k8s']['port']
-        c = self.get_connection_config(connection, alias, dialect, serverip=service_host)#self.config['credentials']['k8s']['ip'])
+        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#self.config['credentials']['k8s']['ip'])
         if isinstance(c['JDBC']['jar'], list):
             for i, j in enumerate(c['JDBC']['jar']):
                 c['JDBC']['jar'][i] = j.replace("/home/perdelt/", "./")
