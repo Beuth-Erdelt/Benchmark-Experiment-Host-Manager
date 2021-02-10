@@ -1087,6 +1087,13 @@ class testdesign():
         while not self.getJobStatus(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
             print("job running")
             self.wait(60)
+        # write pod log
+        stdin, stdout, stderr = self.pod_log(client_pod_name)
+        filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+client_pod_name+'.log'
+        f = open(filename_log, "w")
+        f.write(stdout)
+        f.close()
+        # delete job and pods
         self.deleteJob(jobname=jobname)
         self.deleteJobPod(component=component, configuration=configuration, experiment=self.code, client=client)
         self.wait(60)
@@ -1339,6 +1346,16 @@ class testdesign():
         services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
+    def pod_log(self, pod, container=''):
+        if len(container) > 0:
+            fullcommand = 'kubectl logs '+pod+' --container='+container
+        else:
+            fullcommand = 'kubectl logs '+pod
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
 
 
 class cluster(testdesign):
