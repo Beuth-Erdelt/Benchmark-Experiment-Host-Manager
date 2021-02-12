@@ -1218,6 +1218,7 @@ class testdesign():
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        job_experiment = self.path+'/job-dbmsbenchmarker-{code}-{client}.yml'.format(code=code, client=client)
         with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
             try:
                 result=yaml.safe_load_all(stream)
@@ -1248,12 +1249,12 @@ class testdesign():
                     if e['name'] == 'DBMSBENCHMARKER_SLEEP':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                     print(e)
-        with open(yamlfile,"w+") as stream:
+        with open(job_experiment," w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
                 print(exc)
-        return yamlfile
+        return job_experiment
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         print("create_monitoring")
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -1371,5 +1372,14 @@ class cluster(testdesign):
         self.path = self.resultfolder+"/"+self.code
         if not path.isdir(self.path):
             makedirs(self.path)
+
+class experiment():
+    def __init__(self, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.code = code
+        if self.code is None:
+            self.code = str(round(time.time()))
+        # per configuration: sut+service
+        # per configuration: monitoring+service
+        # per configuration: list of benchmarker
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
