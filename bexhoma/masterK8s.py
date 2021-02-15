@@ -1373,13 +1373,32 @@ class cluster(testdesign):
         if not path.isdir(self.path):
             makedirs(self.path)
 
-class experiment():
-    def __init__(self, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+class configuration():
+    def __init__(self, cluster, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.cluster = cluster
         self.code = code
         if self.code is None:
             self.code = str(round(time.time()))
+        self.appname = cluster.appname
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
+    def getInfo(self, app='', component='', experiment='', configuration=''):
+        if len(app) == 0:
+            app = self.appname
+        if len(experiment) == 0:
+            experiment = self.code
+        print("getPods", app, component, experiment, configuration)
+        self.pods = self.getPods(app, component, experiment, configuration)
+        print(self.pods)
+        if len(self.pods) > 0:
+            self.activepod = self.pods[0]
+        else:
+            self.activepod = None
+        self.deployments = self.getDeployments(app, component, experiment, configuration)
+        print(self.deployments)
+        self.services = self.getServices(app, component, experiment, configuration)
+        print(self.services)
+        self.pvcs = self.getPVCs()
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
