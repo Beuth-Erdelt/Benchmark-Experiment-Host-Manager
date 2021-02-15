@@ -1249,7 +1249,9 @@ class testdesign():
                     if e['name'] == 'DBMSBENCHMARKER_SLEEP':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                     print(e)
-        with open(job_experiment," w+") as stream:
+        #if not path.isdir(self.path):
+        #    makedirs(self.path)
+        with open(job_experiment,"w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
