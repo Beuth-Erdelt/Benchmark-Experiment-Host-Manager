@@ -1359,6 +1359,26 @@ class testdesign():
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    def evaluate_results(self, pod_dashboard=''):
+        if len(pod_dashboard) == 0:
+            pods = getPods(self, component='dashboard')
+            pod_dashboard = pods[0]
+        cmd = {}
+        cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
+        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
+        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
+        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
 
 
 class cluster(testdesign):
