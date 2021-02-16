@@ -1361,7 +1361,7 @@ class testdesign():
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
     def evaluate_results(self, pod_dashboard=''):
         if len(pod_dashboard) == 0:
-            pods = self.getPods(self, component='dashboard')
+            pods = self.getPods(component='dashboard')
             pod_dashboard = pods[0]
         cmd = {}
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
