@@ -22,6 +22,7 @@ from pprint import pprint
 from kubernetes import client, config
 import subprocess
 import os
+from os import makedirs, path
 import time
 from timeit import default_timer #as timer
 import psutil
@@ -68,10 +69,15 @@ class testdesign():
         self.v1core = client.CoreV1Api()
         self.v1beta = kubernetes.client.ExtensionsV1beta1Api()
         self.v1apps = kubernetes.client.AppsV1Api()
+        self.v1batches = kubernetes.client.BatchV1Api()
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
+    def set_queryfile(self, queryfile):
+        self.queryfile = queryfile
+    def set_configfolder(self, configfolder):
+        self.configfolder = configfolder
     def set_workload(self, **kwargs):
         self.workload = kwargs
     def set_connectionmanagement(self, **kwargs):
@@ -131,7 +137,7 @@ class testdesign():
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
         self.createDeployment()
-        self.getInfo()
+        self.getInfo(component='sut')
         status = self.getPodStatus(self.activepod)
         while status != "Running":
             print(status)
@@ -152,7 +158,7 @@ class testdesign():
             self.delay(delay)
     def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.setExperiment(instance, volume, docker, script)
-        self.getInfo()
+        self.getInfo(component='sut')
         status = self.getPodStatus(self.activepod)
         while status != "Running":
             print(status)
@@ -177,7 +183,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def stopExperiment(self, delay=0):
-        self.getInfo()
+        self.getInfo(component='sut')
         self.stopPortforwarding()
         #for p in self.pods:
         #    self.deletePod(p)
@@ -188,7 +194,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def cleanExperiment(self, delay=0):
-        self.getInfo()
+        self.getInfo(component='sut')
         self.stopPortforwarding()
         for p in self.pvcs:
             self.deletePVC(p)
@@ -215,17 +221,42 @@ class testdesign():
         self.stopExperiment()
         self.cleanExperiment()
     def wait(self, sec):
-        print("Waiting "+str(sec)+"s")
+        print("Waiting "+str(sec)+"s...", end="", flush=True)
         intervals = int(sec)
-        intervalLength = 1
-        for i in tqdm(range(intervals)):
-            time.sleep(intervalLength)
+        time.sleep(intervals)
+        print("done")
+        #print("Waiting "+str(sec)+"s")
+        #intervals = int(sec)
+        #intervalLength = 1
+        #for i in tqdm(range(intervals)):
+        #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
-    def generateDeployment(self):
+    def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.d
+        if len(experiment) == 0:
+            experiment = self.code
+        if len(client) > 0:
+            name = "{app}-{component}-{configuration}-{experiment}-{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client).lower()
+        else:
+            name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
+        return name
+    def generateDeployment(self, app='', component='sut', experiment='', configuration=''):
         print("generateDeployment")
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.d
+        if len(experiment) == 0:
+            experiment = self.code
         instance = self.i
         template = "deploymenttemplate-"+self.d+".yml"
+        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
+        # resources
         specs = instance.split("-")
         print(specs)
         cpu = specs[0]
@@ -246,7 +277,23 @@ class testdesign():
             if dep['kind'] == 'PersistentVolumeClaim':
                 pvc = dep['metadata']['name']
                 #print(pvc)
+            if dep['kind'] == 'Service':
+                dep['metadata']['name'] = name
+                self.service = dep['metadata']['name']
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                #print(pvc)
             if dep['kind'] == 'Deployment':
+                dep['metadata']['name'] = name
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
+                dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
                 #print(deployment)
@@ -302,11 +349,15 @@ class testdesign():
                 if node_gpu:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = {}
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = {}
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
                 # add resource cpu
                 #if node_cpu:
                 if not 'nodeSelector' in dep['spec']['template']['spec']:
+                    dep['spec']['template']['spec']['nodeSelector'] = {}
+                if dep['spec']['template']['spec']['nodeSelector'] is None:
                     dep['spec']['template']['spec']['nodeSelector'] = {}
                 dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
                 if node_cpu == '':
@@ -314,23 +365,38 @@ class testdesign():
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
-        with open(self.yamlfolder+"deployment-"+self.d+"-"+instance+".yml","w+") as stream:
+        #with open(self.yamlfolder+"deployment-"+self.d+"-"+instance+".yml","w+") as stream:
+        with open(deployment_experiment,"w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
                 print(exc)
-        return appname
-    def createDeployment(self):
-        self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
+        #return appname
+        return deployment_experiment
+    def createDeployment(self, app='', component='sut', experiment='', configuration=''):
+        #self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
-        self.generateDeployment()
-        print("Deploy "+self.deployment)
-        self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
+        yamlfile = self.generateDeployment(app=app, component=component, experiment=experiment, configuration=configuration)
+        #print("Deploy "+self.deployment)
+        print("Deploy "+yamlfile)
+        #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
+        self.kubectl('kubectl create -f '+yamlfile)
     def deleteDeployment(self, deployment):
         self.kubectl('kubectl delete deployment '+deployment)
-    def getDeployments(self):
+    def getDeployments(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -338,9 +404,21 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling v1beta->list_namespaced_deployment: %s\n" % e)
-    def getPods(self):
+    def getPods(self, app='', component='', experiment='', configuration=''):
+        # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -348,9 +426,11 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
-    def getPodStatus(self, pod):
+    def getPodStatus(self, pod, appname=''):
         try:
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+self.appname)
+            if len(appname) == 0:
+                appname = self.appname
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return api_response.items[0].status.phase
@@ -358,9 +438,20 @@ class testdesign():
                 return ""
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
-    def getServices(self):
+    def getServices(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
@@ -368,9 +459,20 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
-    def getPorts(self):
+    def getPorts(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        print(label)
         try: 
-            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [str(p.port) for p in api_response.items[0].spec.ports]
@@ -412,17 +514,17 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
-    def startPortforwarding(self):
+    def startPortforwarding(self, service='', app='', component='sut'):
         print("startPortforwarding")
-        ports = self.getPorts()
-        #ports = {
-        #    str(self.port): str(self.docker['port']),
-        #    "9300": "9300",
-        #    #"9400": "9400"
-        #}
-        #portstring = " ".join([str(k)+":"+str(v) for k,v in ports.items()])
+        ports = self.getPorts(app=app, component=component)
+        if len(service) == 0:
+            service = self.service
+        if len(service) == 0:
+            service = 'bexhoma-service'
+        self.getInfo(component='sut')
         if len(self.deployments) > 0:
-            forward = ['kubectl', 'port-forward', 'service/bexhoma-service']#, '9091', '9300']#, '9400']
+            forward = ['kubectl', 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
+            #forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
             forward.extend(ports)
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
@@ -447,19 +549,30 @@ class testdesign():
             if len(command) > 0 and command[1] == 'port-forward':
                 print("FOUND")
                 child.terminate()
-    def getInfo(self):
-        self.pods = self.getPods()
+    def getInfo(self, app='', component='', experiment='', configuration=''):
+        print("getPods", app, component, experiment, configuration)
+        self.pods = self.getPods(app, component, experiment, configuration)
+        print(self.pods)
         if len(self.pods) > 0:
             self.activepod = self.pods[0]
         else:
             self.activepod = None
-        self.deployments = self.getDeployments()
-        self.services = self.getServices()
+        self.deployments = self.getDeployments(app, component, experiment, configuration)
+        print(self.deployments)
+        self.services = self.getServices(app, component, experiment, configuration)
+        print(self.services)
         self.pvcs = self.getPVCs()
     def kubectl(self, command):
         print(command)
         os.system(command)
     def executeCTL(self, command):
+        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    def executeCTL_client(self, command):
         fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -632,18 +745,11 @@ class testdesign():
         return int(disk.replace('\n',''))
     def getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
-    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', query=None):
-        if len(resultfolder) == 0:
-            resultfolder = self.config['benchmarker']['resultfolder']
-        if len(configfolder) == 0:
-            configfolder = self.configfolder
+    def get_connection_config(self, connection=None, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         if connection is None:
             connection = self.getConnectionName()
-        if code is None:
-            code = self.code
-        tools.query.template = self.querymanagement
-        print("runBenchmarks")
-        self.getInfo()
+        print("get_connection_config")
+        self.getInfo(component='sut')
         mem = self.getMemory()
         cpu = self.getCPU()
         cores = self.getCores()
@@ -655,6 +761,8 @@ class testdesign():
         c = self.docker['template'].copy()
         if len(alias) > 0:
             c['alias'] = alias
+        if len(dialect) > 0:
+            c['dialect'] = dialect
         #c['docker_alias'] = self.docker['docker_alias']
         c['active'] = True
         c['name'] = connection
@@ -706,6 +814,10 @@ class testdesign():
                 c['monitoring']['grafanashift'] = self.config['credentials']['k8s']['monitor']['grafanashift']
             if 'grafanaextend' in self.config['credentials']['k8s']['monitor']:
                 c['monitoring']['grafanaextend'] = self.config['credentials']['k8s']['monitor']['grafanaextend']
+            if 'prometheus_url' in self.config['credentials']['k8s']['monitor']:
+                c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['prometheus_url']
+            if 'service_monitoring' in self.config['credentials']['k8s']['monitor']:
+                c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.config['credentials']['k8s']['namespace'])
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in self.config['credentials']['k8s']['monitor']:
@@ -717,7 +829,20 @@ class testdesign():
                 for metricname, metricdata in self.config['credentials']['k8s']['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(serverip='localhost', dbname=self.v, DBNAME=self.v.upper())
+        c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.v, DBNAME=self.v.upper())
+        return c
+    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
+        if len(resultfolder) == 0:
+            resultfolder = self.config['benchmarker']['resultfolder']
+        if len(configfolder) == 0:
+            configfolder = self.configfolder
+        if connection is None:
+            connection = self.getConnectionName()
+        if code is None:
+            code = int(self.code)
+        tools.query.template = self.querymanagement
+        c = self.get_connection_config(connection, alias, dialect)
+        print("runBenchmarks")
         if code is not None:
             resultfolder += '/'+str(code)
         self.benchmark = benchmarker.benchmarker(
@@ -767,11 +892,14 @@ class testdesign():
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.logExperiment(experiment)
         # copy deployments
-        if os.path.isfile(self.yamlfolder+self.deployment):
-            shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
+        #if os.path.isfile(self.yamlfolder+self.deployment):
+        #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # append necessary reporters
         #self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         #self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
+        # restart network
+        self.stopPortforwarding()
+        self.startPortforwarding()
         # run or continue benchmarking
         if code is not None:
             self.benchmark.continueBenchmarks(overwrite = True)
@@ -793,7 +921,7 @@ class testdesign():
         return self.code
     def continueBenchmarks(self, connection=None, query=None):
         #configfolder='experiments/gdelt'
-        self.getInfo()
+        self.getInfo(component='sut')
         self.deployment = self.getDeployments()[0]
         self.connection = connection
         self.resultfolder = self.config['benchmarker']['resultfolder']
@@ -850,4 +978,449 @@ class testdesign():
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('kubectl cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
+        if len(resultfolder) == 0:
+            resultfolder = self.config['benchmarker']['resultfolder']
+        if len(configfolder) == 0:
+            configfolder = self.configfolder
+        if connection is None:
+            connection = self.getConnectionName()
+        if len(configuration) == 0:
+            configuration = connection
+        if code is None:
+            code = self.code
+        self.stopPortforwarding()
+        # set query management for new query file
+        tools.query.template = self.querymanagement
+        # get connection config (sut)
+        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
+        service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
+        service_namespace = self.config['credentials']['k8s']['namespace']
+        service_host = self.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
+        #service_port = self.config['credentials']['k8s']['port']
+        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#self.config['credentials']['k8s']['ip'])
+        if isinstance(c['JDBC']['jar'], list):
+            for i, j in enumerate(c['JDBC']['jar']):
+                c['JDBC']['jar'][i] = j.replace("/home/perdelt/", "./")
+        elif isinstance(c['JDBC']['jar'], str):
+            c['JDBC']['jar'] = c['JDBC']['jar'].replace("/home/perdelt/", "./")
+        print("run_benchmarker_pod")
+        #if code is not None:
+        #    resultfolder += '/'+str(int(code))
+        self.benchmark = benchmarker.benchmarker(
+            fixedConnection=connection,
+            fixedQuery=query,
+            result_path=resultfolder,
+            batch=True,
+            working='connection',
+            code=code
+            )
+        #self.benchmark.code = '1611607321'
+        self.code = self.benchmark.code
+        print("Code", self.code)
+        # read config for benchmarker
+        connectionfile = configfolder+'/connections.config'
+        if self.queryfile is not None:
+            queryfile = configfolder+'/'+self.queryfile
+        else:
+            queryfile = configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        if c['name'] in self.benchmark.dbms:
+            print("Rerun connection "+connection)
+        else:
+            self.benchmark.connections.append(c)
+        self.benchmark.dbms[c['name']] = tools.dbms(c, False)
+        # copy or generate config folder (query and connection)
+        # add connection to existing list
+        # or: generate new connection list
+        filename = self.benchmark.path+'/connections.config'
+        with open(filename, 'w') as f:
+            f.write(str(self.benchmark.connections))
+        # write appended query config
+        if len(self.workload) > 0:
+            for k,v in self.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
+        # store experiment
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "runBenchmarks"
+        experiment['connection'] = connection
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.logExperiment(experiment)
+        # copy deployments
+        #if os.path.isfile(self.yamlfolder+self.deployment):
+        #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
+        # create pod
+        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client)
+        # start pod
+        self.kubectl('kubectl create -f '+yamlfile)
+        self.wait(10)
+        pods = self.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+        client_pod_name = pods[0]
+        status = self.getPodStatus(client_pod_name)
+        print(client_pod_name, status)
+        while status != "Running":
+            print(client_pod_name, status)
+            self.wait(10)
+            status = self.getPodStatus(client_pod_name)
+        # copy config to pod
+        cmd = {}
+        cmd['prepare_log'] = 'mkdir /results/'+str(self.code)
+        fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        #stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
+        #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
+        #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
+        #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
+        #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
+        self.wait(10)
+        jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
+        jobname = jobs[0]
+        while not self.getJobStatus(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
+            print("job running")
+            self.wait(60)
+        # write pod log
+        stdin, stdout, stderr = self.pod_log(client_pod_name)
+        filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+client_pod_name+'.log'
+        f = open(filename_log, "w")
+        f.write(stdout)
+        f.close()
+        # delete job and pods
+        self.deleteJob(jobname=jobname)
+        self.deleteJobPod(component=component, configuration=configuration, experiment=self.code, client=client)
+        self.wait(60)
+        # prepare reporting
+        #self.copy_results()
+        #self.copyInits()
+        #self.copyLog()
+        #self.downloadLog()
+        #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
+        #evaluator.evaluator(self.benchmark, load=False, force=True)
+        return self.code
+    def getJobs(self, app='', component='', experiment='', configuration='', client='1'):
+        print("getJobs")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
+        print(label)
+        try: 
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+        print("getJobStatus")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
+        print(label)
+        try: 
+            if len(jobname) == 0:
+                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                if len(jobs) == 0:
+                    return "no job"
+                jobname = jobs[0]
+            api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
+            #pprint(api_response)
+            #pprint(api_response.status.succeeded)
+            return api_response.status.succeeded
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
+            return 1
+    def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+        print("deleteJob")
+        try: 
+            if len(jobname) == 0:
+                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                jobname = jobs[0]
+            api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
+            #pprint(api_response)
+            #pprint(api_response.status.succeeded)
+            return True
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
+            return False
+    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+        print("deleteJobPod")
+        body = kubernetes.client.V1DeleteOptions()
+        try: 
+            if len(jobname) == 0:
+                pods = self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                if len(pods) > 0:
+                    for pod in pods:
+                        self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                    return
+                #jobname = pods[0]
+            api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
+            #pprint(api_response)
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
+    def getJobPods(self, app='', component='', experiment='', configuration='', client='1'):
+        print("getJobPods")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
+        print(label)
+        try: 
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
+        print("create_job")
+        if len(app) == 0:
+            app = self.appname
+        code = str(int(experiment))
+        #connection = configuration
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        print(jobname)
+        yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        job_experiment = self.path+'/job-dbmsbenchmarker-{code}-{client}.yml'.format(code=code, client=client)
+        with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+            except yaml.YAMLError as exc:
+                print(exc)
+        for dep in result:
+            if dep['kind'] == 'Job':
+                dep['metadata']['name'] = jobname
+                job = dep['metadata']['name']
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = str(experiment)
+                dep['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['app'] = app
+                dep['spec']['template']['metadata']['labels']['component'] = component
+                dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
+                dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                envs = dep['spec']['template']['spec']['containers'][0]['env']
+                for i,e in enumerate(envs):
+                    if e['name'] == 'DBMSBENCHMARKER_CODE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
+                    if e['name'] == 'DBMSBENCHMARKER_CONNECTION':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                    if e['name'] == 'DBMSBENCHMARKER_SLEEP':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+                    print(e)
+        #if not path.isdir(self.path):
+        #    makedirs(self.path)
+        with open(job_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        return job_experiment
+    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        print("create_monitoring")
+        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        #if len(app) == 0:
+        #    app = self.appname
+        #if len(experiment) == 0:
+        #    experiment = self.code
+        #name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
+        print(name)
+        return name
+    def create_dashboard(self, app='', component='dashboard'):
+        print("create_dashboard")
+        if len(app) == 0:
+            app = self.appname
+        name = "{app}_{component}".format(app=app, component=component)
+        print(name)
+        return name
+    def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        print("start_monitoring")
+        if len(app) == 0:
+            app = self.appname
+        if len(experiment) == 0:
+            experiment = self.code
+        deployment ='deploymenttemplate-bexhoma-prometheus.yml'
+        #if not os.path.isfile(self.yamlfolder+self.deployment):
+        name = self.create_monitoring(app, component, experiment, configuration)
+        name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
+        deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
+        with open(self.yamlfolder+deployment) as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+                for dep in result:
+                    if dep['kind'] == 'Service':
+                        service = dep['metadata']['name'] = name
+                        dep['metadata']['labels']['app'] = app
+                        dep['metadata']['labels']['component'] = component
+                        dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['experiment'] = experiment
+                        dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    if dep['kind'] == 'Deployment':
+                        deployment = dep['metadata']['name'] = name
+                        dep['metadata']['labels']['app'] = app
+                        dep['metadata']['labels']['component'] = component
+                        dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['experiment'] = str(experiment)
+                        dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
+                        dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
+                        envs = dep['spec']['template']['spec']['containers'][0]['env']
+                        for i,e in enumerate(envs):
+                            if e['name'] == 'BEXHOMA_SERVICE':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
+                            if e['name'] == 'DBMSBENCHMARKER_CONFIGURATION':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                            print(e)
+            except yaml.YAMLError as exc:
+                print(exc)
+        with open(deployment_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        print("Deploy "+deployment)
+        self.kubectl('kubectl create -f '+deployment_experiment)#self.yamlfolder+deployment)
+    def start_dashboard(self, app='', component='dashboard'):
+        deployment ='deploymenttemplate-bexhoma-dashboard.yml'
+        #if not os.path.isfile(self.yamlfolder+self.deployment):
+        name = self.create_dashboard(app, component)
+        print("Deploy "+deployment)
+        self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
+    def stop_dashboard(self, app='', component='dashboard'):
+        deployments = self.getDeployments(app=app, component=component)
+        for deployment in deployments:
+            self.deleteDeployment(deployment)
+        services = self.getServices(app=app, component=component)
+        for service in services:
+            self.deleteService(service)
+    def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        for deployment in deployments:
+            self.deleteDeployment(deployment)
+        services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        for service in services:
+            self.deleteService(service)
+    def stop_sut(self, app='', component='sut', experiment='', configuration=''):
+        deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        for deployment in deployments:
+            self.deleteDeployment(deployment)
+        services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        for service in services:
+            self.deleteService(service)
+    def pod_log(self, pod, container=''):
+        if len(container) > 0:
+            fullcommand = 'kubectl logs '+pod+' --container='+container
+        else:
+            fullcommand = 'kubectl logs '+pod
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    def evaluate_results(self, pod_dashboard=''):
+        if len(pod_dashboard) == 0:
+            pods = self.getPods(component='dashboard')
+            pod_dashboard = pods[0]
+        cmd = {}
+        cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
+        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
+        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
+        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
 
+
+class cluster(testdesign):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.code = code
+        if self.code is None:
+            self.code = str(round(time.time()))
+        # list of configurations (connections, docker)
+        # per configuration: sut+service
+        # per configuration: monitoring+service
+        # per configuration: list of benchmarker
+        testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        self.path = self.resultfolder+"/"+self.code
+        if not path.isdir(self.path):
+            makedirs(self.path)
+
+class configuration():
+    def __init__(self, cluster, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.cluster = cluster
+        self.code = code
+        if self.code is None:
+            self.code = str(round(time.time()))
+        self.appname = cluster.appname
+        # per configuration: sut+service
+        # per configuration: monitoring+service
+        # per configuration: list of benchmarker
+    def getInfo(self, app='', component='', experiment='', configuration=''):
+        if len(app) == 0:
+            app = self.appname
+        if len(experiment) == 0:
+            experiment = self.code
+        print("getPods", app, component, experiment, configuration)
+        self.pods = self.getPods(app, component, experiment, configuration)
+        print(self.pods)
+        if len(self.pods) > 0:
+            self.activepod = self.pods[0]
+        else:
+            self.activepod = None
+        self.deployments = self.getDeployments(app, component, experiment, configuration)
+        print(self.deployments)
+        self.services = self.getServices(app, component, experiment, configuration)
+        print(self.services)
+        self.pvcs = self.getPVCs()
+
+# kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client

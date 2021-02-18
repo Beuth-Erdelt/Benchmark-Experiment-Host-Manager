@@ -2,7 +2,7 @@
 
 We need
 * a [config file](#clusterconfig) containing cluster information , say `cluster.config`
-* a [config folder](https://github.com/Beuth-Erdelt/GEO-GPU-DBMS-Benchmarks#config-folder) for the benchmark tool, say `experiments/tpch/`, containing a config file `queries.config` for the [queries](https://github.com/Beuth-Erdelt/DBMS-Benchmarker#query-file)
+* a [config folder](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/docs/Options.md#config-folder) for the benchmark tool, say `experiments/tpch/`, containing a config file `queries.config` for the [queries](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/docs/Options.md#query-file)
 * some additional data depending on if it is an [AWS](#on-aws) or a [k8s](#on-k8s) cluster
 * a python script managing the experimental workflow, say `experiment-tpch.py`
 
@@ -207,3 +207,5 @@ Monitoring requires
   * `grafanatoken` and `grafanaurl` to access this from DBMSBenchmarker
 * A dict of exporters given as docker commands
   * Will be installed and activated automatically at each instance when `cluster.prepareExperiment()` is invoked.
+
+More information can be found [here](Monitoring.md)
