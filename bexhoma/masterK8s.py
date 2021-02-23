@@ -1043,6 +1043,9 @@ class testdesign():
             filename = self.benchmark.path+'/queries.config'
             with open(filename, 'w') as f:
                 f.write(str(self.benchmark.queryconfig))
+        # generate all parameters and store in protocol
+        self.benchmark.generateAllParameters()
+        self.benchmark.reporterStore.writeProtocol()
         # store experiment
         experiment = {}
         experiment['delay'] = 0
@@ -1081,6 +1084,7 @@ class testdesign():
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
         self.wait(10)
         jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
         jobname = jobs[0]
