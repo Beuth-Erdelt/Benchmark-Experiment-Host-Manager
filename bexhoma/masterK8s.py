@@ -1044,6 +1044,7 @@ class testdesign():
             with open(filename, 'w') as f:
                 f.write(str(self.benchmark.queryconfig))
         # generate all parameters and store in protocol
+        self.benchmark.reporterStore.readProtocol()
         self.benchmark.generateAllParameters()
         self.benchmark.reporterStore.writeProtocol()
         # store experiment
