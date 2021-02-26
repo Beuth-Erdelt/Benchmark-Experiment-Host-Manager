@@ -1104,9 +1104,9 @@ class testdesign():
         self.wait(60)
         # prepare reporting
         #self.copy_results()
-        #self.copyInits()
-        #self.copyLog()
-        #self.downloadLog()
+        self.copyInits()
+        self.copyLog()
+        self.downloadLog()
         #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
@@ -1223,7 +1223,7 @@ class testdesign():
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
-        job_experiment = self.path+'/job-dbmsbenchmarker-{code}-{client}.yml'.format(code=code, client=client)
+        job_experiment = self.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
             try:
                 result=yaml.safe_load_all(stream)
@@ -1368,6 +1368,12 @@ class testdesign():
         if len(pod_dashboard) == 0:
             pods = self.getPods(component='dashboard')
             pod_dashboard = pods[0]
+        # copy logs and yamls to result folder
+        directory = os.fsencode(self.path)
+        for file in os.listdir(directory):
+             filename = os.fsdecode(file)
+             if filename.endswith(".log") or filename.endswith(".yml"): 
+                 self.kubectl('kubectl cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
         cmd = {}
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
         fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
@@ -1384,7 +1390,6 @@ class testdesign():
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-
 
 class cluster(testdesign):
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
