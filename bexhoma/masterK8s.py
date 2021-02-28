@@ -74,22 +74,24 @@ class testdesign():
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
+    def set_code(self, code):
+        return self.setCode(code)
+    # can be overwritten by experiment
     def set_queryfile(self, queryfile):
         self.queryfile = queryfile
     def set_configfolder(self, configfolder):
         self.configfolder = configfolder
     def set_workload(self, **kwargs):
         self.workload = kwargs
-    def set_connectionmanagement(self, **kwargs):
-        self.connectionmanagement = kwargs
     def set_querymanagement(self, **kwargs):
         self.querymanagement = kwargs
+    # can be overwritten by experiment and configuration
+    def set_connectionmanagement(self, **kwargs):
+        self.connectionmanagement = kwargs
     def set_resources(self, **kwargs):
         self.resources = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
-    def set_code(self, code):
-        return self.setCode(code)
     def setCode(self, code):
         self.code = code
         if self.code is not None:
@@ -102,6 +104,7 @@ class testdesign():
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
     def logExperiment(self, experiment):
+        # TODO: update to new structure
         experiment['clusterconfig'] = self.clusterconfig
         experiment['configfolder'] = self.configfolder
         experiment['yamlfolder'] = self.yamlfolder
@@ -114,13 +117,16 @@ class testdesign():
             with open(filename, 'w') as f:
                 f.write(str(self.experiments))
     def setExperiments(self, instances=None, volumes=None, dockers=None):
+        """ Read experiment details from cluster config"""
         self.instance = None
         self.instances = instances
         self.volumes = volumes
         self.dockers = dockers
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+        # Will be deprecated
         return self.setExperiment(instance, volume, docker, script)
     def setExperiment(self, instance=None, volume=None, docker=None, script=None):
+        # Will be deprecated
         self.bChangeInstance = True
         if instance is not None:
             self.i = instance
@@ -134,6 +140,7 @@ class testdesign():
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
     def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        """ Per config: Startup SUT and Monitoring """
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
         self.createDeployment()
@@ -157,6 +164,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        """ Per config: Load Data """
         self.setExperiment(instance, volume, docker, script)
         self.getInfo(component='sut')
         status = self.getPodStatus(self.activepod)
@@ -1405,9 +1413,85 @@ class cluster(testdesign):
         if not path.isdir(self.path):
             makedirs(self.path)
 
-class configuration():
-    def __init__(self, cluster, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+
+
+#experiment (code fixed)
+#* per experiment: querymanagement
+#* list of configs of DBMS (config fixed)
+#  * per config: `0:1` monitoring optionally attached
+#  * per config: resources
+#  * per config: `1:n` list of jobs (client fixed)
+#    * per job: `1:n` list of pods
+#      * per pod: unique connection
+
+
+class experiment():
+    def __init__(self, cluster, code=None, queryfile=None):#, instance=None, volume=None, docker=None, script=None
         self.cluster = cluster
+        self.code = code
+        if self.code is None:
+            self.code = str(round(time.time()))
+        self.appname = cluster.appname
+        self.queryfile = queryfile
+        self.resources = {}
+        self.ddl_parameters = {}
+        self.connectionmanagement = {}
+        self.connectionmanagement['numProcesses'] = None
+        self.connectionmanagement['runsPerConnection'] = None
+        self.connectionmanagement['timeout'] = None
+        self.connectionmanagement['singleConnection'] = False
+        self.querymanagement = {}
+        self.workload = {}
+        self.monitoring_active = True
+        # k8s:
+        self.namespace = self.cluster.config['credentials']['k8s']['namespace']
+    def wait(self, sec):
+        print("Waiting "+str(sec)+"s...", end="", flush=True)
+        intervals = int(sec)
+        time.sleep(intervals)
+        print("done")
+        #print("Waiting "+str(sec)+"s")
+        #intervals = int(sec)
+        #intervalLength = 1
+        #for i in tqdm(range(intervals)):
+        #    time.sleep(intervalLength)
+    def delay(self, sec):
+        self.wait(sec)
+    def get_items(self, app='', component='', experiment='', configuration=''):
+        if len(app) == 0:
+            app = self.experiment.cluster.appname
+        if len(experiment) == 0:
+            experiment = self.code
+        print("get_items", app, component, experiment, configuration)
+        self.pods = self.cluster.getPods(app, component, experiment, configuration)
+        print(self.pods)
+        self.deployments = self.cluster.getDeployments(app, component, experiment, configuration)
+        print(self.deployments)
+        self.services = self.cluster.getServices(app, component, experiment, configuration)
+        print(self.services)
+        self.jobs = self.cluster.getJobs(app, component, experiment, configuration, '')
+        print(self.jobs)
+        self.pvcs = self.cluster.getPVCs()
+    def set_queryfile(self, queryfile):
+        self.queryfile = queryfile
+    def set_configfolder(self, configfolder):
+        self.configfolder = configfolder
+    def set_workload(self, **kwargs):
+        self.workload = kwargs
+    def set_querymanagement(self, **kwargs):
+        self.querymanagement = kwargs
+    # can be overwritten by configuration
+    def set_connectionmanagement(self, **kwargs):
+        self.connectionmanagement = kwargs
+    def set_resources(self, **kwargs):
+        self.resources = kwargs
+    def set_ddl_parameters(self, **kwargs):
+        self.ddl_parameters = kwargs
+
+
+class configuration():
+    def __init__(self, experiment):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.experiment = experiment
         self.code = code
         if self.code is None:
             self.code = str(round(time.time()))
@@ -1415,22 +1499,95 @@ class configuration():
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
-    def getInfo(self, app='', component='', experiment='', configuration=''):
+    def wait(self, sec):
+        print("Waiting "+str(sec)+"s...", end="", flush=True)
+        intervals = int(sec)
+        time.sleep(intervals)
+        print("done")
+        #print("Waiting "+str(sec)+"s")
+        #intervals = int(sec)
+        #intervalLength = 1
+        #for i in tqdm(range(intervals)):
+        #    time.sleep(intervalLength)
+    def delay(self, sec):
+        self.wait(sec)
+    def get_items(self, app='', component='', experiment='', configuration=''):
         if len(app) == 0:
-            app = self.appname
+            app = self.experiment.cluster.appname
         if len(experiment) == 0:
-            experiment = self.code
-        print("getPods", app, component, experiment, configuration)
-        self.pods = self.getPods(app, component, experiment, configuration)
+            experiment = self.experiment.code
+        print("get_items", app, component, experiment, configuration)
+        self.pods = self.experiment.cluster.getPods(app, component, experiment, configuration)
         print(self.pods)
-        if len(self.pods) > 0:
-            self.activepod = self.pods[0]
-        else:
-            self.activepod = None
-        self.deployments = self.getDeployments(app, component, experiment, configuration)
+        self.deployments = self.experiment.cluster.getDeployments(app, component, experiment, configuration)
         print(self.deployments)
-        self.services = self.getServices(app, component, experiment, configuration)
+        self.services = self.experiment.cluster.getServices(app, component, experiment, configuration)
         print(self.services)
-        self.pvcs = self.getPVCs()
+        self.pvcs = self.experiment.cluster.getPVCs()
+    def set_connectionmanagement(self, **kwargs):
+        self.connectionmanagement = kwargs
+    def set_resources(self, **kwargs):
+        self.resources = kwargs
+    def set_ddl_parameters(self, **kwargs):
+        self.ddl_parameters = kwargs
+    def prepare(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        """ Per config: Startup SUT and Monitoring """
+        #self.setExperiment(instance, volume, docker, script)
+        # check if is terminated
+        #self.createDeployment()
+        self.create_sut()
+        self.get_items(component='sut')
+        pods = self.experiment.cluster.getPods(component='sut')
+        status = self.getPodStatus(pods[0])
+        while status != "Running":
+            print(status)
+            self.wait(10)
+            status = self.getPodStatus(pods[0])
+        self.experiment.cluster.startPortforwarding()
+        self.experiment.cluster.getChildProcesses()
+        # store experiment
+        """
+        experiment = {}
+        experiment['delay'] = delay
+        experiment['step'] = "prepareExperiment"
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.v
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        self.logExperiment(experiment)
+        """
+        if delay > 0:
+            self.delay(delay)
+    def start(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        """ Per config: Load Data """
+        #self.setExperiment(instance, volume, docker, script)
+        self.get_items(component='sut')
+        self.get_items(component='sut')
+        pods = self.experiment.cluster.getPods(component='sut')
+        status = self.getPodStatus(pods[0])
+        while status != "Running":
+            print(status)
+            self.wait(10)
+            status = self.getPodStatus(pods[0])
+        dbmsactive = self.checkDBMS(self.host, self.port)
+        while not dbmsactive:
+            self.startPortforwarding()
+            self.wait(10)
+            dbmsactive = self.checkDBMS(self.host, self.port)
+        self.wait(10)
+        self.loadData()
+        # store experiment
+        """
+        experiment = {}
+        experiment['delay'] = delay
+        experiment['step'] = "startExperiment"
+        experiment['docker'] = {self.d: self.docker.copy()}
+        experiment['volume'] = self.v
+        experiment['initscript'] = {self.s: self.initscript.copy()}
+        experiment['instance'] = self.i
+        self.logExperiment(experiment)
+        """
+        if delay > 0:
+            self.delay(delay)
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
