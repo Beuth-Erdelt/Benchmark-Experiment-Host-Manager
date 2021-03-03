@@ -441,7 +441,10 @@ class testdesign():
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
-                return api_response.items[0].status.phase
+                for item in api_response.items:
+                    if item.metadata.name == pod:
+                        return item.status.phase
+                return ""
             else:
                 return ""
         except ApiException as e:
@@ -587,24 +590,6 @@ class testdesign():
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-    def checkGPUs(self):
-        print("checkGPUs")
-        cmd = {}
-        cmd['check_gpus'] = 'nvidia-smi'
-        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'])
-    def checkDBMS(self, ip, port):
-        found = False
-        s = socket.socket()
-        s.settimeout(10)
-        try:
-            s.connect((ip, port))
-            found = True
-            print("Somebody is answering at %s:%d" % (ip, port))
-        except Exception as e:
-            print("Nobody is answering yet at %s:%d" % (ip, port))
-        finally:
-            s.close()
-        return found
     def prepareInit(self):
         print("prepareInit")
         cmd = {}
@@ -649,6 +634,24 @@ class testdesign():
                 self.executeCTL(shellcommand.format(scriptname=scriptfolder+c))
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
+    def checkGPUs(self):
+        print("checkGPUs")
+        cmd = {}
+        cmd['check_gpus'] = 'nvidia-smi'
+        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'])
+    def checkDBMS(self, ip, port):
+        found = False
+        s = socket.socket()
+        s.settimeout(10)
+        try:
+            s.connect((ip, port))
+            found = True
+            print("Somebody is answering at %s:%d" % (ip, port))
+        except Exception as e:
+            print("Nobody is answering yet at %s:%d" % (ip, port))
+        finally:
+            s.close()
+        return found
     def getMemory(self):
         print("getMemory")
         command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
@@ -997,6 +1000,8 @@ class testdesign():
             configuration = connection
         if code is None:
             code = self.code
+        if not isinstance(client, str):
+            client = str(client)
         self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
@@ -1118,7 +1123,7 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
-    def getJobs(self, app='', component='', experiment='', configuration='', client='1'):
+    def getJobs(self, app='', component='', experiment='', configuration='', client=''):
         print("getJobs")
         label = ''
         if len(app)==0:
@@ -1142,7 +1147,7 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
-    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("getJobStatus")
         label = ''
         if len(app)==0:
@@ -1170,7 +1175,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
             return 1
-    def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+    def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("deleteJob")
         try: 
             if len(jobname) == 0:
@@ -1183,7 +1188,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             return False
-    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("deleteJobPod")
         body = kubernetes.client.V1DeleteOptions()
         try: 
@@ -1198,7 +1203,7 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
-    def getJobPods(self, app='', component='', experiment='', configuration='', client='1'):
+    def getJobPods(self, app='', component='', experiment='', configuration='', client=''):
         print("getJobPods")
         label = ''
         if len(app)==0:
@@ -1232,7 +1237,7 @@ class testdesign():
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         job_experiment = self.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
+        with open(self.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
             try:
                 result=yaml.safe_load_all(stream)
                 result = [data for data in result]
@@ -1399,6 +1404,8 @@ class testdesign():
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
 
+
+
 class cluster(testdesign):
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.code = code
@@ -1412,7 +1419,9 @@ class cluster(testdesign):
         self.path = self.resultfolder+"/"+self.code
         if not path.isdir(self.path):
             makedirs(self.path)
-
+        self.experiments = []
+    def add_experiment(self, experiment):
+        self.experiments.append(experiment)
 
 
 #experiment (code fixed)
@@ -1425,7 +1434,7 @@ class cluster(testdesign):
 #      * per pod: unique connection
 
 
-class experiment():
+class experiment_tests():
     def __init__(self, cluster, code=None, queryfile=None):#, instance=None, volume=None, docker=None, script=None
         self.cluster = cluster
         self.code = code
@@ -1445,6 +1454,7 @@ class experiment():
         self.monitoring_active = True
         # k8s:
         self.namespace = self.cluster.config['credentials']['k8s']['namespace']
+        self.configurations = []
     def wait(self, sec):
         print("Waiting "+str(sec)+"s...", end="", flush=True)
         intervals = int(sec)
@@ -1487,6 +1497,8 @@ class experiment():
         self.resources = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
+    def add_configuration(self, configuration):
+        self.configurations.append(configuration)
 
 
 class configuration():

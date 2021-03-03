@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: monitoring, configuration: default, experiment: default}
+  name: bexhoma-monitoring
+spec:
+  ports:
+  - {port: 9090, protocol: TCP, name: port-prometheus, targetPort: 9090}
+  selector: {app: bexhoma, component: monitoring, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: monitoring, configuration: default, experiment: default}
+  name: bexhoma-monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: monitoring, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: monitoring, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector: {cpu: epyc-7542}
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      containers:
+      - name: bexhoma-prometheus
+        image: perdelt/dbms:prometheus
+        imagePullPolicy: Always
+        env:
+        - {name: DBMSBENCHMARKER_CONFIGURATION, value: 'MySQL'}
+        - {name: BEXHOMA_SERVICE, value: 'bexhoma-monitoring'}
+        resources:
+          limits: {cpu: 2000m, memory: 16Gi}
+          requests: {cpu: 2000m, memory: 16Gi}
+        ports:
+        - containerPort: 9090
