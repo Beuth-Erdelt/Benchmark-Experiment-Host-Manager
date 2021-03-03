@@ -4,16 +4,17 @@ metadata:
   labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
   name: bexhoma-benchmarker
 spec:
+  backoffLimit: 4
+  completions: 32
+  parallelism: 16
   template:
     metadata:
       labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
     spec:
-      parallelism: 1
-      completions: 1
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: private-registry-auth
-      nodeSelector: {cpu: epyc-7542}
+      nodeSelector: 
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
@@ -38,4 +39,3 @@ spec:
       - name: bexhoma-results
         persistentVolumeClaim:
           claimName: bexhoma-results
-  backoffLimit: 4

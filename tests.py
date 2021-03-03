@@ -38,7 +38,10 @@ experiment.set_resources(
 	})
 
 
-config = clusters.configuration(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
+#config = clusters.configuration(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
+
+
+
 config = clusters.configuration(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
 
 """
@@ -95,6 +98,15 @@ cluster.getJobs(app, component, experiment.code, configuration)
 cluster.getJobPods(app, component, experiment.code, configuration)
 pods = cluster.getJobPods(app, component, experiment.code, configuration)
 
+# all jobs of configuration - benchmarker
+app = cluster.appname
+component = 'benchmarker'
+configuration = 'MemSQL'
+cluster.getJobs(app, component, experiment.code, configuration)
+# all pods to these jobs
+cluster.getJobPods(app, component, experiment.code, configuration)
+pods = cluster.getJobPods(app, component, experiment.code, configuration)
+
 # status per pod
 for p in pods:
     status = cluster.getPodStatus(p)
@@ -103,10 +115,15 @@ for p in pods:
     if status != 'Running':
         cluster.deletePod(p)
 
+for p in pods:
+    status = cluster.getPodStatus(p)
+    print(p,status)
+    cluster.deletePod(p)
+
 # success of job
 app = cluster.appname
 component = 'benchmarker'
-configuration = 'MonetDB'
+configuration = 'MemSQL'
 success = cluster.getJobStatus(app=app, component=component, experiment=experiment.code, configuration=configuration)
 
 jobs = cluster.getJobs(app, component, experiment.code, configuration)
@@ -132,7 +149,7 @@ cluster.stop_sut()
 # prepare sut
 app = cluster.appname
 component = 'sut'
-configuration = 'MonetDB'
+configuration = 'MemSQL'
 config.start_sut(app=app, component=component, experiment=experiment.code, configuration=configuration)
 #cluster.startExperiment(delay=60)
 config.loadData()
@@ -147,11 +164,12 @@ config.start_sut(app=app, component=component, experiment=experiment.code, confi
 config.loadData()
 """
 
-"""
+
 # start benchmarker job
 app = cluster.appname
 component = 'benchmarker'
 configuration = 'MemSQL'
+"""
 client = '1'
 config.run_benchmarker_pod(connection=configuration+'-'+client, app=app, component=component, experiment=experiment.code, configuration=configuration, client=client)
 client = '2'
@@ -160,16 +178,19 @@ client = '3'
 config.run_benchmarker_pod(connection=configuration+'-'+client, app=app, component=component, experiment=experiment.code, configuration=configuration, client=client)
 client = '4'
 config.run_benchmarker_pod(connection=configuration+'-'+client, app=app, component=component, experiment=experiment.code, configuration=configuration, client=client)
+"""
+client = '4'
+config.run_benchmarker_pod(connection=configuration+'-'+client, app=app, component=component, experiment=experiment.code, configuration=configuration, client=client)
 
 
 # all MonetDB jobs of experiment
 app = cluster.appname
 component = 'benchmarker'
-configuration = 'MonetDB'
+configuration = 'MemSQL'
 jobs = cluster.getJobs(app, component, experiment.code, configuration)
 # all pods to these jobs
 cluster.getJobPods(app, component, experiment.code, configuration)
-"""
+
 
 experiment.evaluate_results()
 

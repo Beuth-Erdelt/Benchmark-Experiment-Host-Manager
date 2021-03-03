@@ -166,6 +166,7 @@ class configuration():
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
         self.experiment.add_configuration(self)
+        self.timeLoading = 0
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -493,7 +494,7 @@ class configuration():
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
-        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'])
+        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'], self.pod_sut)
     def checkDBMS(self, ip, port):
         found = False
         s = socket.socket()
@@ -509,7 +510,7 @@ class configuration():
         return found
     def getMemory(self):
         print("getMemory")
-        command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
+        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
         fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
         mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
@@ -597,14 +598,14 @@ class configuration():
             datadir = self.dockertemplate['datadir']
         else:
             return 0
-        command = "du "+datadir+" | awk 'END{print \\$1}'"
+        command = "du "+datadir+" | awk 'END{print $1}'"
         cmd['disk_space_used'] = command
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'])
+        stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
         return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df / | awk 'NR == 2{print \\$3}'"
+        command = "df / | awk 'NR == 2{print $3}'"
         fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         disk = os.popen(fullcommand).read()
         # pipe to awk sometimes does not work
@@ -617,7 +618,7 @@ class configuration():
         #    connection = self.getConnectionName()
         print("get_connection_config")
         #self.getInfo(component='sut')
-        mem = 0#self.getMemory()
+        mem = self.getMemory()
         cpu = self.getCPU()
         cores = self.getCores()
         host = self.getHostsystem()
@@ -636,7 +637,7 @@ class configuration():
         c['docker'] = self.docker
         c['script'] = self.script
         c['info'] = info
-        c['timeLoad'] = self.experiment.timeLoading
+        c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
         c['hostsystem'] = {}
         c['hostsystem']['RAM'] = mem
@@ -646,8 +647,8 @@ class configuration():
         c['hostsystem']['Cores'] = cores
         c['hostsystem']['host'] = host
         c['hostsystem']['node'] = self.getNode()
-        c['hostsystem']['disk'] = 0#self.getDiskSpaceUsed()
-        c['hostsystem']['datadisk'] = 0#self.getDiskSpaceUsedData()
+        c['hostsystem']['disk'] = self.getDiskSpaceUsed()
+        c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
         #c['hostsystem']['instance'] = self.instance['type']
         #c['hostsystem']['resources'] = self.resources
         # take latest resources
@@ -908,7 +909,7 @@ class configuration():
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
-        yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
             try:
