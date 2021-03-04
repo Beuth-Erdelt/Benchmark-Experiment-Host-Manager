@@ -309,6 +309,19 @@ class setup():
 		print(fullcommand)
 		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		stdout, stderr = proc.communicate()
+	def start_sut(self):
+		for config in self.configurations:
+			config.start_sut()
+	def stop_sut(self):
+		for config in self.configurations:
+			config.stop_sut()
+	def load_data(self):
+		for config in self.configurations:
+			config.load_data()
+
+
+
+
 
 
 class tpcds(setup):

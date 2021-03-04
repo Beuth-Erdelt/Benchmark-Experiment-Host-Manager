@@ -33,6 +33,7 @@ from collections import Counter
 import shutil
 import json
 import ast
+import copy
 
 from dbmsbenchmarker import *
 from bexhoma import masterK8s, experiments
@@ -57,6 +58,13 @@ class kubernetes(masterK8s.testdesign):
         self.experiments = []
     def add_experiment(self, experiment):
         self.experiments.append(experiment)
+    def store_pod_log(self, pod_name):
+        # write pod log
+        stdin, stdout, stderr = self.pod_log(pod_name)
+        filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
+        f = open(filename_log, "w")
+        f.write(stdout)
+        f.close()
 
 
 #experiment (code fixed)
@@ -148,7 +156,7 @@ class configuration():
         #self.code = code
         self.docker = docker
         if docker is not None:
-            self.dockertemplate = self.experiment.cluster.dockers[self.docker]
+            self.dockertemplate = copy.deepcopy(self.experiment.cluster.dockers[self.docker])
         if script is not None:
             self.script = script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
@@ -246,7 +254,8 @@ class configuration():
             self.wait(10)
             dbmsactive = self.checkDBMS(self.host, self.port)
         self.wait(10)
-        self.loadData()
+        print("load_data")
+        self.load_data()
         # store experiment
         """
         experiment = {}
@@ -483,13 +492,6 @@ class configuration():
         services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
-    def get_pod_log(self, pod_name):
-        # write pod log
-        stdin, stdout, stderr = self.experiment.cluster.pod_log(pod_name)
-        filename_log = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
-        f = open(filename_log, "w")
-        f.write(stdout)
-        f.close()
     def checkGPUs(self):
         print("checkGPUs")
         cmd = {}
@@ -626,7 +628,7 @@ class configuration():
         gpu = self.getGPUs()
         info = []
         self.connection = connection
-        c = self.dockertemplate['template'].copy()
+        c = copy.deepcopy(self.dockertemplate['template'])
         if len(alias) > 0:
             c['alias'] = alias
         if len(dialect) > 0:
@@ -699,9 +701,10 @@ class configuration():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper())
-        print(c)
-        return c
+        #print(c)
+        return c#.copy()
     def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
+        print("run_benchmarker_pod")
         if len(resultfolder) == 0:
             resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -735,7 +738,7 @@ class configuration():
             c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
         print(c)
         print(self.dockertemplate)
-        print("run_benchmarker_pod")
+        print(self.experiment.cluster.dockers[self.docker])
         #if code is not None:
         #    resultfolder += '/'+str(int(code))
         self.benchmark = benchmarker.benchmarker(
@@ -761,6 +764,9 @@ class configuration():
             # TODO: Find and replace connection info
         else:
             self.benchmark.connections.append(c)
+        # NEVER rerun, only one connection in config for detached:
+        self.benchmark.connections = [c]
+        print(self.benchmark.connections)
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
         # copy or generate config folder (query and connection)
         # add connection to existing list
@@ -816,6 +822,7 @@ class configuration():
         self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
+        self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
         self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
         """
@@ -884,11 +891,11 @@ class configuration():
                 filename = self.docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.configfolder+'/'+filename):
                     self.experiment.cluster.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
-    def loadData(self):
+    def load_data(self):
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
         self.pod_sut = pods[0]
-        print("loadData")
+        print("load_data")
         self.timeLoadingStart = default_timer()
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
         shellcommand = 'sh {scriptname}'

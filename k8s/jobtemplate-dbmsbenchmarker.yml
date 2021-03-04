@@ -5,8 +5,8 @@ metadata:
   name: bexhoma-benchmarker
 spec:
   backoffLimit: 4
-  completions: 32
-  parallelism: 16
+  completions: 8
+  parallelism: 8
   template:
     metadata:
       labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}

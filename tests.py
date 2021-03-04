@@ -1,4 +1,7 @@
 
+
+
+
 from bexhoma import *
 from dbmsbenchmarker import *
 #import experiments
@@ -11,9 +14,10 @@ import time
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
+
 cluster = clusters.kubernetes()
 
-experiment = experiments.tpch(cluster=cluster, SF=1, timeout=180*1, numExperiments=1, detached=True, code=cluster.code)
+experiment = experiments.tpch(cluster=cluster, SF=1, timeout=180*1, numExperiments=1, detached=True, code=1614868258)#cluster.code)
 experiment.set_queries_full()
 experiment.set_workload(
 	name = 'TPC-H Queries SF='+str(1),
@@ -38,11 +42,63 @@ experiment.set_resources(
 	})
 
 
-#config = clusters.configuration(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
-
-
-
+config = clusters.configuration(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
 config = clusters.configuration(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
+
+
+experiment.start_sut()
+
+experiment.load_data()
+
+for config in experiment.configurations:
+    client = '9'
+    config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client)
+
+
+
+# all jobs of configuration - benchmarker
+app = cluster.appname
+component = 'benchmarker'
+configuration = ''
+jobs = cluster.getJobs(app, component, experiment.code, configuration)
+# all pods to these jobs
+pods = cluster.getJobPods(app, component, experiment.code, configuration)
+
+# status per pod
+for p in pods:
+    status = cluster.getPodStatus(p)
+    print(p,status)
+    if status == 'Succeeded':
+        #if status != 'Running':
+        cluster.store_pod_log(p)
+        cluster.deletePod(p)
+    if status == 'Failed':
+        #if status != 'Running':
+        cluster.store_pod_log(p)
+        cluster.deletePod(p)
+
+# success of job
+app = cluster.appname
+component = 'benchmarker'
+configuration = ''
+success = cluster.getJobStatus(app=app, component=component, experiment=experiment.code, configuration=configuration)
+
+jobs = cluster.getJobs(app, component, experiment.code, configuration)
+
+# status per job
+for job in jobs:
+    success = cluster.getJobStatus(job)
+    print(job, success)
+    if success:
+        cluster.deleteJob(job)
+
+experiment.evaluate_results()
+
+cluster.stop_sut()
+
+#config.start_sut()
+#cluster.startExperiment(delay=60)
+#config.loadData()
 
 """
 config.connectionmanagement
@@ -101,7 +157,7 @@ pods = cluster.getJobPods(app, component, experiment.code, configuration)
 # all jobs of configuration - benchmarker
 app = cluster.appname
 component = 'benchmarker'
-configuration = 'MemSQL'
+configuration = ''
 cluster.getJobs(app, component, experiment.code, configuration)
 # all pods to these jobs
 cluster.getJobPods(app, component, experiment.code, configuration)
@@ -123,7 +179,7 @@ for p in pods:
 # success of job
 app = cluster.appname
 component = 'benchmarker'
-configuration = 'MemSQL'
+configuration = ''
 success = cluster.getJobStatus(app=app, component=component, experiment=experiment.code, configuration=configuration)
 
 jobs = cluster.getJobs(app, component, experiment.code, configuration)
@@ -134,6 +190,14 @@ for job in jobs:
     print(job, success)
     if success:
         cluster.deleteJob(job)
+
+
+
+# status per job
+for job in jobs:
+    success = cluster.getJobStatus(job)
+    print(job, success)
+    cluster.deleteJob(job)
 
 """
 
@@ -194,8 +258,8 @@ cluster.getJobPods(app, component, experiment.code, configuration)
 
 experiment.evaluate_results()
 
-#cluster.start_dashboard()
-#cluster.stop_dashboard()
+cluster.stop_dashboard()
+cluster.start_dashboard()
 
 # start and stop monitoring MySQL
 #config.start_monitoring()
