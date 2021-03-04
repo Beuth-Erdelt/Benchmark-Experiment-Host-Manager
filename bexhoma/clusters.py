@@ -708,7 +708,7 @@ class configuration():
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper())
         #print(c)
         return c#.copy()
-    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
+    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
         print("run_benchmarker_pod")
         if len(resultfolder) == 0:
             resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
@@ -801,7 +801,7 @@ class configuration():
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
-        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client)
+        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism)
         # start pod
         self.experiment.cluster.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
@@ -913,7 +913,7 @@ class configuration():
                 self.executeCTL(shellcommand.format(scriptname=scriptfolder+c), self.pod_sut)
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
-    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
+    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
         print("create_job")
         if len(app) == 0:
             app = self.appname
@@ -934,6 +934,8 @@ class configuration():
             if dep['kind'] == 'Job':
                 dep['metadata']['name'] = jobname
                 job = dep['metadata']['name']
+                dep['spec']['completions'] = parallelism
+                dep['spec']['parallelism'] = parallelism
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
@@ -946,6 +948,8 @@ class configuration():
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
+                    if e['name'] == 'DBMSBENCHMARKER_CLIENT':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = client
                     if e['name'] == 'DBMSBENCHMARKER_CODE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
                     if e['name'] == 'DBMSBENCHMARKER_CONNECTION':

@@ -5,8 +5,8 @@ metadata:
   name: bexhoma-benchmarker
 spec:
   backoffLimit: 4
-  completions: 8
-  parallelism: 8
+  completions: 1
+  parallelism: 1
   template:
     metadata:
       labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
@@ -23,6 +23,7 @@ spec:
         image: registry.datexis.com/perdelt/bexhoma:dbmsbenchmarker
         imagePullPolicy: Always
         env:
+        - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
         - {name: DBMSBENCHMARKER_CODE, value: '1611607321'}
         - {name: DBMSBENCHMARKER_SLEEP, value: '60'}
         - {name: DBMSBENCHMARKER_CONNECTION, value: 'MySQL-1'}
