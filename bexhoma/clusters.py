@@ -949,7 +949,7 @@ class configuration():
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = client
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
                     if e['name'] == 'DBMSBENCHMARKER_CODE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
                     if e['name'] == 'DBMSBENCHMARKER_CONNECTION':

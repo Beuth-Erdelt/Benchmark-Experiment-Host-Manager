@@ -101,6 +101,36 @@ cluster.stop_dashboard()
 cluster.start_dashboard()
 
 
+
+
+# all jobs of configuration - benchmarker
+app = cluster.appname
+component = 'benchmarker'
+configuration = ''
+cluster.getJobs(app, component, experiment.code, configuration)
+# all pods to these jobs
+cluster.getJobPods(app, component, experiment.code, configuration)
+pods = cluster.getJobPods(app, component, experiment.code, configuration)
+jobs = cluster.getJobs(app, component, experiment.code, configuration)
+
+for p in pods:
+    status = cluster.getPodStatus(p)
+    print(p,status)
+    cluster.deletePod(p)
+
+jobs = cluster.getJobs(app, component, experiment.code, configuration)
+
+# status per job
+for job in jobs:
+    success = cluster.getJobStatus(job)
+    print(job, success)
+    cluster.deleteJob(job)
+
+
+
+
+
+
 #config.start_sut()
 #cluster.startExperiment(delay=60)
 #config.loadData()
