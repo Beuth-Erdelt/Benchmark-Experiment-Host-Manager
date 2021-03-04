@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.ERROR)
 
 cluster = clusters.kubernetes()
 
-experiment = experiments.tpch(cluster=cluster, SF=1, timeout=180*1, numExperiments=1, detached=True, code=1614868258)#cluster.code)
+experiment = experiments.tpch(cluster=cluster, SF=1, timeout=180*1, numExperiments=1, detached=True, code=cluster.code)
 experiment.set_queries_full()
 experiment.set_workload(
 	name = 'TPC-H Queries SF='+str(1),
@@ -51,7 +51,7 @@ experiment.start_sut()
 experiment.load_data()
 
 for config in experiment.configurations:
-    client = '9'
+    client = '11'
     config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client)
 
 

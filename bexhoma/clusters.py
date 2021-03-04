@@ -367,6 +367,10 @@ class configuration():
         instance = self.get_instance_from_resources()#self.i
         template = "deploymenttemplate-"+self.docker+".yml"
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        if len(deployments) > 0:
+            # sut is already running
+            return False
         deployment_experiment = self.experiment.path+'/deployment-{name}.yml'.format(name=name)
         # resources
         specs = instance.split("-")
@@ -485,6 +489,7 @@ class configuration():
                 print(exc)
         print("Deploy "+deployment_experiment)
         self.experiment.cluster.kubectl('kubectl create -f '+deployment_experiment)
+        return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
