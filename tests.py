@@ -1,10 +1,23 @@
+"""
+    This script contains some code snippets for testing the detached mode in Kubernetes
 
+    Copyright (C) 2021  Patrick Erdelt
 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 from bexhoma import *
 from dbmsbenchmarker import *
-#import experiments
 import logging
 import urllib3
 import logging
@@ -42,61 +55,42 @@ experiment.set_resources(
     })
 
 
+config = clusters.configuration(experiment=experiment, docker='OmniSci', alias='DBMS C', numExperiments=1, clients=[1])
+config.set_resources(
+    requests = {
+        'cpu': "4",
+        'memory': "64Gi",
+        'gpu': 1
+    },
+    limits = {
+        'cpu': 0,
+        'memory': 0
+    },
+    nodeSelector = {
+        'cpu': '',
+        'gpu': 'a100'
+    })
+
 config = clusters.configuration(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
 config = clusters.configuration(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
 config = clusters.configuration(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
+config = clusters.configuration(experiment=experiment, docker='PostgreSQL', alias='DBMS C', numExperiments=1, clients=[1])
+config = clusters.configuration(experiment=experiment, docker='MySQL', alias='DBMS C', numExperiments=1, clients=[1])
 
 
 experiment.start_sut()
 experiment.wait(10)
 experiment.load_data()
 
-list_clients = [4,8,16,16,16]
+list_clients = [1,2,4,8,16]
 
-for i, parallelism in enumerate(list_clients):
-    client = str(i+1)
-    for config in experiment.configurations:
-        config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client, parallelism=parallelism)
-    while True:
-        time.sleep(10)
-        # all jobs of configuration - benchmarker
-        app = cluster.appname
-        component = 'benchmarker'
-        configuration = ''
-        jobs = cluster.getJobs(app, component, experiment.code, configuration)
-        # all pods to these jobs
-        pods = cluster.getJobPods(app, component, experiment.code, configuration)
-        # status per pod
-        for p in pods:
-            status = cluster.getPodStatus(p)
-            print(p,status)
-            if status == 'Succeeded':
-                #if status != 'Running':
-                cluster.store_pod_log(p)
-                cluster.deletePod(p)
-            if status == 'Failed':
-                #if status != 'Running':
-                cluster.store_pod_log(p)
-                cluster.deletePod(p)
-        # success of job
-        app = cluster.appname
-        component = 'benchmarker'
-        configuration = ''
-        success = cluster.getJobStatus(app=app, component=component, experiment=experiment.code, configuration=configuration)
-        jobs = cluster.getJobs(app, component, experiment.code, configuration)
-        # status per job
-        for job in jobs:
-            success = cluster.getJobStatus(job)
-            print(job, success)
-            if success:
-                cluster.deleteJob(job)
-        if len(pods) == 0 and len(jobs) == 0:
-            break
+experiment.benchmark_list(list_clients)
 
 experiment.evaluate_results()
 
-cluster.stop_sut()
+experiment.stop_benchmarker()
 
+cluster.stop_sut()
 
 cluster.stop_dashboard()
 cluster.start_dashboard()
@@ -104,11 +98,20 @@ cluster.start_dashboard()
 
 
 """
+
+
 # all jobs of configuration - benchmarker
 app = cluster.appname
 component = 'benchmarker'
 configuration = ''
-cluster.getJobs(app, component, experiment.code, configuration)
+jobs = cluster.getJobs(app, component, experiment.code, configuration)
+
+# status per job
+for job in jobs:
+    success = cluster.getJobStatus(job)
+    print(job, success)
+    cluster.deleteJob(job)
+
 # all pods to these jobs
 cluster.getJobPods(app, component, experiment.code, configuration)
 pods = cluster.getJobPods(app, component, experiment.code, configuration)
@@ -119,13 +122,6 @@ for p in pods:
     print(p,status)
     cluster.deletePod(p)
 
-jobs = cluster.getJobs(app, component, experiment.code, configuration)
-
-# status per job
-for job in jobs:
-    success = cluster.getJobStatus(job)
-    print(job, success)
-    cluster.deleteJob(job)
 
 """
 
