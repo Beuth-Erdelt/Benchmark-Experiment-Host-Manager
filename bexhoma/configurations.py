@@ -861,7 +861,7 @@ class default():
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
         # determine start time
-        now = datetime.now()
+        now = datetime.utcnow()
         start = now + timedelta(seconds=180)
         #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
         #wait = (start-now).seconds

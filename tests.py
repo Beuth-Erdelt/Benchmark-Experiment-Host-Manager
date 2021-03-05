@@ -86,7 +86,7 @@ experiment.start_loading()
 #experiment.wait(20)
 #experiment.load_data()
 
-list_clients = [1,2]
+list_clients = [1,4]
 
 experiment.benchmark_list(list_clients)
 
