@@ -55,6 +55,13 @@ experiment.set_resources(
     })
 
 
+config = configurations.default(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
+
+"""
+config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS D', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS E', numExperiments=1, clients=[1])
 config = configurations.default(experiment=experiment, docker='OmniSci', alias='DBMS F', numExperiments=1, clients=[1])
 config.set_resources(
     requests = {
@@ -71,18 +78,15 @@ config.set_resources(
         'gpu': 'a100'
     })
 
-config = configurations.default(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
-config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
-config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
-config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS D', numExperiments=1, clients=[1])
-config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS E', numExperiments=1, clients=[1])
-
+"""
 
 experiment.start_sut()
-experiment.wait(10)
-experiment.load_data()
+experiment.start_loading()
 
-list_clients = [1,2,4,8,16]
+#experiment.wait(20)
+#experiment.load_data()
+
+list_clients = [1,2]
 
 experiment.benchmark_list(list_clients)
 
@@ -95,6 +99,42 @@ cluster.stop_sut()
 cluster.stop_dashboard()
 cluster.start_dashboard()
 
+"""
+app = cluster.appname
+component = 'sut'
+configuration = 'MonetDB'
+cluster.getPorts(app, component, experiment.code, configuration)
+
+
+app = cluster.appname
+component = 'sut'
+configuration = 'MemSQL'
+ports = cluster.getPorts(app, component, experiment.code, configuration)
+
+app = cluster.appname
+component = 'sut'
+configuration = 'MemSQL'
+services = cluster.getServices(app, component, experiment.code, configuration)
+
+
+service = services[0]
+
+forward = ['kubectl', 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
+#forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
+forward.extend(ports)
+#forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
+#forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
+#forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
+your_command = " ".join(forward)
+print(your_command)
+
+import subprocess
+
+subprocess.Popen(forward, stdout=subprocess.PIPE)
+
+
+config.checkDBMS('localhost', 9091)
+"""
 
 
 """

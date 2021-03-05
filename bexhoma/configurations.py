@@ -34,6 +34,7 @@ import shutil
 import json
 import ast
 import copy
+from datetime import datetime, timedelta
 
 from dbmsbenchmarker import *
 from bexhoma import masterK8s, experiments
@@ -161,6 +162,49 @@ class default():
         """
         if delay > 0:
             self.delay(delay)
+        # end
+    def start_loading(self, delay=0):
+        """ Per config: Load Data """
+        app = self.appname
+        component = 'sut'
+        configuration = self.docker
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            while status != "Running":
+                print(pod_sut, status)
+                self.wait(10)
+                status = self.experiment.cluster.getPodStatus(pod_sut)
+            services = self.experiment.cluster.getServices(app, component, self.experiment.code, configuration)
+            service = services[0]
+            ports = self.experiment.cluster.getPorts(app, component, self.experiment.code, configuration)
+            forward = ['kubectl', 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
+            forward.extend(ports)
+            your_command = " ".join(forward)
+            print(your_command)
+            subprocess.Popen(forward, stdout=subprocess.PIPE)
+            dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            while not dbmsactive:
+                self.wait(10)
+                dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            self.wait(10)
+            print("load_data")
+            self.load_data()
+            self.experiment.cluster.stopPortforwarding()
+            # store experiment
+            """
+            experiment = {}
+            experiment['delay'] = delay
+            experiment['step'] = "startExperiment"
+            experiment['docker'] = {self.d: self.docker.copy()}
+            experiment['volume'] = self.v
+            experiment['initscript'] = {self.s: self.initscript.copy()}
+            experiment['instance'] = self.i
+            self.logExperiment(experiment)
+            """
+            if delay > 0:
+                self.delay(delay)
         # end
     def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
         if len(app)==0:
@@ -626,6 +670,9 @@ class default():
         self.pod_sut = pods[0]
         #service_port = config_K8s['port']
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
+        c['parameter'] = {}
+        c['parameter']['parallelism'] = parallelism
+        c['parameter']['client'] = client
         print(c)
         print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
@@ -813,6 +860,13 @@ class default():
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
+        # determine start time
+        now = datetime.now()
+        start = now + timedelta(seconds=180)
+        #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
+        #wait = (start-now).seconds
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
@@ -849,6 +903,10 @@ class default():
                     if e['name'] == 'DBMSBENCHMARKER_SLEEP':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                     print(e)
+                e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
+                dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+                e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
+                dep['spec']['template']['spec']['containers'][0]['env'].append(e)
         #if not path.isdir(self.path):
         #    makedirs(self.path)
         with open(job_experiment,"w+") as stream:

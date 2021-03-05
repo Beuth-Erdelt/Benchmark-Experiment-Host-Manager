@@ -315,6 +315,9 @@ class setup():
 	def stop_sut(self):
 		for config in self.configurations:
 			config.stop_sut()
+	def start_loading(self):
+		for config in self.configurations:
+			config.start_loading()
 	def load_data(self):
 		for config in self.configurations:
 			config.load_data()
