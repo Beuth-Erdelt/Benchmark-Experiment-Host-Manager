@@ -318,6 +318,46 @@ class setup():
 	def load_data(self):
 		for config in self.configurations:
 			config.load_data()
+	def benchmark_list(self, list_clients):
+		for i, parallelism in enumerate(list_clients):
+		    client = str(i+1)
+		    for config in self.configurations:
+		        config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client, parallelism=parallelism)
+		    while True:
+		        time.sleep(10)
+		        # all jobs of configuration - benchmarker
+		        app = self.cluster.appname
+		        component = 'benchmarker'
+		        configuration = ''
+		        jobs = self.cluster.getJobs(app, component, self.code, configuration)
+		        # all pods to these jobs
+		        pods = self.cluster.getJobPods(app, component, self.code, configuration)
+		        # status per pod
+		        for p in pods:
+		            status = self.cluster.getPodStatus(p)
+		            print(p,status)
+		            if status == 'Succeeded':
+		                #if status != 'Running':
+		                self.cluster.store_pod_log(p)
+		                self.cluster.deletePod(p)
+		            if status == 'Failed':
+		                #if status != 'Running':
+		                self.cluster.store_pod_log(p)
+		                self.cluster.deletePod(p)
+		        # success of job
+		        app = self.cluster.appname
+		        component = 'benchmarker'
+		        configuration = ''
+		        success = self.cluster.getJobStatus(app=app, component=component, experiment=self.code, configuration=configuration)
+		        jobs = self.cluster.getJobs(app, component, self.code, configuration)
+		        # status per job
+		        for job in jobs:
+		            success = self.cluster.getJobStatus(job)
+		            print(job, success)
+		            if success:
+		                self.cluster.deleteJob(job)
+		        if len(pods) == 0 and len(jobs) == 0:
+		            break
 
 
 
