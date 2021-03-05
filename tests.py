@@ -55,7 +55,7 @@ experiment.set_resources(
     })
 
 
-config = clusters.configuration(experiment=experiment, docker='OmniSci', alias='DBMS C', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='OmniSci', alias='DBMS F', numExperiments=1, clients=[1])
 config.set_resources(
     requests = {
         'cpu': "4",
@@ -71,11 +71,11 @@ config.set_resources(
         'gpu': 'a100'
     })
 
-config = clusters.configuration(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
-config = clusters.configuration(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
-config = clusters.configuration(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
-config = clusters.configuration(experiment=experiment, docker='PostgreSQL', alias='DBMS C', numExperiments=1, clients=[1])
-config = clusters.configuration(experiment=experiment, docker='MySQL', alias='DBMS C', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS D', numExperiments=1, clients=[1])
+config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS E', numExperiments=1, clients=[1])
 
 
 experiment.start_sut()

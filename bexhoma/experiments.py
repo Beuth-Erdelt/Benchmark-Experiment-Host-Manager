@@ -363,19 +363,19 @@ class setup():
 		app = self.appname
 		component = 'benchmarker'
 		configuration = ''
-		jobs = cluster.getJobs(app, component, self.code, configuration)
+		jobs = self.cluster.getJobs(app, component, self.code, configuration)
 		# status per job
 		for job in jobs:
-			success = cluster.getJobStatus(job)
+			success = self.cluster.getJobStatus(job)
 			print(job, success)
-			cluster.deleteJob(job)
+			self.cluster.deleteJob(job)
 		# all pods to these jobs
-		cluster.getJobPods(app, component, self.code, configuration)
-		pods = cluster.getJobPods(app, component, self.code, configuration)
+		self.cluster.getJobPods(app, component, self.code, configuration)
+		pods = self.cluster.getJobPods(app, component, self.code, configuration)
 		for p in pods:
-			status = cluster.getPodStatus(p)
+			status = self.cluster.getPodStatus(p)
 			print(p, status)
-			cluster.deletePod(p)
+			self.cluster.deletePod(p)
 
 
 
