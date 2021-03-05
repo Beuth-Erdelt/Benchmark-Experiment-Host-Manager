@@ -309,6 +309,12 @@ class setup():
 		print(fullcommand)
 		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		stdout, stderr = proc.communicate()
+	def stop_monitoring(self):
+		for config in self.configurations:
+			config.stop_monitoring()
+	def start_monitoring(self):
+		for config in self.configurations:
+			config.start_monitoring()
 	def start_sut(self):
 		for config in self.configurations:
 			config.start_sut()

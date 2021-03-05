@@ -232,6 +232,8 @@ class default():
         print("start_monitoring")
         if len(app) == 0:
             app = self.appname
+        if len(configuration) == 0:
+            configuration = self.docker
         if len(experiment) == 0:
             experiment = self.code
         deployment ='deploymenttemplate-bexhoma-prometheus.yml'

@@ -37,7 +37,8 @@ experiment.set_workload(
     info = 'This experiment compares run time and resource consumption of TPC-H queries in different DBMS.'
 )
 
-experiment.set_querymanagement_quicktest(numRun=1)
+#experiment.set_querymanagement_quicktest(numRun=1)
+experiment.set_querymanagement_monitoring(numRun=64*16)
 
 experiment.set_resources(
     requests = {
@@ -81,12 +82,13 @@ config.set_resources(
 """
 
 experiment.start_sut()
+experiment.start_monitoring()
 experiment.start_loading()
 
 #experiment.wait(20)
 #experiment.load_data()
 
-list_clients = [1,4]
+list_clients = [1,4,8]
 
 experiment.benchmark_list(list_clients)
 
@@ -95,6 +97,7 @@ experiment.evaluate_results()
 experiment.stop_benchmarker()
 
 cluster.stop_sut()
+experiment.stop_monitoring()
 
 cluster.stop_dashboard()
 cluster.start_dashboard()
