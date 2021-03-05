@@ -44,13 +44,14 @@ experiment.set_resources(
 
 config = clusters.configuration(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
 config = clusters.configuration(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
+config = clusters.configuration(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
 
 
 experiment.start_sut()
 experiment.wait(10)
 experiment.load_data()
 
-list_clients = [4,8,16]
+list_clients = [4,8,16,16,16]
 
 for i, parallelism in enumerate(list_clients):
     client = str(i+1)
@@ -102,7 +103,7 @@ cluster.start_dashboard()
 
 
 
-
+"""
 # all jobs of configuration - benchmarker
 app = cluster.appname
 component = 'benchmarker'
@@ -126,7 +127,7 @@ for job in jobs:
     print(job, success)
     cluster.deleteJob(job)
 
-
+"""
 
 
 
