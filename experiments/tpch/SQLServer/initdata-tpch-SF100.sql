@@ -6,33 +6,33 @@ ALTER DATABASE tpch SET RECOVERY BULK_LOGGED;
 GO
 
 BULK INSERT customer
-    FROM '/data/tpch/SF1_sqlserver/customer.tbl'
+    FROM '/data/tpch/SF100/customer.tbl'
     WITH
     (
     FIRSTROW = 1,
     FIELDTERMINATOR = '|',  --CSV field delimiter
     ROWTERMINATOR = '\n',   --Use to shift the control to next row
-    LASTROW = 150000,
+    LASTROW = 15000000,
     TABLOCK
     )
 
 GO
 
 BULK INSERT lineitem
-    FROM '/data/tpch/SF1_sqlserver/lineitem.tbl'
+    FROM '/data/tpch/SF100/lineitem.tbl'
     WITH
     (
     FIRSTROW = 1,
     FIELDTERMINATOR = '|',  --CSV field delimiter
     ROWTERMINATOR = '\n',   --Use to shift the control to next row
-    LASTROW = 6001215,
+    LASTROW = 600037902,
     TABLOCK
     )
 
 GO
 
 BULK INSERT nation
-    FROM '/data/tpch/SF1_sqlserver/nation.tbl'
+    FROM '/data/tpch/SF100/nation.tbl'
     WITH
     (
     FIRSTROW = 1,
@@ -45,46 +45,46 @@ BULK INSERT nation
 GO
 
 BULK INSERT orders
-    FROM '/data/tpch/SF1_sqlserver/orders.tbl'
+    FROM '/data/tpch/SF100/orders.tbl'
     WITH
     (
     FIRSTROW = 1,
     FIELDTERMINATOR = '|',  --CSV field delimiter
     ROWTERMINATOR = '\n',   --Use to shift the control to next row
-    LASTROW = 1500000,
+    LASTROW = 150000000,
     TABLOCK
     )
 
 GO
 
 BULK INSERT part
-    FROM '/data/tpch/SF1_sqlserver/part.tbl'
+    FROM '/data/tpch/SF100/part.tbl'
     WITH
     (
     FIRSTROW = 1,
     FIELDTERMINATOR = '|',  --CSV field delimiter
     ROWTERMINATOR = '\n',   --Use to shift the control to next row
-    LASTROW = 200000,
+    LASTROW = 20000000,
     TABLOCK
     )
 
 GO
 
 BULK INSERT partsupp
-    FROM '/data/tpch/SF1_sqlserver/partsupp.tbl'
+    FROM '/data/tpch/SF100/partsupp.tbl'
     WITH
     (
     FIRSTROW = 1,
     FIELDTERMINATOR = '|',  --CSV field delimiter
     ROWTERMINATOR = '\n',   --Use to shift the control to next row
-    LASTROW = 800000,
+    LASTROW = 80000000,
     TABLOCK
     )
 
 GO
 
 BULK INSERT region
-    FROM '/data/tpch/SF1_sqlserver/region.tbl'
+    FROM '/data/tpch/SF100/region.tbl'
     WITH
     (
     FIRSTROW = 1,
@@ -97,13 +97,13 @@ BULK INSERT region
 GO
 
 BULK INSERT supplier
-    FROM '/data/tpch/SF1_sqlserver/supplier.tbl'
+    FROM '/data/tpch/SF100/supplier.tbl'
     WITH
     (
     FIRSTROW = 1,
     FIELDTERMINATOR = '|',  --CSV field delimiter
     ROWTERMINATOR = '\n',   --Use to shift the control to next row
-    LASTROW = 10000,
+    LASTROW = 1000000,
     TABLOCK
     )
 

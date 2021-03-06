@@ -48,6 +48,7 @@ class default():
         self.experiment = experiment
         #self.code = code
         self.docker = docker
+        self.volume = self.experiment.volume
         if docker is not None:
             self.dockertemplate = copy.deepcopy(self.experiment.cluster.dockers[self.docker])
         if script is not None:
@@ -102,6 +103,20 @@ class default():
         self.resources = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
+    def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+        """ Read experiment details from cluster config"""
+        #self.bChangeInstance = True
+        #if instance is not None:
+        #   self.i = instance
+        if volume is not None:
+            self.volume = volume
+            self.volumeid = self.experiment.cluster.volumes[self.experiment.volume]['id']
+        #if docker is not None:
+        #   self.d = docker
+        #   self.docker = self.cluster.dockers[self.d]
+        if script is not None:
+            self.script = script
+            self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
     def prepare(self, instance=None, volume=None, docker=None, script=None, delay=0):
         """ Per config: Startup SUT and Monitoring """
         #self.setExperiment(instance, volume, docker, script)
@@ -279,6 +294,12 @@ class default():
         print("Deploy "+deployment)
         self.experiment.cluster.kubectl('kubectl create -f '+deployment_experiment)#self.yamlfolder+deployment)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.docker
+        if len(experiment) == 0:
+            experiment = self.code
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.deleteDeployment(deployment)
@@ -431,6 +452,12 @@ class default():
             self.start_monitoring()
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.docker
+        if len(experiment) == 0:
+            experiment = self.code
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.deleteDeployment(deployment)

@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 39041}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-saphana
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: true
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      containers:
+      - name: dbms
+        #image: store/saplabs/hanaexpress:latest
+        image: perdelt/dbms:saphana
+        args: ["--master-password", "root1234ROOT", "--agree-to-sap-license"]
+        #image: store/saplabs/hanaexpress:2.00.045.00.20200121.1
+        #env:
+        #- {name: agree-to-sap-license, value: 'yes'}
+        ports:
+        - {containerPort: 39041}
+        resources:
+          limits: {cpu: 4000m, memory: 16Gi}
+          requests: {cpu: 4000m, memory: 16Gi}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}

@@ -37,8 +37,8 @@ experiment.set_workload(
     info = 'This experiment compares run time and resource consumption of TPC-H queries in different DBMS.'
 )
 
-#experiment.set_querymanagement_quicktest(numRun=1)
-experiment.set_querymanagement_monitoring(numRun=64)
+experiment.set_querymanagement_quicktest(numRun=1)
+#experiment.set_querymanagement_monitoring(numRun=64)
 
 experiment.set_resources(
     requests = {
@@ -56,19 +56,26 @@ experiment.set_resources(
     })
 
 
-config = configurations.default(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
-config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
+#config = configurations.default(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
+#config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
 
 """
 config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
 config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS D', numExperiments=1, clients=[1])
 config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS E', numExperiments=1, clients=[1])
+"""
+gpus=2
+SF="1"
 config = configurations.default(experiment=experiment, docker='OmniSci', alias='DBMS F', numExperiments=1, clients=[1])
+shard_count = int(gpus)
+fragment_size = int(2*64000000/shard_count)
+config.set_ddl_parameters(fragment_size=str(fragment_size), shard_count=str(shard_count))
+config.set_experiment(script='SF'+SF+'-template')
 config.set_resources(
     requests = {
         'cpu': "4",
         'memory': "64Gi",
-        'gpu': 1
+        'gpu': gpus
     },
     limits = {
         'cpu': 0,
@@ -79,7 +86,7 @@ config.set_resources(
         'gpu': 'a100'
     })
 
-"""
+
 
 experiment.start_sut()
 #experiment.start_monitoring()
@@ -88,7 +95,7 @@ experiment.start_loading()
 #experiment.wait(20)
 #experiment.load_data()
 
-list_clients = [1,4,8]
+list_clients = [1]
 
 experiment.benchmark_list(list_clients)
 
@@ -96,11 +103,14 @@ experiment.evaluate_results()
 
 experiment.stop_benchmarker()
 
-cluster.stop_sut()
+experiment.stop_sut()
 #experiment.stop_monitoring()
 
 cluster.stop_dashboard()
 cluster.start_dashboard()
+
+cluster.stop_sut()
+cluster.stop_monitoring()
 
 """
 app = cluster.appname

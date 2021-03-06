@@ -76,11 +76,11 @@ class setup():
 		self.appname = self.cluster.appname
 		self.resources = {}
 		self.ddl_parameters = {}
-		self.connectionmanagement = {}
-		self.connectionmanagement['numProcesses'] = None
-		self.connectionmanagement['runsPerConnection'] = None
-		self.connectionmanagement['timeout'] = None
-		self.connectionmanagement['singleConnection'] = False
+		#self.connectionmanagement = {}
+		#self.connectionmanagement['numProcesses'] = None
+		#self.connectionmanagement['runsPerConnection'] = None
+		#self.connectionmanagement['timeout'] = None
+		#self.connectionmanagement['singleConnection'] = False
 		self.querymanagement = {}
 		self.workload = {}
 		self.monitoring_active = True
