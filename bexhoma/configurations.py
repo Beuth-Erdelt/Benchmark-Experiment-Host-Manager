@@ -427,6 +427,8 @@ class default():
                 print(exc)
         print("Deploy "+deployment_experiment)
         self.experiment.cluster.kubectl('kubectl create -f '+deployment_experiment)
+        if self.experiment.monitoring_active:
+            self.start_monitoring()
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -435,6 +437,8 @@ class default():
         services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
+        if self.experiment.monitoring_active:
+            self.stop_monitoring()
     def checkGPUs(self):
         print("checkGPUs")
         cmd = {}

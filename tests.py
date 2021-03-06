@@ -38,7 +38,7 @@ experiment.set_workload(
 )
 
 #experiment.set_querymanagement_quicktest(numRun=1)
-experiment.set_querymanagement_monitoring(numRun=64*16)
+experiment.set_querymanagement_monitoring(numRun=64)
 
 experiment.set_resources(
     requests = {
@@ -82,7 +82,7 @@ config.set_resources(
 """
 
 experiment.start_sut()
-experiment.start_monitoring()
+#experiment.start_monitoring()
 experiment.start_loading()
 
 #experiment.wait(20)
@@ -97,7 +97,7 @@ experiment.evaluate_results()
 experiment.stop_benchmarker()
 
 cluster.stop_sut()
-experiment.stop_monitoring()
+#experiment.stop_monitoring()
 
 cluster.stop_dashboard()
 cluster.start_dashboard()
