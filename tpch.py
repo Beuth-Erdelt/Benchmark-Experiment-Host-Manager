@@ -166,16 +166,18 @@ if __name__ == '__main__':
 		})
 	#experiment.run(mode="parallel")
 	experiment.start_sut()
-	experiment.wait(180)
+	#experiment.wait(180)
 	#experiment.start_monitoring()
-	experiment.start_loading()
+	#experiment.start_loading()
 	list_clients = [1]
+	experiment.add_benchmark_list(list_clients)
 	# add list to all config
 	# test if dbms is running
 	# test if data is loaded
 	# yes: work on list
 	# no: try to load
-	experiment.benchmark_list(list_clients)
+	experiment.work_benchmark_list()
+	#experiment.benchmark_list(list_clients)
 	##################
 	experiment.evaluate_results()
 	experiment.stop_benchmarker()

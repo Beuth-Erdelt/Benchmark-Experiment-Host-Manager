@@ -1370,6 +1370,25 @@ class testdesign():
         services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
+    def stop_benchmarker(self):
+        # all jobs of configuration - benchmarker
+        app = self.appname
+        component = 'benchmarker'
+        experiment = ''
+        configuration = ''
+        jobs = self.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.getJobStatus(job)
+            print(job, success)
+            self.deleteJob(job)
+        # all pods to these jobs
+        self.getJobPods(app, component, experiment, configuration)
+        pods = self.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.getPodStatus(p)
+            print(p, status)
+            self.deletePod(p)
     def pod_log(self, pod, container=''):
         if len(container) > 0:
             fullcommand = 'kubectl logs '+pod+' --container='+container

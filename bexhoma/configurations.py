@@ -69,9 +69,14 @@ class default():
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
         self.experiment.add_configuration(self)
         self.timeLoading = 0
+        self.loading_started = False
+        self.loading_after_time = None
+        self.client = 1
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
+    def add_benchmark_list(self, list_clients):
+        self.benchmark_list = copy.deepcopy(list_clients)
     def wait(self, sec):
         print("Waiting "+str(sec)+"s...", end="", flush=True)
         intervals = int(sec)
@@ -178,6 +183,28 @@ class default():
         if delay > 0:
             self.delay(delay)
         # end
+    def sut_is_running(self):
+        app = self.appname
+        component = 'sut'
+        configuration = self.docker
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Running":
+                return True
+        return False
+    def sut_is_pending(self):
+        app = self.appname
+        component = 'sut'
+        configuration = self.docker
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Pending":
+                return True
+        return False
     def start_loading(self, delay=0):
         """ Per config: Load Data """
         app = self.appname
@@ -187,10 +214,12 @@ class default():
         if len(pods) > 0:
             pod_sut = pods[0]
             status = self.experiment.cluster.getPodStatus(pod_sut)
-            while status != "Running":
-                print(pod_sut, status)
-                self.wait(10)
-                status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status != "Running":
+                return False
+            #while status != "Running":
+            #    print(pod_sut, status)
+            #    self.wait(10)
+            #    status = self.experiment.cluster.getPodStatus(pod_sut)
             services = self.experiment.cluster.getServices(app, component, self.experiment.code, configuration)
             service = services[0]
             ports = self.experiment.cluster.getPorts(app, component, self.experiment.code, configuration)
@@ -220,6 +249,7 @@ class default():
             """
             if delay > 0:
                 self.delay(delay)
+            return True
         # end
     def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
         if len(app)==0:
@@ -333,7 +363,7 @@ class default():
         deployment_experiment = self.experiment.path+'/deployment-{name}.yml'.format(name=name)
         # resources
         specs = instance.split("-")
-        print(specs)
+        #print(specs)
         cpu = specs[0]
         mem = specs[1]
         node = ''
@@ -837,6 +867,16 @@ class default():
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    def copyLog(self):
+        print("copyLog")
+        pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
+        self.pod_sut = pods[0]
+        if len(self.dockertemplate['logfile']):
+            cmd = {}
+            cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
+            stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], self.pod_sut)
+            cmd['save_log'] = 'cp '+self.dockertemplate['logfile']+' /data/'+str(self.code)+'/'+self.docker+'.log'
+            stdin, stdout, stderr = self.executeCTL(cmd['save_log'], self.pod_sut)
     def prepareInit(self):
         print("prepareInit")
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
@@ -869,6 +909,9 @@ class default():
                 if os.path.isfile(self.experiment.cluster.configfolder+'/'+filename):
                     self.experiment.cluster.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
     def load_data(self):
+        if self.loading_started:
+            return
+        self.loading_started = True
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
         self.pod_sut = pods[0]

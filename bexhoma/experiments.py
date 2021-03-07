@@ -25,6 +25,7 @@ from os import makedirs, path
 import time
 import os
 import subprocess
+from datetime import datetime, timedelta
 
 
 urllib3.disable_warnings()
@@ -327,12 +328,113 @@ class setup():
 	def load_data(self):
 		for config in self.configurations:
 			config.load_data()
+	def add_benchmark_list(self, list_clients):
+		for config in self.configurations:
+			config.add_benchmark_list(list_clients)
+	def work_benchmark_list(self, intervals=10):
+		do = True
+		while do:
+			time.sleep(intervals)
+			for config in self.configurations:
+				if not config.sut_is_running():
+					print("{} is not running".format(config.docker))
+					continue
+				if not config.loading_started:
+					print("{} is not loaded".format(config.docker))
+					now = datetime.utcnow()
+					if config.loading_after_time is not None:
+						if now >= config.loading_after_time:
+							config.start_loading()
+						else:
+							print("{} will start loading but not before {}".format(config.docker, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+							continue
+					else:
+						delay = 60
+						if 'delay_prepare' in config.dockertemplate:
+							# config demands other delay
+							delay = config.dockertemplate['delay_prepare']
+						config.loading_after_time = now + timedelta(seconds=delay)
+						print("{} will start loading but not before {}".format(config.docker, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+						continue
+				app = self.cluster.appname
+				component = 'benchmarker'
+				configuration = ''
+				pods = self.cluster.getJobPods(app, component, self.code, configuration=config.docker)
+				if len(pods) > 0:
+					# still pods there
+					print("{} has running benchmarks".format(config.docker))
+					continue
+				else:
+					if len(config.benchmark_list) > 0:
+						# next element in list
+						parallelism = config.benchmark_list.pop(0)
+						client = str(config.client)
+						config.client = config.client+1
+						config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client, parallelism=parallelism)
+					else:
+						# no list element left
+						print("{} can be stopped".format(config.docker))
+						config.stop_sut()
+			# all jobs of configuration - benchmarker
+			app = self.cluster.appname
+			component = 'benchmarker'
+			configuration = ''
+			jobs = self.cluster.getJobs(app, component, self.code, configuration)
+			# all pods to these jobs
+			pods = self.cluster.getJobPods(app, component, self.code, configuration)
+			# status per pod
+			for p in pods:
+				status = self.cluster.getPodStatus(p)
+				print(p,status)
+				if status == 'Succeeded':
+					#if status != 'Running':
+					self.cluster.store_pod_log(p)
+					self.cluster.deletePod(p)
+				if status == 'Failed':
+					#if status != 'Running':
+					self.cluster.store_pod_log(p)
+					self.cluster.deletePod(p)
+			# success of job
+			app = self.cluster.appname
+			component = 'benchmarker'
+			configuration = ''
+			success = self.cluster.getJobStatus(app=app, component=component, experiment=self.code, configuration=configuration)
+			jobs = self.cluster.getJobs(app, component, self.code, configuration)
+			# status per job
+			for job in jobs:
+				success = self.cluster.getJobStatus(job)
+				print(job, success)
+				if success:
+					self.cluster.deleteJob(job)
+			if len(pods) == 0 and len(jobs) == 0:
+				do = False
+				for config in self.configurations:
+					#if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
+					if config.sut_is_pending():
+						print("{} pending".format(config.docker))
+						do = True
+					if not config.loading_started:
+						print("{} not loaded".format(config.docker))
+						do = True
+					if len(config.benchmark_list) > 0:
+						print("{} still benchmarks to run".format(config.docker))
+						do = True
 	def benchmark_list(self, list_clients):
 		for i, parallelism in enumerate(list_clients):
 			client = str(i+1)
 			for config in self.configurations:
-				config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client, parallelism=parallelism)
+				if not config.sut_is_running():
+					continue
+				if not config.loading_started:
+					config.start_loading()
+				else:
+					config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client, parallelism=parallelism)
 			while True:
+				for config in self.configurations:
+					if not config.sut_is_running():
+						continue
+					if not config.loading_started:
+						config.start_loading()
 				time.sleep(10)
 				# all jobs of configuration - benchmarker
 				app = self.cluster.appname
