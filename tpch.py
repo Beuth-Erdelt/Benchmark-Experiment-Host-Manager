@@ -32,6 +32,7 @@ if __name__ == '__main__':
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run'])
+	parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
 	parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
 	parser.add_argument('-m', '--monitoring', help='activates monitoring', action='store_true')
 	parser.add_argument('-md', '--monitoring-delay', help='time to wait [s] before execution of the runs of a query', default=10)
@@ -57,11 +58,14 @@ if __name__ == '__main__':
 	cpu_type = str(args.request_cpu_type)
 	gpu_type = str(args.request_gpu_type)
 	gpus = str(args.request_gpu)
+	code = args.experiment
 	# set cluster
 	cluster = clusters.kubernetes()
 	# set experiment
 	#experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout*numRun, numExperiments=numExperiments, detached=args.detached, code=cluster.code)
-	experiment = experiments.tpch(cluster=cluster, SF=1, timeout=180*1, numExperiments=1, detached=True, code=cluster.code)
+	if code is None:
+		code = cluster.code
+	experiment = experiments.tpch(cluster=cluster, SF=1, timeout=180*1, numExperiments=1, detached=True, code=code)
 	# remove running dbms
 	#experiment.clean()
 	if mode == 'run':
@@ -90,7 +94,7 @@ if __name__ == '__main__':
 		requests = {
 			'cpu': cpu,
 			'memory': memory,
-			'gpu': gpus
+			'gpu': 0
 		},
 		limits = {
 			'cpu': 0,
@@ -109,7 +113,35 @@ if __name__ == '__main__':
 	config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS E', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='MariaDBCS', alias='DBMS F', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='Exasol', alias='DBMS G', numExperiments=1, clients=[1])
+	config.set_resources(
+		requests = {
+			'cpu': cpu,
+			'memory': memory,
+			'gpu': 0
+		},
+		limits = {
+			'cpu': 0,
+			'memory': 0
+		},
+		nodeSelector = {
+			'cpu': 'epyc-7742',
+			'gpu': ''
+		})
 	config = configurations.default(experiment=experiment, docker='DB2', alias='DBMS H', numExperiments=1, clients=[1])
+	config.set_resources(
+		requests = {
+			'cpu': cpu,
+			'memory': memory,
+			'gpu': 0
+		},
+		limits = {
+			'cpu': 0,
+			'memory': 0
+		},
+		nodeSelector = {
+			'cpu': 'epyc-7742',
+			'gpu': ''
+		})
 	config = configurations.default(experiment=experiment, docker='SAPHANA', alias='DBMS I', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='Clickhouse', alias='DBMS J', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='SQLServer', alias='DBMS K', numExperiments=1, clients=[1])
@@ -134,9 +166,15 @@ if __name__ == '__main__':
 		})
 	#experiment.run(mode="parallel")
 	experiment.start_sut()
+	experiment.wait(180)
 	#experiment.start_monitoring()
 	experiment.start_loading()
 	list_clients = [1]
+	# add list to all config
+	# test if dbms is running
+	# test if data is loaded
+	# yes: work on list
+	# no: try to load
 	experiment.benchmark_list(list_clients)
 	##################
 	experiment.evaluate_results()

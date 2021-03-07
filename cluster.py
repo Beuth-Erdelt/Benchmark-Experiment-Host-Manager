@@ -43,8 +43,10 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	if args.mode == 'stop':
 		cluster = clusters.kubernetes()
-		if args.experiment is not None:
+		if args.experiment is None:
 			experiment = experiments.tpch(cluster=cluster, code=cluster.code)
+			cluster.stop_sut()
+			cluster.stop_benchmarker()
 		else:
 			experiment = experiments.tpch(cluster=cluster, code=args.experiment)
-		experiment.stop_sut()
+			experiment.stop_sut()
