@@ -559,7 +559,10 @@ class testdesign():
             command = child.cmdline()
             if len(command) > 0 and command[1] == 'port-forward':
                 print("FOUND")
-                child.terminate()
+                try:
+                    child.terminate()
+                except Exception as e:
+                    print(e)
     def getInfo(self, app='', component='', experiment='', configuration=''):
         print("getPods", app, component, experiment, configuration)
         self.pods = self.getPods(app, component, experiment, configuration)
