@@ -880,9 +880,29 @@ class default():
         for c in commands:
             filename, file_extension = os.path.splitext(c)
             if file_extension.lower() == '.sql':
-                self.executeCTL(self.dockertemplate['loadData'].format(scriptname=scriptfolder+c), self.pod_sut)
+                stdin, stdout, stderr = self.executeCTL(self.dockertemplate['loadData'].format(scriptname=scriptfolder+c), self.pod_sut)
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                print(filename_log)
+                if len(stdout) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stdout)
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                print(filename_log)
+                if len(stderr) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stderr)
             elif file_extension.lower() == '.sh':
-                self.executeCTL(shellcommand.format(scriptname=scriptfolder+c), self.pod_sut)
+                stdin, stdout, stderr = self.executeCTL(shellcommand.format(scriptname=scriptfolder+c), self.pod_sut)
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                print(filename_log)
+                if len(stdout) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stdout)
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                print(filename_log)
+                if len(stderr) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stderr)
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
