@@ -1,8 +1,8 @@
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.customer FORMAT CSV" < /data/tpch/SF30/customer.tbl
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.lineitem FORMAT CSV" < /data/tpch/SF30/lineitem.tbl
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.nation FORMAT CSV" < /data/tpch/SF30/nation.tbl
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.orders FORMAT CSV" < /data/tpch/SF30/orders.tbl
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.part FORMAT CSV" < /data/tpch/SF30/part.tbl
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.partsupp FORMAT CSV" < /data/tpch/SF30/partsupp.tbl
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.region FORMAT CSV" < /data/tpch/SF30/region.tbl
-clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.supplier FORMAT CSV" < /data/tpch/SF30/supplier.tbl
+cat /data/tpch/SF30/customer.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.customer FORMAT CSV"
+cat /data/tpch/SF30/lineitem.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.lineitem FORMAT CSV"
+cat /data/tpch/SF30/nation.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.nation FORMAT CSV"
+cat /data/tpch/SF30/orders.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.orders FORMAT CSV"
+cat /data/tpch/SF30/part.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.part FORMAT CSV"
+cat /data/tpch/SF30/partsupp.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.partsupp FORMAT CSV"
+cat /data/tpch/SF30/region.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.region FORMAT CSV"
+cat /data/tpch/SF30/supplier.tbl | clickhouse-client --format_csv_delimiter="|" --query="INSERT INTO tpch.supplier FORMAT CSV"
