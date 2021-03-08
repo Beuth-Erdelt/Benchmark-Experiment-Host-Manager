@@ -424,7 +424,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        logging.debug('getPods'+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
             #pprint(api_response)
@@ -460,7 +460,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        logging.debug('getServices'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -481,7 +481,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        logging.debug('getPorts'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -1140,7 +1140,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        print(label)
+        logging.debug('getJobs'+label)
         try: 
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
@@ -1164,7 +1164,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        print(label)
+        logging.debug('getJobStatus'+label)
         try: 
             if len(jobname) == 0:
                 jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
@@ -1220,7 +1220,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        print(label)
+        logging.debug('getJobPods'+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)

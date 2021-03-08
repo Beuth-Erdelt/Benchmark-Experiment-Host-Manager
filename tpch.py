@@ -65,7 +65,7 @@ if __name__ == '__main__':
 	#experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout*numRun, numExperiments=numExperiments, detached=args.detached, code=cluster.code)
 	if code is None:
 		code = cluster.code
-	experiment = experiments.tpch(cluster=cluster, SF=1, timeout=180*1, numExperiments=1, detached=True, code=code)
+	experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=180*1, numExperiments=1, detached=True, code=code)
 	# remove running dbms
 	#experiment.clean()
 	if mode == 'run':
