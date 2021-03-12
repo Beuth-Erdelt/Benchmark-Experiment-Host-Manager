@@ -1,52 +1,57 @@
--- indexes for foreign keys
+ALTER TABLE PART
+  ADD CONSTRAINT part_kpey
+     PRIMARY KEY (P_PARTKEY);
 
--- for table region
-alter table public.region
-add primary key (r_regionkey);
+ALTER TABLE SUPPLIER
+  ADD CONSTRAINT supplier_pkey
+     PRIMARY KEY (S_SUPPKEY);
 
--- for table nation
-alter table public.nation
-add primary key (n_nationkey);
+ALTER TABLE PARTSUPP
+  ADD CONSTRAINT partsupp_pkey
+     PRIMARY KEY (PS_PARTKEY, PS_SUPPKEY);
 
-create index on public.nation (n_regionkey);
+ALTER TABLE CUSTOMER
+  ADD CONSTRAINT customer_pkey
+     PRIMARY KEY (C_CUSTKEY);
 
--- for table part
-alter table public.part
-add primary key (p_partkey);
+ALTER TABLE ORDERS
+  ADD CONSTRAINT orders_pkey
+     PRIMARY KEY (O_ORDERKEY);
 
--- for table supplier
-alter table public.supplier
-add primary key (s_suppkey);
+ALTER TABLE LINEITEM
+  ADD CONSTRAINT lineitem_pkey
+     PRIMARY KEY (L_ORDERKEY, L_LINENUMBER);
 
-create index on public.supplier (s_nationkey);
+ALTER TABLE NATION
+  ADD CONSTRAINT nation_pkey
+     PRIMARY KEY (N_NATIONKEY);
 
--- for table partsupp
-alter table public.partsupp
-add primary key (ps_partkey,ps_suppkey);
+ALTER TABLE REGION
+  ADD CONSTRAINT region_pkey
+     PRIMARY KEY (R_REGIONKEY);
 
--- for table customer
-alter table public.customer
-add primary key (c_custkey);
 
-create index on public.customer (c_nationkey);
 
--- for table partsupp
-create index on public.partsupp (ps_suppkey);
 
-create index on public.partsupp (ps_partkey);
+-- indexes on the foreign keys
 
--- for table lineitem
-alter table public.lineitem
-add primary key (l_orderkey,l_linenumber);
+CREATE INDEX IDX_SUPPLIER_NATION_KEY ON SUPPLIER (S_NATIONKEY);
 
--- for table orders
-alter table public.orders
-add primary key (o_orderkey);
+CREATE INDEX IDX_PARTSUPP_PARTKEY ON PARTSUPP (PS_PARTKEY);
+CREATE INDEX IDX_PARTSUPP_SUPPKEY ON PARTSUPP (PS_SUPPKEY);
 
-create index on public.orders (o_custkey);
+CREATE INDEX IDX_CUSTOMER_NATIONKEY ON CUSTOMER (C_NATIONKEY);
 
--- for table lineitem
-create index on public.lineitem (l_orderkey);
+CREATE INDEX IDX_ORDERS_CUSTKEY ON ORDERS (O_CUSTKEY);
 
-create index on public.lineitem (l_partkey,l_suppkey);
+CREATE INDEX IDX_LINEITEM_ORDERKEY ON LINEITEM (L_ORDERKEY);
+CREATE INDEX IDX_LINEITEM_PART_SUPP ON LINEITEM (L_PARTKEY,L_SUPPKEY);
 
+CREATE INDEX IDX_NATION_REGIONKEY ON NATION (N_REGIONKEY);
+
+
+-- aditional indexes
+
+CREATE INDEX IDX_LINEITEM_SHIPDATE ON LINEITEM (L_SHIPDATE, L_DISCOUNT, L_QUANTITY);
+
+CREATE INDEX IDX_ORDERS_ORDERDATE ON ORDERS (O_ORDERDATE);

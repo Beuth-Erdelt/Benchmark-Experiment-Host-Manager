@@ -1,36 +1,36 @@
--- sccsid:     @(#)dss.ri	2.1.8.1
--- tpcd benchmark version 8.0
 
--- for table nation
-alter table public.nation
-add foreign key (n_regionkey) references public.region(r_regionkey);
+-- foreign keys
 
--- for table supplier
-alter table public.supplier
-add foreign key (s_nationkey) references public.nation(n_nationkey);
+   ALTER TABLE SUPPLIER
+ADD CONSTRAINT supplier_nation_fkey
+   FOREIGN KEY (S_NATIONKEY) REFERENCES NATION(N_NATIONKEY);
 
--- for table customer
-alter table public.customer
-add foreign key (c_nationkey) references public.nation(n_nationkey);
+   ALTER TABLE PARTSUPP
+ADD CONSTRAINT partsupp_part_fkey
+   FOREIGN KEY (PS_PARTKEY) REFERENCES PART(P_PARTKEY);
+   
+   ALTER TABLE PARTSUPP
+ADD CONSTRAINT partsupp_supplier_fkey
+   FOREIGN KEY (PS_SUPPKEY) REFERENCES SUPPLIER(S_SUPPKEY);
 
--- for table partsupp
-alter table public.partsupp
-add foreign key (ps_suppkey) references public.supplier(s_suppkey);
+   ALTER TABLE CUSTOMER
+ADD CONSTRAINT customer_nation_fkey
+   FOREIGN KEY (C_NATIONKEY) REFERENCES NATION(N_NATIONKEY);
 
-alter table public.partsupp
-add foreign key (ps_partkey) references public.part(p_partkey);
+   ALTER TABLE ORDERS
+ADD CONSTRAINT orders_customer_fkey
+   FOREIGN KEY (O_CUSTKEY) REFERENCES CUSTOMER(C_CUSTKEY);
 
--- for table orders
-alter table public.orders
-add foreign key (o_custkey) references public.customer(c_custkey);
+   ALTER TABLE LINEITEM
+ADD CONSTRAINT lineitem_orders_fkey
+   FOREIGN KEY (L_ORDERKEY) REFERENCES ORDERS(O_ORDERKEY);
 
--- for table lineitem
-alter table public.lineitem
-add foreign key (l_orderkey)  references public.orders(o_orderkey);
+   ALTER TABLE LINEITEM
+ADD CONSTRAINT lineitem_partsupp_fkey
+   FOREIGN KEY (L_PARTKEY,L_SUPPKEY)
+    REFERENCES PARTSUPP(PS_PARTKEY,PS_SUPPKEY);
 
-alter table public.lineitem
-add foreign key (l_partkey,l_suppkey) references 
-        public.partsupp(ps_partkey,ps_suppkey);
-
-
+   ALTER TABLE NATION
+ADD CONSTRAINT nation_region_fkey
+   FOREIGN KEY (N_REGIONKEY) REFERENCES REGION(R_REGIONKEY);
 

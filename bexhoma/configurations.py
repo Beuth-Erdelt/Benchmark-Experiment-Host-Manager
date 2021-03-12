@@ -383,6 +383,8 @@ class default():
                 pvc = dep['metadata']['name']
                 #print(pvc)
             if dep['kind'] == 'Service':
+                if dep['metadata']['name'] != 'bexhoma-service':
+                    continue
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
