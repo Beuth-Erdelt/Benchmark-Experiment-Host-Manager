@@ -383,6 +383,16 @@ class default():
             if dep['kind'] == 'PersistentVolumeClaim':
                 pvc = dep['metadata']['name']
                 #print(pvc)
+            if dep['kind'] == 'StatefulSet':
+                continue
+                #dep['metadata']['name'] = name
+                #self.service = dep['metadata']['name']
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
                     continue
@@ -494,6 +504,9 @@ class default():
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.deleteDeployment(deployment)
+        stateful_sets = self.experiment.cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+        for stateful_set in stateful_sets:
+            self.experiment.cluster.deleteStatefulSet(stateful_set)
         services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)

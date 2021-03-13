@@ -434,6 +434,28 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+    def getStatefulSets(self, app='', component='', experiment='', configuration=''):
+        # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        logging.debug('getStatefulSets'+label)
+        try: 
+            api_response = self.v1apps.list_namespaced_stateful_set(self.namespace, label_selector=label)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling AppsV1Api->list_namespaced_stateful_set: %s\n" % e)
     def getPodStatus(self, pod, appname=''):
         try:
             if len(appname) == 0:
@@ -501,6 +523,14 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+    def deleteStatefulSet(self, name):
+        print("deleteStatefulSet")
+        body = kubernetes.client.V1DeleteOptions()
+        try: 
+            api_response = self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
+            #pprint(api_response)
+        except ApiException as e:
+            print("Exception when calling AppsV1Api->delete_namespaced_stateful_set: %s\n" % e)
     def deletePod(self, name):
         print("deletePod")
         body = kubernetes.client.V1DeleteOptions()
