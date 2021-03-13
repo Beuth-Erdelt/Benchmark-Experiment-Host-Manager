@@ -554,15 +554,15 @@ class testdesign():
         print("stopPortforwarding")
         children = [p for p in psutil.process_iter(attrs=['pid', 'name']) if 'kubectl' in p.info['name']]
         for child in children:
-            print('Child pid is {} {}'.format(child.pid, child.name))
-            print(child.cmdline())
-            command = child.cmdline()
-            if len(command) > 0 and command[1] == 'port-forward':
-                print("FOUND")
-                try:
+            try:
+                print('Child pid is {} {}'.format(child.pid, child.name))
+                command = child.cmdline()
+                print(command)
+                if len(command) > 0 and command[1] == 'port-forward':
+                    print("FOUND")
                     child.terminate()
-                except Exception as e:
-                    print(e)
+            except Exception as e:
+                print(e)
     def getInfo(self, app='', component='', experiment='', configuration=''):
         print("getPods", app, component, experiment, configuration)
         self.pods = self.getPods(app, component, experiment, configuration)
