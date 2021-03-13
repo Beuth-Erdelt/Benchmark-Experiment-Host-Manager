@@ -44,7 +44,7 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, script=None, alias=None, numExperiments=1, clients=[1]):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, script=None, alias=None, numExperiments=1, clients=[1], dialect=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiment = experiment
         #self.code = code
         self.docker = docker
@@ -72,6 +72,7 @@ class default():
         self.loading_started = False
         self.loading_after_time = None
         self.client = 1
+        self.dialect = dialect
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -723,6 +724,8 @@ class default():
             code = self.code
         if not isinstance(client, str):
             client = str(client)
+        if len(dialect) == 0 and len(self.dialect) > 0:
+            dialect = self.dialect
         self.experiment.cluster.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.experiment.querymanagement
