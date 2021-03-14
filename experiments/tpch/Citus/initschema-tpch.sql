@@ -2,8 +2,7 @@
 
 -- Sccsid:     @(#)dss.ddl  2.1.8.1
 
-SELECT * from master_add_node('citus-worker-0.citus-workers', 5432);
-SELECT * from master_add_node('citus-worker-1.citus-workers', 5432);
+-- SELECT * from master_add_node('citus-worker-0.citus-workers', 5432);
 
 SELECT * from master_get_active_worker_nodes();
 
