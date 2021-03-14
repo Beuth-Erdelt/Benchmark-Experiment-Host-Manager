@@ -36,6 +36,8 @@ import ast
 import copy
 from datetime import datetime, timedelta
 
+import threading
+
 from dbmsbenchmarker import *
 from bexhoma import masterK8s, experiments
 
@@ -74,6 +76,7 @@ class default():
         self.timeLoading = 0
         self.loading_started = False
         self.loading_after_time = None
+        self.loading_finished = False
         self.client = 1
         self.dialect = dialect
         self.num_worker = worker
@@ -970,7 +973,18 @@ class default():
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        print("load_data")
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        commands = self.initscript
+        #print("load_data asynch")
+        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+")")
+        #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
+        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path}
+        thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+        thread.start()
+        #pending = asyncio.all_tasks()
+        #loop.run_until_complete(asyncio.gather(*pending))
+        #print(result)
+        return
         self.timeLoadingStart = default_timer()
         # mark pod
         fullcommand = 'kubectl label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
@@ -978,9 +992,7 @@ class default():
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
         # scripts
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
         shellcommand = 'sh {scriptname}'
-        commands = self.initscript
         for c in commands:
             filename, file_extension = os.path.splitext(c)
             if file_extension.lower() == '.sql':
@@ -1078,3 +1090,77 @@ class default():
         return job_experiment
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
+
+
+
+
+
+# https://stackoverflow.com/questions/37278647/fire-and-forget-python-async-await/53255955#53255955
+
+#import asyncio
+
+#def fire_and_forget(f):
+#    def wrapped(*args, **kwargs):
+#        return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
+#    return wrapped
+
+
+
+#@fire_and_forget
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path):
+    #with open('asynch.test.log','w') as file:
+    #    file.write('started')
+    #path = self.experiment.path
+    #loadData = self.dockertemplate['loadData']
+    def executeCTL(command, pod):
+        fullcommand = 'kubectl exec '+pod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    #pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=experiment)
+    #pod_sut = pods[0]
+    #print("load_data")
+    timeLoadingStart = default_timer()
+    # mark pod
+    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(timeLoadingStart)
+    #print(fullcommand)
+    proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    stdout, stderr = proc.communicate()
+    # scripts
+    #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+    shellcommand = 'sh {scriptname}'
+    #commands = self.initscript
+    for c in commands:
+        filename, file_extension = os.path.splitext(c)
+        if file_extension.lower() == '.sql':
+            stdin, stdout, stderr = executeCTL(loadData.format(scriptname=scriptfolder+c), pod_sut)
+            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            #print(filename_log)
+            if len(stdout) > 0:
+                with open(filename_log,'w') as file:
+                    file.write(stdout)
+            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            #print(filename_log)
+            if len(stderr) > 0:
+                with open(filename_log,'w') as file:
+                    file.write(stderr)
+        elif file_extension.lower() == '.sh':
+            stdin, stdout, stderr = executeCTL(shellcommand.format(scriptname=scriptfolder+c), pod_sut)
+            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            #print(filename_log)
+            if len(stdout) > 0:
+                with open(filename_log,'w') as file:
+                    file.write(stdout)
+            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            #print(filename_log)
+            if len(stderr) > 0:
+                with open(filename_log,'w') as file:
+                    file.write(stderr)
+    timeLoadingEnd = default_timer()
+    timeLoading = timeLoadingEnd - timeLoadingStart
+    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(timeLoadingStart, timeLoadingEnd, timeLoading)
+    #print(fullcommand)
+    proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    stdout, stderr = proc.communicate()

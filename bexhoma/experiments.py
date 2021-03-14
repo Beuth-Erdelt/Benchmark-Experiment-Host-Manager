@@ -356,25 +356,41 @@ class default():
 						config.loading_after_time = now + timedelta(seconds=delay)
 						print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
 						continue
-				app = self.cluster.appname
-				component = 'benchmarker'
-				configuration = ''
-				pods = self.cluster.getJobPods(app, component, self.code, configuration=config.configuration)
-				if len(pods) > 0:
-					# still pods there
-					print("{} has running benchmarks".format(config.configuration))
-					continue
-				else:
-					if len(config.benchmark_list) > 0:
-						# next element in list
-						parallelism = config.benchmark_list.pop(0)
-						client = str(config.client)
-						config.client = config.client+1
-						config.run_benchmarker_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
+				if config.loading_started:
+					pod_labels = self.cluster.getPodsLabels(app=app, component='sut', experiment=self.code, configuration=config.configuration)
+					print(pod_labels)
+					if len(pod_labels) > 0:
+						pod = next(iter(pod_labels.keys()))
+						if 'loaded' in pod_labels[pod] and pod_labels[pod]['loaded'] == 'True':
+							config.loading_finished = True
+						if 'timeLoadingStart' in pod_labels[pod]:
+							config.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+						if 'timeLoadingEnd' in pod_labels[pod]:
+							config.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+						if 'timeLoading' in pod_labels[pod]:
+							config.timeLoading = pod_labels[pod]['timeLoading']
+				if config.loading_finished:
+					app = self.cluster.appname
+					component = 'benchmarker'
+					configuration = ''
+					pods = self.cluster.getJobPods(app, component, self.code, configuration=config.configuration)
+					if len(pods) > 0:
+						# still pods there
+						print("{} has running benchmarks".format(config.configuration))
+						continue
 					else:
-						# no list element left
-						print("{} can be stopped".format(config.configuration))
-						config.stop_sut()
+						if len(config.benchmark_list) > 0:
+							# next element in list
+							parallelism = config.benchmark_list.pop(0)
+							client = str(config.client)
+							config.client = config.client+1
+							config.run_benchmarker_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
+						else:
+							# no list element left
+							print("{} can be stopped".format(config.configuration))
+							config.stop_sut()
+				else:
+					print("{} is loading".format(config.configuration))
 			# all jobs of configuration - benchmarker
 			app = self.cluster.appname
 			component = 'benchmarker'
