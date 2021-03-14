@@ -337,16 +337,16 @@ class setup():
 			time.sleep(intervals)
 			for config in self.configurations:
 				if not config.sut_is_running():
-					print("{} is not running".format(config.docker))
+					print("{} is not running".format(config.configuration))
 					continue
 				if not config.loading_started:
-					print("{} is not loaded".format(config.docker))
+					print("{} is not loaded".format(config.configuration))
 					now = datetime.utcnow()
 					if config.loading_after_time is not None:
 						if now >= config.loading_after_time:
 							config.start_loading()
 						else:
-							print("{} will start loading but not before {}".format(config.docker, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+							print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
 							continue
 					else:
 						delay = 60
@@ -354,15 +354,15 @@ class setup():
 							# config demands other delay
 							delay = config.dockertemplate['delay_prepare']
 						config.loading_after_time = now + timedelta(seconds=delay)
-						print("{} will start loading but not before {}".format(config.docker, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+						print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
 						continue
 				app = self.cluster.appname
 				component = 'benchmarker'
 				configuration = ''
-				pods = self.cluster.getJobPods(app, component, self.code, configuration=config.docker)
+				pods = self.cluster.getJobPods(app, component, self.code, configuration=config.configuration)
 				if len(pods) > 0:
 					# still pods there
-					print("{} has running benchmarks".format(config.docker))
+					print("{} has running benchmarks".format(config.configuration))
 					continue
 				else:
 					if len(config.benchmark_list) > 0:
@@ -370,10 +370,10 @@ class setup():
 						parallelism = config.benchmark_list.pop(0)
 						client = str(config.client)
 						config.client = config.client+1
-						config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client, parallelism=parallelism)
+						config.run_benchmarker_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
 					else:
 						# no list element left
-						print("{} can be stopped".format(config.docker))
+						print("{} can be stopped".format(config.configuration))
 						config.stop_sut()
 			# all jobs of configuration - benchmarker
 			app = self.cluster.appname
@@ -411,13 +411,13 @@ class setup():
 				for config in self.configurations:
 					#if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
 					if config.sut_is_pending():
-						print("{} pending".format(config.docker))
+						print("{} pending".format(config.configuration))
 						do = True
 					if not config.loading_started:
-						print("{} not loaded".format(config.docker))
+						print("{} not loaded".format(config.configuration))
 						do = True
 					if len(config.benchmark_list) > 0:
-						print("{} still benchmarks to run".format(config.docker))
+						print("{} still benchmarks to run".format(config.configuration))
 						do = True
 	def benchmark_list(self, list_clients):
 		for i, parallelism in enumerate(list_clients):
@@ -428,7 +428,7 @@ class setup():
 				if not config.loading_started:
 					config.start_loading()
 				else:
-					config.run_benchmarker_pod(connection=config.docker+'-'+client, configuration=config.docker, client=client, parallelism=parallelism)
+					config.run_benchmarker_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
 			while True:
 				for config in self.configurations:
 					if not config.sut_is_running():

@@ -44,10 +44,13 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, script=None, alias=None, numExperiments=1, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=1, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiment = experiment
         #self.code = code
         self.docker = docker
+        if len(configuration) == 0:
+            configuration = docker
+        self.configuration = configuration
         self.volume = self.experiment.volume
         if docker is not None:
             self.dockertemplate = copy.deepcopy(self.experiment.cluster.dockers[self.docker])
@@ -188,7 +191,7 @@ class default():
     def sut_is_running(self):
         app = self.appname
         component = 'sut'
-        configuration = self.docker
+        configuration = self.configuration
         pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
@@ -199,7 +202,7 @@ class default():
     def sut_is_pending(self):
         app = self.appname
         component = 'sut'
-        configuration = self.docker
+        configuration = self.configuration
         pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
@@ -211,7 +214,7 @@ class default():
         """ Per config: Load Data """
         app = self.appname
         component = 'sut'
-        configuration = self.docker
+        configuration = self.configuration
         pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
@@ -259,7 +262,7 @@ class default():
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
-            configuration = self.docker
+            configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
         if len(client) > 0:
@@ -282,7 +285,7 @@ class default():
         if len(app) == 0:
             app = self.appname
         if len(configuration) == 0:
-            configuration = self.docker
+            configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
         deployment ='deploymenttemplate-bexhoma-prometheus.yml'
@@ -331,7 +334,7 @@ class default():
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
-            configuration = self.docker
+            configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -354,7 +357,7 @@ class default():
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
-            configuration = self.docker
+            configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
         instance = self.get_instance_from_resources()#self.i
@@ -511,7 +514,7 @@ class default():
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
-            configuration = self.docker
+            configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -745,7 +748,7 @@ class default():
         if len(configfolder) == 0:
             configfolder = self.experiment.cluster.configfolder
         if connection is None:
-            connection = self.docker#self.getConnectionName()
+            connection = self.configuration#self.getConnectionName()
         if len(configuration) == 0:
             configuration = connection
         if code is None:
@@ -769,16 +772,16 @@ class default():
         c['parameter'] = {}
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
-        print(c)
-        print(self.experiment.cluster.config['benchmarker']['jarfolder'])
+        #print(c)
+        #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
             for i, j in enumerate(c['JDBC']['jar']):
                 c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
         elif isinstance(c['JDBC']['jar'], str):
             c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
-        print(c)
-        print(self.dockertemplate)
-        print(self.experiment.cluster.dockers[self.docker])
+        #print(c)
+        #print(self.dockertemplate)
+        #print(self.experiment.cluster.dockers[self.docker])
         #if code is not None:
         #    resultfolder += '/'+str(int(code))
         self.benchmark = benchmarker.benchmarker(
@@ -902,20 +905,20 @@ class default():
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
     def copyLog(self):
         print("copyLog")
-        pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
+        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         if len(self.dockertemplate['logfile']):
             cmd = {}
             cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
             stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], self.pod_sut)
-            cmd['save_log'] = 'cp '+self.dockertemplate['logfile']+' /data/'+str(self.code)+'/'+self.docker+'.log'
+            cmd['save_log'] = 'cp '+self.dockertemplate['logfile']+' /data/'+str(self.code)+'/'+self.configuration+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['save_log'], self.pod_sut)
     def prepareInit(self):
         print("prepareInit")
-        pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
+        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         cmd = {}
-        cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.docker
+        cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
         # the inits are in the result folder?
@@ -943,21 +946,21 @@ class default():
                     self.experiment.cluster.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
     def attach_worker(self):
         if self.num_worker > 0:
-            pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
-            name_worker = self.generate_component_name(component='worker', experiment=self.code, configuration=self.docker)
+            pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+            name_worker = self.generate_component_name(component='worker', experiment=self.code, configuration=self.configuration)
             if len(pods) > 0:
                 pod_sut = pods[0]
                 num_worker = 0
                 while num_worker < self.num_worker:
                     num_worker = 0
-                    pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.docker, experiment=self.code)
+                    pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
                     for pod in pods_worker:
                         #stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                         status = self.experiment.cluster.getPodStatus(pod)
                         if status == "Running":
                             num_worker = num_worker+1
-                    print(self.docker, "Workers", num_worker, "of", self.num_worker)
-                pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.docker, experiment=self.code)
+                    print(self.configuration, "Workers", num_worker, "of", self.num_worker)
+                pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
     def load_data(self):
@@ -965,7 +968,7 @@ class default():
             return
         self.loading_started = True
         self.prepareInit()
-        pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
+        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         print("load_data")
         self.timeLoadingStart = default_timer()
@@ -976,24 +979,24 @@ class default():
             filename, file_extension = os.path.splitext(c)
             if file_extension.lower() == '.sql':
                 stdin, stdout, stderr = self.executeCTL(self.dockertemplate['loadData'].format(scriptname=scriptfolder+c), self.pod_sut)
-                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
                 print(filename_log)
                 if len(stdout) > 0:
                     with open(filename_log,'w') as file:
                         file.write(stdout)
-                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
                 print(filename_log)
                 if len(stderr) > 0:
                     with open(filename_log,'w') as file:
                         file.write(stderr)
             elif file_extension.lower() == '.sh':
                 stdin, stdout, stderr = self.executeCTL(shellcommand.format(scriptname=scriptfolder+c), self.pod_sut)
-                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
                 print(filename_log)
                 if len(stdout) > 0:
                     with open(filename_log,'w') as file:
                         file.write(stdout)
-                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.docker, filename=filename, extension=file_extension.lower())
+                filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
                 print(filename_log)
                 if len(stderr) > 0:
                     with open(filename_log,'w') as file:
