@@ -550,7 +550,7 @@ class default():
         return found
     def getMemory(self):
         print("getMemory")
-        command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
+        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
         fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
         mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
