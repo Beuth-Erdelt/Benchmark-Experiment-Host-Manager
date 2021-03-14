@@ -481,7 +481,7 @@ class setup():
 			print(job, success)
 			self.cluster.deleteJob(job)
 		# all pods to these jobs
-		self.cluster.getJobPods(app, component, self.code, configuration)
+		#self.cluster.getJobPods(app, component, self.code, configuration)
 		pods = self.cluster.getJobPods(app, component, self.code, configuration)
 		for p in pods:
 			status = self.cluster.getPodStatus(p)

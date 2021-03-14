@@ -106,12 +106,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: citus-workers
-  labels:
-    app: citus-workers
+  name: bexhoma-workers
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
 spec:
   selector:
-    app: citus-workers
+    {app: bexhoma, component: worker, configuration: default, experiment: default}
   clusterIP: None
   ports:
   - port: 5432
@@ -119,21 +118,20 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: citus-worker
-  #labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
 spec:
   selector:
     matchLabels:
-      app: citus-workers
-  serviceName: citus-workers
-  replicas: 2
+      {app: bexhoma, component: worker, configuration: default, experiment: default}
+  serviceName: bexhoma-workers
+  replicas: 6
   template:
     metadata:
-      labels:
-        app: citus-workers
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       nodeSelector:
-        cpu: epyc-7742
+        #cpu: epyc-7742
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
@@ -151,14 +149,14 @@ spec:
             secretKeyRef:
               name: citus-secrets
               key: password
-        lifecycle:
-          postStart:
-            exec:
-              command: 
-              - /bin/sh
-              - -c
-              - if [ ${POD_IP} ]; then sleep 10 ; echo '${HOSTNAME}.citus-workers' ; fi
-              #- if [ ${POD_IP} ]; then psql --host=bexhoma-service --username=postgres --command="SELECT * from master_add_node('${HOSTNAME}.citus-workers', 5432);" ; fi
+        #lifecycle:
+        #  postStart:
+        #    exec:
+        #      command: 
+        #      - /bin/sh
+        #      - -c
+        #      #- if [ ${POD_IP} ]; then sleep 10 ; echo '${HOSTNAME}.citus-workers' ; fi
+        #      - if [ ${POD_IP} ]; then {sleep 180 ; psql --host=bexhoma-service --port 9091 --username=postgres --command="SELECT * from master_add_node('${HOSTNAME}.citus-workers', 5432);" }& fi
         ports:
         - containerPort: 5432
         env:
@@ -168,8 +166,8 @@ spec:
               fieldPath: status.podIP
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
-        #livenessProbe:
-        #  exec:
-        #    command:
-        #    - ./pg_healthcheck
-        #  initialDelaySeconds: 60
+        livenessProbe:
+          exec:
+            command:
+            - ./pg_healthcheck
+          initialDelaySeconds: 60

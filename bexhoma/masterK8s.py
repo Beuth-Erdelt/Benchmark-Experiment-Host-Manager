@@ -1400,6 +1400,11 @@ class testdesign():
         services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
+        stateful_sets = self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+        for stateful_set in stateful_sets:
+            self.deleteStatefulSet(stateful_set)
+        if component == 'sut':
+            self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def stop_benchmarker(self):
         # all jobs of configuration - benchmarker
         app = self.appname

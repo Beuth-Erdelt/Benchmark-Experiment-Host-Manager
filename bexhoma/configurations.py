@@ -44,7 +44,7 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, script=None, alias=None, numExperiments=1, clients=[1], dialect=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, script=None, alias=None, numExperiments=1, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiment = experiment
         #self.code = code
         self.docker = docker
@@ -73,6 +73,7 @@ class default():
         self.loading_after_time = None
         self.client = 1
         self.dialect = dialect
+        self.num_worker = worker
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -217,6 +218,8 @@ class default():
             status = self.experiment.cluster.getPodStatus(pod_sut)
             if status != "Running":
                 return False
+            if self.num_worker > 0:
+                self.attach_worker()
             #while status != "Running":
             #    print(pod_sut, status)
             #    self.wait(10)
@@ -357,6 +360,7 @@ class default():
         instance = self.get_instance_from_resources()#self.i
         template = "deploymenttemplate-"+self.docker+".yml"
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
@@ -384,25 +388,34 @@ class default():
                 pvc = dep['metadata']['name']
                 #print(pvc)
             if dep['kind'] == 'StatefulSet':
-                continue
-                #dep['metadata']['name'] = name
+                dep['metadata']['name'] = name_worker
                 #self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['component'] = 'worker'
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
+                dep['spec']['replicas'] = self.num_worker
+                dep['spec']['serviceName'] = name_worker
+                dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
+                dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
+                    dep['metadata']['name'] = name_worker
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'worker'
+                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['experiment'] = experiment
+                    dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     continue
-                dep['metadata']['name'] = name
-                self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                dep['metadata']['name'] = name
+                self.service = dep['metadata']['name']
                 #print(pvc)
             if dep['kind'] == 'Deployment':
                 dep['metadata']['name'] = name
@@ -512,6 +525,8 @@ class default():
             self.experiment.cluster.deleteService(service)
         if self.experiment.monitoring_active:
             self.stop_monitoring()
+        if component == 'sut':
+            self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def checkGPUs(self):
         print("checkGPUs")
         cmd = {}
@@ -926,6 +941,25 @@ class default():
                 filename = self.docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.configfolder+'/'+filename):
                     self.experiment.cluster.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
+    def attach_worker(self):
+        if self.num_worker > 0:
+            pods = self.experiment.cluster.getPods(component='sut', configuration=self.docker, experiment=self.code)
+            name_worker = self.generate_component_name(component='worker', experiment=self.code, configuration=self.docker)
+            if len(pods) > 0:
+                pod_sut = pods[0]
+                num_worker = 0
+                while num_worker < self.num_worker:
+                    num_worker = 0
+                    pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.docker, experiment=self.code)
+                    for pod in pods_worker:
+                        #stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+                        status = self.experiment.cluster.getPodStatus(pod)
+                        if status == "Running":
+                            num_worker = num_worker+1
+                    print(self.docker, "Workers", num_worker, "of", self.num_worker)
+                pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.docker, experiment=self.code)
+                for pod in pods_worker:
+                    stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
     def load_data(self):
         if self.loading_started:
             return
