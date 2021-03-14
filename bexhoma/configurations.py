@@ -550,7 +550,7 @@ class default():
         return found
     def getMemory(self):
         print("getMemory")
-        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
+        command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
         fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         result = os.popen(fullcommand).read()
         mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
@@ -638,14 +638,14 @@ class default():
             datadir = self.dockertemplate['datadir']
         else:
             return 0
-        command = "du "+datadir+" | awk 'END{print $1}'"
+        command = "du "+datadir+" | awk 'END{print \\$1}'"
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
         return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df / | awk 'NR == 2{print $3}'"
+        command = "df / | awk 'NR == 2{print \\$3}'"
         fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         disk = os.popen(fullcommand).read()
         # pipe to awk sometimes does not work
