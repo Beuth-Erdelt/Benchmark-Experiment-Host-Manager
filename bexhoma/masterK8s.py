@@ -402,7 +402,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        #print(label)
         try: 
             api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -469,6 +469,27 @@ class testdesign():
                 return ""
             else:
                 return ""
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
+    def getPodsLabels(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        pod_labels = {}
+        try:
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                for item in api_response.items:
+                    pod_labels[item.metadata.name] = item.metadata.labels
+            return pod_labels
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
     def getServices(self, app='', component='', experiment='', configuration=''):
@@ -1157,7 +1178,7 @@ class testdesign():
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
     def getJobs(self, app='', component='', experiment='', configuration='', client=''):
-        print("getJobs")
+        #print("getJobs")
         label = ''
         if len(app)==0:
             app = self.appname
@@ -1181,7 +1202,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
     def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
-        print("getJobStatus")
+        #print("getJobStatus")
         label = ''
         if len(app)==0:
             app = self.appname
@@ -1237,7 +1258,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
     def getJobPods(self, app='', component='', experiment='', configuration='', client=''):
-        print("getJobPods")
+        #print("getJobPods")
         label = ''
         if len(app)==0:
             app = self.appname

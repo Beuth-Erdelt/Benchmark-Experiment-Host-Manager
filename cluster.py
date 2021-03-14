@@ -23,7 +23,7 @@ import urllib3
 import logging
 import argparse
 import time
-
+import pandas as pd
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -53,30 +53,64 @@ if __name__ == '__main__':
 	elif args.mode == 'status':
 		cluster = clusters.kubernetes()
 		app = cluster.appname
-		experiment = ''
-		configuration = ''
-		component = 'sut'
-		deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
-		print("Deployments", deployments)
-		services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-		print("Services", services)
-		pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
-		print("Pods", pods)
-		############
-		component = 'worker'
-		stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-		print("Stateful Sets", stateful_sets)
-		services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-		print("Services", services)
-		pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
-		print("Pods", pods)
-		############
-		component = 'benchmarker'
-		jobs = cluster.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
-		# status per job
-		for job in jobs:
-			success = cluster.getJobStatus(job)
-			print(job, success)
-		# all pods to these jobs
-		pods = cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
-		print("Pods", pods)
+		pod_labels = cluster.getPodsLabels(app=app)
+		#print("Pod Labels", pod_labels)
+		experiments = set()
+		configurations = set()
+		for pod, labels in pod_labels.items():
+			if 'experiment' in labels:
+				experiments.add(labels['experiment'])
+			if 'configuration' in labels:
+				configurations.add(labels['configuration'])
+		#print(experiments)
+		apps = {}
+		for experiment in experiments:
+			logging.debug(experiment)
+			for configuration in configurations:
+				logging.debug(configuration)
+				apps[configuration] = {}
+				component = 'sut'
+				apps[configuration][component] = ''
+				deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("Deployments", deployments)
+				services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("SUT Services", services)
+				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("SUT Pods", pods)
+				for pod in pods:
+					status = cluster.getPodStatus(pod)
+					#print(status)
+					apps[configuration]['sut'] = "{pod} ({status})".format(pod='', status=status)
+				############
+				component = 'worker'
+				apps[configuration][component] = ''
+				stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("Stateful Sets", stateful_sets)
+				services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("Worker Services", services)
+				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("Worker Pods", pods)
+				for pod in pods:
+					status = cluster.getPodStatus(pod)
+					#print(status)
+					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+				############
+				component = 'benchmarker'
+				apps[configuration][component] = ''
+				jobs = cluster.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
+				# status per job
+				for job in jobs:
+					success = cluster.getJobStatus(job)
+					logging.debug(job, success)
+				# all pods to these jobs
+				pods = cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("Benchmarker Pods", pods)
+				for pod in pods:
+					status = cluster.getPodStatus(pod)
+					#print(status)
+					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+		#print(apps)
+		df = pd.DataFrame(apps)
+		df = df.T
+		df.sort_index(inplace=True)
+		print(df)
