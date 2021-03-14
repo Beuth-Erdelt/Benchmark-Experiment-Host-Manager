@@ -1003,6 +1003,10 @@ class default():
                         file.write(stderr)
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
+        fullcommand = 'kubectl label pods '+self.pod_sut+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(self.timeLoadingStart, self.timeLoadingEnd, self.timeLoading)
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
         print("create_job")
         if len(app) == 0:
