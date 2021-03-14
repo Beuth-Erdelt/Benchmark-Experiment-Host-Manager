@@ -71,6 +71,7 @@ if __name__ == '__main__':
 				apps[configuration] = {}
 				component = 'sut'
 				apps[configuration][component] = ''
+				apps[configuration]['loaded'] = ''
 				deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
 				logging.debug("Deployments", deployments)
 				services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -80,7 +81,16 @@ if __name__ == '__main__':
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
-					apps[configuration]['sut'] = "{pod} ({status})".format(pod='', status=status)
+					apps[configuration][component] = "{pod} ({status})".format(pod='', status=status)
+					if pod in pod_labels and 'loaded' in pod_labels[pod]:
+						if pod_labels[pod]['loaded'] == 'True':
+							apps[configuration]['loaded'] += "True"
+						if 'timeLoadingStart' in pod_labels[pod]:
+							apps[configuration]['loaded'] += ' '+pod_labels[pod]['timeLoadingStart']
+						if 'timeLoadingEnd' in pod_labels[pod]:
+							apps[configuration]['loaded'] += '-'+pod_labels[pod]['timeLoadingEnd']
+						if 'timeLoading' in pod_labels[pod]:
+							apps[configuration]['loaded'] += '='+pod_labels[pod]['timeLoading']+'s'
 				############
 				component = 'worker'
 				apps[configuration][component] = ''

@@ -972,6 +972,12 @@ class default():
         self.pod_sut = pods[0]
         print("load_data")
         self.timeLoadingStart = default_timer()
+        # mark pod
+        fullcommand = 'kubectl label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        # scripts
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
         shellcommand = 'sh {scriptname}'
         commands = self.initscript
