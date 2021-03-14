@@ -44,11 +44,11 @@ if __name__ == '__main__':
 	if args.mode == 'stop':
 		cluster = clusters.kubernetes()
 		if args.experiment is None:
-			experiment = experiments.tpch(cluster=cluster, code=cluster.code)
+			experiment = experiments.default(cluster=cluster, code=cluster.code)
 			cluster.stop_sut()
 			cluster.stop_benchmarker()
 		else:
-			experiment = experiments.tpch(cluster=cluster, code=args.experiment)
+			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
 	elif args.mode == 'status':
 		cluster = clusters.kubernetes()
@@ -75,7 +75,8 @@ if __name__ == '__main__':
 		jobs = cluster.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
 		# status per job
 		for job in jobs:
-			success = self.cluster.getJobStatus(job)
+			success = cluster.getJobStatus(job)
 			print(job, success)
 		# all pods to these jobs
 		pods = cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
+		print("Pods", pods)

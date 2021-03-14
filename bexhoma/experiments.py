@@ -48,7 +48,7 @@ class DictToObject(object):
 
 
 
-class setup():
+class default():
 	def __init__(self,
 			cluster,
 			code=None,
@@ -493,7 +493,7 @@ class setup():
 
 
 
-class tpcds(setup):
+class tpcds(default):
 	def __init__(self,
 			cluster,
 			code=None,
@@ -502,7 +502,7 @@ class tpcds(setup):
 			numExperiments = 3,
 			timeout = 7200,
 			detached=False):
-		setup.__init__(self, cluster, code, numExperiments, timeout, detached)
+		default.__init__(self, cluster, code, numExperiments, timeout, detached)
 		self.set_experiment(volume='tpcds')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tpcds')
@@ -518,7 +518,7 @@ class tpcds(setup):
 		self.set_queryfile('queries-tpcds-profiling.config')
 
 
-class tpch(setup):
+class tpch(default):
 	def __init__(self,
 			cluster,
 			code=None,
@@ -527,7 +527,7 @@ class tpch(setup):
 			numExperiments = 3,
 			timeout = 7200,
 			detached=False):
-		setup.__init__(self, cluster, code, numExperiments, timeout, detached)
+		default.__init__(self, cluster, code, numExperiments, timeout, detached)
 		self.set_experiment(volume='tpch')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tpch')
