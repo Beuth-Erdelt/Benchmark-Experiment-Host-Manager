@@ -38,7 +38,7 @@ if __name__ == '__main__':
 	"""
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop'])
+	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status'])
 	parser.add_argument('-e', '--experiment', help='time to wait [s] before execution of the runs of a query', default=None)
 	args = parser.parse_args()
 	if args.mode == 'stop':
@@ -50,3 +50,32 @@ if __name__ == '__main__':
 		else:
 			experiment = experiments.tpch(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
+	elif args.mode == 'status':
+		cluster = clusters.kubernetes()
+		app = cluster.appname
+		experiment = ''
+		configuration = ''
+		component = 'sut'
+		deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+		print("Deployments", deployments)
+		services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+		print("Services", services)
+		pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+		print("Pods", pods)
+		############
+		component = 'worker'
+		stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+		print("Stateful Sets", stateful_sets)
+		services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+		print("Services", services)
+		pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+		print("Pods", pods)
+		############
+		component = 'benchmarker'
+		jobs = cluster.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
+		# status per job
+		for job in jobs:
+			success = self.cluster.getJobStatus(job)
+			print(job, success)
+		# all pods to these jobs
+		pods = cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
