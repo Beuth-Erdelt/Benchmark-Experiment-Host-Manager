@@ -110,7 +110,7 @@ if __name__ == '__main__':
 	config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS D', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS D2', numExperiments=1, clients=[1])
+	config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS D2', numExperiments=1, dialect='OmniSci', clients=[1])
 	config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS E', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='MariaDBCS', alias='DBMS F', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='Exasol', alias='DBMS G', numExperiments=1, clients=[1])
