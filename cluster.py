@@ -30,16 +30,13 @@ logging.basicConfig(level=logging.ERROR)
 
 
 if __name__ == '__main__':
-	description = """Perform TPC-H inspired benchmarks in a Kubernetes cluster.
-	This either profiles the imported data in several DBMS and compares some statistics, or runs the TPC-H queries.
-	Optionally monitoring is actived.
-	User can choose to detach the componenten of the benchmarking system, so that as much as possible is run inside a Kubernetes (K8s) cluster.
-	User can also choose some parameters like number of runs per query and configuration and request some resources.
+	description = """Helps managing running Bexhoma experiments in a Kubernetes cluster.
 	"""
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status'])
 	parser.add_argument('-e', '--experiment', help='time to wait [s] before execution of the runs of a query', default=None)
+	parser.add_argument('-v', '--verbose', help='givres more details about Kubernetes objects', action='store_true')
 	args = parser.parse_args()
 	if args.mode == 'stop':
 		cluster = clusters.kubernetes()
@@ -74,10 +71,11 @@ if __name__ == '__main__':
 				component = 'sut'
 				apps[configuration][component] = ''
 				apps[configuration]['loaded'] = ''
-				deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("Deployments", deployments)
-				services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("SUT Services", services)
+				if args.verbose:
+					deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+					logging.debug("Deployments", deployments)
+					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					logging.debug("SUT Services", services)
 				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
 				logging.debug("SUT Pods", pods)
 				for pod in pods:
@@ -96,10 +94,11 @@ if __name__ == '__main__':
 				############
 				component = 'worker'
 				apps[configuration][component] = ''
-				stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("Stateful Sets", stateful_sets)
-				services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("Worker Services", services)
+				if args.verbose:
+					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+					logging.debug("Stateful Sets", stateful_sets)
+					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					logging.debug("Worker Services", services)
 				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
 				logging.debug("Worker Pods", pods)
 				for pod in pods:
@@ -107,13 +106,28 @@ if __name__ == '__main__':
 					#print(status)
 					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
 				############
+				component = 'monitoring'
+				apps[configuration][component] = ''
+				if args.verbose:
+					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+					logging.debug("Stateful Sets", stateful_sets)
+					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					logging.debug("Monitoring Services", services)
+				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				logging.debug("Monitoring Pods", pods)
+				for pod in pods:
+					status = cluster.getPodStatus(pod)
+					#print(status)
+					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+				############
 				component = 'benchmarker'
 				apps[configuration][component] = ''
-				jobs = cluster.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
-				# status per job
-				for job in jobs:
-					success = cluster.getJobStatus(job)
-					logging.debug(job, success)
+				if args.verbose:
+					jobs = cluster.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
+					# status per job
+					for job in jobs:
+						success = cluster.getJobStatus(job)
+						logging.debug(job, success)
 				# all pods to these jobs
 				pods = cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
 				logging.debug("Benchmarker Pods", pods)
