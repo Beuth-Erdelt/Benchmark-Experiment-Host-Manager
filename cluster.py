@@ -44,6 +44,7 @@ if __name__ == '__main__':
 		if args.experiment is None:
 			experiment = experiments.default(cluster=cluster, code=cluster.code)
 			cluster.stop_sut()
+			cluster.stop_monitoring()
 			cluster.stop_benchmarker()
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
