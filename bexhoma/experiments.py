@@ -370,6 +370,9 @@ class default():
 						if 'timeLoading' in pod_labels[pod]:
 							config.timeLoading = float(pod_labels[pod]['timeLoading'])
 				if config.loading_finished:
+					if config.monitoring_active and not config.monitoring_is_running():
+						print("{} waits for monitoring".format(config.configuration))
+						continue
 					app = self.cluster.appname
 					component = 'benchmarker'
 					configuration = ''

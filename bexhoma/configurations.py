@@ -202,6 +202,17 @@ class default():
             if status == "Running":
                 return True
         return False
+    def monitoring_is_running(self):
+        app = self.appname
+        component = 'monitoring'
+        configuration = self.configuration
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Running":
+                return True
+        return False
     def sut_is_pending(self):
         app = self.appname
         component = 'sut'
@@ -400,6 +411,7 @@ class default():
                 dep['metadata']['labels']['component'] = 'worker'
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['dbms'] = self.docker
                 dep['spec']['replicas'] = self.num_worker
                 dep['spec']['serviceName'] = name_worker
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
@@ -413,12 +425,14 @@ class default():
                     dep['metadata']['labels']['component'] = 'worker'
                     dep['metadata']['labels']['configuration'] = configuration
                     dep['metadata']['labels']['experiment'] = experiment
+                    dep['metadata']['labels']['dbms'] = self.docker
                     dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     continue
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['dbms'] = self.docker
                 dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
@@ -429,6 +443,7 @@ class default():
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['dbms'] = self.docker
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']

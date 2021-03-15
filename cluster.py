@@ -24,6 +24,7 @@ import logging
 import argparse
 import time
 import pandas as pd
+from tabulate import tabulate
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -58,7 +59,7 @@ if __name__ == '__main__':
 				experiments.add(labels['experiment'])
 		#print(experiments)
 		for experiment in experiments:
-			logging.debug(experiment)
+			print(experiment)
 			apps = {}
 			pod_labels = cluster.getPodsLabels(app=app, experiment=experiment)
 			configurations = set()
@@ -73,11 +74,12 @@ if __name__ == '__main__':
 				apps[configuration]['loaded'] = ''
 				if args.verbose:
 					deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
-					logging.debug("Deployments", deployments)
+					print("Deployments", deployments)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-					logging.debug("SUT Services", services)
+					print("SUT Services", services)
 				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("SUT Pods", pods)
+				if args.verbose:
+					print("SUT Pods", pods)
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
@@ -96,11 +98,12 @@ if __name__ == '__main__':
 				apps[configuration][component] = ''
 				if args.verbose:
 					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-					logging.debug("Stateful Sets", stateful_sets)
+					print("Stateful Sets", stateful_sets)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-					logging.debug("Worker Services", services)
+					print("Worker Services", services)
 				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("Worker Pods", pods)
+				if args.verbose:
+					print("Worker Pods", pods)
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
@@ -110,11 +113,12 @@ if __name__ == '__main__':
 				apps[configuration][component] = ''
 				if args.verbose:
 					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-					logging.debug("Stateful Sets", stateful_sets)
+					print("Stateful Sets", stateful_sets)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-					logging.debug("Monitoring Services", services)
+					print("Monitoring Services", services)
 				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("Monitoring Pods", pods)
+				if args.verbose:
+					print("Monitoring Pods", pods)
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
@@ -127,10 +131,11 @@ if __name__ == '__main__':
 					# status per job
 					for job in jobs:
 						success = cluster.getJobStatus(job)
-						logging.debug(job, success)
+						print(job, success)
 				# all pods to these jobs
 				pods = cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
-				logging.debug("Benchmarker Pods", pods)
+				if args.verbose:
+					print("Benchmarker Pods", pods)
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
@@ -140,4 +145,5 @@ if __name__ == '__main__':
 			df = df.T
 			df.sort_index(inplace=True)
 			df.index.name = experiment
-			print(df)
+			#print(df)
+			print(tabulate(df,headers=df.columns, tablefmt="grid", floatfmt=".2f", showindex="always"))

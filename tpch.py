@@ -165,9 +165,8 @@ if __name__ == '__main__':
 			'cpu': '',
 			'gpu': gpu_type
 		})
-	config = configurations.default(experiment=experiment, docker='Citus', configuration='Citus-2w', alias='DBMS M', numExperiments=1, clients=[1], dialect='OmniSci', worker=2)
+	#config = configurations.default(experiment=experiment, docker='Citus', configuration='Citus-2w', alias='DBMS M', numExperiments=1, clients=[1], dialect='OmniSci', worker=2)
 	#config = configurations.default(experiment=experiment, docker='Citus', configuration='Citus-4w', alias='DBMS N', numExperiments=1, clients=[1], dialect='OmniSci', worker=4)
-	#experiment.run(mode="parallel")
 	experiment.start_sut()
 	#experiment.wait(180)
 	#experiment.start_monitoring()
