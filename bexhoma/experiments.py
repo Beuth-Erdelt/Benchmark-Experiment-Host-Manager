@@ -368,7 +368,7 @@ class default():
 						if 'timeLoadingEnd' in pod_labels[pod]:
 							config.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
 						if 'timeLoading' in pod_labels[pod]:
-							config.timeLoading = pod_labels[pod]['timeLoading']
+							config.timeLoading = int(pod_labels[pod]['timeLoading'])
 				if config.loading_finished:
 					app = self.cluster.appname
 					component = 'benchmarker'
