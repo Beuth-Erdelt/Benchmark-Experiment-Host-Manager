@@ -56,16 +56,18 @@ if __name__ == '__main__':
 		pod_labels = cluster.getPodsLabels(app=app)
 		#print("Pod Labels", pod_labels)
 		experiments = set()
-		configurations = set()
 		for pod, labels in pod_labels.items():
 			if 'experiment' in labels:
 				experiments.add(labels['experiment'])
-			if 'configuration' in labels:
-				configurations.add(labels['configuration'])
 		#print(experiments)
-		apps = {}
 		for experiment in experiments:
 			logging.debug(experiment)
+			apps = {}
+			pod_labels = cluster.getPodsLabels(app=app, experiment=experiment)
+			configurations = set()
+			for pod, labels in pod_labels.items():
+				if 'configuration' in labels:
+					configurations.add(labels['configuration'])
 			for configuration in configurations:
 				logging.debug(configuration)
 				apps[configuration] = {}
@@ -119,8 +121,9 @@ if __name__ == '__main__':
 					status = cluster.getPodStatus(pod)
 					#print(status)
 					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
-		#print(apps)
-		df = pd.DataFrame(apps)
-		df = df.T
-		df.sort_index(inplace=True)
-		print(df)
+			#print(apps)
+			df = pd.DataFrame(apps)
+			df = df.T
+			df.sort_index(inplace=True)
+			df.index.name = experiment
+			print(df)
