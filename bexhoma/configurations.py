@@ -1141,7 +1141,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     now = datetime.utcnow()
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
     # mark pod
-    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(now_string)
+    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(timeLoadingStart)
     print(fullcommand)
     proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = proc.communicate()
@@ -1179,7 +1179,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     timeLoading = timeLoadingEnd - timeLoadingStart
     now = datetime.utcnow()
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(now_string, timeLoading)
+    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(timeLoadingEnd, timeLoading)
     print(fullcommand)
     proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = proc.communicate()
