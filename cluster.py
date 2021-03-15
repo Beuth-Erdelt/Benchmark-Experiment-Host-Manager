@@ -59,7 +59,8 @@ if __name__ == '__main__':
 				experiments.add(labels['experiment'])
 		#print(experiments)
 		for experiment in experiments:
-			print(experiment)
+			if args.verbose:
+				print(experiment)
 			apps = {}
 			pod_labels = cluster.getPodsLabels(app=app, experiment=experiment)
 			configurations = set()
@@ -86,13 +87,16 @@ if __name__ == '__main__':
 					apps[configuration][component] = "{pod} ({status})".format(pod='', status=status)
 					if pod in pod_labels and 'loaded' in pod_labels[pod]:
 						if pod_labels[pod]['loaded'] == 'True':
-							apps[configuration]['loaded'] += "True"
-						if 'timeLoadingStart' in pod_labels[pod]:
-							apps[configuration]['loaded'] += ' '+pod_labels[pod]['timeLoadingStart']
-						if 'timeLoadingEnd' in pod_labels[pod]:
-							apps[configuration]['loaded'] += '-'+pod_labels[pod]['timeLoadingEnd']
-						if 'timeLoading' in pod_labels[pod]:
-							apps[configuration]['loaded'] += '='+pod_labels[pod]['timeLoading']+'s'
+							#apps[configuration]['loaded'] += "True"
+							apps[configuration]['loaded'] = pod_labels[pod]['timeLoading']+' [s]'
+						elif 'timeLoadingStart' in pod_labels[pod]:
+							apps[configuration]['loaded'] = 'Started at '+pod_labels[pod]['timeLoadingStart']
+						#if 'timeLoadingStart' in pod_labels[pod]:
+						#	apps[configuration]['loaded'] += ' '+pod_labels[pod]['timeLoadingStart']
+						#if 'timeLoadingEnd' in pod_labels[pod]:
+						#	apps[configuration]['loaded'] += '-'+pod_labels[pod]['timeLoadingEnd']
+						#if 'timeLoading' in pod_labels[pod]:
+						#	apps[configuration]['loaded'] += '='+pod_labels[pod]['timeLoading']+'s'
 				############
 				component = 'worker'
 				apps[configuration][component] = ''
@@ -146,4 +150,5 @@ if __name__ == '__main__':
 			df.sort_index(inplace=True)
 			df.index.name = experiment
 			#print(df)
-			print(tabulate(df,headers=df.columns, tablefmt="grid", floatfmt=".2f", showindex="always"))
+			h = [df.index.names[0]] + list(df.columns)
+			print(tabulate(df,headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
