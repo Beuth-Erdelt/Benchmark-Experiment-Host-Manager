@@ -80,7 +80,7 @@ class default():
         self.client = 1
         self.dialect = dialect
         self.num_worker = worker
-        self.monitoring_active = False
+        self.monitoring_active = experiment.monitoring_active
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
