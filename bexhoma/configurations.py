@@ -749,6 +749,8 @@ class default():
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in config_K8s['monitor']:
+                # instance="bexhoma-sut-mysql-1615839517:9300"
+                # instance=~"bexhoma-sut-mysql-1615839517.*"
                 if len(c['hostsystem']['GPUIDs']) > 0:
                     gpuid = '|'.join(c['hostsystem']['GPUIDs'])
                 else:
