@@ -1008,6 +1008,7 @@ class default():
             self.loading_started = False
             self.loading_finished = False
     def load_data(self):
+        self.check_load_data()
         if self.loading_started:
             return
         self.loading_started = True
