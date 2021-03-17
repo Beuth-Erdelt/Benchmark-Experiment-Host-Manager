@@ -341,25 +341,7 @@ class default():
 					print("{} is not running".format(config.configuration))
 					continue
 				# check if loading is done
-				pod_labels = self.cluster.getPodsLabels(app=app, component='sut', experiment=self.code, configuration=config.configuration)
-				#print(pod_labels)
-				if len(pod_labels) > 0:
-					pod = next(iter(pod_labels.keys()))
-					if 'loaded' in pod_labels[pod]:
-						if pod_labels[pod]['loaded'] == 'True':
-							config.loading_finished = True
-						else:
-							config.loading_finished = False
-					else:
-						config.loading_started = False
-					if 'timeLoadingStart' in pod_labels[pod]:
-						config.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
-					if 'timeLoadingEnd' in pod_labels[pod]:
-						config.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
-					if 'timeLoading' in pod_labels[pod]:
-						config.timeLoading = float(pod_labels[pod]['timeLoading'])
-				else:
-					config.loading_started = False
+				config.check_load_data()
 				# start loading
 				if not config.loading_started:
 					print("{} is not loaded".format(config.configuration))

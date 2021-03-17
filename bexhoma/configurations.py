@@ -984,6 +984,27 @@ class default():
                 pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+    def check_load_data(self):
+        # check if loading is done
+        pod_labels = self.experiment.cluster.getPodsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
+        #print(pod_labels)
+        if len(pod_labels) > 0:
+            pod = next(iter(pod_labels.keys()))
+            if 'loaded' in pod_labels[pod]:
+                if pod_labels[pod]['loaded'] == 'True':
+                    self.loading_finished = True
+                else:
+                    self.loading_finished = False
+            else:
+                self.loading_started = False
+            if 'timeLoadingStart' in pod_labels[pod]:
+                self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+            if 'timeLoadingEnd' in pod_labels[pod]:
+                self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+            if 'timeLoading' in pod_labels[pod]:
+                self.timeLoading = float(pod_labels[pod]['timeLoading'])
+        else:
+            self.loading_started = False
     def load_data(self):
         if self.loading_started:
             return
