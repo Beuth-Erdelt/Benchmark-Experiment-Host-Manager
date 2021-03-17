@@ -652,6 +652,7 @@ class default():
         return int(timestamp_remote)-int(timestamp_local)
     def getDiskSpaceUsedData(self):
         print("getDiskSpaceUsedData")
+        disk = ''
         cmd = {}
         if 'datadir' in self.dockertemplate:
             datadir = self.dockertemplate['datadir']
@@ -665,11 +666,14 @@ class default():
             # Windows
             command = "du "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
-        return int(stdout.replace('\n',''))
+            stdin, disk, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
+        if len(disk) > 0:
+            return int(disk.replace('\n',''))
+        else:
+            return 0
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
-        disk = 0
+        disk = ''
         cmd = {}
         try:
             command = "df / | awk 'NR == 2{print \\$3}'"
