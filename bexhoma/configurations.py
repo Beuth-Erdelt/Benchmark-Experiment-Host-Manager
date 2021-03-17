@@ -670,9 +670,15 @@ class default():
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
-        command = "df / | awk 'NR == 2{print \\$3}'"
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        disk = os.popen(fullcommand).read()
+        try:
+            command = "df / | awk 'NR == 2{print \\$3}'"
+            fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+            disk = os.popen(fullcommand).read()
+        except Exception as e:
+            # Windows
+            command = "df / | awk 'NR == 2{print $3}'"
+            fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+            disk = os.popen(fullcommand).read()
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
         return int(disk.replace('\n',''))
