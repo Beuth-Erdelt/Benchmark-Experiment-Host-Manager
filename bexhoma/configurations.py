@@ -991,6 +991,7 @@ class default():
         if len(pod_labels) > 0:
             pod = next(iter(pod_labels.keys()))
             if 'loaded' in pod_labels[pod]:
+                self.loading_started = True
                 if pod_labels[pod]['loaded'] == 'True':
                     self.loading_finished = True
                 else:
@@ -1005,6 +1006,7 @@ class default():
                 self.timeLoading = float(pod_labels[pod]['timeLoading'])
         else:
             self.loading_started = False
+            self.loading_finished = False
     def load_data(self):
         if self.loading_started:
             return
