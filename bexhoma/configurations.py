@@ -990,6 +990,13 @@ class default():
                 pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+    def check_sut(self):
+        pods = self.experiment.cluster.getPods(app=self.appname, component='sut', configuration=self.configuration, experiment=self.code)
+        if len(pods) > 0:
+            self.pod_sut = pods[0]
+            return True
+        else:
+            return False
     def check_load_data(self):
         # check if loading is done
         pod_labels = self.experiment.cluster.getPodsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
