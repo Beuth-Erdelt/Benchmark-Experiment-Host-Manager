@@ -669,6 +669,7 @@ class default():
         return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
+        disk = 0
         cmd = {}
         try:
             command = "df / | awk 'NR == 2{print \\$3}'"
@@ -681,7 +682,10 @@ class default():
             disk = os.popen(fullcommand).read()
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
-        return int(disk.replace('\n',''))
+        if len(disk) > 0:
+            return int(disk.replace('\n',''))
+        else:
+            return 0
     #def getConnectionName(self):
     #    return self.d+"-"+self.s+"-"+self.i+'-'+config_K8s['clustername']
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
