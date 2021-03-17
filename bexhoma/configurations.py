@@ -652,7 +652,6 @@ class default():
         return int(timestamp_remote)-int(timestamp_local)
     def getDiskSpaceUsedData(self):
         print("getDiskSpaceUsedData")
-        disk = ''
         cmd = {}
         if 'datadir' in self.dockertemplate:
             datadir = self.dockertemplate['datadir']
@@ -662,15 +661,15 @@ class default():
             command = "du "+datadir+" | awk 'END{print \\$1}'"
             cmd['disk_space_used'] = command
             stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            return int(stdout.replace('\n',''))
         except Exception as e:
             # Windows
             command = "du "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
-            stdin, disk, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
-        if len(disk) > 0:
-            return int(disk.replace('\n',''))
-        else:
-            return 0
+            stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            if len(stdout) > 0:
+                return int(stdout.replace('\n',''))
+        return 0
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         disk = ''
@@ -679,17 +678,17 @@ class default():
             command = "df / | awk 'NR == 2{print \\$3}'"
             fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             disk = os.popen(fullcommand).read()
+            return int(disk.replace('\n',''))
         except Exception as e:
             # Windows
             command = "df / | awk 'NR == 2{print $3}'"
             fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             disk = os.popen(fullcommand).read()
+            if len(disk) > 0:
+                return int(disk.replace('\n',''))
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
-        if len(disk) > 0:
-            return int(disk.replace('\n',''))
-        else:
-            return 0
+        return 0
     #def getConnectionName(self):
     #    return self.d+"-"+self.s+"-"+self.i+'-'+config_K8s['clustername']
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
