@@ -331,14 +331,36 @@ class default():
 	def add_benchmark_list(self, list_clients):
 		for config in self.configurations:
 			config.add_benchmark_list(list_clients)
-	def work_benchmark_list(self, intervals=10):
+	def work_benchmark_list(self, intervals=30):
 		do = True
 		while do:
 			time.sleep(intervals)
 			for config in self.configurations:
+				# check if sut is running
 				if not config.sut_is_running():
 					print("{} is not running".format(config.configuration))
 					continue
+				# check if loading is done
+				pod_labels = self.cluster.getPodsLabels(app=app, component='sut', experiment=self.code, configuration=config.configuration)
+				#print(pod_labels)
+				if len(pod_labels) > 0:
+					pod = next(iter(pod_labels.keys()))
+					if 'loaded' in pod_labels[pod]:
+						if pod_labels[pod]['loaded'] == 'True':
+							config.loading_finished = True
+						else:
+							config.loading_finished = False
+					else:
+						config.loading_started = False
+					if 'timeLoadingStart' in pod_labels[pod]:
+						config.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+					if 'timeLoadingEnd' in pod_labels[pod]:
+						config.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+					if 'timeLoading' in pod_labels[pod]:
+						config.timeLoading = float(pod_labels[pod]['timeLoading'])
+				else:
+					config.loading_started = False
+				# start loading
 				if not config.loading_started:
 					print("{} is not loaded".format(config.configuration))
 					now = datetime.utcnow()
@@ -356,19 +378,7 @@ class default():
 						config.loading_after_time = now + timedelta(seconds=delay)
 						print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
 						continue
-				if config.loading_started:
-					pod_labels = self.cluster.getPodsLabels(app=app, component='sut', experiment=self.code, configuration=config.configuration)
-					print(pod_labels)
-					if len(pod_labels) > 0:
-						pod = next(iter(pod_labels.keys()))
-						if 'loaded' in pod_labels[pod] and pod_labels[pod]['loaded'] == 'True':
-							config.loading_finished = True
-						if 'timeLoadingStart' in pod_labels[pod]:
-							config.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
-						if 'timeLoadingEnd' in pod_labels[pod]:
-							config.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
-						if 'timeLoading' in pod_labels[pod]:
-							config.timeLoading = float(pod_labels[pod]['timeLoading'])
+				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
 					if config.monitoring_active and not config.monitoring_is_running():
 						print("{} waits for monitoring".format(config.configuration))
