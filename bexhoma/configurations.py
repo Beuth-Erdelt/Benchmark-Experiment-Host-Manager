@@ -908,6 +908,19 @@ class default():
         self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
         self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
+        # get monitoring for loading
+        if self.monitoring_active:
+            cmd = {}
+            #cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
+            #fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
+            #print(fullcommand)
+            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #stdout, stderr = proc.communicate()
+            cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+            fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
+            print(fullcommand)
+            proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            stdout, stderr = proc.communicate()
         """
         self.wait(10)
         jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
