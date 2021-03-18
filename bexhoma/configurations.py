@@ -917,7 +917,7 @@ class default():
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #stdout, stderr = proc.communicate()
             cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
-            fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
+            fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['fetch_loading_metrics'].replace('"','\\"')+'"'
             print(fullcommand)
             proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout, stderr = proc.communicate()
