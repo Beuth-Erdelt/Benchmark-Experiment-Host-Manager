@@ -25,6 +25,7 @@ import argparse
 import time
 import pandas as pd
 from tabulate import tabulate
+from datetime import datetime
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -91,7 +92,10 @@ if __name__ == '__main__':
 							#apps[configuration]['loaded'] += "True"
 							apps[configuration]['loaded'] = pod_labels[pod]['timeLoading']+' [s]'
 						elif 'timeLoadingStart' in pod_labels[pod]:
-							apps[configuration]['loaded'] = 'Started at '+pod_labels[pod]['timeLoadingStart']
+							#apps[configuration]['loaded'] = 'Started at '+pod_labels[pod]['timeLoadingStart']
+							dt_object = datetime.fromtimestamp(int(pod_labels[pod]['timeLoadingStart']))
+							t = dt_object.strftime('%Y-%m-%d %H:%M:%S')
+							apps[configuration]['loaded'] = 'Started at '+t
 						#if 'timeLoadingStart' in pod_labels[pod]:
 						#	apps[configuration]['loaded'] += ' '+pod_labels[pod]['timeLoadingStart']
 						#if 'timeLoadingEnd' in pod_labels[pod]:
