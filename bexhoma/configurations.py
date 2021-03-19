@@ -921,6 +921,7 @@ class default():
             print(fullcommand)
             proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout, stderr = proc.communicate()
+            print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         """
         self.wait(10)
         jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
