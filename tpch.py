@@ -40,7 +40,7 @@ if __name__ == '__main__':
 	parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
 	parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF)', default=1)
 	parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
-	parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
+	parser.add_argument('-rc', '--request-cpu', help='request cpus', default='2')
 	parser.add_argument('-rr', '--request-ram', help='request ram', default='64Gi')
 	parser.add_argument('-rg', '--request-gpu', help='request number of gpus', default=1)
 	parser.add_argument('-rct', '--request-cpu-type', help='request node having node label cpu=', default='')
