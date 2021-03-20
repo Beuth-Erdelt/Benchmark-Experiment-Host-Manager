@@ -24,7 +24,7 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - {name: dockerhub}
-      nodeSelector: {cpu: epyc-7542}
+      nodeSelector: 
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
