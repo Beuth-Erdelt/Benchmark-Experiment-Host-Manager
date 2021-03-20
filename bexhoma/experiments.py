@@ -292,7 +292,7 @@ class default():
 		directory = os.fsencode(self.path)
 		for file in os.listdir(directory):
 			 filename = os.fsdecode(file)
-			 if filename.endswith(".log") or filename.endswith(".yml"): 
+			 if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
 				 self.cluster.kubectl('kubectl cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
 		cmd = {}
 		cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
