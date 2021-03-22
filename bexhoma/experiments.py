@@ -311,8 +311,16 @@ class default():
 		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		stdout, stderr = proc.communicate()
 	def stop_monitoring(self):
-		for config in self.configurations:
-			config.stop_monitoring()
+		if len(self.configurations) > 0:
+			for config in self.configurations:
+				config.stop_monitoring()
+		else:
+			app = self.cluster.appname
+			component = 'monitoring'
+			configuration = ''
+			deployments = self.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+			for deployment in deployments:
+				self.cluster.deleteDeployment(deployment)
 	def start_monitoring(self):
 		for config in self.configurations:
 			config.start_monitoring()
@@ -327,9 +335,9 @@ class default():
 			app = self.cluster.appname
 			component = 'sut'
 			configuration = ''
-			pods = self.cluster.getPods(app=app, component=component, experiment=self.code, configuration=configuration)
-			for pod in pods:
-				self.cluster.deletePod(pod)
+			deployments = self.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+			for deployment in deployments:
+				self.cluster.deleteDeployment(deployment)
 	def start_loading(self):
 		for config in self.configurations:
 			config.start_loading()
