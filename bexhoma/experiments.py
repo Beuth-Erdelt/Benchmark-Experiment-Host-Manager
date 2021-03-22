@@ -320,8 +320,14 @@ class default():
 		for config in self.configurations:
 			config.start_sut()
 	def stop_sut(self):
-		for config in self.configurations:
-			config.stop_sut()
+		if len(self.configurations) > 0:
+			for config in self.configurations:
+				config.stop_sut()
+		else:
+			app = self.cluster.appname
+			component = 'sut'
+			configuration = ''
+			pods = self.cluster.getPods(app=app, component=component, experiment=self.code, configuration=configuration)
 	def start_loading(self):
 		for config in self.configurations:
 			config.start_loading()
