@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="bexhoma",
-    version="0.4.4",
+    version="0.5.0",
     author="Patrick Erdelt",
     author_email="perdelt@beuth-hochschule.de",
     description="This Python tools helps managing DBMS Benchmarking experiments in a HPC cluster environment. It supports AWS and Kubernetes (K8s).",

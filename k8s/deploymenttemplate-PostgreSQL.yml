@@ -1,32 +1,41 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {app: bexhoma}
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   name: bexhoma-service
 spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  selector: {app: bexhoma}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels: {app: bexhoma}
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   name: bexhoma-deployment-postgres
 spec:
   replicas: 1
   selector:
-    matchLabels: {app: bexhoma}
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   template:
     metadata:
-      labels: {app: bexhoma}
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
     spec:
       automountServiceAccountToken: false
-      nodeSelector: {cpu: epyc-7542}
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - name: dbms
-        image: postgres:11.4
+        #image: postgres:11.4
+        image: postgres:13.1
+        env:
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
         ports:
         - {containerPort: 5432}
         resources:
@@ -36,7 +45,8 @@ spec:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /dev/shm, name: dshm}
       - name: cadvisor
-        image: k8s.gcr.io/cadvisor:v0.30.2
+        #image: k8s.gcr.io/cadvisor:v0.30.2
+        image: gcr.io/cadvisor/cadvisor:v0.36.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
         ports:
         - containerPort: 9300
@@ -65,7 +75,7 @@ spec:
           readOnly: true
       volumes:
       - name: benchmark-data-volume
-        persistentVolumeClaim: {claimName: vol-benchmarking}
+        persistentVolumeClaim: {claimName: bexhoma-data}
       - hostPath:
           path: /
         name: rootfs

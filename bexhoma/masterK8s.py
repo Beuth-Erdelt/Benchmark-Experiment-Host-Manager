@@ -74,22 +74,24 @@ class testdesign():
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
+    def set_code(self, code):
+        return self.setCode(code)
+    # can be overwritten by experiment
     def set_queryfile(self, queryfile):
         self.queryfile = queryfile
     def set_configfolder(self, configfolder):
         self.configfolder = configfolder
     def set_workload(self, **kwargs):
         self.workload = kwargs
-    def set_connectionmanagement(self, **kwargs):
-        self.connectionmanagement = kwargs
     def set_querymanagement(self, **kwargs):
         self.querymanagement = kwargs
+    # can be overwritten by experiment and configuration
+    def set_connectionmanagement(self, **kwargs):
+        self.connectionmanagement = kwargs
     def set_resources(self, **kwargs):
         self.resources = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
-    def set_code(self, code):
-        return self.setCode(code)
     def setCode(self, code):
         self.code = code
         if self.code is not None:
@@ -102,6 +104,7 @@ class testdesign():
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
     def logExperiment(self, experiment):
+        # TODO: update to new structure
         experiment['clusterconfig'] = self.clusterconfig
         experiment['configfolder'] = self.configfolder
         experiment['yamlfolder'] = self.yamlfolder
@@ -114,13 +117,16 @@ class testdesign():
             with open(filename, 'w') as f:
                 f.write(str(self.experiments))
     def setExperiments(self, instances=None, volumes=None, dockers=None):
+        """ Read experiment details from cluster config"""
         self.instance = None
         self.instances = instances
         self.volumes = volumes
         self.dockers = dockers
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+        # Will be deprecated
         return self.setExperiment(instance, volume, docker, script)
     def setExperiment(self, instance=None, volume=None, docker=None, script=None):
+        # Will be deprecated
         self.bChangeInstance = True
         if instance is not None:
             self.i = instance
@@ -134,6 +140,7 @@ class testdesign():
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
     def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        """ Per config: Startup SUT and Monitoring """
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
         self.createDeployment()
@@ -157,6 +164,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        """ Per config: Load Data """
         self.setExperiment(instance, volume, docker, script)
         self.getInfo(component='sut')
         status = self.getPodStatus(self.activepod)
@@ -394,7 +402,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        #print(label)
         try: 
             api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -416,7 +424,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        logging.debug('getPods'+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
             #pprint(api_response)
@@ -426,6 +434,28 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+    def getStatefulSets(self, app='', component='', experiment='', configuration=''):
+        # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        logging.debug('getStatefulSets'+label)
+        try: 
+            api_response = self.v1apps.list_namespaced_stateful_set(self.namespace, label_selector=label)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling AppsV1Api->list_namespaced_stateful_set: %s\n" % e)
     def getPodStatus(self, pod, appname=''):
         try:
             if len(appname) == 0:
@@ -433,9 +463,33 @@ class testdesign():
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
-                return api_response.items[0].status.phase
+                for item in api_response.items:
+                    if item.metadata.name == pod:
+                        return item.status.phase
+                return ""
             else:
                 return ""
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
+    def getPodsLabels(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        pod_labels = {}
+        try:
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                for item in api_response.items:
+                    pod_labels[item.metadata.name] = item.metadata.labels
+            return pod_labels
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
     def getServices(self, app='', component='', experiment='', configuration=''):
@@ -449,7 +503,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        logging.debug('getServices'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -470,7 +524,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        print(label)
+        logging.debug('getPorts'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -490,6 +544,14 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+    def deleteStatefulSet(self, name):
+        print("deleteStatefulSet")
+        body = kubernetes.client.V1DeleteOptions()
+        try: 
+            api_response = self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
+            #pprint(api_response)
+        except ApiException as e:
+            print("Exception when calling AppsV1Api->delete_namespaced_stateful_set: %s\n" % e)
     def deletePod(self, name):
         print("deletePod")
         body = kubernetes.client.V1DeleteOptions()
@@ -543,12 +605,15 @@ class testdesign():
         print("stopPortforwarding")
         children = [p for p in psutil.process_iter(attrs=['pid', 'name']) if 'kubectl' in p.info['name']]
         for child in children:
-            print('Child pid is {} {}'.format(child.pid, child.name))
-            print(child.cmdline())
-            command = child.cmdline()
-            if len(command) > 0 and command[1] == 'port-forward':
-                print("FOUND")
-                child.terminate()
+            try:
+                print('Child pid is {} {}'.format(child.pid, child.name))
+                command = child.cmdline()
+                print(command)
+                if len(command) > 0 and command[1] == 'port-forward':
+                    print("FOUND")
+                    child.terminate()
+            except Exception as e:
+                print(e)
     def getInfo(self, app='', component='', experiment='', configuration=''):
         print("getPods", app, component, experiment, configuration)
         self.pods = self.getPods(app, component, experiment, configuration)
@@ -579,24 +644,6 @@ class testdesign():
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-    def checkGPUs(self):
-        print("checkGPUs")
-        cmd = {}
-        cmd['check_gpus'] = 'nvidia-smi'
-        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'])
-    def checkDBMS(self, ip, port):
-        found = False
-        s = socket.socket()
-        s.settimeout(10)
-        try:
-            s.connect((ip, port))
-            found = True
-            print("Somebody is answering at %s:%d" % (ip, port))
-        except Exception as e:
-            print("Nobody is answering yet at %s:%d" % (ip, port))
-        finally:
-            s.close()
-        return found
     def prepareInit(self):
         print("prepareInit")
         cmd = {}
@@ -641,6 +688,24 @@ class testdesign():
                 self.executeCTL(shellcommand.format(scriptname=scriptfolder+c))
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
+    def checkGPUs(self):
+        print("checkGPUs")
+        cmd = {}
+        cmd['check_gpus'] = 'nvidia-smi'
+        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'])
+    def checkDBMS(self, ip, port):
+        found = False
+        s = socket.socket()
+        s.settimeout(10)
+        try:
+            s.connect((ip, port))
+            found = True
+            print("Somebody is answering at %s:%d" % (ip, port))
+        except Exception as e:
+            print("Nobody is answering yet at %s:%d" % (ip, port))
+        finally:
+            s.close()
+        return found
     def getMemory(self):
         print("getMemory")
         command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
@@ -989,6 +1054,8 @@ class testdesign():
             configuration = connection
         if code is None:
             code = self.code
+        if not isinstance(client, str):
+            client = str(client)
         self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
@@ -1043,6 +1110,10 @@ class testdesign():
             filename = self.benchmark.path+'/queries.config'
             with open(filename, 'w') as f:
                 f.write(str(self.benchmark.queryconfig))
+        # generate all parameters and store in protocol
+        self.benchmark.reporterStore.readProtocol()
+        self.benchmark.generateAllParameters()
+        self.benchmark.reporterStore.writeProtocol()
         # store experiment
         experiment = {}
         experiment['delay'] = 0
@@ -1081,6 +1152,7 @@ class testdesign():
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
+        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
         self.wait(10)
         jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
         jobname = jobs[0]
@@ -1099,14 +1171,14 @@ class testdesign():
         self.wait(60)
         # prepare reporting
         #self.copy_results()
-        #self.copyInits()
-        #self.copyLog()
-        #self.downloadLog()
+        self.copyInits()
+        self.copyLog()
+        self.downloadLog()
         #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
-    def getJobs(self, app='', component='', experiment='', configuration='', client='1'):
-        print("getJobs")
+    def getJobs(self, app='', component='', experiment='', configuration='', client=''):
+        #print("getJobs")
         label = ''
         if len(app)==0:
             app = self.appname
@@ -1119,7 +1191,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        print(label)
+        logging.debug('getJobs'+label)
         try: 
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
@@ -1129,8 +1201,8 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
-    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
-        print("getJobStatus")
+    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
+        #print("getJobStatus")
         label = ''
         if len(app)==0:
             app = self.appname
@@ -1143,7 +1215,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        print(label)
+        logging.debug('getJobStatus'+label)
         try: 
             if len(jobname) == 0:
                 jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
@@ -1157,7 +1229,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
             return 1
-    def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+    def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("deleteJob")
         try: 
             if len(jobname) == 0:
@@ -1170,7 +1242,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             return False
-    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client='1'):
+    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("deleteJobPod")
         body = kubernetes.client.V1DeleteOptions()
         try: 
@@ -1185,8 +1257,8 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
-    def getJobPods(self, app='', component='', experiment='', configuration='', client='1'):
-        print("getJobPods")
+    def getJobPods(self, app='', component='', experiment='', configuration='', client=''):
+        #print("getJobPods")
         label = ''
         if len(app)==0:
             app = self.appname
@@ -1199,7 +1271,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        print(label)
+        logging.debug('getJobPods'+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
@@ -1218,8 +1290,8 @@ class testdesign():
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
-        job_experiment = self.path+'/job-dbmsbenchmarker-{code}-{client}.yml'.format(code=code, client=client)
-        with open(self.yamlfolder+"job-dbmsbenchmarker.yml") as stream:
+        job_experiment = self.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        with open(self.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
             try:
                 result=yaml.safe_load_all(stream)
                 result = [data for data in result]
@@ -1349,6 +1421,30 @@ class testdesign():
         services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
+        stateful_sets = self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+        for stateful_set in stateful_sets:
+            self.deleteStatefulSet(stateful_set)
+        if component == 'sut':
+            self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
+    def stop_benchmarker(self):
+        # all jobs of configuration - benchmarker
+        app = self.appname
+        component = 'benchmarker'
+        experiment = ''
+        configuration = ''
+        jobs = self.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.getJobStatus(job)
+            print(job, success)
+            self.deleteJob(job)
+        # all pods to these jobs
+        self.getJobPods(app, component, experiment, configuration)
+        pods = self.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.getPodStatus(p)
+            print(p, status)
+            self.deletePod(p)
     def pod_log(self, pod, container=''):
         if len(container) > 0:
             fullcommand = 'kubectl logs '+pod+' --container='+container
@@ -1357,12 +1453,18 @@ class testdesign():
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
     def evaluate_results(self, pod_dashboard=''):
         if len(pod_dashboard) == 0:
             pods = self.getPods(component='dashboard')
             pod_dashboard = pods[0]
+        # copy logs and yamls to result folder
+        directory = os.fsencode(self.path)
+        for file in os.listdir(directory):
+             filename = os.fsdecode(file)
+             if filename.endswith(".log") or filename.endswith(".yml"): 
+                 self.kubectl('kubectl cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
         cmd = {}
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
         fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
@@ -1381,46 +1483,6 @@ class testdesign():
         stdout, stderr = proc.communicate()
 
 
-class cluster(testdesign):
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
-        self.code = code
-        if self.code is None:
-            self.code = str(round(time.time()))
-        # list of configurations (connections, docker)
-        # per configuration: sut+service
-        # per configuration: monitoring+service
-        # per configuration: list of benchmarker
-        testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
-        self.path = self.resultfolder+"/"+self.code
-        if not path.isdir(self.path):
-            makedirs(self.path)
 
-class configuration():
-    def __init__(self, cluster, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
-        self.cluster = cluster
-        self.code = code
-        if self.code is None:
-            self.code = str(round(time.time()))
-        self.appname = cluster.appname
-        # per configuration: sut+service
-        # per configuration: monitoring+service
-        # per configuration: list of benchmarker
-    def getInfo(self, app='', component='', experiment='', configuration=''):
-        if len(app) == 0:
-            app = self.appname
-        if len(experiment) == 0:
-            experiment = self.code
-        print("getPods", app, component, experiment, configuration)
-        self.pods = self.getPods(app, component, experiment, configuration)
-        print(self.pods)
-        if len(self.pods) > 0:
-            self.activepod = self.pods[0]
-        else:
-            self.activepod = None
-        self.deployments = self.getDeployments(app, component, experiment, configuration)
-        print(self.deployments)
-        self.services = self.getServices(app, component, experiment, configuration)
-        print(self.services)
-        self.pvcs = self.getPVCs()
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client

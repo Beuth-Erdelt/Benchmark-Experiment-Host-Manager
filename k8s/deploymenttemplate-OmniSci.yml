@@ -1,35 +1,41 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {app: bexhoma}
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   name: bexhoma-service
 spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 6274}
   - {port: 9400, protocol: TCP, name: port-dcgm, targetPort: 9400}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  selector: {app: bexhoma}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels: {app: bexhoma}
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   name: bexhoma-deployment-omnisci
 spec:
   replicas: 1
   selector:
-    matchLabels: {app: bexhoma}
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   template:
     metadata:
-      labels: {app: bexhoma}
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
     spec:
       automountServiceAccountToken: false
-      nodeSelector: {gpu: k80}
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - env:
         - {name: CUDA_CACHE_DISABLE, value: '0'}
         - {name: CUDA_CACHE_MAXSIZE, value: '4294967296'}
-        image: omnisci/core-os-cuda:v5.4.0
+        #image: omnisci/core-os-cuda:v5.4.0
+        image: perdelt/dbms:omnisci
         name: dbms
         ports:
         - {containerPort: 6274}
@@ -55,7 +61,8 @@ spec:
           readOnly: true
           mountPath: /var/lib/kubelet/pod-resources
       - name: cadvisor
-        image: k8s.gcr.io/cadvisor:v0.30.2
+        #image: k8s.gcr.io/cadvisor:v0.30.2
+        image: gcr.io/cadvisor/cadvisor:v0.36.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
         ports:
         - containerPort: 9300
@@ -84,7 +91,7 @@ spec:
           readOnly: true
       volumes:
       - name: benchmark-data-volume
-        persistentVolumeClaim: {claimName: vol-benchmarking}
+        persistentVolumeClaim: {claimName: bexhoma-data}
       - hostPath:
           path: /
         name: rootfs

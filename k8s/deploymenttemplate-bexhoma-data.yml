@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma}
+  name: bexhoma-data
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma}
+  template:
+    metadata:
+      labels: {app: bexhoma}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: private-registry-auth
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      containers:
+      - env:
+        image: registry.datexis.com/perdelt/bexhoma:dashboard
+        name: data
+        volumeMounts:
+        - {mountPath: /dataold, name: benchmark-data-volume}
+        - {mountPath: /datanew, name: bexhoma-data}
+        - {mountPath: /results, name: bexhoma-results}
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: data-benchmarking}
+      - name: bexhoma-data
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: bexhoma-results
+        persistentVolumeClaim:
+          claimName: bexhoma-results

@@ -1,0 +1,98 @@
+ALTER SYSTEM ALTER CONFIGURATION ('indexserver.ini', 'system') set ('import_export', 'enable_csv_import_path_filter') = 'false' with reconfigure;
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/region.tbl'
+INTO TPCH.REGION
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF10/error_log.txt'
+BATCH 1000;
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/nation.tbl'
+INTO TPCH.NATION
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF10/error_log.txt'
+BATCH 1000;
+
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/lineitem.tbl'
+INTO TPCH.LINEITEM
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF10/error_log.txt'
+BATCH 1000;
+
+
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/customer.tbl'
+INTO TPCH.CUSTOMER
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF10/error_log.txt'
+BATCH 1000;
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/part.tbl'
+INTO TPCH.PART
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF10/error_log.txt'
+BATCH 1000;
+
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/supplier.tbl'
+INTO TPCH.SUPPLIER
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF10/error_log.txt'
+BATCH 1000;
+
+
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/partsupp.tbl'
+INTO TPCH.PARTSUPP
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF10/error_log.txt'
+BATCH 1000;
+
+
+
+
+
+IMPORT FROM CSV FILE '/data/tpch/SF10/orders.tbl'
+INTO TPCH.ORDERS
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+ERROR LOG '/data/tpch/SF1/error_log.txt'
+BATCH 1000;
