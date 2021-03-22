@@ -328,6 +328,8 @@ class default():
 			component = 'sut'
 			configuration = ''
 			pods = self.cluster.getPods(app=app, component=component, experiment=self.code, configuration=configuration)
+			for pod in pods:
+				self.cluster.deletePod(pod)
 	def start_loading(self):
 		for config in self.configurations:
 			config.start_loading()
