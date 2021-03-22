@@ -318,7 +318,7 @@ class default():
 			app = self.cluster.appname
 			component = 'monitoring'
 			configuration = ''
-			deployments = self.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+			deployments = self.cluster.getDeployments(app=app, component=component, experiment=self.code, configuration=configuration)
 			for deployment in deployments:
 				self.cluster.deleteDeployment(deployment)
 	def start_monitoring(self):
@@ -335,7 +335,7 @@ class default():
 			app = self.cluster.appname
 			component = 'sut'
 			configuration = ''
-			deployments = self.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+			deployments = self.cluster.getDeployments(app=app, component=component, experiment=self.code, configuration=configuration)
 			for deployment in deployments:
 				self.cluster.deleteDeployment(deployment)
 	def start_loading(self):
