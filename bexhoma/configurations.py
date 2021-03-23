@@ -1056,8 +1056,11 @@ class default():
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
-        commands = self.initscript
+        commands = self.initscript.copy()
         #print("load_data asynch")
+        if len(self.ddl_parameters):
+            for i,c in enumerate(commands):
+                commands[i] = '/filled_'+c
         print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
         thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path}
@@ -1078,7 +1081,11 @@ class default():
         for c in commands:
             filename, file_extension = os.path.splitext(c)
             if file_extension.lower() == '.sql':
-                stdin, stdout, stderr = self.executeCTL(self.dockertemplate['loadData'].format(scriptname=scriptfolder+c), self.pod_sut)
+                if len(self.ddl_parameters):
+                    filename_script = scriptfolder+'/filled_'+c
+                else:
+                    filename_script = scriptfolder+c
+                stdin, stdout, stderr = self.executeCTL(self.dockertemplate['loadData'].format(scriptname=filename_script), self.pod_sut)
                 filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
                 print(filename_log)
                 if len(stdout) > 0:
@@ -1090,7 +1097,7 @@ class default():
                     with open(filename_log,'w') as file:
                         file.write(stderr)
             elif file_extension.lower() == '.sh':
-                stdin, stdout, stderr = self.executeCTL(shellcommand.format(scriptname=scriptfolder+c), self.pod_sut)
+                stdin, stdout, stderr = self.executeCTL(shellcommand.format(scriptname=filename_script), self.pod_sut)
                 filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
                 print(filename_log)
                 if len(stdout) > 0:
