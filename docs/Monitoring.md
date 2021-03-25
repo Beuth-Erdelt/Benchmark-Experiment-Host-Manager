@@ -49,7 +49,7 @@ We insert information about
 * metrics definitions
 
 into the cluster configuration.
-This is handed over to the [DBMS configuration](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#connection-file) of the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Concept.md#monitoring-hardware-metrics).
+This is handed over to the [DBMS configuration](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#connection-file) of the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Concept.md#monitoring-hardware-metrics) in a [monitoring section](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#monitoring).
 
 ### Example
 
@@ -64,6 +64,7 @@ The details of the metrics correspond to the YAML configuration of the [deployme
     'grafanaurl': 'http://localhost:3000/api/datasources/proxy/1/api/v1/',
     'grafanaextend': 20,
     'grafanashift': 0,
+    'prometheus_url': 'http://localhost:9090/api/v1/',
     'metrics': {
         'total_cpu_memory': {
             'query': 'container_memory_working_set_bytes{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}',
