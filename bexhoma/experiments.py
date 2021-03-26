@@ -77,6 +77,7 @@ class default():
 		self.appname = self.cluster.appname
 		self.resources = {}
 		self.ddl_parameters = {}
+		self.storage = {}
 		#self.connectionmanagement = {}
 		#self.connectionmanagement['numProcesses'] = None
 		#self.connectionmanagement['runsPerConnection'] = None
@@ -130,6 +131,8 @@ class default():
 		self.resources = kwargs
 	def set_ddl_parameters(self, **kwargs):
 		self.ddl_parameters = kwargs
+	def set_storage(self, **kwargs):
+		self.storage = kwargs
 	def add_configuration(self, configuration):
 		self.configurations.append(configuration)
 	def __set_queryfile(self, queryfile):

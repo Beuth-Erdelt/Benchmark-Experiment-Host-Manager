@@ -72,6 +72,7 @@ class default():
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
+        self.set_storage(**self.experiment.storage)
         self.experiment.add_configuration(self)
         self.timeLoading = 0
         self.loading_started = False
@@ -115,6 +116,8 @@ class default():
         self.connectionmanagement = kwargs
     def set_resources(self, **kwargs):
         self.resources = kwargs
+    def set_storage(self, **kwargs):
+        self.storage = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
@@ -368,7 +371,15 @@ class default():
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
     def start_sut(self, app='', component='sut', experiment='', configuration=''):
-        use_storage = True
+        if len(self.storage) > 0:
+            use_storage = True
+            if 'storageClassName' in self.storage:
+                storageClassName = self.storage['storageClassName']
+            else:
+                storageClassName = ''
+        else:
+            use_storage = False
+        print(self.storage)
         storage_label = 'tpc-ds-1'
         print("generateDeployment")
         if len(app)==0:
@@ -420,6 +431,8 @@ class default():
                     dep['metadata']['labels']['experiment'] = storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['loaded'] = "False"
+                    if len(storageClassName) > 0:
+                        dep['spec']['storageClassName'] = storageClassName
                     print(dep['spec']['accessModes']) # list
                     print(dep['spec']['storageClassName'])
                     print(dep['spec']['resources']['requests']['storage'])
