@@ -368,6 +368,8 @@ class default():
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
     def start_sut(self, app='', component='sut', experiment='', configuration=''):
+        use_storage = True
+        storage_label = 'tpc-ds-1'
         print("generateDeployment")
         if len(app)==0:
             app = self.appname
@@ -379,6 +381,7 @@ class default():
         template = "deploymenttemplate-"+self.docker+".yml"
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
+        name_pvc = self.generate_component_name(app=app, component='storage', experiment=storage_label, configuration=configuration)
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
@@ -401,10 +404,43 @@ class default():
                 #print(result)
             except yaml.YAMLError as exc:
                 print(exc)
-        for dep in result:
+        for key in reversed(range(len(result))):#enumerate(result):
+            dep = result[key]
             if dep['kind'] == 'PersistentVolumeClaim':
                 pvc = dep['metadata']['name']
-                #print(pvc)
+                print("PVC", pvc, name_pvc)
+                if not use_storage:
+                    del result[key]
+                else:
+                    dep['metadata']['name'] = name_pvc
+                    #self.service = dep['metadata']['name']
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'storage'
+                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['experiment'] = storage_label
+                    dep['metadata']['labels']['dbms'] = self.docker
+                    dep['metadata']['labels']['loaded'] = "False"
+                    print(dep['spec']['accessModes']) # list
+                    print(dep['spec']['storageClassName'])
+                    print(dep['spec']['resources']['requests']['storage'])
+                    pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=storage_label, configuration=configuration)
+                    print(pvcs)
+                    if len(pvcs) > 0:
+                        print("Storage exists")
+                        yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
+                        pvcs_labels = self.experiment.cluster.getPVCsLabels(app=app, component='storage', experiment=storage_label, configuration=configuration)
+                        print(pvcs_labels)
+                        if len(pvcs_labels) > 0:
+                            pvc_labels = pvcs_labels[0]
+                            if 'loaded' in pvc_labels:
+                                yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
+                            if 'timeLoading' in pvc_labels:
+                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
+                            if 'timeLoadingStart' in pvc_labels:
+                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
+                            if 'timeLoadingEnd' in pvc_labels:
+                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
+                        del result[key]
             if dep['kind'] == 'StatefulSet':
                 dep['metadata']['name'] = name_worker
                 #self.service = dep['metadata']['name']
@@ -439,6 +475,7 @@ class default():
                 self.service = dep['metadata']['name']
                 #print(pvc)
             if dep['kind'] == 'Deployment':
+                yaml_deployment = result[key]
                 dep['metadata']['name'] = name
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
@@ -449,6 +486,22 @@ class default():
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
+                for i, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    #container = dep['spec']['template']['spec']['containers'][0]['name']
+                    #print("Container", container)
+                    if container['name'] == 'dbms':
+                        #print(container['volumeMounts'])
+                        for j, vol in enumerate(container['volumeMounts']):
+                            if vol['name'] == 'benchmark-storage-volume':
+                                #print(vol['mountPath'])
+                                if not use_storage:
+                                    del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                for i, vol in enumerate(dep['spec']['template']['spec']['volumes']):
+                    if vol['name'] == 'benchmark-storage-volume':
+                        if not use_storage:
+                            del result[key]['spec']['template']['spec']['volumes'][i]
+                        else:
+                            vol['persistentVolumeClaim']['claimName'] = name_pvc
                 #print(deployment)
                 #print(appname)
                 # parameter from instance name
@@ -1061,9 +1114,16 @@ class default():
         #if len(self.ddl_parameters):
         #    for i,c in enumerate(commands):
         #        commands[i] = '/filled_'+c
-        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+")")
+        use_storage = True
+        if use_storage:
+            storage_label = 'tpc-ds-1'
+            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=storage_label, configuration=self.configuration)
+            volume = name_pvc
+        else:
+            volume = ''
+        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path}
+        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume}
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         #pending = asyncio.all_tasks()
@@ -1197,7 +1257,7 @@ class default():
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume):
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
     #path = self.experiment.path
@@ -1222,6 +1282,12 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     print(fullcommand)
     proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = proc.communicate()
+    if len(volume) > 0:
+        # mark pvc
+        fullcommand = 'kubectl label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
     # scripts
     #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
     shellcommand = 'sh {scriptname}'
@@ -1252,6 +1318,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stderr)
+    # mark pod
     timeLoadingEnd = default_timer()
     timeLoading = timeLoadingEnd - timeLoadingStart
     now = datetime.utcnow()
@@ -1262,3 +1329,9 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     print(fullcommand)
     proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = proc.communicate()
+    if len(volume) > 0:
+        # mark volume
+        fullcommand = 'kubectl label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()

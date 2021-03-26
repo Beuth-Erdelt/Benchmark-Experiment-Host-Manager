@@ -53,6 +53,34 @@ if __name__ == '__main__':
 	elif args.mode == 'status':
 		cluster = clusters.kubernetes()
 		app = cluster.appname
+		# get all volumes
+		pvcs = cluster.getPVCs(app=app, component='storage', experiment='', configuration='')
+		#print("PVCs", pvcs)
+		volumes = {}
+		for pvc in pvcs:
+			volumes[pvcs[0]] = {}
+			pvcs_labels = cluster.getPVCsLabels(app=app, component='storage', experiment='', configuration='', pvc=pvc)
+			#print("PVCsLabels", pvcs_labels)
+			volumes[pvcs[0]]['configuration'] = pvcs_labels[0]['configuration']
+			volumes[pvcs[0]]['experiment'] = pvcs_labels[0]['experiment']
+			volumes[pvcs[0]]['loaded'] = pvcs_labels[0]['loaded']
+			volumes[pvcs[0]]['dbms'] = pvcs_labels[0]['dbms']
+			#volumes[pvcs[0]]['labels'] = pvcs_labels[0]
+			pvcs_specs = cluster.getPVCsSpecs(app=app, component='storage', experiment='', configuration='', pvc=pvc)
+			#print("PVCsSpecs", pvcs_specs)
+			#volumes[pvcs[0]]['specs'] = pvcs_specs[0]
+			volumes[pvcs[0]]['storage_class_name'] = pvcs_specs[0].storage_class_name
+			volumes[pvcs[0]]['storage'] = pvcs_specs[0].resources.requests['storage']
+			pvcs_status = cluster.getPVCsStatus(app=app, component='storage', experiment='', configuration='', pvc=pvc)
+			#print("PVCsStatus", pvcs_status)
+			volumes[pvcs[0]]['status'] = pvcs_status[0].phase
+		#print(volumes)
+		if len(volumes) > 0:
+			df = pd.DataFrame(volumes).T
+			#print(df)
+			h = ['Volumes'] + list(df.columns)
+			print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
+		# get all pods
 		pod_labels = cluster.getPodsLabels(app=app)
 		#print("Pod Labels", pod_labels)
 		experiments = set()
@@ -156,4 +184,4 @@ if __name__ == '__main__':
 			df.index.name = experiment
 			#print(df)
 			h = [df.index.names[0]] + list(df.columns)
-			print(tabulate(df,headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
+			print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))

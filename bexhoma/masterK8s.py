@@ -534,12 +534,95 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
-    def getPVCs(self):
+    def getPVCs(self, app='', component='', experiment='', configuration=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        logging.debug('getPVCs'+label)
         try: 
-            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector='app='+self.appname)
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+    def getPVCsLabels(self, app='', component='', experiment='', configuration='', pvc=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        logging.debug('getPVCs'+label)
+        try: 
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                if len(pvc) > 0:
+                    return [p.metadata.labels for p in api_response.items if p.metadata.name == pvc]
+                else:
+                    return [p.metadata.labels for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+    def getPVCsSpecs(self, app='', component='', experiment='', configuration='', pvc=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        logging.debug('getPVCs'+label)
+        try: 
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                if len(pvc) > 0:
+                    return [p.spec for p in api_response.items if p.metadata.name == pvc]
+                else:
+                    return [p.spec for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+    def getPVCsStatus(self, app='', component='', experiment='', configuration='', pvc=''):
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        logging.debug('getPVCs'+label)
+        try: 
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                if len(pvc) > 0:
+                    return [p.status for p in api_response.items if p.metadata.name == pvc]
+                else:
+                    return [p.spec for p in api_response.items]
             else:
                 return []
         except ApiException as e:
