@@ -515,6 +515,9 @@ class default():
                             del result[key]['spec']['template']['spec']['volumes'][i]
                         else:
                             vol['persistentVolumeClaim']['claimName'] = name_pvc
+                # init containers only for persistent volumes
+                if 'initContainers' in result[key]['spec']['template']['spec'] and not use_storage:
+                    del result[key]['spec']['template']['spec']['initContainers']
                 #print(deployment)
                 #print(appname)
                 # parameter from instance name
