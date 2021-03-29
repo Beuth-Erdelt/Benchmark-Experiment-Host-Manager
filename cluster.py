@@ -58,22 +58,28 @@ if __name__ == '__main__':
 		#print("PVCs", pvcs)
 		volumes = {}
 		for pvc in pvcs:
-			volumes[pvcs[0]] = {}
+			volumes[pvc] = {}
 			pvcs_labels = cluster.getPVCsLabels(app=app, component='storage', experiment='', configuration='', pvc=pvc)
 			#print("PVCsLabels", pvcs_labels)
-			volumes[pvcs[0]]['configuration'] = pvcs_labels[0]['configuration']
-			volumes[pvcs[0]]['experiment'] = pvcs_labels[0]['experiment']
-			volumes[pvcs[0]]['loaded'] = pvcs_labels[0]['loaded']
-			volumes[pvcs[0]]['dbms'] = pvcs_labels[0]['dbms']
-			#volumes[pvcs[0]]['labels'] = pvcs_labels[0]
+			pvc_labels = pvcs_labels[0]
+			volumes[pvc]['configuration'] = pvc_labels['configuration']
+			volumes[pvc]['experiment'] = pvc_labels['experiment']
+			volumes[pvc]['loaded [s]'] = pvc_labels['loaded']
+			if 'timeLoading' in pvc_labels:
+				volumes[pvc]['timeLoading [s]'] = pvc_labels['timeLoading']
+			else:
+				volumes[pvc]['timeLoading [s]'] = ""
+			volumes[pvc]['dbms'] = pvc_labels['dbms']
+			#volumes[pvc]['labels'] = pvcs_label
 			pvcs_specs = cluster.getPVCsSpecs(app=app, component='storage', experiment='', configuration='', pvc=pvc)
+			pvc_specs = pvcs_specs[0]
 			#print("PVCsSpecs", pvcs_specs)
-			#volumes[pvcs[0]]['specs'] = pvcs_specs[0]
-			volumes[pvcs[0]]['storage_class_name'] = pvcs_specs[0].storage_class_name
-			volumes[pvcs[0]]['storage'] = pvcs_specs[0].resources.requests['storage']
+			#volumes[pvc]['specs'] = pvc_specs
+			volumes[pvc]['storage_class_name'] = pvc_specs.storage_class_name
+			volumes[pvc]['storage'] = pvc_specs.resources.requests['storage']
 			pvcs_status = cluster.getPVCsStatus(app=app, component='storage', experiment='', configuration='', pvc=pvc)
 			#print("PVCsStatus", pvcs_status)
-			volumes[pvcs[0]]['status'] = pvcs_status[0].phase
+			volumes[pvc]['status'] = pvcs_status[0].phase
 		#print(volumes)
 		if len(volumes) > 0:
 			df = pd.DataFrame(volumes).T
@@ -118,12 +124,12 @@ if __name__ == '__main__':
 					if pod in pod_labels and 'loaded' in pod_labels[pod]:
 						if pod_labels[pod]['loaded'] == 'True':
 							#apps[configuration]['loaded'] += "True"
-							apps[configuration]['loaded'] = pod_labels[pod]['timeLoading']+' [s]'
+							apps[configuration]['loaded [s]'] = pod_labels[pod]['timeLoading']#+' [s]'
 						elif 'timeLoadingStart' in pod_labels[pod]:
 							#apps[configuration]['loaded'] = 'Started at '+pod_labels[pod]['timeLoadingStart']
 							dt_object = datetime.fromtimestamp(int(pod_labels[pod]['timeLoadingStart']))
 							t = dt_object.strftime('%Y-%m-%d %H:%M:%S')
-							apps[configuration]['loaded'] = 'Started at '+t
+							apps[configuration]['loaded [s]'] = 'Started at '+t
 						#if 'timeLoadingStart' in pod_labels[pod]:
 						#	apps[configuration]['loaded'] += ' '+pod_labels[pod]['timeLoadingStart']
 						#if 'timeLoadingEnd' in pod_labels[pod]:
@@ -183,5 +189,5 @@ if __name__ == '__main__':
 			df.sort_index(inplace=True)
 			df.index.name = experiment
 			#print(df)
-			h = [df.index.names[0]] + list(df.columns)
+			h = [df.index.name] + list(df.columns)
 			print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
