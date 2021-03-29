@@ -405,11 +405,11 @@ class default():
 						else:
 							# no list element left
 							print("{} can be stopped".format(config.configuration))
-					        app = self.cluster.appname
-					        component = 'sut'
-					        pods = self.experiment.cluster.getPods(app, component, self.code, config.configuration)
-					        if len(pods) > 0:
-					            pod_sut = pods[0]
+							app = self.cluster.appname
+							component = 'sut'
+							pods = self.experiment.cluster.getPods(app, component, self.code, config.configuration)
+							if len(pods) > 0:
+								pod_sut = pods[0]
 								self.cluster.store_pod_log(pod_sut)
 							config.stop_sut()
 				else:
