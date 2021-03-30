@@ -89,6 +89,7 @@ class default():
 		# k8s:
 		self.namespace = self.cluster.config['credentials']['k8s']['namespace']
 		self.configurations = []
+		self.storage_label = ''
 	def wait(self, sec):
 		print("Waiting "+str(sec)+"s...", end="", flush=True)
 		intervals = int(sec)
@@ -551,6 +552,7 @@ class tpcds(default):
 			name = 'TPC-DS Queries SF='+str(SF),
 			info = 'This experiment performs some TPC-DS inspired queries.'
 			)
+		self.storage_label = 'tpcds-'+str(SF)
 	def set_queries_full(self):
 		self.set_queryfile('queries-tpcds.config')
 	def set_queries_profiling(self):
@@ -576,6 +578,7 @@ class tpch(default):
 			name = 'TPC-H Queries SF='+str(SF),
 			info = 'This experiment performs some TPC-H inspired queries.'
 			)
+		self.storage_label = 'tpch-'+str(SF)
 	def set_queries_full(self):
 		self.set_queryfile('queries-tpch.config')
 	def set_queries_profiling(self):

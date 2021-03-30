@@ -82,6 +82,7 @@ class default():
         self.dialect = dialect
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
+        self.storage_label = experiment.storage_label
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
