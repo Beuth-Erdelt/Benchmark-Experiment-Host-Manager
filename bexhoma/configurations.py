@@ -552,6 +552,7 @@ class default():
                     nodeSelectors = self.resources['nodeSelector'].copy()
                 else:
                     nodeSelectors = {}
+                print(nodeSelectors)
                 # we want to have a resource dict anyway!
                 self.resources = {}
                 self.resources['requests'] = {}
