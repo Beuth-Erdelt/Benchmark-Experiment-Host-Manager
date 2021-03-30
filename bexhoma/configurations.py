@@ -433,7 +433,7 @@ class default():
                     dep['metadata']['labels']['experiment'] = storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['loaded'] = "False"
-                    if storageClassName is not None:# and len(storageClassName) > 0:
+                    if storageClassName is not None and len(storageClassName) > 0:
                         dep['spec']['storageClassName'] = storageClassName
                     else:
                         del result[key]['spec']['storageClassName']
