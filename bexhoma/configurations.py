@@ -375,6 +375,8 @@ class default():
             use_storage = True
             if 'storageClassName' in self.storage:
                 storageClassName = self.storage['storageClassName']
+                if storageClassName is None:
+                    use_storage = False
             else:
                 storageClassName = ''
         else:
@@ -431,7 +433,7 @@ class default():
                     dep['metadata']['labels']['experiment'] = storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['loaded'] = "False"
-                    if len(storageClassName) > 0:
+                    if storageClassName is not None and len(storageClassName) > 0:
                         dep['spec']['storageClassName'] = storageClassName
                     print(dep['spec']['accessModes']) # list
                     print(dep['spec']['storageClassName'])
