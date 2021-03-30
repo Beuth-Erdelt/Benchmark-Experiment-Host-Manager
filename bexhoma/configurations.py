@@ -589,6 +589,12 @@ class default():
                 dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
                 if node_cpu == '':
                     del dep['spec']['template']['spec']['nodeSelector']['cpu']
+                # nodeSelector that is not cpu or gpu is copied to yaml
+                for nodeSelector, value in self.resources['nodeSelector'].items():
+                    if nodeSelector == 'cpu' or nodeSelector == 'gpu':
+                        continue
+                    else:
+                        dep['spec']['template']['spec'][nodeSelector] = value
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
