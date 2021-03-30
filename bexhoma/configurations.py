@@ -599,7 +599,7 @@ class default():
                     if nodeSelector == 'cpu' or nodeSelector == 'gpu':
                         continue
                     else:
-                        dep['spec']['template']['spec'][nodeSelector] = value
+                        dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
