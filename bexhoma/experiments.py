@@ -420,6 +420,7 @@ class default():
 							config.numExperimentsDone = config.numExperimentsDone + 1
 							if config.numExperimentsDone < config.numExperiments:
 								print("{} starts again".format(config.configuration))
+								config.benchmark_list = config.benchmark_list_template.copy()
 								# wait for PV to be gone completely
 								self.wait(60)
 								config.start_sut()
