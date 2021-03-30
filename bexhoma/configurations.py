@@ -548,6 +548,10 @@ class default():
                     node_cpu = self.resources['nodeSelector']['cpu']
                 if 'nodeSelector' in self.resources and 'gpu' in self.resources['nodeSelector']:
                     node_gpu = self.resources['nodeSelector']['gpu']
+                if 'nodeSelector' in self.resources:
+                    nodeSelectors = self.resources['nodeSelector'].copy()
+                else:
+                    nodeSelectors = {}
                 # we want to have a resource dict anyway!
                 self.resources = {}
                 self.resources['requests'] = {}
@@ -590,7 +594,7 @@ class default():
                 if node_cpu == '':
                     del dep['spec']['template']['spec']['nodeSelector']['cpu']
                 # nodeSelector that is not cpu or gpu is copied to yaml
-                for nodeSelector, value in self.resources['nodeSelector'].items():
+                for nodeSelector, value in nodeSelectors.items():
                     if nodeSelector == 'cpu' or nodeSelector == 'gpu':
                         continue
                     else:
