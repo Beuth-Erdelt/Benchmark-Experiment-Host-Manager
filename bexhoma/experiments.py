@@ -52,7 +52,7 @@ class default():
 	def __init__(self,
 			cluster,
 			code=None,
-			numExperiments = 3,
+			numExperiments = 1,
 			timeout = 7200,
 			detached=False):
 		self.cluster = cluster
@@ -419,6 +419,9 @@ class default():
 							config.stop_sut()
 							config.numExperimentsDone = config.numExperimentsDone + 1
 							if config.numExperimentsDone < config.numExperiments:
+								print("{} starts again".format(config.configuration))
+								# wait for PV to be gone completely
+								self.wait(60)
 								config.start_sut()
 				else:
 					print("{} is loading".format(config.configuration))

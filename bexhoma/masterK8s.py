@@ -644,7 +644,7 @@ class testdesign():
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
     def deletePVC(self, name):
-        print("deletePVC")
+        print("deletePVC", name)
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
