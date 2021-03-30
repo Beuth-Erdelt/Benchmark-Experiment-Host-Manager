@@ -64,6 +64,7 @@ class default():
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
         self.alias = alias
         self.numExperiments = numExperiments
+        self.numExperimentsDone = 0
         self.clients = clients
         #if self.code is None:
         #    self.code = str(round(time.time()))
@@ -87,7 +88,10 @@ class default():
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
     def add_benchmark_list(self, list_clients):
+        # this queue will be reduced when a job has finished
         self.benchmark_list = copy.deepcopy(list_clients)
+        # this queue will stay as a template for future copies of the configuration
+        self.benchmark_list_template = copy.deepcopy(list_clients)
     def wait(self, sec):
         print("Waiting "+str(sec)+"s...", end="", flush=True)
         intervals = int(sec)
@@ -383,7 +387,7 @@ class default():
         else:
             use_storage = False
         print(self.storage)
-        storage_label = 'tpc-ds-1'
+        #storage_label = 'tpc-ds-1'
         print("generateDeployment")
         if len(app)==0:
             app = self.appname
@@ -395,7 +399,7 @@ class default():
         template = "deploymenttemplate-"+self.docker+".yml"
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
-        name_pvc = self.generate_component_name(app=app, component='storage', experiment=storage_label, configuration=configuration)
+        name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
@@ -431,7 +435,7 @@ class default():
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'storage'
                     dep['metadata']['labels']['configuration'] = configuration
-                    dep['metadata']['labels']['experiment'] = storage_label
+                    dep['metadata']['labels']['experiment'] = self.storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['loaded'] = "False"
                     if storageClassName is not None and len(storageClassName) > 0:
@@ -441,12 +445,12 @@ class default():
                         del result[key]['spec']['storageClassName']
                     print(dep['spec']['accessModes']) # list
                     print(dep['spec']['resources']['requests']['storage'])
-                    pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=storage_label, configuration=configuration)
+                    pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                     print(pvcs)
                     if len(pvcs) > 0:
                         print("Storage exists")
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
-                        pvcs_labels = self.experiment.cluster.getPVCsLabels(app=app, component='storage', experiment=storage_label, configuration=configuration)
+                        pvcs_labels = self.experiment.cluster.getPVCsLabels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                         print(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
@@ -621,6 +625,12 @@ class default():
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
+        if len(self.storage) > 0 and 'keep' in self.storage and self.storage['keep']:
+            # keep the storage
+            pass
+        else:
+            name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+            self.experiment.cluster.deletePVC(name_pvc)
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.deleteDeployment(deployment)
@@ -1148,8 +1158,8 @@ class default():
         #        commands[i] = '/filled_'+c
         use_storage = True
         if use_storage:
-            storage_label = 'tpc-ds-1'
-            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=storage_label, configuration=self.configuration)
+            #storage_label = 'tpc-ds-1'
+            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
             volume = name_pvc
         else:
             volume = ''

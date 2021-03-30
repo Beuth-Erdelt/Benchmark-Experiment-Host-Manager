@@ -402,7 +402,11 @@ class default():
 							parallelism = config.benchmark_list.pop(0)
 							client = str(config.client)
 							config.client = config.client+1
-							config.run_benchmarker_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
+							if config.numExperiments > 1:
+								connection=config.configuration+'-'+client
+							else:
+								connection=config.configuration+'-'+str(config.numExperimentsDone+1)+'-'+client
+							config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
 						else:
 							# no list element left
 							print("{} can be stopped".format(config.configuration))
@@ -413,6 +417,9 @@ class default():
 								pod_sut = pods[0]
 								self.cluster.store_pod_log(pod_sut)
 							config.stop_sut()
+							config.numExperimentsDone = config.numExperimentsDone + 1
+							if config.numExperimentsDone < config.numExperiments:
+								config.start_sut()
 				else:
 					print("{} is loading".format(config.configuration))
 			# all jobs of configuration - benchmarker
