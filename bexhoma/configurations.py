@@ -435,10 +435,10 @@ class default():
                     dep['metadata']['labels']['loaded'] = "False"
                     if storageClassName is not None and len(storageClassName) > 0:
                         dep['spec']['storageClassName'] = storageClassName
+                        print(dep['spec']['storageClassName'])
                     else:
                         del result[key]['spec']['storageClassName']
                     print(dep['spec']['accessModes']) # list
-                    print(dep['spec']['storageClassName'])
                     print(dep['spec']['resources']['requests']['storage'])
                     pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=storage_label, configuration=configuration)
                     print(pvcs)
