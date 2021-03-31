@@ -404,9 +404,9 @@ class default():
 							config.client = config.client+1
 							print("Done {} of {} benchmarks. This will be client {}".format(config.numExperimentsDone, config.numExperiments, client))
 							if config.numExperiments > 1:
-								connection=config.configuration+'-'+client
-							else:
 								connection=config.configuration+'-'+str(config.numExperimentsDone+1)+'-'+client
+							else:
+								connection=config.configuration+'-'+client
 							print("Running benchmark {}".format(connection))
 							config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
 						else:
@@ -553,7 +553,7 @@ class tpcds(default):
 			code=None,
 			queryfile = 'queries-tpcds.config',
 			SF = '100',
-			numExperiments = 3,
+			numExperiments = 1,
 			timeout = 7200,
 			detached=False):
 		default.__init__(self, cluster, code, numExperiments, timeout, detached)
@@ -579,7 +579,7 @@ class tpch(default):
 			code=None,
 			queryfile = 'queries-tpch.config',
 			SF = '100',
-			numExperiments = 3,
+			numExperiments = 1,
 			timeout = 7200,
 			detached=False):
 		default.__init__(self, cluster, code, numExperiments, timeout, detached)
