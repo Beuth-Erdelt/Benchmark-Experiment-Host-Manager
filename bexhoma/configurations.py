@@ -1257,11 +1257,13 @@ class default():
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
+                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
