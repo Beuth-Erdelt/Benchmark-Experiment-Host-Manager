@@ -75,11 +75,6 @@ class default():
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
         self.set_storage(**self.experiment.storage)
         self.experiment.add_configuration(self)
-        self.timeLoading = 0
-        self.loading_started = False
-        self.loading_after_time = None
-        self.loading_finished = False
-        self.client = 1
         self.dialect = dialect
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
@@ -87,6 +82,13 @@ class default():
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
+        self.reset_sut()
+    def reset_sut(self):
+        self.timeLoading = 0
+        self.loading_started = False
+        self.loading_after_time = None
+        self.loading_finished = False
+        self.client = 1        
     def add_benchmark_list(self, list_clients):
         # this queue will be reduced when a job has finished
         self.benchmark_list = copy.deepcopy(list_clients)
@@ -604,6 +606,7 @@ class default():
                         continue
                     else:
                         dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
+                print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)

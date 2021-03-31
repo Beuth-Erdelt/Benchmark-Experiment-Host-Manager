@@ -402,10 +402,12 @@ class default():
 							parallelism = config.benchmark_list.pop(0)
 							client = str(config.client)
 							config.client = config.client+1
+							print("Done {} of {} benchmarks. This will be client {}".format(config.numExperimentsDone, config.numExperiments, client))
 							if config.numExperiments > 1:
 								connection=config.configuration+'-'+client
 							else:
 								connection=config.configuration+'-'+str(config.numExperimentsDone+1)+'-'+client
+							print("Running benchmark {}".format(connection))
 							config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
 						else:
 							# no list element left
@@ -423,6 +425,7 @@ class default():
 								config.benchmark_list = config.benchmark_list_template.copy()
 								# wait for PV to be gone completely
 								self.wait(60)
+								config.reset_sut()
 								config.start_sut()
 				else:
 					print("{} is loading".format(config.configuration))
