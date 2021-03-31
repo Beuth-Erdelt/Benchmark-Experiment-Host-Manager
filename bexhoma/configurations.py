@@ -607,6 +607,7 @@ class default():
                         continue
                     else:
                         dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
+                        self.resources['nodeSelector'][nodeSelector] = value
                 print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
