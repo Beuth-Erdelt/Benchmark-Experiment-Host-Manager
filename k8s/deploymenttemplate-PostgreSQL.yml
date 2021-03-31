@@ -1,4 +1,17 @@
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
+---
+apiVersion: v1
 kind: Service
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
@@ -36,6 +49,8 @@ spec:
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         ports:
         - {containerPort: 5432}
         resources:
@@ -44,6 +59,7 @@ spec:
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /dev/shm, name: dshm}
+        - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
       - name: cadvisor
         #image: k8s.gcr.io/cadvisor:v0.30.2
         image: gcr.io/cadvisor/cadvisor:v0.36.0
@@ -76,6 +92,8 @@ spec:
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
       - hostPath:
           path: /
         name: rootfs

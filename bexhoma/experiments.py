@@ -52,7 +52,7 @@ class default():
 	def __init__(self,
 			cluster,
 			code=None,
-			numExperiments = 3,
+			numExperiments = 1,
 			timeout = 7200,
 			detached=False):
 		self.cluster = cluster
@@ -77,6 +77,7 @@ class default():
 		self.appname = self.cluster.appname
 		self.resources = {}
 		self.ddl_parameters = {}
+		self.storage = {}
 		#self.connectionmanagement = {}
 		#self.connectionmanagement['numProcesses'] = None
 		#self.connectionmanagement['runsPerConnection'] = None
@@ -88,6 +89,7 @@ class default():
 		# k8s:
 		self.namespace = self.cluster.config['credentials']['k8s']['namespace']
 		self.configurations = []
+		self.storage_label = ''
 	def wait(self, sec):
 		print("Waiting "+str(sec)+"s...", end="", flush=True)
 		intervals = int(sec)
@@ -130,6 +132,8 @@ class default():
 		self.resources = kwargs
 	def set_ddl_parameters(self, **kwargs):
 		self.ddl_parameters = kwargs
+	def set_storage(self, **kwargs):
+		self.storage = kwargs
 	def add_configuration(self, configuration):
 		self.configurations.append(configuration)
 	def __set_queryfile(self, queryfile):
@@ -398,11 +402,31 @@ class default():
 							parallelism = config.benchmark_list.pop(0)
 							client = str(config.client)
 							config.client = config.client+1
-							config.run_benchmarker_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
+							print("Done {} of {} benchmarks. This will be client {}".format(config.numExperimentsDone, config.numExperiments, client))
+							if config.numExperiments > 1:
+								connection=config.configuration+'-'+str(config.numExperimentsDone+1)+'-'+client
+							else:
+								connection=config.configuration+'-'+client
+							print("Running benchmark {}".format(connection))
+							config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
 						else:
 							# no list element left
 							print("{} can be stopped".format(config.configuration))
+							app = self.cluster.appname
+							component = 'sut'
+							pods = self.cluster.getPods(app, component, self.code, config.configuration)
+							if len(pods) > 0:
+								pod_sut = pods[0]
+								self.cluster.store_pod_log(pod_sut)
 							config.stop_sut()
+							config.numExperimentsDone = config.numExperimentsDone + 1
+							if config.numExperimentsDone < config.numExperiments:
+								print("{} starts again".format(config.configuration))
+								config.benchmark_list = config.benchmark_list_template.copy()
+								# wait for PV to be gone completely
+								self.wait(60)
+								config.reset_sut()
+								config.start_sut()
 				else:
 					print("{} is loading".format(config.configuration))
 			# all jobs of configuration - benchmarker
@@ -529,7 +553,7 @@ class tpcds(default):
 			code=None,
 			queryfile = 'queries-tpcds.config',
 			SF = '100',
-			numExperiments = 3,
+			numExperiments = 1,
 			timeout = 7200,
 			detached=False):
 		default.__init__(self, cluster, code, numExperiments, timeout, detached)
@@ -542,6 +566,7 @@ class tpcds(default):
 			name = 'TPC-DS Queries SF='+str(SF),
 			info = 'This experiment performs some TPC-DS inspired queries.'
 			)
+		self.storage_label = 'tpcds-'+str(SF)
 	def set_queries_full(self):
 		self.set_queryfile('queries-tpcds.config')
 	def set_queries_profiling(self):
@@ -554,7 +579,7 @@ class tpch(default):
 			code=None,
 			queryfile = 'queries-tpch.config',
 			SF = '100',
-			numExperiments = 3,
+			numExperiments = 1,
 			timeout = 7200,
 			detached=False):
 		default.__init__(self, cluster, code, numExperiments, timeout, detached)
@@ -567,6 +592,7 @@ class tpch(default):
 			name = 'TPC-H Queries SF='+str(SF),
 			info = 'This experiment performs some TPC-H inspired queries.'
 			)
+		self.storage_label = 'tpch-'+str(SF)
 	def set_queries_full(self):
 		self.set_queryfile('queries-tpch.config')
 	def set_queries_profiling(self):
