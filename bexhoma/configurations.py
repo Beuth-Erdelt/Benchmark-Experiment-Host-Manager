@@ -386,6 +386,10 @@ class default():
                     use_storage = False
             else:
                 storageClassName = ''
+            if 'storageSize' in self.storage:
+                storageSize = self.storage['storageSize']
+            else:
+                storageSize = ''
         else:
             use_storage = False
         print(self.storage)
@@ -445,6 +449,8 @@ class default():
                         print(dep['spec']['storageClassName'])
                     else:
                         del result[key]['spec']['storageClassName']
+                    if len(storageSize) > 0:
+                        dep['spec']['resources']['requests']['storage'] = storageSize
                     print(dep['spec']['accessModes']) # list
                     print(dep['spec']['resources']['requests']['storage'])
                     pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
