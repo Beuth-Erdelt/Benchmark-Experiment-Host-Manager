@@ -378,6 +378,7 @@ class default():
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
     def start_sut(self, app='', component='sut', experiment='', configuration=''):
+        print("Storage", self.storage)
         if len(self.storage) > 0:
             use_storage = True
             if 'storageClassName' in self.storage:
