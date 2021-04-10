@@ -150,7 +150,8 @@ class default():
 		self.monitoring_active = False
 	def set_querymanagement_monitoring(self,
 			numRun=256,
-			delay=10):
+			delay=10,
+			datatransfer=False):
 		self.set_querymanagement(
 			numWarmup = 0,
 			numCooldown = 0,
@@ -164,7 +165,7 @@ class default():
 				},
 				'datatransfer':
 				{
-					'active': False,
+					'active': datatransfer,
 				}
 			})
 		self.monitoring_active = True
