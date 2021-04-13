@@ -368,6 +368,8 @@ class default():
 					print("{} is not loaded".format(config.configuration))
 					if config.monitoring_active and not config.monitoring_is_running():
 						print("{} waits for monitoring".format(config.configuration))
+						if not config.monitoring_is_pending():
+							self.start_monitoring()
 						continue
 					now = datetime.utcnow()
 					if config.loading_after_time is not None:

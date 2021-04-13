@@ -224,6 +224,17 @@ class default():
             if status == "Running":
                 return True
         return False
+    def monitoring_is_pending(self):
+        app = self.appname
+        component = 'monitoring'
+        configuration = self.configuration
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Pending":
+                return True
+        return False
     def sut_is_pending(self):
         app = self.appname
         component = 'sut'
@@ -306,6 +317,8 @@ class default():
         print(name)
         return name
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        if not self.experiment.monitoring_active:
+            return
         print("start_monitoring")
         if len(app) == 0:
             app = self.appname
@@ -627,8 +640,8 @@ class default():
                 print(exc)
         print("Deploy "+deployment_experiment)
         self.experiment.cluster.kubectl('kubectl create -f '+deployment_experiment)
-        if self.experiment.monitoring_active:
-            self.start_monitoring()
+        #if self.experiment.monitoring_active:
+        #    self.start_monitoring()
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         if len(app)==0:
