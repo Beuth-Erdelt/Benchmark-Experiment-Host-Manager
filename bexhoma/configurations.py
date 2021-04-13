@@ -1081,7 +1081,8 @@ class default():
         cmd = {}
         cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        scriptfolder = '/tmp/'
         # the inits are in the result folder?
         #i = 0
         #for script in self.initscript:
@@ -1162,7 +1163,8 @@ class default():
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        scriptfolder = '/tmp/'
         commands = self.initscript.copy()
         #print("load_data asynch")
         #if len(self.ddl_parameters):
