@@ -166,6 +166,10 @@ class default():
 				'datatransfer':
 				{
 					'active': datatransfer,
+					'sorted': True,
+					'compare': 'result',
+					'store': [],
+					'precision': 0,
 				}
 			})
 		self.monitoring_active = True
