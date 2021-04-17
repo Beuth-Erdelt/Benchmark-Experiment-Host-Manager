@@ -71,7 +71,7 @@ class default():
 			numProcesses = 1,
 			runsPerConnection = 0,
 			timeout = timeout,
-			singleConnection = False)
+			singleConnection = True)
 		self.numExperiments = numExperiments
 		self.cluster.add_experiment(self)
 		self.appname = self.cluster.appname
