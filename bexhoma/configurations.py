@@ -508,6 +508,10 @@ class default():
                     dep['metadata']['labels']['experiment'] = experiment
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    for i, ports in enumerate(dep['spec']['ports']):
+                        # remove monitoring ports
+                        if ports['name'] != 'port-dbms':
+                            del result[key]['spec']['ports'][i]
                     continue
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
@@ -541,6 +545,12 @@ class default():
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                    elif not self.monitoring_active:
+                        # remove monitoring containers
+                        if container['name'] == 'cadvisor':
+                            del result[key]['spec']['template']['spec']['containers'][i]
+                        if container['name'] == 'dcgm-exporter':
+                            del result[key]['spec']['template']['spec']['containers'][i]
                 for i, vol in enumerate(dep['spec']['template']['spec']['volumes']):
                     if vol['name'] == 'benchmark-storage-volume':
                         if not use_storage:
