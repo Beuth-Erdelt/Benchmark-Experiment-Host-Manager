@@ -509,7 +509,7 @@ class default():
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     if not self.monitoring_active:
-                        for i, ports in enumerate(dep['spec']['ports']):
+                        for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
                             if 'name' in ports and ports['name'] != 'port-dbms':
                                 del result[key]['spec']['ports'][i]
@@ -523,7 +523,7 @@ class default():
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
                 if not self.monitoring_active:
-                    for i, ports in enumerate(dep['spec']['ports']):
+                    for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
                         if 'name' in ports and ports['name'] != 'port-dbms':
                             del result[key]['spec']['ports'][i]
