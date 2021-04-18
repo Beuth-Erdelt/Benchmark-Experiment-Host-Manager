@@ -508,10 +508,6 @@ class default():
                     dep['metadata']['labels']['experiment'] = experiment
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                    for i, ports in enumerate(dep['spec']['ports']):
-                        # remove monitoring ports
-                        if 'name' in ports and ports['name'] != 'port-dbms':
-                            del result[key]['spec']['ports'][i]
                     continue
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
@@ -521,6 +517,10 @@ class default():
                 dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
+                for i, ports in enumerate(dep['spec']['ports']):
+                    # remove monitoring ports
+                    if 'name' in ports and ports['name'] != 'port-dbms':
+                        del result[key]['spec']['ports'][i]
                 #print(pvc)
             if dep['kind'] == 'Deployment':
                 yaml_deployment = result[key]
