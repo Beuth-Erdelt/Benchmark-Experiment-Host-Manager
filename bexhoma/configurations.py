@@ -510,7 +510,7 @@ class default():
                     dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     for i, ports in enumerate(dep['spec']['ports']):
                         # remove monitoring ports
-                        if ports['name'] != 'port-dbms':
+                        if 'name' in ports and ports['name'] != 'port-dbms':
                             del result[key]['spec']['ports'][i]
                     continue
                 dep['metadata']['labels']['app'] = app
