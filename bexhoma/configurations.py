@@ -843,6 +843,8 @@ class default():
         c = copy.deepcopy(self.dockertemplate['template'])
         if len(alias) > 0:
             c['alias'] = alias
+        elif self.alias is not None:
+            c['alias'] = self.alias
         else:
             c['alias'] = connection
         if len(dialect) > 0:
