@@ -843,6 +843,8 @@ class default():
         c = copy.deepcopy(self.dockertemplate['template'])
         if len(alias) > 0:
             c['alias'] = alias
+        else:
+            c['alias'] = connection
         if len(dialect) > 0:
             c['dialect'] = dialect
         #c['docker_alias'] = self.docker['docker_alias']
@@ -1015,7 +1017,7 @@ class default():
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
-        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism)
+        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
         # start pod
         self.experiment.cluster.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
@@ -1266,7 +1268,7 @@ class default():
             app = self.appname
         code = str(int(experiment))
         #connection = configuration
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client), alias='')
         print(jobname)
         # determine start time
         now = datetime.utcnow()
@@ -1312,6 +1314,8 @@ class default():
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
                     if e['name'] == 'DBMSBENCHMARKER_SLEEP':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+                    if e['name'] == 'DBMSBENCHMARKER_ALIAS':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = alias
                     print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
