@@ -1262,13 +1262,13 @@ class default():
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
+    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         print("create_job")
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
         #connection = configuration
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client), alias='')
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         print(jobname)
         # determine start time
         now = datetime.utcnow()
