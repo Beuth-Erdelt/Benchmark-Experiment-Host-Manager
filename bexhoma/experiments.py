@@ -278,7 +278,24 @@ class default():
 		self.cluster.cleanExperiment()
 		del gc.garbage[:]
 	def zip(self):
-		shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
+		# remote:
+		pods = self.cluster.getPods(component='dashboard')
+		if len(pods) > 0:
+			pod_dashboard = pods[0]
+	        status = self.cluster.getPodStatus(pod_dashboard)
+	        print(pod_dashboard, status)
+	        while status != "Running":
+	            self.wait(10)
+	            status = self.experiment.cluster.getPodStatus(pod_dashboard)
+	            print(pod_dashboard, status)
+			cmd = {}
+			cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
+			fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
+			print(fullcommand)
+			proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+			stdout, stderr = proc.communicate()
+		# local:
+		#shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
 	def set_experiment(self, instance=None, volume=None, docker=None, script=None):
 		""" Read experiment details from cluster config"""
 		#self.bChangeInstance = True
