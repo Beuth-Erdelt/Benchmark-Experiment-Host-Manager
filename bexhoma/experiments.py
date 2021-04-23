@@ -71,7 +71,7 @@ class default():
 			numProcesses = 1,
 			runsPerConnection = 0,
 			timeout = timeout,
-			singleConnection = False)
+			singleConnection = True)
 		self.numExperiments = numExperiments
 		self.cluster.add_experiment(self)
 		self.appname = self.cluster.appname
@@ -150,7 +150,8 @@ class default():
 		self.monitoring_active = False
 	def set_querymanagement_monitoring(self,
 			numRun=256,
-			delay=10):
+			delay=10,
+			datatransfer=False):
 		self.set_querymanagement(
 			numWarmup = 0,
 			numCooldown = 0,
@@ -164,7 +165,11 @@ class default():
 				},
 				'datatransfer':
 				{
-					'active': False,
+					'active': datatransfer,
+					'sorted': True,
+					'compare': 'result',
+					'store': [],
+					'precision': 0,
 				}
 			})
 		self.monitoring_active = True
@@ -273,7 +278,26 @@ class default():
 		self.cluster.cleanExperiment()
 		del gc.garbage[:]
 	def zip(self):
-		shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
+		# remote:
+		pods = self.cluster.getPods(component='dashboard')
+		if len(pods) > 0:
+			pod_dashboard = pods[0]
+	        status = self.cluster.getPodStatus(pod_dashboard)
+	        print(pod_dashboard, status)
+	        while status != "Running":
+	            self.wait(10)
+	            status = self.experiment.cluster.getPodStatus(pod_dashboard)
+	            print(pod_dashboard, status)
+			cmd = {}
+			cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+			# include sub directories
+			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
+			fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
+			print(fullcommand)
+			proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+			stdout, stderr = proc.communicate()
+		# local:
+		#shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
 	def set_experiment(self, instance=None, volume=None, docker=None, script=None):
 		""" Read experiment details from cluster config"""
 		#self.bChangeInstance = True
@@ -367,6 +391,8 @@ class default():
 					print("{} is not loaded".format(config.configuration))
 					if config.monitoring_active and not config.monitoring_is_running():
 						print("{} waits for monitoring".format(config.configuration))
+						if not config.monitoring_is_pending():
+							config.start_monitoring()
 						continue
 					now = datetime.utcnow()
 					if config.loading_after_time is not None:

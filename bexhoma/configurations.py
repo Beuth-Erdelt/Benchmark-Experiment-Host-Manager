@@ -224,6 +224,17 @@ class default():
             if status == "Running":
                 return True
         return False
+    def monitoring_is_pending(self):
+        app = self.appname
+        component = 'monitoring'
+        configuration = self.configuration
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Pending":
+                return True
+        return False
     def sut_is_pending(self):
         app = self.appname
         component = 'sut'
@@ -306,6 +317,8 @@ class default():
         print(name)
         return name
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        if not self.experiment.monitoring_active:
+            return
         print("start_monitoring")
         if len(app) == 0:
             app = self.appname
@@ -378,6 +391,7 @@ class default():
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
     def start_sut(self, app='', component='sut', experiment='', configuration=''):
+        print("Storage", self.storage)
         if len(self.storage) > 0:
             use_storage = True
             if 'storageClassName' in self.storage:
@@ -386,6 +400,10 @@ class default():
                     use_storage = False
             else:
                 storageClassName = ''
+            if 'storageSize' in self.storage:
+                storageSize = self.storage['storageSize']
+            else:
+                storageSize = ''
         else:
             use_storage = False
         print(self.storage)
@@ -445,6 +463,8 @@ class default():
                         print(dep['spec']['storageClassName'])
                     else:
                         del result[key]['spec']['storageClassName']
+                    if len(storageSize) > 0:
+                        dep['spec']['resources']['requests']['storage'] = storageSize
                     print(dep['spec']['accessModes']) # list
                     print(dep['spec']['resources']['requests']['storage'])
                     pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
@@ -488,6 +508,11 @@ class default():
                     dep['metadata']['labels']['experiment'] = experiment
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    if not self.monitoring_active:
+                        for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
+                            # remove monitoring ports
+                            if 'name' in ports and ports['name'] != 'port-dbms':
+                                del result[key]['spec']['ports'][i]
                     continue
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
@@ -497,6 +522,11 @@ class default():
                 dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
+                if not self.monitoring_active:
+                    for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
+                        # remove monitoring ports
+                        if 'name' in ports and ports['name'] != 'port-dbms':
+                            del result[key]['spec']['ports'][i]
                 #print(pvc)
             if dep['kind'] == 'Deployment':
                 yaml_deployment = result[key]
@@ -521,6 +551,12 @@ class default():
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                    elif not self.monitoring_active:
+                        # remove monitoring containers
+                        if container['name'] == 'cadvisor':
+                            del result[key]['spec']['template']['spec']['containers'][i]
+                        if container['name'] == 'dcgm-exporter':
+                            del result[key]['spec']['template']['spec']['containers'][i]
                 for i, vol in enumerate(dep['spec']['template']['spec']['volumes']):
                     if vol['name'] == 'benchmark-storage-volume':
                         if not use_storage:
@@ -620,8 +656,8 @@ class default():
                 print(exc)
         print("Deploy "+deployment_experiment)
         self.experiment.cluster.kubectl('kubectl create -f '+deployment_experiment)
-        if self.experiment.monitoring_active:
-            self.start_monitoring()
+        #if self.experiment.monitoring_active:
+        #    self.start_monitoring()
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         if len(app)==0:
@@ -807,6 +843,10 @@ class default():
         c = copy.deepcopy(self.dockertemplate['template'])
         if len(alias) > 0:
             c['alias'] = alias
+        elif self.alias is not None:
+            c['alias'] = self.alias
+        else:
+            c['alias'] = connection
         if len(dialect) > 0:
             c['dialect'] = dialect
         #c['docker_alias'] = self.docker['docker_alias']
@@ -849,7 +889,7 @@ class default():
         c['connectionmanagement']['numProcesses'] = self.connectionmanagement['numProcesses']
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
-        c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else False
+        c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
         c['monitoring'] = {}
         config_K8s = self.experiment.cluster.config['credentials']['k8s']
         if self.experiment.monitoring_active and 'monitor' in config_K8s:
@@ -979,7 +1019,7 @@ class default():
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
         # create pod
-        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism)
+        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
         # start pod
         self.experiment.cluster.kubectl('kubectl create -f '+yamlfile)
         self.wait(10)
@@ -1074,7 +1114,8 @@ class default():
         cmd = {}
         cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        scriptfolder = '/tmp/'
         # the inits are in the result folder?
         #i = 0
         #for script in self.initscript:
@@ -1155,7 +1196,8 @@ class default():
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        scriptfolder = '/tmp/'
         commands = self.initscript.copy()
         #print("load_data asynch")
         #if len(self.ddl_parameters):
@@ -1222,7 +1264,7 @@ class default():
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
+    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         print("create_job")
         if len(app) == 0:
             app = self.appname
@@ -1257,11 +1299,13 @@ class default():
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
+                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
@@ -1272,6 +1316,8 @@ class default():
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
                     if e['name'] == 'DBMSBENCHMARKER_SLEEP':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+                    if e['name'] == 'DBMSBENCHMARKER_ALIAS':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = alias
                     print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
