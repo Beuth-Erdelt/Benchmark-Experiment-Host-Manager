@@ -289,7 +289,9 @@ class default():
 	            status = self.experiment.cluster.getPodStatus(pod_dashboard)
 	            print(pod_dashboard, status)
 			cmd = {}
-			cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
+			cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+			# include sub directories
+			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
 			print(fullcommand)
 			proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
