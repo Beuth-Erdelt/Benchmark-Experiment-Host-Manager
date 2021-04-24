@@ -282,12 +282,12 @@ class default():
 		pods = self.cluster.getPods(component='dashboard')
 		if len(pods) > 0:
 			pod_dashboard = pods[0]
-	        status = self.cluster.getPodStatus(pod_dashboard)
-	        print(pod_dashboard, status)
-	        while status != "Running":
-	            self.wait(10)
-	            status = self.experiment.cluster.getPodStatus(pod_dashboard)
-	            print(pod_dashboard, status)
+			status = self.cluster.getPodStatus(pod_dashboard)
+			print(pod_dashboard, status)
+			while status != "Running":
+				self.wait(10)
+				status = self.experiment.cluster.getPodStatus(pod_dashboard)
+				print(pod_dashboard, status)
 			cmd = {}
 			cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
 			# include sub directories
