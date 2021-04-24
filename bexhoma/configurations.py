@@ -498,6 +498,18 @@ class default():
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                for i, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    #container = dep['spec']['template']['spec']['containers'][0]['name']
+                    #print("Container", container)
+                    if container['name'] == 'dbms-worker':
+                        #print(container['volumeMounts'])
+                        for j, vol in enumerate(container['volumeMounts']):
+                            if vol['name'] == 'bexhoma-workers':
+                                #print(vol['mountPath'])
+                                if not use_storage:
+                                    del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                if not use_storage and 'volumeClaimTemplates' in result[key]['spec']['template']:
+                    del result[key]['spec']['template']['volumeClaimTemplates']
                 #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
