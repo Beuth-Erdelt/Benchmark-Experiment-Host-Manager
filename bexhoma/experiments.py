@@ -386,7 +386,10 @@ class default():
 					if not config.self.experiment_done:
 						if not config.sut_is_pending():
 							if self.cluster.max_sut is not None:
-								if len(cluster.getPods(app = self.appname, component = 'sut', status = 'Running')) + len(cluster.getPods(app = self.appname, component = 'sut', status = 'Pending')) < self.cluster.max_sut:
+								num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
+								num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
+								print("{} running and {} pending pods".format(num_pods_running, num_pods_pending))
+								if num_pods_running+num_pods_pending < self.cluster.max_sut:
 									config.start_sut()
 							else:
 								config.start_sut()
