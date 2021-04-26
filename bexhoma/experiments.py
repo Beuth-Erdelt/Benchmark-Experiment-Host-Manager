@@ -379,6 +379,9 @@ class default():
 		do = True
 		while do:
 			time.sleep(intervals)
+			# count number of running and pending pods
+			num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
+			num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 			for config in self.configurations:
 				# check if sut is running
 				if not config.sut_is_running():
@@ -386,8 +389,6 @@ class default():
 					if not config.experiment_done:
 						if not config.sut_is_pending():
 							if self.cluster.max_sut is not None:
-								num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
-								num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 								print("{} running and {} pending pods".format(num_pods_running, num_pods_pending))
 								if num_pods_running+num_pods_pending < self.cluster.max_sut:
 									config.start_sut()
