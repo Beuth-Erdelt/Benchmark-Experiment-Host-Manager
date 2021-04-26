@@ -412,7 +412,7 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling v1beta->list_namespaced_deployment: %s\n" % e)
-    def getPods(self, app='', component='', experiment='', configuration=''):
+    def getPods(self, app='', component='', experiment='', configuration='', status=''):
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
         if len(app)==0:
@@ -424,9 +424,13 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
+        if len(status)>0:
+            field_selector = 'status.phase='+status
+        else:
+            field_selector = ''
         logging.debug('getPods'+label)
         try: 
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label, field_selector=field_selector)
             #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
