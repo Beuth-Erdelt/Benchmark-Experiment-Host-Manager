@@ -383,7 +383,7 @@ class default():
 				# check if sut is running
 				if not config.sut_is_running():
 					print("{} is not running".format(config.configuration))
-					if not config.self.experiment_done:
+					if not config.experiment_done:
 						if not config.sut_is_pending():
 							if self.cluster.max_sut is not None:
 								num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
