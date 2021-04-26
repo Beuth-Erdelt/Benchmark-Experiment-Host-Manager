@@ -486,6 +486,9 @@ class default():
                                 yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
             if dep['kind'] == 'StatefulSet':
+                if self.num_worker == 0:
+                    del result[key]
+                    continue
                 dep['metadata']['name'] = name_worker
                 #self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
@@ -513,6 +516,9 @@ class default():
                 #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
+                    if self.num_worker == 0:
+                        del result[key]
+                        continue
                     dep['metadata']['name'] = name_worker
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'worker'
