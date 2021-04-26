@@ -79,6 +79,7 @@ class default():
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
         self.storage_label = experiment.storage_label
+        self.experiment_done = False
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -202,6 +203,17 @@ class default():
         if delay > 0:
             self.delay(delay)
         # end
+    def sut_is_pending(self):
+        app = self.appname
+        component = 'sut'
+        configuration = self.configuration
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Pending":
+                return True
+        return False
     def sut_is_running(self):
         app = self.appname
         component = 'sut'
