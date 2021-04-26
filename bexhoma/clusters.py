@@ -47,6 +47,7 @@ class kubernetes(masterK8s.testdesign):
         # per configuration: list of benchmarker
         self.code = code
         masterK8s.testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        self.max_sut = None
         """
         self.code = code
         if self.code is None:

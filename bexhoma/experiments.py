@@ -383,6 +383,13 @@ class default():
 				# check if sut is running
 				if not config.sut_is_running():
 					print("{} is not running".format(config.configuration))
+					if not config.self.experiment_done:
+						if not config.sut_is_pending():
+							if self.cluster.max_sut is not None:
+								if len(cluster.getPods(app = self.appname, component = 'sut', status = 'Running')) < self.cluster.max_sut:
+									config.start_sut()
+							else:
+								config.start_sut()
 					continue
 				# check if loading is done
 				config.check_load_data()
@@ -453,6 +460,8 @@ class default():
 								self.wait(60)
 								config.reset_sut()
 								config.start_sut()
+							else:
+								config.experiment_done = True
 				else:
 					print("{} is loading".format(config.configuration))
 			# all jobs of configuration - benchmarker
