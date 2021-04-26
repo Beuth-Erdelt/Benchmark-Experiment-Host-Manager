@@ -723,11 +723,15 @@ class default():
         return found
     def getMemory(self):
         print("getMemory")
-        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        result = os.popen(fullcommand).read()
-        mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
-        return mem
+        try:
+            command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
+            fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+            result = os.popen(fullcommand).read()
+            mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
+            return mem
+        except Exception as e:
+            logging.error(e)
+            return 0
     def getCPU(self):
         print("getCPU")
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
@@ -1349,6 +1353,12 @@ class default():
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
+
+
+
+
+
+
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
 
