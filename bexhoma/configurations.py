@@ -288,8 +288,10 @@ class default():
                 self.wait(10)
                 dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
             self.wait(10)
-            print("load_data")
-            self.load_data()
+            self.check_load_data()
+            if not self.loading_started:
+                print("load_data")
+                self.load_data()
             self.experiment.cluster.stopPortforwarding()
             # store experiment
             """
@@ -1223,9 +1225,6 @@ class default():
             self.loading_started = False
             self.loading_finished = False
     def load_data(self):
-        self.check_load_data()
-        if self.loading_started:
-            return
         self.loading_started = True
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
