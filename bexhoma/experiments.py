@@ -392,8 +392,10 @@ class default():
 								print("{} running and {} pending pods".format(num_pods_running, num_pods_pending))
 								if num_pods_running+num_pods_pending < self.cluster.max_sut:
 									config.start_sut()
+									self.wait(10)
 							else:
 								config.start_sut()
+								self.wait(10)
 					continue
 				# check if loading is done
 				config.check_load_data()
