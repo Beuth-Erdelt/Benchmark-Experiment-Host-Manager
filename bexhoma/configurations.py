@@ -1428,7 +1428,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         stdout, stderr = proc.communicate()
     # scripts
     #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
-    shellcommand = 'sh {scriptname}'
+    shellcommand = '[ -f {scriptname} ] && sh {scriptname}'
     #commands = self.initscript
     for c in commands:
         filename, file_extension = os.path.splitext(c)
