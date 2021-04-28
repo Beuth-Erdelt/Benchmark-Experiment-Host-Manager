@@ -283,11 +283,17 @@ class default():
             your_command = " ".join(forward)
             print(your_command)
             subprocess.Popen(forward, stdout=subprocess.PIPE)
-            dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
-            while not dbmsactive:
-                self.wait(10)
-                dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            # wait for port to be connected
             self.wait(10)
+            dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            if not dbmsactive:
+                # not answering
+                self.experiment.cluster.stopPortforwarding()
+                return False
+            #while not dbmsactive:
+            #    self.wait(10)
+            #    dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            #self.wait(10)
             self.check_load_data()
             if not self.loading_started:
                 print("load_data")
