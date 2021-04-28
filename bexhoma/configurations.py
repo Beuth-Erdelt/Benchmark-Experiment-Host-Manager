@@ -404,8 +404,7 @@ class default():
         gpu_type = resources.nodeSelector.gpu
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
-    def start_sut(self, app='', component='sut', experiment='', configuration=''):
-        print("Storage", self.storage)
+    def use_storage(self):
         if len(self.storage) > 0:
             use_storage = True
             if 'storageClassName' in self.storage:
@@ -420,7 +419,11 @@ class default():
                 storageSize = ''
         else:
             use_storage = False
-        print(self.storage)
+        return use_storage
+    def start_sut(self, app='', component='sut', experiment='', configuration=''):
+        #print("Storage", self.storage)
+        #print(self.storage)
+        use_storage = self.use_storage()
         #storage_label = 'tpc-ds-1'
         print("generateDeployment")
         if len(app)==0:
@@ -702,8 +705,11 @@ class default():
             # keep the storage
             pass
         else:
-            name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-            self.experiment.cluster.deletePVC(name_pvc)
+            use_storage = self.use_storage()
+            if use_storage:
+                # remove the storage
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                self.experiment.cluster.deletePVC(name_pvc)
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.deleteDeployment(deployment)
