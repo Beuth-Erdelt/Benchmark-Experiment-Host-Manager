@@ -79,6 +79,7 @@ class default():
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
         self.storage_label = experiment.storage_label
+        self.experiment_done = False
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -202,6 +203,17 @@ class default():
         if delay > 0:
             self.delay(delay)
         # end
+    def sut_is_pending(self):
+        app = self.appname
+        component = 'sut'
+        configuration = self.configuration
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Pending":
+                return True
+        return False
     def sut_is_running(self):
         app = self.appname
         component = 'sut'
@@ -271,13 +283,21 @@ class default():
             your_command = " ".join(forward)
             print(your_command)
             subprocess.Popen(forward, stdout=subprocess.PIPE)
-            dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
-            while not dbmsactive:
-                self.wait(10)
-                dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            # wait for port to be connected
             self.wait(10)
-            print("load_data")
-            self.load_data()
+            dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            if not dbmsactive:
+                # not answering
+                self.experiment.cluster.stopPortforwarding()
+                return False
+            #while not dbmsactive:
+            #    self.wait(10)
+            #    dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            #self.wait(10)
+            self.check_load_data()
+            if not self.loading_started:
+                print("load_data")
+                self.load_data()
             self.experiment.cluster.stopPortforwarding()
             # store experiment
             """
@@ -390,8 +410,7 @@ class default():
         gpu_type = resources.nodeSelector.gpu
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
-    def start_sut(self, app='', component='sut', experiment='', configuration=''):
-        print("Storage", self.storage)
+    def use_storage(self):
         if len(self.storage) > 0:
             use_storage = True
             if 'storageClassName' in self.storage:
@@ -406,7 +425,11 @@ class default():
                 storageSize = ''
         else:
             use_storage = False
-        print(self.storage)
+        return use_storage
+    def start_sut(self, app='', component='sut', experiment='', configuration=''):
+        #print("Storage", self.storage)
+        #print(self.storage)
+        use_storage = self.use_storage()
         #storage_label = 'tpc-ds-1'
         print("generateDeployment")
         if len(app)==0:
@@ -486,6 +509,9 @@ class default():
                                 yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
             if dep['kind'] == 'StatefulSet':
+                if self.num_worker == 0:
+                    del result[key]
+                    continue
                 dep['metadata']['name'] = name_worker
                 #self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
@@ -498,9 +524,24 @@ class default():
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                for i, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    #container = dep['spec']['template']['spec']['containers'][0]['name']
+                    #print("Container", container)
+                    if container['name'] == 'dbms-worker':
+                        #print(container['volumeMounts'])
+                        for j, vol in enumerate(container['volumeMounts']):
+                            if vol['name'] == 'bexhoma-workers':
+                                #print(vol['mountPath'])
+                                if not use_storage:
+                                    del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                if not use_storage and 'volumeClaimTemplates' in result[key]['spec']['template']:
+                    del result[key]['spec']['template']['volumeClaimTemplates']
                 #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
+                    if self.num_worker == 0:
+                        del result[key]
+                        continue
                     dep['metadata']['name'] = name_worker
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'worker'
@@ -670,8 +711,11 @@ class default():
             # keep the storage
             pass
         else:
-            name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-            self.experiment.cluster.deletePVC(name_pvc)
+            use_storage = self.use_storage()
+            if use_storage:
+                # remove the storage
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                self.experiment.cluster.deletePVC(name_pvc)
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.deleteDeployment(deployment)
@@ -705,11 +749,15 @@ class default():
         return found
     def getMemory(self):
         print("getMemory")
-        command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        result = os.popen(fullcommand).read()
-        mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
-        return mem
+        try:
+            command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
+            fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+            result = os.popen(fullcommand).read()
+            mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
+            return mem
+        except Exception as e:
+            logging.error(e)
+            return 0
     def getCPU(self):
         print("getCPU")
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
@@ -1189,9 +1237,6 @@ class default():
             self.loading_started = False
             self.loading_finished = False
     def load_data(self):
-        self.check_load_data()
-        if self.loading_started:
-            return
         self.loading_started = True
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -1332,6 +1377,12 @@ class default():
                 print(exc)
         return job_experiment
 
+
+
+
+
+
+
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
 
 
@@ -1383,7 +1434,8 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         stdout, stderr = proc.communicate()
     # scripts
     #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
-    shellcommand = 'sh {scriptname}'
+    #shellcommand = '[ -f {scriptname} ] && sh {scriptname}'
+    shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     #commands = self.initscript
     for c in commands:
         filename, file_extension = os.path.splitext(c)

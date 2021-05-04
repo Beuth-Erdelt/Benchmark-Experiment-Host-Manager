@@ -282,12 +282,12 @@ class default():
 		pods = self.cluster.getPods(component='dashboard')
 		if len(pods) > 0:
 			pod_dashboard = pods[0]
-	        status = self.cluster.getPodStatus(pod_dashboard)
-	        print(pod_dashboard, status)
-	        while status != "Running":
-	            self.wait(10)
-	            status = self.experiment.cluster.getPodStatus(pod_dashboard)
-	            print(pod_dashboard, status)
+			status = self.cluster.getPodStatus(pod_dashboard)
+			print(pod_dashboard, status)
+			while status != "Running":
+				self.wait(10)
+				status = self.experiment.cluster.getPodStatus(pod_dashboard)
+				print(pod_dashboard, status)
 			cmd = {}
 			cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
 			# include sub directories
@@ -380,9 +380,22 @@ class default():
 		while do:
 			time.sleep(intervals)
 			for config in self.configurations:
+				# count number of running and pending pods
+				num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
+				num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 				# check if sut is running
 				if not config.sut_is_running():
 					print("{} is not running".format(config.configuration))
+					if not config.experiment_done:
+						if not config.sut_is_pending():
+							if self.cluster.max_sut is not None:
+								print("{} running and {} pending pods".format(num_pods_running, num_pods_pending))
+								if num_pods_running+num_pods_pending < self.cluster.max_sut:
+									config.start_sut()
+									self.wait(10)
+							else:
+								config.start_sut()
+								self.wait(10)
 					continue
 				# check if loading is done
 				config.check_load_data()
@@ -453,6 +466,8 @@ class default():
 								self.wait(60)
 								config.reset_sut()
 								config.start_sut()
+							else:
+								config.experiment_done = True
 				else:
 					print("{} is loading".format(config.configuration))
 			# all jobs of configuration - benchmarker
