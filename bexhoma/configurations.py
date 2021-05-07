@@ -604,6 +604,9 @@ class default():
                             del result[key]['spec']['template']['spec']['volumes'][i]
                         else:
                             vol['persistentVolumeClaim']['claimName'] = name_pvc
+                    if 'hostPath' in vol and not self.monitoring_active:
+                        # we only need hostPath for monitoring
+                            del result[key]['spec']['template']['spec']['volumes'][i]
                 # init containers only for persistent volumes
                 if 'initContainers' in result[key]['spec']['template']['spec'] and not use_storage:
                     del result[key]['spec']['template']['spec']['initContainers']
