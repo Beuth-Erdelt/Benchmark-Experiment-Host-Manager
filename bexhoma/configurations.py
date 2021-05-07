@@ -582,7 +582,7 @@ class default():
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
-                for i, container in enumerate(dep['spec']['template']['spec']['containers']):
+                for i, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
