@@ -598,7 +598,7 @@ class default():
                             del result[key]['spec']['template']['spec']['containers'][i]
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i]
-                for i, vol in enumerate(dep['spec']['template']['spec']['volumes']):
+                for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
                     if vol['name'] == 'benchmark-storage-volume':
                         if not use_storage:
                             del result[key]['spec']['template']['spec']['volumes'][i]
