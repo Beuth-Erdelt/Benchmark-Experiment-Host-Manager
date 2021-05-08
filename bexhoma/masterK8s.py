@@ -1568,6 +1568,16 @@ class testdesign():
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
+    def connect_dashboard(self):
+        print("connect_dashboard")
+        pods_dashboard = self.getPods(component='dashboard')
+        if len(pods_dashboard) > 0:
+            pod_dashboard = pods_dashboard[0]
+            cmd = {}
+            fullcommand = 'kubectl port-forward pod/{pod} 8050:8050 --address 0.0.0.0'.format(pod=pod_dashboard)
+            print(fullcommand)
+            proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            stdout, stderr = proc.communicate()
 
 
 
