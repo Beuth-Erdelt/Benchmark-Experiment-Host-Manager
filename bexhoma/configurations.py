@@ -1165,7 +1165,7 @@ class default():
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         """
     def kubectl(self, command):
-        fullcommand = 'kubectl --context {context} '.format(context=self.cluster.context)
+        fullcommand = 'kubectl --context {context} {command}'.format(context=self.cluster.context, command=command)
         print(fullcommand)
         return os.system(fullcommand)
     def executeCTL(self, command, pod='', container='', params=''):
