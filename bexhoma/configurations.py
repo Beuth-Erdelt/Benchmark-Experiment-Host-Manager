@@ -797,7 +797,7 @@ class default():
         print("getNode")
         cmd = {}
         #fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
-        result = elf.experiment.cluster.kubectl('get pods/'+self.pod_sut+' -o=json')#self.yamlfolder+deployment)
+        result = self.experiment.cluster.kubectl('get pods/'+self.pod_sut+' -o=json')#self.yamlfolder+deployment)
         #result = os.popen(fullcommand).read()
         datastore = json.loads(result)
         #print(datastore)
@@ -1315,10 +1315,11 @@ class default():
         return
         self.timeLoadingStart = default_timer()
         # mark pod
-        fullcommand = 'kubectl label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
+        fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        self.experiment.cluster.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
         # scripts
         shellcommand = 'sh {scriptname}'
         for c in commands:
@@ -1354,10 +1355,11 @@ class default():
                         file.write(stderr)
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
-        fullcommand = 'kubectl label pods '+self.pod_sut+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(self.timeLoadingStart, self.timeLoadingEnd, self.timeLoading)
+        fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(self.timeLoadingStart, self.timeLoadingEnd, self.timeLoading)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        self.experiment.cluster.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         print("create_job")
         if len(app) == 0:
@@ -1471,16 +1473,18 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     # mark pod
-    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
+    fullcommand = 'label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
     print(fullcommand)
-    proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    stdout, stderr = proc.communicate()
+    self.experiment.cluster.kubectl(fullcommand)
+    #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
-        fullcommand = 'kubectl label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
+        fullcommand = 'label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        self.experiment.cluster.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
     # scripts
     #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
     #shellcommand = '[ -f {scriptname} ] && sh {scriptname}'
@@ -1519,13 +1523,15 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+    fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
     print(fullcommand)
-    proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    stdout, stderr = proc.communicate()
+    self.experiment.cluster.kubectl(fullcommand)
+    #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'kubectl label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+        fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        self.experiment.cluster.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
