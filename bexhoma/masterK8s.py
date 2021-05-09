@@ -393,9 +393,9 @@ class testdesign():
         #print("Deploy "+self.deployment)
         print("Deploy "+yamlfile)
         #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
-        self.kubectl('kubectl create -f '+yamlfile)
+        self.kubectl('create -f '+yamlfile)
     def deleteDeployment(self, deployment):
-        self.kubectl('kubectl delete deployment '+deployment)
+        self.kubectl('delete deployment '+deployment)
     def getDeployments(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
@@ -677,7 +677,7 @@ class testdesign():
             service = 'bexhoma-service'
         self.getInfo(component='sut')
         if len(self.deployments) > 0:
-            forward = ['kubectl', 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
+            forward = ['kubectl', '--context {context}'.format(context=self.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             #forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
             forward.extend(ports)
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
@@ -720,17 +720,18 @@ class testdesign():
         print(self.services)
         self.pvcs = self.getPVCs()
     def kubectl(self, command):
-        print(command)
-        os.system(command)
-    def executeCTL(self, command):
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
+        fullcommand = 'kubectl --context {context} '.format(context=self.context)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-    def executeCTL_client(self, command):
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
+        return os.system(fullcommand)
+    def executeCTL(self, command, pod='', container='', params=''):
+        if len(pod) == 0:
+            pod = self.activepod
+        command_clean = command.replace('"','\\"')
+        if len(container) > 0:
+            fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
+        else:
+            fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
+            #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
@@ -740,7 +741,7 @@ class testdesign():
         print("prepareInit")
         cmd = {}
         cmd['prepare_init'] = 'mkdir -p /data/'+self.configfolder+'/'+self.d
-        stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'])
+        stdin, stdout, stderr = self.executeCTL(command=cmd['prepare_init'], container='dbms')
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         # the inits are in the result folder?
         #i = 0
@@ -759,12 +760,12 @@ class testdesign():
                         filename_filled = self.d+'/filled_'+script
                         with open(self.configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
-                        self.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename_filled, to_name=self.activepod+':'+scriptfolder+script))
+                        self.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename_filled, to_name=self.activepod+':'+scriptfolder+script))
         else:
             for script in self.initscript:
                 filename = self.d+'/'+script
                 if os.path.isfile(self.configfolder+'/'+filename):
-                    self.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
+                    self.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
     def loadData(self):
         self.prepareInit()
         print("loadData")
@@ -775,16 +776,16 @@ class testdesign():
         for c in commands:
             filename, file_extension = os.path.splitext(c)
             if file_extension.lower() == '.sql':
-                self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c))
+                self.executeCTL(self.docker['loadData'].format(scriptname=scriptfolder+c), container='dbms')
             elif file_extension.lower() == '.sh':
-                self.executeCTL(shellcommand.format(scriptname=scriptfolder+c))
+                self.executeCTL(shellcommand.format(scriptname=scriptfolder+c), container='dbms')
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
     def checkGPUs(self):
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
-        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'])
+        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'], container='dbms')
     def checkDBMS(self, ip, port):
         found = False
         s = socket.socket()
@@ -801,15 +802,18 @@ class testdesign():
     def getMemory(self):
         print("getMemory")
         command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        result = os.popen(fullcommand).read()
-        mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        mem = stdout#os.popen(fullcommand).read()
+        mem =  int(mem.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
         return mem
     def getCPU(self):
         print("getCPU")
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        cpu = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        cpu = stdout#os.popen(fullcommand).read()
+        #cpu = os.popen(fullcommand).read()
         cpu = cpu.replace('model name\t: ', '')
         #cpu = cpu.replace('model name\t: ', 'CPU: ')
         return cpu.replace('\n','')
@@ -817,15 +821,19 @@ class testdesign():
         print("getCores")
         cmd = {}
         command = 'grep -c ^processor /proc/cpuinfo'
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        cores = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        cores = stdout#os.popen(fullcommand).read()
+        #cores = os.popen(fullcommand).read()
         return int(cores)
     def getHostsystem(self):
         print("getHostsystem")
         cmd = {}
         command = 'uname -r'
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        host = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        host = stdout#os.popen(fullcommand).read()
+        #host = os.popen(fullcommand).read()
         return host.replace('\n','')
     def getNode(self):
         print("getNode")
@@ -842,8 +850,10 @@ class testdesign():
         print("getGPUs")
         cmd = {}
         command = 'nvidia-smi -L'
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        gpus = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        #gpus = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
         result = ""
@@ -854,8 +864,10 @@ class testdesign():
         print("getGPUIDs")
         cmd = {}
         command = 'nvidia-smi -L'
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        gpus = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        #gpus = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         result = []
         for i,gpu in enumerate(l):
@@ -867,14 +879,18 @@ class testdesign():
         print("getCUDA")
         cmd = {}
         command = 'nvidia-smi | grep \'CUDA\''
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        cuda = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        #cuda = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        cuda = stdout#os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
-    def getTimediff(self):
+    def __getTimediff(self):
         print("getTimediff")
         cmd = {}
         command = 'date +"%s"'
         fullcommand = 'kubectl exec '+cluster.activepod+' --container=dbms -- bash -c "'+command+'"'
+        #stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        #gpus = stdout#os.popen(fullcommand).read()
         timestamp_remote = os.popen(fullcommand).read()
         timestamp_local = os.popen(command).read()
         #print(timestamp_remote)
@@ -889,14 +905,16 @@ class testdesign():
             return 0
         command = "du "+datadir+" | awk 'END{print \\$1}'"
         cmd['disk_space_used'] = command
-        stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'])
+        stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], container='dbms')
         return int(stdout.replace('\n',''))
     def getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
         command = "df / | awk 'NR == 2{print \\$3}'"
-        fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
-        disk = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
+        #disk = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+        disk = stdout#os.popen(fullcommand).read()
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
         return int(disk.replace('\n',''))
@@ -1118,23 +1136,23 @@ class testdesign():
         if len(self.docker['logfile']):
             cmd = {}
             cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-            stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'])
+            stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], container='dbms')
             cmd['save_log'] = 'cp '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
-            stdin, stdout, stderr = self.executeCTL(cmd['save_log'])
+            stdin, stdout, stderr = self.executeCTL(cmd['save_log'], container='dbms')
     def copyInits(self):
         print("copyInits")
         cmd = {}
         cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-        stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'])
+        stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], container='dbms')
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
             cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
-            stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
+            stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'], container='dbms')
             i = i + 1
     def downloadLog(self):
         print("downloadLog")
-        self.kubectl('kubectl cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+        self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
     def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
@@ -1219,7 +1237,7 @@ class testdesign():
         # create pod
         yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client)
         # start pod
-        self.kubectl('kubectl create -f '+yamlfile)
+        self.kubectl('create -f '+yamlfile)
         self.wait(10)
         pods = self.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
@@ -1231,20 +1249,21 @@ class testdesign():
             status = self.getPodStatus(client_pod_name)
         # copy config to pod
         cmd = {}
-        cmd['prepare_log'] = 'mkdir /results/'+str(self.code)
-        fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
-        print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        cmd['prepare_log'] = ('mkdir /results/{code}'.format(self.code)).replace('"','\\"')
+        #fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
+        #print(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
+        stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         #stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
+        self.kubectl('cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
-        self.kubectl('kubectl cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
+        self.kubectl('cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
+        self.kubectl('cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
         self.wait(10)
         jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
         jobname = jobs[0]
@@ -1252,7 +1271,8 @@ class testdesign():
             print("job running")
             self.wait(60)
         # write pod log
-        stdin, stdout, stderr = self.pod_log(client_pod_name)
+        stdout = self.pod_log(client_pod_name)
+        #stdin, stdout, stderr = self.pod_log(client_pod_name)
         filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+client_pod_name+'.log'
         f = open(filename_log, "w")
         f.write(stdout)
@@ -1485,13 +1505,13 @@ class testdesign():
             except yaml.YAMLError as exc:
                 print(exc)
         print("Deploy "+deployment)
-        self.kubectl('kubectl create -f '+deployment_experiment)#self.yamlfolder+deployment)
+        self.kubectl('create -f '+deployment_experiment)#self.yamlfolder+deployment)
     def start_dashboard(self, app='', component='dashboard'):
         deployment ='deploymenttemplate-bexhoma-dashboard.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_dashboard(app, component)
         print("Deploy "+deployment)
-        self.kubectl('kubectl create -f '+self.yamlfolder+deployment)
+        self.kubectl('create -f '+self.yamlfolder+deployment)
     def stop_dashboard(self, app='', component='dashboard'):
         deployments = self.getDeployments(app=app, component=component)
         for deployment in deployments:
@@ -1539,14 +1559,16 @@ class testdesign():
             self.deletePod(p)
     def pod_log(self, pod, container=''):
         if len(container) > 0:
-            fullcommand = 'kubectl logs '+pod+' --container='+container
+            fullcommand = 'logs '+pod+' --container='+container
         else:
-            fullcommand = 'kubectl logs '+pod
+            fullcommand = 'logs '+pod
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        output = self.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
         #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        return output
     def evaluate_results(self, pod_dashboard=''):
         if len(pod_dashboard) == 0:
             pods = self.getPods(component='dashboard')
@@ -1556,33 +1578,37 @@ class testdesign():
         for file in os.listdir(directory):
              filename = os.fsdecode(file)
              if filename.endswith(".log") or filename.endswith(".yml"): 
-                 self.kubectl('kubectl cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
+                 self.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
         cmd = {}
-        cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
-        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-        print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
-        cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
-        print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
-        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-        fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
-        print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        cmd['update_dbmsbenchmarker'] = 'git pull'.replace('"','\\"')#/'+str(self.code)
+        self.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard)
+        #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
+        #print(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
+        cmd['merge_results'] = 'python merge.py -r /results/ -c {code}'.format(self.code)
+        self.executeCTL(command=cmd['merge_results'], pod=pod_dashboard)
+        #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
+        #print(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
+        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/{code}'.format(self.code)
+        self.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard)
+        #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
+        #print(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
     def connect_dashboard(self):
         print("connect_dashboard")
         pods_dashboard = self.getPods(component='dashboard')
         if len(pods_dashboard) > 0:
             pod_dashboard = pods_dashboard[0]
             cmd = {}
-            fullcommand = 'kubectl port-forward pod/{pod} 8050:8050 --address 0.0.0.0'.format(pod=pod_dashboard)
-            print(fullcommand)
-            proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            stdout, stderr = proc.communicate()
+            fullcommand = 'port-forward pod/{pod} 8050:8050 --address 0.0.0.0'.format(pod=pod_dashboard)
+            self.kubectl(fullcommand)
+            #print(fullcommand)
+            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #stdout, stderr = proc.communicate()
 
 
 
