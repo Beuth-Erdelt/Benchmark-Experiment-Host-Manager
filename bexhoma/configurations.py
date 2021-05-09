@@ -1304,9 +1304,9 @@ class default():
             volume = name_pvc
         else:
             volume = ''
-        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+")")
+        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume++", context="+self.experiment.cluster.context+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume}
+        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context}
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         #pending = asyncio.all_tasks()
@@ -1452,13 +1452,13 @@ class default():
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context):
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
     #path = self.experiment.path
     #loadData = self.dockertemplate['loadData']
-    def executeCTL(command, pod):
-        fullcommand = 'kubectl exec '+pod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
+    def executeCTL(command, pod, context):
+        fullcommand = 'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'.format(context=context, pod=pod, command=command.replace('"','\\"'))
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
@@ -1493,7 +1493,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     for c in commands:
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
-            stdin, stdout, stderr = executeCTL(loadData.format(scriptname=scriptfolder+c), pod_sut)
+            stdin, stdout, stderr = executeCTL(loadData.format(scriptname=scriptfolder+c), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
@@ -1505,7 +1505,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 with open(filename_log,'w') as file:
                     file.write(stderr)
         elif file_extension.lower() == '.sh':
-            stdin, stdout, stderr = executeCTL(shellcommand.format(scriptname=scriptfolder+c), pod_sut)
+            stdin, stdout, stderr = executeCTL(shellcommand.format(scriptname=scriptfolder+c), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
