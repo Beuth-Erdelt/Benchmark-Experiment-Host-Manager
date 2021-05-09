@@ -289,7 +289,10 @@ class default():
 				status = self.cluster.getPodStatus(pod_dashboard)
 				print(pod_dashboard, status)
 			cmd = {}
-			cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+			# only zip first level
+			#cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+			# zip complete folder
+			cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			# include sub directories
 			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
