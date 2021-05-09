@@ -685,7 +685,7 @@ class testdesign():
             #forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
             your_command = " ".join(forward)
             print(your_command)
-            subprocess.Popen(forward, stdout=subprocess.PIPE)
+            subprocess.Popen(your_command, stdout=subprocess.PIPE)
     def getChildProcesses(self):
         print("getChildProcesses")
         current_process = psutil.Process()
