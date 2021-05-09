@@ -104,7 +104,7 @@ class default():
 		self.wait(sec)
 	def get_items(self, app='', component='', experiment='', configuration=''):
 		if len(app) == 0:
-			app = self.experiment.cluster.appname
+			app = self.cluster.appname
 		if len(experiment) == 0:
 			experiment = self.code
 		print("get_items", app, component, experiment, configuration)
@@ -295,10 +295,11 @@ class default():
 			cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			# include sub directories
 			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
-			fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-			print(fullcommand)
-			proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-			stdout, stderr = proc.communicate()
+			#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
+	        self.cluster.kubectl(cmd['zip_results'])#self.yamlfolder+deployment)
+			#print(fullcommand)
+			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+			#stdout, stderr = proc.communicate()
 		# local:
 		#shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
 	def set_experiment(self, instance=None, volume=None, docker=None, script=None):
@@ -324,23 +325,26 @@ class default():
 		for file in os.listdir(directory):
 			 filename = os.fsdecode(file)
 			 if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
-				 self.cluster.kubectl('kubectl cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
+				 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
 		cmd = {}
 		cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
-		fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-		print(fullcommand)
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
+		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
+        self.cluster.kubectl(cmd['update_dbmsbenchmarker'])
+		#print(fullcommand)
+		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+		#stdout, stderr = proc.communicate()
 		cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-		fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
-		print(fullcommand)
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
+        self.cluster.kubectl(cmd['merge_results'])
+		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
+		#print(fullcommand)
+		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+		#stdout, stderr = proc.communicate()
 		cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-		fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
-		print(fullcommand)
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
+        self.cluster.kubectl(cmd['evaluate_results'])
+		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
+		#print(fullcommand)
+		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+		#stdout, stderr = proc.communicate()
 	def stop_monitoring(self):
 		if len(self.configurations) > 0:
 			for config in self.configurations:
