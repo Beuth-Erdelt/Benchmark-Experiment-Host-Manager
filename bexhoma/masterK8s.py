@@ -38,10 +38,14 @@ import ast
 from dbmsbenchmarker import *
 
 class testdesign():
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        if context is None:
+            # use current context
+            context = config.list_kube_config_contexts()[1]['name']
+        self.context = context
         self.experiments = []
         self.benchmark = None
-        kubernetes.config.load_kube_config()
+        kubernetes.config.load_kube_config(context=context)
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
@@ -59,17 +63,18 @@ class testdesign():
         self.connectionmanagement['singleConnection'] = False
         self.querymanagement = {}
         self.workload = {}
+        self.contextdata = self.config['credentials']['k8s']['context'][self.context]
         self.host = 'localhost'
-        self.port = self.config['credentials']['k8s']['port']
+        self.port = self.contextdata['port']
         self.monitoring_active = True
         # k8s:
-        self.namespace = self.config['credentials']['k8s']['namespace']
+        self.namespace = self.contextdata['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
         self.yamlfolder = yamlfolder
-        self.v1core = client.CoreV1Api()
-        self.v1beta = kubernetes.client.ExtensionsV1beta1Api()
-        self.v1apps = kubernetes.client.AppsV1Api()
-        self.v1batches = kubernetes.client.BatchV1Api()
+        self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=context))
+        self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=context))
+        self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=context))
+        self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=context))
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
@@ -896,7 +901,7 @@ class testdesign():
         #return int(disk.split('\t')[0])
         return int(disk.replace('\n',''))
     def getConnectionName(self):
-        return self.d+"-"+self.s+"-"+self.i+'-'+self.config['credentials']['k8s']['clustername']
+        return self.d+"-"+self.s+"-"+self.i+'-'+self.contextdata['clustername']
     def get_connection_config(self, connection=None, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         if connection is None:
             connection = self.getConnectionName()
@@ -969,7 +974,7 @@ class testdesign():
             if 'prometheus_url' in self.config['credentials']['k8s']['monitor']:
                 c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['prometheus_url']
             if 'service_monitoring' in self.config['credentials']['k8s']['monitor']:
-                c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.config['credentials']['k8s']['namespace'])
+                c['monitoring']['prometheus_url'] = self.config['credentials']['k8s']['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.contextdata['namespace'])
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in self.config['credentials']['k8s']['monitor']:
@@ -1149,8 +1154,8 @@ class testdesign():
         # get connection config (sut)
         monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
         service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
-        service_namespace = self.config['credentials']['k8s']['namespace']
-        service_host = self.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
+        service_namespace = self.contextdata['namespace']
+        service_host = self.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
         #service_port = self.config['credentials']['k8s']['port']
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#self.config['credentials']['k8s']['ip'])
         if isinstance(c['JDBC']['jar'], list):
