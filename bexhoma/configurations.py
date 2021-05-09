@@ -1297,7 +1297,7 @@ class default():
         #if len(self.ddl_parameters):
         #    for i,c in enumerate(commands):
         #        commands[i] = '/filled_'+c
-        use_storage = True
+        use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
             name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
