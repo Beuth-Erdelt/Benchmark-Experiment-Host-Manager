@@ -1464,7 +1464,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-    def kubectl(self, command, context):
+    def kubectl(command, context):
         fullcommand = 'kubectl --context {context} {command}'.format(context=context, command=command)
         print(fullcommand)
         return os.system(fullcommand)
@@ -1479,14 +1479,14 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # mark pod
     fullcommand = 'label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
     print(fullcommand)
-    kubectl(fullcommand)
+    kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
         fullcommand = 'label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
         print(fullcommand)
-        kubectl(fullcommand)
+        kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
     # scripts
@@ -1529,13 +1529,13 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
     print(fullcommand)
-    kubectl(fullcommand)
+    kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
         fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
         print(fullcommand)
-        kubectl(fullcommand)
+        kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
