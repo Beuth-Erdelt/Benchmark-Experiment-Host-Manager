@@ -87,7 +87,7 @@ class default():
 		self.workload = {}
 		self.monitoring_active = True
 		# k8s:
-		self.namespace = self.cluster.config['credentials']['k8s']['namespace']
+		self.namespace = self.cluster.namespace#.config['credentials']['k8s']['namespace']
 		self.configurations = []
 		self.storage_label = ''
 	def wait(self, sec):
