@@ -278,7 +278,7 @@ class default():
             services = self.experiment.cluster.getServices(app, component, self.experiment.code, configuration)
             service = services[0]
             ports = self.experiment.cluster.getPorts(app, component, self.experiment.code, configuration)
-            forward = ['kubectl', 'port-forward', '--context {context}'.format(context=self.experiment.cluster.context), 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
+            forward = ['kubectl', '--context {context}'.format(context=self.experiment.cluster.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             forward.extend(ports)
             your_command = " ".join(forward)
             print(your_command)
