@@ -1175,7 +1175,7 @@ class default():
         if len(container) > 0:
             fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.cluster.context, pod=pod, container=container, command=command_clean)
         else:
-            fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
+            fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.cluster.context, pod=pod, command=command_clean)
             #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
