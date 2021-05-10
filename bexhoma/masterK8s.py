@@ -722,7 +722,7 @@ class testdesign():
     def kubectl(self, command):
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
         print(fullcommand)
-        return os.system(fullcommand)
+        return os.popen(fullcommand).read()# os.system(fullcommand)
     def executeCTL(self, command, pod='', container='', params=''):
         if len(pod) == 0:
             pod = self.activepod
