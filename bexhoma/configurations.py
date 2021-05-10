@@ -639,7 +639,7 @@ class default():
                     nodeSelectors = self.resources['nodeSelector'].copy()
                 else:
                     nodeSelectors = {}
-                print(nodeSelectors)
+                #print(nodeSelectors)
                 # we want to have a resource dict anyway!
                 self.resources = {}
                 self.resources['requests'] = {}
@@ -691,7 +691,7 @@ class default():
                     else:
                         dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
                         self.resources['nodeSelector'][nodeSelector] = value
-                print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
+                #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
@@ -1114,7 +1114,7 @@ class default():
         #print(fullcommand)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         #stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
@@ -1138,7 +1138,7 @@ class default():
             #print(fullcommand)
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #stdout, stderr = proc.communicate()
-            print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+            #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         """
         self.wait(10)
         jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
