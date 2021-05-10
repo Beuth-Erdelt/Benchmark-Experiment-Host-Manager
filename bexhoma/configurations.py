@@ -739,7 +739,7 @@ class default():
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
-        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'], self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut)
     def checkDBMS(self, ip, port):
         found = False
         s = socket.socket()
@@ -758,7 +758,7 @@ class default():
         try:
             command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-            stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
             result = stdout#os.popen(fullcommand).read()
             mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
             return mem
@@ -770,7 +770,7 @@ class default():
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cpu = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
         cpu = stdout#os.popen(fullcommand).read()
         cpu = cpu.replace('model name\t: ', '')
         #cpu = cpu.replace('model name\t: ', 'CPU: ')
@@ -781,7 +781,7 @@ class default():
         command = 'grep -c ^processor /proc/cpuinfo'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cores = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
         cores = stdout#os.popen(fullcommand).read()
         return int(cores)
     def getHostsystem(self):
@@ -790,7 +790,7 @@ class default():
         command = 'uname -r'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #host = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
         host = stdout#os.popen(fullcommand).read()
         return host.replace('\n','')
     def getNode(self):
@@ -812,7 +812,7 @@ class default():
         command = 'nvidia-smi -L'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #gpus = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
         gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
@@ -826,7 +826,7 @@ class default():
         command = 'nvidia-smi -L'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #gpus = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
         gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         result = []
@@ -841,7 +841,7 @@ class default():
         command = 'nvidia-smi | grep \'CUDA\''
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cuda = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
         cuda = stdout#os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
     def getTimediff(self):
@@ -849,7 +849,7 @@ class default():
         cmd = {}
         command = 'date +"%s"'
         #fullcommand = 'kubectl exec '+cluster.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
         timestamp_remote = stdout#os.popen(fullcommand).read()
         #timestamp_remote = os.popen(fullcommand).read()
         timestamp_local = os.popen(command).read()
@@ -866,13 +866,13 @@ class default():
         try:
             command = "du "+datadir+" | awk 'END{print \\$1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut)
             return int(stdout.replace('\n',''))
         except Exception as e:
             # Windows
             command = "du "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut)
             if len(stdout) > 0:
                 return int(stdout.replace('\n',''))
         return 0
@@ -884,7 +884,7 @@ class default():
             command = "df / | awk 'NR == 2{print \\$3}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             #disk = os.popen(fullcommand).read()
-            stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
             disk = stdout#os.popen(fullcommand).read()
             return int(disk.replace('\n',''))
         except Exception as e:
@@ -892,7 +892,7 @@ class default():
             command = "df / | awk 'NR == 2{print $3}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             #disk = os.popen(fullcommand).read()
-            stdin, stdout, stderr = self.cluster.executeCTL(command=command, pod=self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
             disk = stdout#os.popen(fullcommand).read()
             if len(disk) > 0:
                 return int(disk.replace('\n',''))
