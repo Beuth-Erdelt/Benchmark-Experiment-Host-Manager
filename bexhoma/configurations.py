@@ -282,7 +282,7 @@ class default():
             forward.extend(ports)
             your_command = " ".join(forward)
             print(your_command)
-            subprocess.Popen(your_command, stdout=subprocess.PIPE)
+            subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
             # wait for port to be connected
             self.wait(10)
             dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
