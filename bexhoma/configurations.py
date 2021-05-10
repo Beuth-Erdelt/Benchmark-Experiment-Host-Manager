@@ -1467,7 +1467,11 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     def kubectl(command, context):
         fullcommand = 'kubectl --context {context} {command}'.format(context=context, command=command)
         print(fullcommand)
-        return os.system(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return stdout.decode('utf-8')
+        #return os.system(fullcommand)
     #pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=experiment)
     #pod_sut = pods[0]
     #print("load_data")
