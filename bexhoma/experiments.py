@@ -329,18 +329,18 @@ class default():
 		cmd = {}
 		cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-		self.cluster.kubectl(cmd['update_dbmsbenchmarker'])
+		self.cluster.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard)
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
 		cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-		self.cluster.kubectl(cmd['merge_results'])
+		self.cluster.executeCTL(command=cmd['merge_results'], pod=pod_dashboard)
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
 		cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-		self.cluster.kubectl(cmd['evaluate_results'])
+		self.cluster.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard)
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
