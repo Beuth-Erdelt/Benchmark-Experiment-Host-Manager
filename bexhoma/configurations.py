@@ -1108,7 +1108,7 @@ class default():
         # copy config to pod
         cmd = {}
         cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-        stdin, stdout, stderr = self.cluster.executeCTL(command=cmd['prepare_log'], pod=client_pod_name)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=cmd['prepare_log'], pod=client_pod_name)
         #disk = stdout#os.popen(fullcommand).read()
         #fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
         #print(fullcommand)
@@ -1133,7 +1133,7 @@ class default():
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #stdout, stderr = proc.communicate()
             cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
-            stdin, stdout, stderr = self.cluster.executeCTL(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
             #fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['fetch_loading_metrics'].replace('"','\\"')+'"'
             #print(fullcommand)
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -1165,7 +1165,7 @@ class default():
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         """
     def kubectl(self, command):
-        fullcommand = 'kubectl --context {context} {command}'.format(context=self.cluster.context, command=command)
+        fullcommand = 'kubectl --context {context} {command}'.format(context=self.experiment.cluster.context, command=command)
         print(fullcommand)
         return os.system(fullcommand)
     def executeCTL(self, command, pod='', container='', params=''):
