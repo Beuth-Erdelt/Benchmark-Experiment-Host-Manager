@@ -296,7 +296,7 @@ class default():
 			# include sub directories
 			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-			self.cluster.kubectl(cmd['zip_results'])#self.yamlfolder+deployment)
+			self.cluster.executeCTL(command=cmd['zip_results'], pod=pod_dashboard)#self.yamlfolder+deployment)
 			#print(fullcommand)
 			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			#stdout, stderr = proc.communicate()
