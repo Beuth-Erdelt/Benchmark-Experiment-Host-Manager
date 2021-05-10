@@ -978,7 +978,7 @@ class default():
             if 'prometheus_url' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['prometheus_url']
             if 'service_monitoring' in config_K8s['monitor']:
-                c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=config_K8s['namespace'])
+                c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in config_K8s['monitor']:
@@ -1017,8 +1017,8 @@ class default():
         # get connection config (sut)
         monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
         service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
-        service_namespace = self.experiment.cluster.config['credentials']['k8s']['namespace']
-        service_host = self.experiment.cluster.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
+        service_namespace = self.experiment.cluster.contextdata['namespace']
+        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
         pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=self.code)
         self.pod_sut = pods[0]
         #service_port = config_K8s['port']
