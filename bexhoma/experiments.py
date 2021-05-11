@@ -129,7 +129,7 @@ class default():
 	def set_connectionmanagement(self, **kwargs):
 		self.connectionmanagement = kwargs
 	def set_resources(self, **kwargs):
-		self.resources = kwargs
+		self.resources = {**self.resources, **kwargs}
 	def set_ddl_parameters(self, **kwargs):
 		self.ddl_parameters = kwargs
 	def set_storage(self, **kwargs):
