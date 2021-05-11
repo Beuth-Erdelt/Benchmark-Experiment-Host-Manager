@@ -73,6 +73,7 @@ class default():
         #    self.code = str(round(time.time()))
         self.appname = self.experiment.cluster.appname
         self.code = self.experiment.cluster.code
+        self.resources = {}
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
