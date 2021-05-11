@@ -46,7 +46,7 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=1, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=None, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiment = experiment
         #self.code = code
         self.docker = docker
@@ -63,7 +63,10 @@ class default():
             self.script = self.experiment.script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
         self.alias = alias
-        self.numExperiments = numExperiments
+        if numExperiments is not None:
+            self.numExperiments = numExperiments
+        else:
+            self.numExperiments = self.experiment.numExperiments
         self.numExperimentsDone = 0
         self.clients = clients
         #if self.code is None:
