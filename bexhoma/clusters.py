@@ -40,13 +40,13 @@ from bexhoma import masterK8s, experiments
 
 
 class kubernetes(masterK8s.testdesign):
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         # list of configurations (connections, docker)
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
         self.code = code
-        masterK8s.testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        masterK8s.testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
         self.max_sut = None
         """
         self.code = code
@@ -61,7 +61,7 @@ class kubernetes(masterK8s.testdesign):
         self.experiments.append(experiment)
     def store_pod_log(self, pod_name):
         # write pod log
-        stdin, stdout, stderr = self.pod_log(pod_name)
+        stdout = self.pod_log(pod_name)
         filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
         f = open(filename_log, "w")
         f.write(stdout)

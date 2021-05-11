@@ -46,7 +46,7 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=1, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=None, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.experiment = experiment
         #self.code = code
         self.docker = docker
@@ -63,13 +63,17 @@ class default():
             self.script = self.experiment.script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
         self.alias = alias
-        self.numExperiments = numExperiments
+        if numExperiments is not None:
+            self.numExperiments = numExperiments
+        else:
+            self.numExperiments = self.experiment.numExperiments
         self.numExperimentsDone = 0
         self.clients = clients
         #if self.code is None:
         #    self.code = str(round(time.time()))
         self.appname = self.experiment.cluster.appname
         self.code = self.experiment.cluster.code
+        self.resources = {}
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
@@ -123,7 +127,7 @@ class default():
     def set_connectionmanagement(self, **kwargs):
         self.connectionmanagement = kwargs
     def set_resources(self, **kwargs):
-        self.resources = kwargs
+        self.resources = {**self.resources, **kwargs}
     def set_storage(self, **kwargs):
         self.storage = kwargs
     def set_ddl_parameters(self, **kwargs):
@@ -278,11 +282,11 @@ class default():
             services = self.experiment.cluster.getServices(app, component, self.experiment.code, configuration)
             service = services[0]
             ports = self.experiment.cluster.getPorts(app, component, self.experiment.code, configuration)
-            forward = ['kubectl', 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
+            forward = ['kubectl', '--context {context}'.format(context=self.experiment.cluster.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             forward.extend(ports)
             your_command = " ".join(forward)
             print(your_command)
-            subprocess.Popen(forward, stdout=subprocess.PIPE)
+            subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
             # wait for port to be connected
             self.wait(10)
             dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
@@ -387,7 +391,7 @@ class default():
             except yaml.YAMLError as exc:
                 print(exc)
         print("Deploy "+deployment)
-        self.experiment.cluster.kubectl('kubectl create -f '+deployment_experiment)#self.yamlfolder+deployment)
+        self.experiment.cluster.kubectl('create -f '+deployment_experiment)#self.yamlfolder+deployment)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         if len(app)==0:
             app = self.appname
@@ -582,7 +586,7 @@ class default():
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
-                for i, container in enumerate(dep['spec']['template']['spec']['containers']):
+                for i, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
@@ -598,12 +602,15 @@ class default():
                             del result[key]['spec']['template']['spec']['containers'][i]
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i]
-                for i, vol in enumerate(dep['spec']['template']['spec']['volumes']):
+                for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
                     if vol['name'] == 'benchmark-storage-volume':
                         if not use_storage:
                             del result[key]['spec']['template']['spec']['volumes'][i]
                         else:
                             vol['persistentVolumeClaim']['claimName'] = name_pvc
+                    if 'hostPath' in vol and not self.monitoring_active:
+                        # we only need hostPath for monitoring
+                            del result[key]['spec']['template']['spec']['volumes'][i]
                 # init containers only for persistent volumes
                 if 'initContainers' in result[key]['spec']['template']['spec'] and not use_storage:
                     del result[key]['spec']['template']['spec']['initContainers']
@@ -636,7 +643,7 @@ class default():
                     nodeSelectors = self.resources['nodeSelector'].copy()
                 else:
                     nodeSelectors = {}
-                print(nodeSelectors)
+                #print(nodeSelectors)
                 # we want to have a resource dict anyway!
                 self.resources = {}
                 self.resources['requests'] = {}
@@ -669,6 +676,9 @@ class default():
                         dep['spec']['template']['spec']['nodeSelector'] = {}
                     dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
                     dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
+                else:
+                    if 'nvidia.com/gpu' in dep['spec']['template']['spec']['containers'][0]['resources']['limits']:
+                        del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu']
                 # add resource cpu
                 #if node_cpu:
                 if not 'nodeSelector' in dep['spec']['template']['spec']:
@@ -685,7 +695,7 @@ class default():
                     else:
                         dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
                         self.resources['nodeSelector'][nodeSelector] = value
-                print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
+                #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
                 #print(service)
@@ -696,7 +706,7 @@ class default():
             except yaml.YAMLError as exc:
                 print(exc)
         print("Deploy "+deployment_experiment)
-        self.experiment.cluster.kubectl('kubectl create -f '+deployment_experiment)
+        self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
         return True
@@ -733,7 +743,7 @@ class default():
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
-        stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'], self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut)
     def checkDBMS(self, ip, port):
         found = False
         s = socket.socket()
@@ -751,8 +761,9 @@ class default():
         print("getMemory")
         try:
             command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
-            fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-            result = os.popen(fullcommand).read()
+            #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+            result = stdout#os.popen(fullcommand).read()
             mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
             return mem
         except Exception as e:
@@ -761,8 +772,10 @@ class default():
     def getCPU(self):
         print("getCPU")
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        cpu = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+        #cpu = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        cpu = stdout#os.popen(fullcommand).read()
         cpu = cpu.replace('model name\t: ', '')
         #cpu = cpu.replace('model name\t: ', 'CPU: ')
         return cpu.replace('\n','')
@@ -770,21 +783,26 @@ class default():
         print("getCores")
         cmd = {}
         command = 'grep -c ^processor /proc/cpuinfo'
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        cores = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+        #cores = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        cores = stdout#os.popen(fullcommand).read()
         return int(cores)
     def getHostsystem(self):
         print("getHostsystem")
         cmd = {}
         command = 'uname -r'
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        host = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+        #host = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        host = stdout#os.popen(fullcommand).read()
         return host.replace('\n','')
     def getNode(self):
         print("getNode")
         cmd = {}
-        fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
-        result = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
+        result = self.experiment.cluster.kubectl('get pods/'+self.pod_sut+' -o=json')#self.yamlfolder+deployment)
+        #result = os.popen(fullcommand).read()
         datastore = json.loads(result)
         #print(datastore)
         if self.appname == datastore['metadata']['labels']['app']:
@@ -796,8 +814,10 @@ class default():
         print("getGPUs")
         cmd = {}
         command = 'nvidia-smi -L'
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        gpus = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+        #gpus = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
         result = ""
@@ -808,8 +828,10 @@ class default():
         print("getGPUIDs")
         cmd = {}
         command = 'nvidia-smi -L'
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        gpus = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+        #gpus = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         result = []
         for i,gpu in enumerate(l):
@@ -821,15 +843,19 @@ class default():
         print("getCUDA")
         cmd = {}
         command = 'nvidia-smi | grep \'CUDA\''
-        fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        cuda = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+        #cuda = os.popen(fullcommand).read()
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        cuda = stdout#os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
     def getTimediff(self):
         print("getTimediff")
         cmd = {}
         command = 'date +"%s"'
-        fullcommand = 'kubectl exec '+cluster.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        timestamp_remote = os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+cluster.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        timestamp_remote = stdout#os.popen(fullcommand).read()
+        #timestamp_remote = os.popen(fullcommand).read()
         timestamp_local = os.popen(command).read()
         #print(timestamp_remote)
         #print(timestamp_local)
@@ -844,13 +870,13 @@ class default():
         try:
             command = "du "+datadir+" | awk 'END{print \\$1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut)
             return int(stdout.replace('\n',''))
         except Exception as e:
             # Windows
             command = "du "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut)
             if len(stdout) > 0:
                 return int(stdout.replace('\n',''))
         return 0
@@ -860,14 +886,18 @@ class default():
         cmd = {}
         try:
             command = "df / | awk 'NR == 2{print \\$3}'"
-            fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-            disk = os.popen(fullcommand).read()
+            #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+            #disk = os.popen(fullcommand).read()
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+            disk = stdout#os.popen(fullcommand).read()
             return int(disk.replace('\n',''))
         except Exception as e:
             # Windows
             command = "df / | awk 'NR == 2{print $3}'"
-            fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-            disk = os.popen(fullcommand).read()
+            #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+            #disk = os.popen(fullcommand).read()
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+            disk = stdout#os.popen(fullcommand).read()
             if len(disk) > 0:
                 return int(disk.replace('\n',''))
         # pipe to awk sometimes does not work
@@ -952,7 +982,7 @@ class default():
             if 'prometheus_url' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['prometheus_url']
             if 'service_monitoring' in config_K8s['monitor']:
-                c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=config_K8s['namespace'])
+                c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}
             if 'metrics' in config_K8s['monitor']:
@@ -991,8 +1021,8 @@ class default():
         # get connection config (sut)
         monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
         service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
-        service_namespace = self.experiment.cluster.config['credentials']['k8s']['namespace']
-        service_host = self.experiment.cluster.config['credentials']['k8s']['service_sut'].format(service=service_name, namespace=service_namespace)
+        service_namespace = self.experiment.cluster.contextdata['namespace']
+        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
         pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=self.code)
         self.pod_sut = pods[0]
         #service_port = config_K8s['port']
@@ -1069,7 +1099,7 @@ class default():
         # create pod
         yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
         # start pod
-        self.experiment.cluster.kubectl('kubectl create -f '+yamlfile)
+        self.experiment.cluster.kubectl('create -f '+yamlfile)
         self.wait(10)
         pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
@@ -1082,20 +1112,22 @@ class default():
         # copy config to pod
         cmd = {}
         cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-        fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
-        print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=cmd['prepare_log'], pod=client_pod_name)
+        #disk = stdout#os.popen(fullcommand).read()
+        #fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
+        #print(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         #stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
+        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
-        self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
-        self.experiment.cluster.kubectl('kubectl cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
+        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
+        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
         # get monitoring for loading
         if self.monitoring_active:
             cmd = {}
@@ -1105,11 +1137,12 @@ class default():
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #stdout, stderr = proc.communicate()
             cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
-            fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['fetch_loading_metrics'].replace('"','\\"')+'"'
-            print(fullcommand)
-            proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            stdout, stderr = proc.communicate()
-            print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
+            #fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['fetch_loading_metrics'].replace('"','\\"')+'"'
+            #print(fullcommand)
+            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #stdout, stderr = proc.communicate()
+            #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         """
         self.wait(10)
         jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
@@ -1136,6 +1169,25 @@ class default():
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         """
     def kubectl(self, command):
+        fullcommand = 'kubectl --context {context} {command}'.format(context=self.experiment.cluster.context, command=command)
+        print(fullcommand)
+        return os.system(fullcommand)
+    def executeCTL(self, command, pod='', container='', params=''):
+        if len(pod) == 0:
+            pod = self.activepod
+        command_clean = command.replace('"','\\"')
+        if len(container) > 0:
+            fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.experiment.cluster.context, pod=pod, container=container, command=command_clean)
+        else:
+            fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.experiment.cluster.context, pod=pod, command=command_clean)
+            #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    """
+    def kubectl(self, command):
         print(command)
         os.system(command)
     def executeCTL(self, command, pod):
@@ -1145,6 +1197,7 @@ class default():
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    """
     def copyLog(self):
         print("copyLog")
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -1152,9 +1205,9 @@ class default():
         if len(self.dockertemplate['logfile']):
             cmd = {}
             cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-            stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], self.pod_sut)
+            stdin, stdout, stderr = self.executeCTL(command=cmd['prepare_log'], pod=self.pod_sut)
             cmd['save_log'] = 'cp '+self.dockertemplate['logfile']+' /data/'+str(self.code)+'/'+self.configuration+'.log'
-            stdin, stdout, stderr = self.executeCTL(cmd['save_log'], self.pod_sut)
+            stdin, stdout, stderr = self.executeCTL(command=cmd['save_log'], pod=self.pod_sut)
     def prepareInit(self):
         print("prepareInit")
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -1181,12 +1234,12 @@ class default():
                         filename_filled = self.docker+'/filled_'+script
                         with open(self.experiment.cluster.configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
-                        self.experiment.cluster.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
+                        self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
         else:
             for script in self.initscript:
                 filename = self.docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.configfolder+'/'+filename):
-                    self.experiment.cluster.kubectl('kubectl cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
+                    self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
     def attach_worker(self):
         if self.num_worker > 0:
             pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -1248,16 +1301,16 @@ class default():
         #if len(self.ddl_parameters):
         #    for i,c in enumerate(commands):
         #        commands[i] = '/filled_'+c
-        use_storage = True
+        use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
             name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
             volume = name_pvc
         else:
             volume = ''
-        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+")")
+        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume}
+        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context}
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         #pending = asyncio.all_tasks()
@@ -1266,10 +1319,11 @@ class default():
         return
         self.timeLoadingStart = default_timer()
         # mark pod
-        fullcommand = 'kubectl label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
+        fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        self.experiment.cluster.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
         # scripts
         shellcommand = 'sh {scriptname}'
         for c in commands:
@@ -1305,10 +1359,11 @@ class default():
                         file.write(stderr)
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
-        fullcommand = 'kubectl label pods '+self.pod_sut+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(self.timeLoadingStart, self.timeLoadingEnd, self.timeLoading)
+        fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(self.timeLoadingStart, self.timeLoadingEnd, self.timeLoading)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        self.experiment.cluster.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         print("create_job")
         if len(app) == 0:
@@ -1401,18 +1456,26 @@ class default():
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context):
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
     #path = self.experiment.path
     #loadData = self.dockertemplate['loadData']
-    def executeCTL(command, pod):
-        fullcommand = 'kubectl exec '+pod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
+    def executeCTL(command, pod, context):
+        fullcommand = 'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'.format(context=context, pod=pod, command=command.replace('"','\\"'))
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
         print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+    def kubectl(command, context):
+        fullcommand = 'kubectl --context {context} {command}'.format(context=context, command=command)
+        print(fullcommand)
+        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = proc.communicate()
+        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        return stdout.decode('utf-8')
+        #return os.system(fullcommand)
     #pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=experiment)
     #pod_sut = pods[0]
     #print("load_data")
@@ -1422,16 +1485,18 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     # mark pod
-    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
+    fullcommand = 'label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
     print(fullcommand)
-    proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    stdout, stderr = proc.communicate()
+    kubectl(fullcommand, context)
+    #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
-        fullcommand = 'kubectl label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
+        fullcommand = 'label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        kubectl(fullcommand, context)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
     # scripts
     #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
     #shellcommand = '[ -f {scriptname} ] && sh {scriptname}'
@@ -1440,7 +1505,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     for c in commands:
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
-            stdin, stdout, stderr = executeCTL(loadData.format(scriptname=scriptfolder+c), pod_sut)
+            stdin, stdout, stderr = executeCTL(loadData.format(scriptname=scriptfolder+c), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
@@ -1452,7 +1517,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 with open(filename_log,'w') as file:
                     file.write(stderr)
         elif file_extension.lower() == '.sh':
-            stdin, stdout, stderr = executeCTL(shellcommand.format(scriptname=scriptfolder+c), pod_sut)
+            stdin, stdout, stderr = executeCTL(shellcommand.format(scriptname=scriptfolder+c), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
@@ -1470,13 +1535,15 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    fullcommand = 'kubectl label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+    fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
     print(fullcommand)
-    proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    stdout, stderr = proc.communicate()
+    kubectl(fullcommand, context)
+    #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'kubectl label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+        fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
         print(fullcommand)
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
+        kubectl(fullcommand, context)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()

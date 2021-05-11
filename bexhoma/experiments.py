@@ -87,7 +87,7 @@ class default():
 		self.workload = {}
 		self.monitoring_active = True
 		# k8s:
-		self.namespace = self.cluster.config['credentials']['k8s']['namespace']
+		self.namespace = self.cluster.namespace#.config['credentials']['k8s']['namespace']
 		self.configurations = []
 		self.storage_label = ''
 	def wait(self, sec):
@@ -104,7 +104,7 @@ class default():
 		self.wait(sec)
 	def get_items(self, app='', component='', experiment='', configuration=''):
 		if len(app) == 0:
-			app = self.experiment.cluster.appname
+			app = self.cluster.appname
 		if len(experiment) == 0:
 			experiment = self.code
 		print("get_items", app, component, experiment, configuration)
@@ -129,7 +129,7 @@ class default():
 	def set_connectionmanagement(self, **kwargs):
 		self.connectionmanagement = kwargs
 	def set_resources(self, **kwargs):
-		self.resources = kwargs
+		self.resources = {**self.resources, **kwargs}
 	def set_ddl_parameters(self, **kwargs):
 		self.ddl_parameters = kwargs
 	def set_storage(self, **kwargs):
@@ -286,16 +286,20 @@ class default():
 			print(pod_dashboard, status)
 			while status != "Running":
 				self.wait(10)
-				status = self.experiment.cluster.getPodStatus(pod_dashboard)
+				status = self.cluster.getPodStatus(pod_dashboard)
 				print(pod_dashboard, status)
 			cmd = {}
-			cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+			# only zip first level
+			#cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+			# zip complete folder
+			cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			# include sub directories
 			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
-			fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-			print(fullcommand)
-			proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-			stdout, stderr = proc.communicate()
+			#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
+			self.cluster.executeCTL(command=cmd['zip_results'], pod=pod_dashboard)#self.yamlfolder+deployment)
+			#print(fullcommand)
+			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+			#stdout, stderr = proc.communicate()
 		# local:
 		#shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
 	def set_experiment(self, instance=None, volume=None, docker=None, script=None):
@@ -321,23 +325,26 @@ class default():
 		for file in os.listdir(directory):
 			 filename = os.fsdecode(file)
 			 if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
-				 self.cluster.kubectl('kubectl cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
+				 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
 		cmd = {}
 		cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
-		fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-		print(fullcommand)
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
+		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
+		self.cluster.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard)
+		#print(fullcommand)
+		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+		#stdout, stderr = proc.communicate()
 		cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-		fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
-		print(fullcommand)
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
+		self.cluster.executeCTL(command=cmd['merge_results'], pod=pod_dashboard)
+		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
+		#print(fullcommand)
+		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+		#stdout, stderr = proc.communicate()
 		cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-		fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
-		print(fullcommand)
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
+		self.cluster.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard)
+		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
+		#print(fullcommand)
+		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+		#stdout, stderr = proc.communicate()
 	def stop_monitoring(self):
 		if len(self.configurations) > 0:
 			for config in self.configurations:
