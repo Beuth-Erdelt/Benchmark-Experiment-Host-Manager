@@ -1100,8 +1100,10 @@ class default():
         yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
-        self.wait(10)
-        pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+        pods = []
+        while len(pods) == 0:
+            self.wait(10)
+            pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
         status = self.experiment.cluster.getPodStatus(client_pod_name)
         print(client_pod_name, status)
