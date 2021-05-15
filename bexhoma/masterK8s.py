@@ -479,7 +479,7 @@ class testdesign():
             else:
                 return ""
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getPodStatus: %s\n" % e)
     def getPodsLabels(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
@@ -500,7 +500,7 @@ class testdesign():
                     pod_labels[item.metadata.name] = item.metadata.labels
             return pod_labels
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getPodsLabels: %s\n" % e)
     def getServices(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
