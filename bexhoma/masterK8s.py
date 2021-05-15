@@ -443,6 +443,7 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod for getPods: %s\n" % e)
+            return []
     def getStatefulSets(self, app='', component='', experiment='', configuration=''):
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
