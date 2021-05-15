@@ -442,7 +442,7 @@ class testdesign():
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getPods: %s\n" % e)
     def getStatefulSets(self, app='', component='', experiment='', configuration=''):
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
@@ -1392,7 +1392,7 @@ class testdesign():
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: %s\n" % e)
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         print("create_job")
         if len(app) == 0:
