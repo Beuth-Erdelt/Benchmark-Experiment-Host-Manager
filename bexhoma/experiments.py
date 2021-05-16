@@ -141,12 +141,28 @@ class default():
 	def __set_configfolder(self, configfolder):
 		self.cluster.set_configfolder(configfolder)
 	def set_querymanagement_quicktest(self,
-			numRun=1):
+			numRun=1,
+			datatransfer=False):
 		self.set_querymanagement(
 			numWarmup = 0,
 			numCooldown = 0,
 			numRun = numRun,
-			delay = 0)
+			delay = 0,
+			timer = {
+				'connection':
+				{
+					'active': True,
+					'delay': 0
+				},
+				'datatransfer':
+				{
+					'active': datatransfer,
+					'sorted': True,
+					'compare': 'result',
+					'store': 'dataframe',
+					'precision': 0,
+				}
+			})
 		self.monitoring_active = False
 	def set_querymanagement_monitoring(self,
 			numRun=256,
