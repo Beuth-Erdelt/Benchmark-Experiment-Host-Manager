@@ -45,7 +45,6 @@ class testdesign():
         self.context = context
         self.experiments = []
         self.benchmark = None
-        kubernetes.config.load_kube_config(context=context)
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
@@ -71,14 +70,17 @@ class testdesign():
         self.namespace = self.contextdata['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
         self.yamlfolder = yamlfolder
-        self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=context))
-        self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=context))
-        self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=context))
-        self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=context))
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
+        self.cluster_access()
+    def cluster_access():
+        kubernetes.config.load_kube_config(context=self.context)
+        self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
     def set_code(self, code):
         return self.setCode(code)
     # can be overwritten by experiment
@@ -1397,6 +1399,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: %s\n" % e)
+            if int(e) == 401:
+                print("Create new access token")
+                self.cluster_access()
             return []
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         print("create_job")
