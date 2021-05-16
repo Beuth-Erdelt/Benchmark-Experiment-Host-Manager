@@ -1214,9 +1214,9 @@ class default():
         print("prepareInit")
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        cmd = {}
-        cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
-        stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
+        #cmd = {}
+        #cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
+        #stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
         #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
         scriptfolder = '/tmp/'
         # the inits are in the result folder?
