@@ -539,7 +539,7 @@ class default():
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
                 if not use_storage and 'volumeClaimTemplates' in result[key]['spec']['template']:
-                    del result[key]['spec']['template']['volumeClaimTemplates']
+                    del result[key]['spec']['volumeClaimTemplates']
                 #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
