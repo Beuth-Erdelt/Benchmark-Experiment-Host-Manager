@@ -1399,9 +1399,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: %s\n" % e)
-            if int(e) == 401:
-                print("Create new access token")
-                self.cluster_access()
+            #if int(e) == 401:
+            print("Create new access token")
+            self.cluster_access()
             return []
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         print("create_job")
