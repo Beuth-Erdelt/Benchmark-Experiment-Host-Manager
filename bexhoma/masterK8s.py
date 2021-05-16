@@ -75,7 +75,7 @@ class testdesign():
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
         self.cluster_access()
-    def cluster_access():
+    def cluster_access(self):
         kubernetes.config.load_kube_config(context=self.context)
         self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
         self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
