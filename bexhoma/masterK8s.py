@@ -419,6 +419,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling v1beta->list_namespaced_deployment: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            return []
     def getPods(self, app='', component='', experiment='', configuration='', status=''):
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
@@ -445,6 +448,8 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod for getPods: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
             return []
     def getStatefulSets(self, app='', component='', experiment='', configuration=''):
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
@@ -468,6 +473,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling AppsV1Api->list_namespaced_stateful_set: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            return []
     def getPodStatus(self, pod, appname=''):
         try:
             if len(appname) == 0:
@@ -483,6 +491,8 @@ class testdesign():
                 return ""
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod for getPodStatus: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
             return ""
     def getPodsLabels(self, app='', component='', experiment='', configuration=''):
         label = ''
@@ -505,6 +515,8 @@ class testdesign():
             return pod_labels
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod for getPodsLabels: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
             return []
     def getServices(self, app='', component='', experiment='', configuration=''):
         label = ''
@@ -1318,6 +1330,8 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
             return []
     def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         #print("getJobStatus")
@@ -1346,6 +1360,8 @@ class testdesign():
             return api_response.status.succeeded
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
             return 1
     def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("deleteJob")
