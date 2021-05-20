@@ -1030,6 +1030,7 @@ class default():
         c['parameter'] = {}
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
+        c['parameter']['numExperiment'] = str(self.numExperimentsDone+1)
         #print(c)
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
