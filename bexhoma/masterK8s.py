@@ -787,8 +787,14 @@ class testdesign():
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        try:
+            print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+            return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        except Exception as e:
+            print(e)
+            print(stdout, stderr)
+            return "", stdout, stderr
+        return "", "", ""
     def prepareInit(self):
         print("prepareInit")
         cmd = {}
