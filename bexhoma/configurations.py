@@ -539,7 +539,7 @@ class default():
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
                 if not use_storage and 'volumeClaimTemplates' in result[key]['spec']['template']:
-                    del result[key]['spec']['template']['volumeClaimTemplates']
+                    del result[key]['spec']['volumeClaimTemplates']
                 #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
@@ -743,7 +743,7 @@ class default():
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut, container='dbms')
     def checkDBMS(self, ip, port):
         found = False
         s = socket.socket()
@@ -762,7 +762,7 @@ class default():
         try:
             command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
             result = stdout#os.popen(fullcommand).read()
             mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
             return mem
@@ -774,7 +774,7 @@ class default():
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cpu = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         cpu = stdout#os.popen(fullcommand).read()
         cpu = cpu.replace('model name\t: ', '')
         #cpu = cpu.replace('model name\t: ', 'CPU: ')
@@ -785,7 +785,7 @@ class default():
         command = 'grep -c ^processor /proc/cpuinfo'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cores = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         cores = stdout#os.popen(fullcommand).read()
         return int(cores)
     def getHostsystem(self):
@@ -794,7 +794,7 @@ class default():
         command = 'uname -r'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #host = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         host = stdout#os.popen(fullcommand).read()
         return host.replace('\n','')
     def getNode(self):
@@ -816,7 +816,7 @@ class default():
         command = 'nvidia-smi -L'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #gpus = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
@@ -830,7 +830,7 @@ class default():
         command = 'nvidia-smi -L'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #gpus = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         gpus = stdout#os.popen(fullcommand).read()
         l = gpus.split("\n")
         result = []
@@ -845,7 +845,7 @@ class default():
         command = 'nvidia-smi | grep \'CUDA\''
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cuda = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         cuda = stdout#os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
     def getTimediff(self):
@@ -853,7 +853,7 @@ class default():
         cmd = {}
         command = 'date +"%s"'
         #fullcommand = 'kubectl exec '+cluster.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+        stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         timestamp_remote = stdout#os.popen(fullcommand).read()
         #timestamp_remote = os.popen(fullcommand).read()
         timestamp_local = os.popen(command).read()
@@ -870,13 +870,13 @@ class default():
         try:
             command = "du "+datadir+" | awk 'END{print \\$1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut, container='dbms')
             return int(stdout.replace('\n',''))
         except Exception as e:
             # Windows
             command = "du "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut, container='dbms')
             if len(stdout) > 0:
                 return int(stdout.replace('\n',''))
         return 0
@@ -888,7 +888,7 @@ class default():
             command = "df / | awk 'NR == 2{print \\$3}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             #disk = os.popen(fullcommand).read()
-            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
             disk = stdout#os.popen(fullcommand).read()
             return int(disk.replace('\n',''))
         except Exception as e:
@@ -896,7 +896,7 @@ class default():
             command = "df / | awk 'NR == 2{print $3}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             #disk = os.popen(fullcommand).read()
-            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut)
+            stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
             disk = stdout#os.popen(fullcommand).read()
             if len(disk) > 0:
                 return int(disk.replace('\n',''))
@@ -1030,6 +1030,7 @@ class default():
         c['parameter'] = {}
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
+        c['parameter']['numExperiment'] = str(self.numExperimentsDone+1)
         #print(c)
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
@@ -1100,8 +1101,10 @@ class default():
         yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
-        self.wait(10)
-        pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+        pods = []
+        while len(pods) == 0:
+            self.wait(10)
+            pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
         status = self.experiment.cluster.getPodStatus(client_pod_name)
         print(client_pod_name, status)
@@ -1212,9 +1215,9 @@ class default():
         print("prepareInit")
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        cmd = {}
-        cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
-        stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
+        #cmd = {}
+        #cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
+        #stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
         #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
         scriptfolder = '/tmp/'
         # the inits are in the result folder?
@@ -1240,6 +1243,8 @@ class default():
                 filename = self.docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.configfolder+'/'+filename):
                     self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
+                    stdin, stdout, stderr = self.executeCTL("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script), self.pod_sut)
+                    #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
     def attach_worker(self):
         if self.num_worker > 0:
             pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)

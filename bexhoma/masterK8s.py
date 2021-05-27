@@ -45,7 +45,6 @@ class testdesign():
         self.context = context
         self.experiments = []
         self.benchmark = None
-        kubernetes.config.load_kube_config(context=context)
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
@@ -71,14 +70,17 @@ class testdesign():
         self.namespace = self.contextdata['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
         self.yamlfolder = yamlfolder
-        self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=context))
-        self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=context))
-        self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=context))
-        self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=context))
         # experiment:
         self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.setExperiment(instance, volume, docker, script)
         self.setCode(code)
+        self.cluster_access()
+    def cluster_access(self):
+        kubernetes.config.load_kube_config(context=self.context)
+        self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
     def set_code(self, code):
         return self.setCode(code)
     # can be overwritten by experiment
@@ -417,6 +419,10 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling v1beta->list_namespaced_deployment: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPods(self, app='', component='', experiment='', configuration='', status=''):
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
@@ -442,7 +448,11 @@ class testdesign():
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getPods: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getPods(app=app, component=component, experiment=experiment, configuration=configuration, status=status)
     def getStatefulSets(self, app='', component='', experiment='', configuration=''):
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
@@ -465,6 +475,10 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling AppsV1Api->list_namespaced_stateful_set: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPodStatus(self, pod, appname=''):
         try:
             if len(appname) == 0:
@@ -479,7 +493,11 @@ class testdesign():
             else:
                 return ""
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getPodStatus: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getPodStatus(pod=pod, appname=appname)
     def getPodsLabels(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
@@ -500,7 +518,11 @@ class testdesign():
                     pod_labels[item.metadata.name] = item.metadata.labels
             return pod_labels
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod_preset: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getPodsLabels: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getPodsLabels(app=app, component=component, experiment=experiment, configuration=configuration)
     def getServices(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
@@ -522,6 +544,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPorts(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
@@ -543,6 +568,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.getPorts(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPVCs(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
@@ -564,6 +592,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.getPVCs(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPVCsLabels(self, app='', component='', experiment='', configuration='', pvc=''):
         label = ''
         if len(app)==0:
@@ -588,6 +619,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.getPVCsLabels(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def getPVCsSpecs(self, app='', component='', experiment='', configuration='', pvc=''):
         label = ''
         if len(app)==0:
@@ -612,6 +646,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.getPVCsSpecs(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def getPVCsStatus(self, app='', component='', experiment='', configuration='', pvc=''):
         label = ''
         if len(app)==0:
@@ -636,6 +673,9 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.getPVCsStatus(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def deleteStatefulSet(self, name):
         print("deleteStatefulSet")
         body = kubernetes.client.V1DeleteOptions()
@@ -644,6 +684,9 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling AppsV1Api->delete_namespaced_stateful_set: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.deleteStatefulSet(name=name)
     def deletePod(self, name):
         print("deletePod")
         body = kubernetes.client.V1DeleteOptions()
@@ -652,6 +695,9 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.deletePod(name=name)
     def deletePVC(self, name):
         print("deletePVC", name)
         body = kubernetes.client.V1DeleteOptions()
@@ -660,6 +706,9 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.deletePVC(name=name)
     def deleteService(self, name):
         print("deleteService")
         body = kubernetes.client.V1DeleteOptions()
@@ -668,6 +717,9 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.deleteService(name=name)
     def startPortforwarding(self, service='', app='', component='sut'):
         print("startPortforwarding")
         ports = self.getPorts(app=app, component=component)
@@ -735,8 +787,14 @@ class testdesign():
         print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        try:
+            print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+            return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        except Exception as e:
+            print(e)
+            print(stdout, stderr)
+            return "", stdout, stderr
+        return "", "", ""
     def prepareInit(self):
         print("prepareInit")
         cmd = {}
@@ -1313,6 +1371,10 @@ class testdesign():
                 return []
         except ApiException as e:
             print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         #print("getJobStatus")
         label = ''
@@ -1340,7 +1402,10 @@ class testdesign():
             return api_response.status.succeeded
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
-            return 1
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getJobStatus(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("deleteJob")
         try: 
@@ -1353,7 +1418,9 @@ class testdesign():
             return True
         except ApiException as e:
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
-            return False
+            self.cluster_access()
+            self.wait(2)
+            return self.deleteJob(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         print("deleteJobPod")
         body = kubernetes.client.V1DeleteOptions()
@@ -1369,6 +1436,9 @@ class testdesign():
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.deleteJobPod(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def getJobPods(self, app='', component='', experiment='', configuration='', client=''):
         #print("getJobPods")
         label = ''
@@ -1392,7 +1462,12 @@ class testdesign():
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_deployment: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: %s\n" % e)
+            #if int(e) == 401:
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         print("create_job")
         if len(app) == 0:
