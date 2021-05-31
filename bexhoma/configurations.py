@@ -1110,7 +1110,13 @@ class default():
         print(client_pod_name, status)
         while status != "Running":
             print(client_pod_name, status)
-            self.wait(10)
+            #self.wait(10)
+            # maybe pod had to be restarted
+            pods = []
+            while len(pods) == 0:
+                self.wait(10)
+                pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+            client_pod_name = pods[0]
             status = self.experiment.cluster.getPodStatus(client_pod_name)
         # copy config to pod
         cmd = {}
