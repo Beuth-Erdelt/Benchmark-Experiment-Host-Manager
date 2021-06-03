@@ -489,6 +489,7 @@ class default():
 								self.wait(60)
 								config.reset_sut()
 								config.start_sut()
+								self.wait(10)
 							else:
 								config.experiment_done = True
 				else:
