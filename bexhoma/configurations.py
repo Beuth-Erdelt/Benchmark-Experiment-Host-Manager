@@ -1131,12 +1131,19 @@ class default():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
+        print(stdout)
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        print(stdout)
+        # copy twice to be more sure it worked
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        print(stdout)
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
+        print(stdout)
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
+        print(stdout)
         # get monitoring for loading
         if self.monitoring_active:
             cmd = {}
