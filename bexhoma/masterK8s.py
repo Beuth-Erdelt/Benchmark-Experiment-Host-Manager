@@ -1684,6 +1684,22 @@ class testdesign():
             #print(fullcommand)
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #stdout, stderr = proc.communicate()
+    def connect_master(self, experiment='', configuration=''):
+        print("connect_master")
+        if experiment is None:
+            experiment = ''
+        if configuration is None:
+            configuration = ''
+        pods_master = self.getServices(component='sut', experiment=experiment, configuration=configuration)
+        if len(pods_master) > 0:
+            pod_master = pods_master[0]
+            print("Connect to {}".format(pod_master))
+            cmd = {}
+            fullcommand = 'port-forward svc/{pod} {port} --address 0.0.0.0'.format(pod=pod_master, port=self.port)
+            self.kubectl(fullcommand)
+            #print(fullcommand)
+            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #stdout, stderr = proc.communicate()
 
 
 

@@ -36,8 +36,9 @@ if __name__ == '__main__':
 	"""
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status','dashboard'])
-	parser.add_argument('-e', '--experiment', help='time to wait [s] before execution of the runs of a query', default=None)
+	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status','dashboard', 'master'])
+	parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
+	parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
 	parser.add_argument('-v', '--verbose', help='gives more details about Kubernetes objects', action='store_true')
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	clusterconfig = 'cluster.config'
@@ -54,9 +55,12 @@ if __name__ == '__main__':
 			experiment.stop_sut()
 			cluster.stop_monitoring()
 			cluster.stop_benchmarker()
-	if args.mode == 'dashboard':
+	elif args.mode == 'dashboard':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		cluster.connect_dashboard()
+	elif args.mode == 'master':
+		cluster = clusters.kubernetes(clusterconfig, context=args.context)
+		cluster.connect_master(experiment=args.experiment, configuration=args.connection)
 	elif args.mode == 'status':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		app = cluster.appname
