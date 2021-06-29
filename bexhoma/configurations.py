@@ -531,7 +531,7 @@ class default():
                 for i, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
-                    if container['name'] == 'dbms-worker':
+                    if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
                         for j, vol in enumerate(container['volumeMounts']):
                             if vol['name'] == 'bexhoma-workers':
