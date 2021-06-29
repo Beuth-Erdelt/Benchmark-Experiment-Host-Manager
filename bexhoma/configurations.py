@@ -905,9 +905,23 @@ class default():
         return 0
     #def getConnectionName(self):
     #    return self.d+"-"+self.s+"-"+self.i+'-'+config_K8s['clustername']
+    def get_server_infos(self):
+        server = {}
+        server['RAM'] = self.getMemory()
+        server['CPU'] = self.getCPU()
+        server['GPU'] = self.getGPUs()
+        server['GPUIDs'] = self.getGPUIDs()
+        server['Cores'] = self.getCores()
+        server['host'] = self.getHostsystem()
+        server['node'] = self.getNode()
+        server['disk'] = self.getDiskSpaceUsed()
+        server['datadisk'] = self.getDiskSpaceUsedData()
+        server['cuda'] = self.getCUDA()
+        return server
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         #if connection is None:
         #    connection = self.getConnectionName()
+        """
         print("get_connection_config")
         #self.getInfo(component='sut')
         mem = self.getMemory()
@@ -916,6 +930,7 @@ class default():
         host = self.getHostsystem()
         cuda = self.getCUDA()
         gpu = self.getGPUs()
+        """
         info = []
         self.connection = connection
         c = copy.deepcopy(self.dockertemplate['template'])
@@ -935,6 +950,17 @@ class default():
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
+        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+        self.pod_sut = pods[0]
+        pod_sut = self.pod_sut
+        c['hostsystem'] = self.get_server_infos()
+        c['worker'] = []
+        pods = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+        for i, pod in enumerate(pods):
+            self.pod_sut = pod
+            c['worker'][i] = self.get_server_infos()
+        self.pod_sut = pod_sut
+        """
         c['hostsystem'] = {}
         c['hostsystem']['RAM'] = mem
         c['hostsystem']['CPU'] = cpu
@@ -945,6 +971,7 @@ class default():
         c['hostsystem']['node'] = self.getNode()
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
         c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
+        """
         #c['hostsystem']['instance'] = self.instance['type']
         #c['hostsystem']['resources'] = self.resources
         # take latest resources
@@ -961,8 +988,8 @@ class default():
         else:
             c['hostsystem']['limits_cpu'] = 0
             c['hostsystem']['limits_memory'] = 0
-        if len(cuda) > 0:
-            c['hostsystem']['CUDA'] = cuda
+        #if len(cuda) > 0:
+        #    c['hostsystem']['CUDA'] = cuda
         c['connectionmanagement'] = {}
         c['connectionmanagement']['numProcesses'] = self.connectionmanagement['numProcesses']
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
