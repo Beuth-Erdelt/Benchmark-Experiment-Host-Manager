@@ -956,9 +956,9 @@ class default():
         c['hostsystem'] = self.get_server_infos()
         c['worker'] = []
         pods = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
-        for i, pod in enumerate(pods):
+        for pod in pods:
             self.pod_sut = pod
-            c['worker'][i] = self.get_server_infos()
+            c['worker'].append(self.get_server_infos())
         self.pod_sut = pod_sut
         """
         c['hostsystem'] = {}
