@@ -382,6 +382,13 @@ class default():
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
                             if e['name'] == 'DBMSBENCHMARKER_CONFIGURATION':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                            if e['name'] == 'BEXHOMA_WORKERS':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = """  - job_name: 'monitor-node'
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['{}:9300']
+""".format(name_sut)
                             print(e)
             except yaml.YAMLError as exc:
                 print(exc)
