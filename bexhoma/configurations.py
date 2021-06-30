@@ -385,12 +385,12 @@ scrape_configs:
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
-      - targets: ['{master}']
+      - targets: ['{master}:9300']
   - job_name: 'monitor-gpu'
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
-      - targets: ['{master}']""".format(master=name_sut)
+      - targets: ['{master}:9400']""".format(master=name_sut)
                         # services of workers
                         name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
                         pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
@@ -402,8 +402,7 @@ scrape_configs:
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
-      - targets: ['{worker}.{service_sut}:9300']
-""".format(worker=pod, service_sut=name_worker, client=i)
+      - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i)
                             i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
