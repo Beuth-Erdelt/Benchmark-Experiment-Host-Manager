@@ -1310,6 +1310,7 @@ class default():
                     print(self.configuration, "Workers", num_worker, "of", self.num_worker)
                 pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
+                    print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
     def check_sut(self):
         pods = self.experiment.cluster.getPods(app=self.appname, component='sut', configuration=self.configuration, experiment=self.code)
