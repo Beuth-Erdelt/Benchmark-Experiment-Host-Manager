@@ -377,13 +377,7 @@ class default():
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                         envs = dep['spec']['template']['spec']['containers'][0]['env']
-                        for i,e in enumerate(envs):
-                            if e['name'] == 'BEXHOMA_SERVICE':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
-                            if e['name'] == 'DBMSBENCHMARKER_CONFIGURATION':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
-                            if e['name'] == 'BEXHOMA_WORKERS':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = """global:
+                        prometheus_config = """global:
   scrape_interval: 15s
 
 scrape_configs:
@@ -391,18 +385,31 @@ scrape_configs:
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
-      - targets: ['bexhoma-sut-citus-4w-1625045158:9300']
+      - targets: ['{master}']
   - job_name: 'monitor-gpu'
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
-      - targets: ['bexhoma-sut-citus-4w-1625045158:9400']
-  - job_name: 'monitor-node'
+      - targets: ['{master}']""".format(master=name_sut)
+                        # services of workers
+                        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+                        pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+                        for pod in pods_worker:
+                            print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                            prometheus_config += """
+  - job_name: 'monitor-worker'
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
-      - targets: ['{}:9300']
-""".format(name_sut)
+      - targets: ['{worker}.{service_sut}:9300']
+""".format(worker=pod, service_sut=name_worker)
+                        for i,e in enumerate(envs):
+                            if e['name'] == 'BEXHOMA_SERVICE':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
+                            if e['name'] == 'DBMSBENCHMARKER_CONFIGURATION':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                            if e['name'] == 'BEXHOMA_WORKERS':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = prometheus_config
                             print(e)
             except yaml.YAMLError as exc:
                 print(exc)
