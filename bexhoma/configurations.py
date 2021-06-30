@@ -383,7 +383,21 @@ class default():
                             if e['name'] == 'DBMSBENCHMARKER_CONFIGURATION':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
                             if e['name'] == 'BEXHOMA_WORKERS':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = """  - job_name: 'monitor-node'
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = """global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'monitor-node'
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['bexhoma-sut-citus-4w-1625045158:9300']
+  - job_name: 'monitor-gpu'
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['bexhoma-sut-citus-4w-1625045158:9400']
+  - job_name: 'monitor-node'
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
