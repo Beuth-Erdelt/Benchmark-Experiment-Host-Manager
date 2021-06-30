@@ -394,15 +394,17 @@ scrape_configs:
                         # services of workers
                         name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
                         pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+                        i = 0
                         for pod in pods_worker:
                             print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
-  - job_name: 'monitor-worker'
+  - job_name: 'monitor-worker-{client}'
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
       - targets: ['{worker}.{service_sut}:9300']
-""".format(worker=pod, service_sut=name_worker)
+""".format(worker=pod, service_sut=name_worker, client=i)
+                            i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
