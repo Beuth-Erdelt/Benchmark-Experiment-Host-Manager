@@ -398,7 +398,7 @@ scrape_configs:
                         for pod in pods_worker:
                             print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
-  - job_name: '{worker}.{service_sut}'
+  - job_name: '{worker}'
     scrape_interval: 3s
     scrape_timeout: 3s
     static_configs:
