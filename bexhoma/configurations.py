@@ -1051,7 +1051,7 @@ scrape_configs:
                 node = c['hostsystem']['node']
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
-                    c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
+                    c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, experiment=self.code)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
