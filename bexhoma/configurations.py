@@ -146,7 +146,7 @@ class default():
         if script is not None:
             self.script = script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
-    def prepare(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def __OLD_prepare(self, instance=None, volume=None, docker=None, script=None, delay=0):
         """ Per config: Startup SUT and Monitoring """
         #self.setExperiment(instance, volume, docker, script)
         # check if is terminated
@@ -174,7 +174,7 @@ class default():
         """
         if delay > 0:
             self.delay(delay)
-    def start(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def __OLD_start(self, instance=None, volume=None, docker=None, script=None, delay=0):
         """ Per config: Load Data """
         #self.setExperiment(instance, volume, docker, script)
         self.get_items(component='sut')

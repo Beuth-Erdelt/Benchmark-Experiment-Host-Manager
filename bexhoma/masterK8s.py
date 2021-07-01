@@ -753,7 +753,7 @@ class testdesign():
                 print('Child pid is {} {}'.format(child.pid, child.name))
                 command = child.cmdline()
                 print(command)
-                if len(command) > 0 and command[1] == 'port-forward':
+                if len(command) > 0 and command[3] == 'port-forward':
                     print("FOUND")
                     child.terminate()
             except Exception as e:
