@@ -479,7 +479,7 @@ class default():
 							pods = self.cluster.getPods(app, component, self.code, config.configuration)
 							if len(pods) > 0:
 								pod_sut = pods[0]
-								self.cluster.store_pod_log(pod_sut)
+								self.cluster.store_pod_log(pod_sut, 'dbms')
 							config.stop_sut()
 							config.numExperimentsDone = config.numExperimentsDone + 1
 							if config.numExperimentsDone < config.numExperiments:
