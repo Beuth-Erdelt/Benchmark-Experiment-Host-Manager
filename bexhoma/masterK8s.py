@@ -1679,7 +1679,7 @@ class testdesign():
         if len(pods_dashboard) > 0:
             pod_dashboard = pods_dashboard[0]
             cmd = {}
-            fullcommand = 'port-forward pod/{pod} 8050:8050 --address 0.0.0.0'.format(pod=pod_dashboard)
+            fullcommand = 'port-forward pod/{pod} 8050:8050 8888:8888 --address 0.0.0.0'.format(pod=pod_dashboard)
             self.kubectl(fullcommand)
             #print(fullcommand)
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
