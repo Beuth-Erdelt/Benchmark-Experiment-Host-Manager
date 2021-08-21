@@ -1,32 +1,43 @@
 # Benchmark Experiment Host Manager
 This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a High-Performance-Computing (HPC) cluster environment**.
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
-The basic workflow is: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
+
+It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
+
+<p align="center">
+    <img src="docs/experiment-with-orchestrator.png" width="800">
+</p>
+
+The basic workflow is [1]: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
-This tool supports AWS and kubernetes (k8s) based clusters.
 
-This documentation
-* illustrates the [concepts](docs/Concept.md)
-* provides a basic [TPC-H like example](docs/Example-TPC-H.md)
-* shows how to use several [DBMS](docs/DBMS.md)
-  * MariaDB
-  * MonetDB
-  * OmniSci
-  * PostgreSQL
-* illustrates the deployment in [Kubernetes](docs/Deployments.md)
-* illustrates the usage of [Monitoring](docs/Monitoring.md)
-* provides [more detailed examples](docs/Examples.md)
-  * [Example: TPC-H Benchmark for 3 DBMS on 1 Virtual Machine](docs/Examples.md#example-tpc-h-benchmark-for-3-dbms-on-1-virtual-machine)
-  * [Example: TPC-H Benchmark for 1 DBMS on 3 Virtual Machines](docs/Examples.md#example-tpc-h-benchmark-for-1-dbms-on-3-virtual-machines)
-* defines [how to configure an experiment setup](docs/Config.md)
-* goes into more detail about the [API](docs/API.md), that is the commands for
-  * [Run an Experiment](docs/API.md#run-experiment)
-  * [Prepare an Experiment](docs/API.md#prepare-experiment)
-  * [Start an Experiment](docs/API.md#start-experiment)
-  * [Run Benchmarks](docs/API.md#run-benchmarks)
-  * [Stop an Experiment](docs/API.md#stop-experiment)
-  * [Clean an Experiment](docs/API.md#clean-experiment)
-* shows [alternative workflows](docs/API.md#alternative-workflows)
-  * [Parking DBMS at AWS](docs/API.md#parking-dbms-at-aws)
-  * [Rerun a List of Experiments](docs/API.md#rerun-a-list-of-experiments)
+## Installation
 
+1. Download this repository
+
+2. Run `pip install -r requirements.txt`
+
+3. Adjust configuration [tbd]
+
+4. Install data [tbd]
+
+## Quickstart
+
+The repository contains a tool for running TPC-H (reading) queries at MonetDB and PostgreSQL.
+
+Run `python tpch.py run`
+
+## References
+
+[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
+```
+Erdelt P.K. (2021)
+A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
+In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
+Lecture Notes in Computer Science, vol 12752. Springer, Cham.
+https://doi.org/10.1007/978-3-030-84924-5_6
+```
+
+[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://www.researchgate.net/publication/353236865_Orchestrating_DBMS_Benchmarking_in_the_Cloud_with_Kubernetes)
+
+(old, slightly outdated [docs](docs/Docs_old.md))

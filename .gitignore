@@ -5,3 +5,5 @@ tmp/*
 /cluster.config
 1*/
 jars/*
+build/*
+bexhoma.egg-info/*
