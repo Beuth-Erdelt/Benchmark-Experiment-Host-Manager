@@ -5,7 +5,8 @@ metadata:
   name: bexhoma-service
 spec:
   ports:
-  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 3306}
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 1521}
+  - {port: 5500, protocol: TCP, name: port-web, targetPort: 5500}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
@@ -13,7 +14,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-sut-memsql
+  name: bexhoma-deployment-oracle
 spec:
   replicas: 1
   selector:
@@ -24,33 +25,39 @@ spec:
     spec:
       automountServiceAccountToken: false
       imagePullSecrets:
-      - {name: dockerhub}
-      nodeSelector: 
+      - {name: private-registry-auth}
+      #nodeSelector:
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
       containers:
       - name: dbms
-        image: memsql/cluster-in-a-box:centos-7.3.2-a364d4b31f-3.0.0-1.9.3
+        image: registry.datexis.com/perdelt/oracle:latest
+        #args: ["--cpuset-cpus", '"0-7"']
         ports:
-        - containerPort: 3306 # MemSQL db
-        - containerPort: 8080 # MemSQL Studio
+        - containerPort: 1521 # oracle db
+        - containerPort: 5500 # oracle Studio
         env:
-        - {name: START_AFTER_INIT, value: \'Y\'}
-        - {name: LICENSE_KEY, value: 1234==}
-        - {name: ROOT_PASSWORD, value: 'root'}
+        - {name: ORACLE_PWD, value: 'mysecurepassword'}
+        - {name: ORACLE_CHARACTERSET, value: 'AL32UTF8'}
+        - {name: ORACLE_MEM, value: '4g'}
+        - {name: INIT_SGA_SIZE, value: '10240'}
+        - {name: INIT_PGA_SIZE, value: '10240'}
+        - {name: m, value: '16g'}
+        - {name: SKIP_VALIDATIONS, value: '1'}
         resources:
-          limits: {cpu: 16000m, memory: 128Gi}
-          requests: {cpu: 16000m, memory: 128Gi}
+          limits: {cpu: 4000m, memory: 4Gi}
+          requests: {cpu: 4000m, memory: 4Gi}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
+        - {mountPath: /dev/shm, name: dshm}
       - name: cadvisor
         #image: k8s.gcr.io/cadvisor:v0.30.2
         image: gcr.io/cadvisor/cadvisor:v0.36.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
         ports:
         - containerPort: 9300
-          hostPort: 9300
+          #hostPort: 9300
           name: http
           protocol: TCP
         resources:
@@ -58,39 +65,41 @@ spec:
             cpu: 150m
             memory: 200Mi
         volumeMounts:
-        - mountPath: /rootfs
-          name: rootfs
+        - name: rootfs
+          mountPath: /rootfs
           readOnly: true
-        - mountPath: /var/run
-          name: var-run
+        - name: var-run
+          mountPath: /var/run
           readOnly: true
-        - mountPath: /sys
-          name: sys
+        - name: sys
+          mountPath: /sys
           readOnly: true
-        - mountPath: /var/lib/docker
-          name: docker
+        - name: docker
+          mountPath: /var/lib/docker
           readOnly: true
-        - mountPath: /dev/disk
-          name: disk
+        - name: disk
+          mountPath: /dev/disk
           readOnly: true
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
-      - hostPath:
-          path: /
-        name: rootfs
-      - hostPath:
-          path: /var/run
-        name: var-run
-      - hostPath:
-          path: /sys
-        name: sys
-      - hostPath:
-          path: /var/lib/docker
-        name: docker
-      - hostPath:
-          path: /dev/disk
-        name: disk
-      - name: proc
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
         hostPath:
-          path: /proc
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory
