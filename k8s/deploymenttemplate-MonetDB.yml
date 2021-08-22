@@ -31,7 +31,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbms
-        image: monetdb/monetdb:Oct2020-SP5
+        image: monetdb/monetdb:Jul2021
         ports:
         - {containerPort: 50000}
         #command: ["printf "user=monetdb\npassword=monetdb\nlanguage=sql" > .monetdb"]
