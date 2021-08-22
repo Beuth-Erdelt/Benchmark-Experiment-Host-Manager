@@ -31,10 +31,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbms
-        #image: perdelt/dbms:monetdb
-        image: monetdb/monetdb:Oct2020-SP3
-        #image: monetdb/monetdb:Oct2020-SP2
-        #image: monetdb/monetdb-r-docker:11.31.7
+        image: monetdb/monetdb:Oct2020-SP5
         ports:
         - {containerPort: 50000}
         #command: ["printf "user=monetdb\npassword=monetdb\nlanguage=sql" > .monetdb"]
