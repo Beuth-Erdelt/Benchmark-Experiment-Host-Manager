@@ -36,12 +36,15 @@ if __name__ == '__main__':
 	"""
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status'])
-	parser.add_argument('-e', '--experiment', help='time to wait [s] before execution of the runs of a query', default=None)
-	parser.add_argument('-v', '--verbose', help='givres more details about Kubernetes objects', action='store_true')
+	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status','dashboard', 'master'])
+	parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
+	parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
+	parser.add_argument('-v', '--verbose', help='gives more details about Kubernetes objects', action='store_true')
+	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
+	clusterconfig = 'cluster.config'
 	args = parser.parse_args()
 	if args.mode == 'stop':
-		cluster = clusters.kubernetes()
+		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		if args.experiment is None:
 			experiment = experiments.default(cluster=cluster, code=cluster.code)
 			cluster.stop_sut()
@@ -50,8 +53,16 @@ if __name__ == '__main__':
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
+			cluster.stop_monitoring()
+			cluster.stop_benchmarker()
+	elif args.mode == 'dashboard':
+		cluster = clusters.kubernetes(clusterconfig, context=args.context)
+		cluster.connect_dashboard()
+	elif args.mode == 'master':
+		cluster = clusters.kubernetes(clusterconfig, context=args.context)
+		cluster.connect_master(experiment=args.experiment, configuration=args.connection)
 	elif args.mode == 'status':
-		cluster = clusters.kubernetes()
+		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		app = cluster.appname
 		# get all volumes
 		pvcs = cluster.getPVCs(app=app, component='storage', experiment='', configuration='')
@@ -108,7 +119,7 @@ if __name__ == '__main__':
 				apps[configuration] = {}
 				component = 'sut'
 				apps[configuration][component] = ''
-				apps[configuration]['loaded'] = ''
+				apps[configuration]['loaded [s]'] = ''
 				if args.verbose:
 					deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Deployments", deployments)
@@ -120,7 +131,11 @@ if __name__ == '__main__':
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
-					apps[configuration][component] = "{pod} ({status})".format(pod='', status=status)
+					if pod in pod_labels and 'experimentRun' in pod_labels[pod]:
+						experimentRun = '{}. '.format(pod_labels[pod]['experimentRun'])
+					else:
+						experimentRun = ''
+					apps[configuration][component] = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
 					if pod in pod_labels and 'loaded' in pod_labels[pod]:
 						if pod_labels[pod]['loaded'] == 'True':
 							#apps[configuration]['loaded'] += "True"
@@ -182,7 +197,11 @@ if __name__ == '__main__':
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
-					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+					if pod in pod_labels and 'client' in pod_labels[pod]:
+						experimentRun = '{}. '.format(pod_labels[pod]['client'])
+					else:
+						experimentRun = ''
+					apps[configuration][component] += "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
 			#print(apps)
 			df = pd.DataFrame(apps)
 			df = df.T

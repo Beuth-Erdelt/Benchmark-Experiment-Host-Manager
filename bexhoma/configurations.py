@@ -146,7 +146,7 @@ class default():
         if script is not None:
             self.script = script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
-    def prepare(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def __OLD_prepare(self, instance=None, volume=None, docker=None, script=None, delay=0):
         """ Per config: Startup SUT and Monitoring """
         #self.setExperiment(instance, volume, docker, script)
         # check if is terminated
@@ -174,7 +174,7 @@ class default():
         """
         if delay > 0:
             self.delay(delay)
-    def start(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def __OLD_start(self, instance=None, volume=None, docker=None, script=None, delay=0):
         """ Per config: Load Data """
         #self.setExperiment(instance, volume, docker, script)
         self.get_items(component='sut')
@@ -377,11 +377,40 @@ class default():
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                         envs = dep['spec']['template']['spec']['containers'][0]['env']
+                        prometheus_config = """global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: '{master}'
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['{master}:9300']
+  - job_name: 'monitor-gpu'
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['{master}:9400']""".format(master=name_sut)
+                        # services of workers
+                        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+                        pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+                        i = 0
+                        for pod in pods_worker:
+                            print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                            prometheus_config += """
+  - job_name: '{worker}'
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i)
+                            i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
                             if e['name'] == 'DBMSBENCHMARKER_CONFIGURATION':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                            if e['name'] == 'BEXHOMA_WORKERS':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = prometheus_config
                             print(e)
             except yaml.YAMLError as exc:
                 print(exc)
@@ -531,14 +560,14 @@ class default():
                 for i, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
-                    if container['name'] == 'dbms-worker':
+                    if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
                         for j, vol in enumerate(container['volumeMounts']):
                             if vol['name'] == 'bexhoma-workers':
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
-                if not use_storage and 'volumeClaimTemplates' in result[key]['spec']['template']:
+                if not use_storage and 'volumeClaimTemplates' in result[key]['spec']:
                     del result[key]['spec']['volumeClaimTemplates']
                 #print(pvc)
             if dep['kind'] == 'Service':
@@ -905,9 +934,23 @@ class default():
         return 0
     #def getConnectionName(self):
     #    return self.d+"-"+self.s+"-"+self.i+'-'+config_K8s['clustername']
+    def get_server_infos(self):
+        server = {}
+        server['RAM'] = self.getMemory()
+        server['CPU'] = self.getCPU()
+        server['GPU'] = self.getGPUs()
+        server['GPUIDs'] = self.getGPUIDs()
+        server['Cores'] = self.getCores()
+        server['host'] = self.getHostsystem()
+        server['node'] = self.getNode()
+        server['disk'] = self.getDiskSpaceUsed()
+        server['datadisk'] = self.getDiskSpaceUsedData()
+        server['cuda'] = self.getCUDA()
+        return server
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         #if connection is None:
         #    connection = self.getConnectionName()
+        """
         print("get_connection_config")
         #self.getInfo(component='sut')
         mem = self.getMemory()
@@ -916,6 +959,7 @@ class default():
         host = self.getHostsystem()
         cuda = self.getCUDA()
         gpu = self.getGPUs()
+        """
         info = []
         self.connection = connection
         c = copy.deepcopy(self.dockertemplate['template'])
@@ -935,6 +979,17 @@ class default():
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
+        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+        self.pod_sut = pods[0]
+        pod_sut = self.pod_sut
+        c['hostsystem'] = self.get_server_infos()
+        c['worker'] = []
+        pods = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+        for pod in pods:
+            self.pod_sut = pod
+            c['worker'].append(self.get_server_infos())
+        self.pod_sut = pod_sut
+        """
         c['hostsystem'] = {}
         c['hostsystem']['RAM'] = mem
         c['hostsystem']['CPU'] = cpu
@@ -945,6 +1000,7 @@ class default():
         c['hostsystem']['node'] = self.getNode()
         c['hostsystem']['disk'] = self.getDiskSpaceUsed()
         c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
+        """
         #c['hostsystem']['instance'] = self.instance['type']
         #c['hostsystem']['resources'] = self.resources
         # take latest resources
@@ -961,8 +1017,8 @@ class default():
         else:
             c['hostsystem']['limits_cpu'] = 0
             c['hostsystem']['limits_memory'] = 0
-        if len(cuda) > 0:
-            c['hostsystem']['CUDA'] = cuda
+        #if len(cuda) > 0:
+        #    c['hostsystem']['CUDA'] = cuda
         c['connectionmanagement'] = {}
         c['connectionmanagement']['numProcesses'] = self.connectionmanagement['numProcesses']
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
@@ -995,8 +1051,8 @@ class default():
                 node = c['hostsystem']['node']
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
-                    c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper())
+                    c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+        c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
     def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
@@ -1110,7 +1166,13 @@ class default():
         print(client_pod_name, status)
         while status != "Running":
             print(client_pod_name, status)
-            self.wait(10)
+            #self.wait(10)
+            # maybe pod had to be restarted
+            pods = []
+            while len(pods) == 0:
+                self.wait(10)
+                pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+            client_pod_name = pods[0]
             status = self.experiment.cluster.getPodStatus(client_pod_name)
         # copy config to pod
         cmd = {}
@@ -1125,12 +1187,19 @@ class default():
         #stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
+        print(stdout)
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
-        self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        print(stdout)
+        # copy twice to be more sure it worked
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        print(stdout)
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
+        print(stdout)
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
+        print(stdout)
         # get monitoring for loading
         if self.monitoring_active:
             cmd = {}
@@ -1263,6 +1332,7 @@ class default():
                     print(self.configuration, "Workers", num_worker, "of", self.num_worker)
                 pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
+                    print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
     def check_sut(self):
         pods = self.experiment.cluster.getPods(app=self.appname, component='sut', configuration=self.configuration, experiment=self.code)

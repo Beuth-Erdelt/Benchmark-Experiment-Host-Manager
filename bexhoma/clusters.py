@@ -59,9 +59,9 @@ class kubernetes(masterK8s.testdesign):
         self.experiments = []
     def add_experiment(self, experiment):
         self.experiments.append(experiment)
-    def store_pod_log(self, pod_name):
+    def store_pod_log(self, pod_name, container=''):
         # write pod log
-        stdout = self.pod_log(pod_name)
+        stdout = self.pod_log(pod_name, container)
         filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
         f = open(filename_log, "w")
         f.write(stdout)

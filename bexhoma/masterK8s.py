@@ -753,7 +753,7 @@ class testdesign():
                 print('Child pid is {} {}'.format(child.pid, child.name))
                 command = child.cmdline()
                 print(command)
-                if len(command) > 0 and command[1] == 'port-forward':
+                if len(command) > 0 and command[3] == 'port-forward':
                     print("FOUND")
                     child.terminate()
             except Exception as e:
@@ -1679,7 +1679,23 @@ class testdesign():
         if len(pods_dashboard) > 0:
             pod_dashboard = pods_dashboard[0]
             cmd = {}
-            fullcommand = 'port-forward pod/{pod} 8050:8050 --address 0.0.0.0'.format(pod=pod_dashboard)
+            fullcommand = 'port-forward pod/{pod} 8050:8050 8888:8888 --address 0.0.0.0'.format(pod=pod_dashboard)
+            self.kubectl(fullcommand)
+            #print(fullcommand)
+            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #stdout, stderr = proc.communicate()
+    def connect_master(self, experiment='', configuration=''):
+        print("connect_master")
+        if experiment is None:
+            experiment = ''
+        if configuration is None:
+            configuration = ''
+        pods_master = self.getServices(component='sut', experiment=experiment, configuration=configuration)
+        if len(pods_master) > 0:
+            pod_master = pods_master[0]
+            print("Connect to {}".format(pod_master))
+            cmd = {}
+            fullcommand = 'port-forward svc/{pod} {port} --address 0.0.0.0'.format(pod=pod_master, port=self.port)
             self.kubectl(fullcommand)
             #print(fullcommand)
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

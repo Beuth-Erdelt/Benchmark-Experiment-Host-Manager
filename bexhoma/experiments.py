@@ -479,7 +479,7 @@ class default():
 							pods = self.cluster.getPods(app, component, self.code, config.configuration)
 							if len(pods) > 0:
 								pod_sut = pods[0]
-								self.cluster.store_pod_log(pod_sut)
+								self.cluster.store_pod_log(pod_sut, 'dbms')
 							config.stop_sut()
 							config.numExperimentsDone = config.numExperimentsDone + 1
 							if config.numExperimentsDone < config.numExperiments:
@@ -489,6 +489,7 @@ class default():
 								self.wait(60)
 								config.reset_sut()
 								config.start_sut()
+								self.wait(10)
 							else:
 								config.experiment_done = True
 				else:
