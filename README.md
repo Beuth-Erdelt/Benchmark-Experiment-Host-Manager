@@ -5,7 +5,7 @@ It enables users to configure hardware / software setups for easily repeating te
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 
 <p align="center">
-    <img src="docs/experiment-with-orchestrator.png" width="800">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/v0.5.6/docs/experiment-with-orchestrator.png" width="800">
 </p>
 
 The basic workflow is [1]: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
