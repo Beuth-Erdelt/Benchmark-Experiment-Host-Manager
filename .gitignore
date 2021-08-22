@@ -7,3 +7,4 @@ tmp/*
 jars/*
 build/*
 bexhoma.egg-info/*
+dist/*
