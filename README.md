@@ -1,5 +1,5 @@
 # Benchmark Experiment Host Manager
-This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a High-Performance-Computing (HPC) cluster environment**.
+This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment**.
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
