@@ -26,4 +26,9 @@ setuptools.setup(
     include_package_data=True,
     install_requires=requirements,
     package_dir={'bexhoma': 'bexhoma'},
+    entry_points='''
+        [console_scripts]
+        tpch=bexhoma.scripts.tpch:do_benchmark
+        experiments=bexhoma.scripts.experimentsmanager:manage
+    ''',
 )
