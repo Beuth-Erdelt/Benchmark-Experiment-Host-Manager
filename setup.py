@@ -11,7 +11,7 @@ setuptools.setup(
     version="0.5.7",
     author="Patrick Erdelt",
     author_email="perdelt@beuth-hochschule.de",
-    description="This Python tools helps managing DBMS Benchmarking experiments in a HPC cluster environment. It supports AWS and Kubernetes (K8s).",
+    description="This python tools helps managing DBMS benchmarking experiments in a Kubernetes-based HPC cluster environment. It enables users to configure hardware / software setups for easily repeating tests over varying configurations.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager",

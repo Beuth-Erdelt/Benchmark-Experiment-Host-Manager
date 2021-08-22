@@ -13,7 +13,7 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 
 ## Installation
 
-1. Download this repository
+1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 
 2. Run `pip install -r requirements.txt`
 
