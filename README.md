@@ -32,6 +32,12 @@ The repository contains a tool for running TPC-H (reading) queries at MonetDB an
 1. After benchmarking has finished, run `experiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`.  
   This is equivalent to `python cluster.py dashboard`
 
+## More Informations
+
+For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) as query executor [2] and evaluator [1].
+
+This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
+
 ## References
 
 [1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
