@@ -107,7 +107,7 @@ def do_benchmark():
 	cluster.start_dashboard()
 	# add configs
 	config = configurations.default(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS D', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS D2', numExperiments=1, dialect='OmniSci', clients=[1])
