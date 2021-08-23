@@ -22,10 +22,11 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 1. Install data [tbd in detail]  
   Run `kubectl create -f k8s/job-data-tpch-1.yml`  
   When job is done, clean up with  
-  ```
-  kubectl delete job -l app=bexhoma -l component=data-source
-  kubectl delete deployment -l app=bexhoma -l component=data-source
-  ```
+  `kubectl delete job -l app=bexhoma -l component=data-source` and  
+  `kubectl delete deployment -l app=bexhoma -l component=data-source`.
+1. Install result folder  
+  Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
+
 
 ## Quickstart
 

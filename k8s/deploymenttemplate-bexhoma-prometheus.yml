@@ -30,7 +30,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: bexhoma-prometheus
-        image: perdelt/dbms:prometheus
+        image: perdelt/bexhoma:prometheus
         imagePullPolicy: Always
         env:
         - {name: DBMSBENCHMARKER_CONFIGURATION, value: 'MySQL'}

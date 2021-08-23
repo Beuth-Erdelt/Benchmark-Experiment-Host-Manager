@@ -20,7 +20,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
-        image: registry.datexis.com/perdelt/bexhoma:dbmsbenchmarker
+        image: perdelt/bexhoma:dashboard
         imagePullPolicy: Always
         env:
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}

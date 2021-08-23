@@ -29,7 +29,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: data-init
-        image: perdelt/dbms:data-tpch-1
+        image: perdelt/bexhoma:data-tpch-1
         #imagePullPolicy: Always
         resources:
           limits: {cpu: 2000m, memory: 16Gi}
@@ -67,7 +67,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - env:
-        image: registry.datexis.com/perdelt/bexhoma:dashboard
+        image: perdelt/bexhoma:dashboard
         name: data
         volumeMounts:
         - {mountPath: /data, name: bexhoma-data}
