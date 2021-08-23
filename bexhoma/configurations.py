@@ -816,7 +816,10 @@ scrape_configs:
         #cores = os.popen(fullcommand).read()
         stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
         cores = stdout#os.popen(fullcommand).read()
-        return int(cores)
+        if len(cores)>0:
+            return int(cores)
+        else:
+            return 0
     def getHostsystem(self):
         print("getHostsystem")
         cmd = {}
