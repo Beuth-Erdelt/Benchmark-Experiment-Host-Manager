@@ -16,10 +16,16 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Run `pip install -r requirements.txt`
 1. Make sure you have a working `kubectl` installed
-1. Adjust configuration
+1. Adjust configuration [tbd in detail]
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
-1. Install data [tbd]
+1. Install data [tbd in detail]  
+  Run `kubectl create -f k8s/job-data-tpch-1.yml`  
+  When job is done, clean up with  
+  ```
+  kubectl delete job -l app=bexhoma -l component=data-source
+  kubectl delete deployment -l app=bexhoma -l component=data-source
+  ```
 
 ## Quickstart
 
