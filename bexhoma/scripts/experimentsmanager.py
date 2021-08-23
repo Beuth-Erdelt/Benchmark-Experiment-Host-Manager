@@ -26,14 +26,14 @@ import time
 import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
-
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 
 def manage():
-	description = """Helps managing running Bexhoma experiments in a Kubernetes cluster.
+	description = """This tool helps managing running Bexhoma experiments in a Kubernetes cluster.
 	"""
+	print(description)
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard', 'master'])
@@ -100,12 +100,12 @@ def manage():
 		# get all pods
 		pod_labels = cluster.getPodsLabels(app=app)
 		#print("Pod Labels", pod_labels)
-		experiments = set()
+		experiment_set = set()
 		for pod, labels in pod_labels.items():
 			if 'experiment' in labels:
-				experiments.add(labels['experiment'])
-		#print(experiments)
-		for experiment in experiments:
+				experiment_set.add(labels['experiment'])
+		#print(experiment_set)
+		for experiment in experiment_set:
 			if args.verbose:
 				print(experiment)
 			apps = {}
