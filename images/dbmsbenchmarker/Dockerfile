@@ -12,8 +12,8 @@ RUN pip install dbmsbenchmarker
 #RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker
 #@v0.11.4
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+#COPY requirements.txt ./
+#RUN pip install --no-cache-dir -r requirements.txt
 
 RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker
 
