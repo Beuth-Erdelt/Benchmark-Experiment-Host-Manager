@@ -8,22 +8,23 @@ It serves as the **orchestrator** [2] for distributed parallel benchmarking expe
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/v0.5.6/docs/experiment-with-orchestrator.png" width="800">
 </p>
 
-The basic workflow is [1]: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
+The basic workflow is [1,2]: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
 ## Installation
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
-1. Run `pip install -r requirements.txt`
+1. Install the package `pip install bexhoma`
 1. Make sure you have a working `kubectl` installed
 1. Adjust configuration [tbd in detail]
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
 1. Install data [tbd in detail]  
-  Run `kubectl create -f k8s/job-data-tpch-1.yml`  
-  When job is done, clean up with  
-  `kubectl delete job -l app=bexhoma -l component=data-source` and  
-  `kubectl delete deployment -l app=bexhoma -l component=data-source`.
+  Example for TPC-H SF=1:  
+    * Run `kubectl create -f k8s/job-data-tpch-1.yml`  
+    * When job is done, clean up with  
+    `kubectl delete job -l app=bexhoma -l component=data-source` and  
+    `kubectl delete deployment -l app=bexhoma -l component=data-source`.
 1. Install result folder  
   Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
 
