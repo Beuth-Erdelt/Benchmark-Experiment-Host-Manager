@@ -4,8 +4,10 @@ metadata:
   labels: {app: bexhoma, component: dashboard}
   name: bexhoma-dashboard
 spec:
+  type: NodePort
   ports:
-  - {port: 8050, protocol: TCP, name: port-web, targetPort: 8050}
+  - {port: 8050, protocol: TCP, name: port-dashboard, targetPort: 8050}
+  - {port: 8888, protocol: TCP, name: port-jupyter, targetPort: 8888}
   selector: {app: bexhoma, component: dashboard}
 ---
 apiVersion: apps/v1
@@ -24,19 +26,36 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: private-registry-auth
-      nodeSelector: {cpu: epyc-7542}
+      #nodeSelector: {cpu: epyc-7542}
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
       containers:
-      - name: bexhoma
-        image: registry.datexis.com/perdelt/bexhoma:dashboard
+      - name: dashboard
+        image: perdelt/bexhoma:dashboard
         imagePullPolicy: Always
         ports:
         - containerPort: 8050 # Web
+        - containerPort: 8888 # Jupyter
         resources:
-          limits: {cpu: 4000m, memory: 16Gi}
-          requests: {cpu: 4000m, memory: 16Gi}
+          limits: {cpu: 4000m, memory: 32Gi}
+          #requests: {cpu: 4000m, memory: 32Gi}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: bexhoma-results
+          mountPath: /results
+      - name: jupyter
+        image: perdelt/bexhoma:dashboard
+        imagePullPolicy: Always
+        #command: ["jupyter","notebook","--no-browser", "--NotebookApp.password=\"$(echo 'admin' | python -c 'from notebook.auth import passwd;print(passwd(input()))')\"", "--allow-root"]
+        command: ["jupyter","notebook","--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]
+        ports:
+        - containerPort: 8050 # Web
+        - containerPort: 8888 # Jupyter
+        resources:
+          limits: {cpu: 4000m, memory: 32Gi}
+          #requests: {cpu: 4000m, memory: 32Gi}
         securityContext:
           privileged: true
         volumeMounts:

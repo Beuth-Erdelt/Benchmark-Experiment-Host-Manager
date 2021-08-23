@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bexhoma-results
+  labels: {app: bexhoma, component: results, configuration: default, experiment: default}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  #storageClassName: shared

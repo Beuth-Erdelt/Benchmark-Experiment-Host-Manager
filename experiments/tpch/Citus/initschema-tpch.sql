@@ -15,8 +15,6 @@ CREATE TABLE nation
     n_comment    VARCHAR(152)
 );
 
-select create_reference_table('nation');
-
 
 CREATE TABLE region
 (
@@ -24,8 +22,6 @@ CREATE TABLE region
     r_name       CHAR(25) not null,
     r_comment    VARCHAR(152)
 );
-
-select create_reference_table('region');
 
 CREATE TABLE part
 (
@@ -40,8 +36,6 @@ CREATE TABLE part
     p_comment     VARCHAR(23) not null
 );
 
-select create_distributed_table('part', 'p_partkey');
-
 
 CREATE TABLE supplier
 (
@@ -54,8 +48,6 @@ CREATE TABLE supplier
     s_comment     VARCHAR(101) not null
 );
 
-select create_reference_table('supplier');
-
 
 CREATE TABLE partsupp
 (
@@ -65,8 +57,6 @@ CREATE TABLE partsupp
     ps_supplycost  DOUBLE PRECISION  not null,
     ps_comment     VARCHAR(199) not null
 );
-
-select create_distributed_table('partsupp', 'ps_partkey');
 
 
 CREATE TABLE customer
@@ -81,8 +71,6 @@ CREATE TABLE customer
     c_comment     VARCHAR(117) not null
 );
 
-select create_distributed_table('customer', 'c_custkey');
-
 
 CREATE TABLE orders
 (
@@ -96,8 +84,6 @@ CREATE TABLE orders
     o_shippriority   INTEGER not null,
     o_comment        VARCHAR(79) not null
 );
-
-select create_distributed_table('orders', 'o_orderkey');
 
 
 CREATE TABLE lineitem
@@ -120,4 +106,10 @@ CREATE TABLE lineitem
     l_comment      VARCHAR(44) not null
 );
 
-select create_distributed_table('lineitem', 'l_orderkey');
+
+ALTER SYSTEM SET citus.max_intermediate_result_size TO -1;
+
+ALTER SYSTEM SET citus.enable_repartition_joins TO 1;
+
+SELECT pg_reload_conf();
+
