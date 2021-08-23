@@ -29,7 +29,7 @@ spec:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
       containers:
-      - name: bexhoma-prometheus
+      - name: bexhoma-monitoring
         image: perdelt/bexhoma:monitoring
         imagePullPolicy: Always
         env:
