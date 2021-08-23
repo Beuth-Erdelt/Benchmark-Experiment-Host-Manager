@@ -15,7 +15,10 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Run `pip install -r requirements.txt`
-1. Adjust configuration [tbd]
+1. Make sure you have a working `kubectl` installed
+1. Adjust configuration
+    1. Rename `k8s-cluster.config` to `cluster.config`
+    1. Set name of context, namespace and name of cluster in that file
 1. Install data [tbd]
 
 ## Quickstart
