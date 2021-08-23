@@ -14,23 +14,21 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 ## Installation
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
-
-2. Run `pip install -r requirements.txt`
-
-3. Adjust configuration [tbd]
-
-4. Install data [tbd]
+1. Run `pip install -r requirements.txt`
+1. Adjust configuration [tbd]
+1. Install data [tbd]
 
 ## Quickstart
 
 The repository contains a tool for running TPC-H (reading) queries at MonetDB and PostgreSQL.
 
-1. Run `tpch.py run`.  
+1. Run `tpch run`.  
   This is equivalent to `python tpch.py run`.
-1. You can watch status using `experiments status` while running.  
+1. You can watch status using `bexperiments status` while running.  
   This is equivalent to `python cluster.py status`.
-1. After benchmarking has finished, run `experiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`.  
-  This is equivalent to `python cluster.py dashboard`
+1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`.  
+  This is equivalent to `python cluster.py dashboard`  
+  Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
 
 ## More Informations
 
