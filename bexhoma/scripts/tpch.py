@@ -17,6 +17,8 @@ import urllib3
 import logging
 import argparse
 import time
+from timeit import default_timer
+import datetime
 
 
 urllib3.disable_warnings()

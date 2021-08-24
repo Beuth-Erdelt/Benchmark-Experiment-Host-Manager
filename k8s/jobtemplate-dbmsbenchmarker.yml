@@ -20,7 +20,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
-        image: registry.datexis.com/perdelt/bexhoma:dbmsbenchmarker
+        image: perdelt/bexhoma:dbmsbenchmarker
         imagePullPolicy: Always
         env:
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
@@ -28,8 +28,10 @@ spec:
         - {name: DBMSBENCHMARKER_SLEEP, value: '60'}
         - {name: DBMSBENCHMARKER_CONNECTION, value: 'MySQL-1'}
         resources:
-          limits: {cpu: 2000m, memory: 16Gi}
-          requests: {cpu: 2000m, memory: 16Gi}
+          limits: {cpu: 2000m}
+          #, memory: 16Gi}
+          requests: {cpu: 2000m}
+          #, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:

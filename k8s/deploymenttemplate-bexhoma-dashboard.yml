@@ -38,7 +38,7 @@ spec:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
         resources:
-          limits: {cpu: 4000m, memory: 32Gi}
+          #limits: {cpu: 4000m, memory: 32Gi}
           #requests: {cpu: 4000m, memory: 32Gi}
         securityContext:
           privileged: true
@@ -54,7 +54,7 @@ spec:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
         resources:
-          limits: {cpu: 4000m, memory: 32Gi}
+          #limits: {cpu: 4000m, memory: 32Gi}
           #requests: {cpu: 4000m, memory: 32Gi}
         securityContext:
           privileged: true
