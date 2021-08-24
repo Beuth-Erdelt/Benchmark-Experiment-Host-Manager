@@ -29,6 +29,7 @@ setuptools.setup(
     entry_points='''
         [console_scripts]
         tpch=bexhoma.scripts.tpch:do_benchmark
+        tpcds=bexhoma.scripts.tpcds:do_benchmark
         bexperiments=bexhoma.scripts.experimentsmanager:manage
     ''',
 )
