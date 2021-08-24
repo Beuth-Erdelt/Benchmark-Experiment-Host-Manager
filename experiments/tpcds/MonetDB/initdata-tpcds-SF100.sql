@@ -1,0 +1,26 @@
+COPY 30 RECORDS INTO call_center FROM '/data/tpcds/SF100/call_center.dat' DELIMITERS '|' NULL AS '';
+COPY 20400 RECORDS INTO catalog_page FROM '/data/tpcds/SF100/catalog_page.dat' DELIMITERS '|' NULL AS '';
+COPY 14404374 RECORDS INTO catalog_returns FROM '/data/tpcds/SF100/catalog_returns.dat' DELIMITERS '|' NULL AS '';
+COPY 143997065 RECORDS INTO catalog_sales FROM '/data/tpcds/SF100/catalog_sales.dat' DELIMITERS '|' NULL AS '';
+COPY 2000000 RECORDS INTO customer FROM '/data/tpcds/SF100/customer.dat' DELIMITERS '|' NULL AS '';
+COPY 1000000 RECORDS INTO customer_address FROM '/data/tpcds/SF100/customer_address.dat' DELIMITERS '|' NULL AS '';
+COPY 1920800 RECORDS INTO customer_demographics FROM '/data/tpcds/SF100/customer_demographics.dat' DELIMITERS '|' NULL AS '';
+COPY 73049 RECORDS INTO date_dim FROM '/data/tpcds/SF100/date_dim.dat' DELIMITERS '|' NULL AS '';
+COPY 1 RECORDS INTO dbgen_version FROM '/data/tpcds/SF100/dbgen_version.dat' DELIMITERS '|' NULL AS '';
+COPY 7200 RECORDS INTO household_demographics FROM '/data/tpcds/SF100/household_demographics.dat' DELIMITERS '|' NULL AS '';
+COPY 20 RECORDS INTO income_band FROM '/data/tpcds/SF100/income_band.dat' DELIMITERS '|' NULL AS '';
+COPY 399330000 RECORDS INTO inventory FROM '/data/tpcds/SF100/inventory.dat' DELIMITERS '|' NULL AS '';
+COPY 204000 RECORDS INTO item FROM '/data/tpcds/SF100/item.dat' DELIMITERS '|' NULL AS '';
+COPY 1000 RECORDS INTO promotion FROM '/data/tpcds/SF100/promotion.dat' DELIMITERS '|' NULL AS '';
+COPY 55 RECORDS INTO reason FROM '/data/tpcds/SF100/reason.dat' DELIMITERS '|' NULL AS '';
+COPY 20 RECORDS INTO ship_mode FROM '/data/tpcds/SF100/ship_mode.dat' DELIMITERS '|' NULL AS '';
+COPY 402 RECORDS INTO store FROM '/data/tpcds/SF100/store.dat' DELIMITERS '|' NULL AS '';
+COPY 28795080 RECORDS INTO store_returns FROM '/data/tpcds/SF100/store_returns.dat' DELIMITERS '|' NULL AS '';
+COPY 287997024 RECORDS INTO store_sales FROM '/data/tpcds/SF100/store_sales.dat' DELIMITERS '|' NULL AS '';
+COPY 86400 RECORDS INTO time_dim FROM '/data/tpcds/SF100/time_dim.dat' DELIMITERS '|' NULL AS '';
+COPY 15 RECORDS INTO warehouse FROM '/data/tpcds/SF100/warehouse.dat' DELIMITERS '|' NULL AS '';
+COPY 2040 RECORDS INTO web_page FROM '/data/tpcds/SF100/web_page.dat' DELIMITERS '|' NULL AS '';
+COPY 7197670 RECORDS INTO web_returns FROM '/data/tpcds/SF100/web_returns.dat' DELIMITERS '|' NULL AS '';
+COPY 72001237 RECORDS INTO web_sales FROM '/data/tpcds/SF100/web_sales.dat' DELIMITERS '|' NULL AS '';
+COPY 24 RECORDS INTO web_site FROM '/data/tpcds/SF100/web_site.dat' DELIMITERS '|' NULL AS '';
+

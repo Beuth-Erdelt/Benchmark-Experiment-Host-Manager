@@ -1,0 +1,26 @@
+IMPORT INTO public.call_center FROM LOCAL CSV FILE '/data/tpcds/SF10/call_center.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.catalog_page FROM LOCAL CSV FILE '/data/tpcds/SF10/catalog_page.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.catalog_returns FROM LOCAL CSV FILE '/data/tpcds/SF10/catalog_returns.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.catalog_sales FROM LOCAL CSV FILE '/data/tpcds/SF10/catalog_sales.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.customer FROM LOCAL CSV FILE '/data/tpcds/SF10/customer.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.customer_address FROM LOCAL CSV FILE '/data/tpcds/SF10/customer_address.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.customer_demographics FROM LOCAL CSV FILE '/data/tpcds/SF10/customer_demographics.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.date_dim FROM LOCAL CSV FILE '/data/tpcds/SF10/date_dim.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.dbgen_version FROM LOCAL CSV FILE '/data/tpcds/SF10/dbgen_version.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.household_demographics FROM LOCAL CSV FILE '/data/tpcds/SF10/household_demographics.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.income_band FROM LOCAL CSV FILE '/data/tpcds/SF10/income_band.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.inventory FROM LOCAL CSV FILE '/data/tpcds/SF10/inventory.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.item FROM LOCAL CSV FILE '/data/tpcds/SF10/item.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.promotion FROM LOCAL CSV FILE '/data/tpcds/SF10/promotion.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.reason FROM LOCAL CSV FILE '/data/tpcds/SF10/reason.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.ship_mode FROM LOCAL CSV FILE '/data/tpcds/SF10/ship_mode.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.store FROM LOCAL CSV FILE '/data/tpcds/SF10/store.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.store_returns FROM LOCAL CSV FILE '/data/tpcds/SF10/store_returns.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.store_sales FROM LOCAL CSV FILE '/data/tpcds/SF10/store_sales.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.time_dim FROM LOCAL CSV FILE '/data/tpcds/SF10/time_dim.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.warehouse FROM LOCAL CSV FILE '/data/tpcds/SF10/warehouse.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.web_page FROM LOCAL CSV FILE '/data/tpcds/SF10/web_page.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.web_returns FROM LOCAL CSV FILE '/data/tpcds/SF10/web_returns.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.web_sales FROM LOCAL CSV FILE '/data/tpcds/SF10/web_sales.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+IMPORT INTO public.web_site FROM LOCAL CSV FILE '/data/tpcds/SF10/web_site.dat' COLUMN SEPARATOR = '|' SKIP = 0;
+

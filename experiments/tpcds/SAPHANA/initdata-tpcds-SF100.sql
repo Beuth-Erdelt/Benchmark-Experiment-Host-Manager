@@ -1,0 +1,238 @@
+ALTER SYSTEM ALTER CONFIGURATION ('indexserver.ini', 'system') set ('import_export', 'enable_csv_import_path_filter') = 'false' with reconfigure;
+
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/call_center.dat'
+INTO tpcds.call_center
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/catalog_page.dat'
+INTO tpcds.catalog_page
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/catalog_returns.dat'
+INTO tpcds.catalog_returns
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/catalog_sales.dat'
+INTO tpcds.catalog_sales
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/customer.dat'
+INTO tpcds.customer
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/customer_address.dat'
+INTO tpcds.customer_address
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/customer_demographics.dat'
+INTO tpcds.customer_demographics
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/date_dim.dat'
+INTO tpcds.date_dim
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+
+
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/dbgen_version.dat'
+INTO tpcds.dbgen_version
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/household_demographics.dat'
+INTO tpcds.household_demographics
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/income_band.dat'
+INTO tpcds.income_band
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/inventory.dat'
+INTO tpcds.inventory
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/item.dat'
+INTO tpcds.item
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/promotion.dat'
+INTO tpcds.promotion
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/reason.dat'
+INTO tpcds.reason
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/ship_mode.dat'
+INTO tpcds.ship_mode
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+
+
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/store.dat'
+INTO tpcds.store
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/store_returns.dat'
+INTO tpcds.store_returns
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/store_sales.dat'
+INTO tpcds.store_sales
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/time_dim.dat'
+INTO tpcds.time_dim
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/warehouse.dat'
+INTO tpcds.warehouse
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/web_page.dat'
+INTO tpcds.web_page
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/web_returns.dat'
+INTO tpcds.web_returns
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/web_sales.dat'
+INTO tpcds.web_sales
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
+
+IMPORT FROM CSV FILE '/data/tpcds/SF100/web_site.dat'
+INTO tpcds.web_site
+WITH
+RECORD DELIMITED BY '\n'
+FIELD DELIMITED BY '|'
+THREADS 10
+NO TYPE CHECK
+BATCH 1000;
