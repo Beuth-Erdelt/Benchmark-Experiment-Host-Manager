@@ -31,7 +31,7 @@ def do_benchmark():
 	"""
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run'])
+	parser.add_argument('mode', help='profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or just start the DBMS', choices=['profiling', 'run', 'start', 'load'])
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
 	parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
@@ -132,29 +132,59 @@ def do_benchmark():
 	# add configs
 	config = configurations.default(experiment=experiment, docker='MonetDB', alias='DBMS A', numExperiments=1, clients=[1])
 	#config = configurations.default(experiment=experiment, docker='MemSQL', alias='DBMS B', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C', numExperiments=1, clients=[1])
 	config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS D', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS D2', numExperiments=1, dialect='OmniSci', clients=[1])
-	config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS E', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='MariaDBCS', alias='DBMS F', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='Exasol', alias='DBMS G', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='DB2', alias='DBMS H', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='SAPHANA', alias='DBMS I', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='Clickhouse', alias='DBMS J', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='SQLServer', alias='DBMS K', numExperiments=1, clients=[1])
-	config = configurations.default(experiment=experiment, docker='OmniSci', alias='DBMS L', numExperiments=1, clients=[1])
-	experiment.start_sut()
-	list_clients = [1]
-	experiment.add_benchmark_list(list_clients)
-	# add list to all config
-	# test if dbms is running
-	# test if data is loaded
-	# yes: work on list
-	# no: try to load
-	experiment.work_benchmark_list()
-	experiment.evaluate_results()
-	experiment.stop_benchmarker()
-	experiment.stop_sut()
-	cluster.stop_dashboard()
-	cluster.start_dashboard()
+	#config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS E', numExperiments=1, dialect='OmniSci', clients=[1])
+	#config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS F', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='MariaDBCS', alias='DBMS G', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='Exasol', alias='DBMS H', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='DB2', alias='DBMS I', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='SAPHANA', alias='DBMS J', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='Clickhouse', alias='DBMS K', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='SQLServer', alias='DBMS L', numExperiments=1, clients=[1])
+	#config = configurations.default(experiment=experiment, docker='OmniSci', alias='DBMS M', numExperiments=1, clients=[1])
+	if args.mode == 'start':
+		experiment.start_sut()
+	elif args.mode == 'load':
+		# start all DBMS
+		experiment.start_sut()
+		# configure number of clients per config = 0
+		list_clients = []
+		# total time of experiment
+		experiment.add_benchmark_list(list_clients)
+		start = default_timer()
+		start_datetime = str(datetime.datetime.now())
+		print("Experiment starts at {} ({})".format(start_datetime, start))
+		# run workflow
+		experiment.work_benchmark_list()
+		# total time of experiment
+		end = default_timer()
+		end_datetime = str(datetime.datetime.now())
+		duration_experiment = end - start
+		print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+	else:
+		# configure number of clients per config
+		list_clients = args.num_query_executors.split(",")
+		if len(list_clients) > 0:
+			list_clients = [int(x) for x in list_clients]
+		experiment.add_benchmark_list(list_clients)
+		# total time of experiment
+		start = default_timer()
+		start_datetime = str(datetime.datetime.now())
+		print("Experiment starts at {} ({})".format(start_datetime, start))
+		# run workflow
+		experiment.work_benchmark_list()
+		# total time of experiment
+		end = default_timer()
+		end_datetime = str(datetime.datetime.now())
+		duration_experiment = end - start
+		print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+		##################
+		experiment.evaluate_results()
+		experiment.stop_benchmarker()
+		experiment.stop_sut()
+		cluster.stop_dashboard()
+		cluster.start_dashboard()
+		# OOM? exit code 137
+		#experiment.zip()
 	exit()
