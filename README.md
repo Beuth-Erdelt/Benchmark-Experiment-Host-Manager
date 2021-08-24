@@ -15,7 +15,8 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Install the package `pip install bexhoma`
-1. Make sure you have a working `kubectl` installed
+1. Make sure you have a working `kubectl` installed  
+  (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
 1. Adjust configuration [tbd in detail]
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file

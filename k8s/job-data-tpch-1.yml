@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: bexhoma-init
+  name: bexhoma-data
   labels: {app: bexhoma, component: data-source, configuration: default, experiment: default}
 spec:
   accessModes:
@@ -9,7 +9,7 @@ spec:
   resources:
     requests:
       storage: 20Gi
-  storageClassName: shared
+  #storageClassName: shared
 ---
 apiVersion: batch/v1
 kind: Job
@@ -43,7 +43,7 @@ spec:
       volumes:
       - name: bexhoma-data
         persistentVolumeClaim:
-          claimName: bexhoma-init
+          claimName: bexhoma-data
   backoffLimit: 4
 ---
 apiVersion: apps/v1
