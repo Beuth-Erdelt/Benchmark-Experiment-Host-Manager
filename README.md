@@ -32,10 +32,9 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 
 ## Quickstart
 
-The repository contains a tool for running TPC-H (reading) queries at MonetDB and PostgreSQL.
+The repository contains a [tool](experiments/tpch/) for running TPC-H (reading) queries at MonetDB and PostgreSQL.
 
-1. Run `tpch run`.  
-  This is equivalent to `python tpch.py run`.
+1. Run `tpch run -sf 1 -t 30`.
 1. You can watch status using `bexperiments status` while running.  
   This is equivalent to `python cluster.py status`.
 1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`.  
