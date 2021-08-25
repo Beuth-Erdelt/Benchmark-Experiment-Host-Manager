@@ -1,4 +1,4 @@
 """
 The clustermanager module
 """
-__all__ = ["experimentsmanager","tpch"]
+__all__ = ["experimentsmanager","tpch","tpcds"]

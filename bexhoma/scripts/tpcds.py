@@ -3,7 +3,7 @@
 :Version: 0.1
 :Authors: Patrick Erdelt
 
-Perform TPC-H inspired benchmarks in a Kubernetes cluster.
+Perform TPC-DS inspired benchmarks in a Kubernetes cluster.
 This either profiles the imported data in several DBMS and compares some statistics, or runs the TPC-H queries.
 Optionally monitoring is actived.
 User can choose to detach the componenten of the benchmarking system, so that as much as possible is run inside a Kubernetes (K8s) cluster.
@@ -25,15 +25,15 @@ urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 def do_benchmark():
-	description = """Perform TPC-H inspired benchmarks in a Kubernetes cluster.
-	This either profiles the imported data in several DBMS and compares some statistics, or runs the TPC-H queries.
+	description = """Perform TPC-DS inspired benchmarks in a Kubernetes cluster.
+	This either profiles the imported data in several DBMS and compares some statistics, or runs the TPC-DS queries.
 	Optionally monitoring is actived.
 	User can choose to detach the componenten of the benchmarking system, so that as much as possible is run inside a Kubernetes (K8s) cluster.
 	User can also choose some parameters like number of runs per query and configuration and request some resources.
 	"""
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('mode', help='profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or just start the DBMS', choices=['profiling', 'run', 'start', 'load'])
+	parser.add_argument('mode', help='profile the import of TPC-DS data, or run the TPC-DS queries, or start DBMS and load data, or just start the DBMS', choices=['profiling', 'run', 'start', 'load'])
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
 	parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
@@ -80,20 +80,20 @@ def do_benchmark():
 	# set experiment
 	if code is None:
 		code = cluster.code
-	experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, detached=True, code=code, numExperiments=numExperiments)
+	experiment = experiments.tpcds(cluster=cluster, SF=SF, timeout=timeout, detached=True, code=code, numExperiments=numExperiments)
 	if mode == 'run':
 		# we want all TPC-H queries
 		experiment.set_queries_full()
 		experiment.set_workload(
 			name = 'TPC-H Queries SF='+str(SF),
-			info = 'This experiment compares run time and resource consumption of TPC-H queries in different DBMS.'
+			info = 'This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.'
 		)
 	else:
 		# we want to profile the import
 		experiment.set_queries_profiling()
 		experiment.set_workload(
 			name = 'TPC-H Data Profiling SF='+str(SF),
-			info = 'This experiment compares imported TPC-H data sets in different DBMS.'
+			info = 'This experiment compares imported TPC-DS data sets in different DBMS.'
 		)
 	if monitoring:
 		# we want to monitor resource consumption
@@ -132,19 +132,19 @@ def do_benchmark():
 		)
 	cluster.start_dashboard()
 	# add configs
-	config = configurations.default(experiment=experiment, docker='MonetDB', configuration='MonetDB-{}'.format(cluster_name), alias='DBMS A')
-	#config = configurations.default(experiment=experiment, docker='MemSQL', configuration='MemSQL-{}'.format(cluster_name), alias='DBMS B')
+	config = configurations.default(experiment=experiment, docker='MonetDB', configuration='MonetDB-{}'.format(cluster_name), alias='DBMS A', dialect='MonetDB')
+	#config = configurations.default(experiment=experiment, docker='MemSQL', configuration='MemSQL-{}'.format(cluster_name), alias='DBMS B', dialect='MonetDB')
 	#config = configurations.default(experiment=experiment, docker='MariaDB', configuration='MariaDB-{}'.format(cluster_name), alias='DBMS C')
-	config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration='PostgreSQL-{}'.format(cluster_name), alias='DBMS D')
+	config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration='PostgreSQL-{}'.format(cluster_name), alias='DBMS D', dialect='MonetDB')
 	#config = configurations.default(experiment=experiment, docker='Citus', configuration='Citus-{}'.format(cluster_name), alias='DBMS E', dialect='OmniSci')
 	#config = configurations.default(experiment=experiment, docker='MySQL', configuration='MySQL-{}'.format(cluster_name), alias='DBMS F')
 	#config = configurations.default(experiment=experiment, docker='MariaDBCS', configuration='MariaDBCS-{}'.format(cluster_name), alias='DBMS G')
 	#config = configurations.default(experiment=experiment, docker='Exasol', configuration='Exasol-{}'.format(cluster_name), alias='DBMS H')
 	#config = configurations.default(experiment=experiment, docker='DB2', configuration='DB2-{}'.format(cluster_name), alias='DBMS I')
-	#config = configurations.default(experiment=experiment, docker='SAPHANA', configuration='SAPHANA-{}'.format(cluster_name), alias='DBMS J')
+	#config = configurations.default(experiment=experiment, docker='SAPHANA', configuration='SAPHANA-{}'.format(cluster_name), alias='DBMS J', dialect='MonetDB')
 	#config = configurations.default(experiment=experiment, docker='Clickhouse', configuration='Clickhouse-{}'.format(cluster_name), alias='DBMS K')
 	#config = configurations.default(experiment=experiment, docker='SQLServer', configuration='SQLServer-{}'.format(cluster_name), alias='DBMS L')
-	#config = configurations.default(experiment=experiment, docker='OmniSci', configuration='OmniSci-{}'.format(cluster_name), alias='DBMS M')
+	#config = configurations.default(experiment=experiment, docker='OmniSci', configuration='OmniSci-{}'.format(cluster_name) alias='DBMS M')
 	if args.mode == 'start':
 		experiment.start_sut()
 	elif args.mode == 'load':

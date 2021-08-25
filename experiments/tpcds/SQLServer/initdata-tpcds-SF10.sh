@@ -1,0 +1,26 @@
+
+/opt/mssql-tools/bin/bcp dbgen_version          in '/data/tpcds/SF10/dbgen_version.dat'          -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp income_band            in '/data/tpcds/SF10/income_band.dat'            -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp warehouse              in '/data/tpcds/SF10/warehouse.dat'              -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp ship_mode              in '/data/tpcds/SF10/ship_mode.dat'              -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp reason                 in '/data/tpcds/SF10/reason.dat'                 -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp call_center            in '/data/tpcds/SF10/call_center.dat'            -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp store                  in '/data/tpcds/SF10/store.dat'                  -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp web_page               in '/data/tpcds/SF10/web_page.dat'               -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp web_site               in '/data/tpcds/SF10/web_site.dat'               -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp promotion              in '/data/tpcds/SF10/promotion.dat'              -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp household_demographics in '/data/tpcds/SF10/household_demographics.dat' -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp catalog_page           in '/data/tpcds/SF10/catalog_page.dat'           -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp item                   in '/data/tpcds/SF10/item.dat'                   -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp time_dim               in '/data/tpcds/SF10/time_dim.dat'               -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp customer_address       in '/data/tpcds/SF10/customer_address.dat'       -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp web_returns            in '/data/tpcds/SF10/web_returns.dat'            -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp date_dim               in '/data/tpcds/SF10/date_dim.dat'               -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp customer               in '/data/tpcds/SF10/customer.dat'               -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp catalog_returns        in '/data/tpcds/SF10/catalog_returns.dat'        -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp store_returns          in '/data/tpcds/SF10/store_returns.dat'          -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp customer_demographics  in '/data/tpcds/SF10/customer_demographics.dat'  -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp web_sales              in '/data/tpcds/SF10/web_sales.dat'              -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp inventory              in '/data/tpcds/SF10/inventory.dat'              -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp catalog_sales          in '/data/tpcds/SF10/catalog_sales.dat'          -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
+/opt/mssql-tools/bin/bcp store_sales            in '/data/tpcds/SF10/store_sales.dat'            -d tpcds -S localhost -U sa -P '<YourStrong@Passw0rd>'  -t "|" -F 1 -c
