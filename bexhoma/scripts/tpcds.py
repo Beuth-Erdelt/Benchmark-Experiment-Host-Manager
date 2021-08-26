@@ -158,7 +158,7 @@ def do_benchmark():
 		start_datetime = str(datetime.datetime.now())
 		print("Experiment starts at {} ({})".format(start_datetime, start))
 		# run workflow
-		experiment.work_benchmark_list()
+		experiment.work_benchmark_list(stop=False)
 		# total time of experiment
 		end = default_timer()
 		end_datetime = str(datetime.datetime.now())
@@ -175,7 +175,7 @@ def do_benchmark():
 		start_datetime = str(datetime.datetime.now())
 		print("Experiment starts at {} ({})".format(start_datetime, start))
 		# run workflow
-		experiment.work_benchmark_list()
+		experiment.work_benchmark_list(stop=True)
 		# total time of experiment
 		end = default_timer()
 		end_datetime = str(datetime.datetime.now())

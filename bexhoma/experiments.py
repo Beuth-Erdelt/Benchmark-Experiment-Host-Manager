@@ -398,7 +398,7 @@ class default():
 	def add_benchmark_list(self, list_clients):
 		for config in self.configurations:
 			config.add_benchmark_list(list_clients)
-	def work_benchmark_list(self, intervals=30):
+	def work_benchmark_list(self, intervals=30, stop=True):
 		do = True
 		while do:
 			time.sleep(intervals)
@@ -473,25 +473,28 @@ class default():
 							config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
 						else:
 							# no list element left
-							print("{} can be stopped".format(config.configuration))
-							app = self.cluster.appname
-							component = 'sut'
-							pods = self.cluster.getPods(app, component, self.code, config.configuration)
-							if len(pods) > 0:
-								pod_sut = pods[0]
-								self.cluster.store_pod_log(pod_sut, 'dbms')
-							config.stop_sut()
-							config.numExperimentsDone = config.numExperimentsDone + 1
-							if config.numExperimentsDone < config.numExperiments:
-								print("{} starts again".format(config.configuration))
-								config.benchmark_list = config.benchmark_list_template.copy()
-								# wait for PV to be gone completely
-								self.wait(60)
-								config.reset_sut()
-								config.start_sut()
-								self.wait(10)
+							if stop:
+								print("{} can be stopped".format(config.configuration))
+								app = self.cluster.appname
+								component = 'sut'
+								pods = self.cluster.getPods(app, component, self.code, config.configuration)
+								if len(pods) > 0:
+									pod_sut = pods[0]
+									self.cluster.store_pod_log(pod_sut, 'dbms')
+								config.stop_sut()
+								config.numExperimentsDone = config.numExperimentsDone + 1
+								if config.numExperimentsDone < config.numExperiments:
+									print("{} starts again".format(config.configuration))
+									config.benchmark_list = config.benchmark_list_template.copy()
+									# wait for PV to be gone completely
+									self.wait(60)
+									config.reset_sut()
+									config.start_sut()
+									self.wait(10)
+								else:
+									config.experiment_done = True
 							else:
-								config.experiment_done = True
+								print("{} can be stopped, be we leave it running".format(config.configuration))
 				else:
 					print("{} is loading".format(config.configuration))
 			# all jobs of configuration - benchmarker
