@@ -85,14 +85,14 @@ def do_benchmark():
 		# we want all TPC-H queries
 		experiment.set_queries_full()
 		experiment.set_workload(
-			name = 'TPC-H Queries SF='+str(SF),
+			name = 'TPC-DS Queries SF='+str(SF),
 			info = 'This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.'
 		)
 	else:
 		# we want to profile the import
 		experiment.set_queries_profiling()
 		experiment.set_workload(
-			name = 'TPC-H Data Profiling SF='+str(SF),
+			name = 'TPC-DS Data Profiling SF='+str(SF),
 			info = 'This experiment compares imported TPC-DS data sets in different DBMS.'
 		)
 	if monitoring:
