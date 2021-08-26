@@ -375,7 +375,7 @@ class default():
 	def start_monitoring(self):
 		for config in self.configurations:
 			config.start_monitoring()
-	def start_sut(self):
+	def start_sut(self):#, configuration=None):
 		for config in self.configurations:
 			config.start_sut()
 	def stop_sut(self):

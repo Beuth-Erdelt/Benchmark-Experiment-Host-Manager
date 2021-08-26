@@ -34,6 +34,7 @@ def do_benchmark():
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('mode', help='profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or just start the DBMS', choices=['profiling', 'run', 'start', 'load'])
+	parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
 	parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
@@ -57,6 +58,7 @@ def do_benchmark():
 	args = parser.parse_args()
 	# set parameter
 	monitoring = args.monitoring
+	connection = args.connection
 	mode = str(args.mode)
 	SF = str(args.scaling_factor)
 	timeout = int(args.timeout)
@@ -145,6 +147,10 @@ def do_benchmark():
 	#config = configurations.default(experiment=experiment, docker='Clickhouse', configuration='Clickhouse-{}'.format(cluster_name), alias='DBMS K')
 	#config = configurations.default(experiment=experiment, docker='SQLServer', configuration='SQLServer-{}'.format(cluster_name), alias='DBMS L')
 	#config = configurations.default(experiment=experiment, docker='OmniSci', configuration='OmniSci-{}'.format(cluster_name), alias='DBMS M')
+	if connection is not None:
+		for c in reversed(range(len(experiment.configurations))):
+			if c.docker != connection:
+				del experiment.configurations
 	if args.mode == 'start':
 		experiment.start_sut()
 	elif args.mode == 'load':
