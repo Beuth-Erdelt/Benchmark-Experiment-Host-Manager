@@ -23,7 +23,7 @@ import datetime
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-def do_benchmark():
+if __name__ == '__main__':
 	description = """Perform TPC-H inspired benchmarks in a Kubernetes cluster.
 	This either profiles the imported data in several DBMS and compares some statistics, or runs the TPC-H queries.
 	Optionally monitoring is actived.
@@ -134,18 +134,7 @@ def do_benchmark():
 	cluster.start_dashboard()
 	# add configs
 	config = configurations.default(experiment=experiment, docker='MonetDB', configuration='MonetDB-{}'.format(cluster_name), alias='DBMS A')
-	#config = configurations.default(experiment=experiment, docker='MemSQL', configuration='MemSQL-{}'.format(cluster_name), alias='DBMS B')
-	#config = configurations.default(experiment=experiment, docker='MariaDB', configuration='MariaDB-{}'.format(cluster_name), alias='DBMS C')
 	config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration='PostgreSQL-{}'.format(cluster_name), alias='DBMS D')
-	#config = configurations.default(experiment=experiment, docker='Citus', configuration='Citus-{}'.format(cluster_name), alias='DBMS E', dialect='OmniSci')
-	#config = configurations.default(experiment=experiment, docker='MySQL', configuration='MySQL-{}'.format(cluster_name), alias='DBMS F')
-	#config = configurations.default(experiment=experiment, docker='MariaDBCS', configuration='MariaDBCS-{}'.format(cluster_name), alias='DBMS G')
-	#config = configurations.default(experiment=experiment, docker='Exasol', configuration='Exasol-{}'.format(cluster_name), alias='DBMS H')
-	#config = configurations.default(experiment=experiment, docker='DB2', configuration='DB2-{}'.format(cluster_name), alias='DBMS I')
-	#config = configurations.default(experiment=experiment, docker='SAPHANA', configuration='SAPHANA-{}'.format(cluster_name), alias='DBMS J')
-	#config = configurations.default(experiment=experiment, docker='Clickhouse', configuration='Clickhouse-{}'.format(cluster_name), alias='DBMS K')
-	#config = configurations.default(experiment=experiment, docker='SQLServer', configuration='SQLServer-{}'.format(cluster_name), alias='DBMS L')
-	#config = configurations.default(experiment=experiment, docker='OmniSci', configuration='OmniSci-{}'.format(cluster_name), alias='DBMS M')
 	if connection is not None:
 		for c in reversed(range(len(experiment.configurations))):
 			if c.docker != connection:

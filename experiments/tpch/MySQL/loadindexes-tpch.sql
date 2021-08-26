@@ -1,0 +1,17 @@
+SELECT COUNT(*) FROM customer FORCE INDEX(c_n);
+SELECT COUNT(*) FROM nation FORCE INDEX(n_r);
+SELECT COUNT(*) FROM supplier FORCE INDEX(s_n);
+SELECT COUNT(*) FROM partsupp FORCE INDEX(ps_s);
+SELECT COUNT(*) FROM partsupp FORCE INDEX(ps_p);
+SELECT COUNT(*) FROM orders FORCE INDEX(o_c);
+SELECT COUNT(*) FROM lineitem FORCE INDEX(l_o);
+SELECT COUNT(*) FROM lineitem FORCE INDEX(l_ps);
+
+SELECT COUNT(*) FROM customer;
+SELECT COUNT(*) FROM lineitem;
+SELECT COUNT(*) FROM nation;
+SELECT COUNT(*) FROM supplier;
+SELECT COUNT(*) FROM partsupp;
+SELECT COUNT(*) FROM orders;
+SELECT COUNT(*) FROM region;
+SELECT COUNT(*) FROM part;
