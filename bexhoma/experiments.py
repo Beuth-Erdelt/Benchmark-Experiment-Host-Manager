@@ -591,11 +591,10 @@ class default():
 						self.cluster.deleteJob(job)
 				if len(pods) == 0 and len(jobs) == 0:
 					break
-	def stop_benchmarker(self):
+	def stop_benchmarker(self, configuration=''):
 		# all jobs of configuration - benchmarker
 		app = self.appname
 		component = 'benchmarker'
-		configuration = ''
 		jobs = self.cluster.getJobs(app, component, self.code, configuration)
 		# status per job
 		for job in jobs:

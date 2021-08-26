@@ -148,8 +148,10 @@ def do_benchmark():
 	#config = configurations.default(experiment=experiment, docker='OmniSci', configuration='OmniSci-{}'.format(cluster_name), alias='DBMS M')
 	if connection is not None:
 		for c in reversed(range(len(experiment.configurations))):
-			if c.docker != connection:
-				del experiment.configurations
+			if experiment.configurations[c].docker != connection:
+				del experiment.configurations[c]
+	for c in experiment.configurations:
+		print("System to test:", c.configuration)
 	if args.mode == 'start':
 		experiment.start_sut()
 	elif args.mode == 'load':
