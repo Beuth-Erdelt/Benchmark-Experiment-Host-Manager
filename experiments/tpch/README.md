@@ -8,6 +8,18 @@ It also starts an evaluation dashboard.
 
 Recommended settings: `tpch run -sf 1 -t 30 -dt`
 
+For more detail about options.
+
+## Tutorials
+
+### Install Data
+
+### Start a DBMS
+
+### Start a DBMS and Load Data
+
+### Start a DBMS and Load Data and Connect
+
 ## Options
 
 ```

@@ -43,13 +43,16 @@ def manage():
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	clusterconfig = 'cluster.config'
 	args = parser.parse_args()
+	connection = args.connection
 	if args.mode == 'stop':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		if args.experiment is None:
 			experiment = experiments.default(cluster=cluster, code=cluster.code)
-			cluster.stop_sut()
-			cluster.stop_monitoring()
-			cluster.stop_benchmarker()
+			if connection is None:
+				connection = ''
+			cluster.stop_sut(configuration=connection)
+			cluster.stop_monitoring(configuration=connection)
+			cluster.stop_benchmarker(configuration=connection)
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
@@ -60,7 +63,7 @@ def manage():
 		cluster.connect_dashboard()
 	elif args.mode == 'master':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
-		cluster.connect_master(experiment=args.experiment, configuration=args.connection)
+		cluster.connect_master(experiment=args.experiment, configuration=connection)
 	elif args.mode == 'status':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		app = cluster.appname

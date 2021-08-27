@@ -1613,12 +1613,10 @@ class testdesign():
             self.deleteStatefulSet(stateful_set)
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
-    def stop_benchmarker(self):
+    def stop_benchmarker(self, experiment='', configuration=''):
         # all jobs of configuration - benchmarker
         app = self.appname
         component = 'benchmarker'
-        experiment = ''
-        configuration = ''
         jobs = self.getJobs(app, component, experiment, configuration)
         # status per job
         for job in jobs:
