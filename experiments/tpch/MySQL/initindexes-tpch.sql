@@ -1,4 +1,4 @@
--- indexes for foreign keys
+-- btree indexes for foreign keys
 
 -- for table region
 alter table tpch.region
