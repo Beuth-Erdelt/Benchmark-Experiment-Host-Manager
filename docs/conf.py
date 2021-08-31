@@ -3,7 +3,7 @@
 # -- Project information
 
 project = 'Bexhoma'
-copyright = '2021'
+copyright = '2021, Patrick Erdelt'
 author = 'Patrick Erdelt'
 
 release = '0.1'
