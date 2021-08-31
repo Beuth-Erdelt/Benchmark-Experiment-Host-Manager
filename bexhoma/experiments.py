@@ -77,6 +77,7 @@ class default():
 		self.appname = self.cluster.appname
 		self.resources = {}
 		self.ddl_parameters = {}
+		self.eval_parameters = {}
 		self.storage = {}
 		#self.connectionmanagement = {}
 		#self.connectionmanagement['numProcesses'] = None
@@ -132,6 +133,8 @@ class default():
 		self.resources = {**self.resources, **kwargs}
 	def set_ddl_parameters(self, **kwargs):
 		self.ddl_parameters = kwargs
+	def set_eval_parameters(self, **kwargs):
+		self.eval_parameters = kwargs
 	def set_storage(self, **kwargs):
 		self.storage = kwargs
 	def add_configuration(self, configuration):

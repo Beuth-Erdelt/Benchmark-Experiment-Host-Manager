@@ -76,6 +76,7 @@ class default():
         self.resources = {}
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
+        self.set_eval_parameters(**self.experiment.eval_parameters)
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
         self.set_storage(**self.experiment.storage)
         self.experiment.add_configuration(self)
@@ -132,6 +133,8 @@ class default():
         self.storage = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
+    def set_eval_parameters(self, **kwargs):
+        self.eval_parameters = kwargs
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
         """ Read experiment details from cluster config"""
         #self.bChangeInstance = True
@@ -1086,7 +1089,8 @@ scrape_configs:
         self.pod_sut = pods[0]
         #service_port = config_K8s['port']
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
-        c['parameter'] = {}
+        #c['parameter'] = {}
+        c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = str(self.numExperimentsDone+1)
