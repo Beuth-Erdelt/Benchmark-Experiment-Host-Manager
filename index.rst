@@ -2,5 +2,5 @@
     :maxdepth: 2
     :caption: Table of Contents:
 
-    readme
+    README.md
     ...
