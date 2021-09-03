@@ -71,7 +71,7 @@ cluster.set_connectionmanagement(
 * `numProcesses`: Number of parallel client processes. Default is 1.
 * `runsPerConnection`: Number of runs performed before connection is closed. Default is None, i.e. no limit.
 
-These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#extended-query-file).
+These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.html#extended-query-file).
 
 ## Set Query Management
 
@@ -83,11 +83,11 @@ cluster.set_querymanagement(numRun = 1)
 
 * `numRun`: Number of runs each query is run for benchmarking
 
-These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#extended-query-file), c.f. for more options.
+These values are handed over to the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.html#extended-query-file), c.f. for more options.
 
 ## Set Resources
 
-Specify details about the following experiment. This overwrites infos given in the instance description (YAML) in [deployments](Deployments.md) for Kubernetes.
+Specify details about the following experiment. This overwrites infos given in the instance description (YAML) in [deployments](Deployments.html) for Kubernetes.
 
 ```
 cluster.set_resources(
@@ -150,7 +150,7 @@ cluster.startPortforwarding()
 * `cluster.createDeployment()`: Creates a deployment (pod and services) of Docker images to k8s
 * Setup Network `cluster.startPortforwarding()`: Forwards the port of the DBMS in the pod to localhost:fixedport (same for all containers) 
 
-See the documentation for more information about [deployments](Deployments.md).
+See the documentation for more information about [deployments](Deployments.html).
 
 ### On AWS
 
@@ -288,7 +288,7 @@ The result folder also contains
 
 **Note this means it stores confidential informations**
 
-Results are inspected best using the [dashboard](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.md)
+Results are inspected best using the [dashboard](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.html)
 
 ### Collect Host Informations
 

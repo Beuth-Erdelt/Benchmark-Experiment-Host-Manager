@@ -9,6 +9,7 @@
 .. toctree::
     :maxdepth: 2
     :caption: Table of Contents:
+    :hidden:
 
     ../README.md
     ./Example-TPC-H.md
