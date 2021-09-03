@@ -14,6 +14,8 @@
     ./Example-TPC-H.md
     ./Concept.md
     ./Config.md
+    ./DBMS.md
+    ./Deployments.md
     ./Monitoring.md
     ...
 

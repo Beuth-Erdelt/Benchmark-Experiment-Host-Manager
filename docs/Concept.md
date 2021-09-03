@@ -64,4 +64,4 @@ This tool relies on
 * [paramiko](http://www.paramiko.org/) for SSH handling
 * [scp](https://pypi.org/project/scp/) for SCP handling
 * [kubernetes](https://github.com/kubernetes-client/python) for k8s management
-* and some more [python libraries](https://github.com/perdelt/kubecluster/blob/master/requirements.txt)
+* and some more [python libraries](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/requirements.txt)
