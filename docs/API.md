@@ -118,7 +118,7 @@ All occurrences of `{shard_count}` in the DDL scripts of the following experimen
 ## Run Experiment
 
 <p align="center">
-    <img src="run-experiment.png" width="160">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/run-experiment.png" width="160">
 </p>
 
 The command `cluster.runExperiment()` is short for:
@@ -136,7 +136,7 @@ In a k8s cluster, this also starts the DBMS.
 
 
 <p align="center">
-    <img src="prepare-experiment.png" width="320">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/prepare-experiment.png" width="320">
 </p>
 
 ### On K8s
@@ -179,7 +179,7 @@ cluster.mountVolume()
 This yields a fully loaded DBMS with a fixed port on the virtual machine in a docker container with the fixed name `benchmark` (AWS) or a pod with the fixed label `app=` (k8s) resp.
 
 <p align="center">
-    <img src="start-experiment.png" width="320">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/start-experiment.png" width="320">
 </p>
 
 ### On K8s
@@ -228,7 +228,7 @@ cluster.loadData()
 The command `cluster.runBenchmarks()` runs an [external benchmark tool](https://github.com/Beuth-Erdelt/GEO-GPU-DBMS-Benchmarks).
 
 <p align="center">
-    <img src="https://github.com/Beuth-Erdelt/DBMS-Benchmarker/raw/master/docs/Concept-Benchmarking.png" width="320">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/https://github.com/Beuth-Erdelt/DBMS-Benchmarker/raw/master/docs/Concept-Benchmarking.png" width="320">
 </p>
 
 ### Connectionname and Client Configurations
@@ -331,7 +331,7 @@ This generates reports about all experiments that have been stored in the same c
 This yields the virtual machine in (almost) the same state as if it was just prepared without restarting it.
 
 <p align="center">
-    <img src="stop-experiment.png" width="320">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/stop-experiment.png" width="320">
 </p>
 
 ### On K8s
@@ -369,7 +369,7 @@ cluster.cleanDocker()
 This removes everything from the virtual machine that is related to the experiment (except for results) and shuts it down.
 
 <p align="center">
-    <img src="clean-experiment.png" width="320">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/clean-experiment.png" width="320">
 </p>
 
 ### On K8s

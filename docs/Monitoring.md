@@ -13,7 +13,7 @@ This document contains information about the
 ## Concept
 
 <p align="center">
-    <img src="architecture.png" width="640">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/architecture.png" width="640">
 </p>
 
 There is
