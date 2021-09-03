@@ -27,7 +27,7 @@ To be documented
 
 ### Kubernetes
 
-* Experiment Host: Exporters are part of the [deployments](Deployments.md)
+* Experiment Host: Exporters are part of the [deployments](Deployments.html)
 * Monitor: Servers are deployed using Docker images, fixed on a separate monitoring instance
 * Manager: See [configuration](#configuration)
 
@@ -49,11 +49,11 @@ We insert information about
 * metrics definitions
 
 into the cluster configuration.
-This is handed over to the [DBMS configuration](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#connection-file) of the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Concept.md#monitoring-hardware-metrics) in a [monitoring section](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#monitoring).
+This is handed over to the [DBMS configuration](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.html#connection-file) of the [benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Concept.html#monitoring-hardware-metrics) in a [monitoring section](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.html#monitoring).
 
 ### Example
 
-The details of the metrics correspond to the YAML configuration of the [deployments](Deployments.md):
+The details of the metrics correspond to the YAML configuration of the [deployments](Deployments.html):
 * `job="monitor-node"`
 * `container_name="dbms"`
 

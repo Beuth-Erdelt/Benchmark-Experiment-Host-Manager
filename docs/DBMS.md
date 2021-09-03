@@ -20,7 +20,7 @@ This document contains examples for
 
 ### Deployment
 
-See documentation of [deployments](Deployments.md).
+See documentation of [deployments](Deployments.html).
 
 ### Configuration
 
@@ -47,7 +47,7 @@ See documentation of [deployments](Deployments.md).
 ```
 This has
 * a base name for the DBMS
-* a placeholder `template` for the [benchmark tool](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.md#connection-file)
+* a placeholder `template` for the [benchmark tool](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.html#connection-file)
 * the JDBC driver jar locally available
 * a command `loadData` for running the init scripts with `{scriptname}` as a placeholder for the script name inside the container
 * `{serverip}` as a placeholder for the host address (localhost for k8s, an Elastic IP for AWS)

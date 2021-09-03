@@ -17,13 +17,13 @@ A **benchmark setting** consists of
 ## Workflow
 
 The **management** roughly means
-* [configure](Config.md#how-to-configure-an-experiment-setup), [set up](Config.md#example-setup-different-dbms-on-same-instance) and [start](API.md#prepare-experiment) a virtual machine environment
-* [start](API.md#start-experiment) a DBMS and load raw data
-* [run](API.md#run-benchmarks) some benchmarks, fetch metrics and do reporting
-* [shut](API.md#stop-experiment) down environment and [clean up](API.md#clean-experiment)
+* [configure](Config.html#how-to-configure-an-experiment-setup), [set up](Config.html#example-setup-different-dbms-on-same-instance) and [start](API.html#prepare-experiment) a virtual machine environment
+* [start](API.html#start-experiment) a DBMS and load raw data
+* [run](API.html#run-benchmarks) some benchmarks, fetch metrics and do reporting
+* [shut](API.html#stop-experiment) down environment and [clean up](API.html#clean-experiment)
 
 <p align="center">
-    <img src="architecture.png" width="640">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/architecture.png" width="640">
 </p>
 
 In more detail this means
