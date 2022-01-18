@@ -70,5 +70,6 @@ This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kineti
 > Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
+> https://doi.org/10.1007/978-3-030-94437-7_6
 
 (old, slightly outdated [docs](docs/Docs_old.md))
