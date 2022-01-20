@@ -6,18 +6,13 @@ This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H
 
 Official TPC-H benchmark - http://www.tpc.org/tpch
 
-**Content**:
-* [Prerequisites](#prerequisites)
-* [Perform Benchmark](#perform-benchmark)
-* [Evaluate Results in Dashboard](#evaluate-results-in-dashboard)
-
 ## Prerequisites
 
-We need configuration file containing the following informations in a predefined format, c.f. [demo file](../k8s-cluster.config).
-We may adjust the configuration to match the actual environment.
-This in particular holds for `imagePullSecrets`, `tolerations` and `nodeSelector` in the [YAML files](Deployments.md).
+We need configuration file containing the following informations in a predefined format, c.f. [demo file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/k8s-cluster.config).
+The demo also includes the necessary settings for some [DBMS](DBMS.html): MariaDB, MonetDB, MySQL, OmniSci and PostgreSQL.
 
-The demo also includes the necessary settings for some [DBMS](DBMS.md): MariaDB, MonetDB, MySQL, OmniSci and PostgreSQL.
+We may adjust the configuration to match the actual environment.
+This in particular holds for `imagePullSecrets`, `tolerations` and `nodeSelector` in the [YAML files](Deployments.html).
 
 For basic execution of benchmarking we need
 * a Kubernetes (K8s) cluster
@@ -36,13 +31,12 @@ For also enabling monitoring we need
 
 ## Perform Benchmark
 
-For performing the experiment we can run the [demo file](../demo-tpch-k8s.py).
+For performing the experiment we can run the [demo file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
-The actual benchmarking is done by
+The actual configurations to benchmark are added by
 ```
-# run experiments
-run_experiments(docker='MonetDB', alias='DBMS-A')
-run_experiments(docker='PostgreSQL', alias='DBMS-B')
+config = configurations.default(experiment=experiment, docker='MonetDB', configuration='MonetDB-{}'.format(cluster_name), alias='DBMS A')
+config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration='PostgreSQL-{}'.format(cluster_name), alias='DBMS D')
 ```
 
 ### Adjust Parameter
@@ -52,18 +46,12 @@ You maybe want to adjust some of the parameters that are set in the file.
 The hardware requirements are set via
 ```
 # pick hardware
-cpu = "4000m"
-memory = '16Gi'
-cpu_type = 'epyc-7542'
+cpu = str(args.request_cpu)
+memory = str(args.request_ram)
+cpu_type = str(args.request_cpu_type)
 ```
 
-The number of executions of each query can be adjusted here
-```
-# set query parameters - this overwrites infos given in the query file
-cluster.set_querymanagement(numRun = 1)
-```
+## Evaluate Results in Dashboard
 
-### Evaluate Results in Dashboard
-
-Evaluation is done using DBMSBenchmarker: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.md
+Evaluation is done using DBMSBenchmarker: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.html
 
