@@ -152,7 +152,19 @@ class testdesign():
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
         self.logger.debug('testdesign.set_experiment()')
         # Will be deprecated
-        return self.setExperiment(instance, volume, docker, script)
+        #return self.setExperiment(instance, volume, docker, script)
+        self.bChangeInstance = True
+        if instance is not None:
+            self.i = instance
+        if volume is not None:
+            self.v = volume
+            self.volume = self.volumes[self.v]['id']
+        if docker is not None:
+            self.d = docker
+            self.docker = self.dockers[self.d]
+        if script is not None:
+            self.s = script
+            self.initscript = self.volumes[self.v]['initscripts'][self.s]
     def DEPRECATED_setExperiment(self, instance=None, volume=None, docker=None, script=None):
         self.logger.debug('testdesign.setExperiment()')
         # Will be deprecated?
