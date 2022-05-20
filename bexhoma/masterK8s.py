@@ -84,7 +84,7 @@ class testdesign():
         """
         provide access to an K8s cluster by initializing connection handlers.
         """
-        self.logger.debug('testdesign.cluster_access()', self.context)
+        self.logger.debug('testdesign.cluster_access({})'.format(self.context))
         kubernetes.config.load_kube_config(context=self.context)
         self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
         #self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
@@ -180,7 +180,7 @@ class testdesign():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def DEPRECATED_prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         self.logger.debug('testdesign.prepareExperiment()')
         """ Per config: Startup SUT and Monitoring """
         self.setExperiment(instance, volume, docker, script)
@@ -205,7 +205,7 @@ class testdesign():
         self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
-    def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def DEPRECATED_startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         print("testdesign.startExperiment")
         """ Per config: Load Data """
         self.setExperiment(instance, volume, docker, script)
@@ -233,7 +233,7 @@ class testdesign():
         self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
-    def stopExperiment(self, delay=0):
+    def DEPRECATED_stopExperiment(self, delay=0):
         print("testdesign.stopExperiment")
         self.getInfo(component='sut')
         self.stopPortforwarding()
@@ -275,10 +275,10 @@ class testdesign():
         self.stopExperiment()
         self.cleanExperiment()
     def wait(self, sec):
-        print("Waiting "+str(sec)+"s...", end="", flush=True)
+        print("Waiting {} s...".format(sec), end="", flush=True)
         intervals = int(sec)
         time.sleep(intervals)
-        print("done")
+        print("Done waiting {} s".format(sec))
         #print("Waiting "+str(sec)+"s")
         #intervals = int(sec)
         #intervalLength = 1
@@ -439,7 +439,6 @@ class testdesign():
         self.logger.debug('testdesign.deleteDeployment()')
         self.kubectl('delete deployment '+deployment)
     def getDeployments(self, app='', component='', experiment='', configuration=''):
-        self.logger.debug('testdesign.getDeployments()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -451,6 +450,7 @@ class testdesign():
         if len(configuration)>0:
             label += ',configuration='+configuration
         #print(label)
+        self.logger.debug('testdesign.getDeployments({})'.format(label))
         try: 
             api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -481,7 +481,7 @@ class testdesign():
             field_selector = 'status.phase='+status
         else:
             field_selector = ''
-        self.logger.debug('getPods'+label)
+        self.logger.debug('getPods label='+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label, field_selector=field_selector)
             #pprint(api_response)
@@ -824,7 +824,8 @@ class testdesign():
         self.pvcs = self.getPVCs()
     def kubectl(self, command):
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
-        print(fullcommand)
+        self.logger.debug('testdesign.kubectl({})'.format(fullcommand))
+        #print(fullcommand)
         return os.popen(fullcommand).read()# os.system(fullcommand)
     def executeCTL(self, command, pod='', container='', params=''):
         if len(pod) == 0:
@@ -835,7 +836,8 @@ class testdesign():
         else:
             fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
             #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
-        print(fullcommand)
+        #print(fullcommand)
+        self.logger.debug('testdesign.executeCTL({})'.format(fullcommand))
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
         try:
@@ -1578,11 +1580,12 @@ class testdesign():
         print(name)
         return name
     def create_dashboard(self, app='', component='dashboard'):
-        print("create_dashboard")
+        #print("create_dashboard")
         if len(app) == 0:
             app = self.appname
         name = "{app}_{component}".format(app=app, component=component)
-        print(name)
+        #print(name)
+        self.logger.debug('testdesign.create_dashboard({})'.format(name))
         return name
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         print("start_monitoring")
@@ -1636,9 +1639,11 @@ class testdesign():
         deployment ='deploymenttemplate-bexhoma-dashboard.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_dashboard(app, component)
-        print("Deploy "+deployment)
+        self.logger.debug('testdesign.start_dashboard({})'.format(deployment))
+        #print("Deploy "+deployment)
         self.kubectl('create -f '+self.yamlfolder+deployment)
     def stop_dashboard(self, app='', component='dashboard'):
+        self.logger.debug('testdesign.stop_dashboard()')
         deployments = self.getDeployments(app=app, component=component)
         for deployment in deployments:
             self.deleteDeployment(deployment)
