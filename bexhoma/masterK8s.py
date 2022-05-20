@@ -141,18 +141,19 @@ class testdesign():
             with open(filename, 'w') as f:
                 f.write(str(self.experiments))
     def setExperiments(self, instances=None, volumes=None, dockers=None):
-        print("testdesign.logExperiment")
+        logging.debug('testdesign.setExperiments()')
         """ Read experiment details from cluster config"""
         self.instance = None
         self.instances = instances
         self.volumes = volumes
         self.dockers = dockers
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
-        print("testdesign.set_experiment")
+        logging.debug('testdesign.set_experiment()')
         # Will be deprecated
         return self.setExperiment(instance, volume, docker, script)
-    def DEPRECATED_setExperiment(self, instance=None, volume=None, docker=None, script=None):
-        # Will be deprecated
+    def setExperiment(self, instance=None, volume=None, docker=None, script=None):
+        logging.debug('testdesign.setExperiment()')
+        # Will be deprecated?
         self.bChangeInstance = True
         if instance is not None:
             self.i = instance

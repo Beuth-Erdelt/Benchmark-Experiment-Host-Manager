@@ -56,7 +56,7 @@ if __name__ == '__main__':
 	parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
 	parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
 	# evaluate args
-	logger = logging.getLogger('dbmsbenchmarker')
+	logger = logging.getLogger('bexhoma')
 	args = parser.parse_args()
 	# evaluate args
 	if args.debug:
