@@ -1,5 +1,9 @@
 """
-    Class to managing experiments in a Kubernetes cluster
+:Date: 2022-05-01
+:Version: 0.5
+:Authors: Patrick Erdelt
+
+    Class to managing experiments in a cluster
     Copyright (C) 2020  Patrick Erdelt
 
     This program is free software: you can redistribute it and/or modify
@@ -23,7 +27,7 @@ from kubernetes import client, config
 import subprocess
 import os
 import time
-from timeit import default_timer #as timer
+from timeit import default_timer
 import psutil
 import logging
 import socket
@@ -48,14 +52,6 @@ class kubernetes(masterK8s.testdesign):
         self.code = code
         masterK8s.testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
         self.max_sut = None
-        """
-        self.code = code
-        if self.code is None:
-            self.code = str(round(time.time()))
-        self.path = self.resultfolder+"/"+self.code
-        if not path.isdir(self.path):
-            makedirs(self.path)
-        """
         self.experiments = []
     def add_experiment(self, experiment):
         self.experiments.append(experiment)

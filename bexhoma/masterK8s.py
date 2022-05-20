@@ -1,5 +1,9 @@
 """
-    Class to managing experiments in a Kubernetes cluster
+:Date: 2022-05-01
+:Version: 0.5
+:Authors: Patrick Erdelt
+
+    Class to manage experiments in a Kubernetes cluster
     Copyright (C) 2020  Patrick Erdelt
 
     This program is free software: you can redistribute it and/or modify
@@ -24,7 +28,7 @@ import subprocess
 import os
 from os import makedirs, path
 import time
-from timeit import default_timer #as timer
+from timeit import default_timer
 import psutil
 import logging
 import socket
@@ -76,13 +80,25 @@ class testdesign():
         self.setCode(code)
         self.cluster_access()
     def cluster_access(self):
+        """
+        provide access to an K8s cluster by initializing connection handlers.
+        """
         kubernetes.config.load_kube_config(context=self.context)
         self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
         #self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
         self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
         self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
     def set_code(self, code):
-        return self.setCode(code)
+        self.code = code
+        if self.code is not None:
+            resultfolder = self.config['benchmarker']['resultfolder']
+            resultfolder += '/'+str(self.code)
+            # store experiment list
+            filename = resultfolder+'/experiments.config'
+            if os.path.isfile(filename):
+                print("experiments found")
+                with open(filename, 'r') as f:
+                    self.experiments = ast.literal_eval(f.read())
     # can be overwritten by experiment
     def set_queryfile(self, queryfile):
         self.queryfile = queryfile
@@ -99,7 +115,7 @@ class testdesign():
         self.resources = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
-    def setCode(self, code):
+    def DEPRECATED_setCode(self, code):
         self.code = code
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
@@ -111,6 +127,7 @@ class testdesign():
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
     def logExperiment(self, experiment):
+        print("testdesign.logExperiment")
         # TODO: update to new structure
         experiment['clusterconfig'] = self.clusterconfig
         experiment['configfolder'] = self.configfolder
@@ -124,15 +141,17 @@ class testdesign():
             with open(filename, 'w') as f:
                 f.write(str(self.experiments))
     def setExperiments(self, instances=None, volumes=None, dockers=None):
+        print("testdesign.logExperiment")
         """ Read experiment details from cluster config"""
         self.instance = None
         self.instances = instances
         self.volumes = volumes
         self.dockers = dockers
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+        print("testdesign.set_experiment")
         # Will be deprecated
         return self.setExperiment(instance, volume, docker, script)
-    def setExperiment(self, instance=None, volume=None, docker=None, script=None):
+    def DEPRECATED_setExperiment(self, instance=None, volume=None, docker=None, script=None):
         # Will be deprecated
         self.bChangeInstance = True
         if instance is not None:
@@ -147,6 +166,7 @@ class testdesign():
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
     def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        print("testdesign.prepareExperiment")
         """ Per config: Startup SUT and Monitoring """
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
@@ -171,6 +191,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        print("testdesign.startExperiment")
         """ Per config: Load Data """
         self.setExperiment(instance, volume, docker, script)
         self.getInfo(component='sut')
@@ -198,6 +219,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def stopExperiment(self, delay=0):
+        print("testdesign.stopExperiment")
         self.getInfo(component='sut')
         self.stopPortforwarding()
         #for p in self.pods:
@@ -209,6 +231,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def cleanExperiment(self, delay=0):
+        print("testdesign.cleanExperiment")
         self.getInfo(component='sut')
         self.stopPortforwarding()
         for p in self.pvcs:
@@ -230,6 +253,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        print("testdesign.runExperiment")
         self.prepareExperiment(instance, volume, docker, script, delay)
         self.startExperiment(delay=delay)
         self.runBenchmarks()
@@ -247,7 +271,7 @@ class testdesign():
         #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
-    def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
+    def DEPRECATED_generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
@@ -259,7 +283,7 @@ class testdesign():
         else:
             name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
         return name
-    def generateDeployment(self, app='', component='sut', experiment='', configuration=''):
+    def DEPRECATED_generateDeployment(self, app='', component='sut', experiment='', configuration=''):
         print("generateDeployment")
         if len(app)==0:
             app = self.appname
@@ -388,7 +412,7 @@ class testdesign():
                 print(exc)
         #return appname
         return deployment_experiment
-    def createDeployment(self, app='', component='sut', experiment='', configuration=''):
+    def DEPRECATED_createDeployment(self, app='', component='sut', experiment='', configuration=''):
         #self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         yamlfile = self.generateDeployment(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -397,8 +421,10 @@ class testdesign():
         #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
         self.kubectl('create -f '+yamlfile)
     def deleteDeployment(self, deployment):
+        logging.debug('testdesign.deleteDeployment()')
         self.kubectl('delete deployment '+deployment)
     def getDeployments(self, app='', component='', experiment='', configuration=''):
+        logging.debug('testdesign.getDeployments()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -424,6 +450,7 @@ class testdesign():
             self.wait(2)
             return self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPods(self, app='', component='', experiment='', configuration='', status=''):
+        logging.debug('testdesign.getPods()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
         if len(app)==0:
@@ -454,6 +481,7 @@ class testdesign():
             self.wait(2)
             return self.getPods(app=app, component=component, experiment=experiment, configuration=configuration, status=status)
     def getStatefulSets(self, app='', component='', experiment='', configuration=''):
+        logging.debug('testdesign.getStatefulSets()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
         if len(app)==0:
@@ -480,6 +508,7 @@ class testdesign():
             self.wait(2)
             return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPodStatus(self, pod, appname=''):
+        logging.debug('testdesign.getPodStatus()')
         try:
             if len(appname) == 0:
                 appname = self.appname
@@ -499,6 +528,7 @@ class testdesign():
             self.wait(2)
             return self.getPodStatus(pod=pod, appname=appname)
     def getPodsLabels(self, app='', component='', experiment='', configuration=''):
+        logging.debug('testdesign.getPodsLabels()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -524,6 +554,7 @@ class testdesign():
             self.wait(2)
             return self.getPodsLabels(app=app, component=component, experiment=experiment, configuration=configuration)
     def getServices(self, app='', component='', experiment='', configuration=''):
+        logging.debug('testdesign.getServices()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -548,6 +579,7 @@ class testdesign():
             self.wait(2)
             return self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPorts(self, app='', component='', experiment='', configuration=''):
+        logging.debug('testdesign.getPorts()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -572,6 +604,7 @@ class testdesign():
             self.wait(2)
             return self.getPorts(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPVCs(self, app='', component='', experiment='', configuration=''):
+        logging.debug('testdesign.getPVCs()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -596,6 +629,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCs(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPVCsLabels(self, app='', component='', experiment='', configuration='', pvc=''):
+        logging.debug('testdesign.getPVCsLabels()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -623,6 +657,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCsLabels(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def getPVCsSpecs(self, app='', component='', experiment='', configuration='', pvc=''):
+        logging.debug('testdesign.getPVCsSpecs()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -650,6 +685,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCsSpecs(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def getPVCsStatus(self, app='', component='', experiment='', configuration='', pvc=''):
+        logging.debug('testdesign.getPVCsStatus()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -677,7 +713,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCsStatus(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def deleteStatefulSet(self, name):
-        print("deleteStatefulSet")
+        logging.debug('testdesign.deleteStatefulSet()')
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
@@ -688,7 +724,7 @@ class testdesign():
             self.wait(2)
             return self.deleteStatefulSet(name=name)
     def deletePod(self, name):
-        print("deletePod")
+        logging.debug('testdesign.deletePod()', name)
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
@@ -699,7 +735,7 @@ class testdesign():
             self.wait(2)
             return self.deletePod(name=name)
     def deletePVC(self, name):
-        print("deletePVC", name)
+        logging.debug('testdesign.deletePVC()', name)
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
@@ -710,7 +746,7 @@ class testdesign():
             self.wait(2)
             return self.deletePVC(name=name)
     def deleteService(self, name):
-        print("deleteService")
+        logging.debug('testdesign.deleteService()', name)
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_service(name, self.namespace, body=body)
@@ -721,7 +757,7 @@ class testdesign():
             self.wait(2)
             return self.deleteService(name=name)
     def startPortforwarding(self, service='', app='', component='sut'):
-        print("startPortforwarding")
+        logging.debug('testdesign.startPortforwarding()')
         ports = self.getPorts(app=app, component=component)
         if len(service) == 0:
             service = self.service

@@ -1,5 +1,11 @@
 """
-    Class to managing experiments in a Kubernetes cluster
+:Date: 2022-05-01
+:Version: 0.5
+:Authors: Patrick Erdelt
+
+    Class for managing an DBMS configuation.
+    This is plugged into an experiment object.
+
     Copyright (C) 2020  Patrick Erdelt
 
     This program is free software: you can redistribute it and/or modify
@@ -23,7 +29,7 @@ from kubernetes import client, config
 import subprocess
 import os
 import time
-from timeit import default_timer #as timer
+from timeit import default_timer
 import psutil
 import logging
 import socket

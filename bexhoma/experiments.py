@@ -1,21 +1,29 @@
 """
-:Date: 2018-08-22
-:Version: 0.1
+:Date: 2022-05-01
+:Version: 0.5
 :Authors: Patrick Erdelt
 
-Demo of TPC-DS in a K8s Cluster.
+    Class for managing an experiment.
+    This is plugged into a cluster object.
+    It collects some configuation objects.
 
-# Compare 4 DBMS on different HW
-# 256 runs
-# no delay
-# Compare result sets
-# 2x each DBMS
-# MemSQL, OmniSci, MonetDB, PostgreSQL, maybe add MySQL, MariaDB, Kinetica?
-# Limit 4 CPUs
+    Two examples included, dealing with TPC-H and TPC-DS tests.
 
-This deals with the TPC-DS tests.
+    Copyright (C) 2020  Patrick Erdelt
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-#from bexhoma import *
 from dbmsbenchmarker import parameter, tools, inspector
 import logging
 import urllib3
