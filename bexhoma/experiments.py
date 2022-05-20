@@ -323,7 +323,7 @@ class default():
 			# include sub directories
 			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-			self.cluster.executeCTL(command=cmd['zip_results'], pod=pod_dashboard)#self.yamlfolder+deployment)
+			self.cluster.executeCTL(command=cmd['zip_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
 			#print(fullcommand)
 			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			#stdout, stderr = proc.communicate()
@@ -348,26 +348,29 @@ class default():
 			pods = self.cluster.getPods(component='dashboard')
 			pod_dashboard = pods[0]
 		# copy logs and yamls to result folder
+		print("Copy configuration and logs ", end="", flush=True)
 		directory = os.fsencode(self.path)
 		for file in os.listdir(directory):
 			 filename = os.fsdecode(file)
 			 if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
-				 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
+				 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
+				print(".", end="", flush=True)
+		print("done!")
 		cmd = {}
 		cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-		self.cluster.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard)
+		self.cluster.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
 		cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-		self.cluster.executeCTL(command=cmd['merge_results'], pod=pod_dashboard)
+		self.cluster.executeCTL(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
 		cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-		self.cluster.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard)
+		self.cluster.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -518,7 +521,8 @@ class default():
 			# status per pod
 			for p in pods:
 				status = self.cluster.getPodStatus(p)
-				print(p,status)
+				self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+				#print(p,status)
 				if status == 'Succeeded':
 					#if status != 'Running':
 					self.cluster.store_pod_log(p)
@@ -536,7 +540,8 @@ class default():
 			# status per job
 			for job in jobs:
 				success = self.cluster.getJobStatus(job)
-				print(job, success)
+				self.cluster.logger.debug('job {} has status {}'.format(job, success))
+				#print(job, success)
 				if success:
 					self.cluster.deleteJob(job)
 			if len(pods) == 0 and len(jobs) == 0:
@@ -604,6 +609,7 @@ class default():
 					break
 	def stop_benchmarker(self, configuration=''):
 		# all jobs of configuration - benchmarker
+		self.cluster.logger.debug("experiment.stop_benchmarker({})".format(configuration))
 		app = self.appname
 		component = 'benchmarker'
 		jobs = self.cluster.getJobs(app, component, self.code, configuration)

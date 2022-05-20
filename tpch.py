@@ -132,7 +132,7 @@ if __name__ == '__main__':
 				'kubernetes.io/hostname': request_node_name
 			})		
 	# persistent storage
-	print(request_storage_type)
+	#print(request_storage_type)
 	experiment.set_storage(
 		storageClassName = request_storage_type,
 		storageSize = request_storage_size,#'100Gi',
