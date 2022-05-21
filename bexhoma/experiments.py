@@ -351,9 +351,9 @@ class default():
 		print("Copy configuration and logs ", end="", flush=True)
 		directory = os.fsencode(self.path)
 		for file in os.listdir(directory):
-			 filename = os.fsdecode(file)
-			 if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
-				 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
+			filename = os.fsdecode(file)
+			if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
+				self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
 				print(".", end="", flush=True)
 		print("done!")
 		cmd = {}
