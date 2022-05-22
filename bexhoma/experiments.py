@@ -415,30 +415,41 @@ class default():
 	def work_benchmark_list(self, intervals=30, stop=True):
 		do = True
 		while do:
-			time.sleep(intervals)
+			#time.sleep(intervals)
+			self.wait(intervals)
+			# count number of running and pending pods
+			num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
+			num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 			for config in self.configurations:
-				# count number of running and pending pods
-				num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
-				num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 				# check if sut is running
 				if not config.sut_is_running():
-					print("{} is not running".format(config.configuration))
+					#print("{} is not running".format(config.configuration))
 					if not config.experiment_done:
 						if not config.sut_is_pending():
+							print("{} is not running yet - ".format(config.configuration), end="", flush=True)
 							if self.cluster.max_sut is not None:
-								print("{} running and {} pending pods".format(num_pods_running, num_pods_pending))
+								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut), end="", flush=True)
 								if num_pods_running+num_pods_pending < self.cluster.max_sut:
+									print("it will start now")
 									config.start_sut()
-									self.wait(10)
+									num_pods_pending = num_pods_pending + 1
+									#self.wait(10)
+								else:
+									print("it has to wait")
 							else:
+								print("it will start now")
 								config.start_sut()
-								self.wait(10)
+								num_pods_pending = num_pods_pending + 1
+								#self.wait(10)
+						else:
+							print("{} is pending".format(config.configuration))
 					continue
 				# check if loading is done
 				config.check_load_data()
 				# start loading
 				if not config.loading_started:
-					print("{} is not loaded".format(config.configuration))
+					if config.sut_is_running():
+						print("{} is not loaded yet".format(config.configuration))
 					if config.monitoring_active and not config.monitoring_is_running():
 						print("{} waits for monitoring".format(config.configuration))
 						if not config.monitoring_is_pending():
@@ -549,13 +560,13 @@ class default():
 				for config in self.configurations:
 					#if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
 					if config.sut_is_pending():
-						print("{} pending".format(config.configuration))
+						self.cluster.logger.debug("{} pending".format(config.configuration))
 						do = True
 					if not config.loading_started:
-						print("{} not loaded".format(config.configuration))
+						self.cluster.logger.debug("{} not loaded".format(config.configuration))
 						do = True
 					if len(config.benchmark_list) > 0:
-						print("{} still benchmarks to run".format(config.configuration))
+						self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
 						do = True
 	def benchmark_list(self, list_clients):
 		for i, parallelism in enumerate(list_clients):
