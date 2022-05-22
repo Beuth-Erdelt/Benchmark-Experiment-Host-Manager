@@ -457,7 +457,7 @@ class default():
 							# config demands other delay
 							delay = config.dockertemplate['delay_prepare']
 						config.loading_after_time = now + timedelta(seconds=delay)
-						print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+						print("{} will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
 						continue
 				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
