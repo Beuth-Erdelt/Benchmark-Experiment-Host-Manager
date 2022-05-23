@@ -52,7 +52,7 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=None, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.logger = logging.getLogger('bexhoma')
         self.experiment = experiment
         #self.code = code
@@ -92,6 +92,7 @@ class default():
         self.monitoring_active = experiment.monitoring_active
         self.storage_label = experiment.storage_label
         self.experiment_done = False
+        self.dockerimage = dockerimage
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -640,6 +641,8 @@ scrape_configs:
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                        if self.dockerimage:
+                            result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                     elif not self.monitoring_active:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
