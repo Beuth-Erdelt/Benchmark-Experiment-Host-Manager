@@ -530,22 +530,22 @@ scrape_configs:
                     dep['metadata']['labels']['experiment'] = self.storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['loaded'] = "False"
-                    if storageClassName is not None and len(storageClassName) > 0:
-                        dep['spec']['storageClassName'] = storageClassName
-                        print(dep['spec']['storageClassName'])
+                    if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
+                        dep['spec']['storageClassName'] = self.storage['storageClassName']
+                        #print(dep['spec']['storageClassName'])
                     else:
                         del result[key]['spec']['storageClassName']
-                    if len(storageSize) > 0:
-                        dep['spec']['resources']['requests']['storage'] = storageSize
-                    print(dep['spec']['accessModes']) # list
-                    print(dep['spec']['resources']['requests']['storage'])
+                    if len(self.storage['storageSize']) > 0:
+                        dep['spec']['resources']['requests']['storage'] = self.storage['storageSize']
+                    #print(dep['spec']['accessModes']) # list
+                    #print(dep['spec']['resources']['requests']['storage'])
                     pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-                    print(pvcs)
+                    #print(pvcs)
                     if len(pvcs) > 0:
-                        print("Storage exists")
+                        print("Storage {} exists".format(name_pvc))
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                         pvcs_labels = self.experiment.cluster.getPVCsLabels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-                        print(pvcs_labels)
+                        self.logger.debug(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
                             if 'loaded' in pvc_labels:
