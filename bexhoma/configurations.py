@@ -1,5 +1,11 @@
 """
-    Class to managing experiments in a Kubernetes cluster
+:Date: 2022-05-01
+:Version: 0.5
+:Authors: Patrick Erdelt
+
+    Class for managing an DBMS configuation.
+    This is plugged into an experiment object.
+
     Copyright (C) 2020  Patrick Erdelt
 
     This program is free software: you can redistribute it and/or modify
@@ -23,7 +29,7 @@ from kubernetes import client, config
 import subprocess
 import os
 import time
-from timeit import default_timer #as timer
+from timeit import default_timer
 import psutil
 import logging
 import socket
@@ -46,7 +52,8 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=None, clients=[1], dialect='', worker=0):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.logger = logging.getLogger('bexhoma')
         self.experiment = experiment
         #self.code = code
         self.docker = docker
@@ -85,6 +92,7 @@ class default():
         self.monitoring_active = experiment.monitoring_active
         self.storage_label = experiment.storage_label
         self.experiment_done = False
+        self.dockerimage = dockerimage
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -100,11 +108,13 @@ class default():
         self.benchmark_list = copy.deepcopy(list_clients)
         # this queue will stay as a template for future copies of the configuration
         self.benchmark_list_template = copy.deepcopy(list_clients)
-    def wait(self, sec):
-        print("Waiting "+str(sec)+"s...", end="", flush=True)
+    def wait(self, sec, silent=False):
+        if not silent:
+            print("Waiting "+str(sec)+"s...", end="", flush=True)
         intervals = int(sec)
         time.sleep(intervals)
-        print("done")
+        if not silent:
+            print("done")
         #print("Waiting "+str(sec)+"s")
         #intervals = int(sec)
         #intervalLength = 1
@@ -282,16 +292,17 @@ class default():
             #    print(pod_sut, status)
             #    self.wait(10)
             #    status = self.experiment.cluster.getPodStatus(pod_sut)
+            print("ckeck if {} is running".format(pod_sut))
             services = self.experiment.cluster.getServices(app, component, self.experiment.code, configuration)
             service = services[0]
             ports = self.experiment.cluster.getPorts(app, component, self.experiment.code, configuration)
             forward = ['kubectl', '--context {context}'.format(context=self.experiment.cluster.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             forward.extend(ports)
             your_command = " ".join(forward)
-            print(your_command)
+            self.logger.debug('configuration.start_loading({})'.format(your_command))
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
             # wait for port to be connected
-            self.wait(10)
+            self.wait(2)
             dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
             if not dbmsactive:
                 # not answering
@@ -303,7 +314,7 @@ class default():
             #self.wait(10)
             self.check_load_data()
             if not self.loading_started:
-                print("load_data")
+                #print("load_data")
                 self.load_data()
             self.experiment.cluster.stopPortforwarding()
             # store experiment
@@ -334,19 +345,17 @@ class default():
             name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
         return name
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-        print("create_monitoring")
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         #if len(app) == 0:
         #    app = self.appname
         #if len(experiment) == 0:
         #    experiment = self.code
         #name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
-        print(name)
+        self.logger.debug("configuration.create_monitoring({})".format(name))
         return name
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         if not self.experiment.monitoring_active:
             return
-        print("start_monitoring")
         if len(app) == 0:
             app = self.appname
         if len(configuration) == 0:
@@ -357,6 +366,7 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
+        print("start_monitoring of {}".format(name_sut))
         deployment_experiment = self.experiment.path+'/deployment-{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:
             try:
@@ -414,7 +424,8 @@ scrape_configs:
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
                             if e['name'] == 'BEXHOMA_WORKERS':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = prometheus_config
-                            print(e)
+                            #print(e)
+                            self.logger.debug('configuration.start_monitoring({})'.format(str(e)))
             except yaml.YAMLError as exc:
                 print(exc)
         with open(deployment_experiment,"w+") as stream:
@@ -422,7 +433,7 @@ scrape_configs:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
                 print(exc)
-        print("Deploy "+deployment)
+        self.logger.debug("Deploy "+deployment)
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)#self.yamlfolder+deployment)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         if len(app)==0:
@@ -467,7 +478,7 @@ scrape_configs:
         #print(self.storage)
         use_storage = self.use_storage()
         #storage_label = 'tpc-ds-1'
-        print("generateDeployment")
+        #print("generateDeployment")
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
@@ -479,6 +490,7 @@ scrape_configs:
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+        self.logger.debug('configuration.start_sut(name={})'.format(name))
         deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
@@ -505,10 +517,11 @@ scrape_configs:
             dep = result[key]
             if dep['kind'] == 'PersistentVolumeClaim':
                 pvc = dep['metadata']['name']
-                print("PVC", pvc, name_pvc)
+                #print("PVC", pvc, name_pvc)
                 if not use_storage:
                     del result[key]
                 else:
+                    self.logger.debug('configuration.start_sut(PVC={},{})'.format(pvc, name_pvc))
                     dep['metadata']['name'] = name_pvc
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
@@ -517,22 +530,22 @@ scrape_configs:
                     dep['metadata']['labels']['experiment'] = self.storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['loaded'] = "False"
-                    if storageClassName is not None and len(storageClassName) > 0:
-                        dep['spec']['storageClassName'] = storageClassName
-                        print(dep['spec']['storageClassName'])
+                    if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
+                        dep['spec']['storageClassName'] = self.storage['storageClassName']
+                        #print(dep['spec']['storageClassName'])
                     else:
                         del result[key]['spec']['storageClassName']
-                    if len(storageSize) > 0:
-                        dep['spec']['resources']['requests']['storage'] = storageSize
-                    print(dep['spec']['accessModes']) # list
-                    print(dep['spec']['resources']['requests']['storage'])
+                    if len(self.storage['storageSize']) > 0:
+                        dep['spec']['resources']['requests']['storage'] = self.storage['storageSize']
+                    #print(dep['spec']['accessModes']) # list
+                    #print(dep['spec']['resources']['requests']['storage'])
                     pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-                    print(pvcs)
+                    #print(pvcs)
                     if len(pvcs) > 0:
-                        print("Storage exists")
+                        print("Storage {} exists".format(name_pvc))
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                         pvcs_labels = self.experiment.cluster.getPVCsLabels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-                        print(pvcs_labels)
+                        self.logger.debug(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
                             if 'loaded' in pvc_labels:
@@ -628,6 +641,8 @@ scrape_configs:
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                        if self.dockerimage:
+                            result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                     elif not self.monitoring_active:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
@@ -772,11 +787,13 @@ scrape_configs:
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def checkGPUs(self):
+        self.logger.debug('configuration.checkGPUs()')
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
         stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut, container='dbms')
     def checkDBMS(self, ip, port):
+        self.logger.debug('configuration.checkDBMS()')
         found = False
         s = socket.socket()
         s.settimeout(10)
@@ -790,7 +807,7 @@ scrape_configs:
             s.close()
         return found
     def getMemory(self):
-        print("getMemory")
+        self.logger.debug('configuration.getMemory()')
         try:
             command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -802,7 +819,7 @@ scrape_configs:
             logging.error(e)
             return 0
     def getCPU(self):
-        print("getCPU")
+        self.logger.debug('configuration.getCPU()')
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cpu = os.popen(fullcommand).read()
@@ -812,7 +829,7 @@ scrape_configs:
         #cpu = cpu.replace('model name\t: ', 'CPU: ')
         return cpu.replace('\n','')
     def getCores(self):
-        print("getCores")
+        self.logger.debug('configuration.getCores()')
         cmd = {}
         command = 'grep -c ^processor /proc/cpuinfo'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -824,7 +841,7 @@ scrape_configs:
         else:
             return 0
     def getHostsystem(self):
-        print("getHostsystem")
+        self.logger.debug('configuration.getHostsystem()')
         cmd = {}
         command = 'uname -r'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -833,7 +850,7 @@ scrape_configs:
         host = stdout#os.popen(fullcommand).read()
         return host.replace('\n','')
     def getNode(self):
-        print("getNode")
+        self.logger.debug('configuration.getNode()')
         cmd = {}
         #fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
         result = self.experiment.cluster.kubectl('get pods/'+self.pod_sut+' -o=json')#self.yamlfolder+deployment)
@@ -846,7 +863,7 @@ scrape_configs:
                 return node
         return ""
     def getGPUs(self):
-        print("getGPUs")
+        self.logger.debug('configuration.getGPUs()')
         cmd = {}
         command = 'nvidia-smi -L'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -860,7 +877,7 @@ scrape_configs:
             result += str(j)+" x "+i
         return result
     def getGPUIDs(self):
-        print("getGPUIDs")
+        self.logger.debug('configuration.getGPUIDs()')
         cmd = {}
         command = 'nvidia-smi -L'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -875,7 +892,7 @@ scrape_configs:
                 result.append(id)
         return result
     def getCUDA(self):
-        print("getCUDA")
+        self.logger.debug('configuration.getCUDA()')
         cmd = {}
         command = 'nvidia-smi | grep \'CUDA\''
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -884,7 +901,7 @@ scrape_configs:
         cuda = stdout#os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
     def getTimediff(self):
-        print("getTimediff")
+        self.logger.debug('configuration.getTimediff()')
         cmd = {}
         command = 'date +"%s"'
         #fullcommand = 'kubectl exec '+cluster.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -896,7 +913,7 @@ scrape_configs:
         #print(timestamp_local)
         return int(timestamp_remote)-int(timestamp_local)
     def getDiskSpaceUsedData(self):
-        print("getDiskSpaceUsedData")
+        self.logger.debug('configuration.getDiskSpaceUsedData()')
         cmd = {}
         if 'datadir' in self.dockertemplate:
             datadir = self.dockertemplate['datadir']
@@ -916,7 +933,7 @@ scrape_configs:
                 return int(stdout.replace('\n',''))
         return 0
     def getDiskSpaceUsed(self):
-        print("getDiskSpaceUsed")
+        self.logger.debug('configuration.getDiskSpaceUsed()')
         disk = ''
         cmd = {}
         try:
@@ -1038,9 +1055,9 @@ scrape_configs:
             if 'grafanaurl' in config_K8s['monitor']:
                 c['monitoring']['grafanaurl'] = config_K8s['monitor']['grafanaurl']
             if 'grafanashift' in config_K8s['monitor']:
-                c['monitoring']['grafanashift'] = config_K8s['monitor']['grafanashift']
+                c['monitoring']['shift'] = config_K8s['monitor']['grafanashift']
             if 'grafanaextend' in config_K8s['monitor']:
-                c['monitoring']['grafanaextend'] = config_K8s['monitor']['grafanaextend']
+                c['monitoring']['extend'] = config_K8s['monitor']['grafanaextend']
             if 'prometheus_url' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['prometheus_url']
             if 'service_monitoring' in config_K8s['monitor']:
@@ -1062,7 +1079,7 @@ scrape_configs:
         #print(c)
         return c#.copy()
     def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
-        print("run_benchmarker_pod")
+        self.logger.debug('configuration.run_benchmarker_pod()')
         if len(resultfolder) == 0:
             resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -1116,7 +1133,8 @@ scrape_configs:
             )
         #self.benchmark.code = '1611607321'
         self.code = self.benchmark.code
-        print("Code", self.code)
+        #print("Code", self.code)
+        self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
         connectionfile = configfolder+'/connections.config'
         if self.experiment.queryfile is not None:
@@ -1131,7 +1149,8 @@ scrape_configs:
             self.benchmark.connections.append(c)
         # NEVER rerun, only one connection in config for detached:
         self.benchmark.connections = [c]
-        print(self.benchmark.connections)
+        #print(self.benchmark.connections)
+        self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
         # copy or generate config folder (query and connection)
         # add connection to existing list
@@ -1170,17 +1189,20 @@ scrape_configs:
             pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
         status = self.experiment.cluster.getPodStatus(client_pod_name)
-        print(client_pod_name, status)
+        self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+        print("Waiting for job {}: ".format(client_pod_name), end="", flush=True)
         while status != "Running":
-            print(client_pod_name, status)
+            self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+            print(".", end="", flush=True)
             #self.wait(10)
             # maybe pod had to be restarted
             pods = []
             while len(pods) == 0:
-                self.wait(10)
+                self.wait(10, silent=True)
                 pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
             client_pod_name = pods[0]
             status = self.experiment.cluster.getPodStatus(client_pod_name)
+        print("found")
         # copy config to pod
         cmd = {}
         cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
@@ -1195,18 +1217,18 @@ scrape_configs:
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
-        print(stdout)
+        self.logger.debug('copy config queries.config: {}'.format(stdout))
         #cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
         #stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
         stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
-        print(stdout)
+        self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
         # copy twice to be more sure it worked
         stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
-        print(stdout)
+        self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
         stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
-        print(stdout)
+        self.logger.debug('copy config connections.config: {}'.format(stdout))
         stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
-        print(stdout)
+        self.logger.debug('copy config protocol.json: {}'.format(stdout))
         # get monitoring for loading
         if self.monitoring_active:
             cmd = {}
@@ -1249,7 +1271,8 @@ scrape_configs:
         """
     def kubectl(self, command):
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.experiment.cluster.context, command=command)
-        print(fullcommand)
+        #print(fullcommand)
+        self.logger.debug('configuration.kubectl({})'.format(fullcommand))
         return os.system(fullcommand)
     def executeCTL(self, command, pod='', container='', params=''):
         if len(pod) == 0:
@@ -1260,11 +1283,15 @@ scrape_configs:
         else:
             fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.experiment.cluster.context, pod=pod, command=command_clean)
             #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
-        print(fullcommand)
+        #print(fullcommand)
+        self.logger.debug('configuration.executeCTL({})'.format(fullcommand))
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        str_stdout = stdout.decode('utf-8')
+        str_stderr = stderr.decode('utf-8')
+        return "", str_stdout, str_stderr
+        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
     """
     def kubectl(self, command):
         print(command)
@@ -1288,7 +1315,7 @@ scrape_configs:
             cmd['save_log'] = 'cp '+self.dockertemplate['logfile']+' /data/'+str(self.code)+'/'+self.configuration+'.log'
             stdin, stdout, stderr = self.executeCTL(command=cmd['save_log'], pod=self.pod_sut)
     def prepareInit(self):
-        print("prepareInit")
+        self.logger.debug('configuration.prepareInit()')
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         #cmd = {}
@@ -1339,7 +1366,7 @@ scrape_configs:
                     print(self.configuration, "Workers", num_worker, "of", self.num_worker)
                 pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
-                    print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                    self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
     def check_sut(self):
         pods = self.experiment.cluster.getPods(app=self.appname, component='sut', configuration=self.configuration, experiment=self.code)
@@ -1372,6 +1399,7 @@ scrape_configs:
             self.loading_started = False
             self.loading_finished = False
     def load_data(self):
+        self.logger.debug('configuration.load_data()')
         self.loading_started = True
         self.prepareInit()
         pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -1390,7 +1418,8 @@ scrape_configs:
             volume = name_pvc
         else:
             volume = ''
-        print("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+")")
+        print("start loading asynch {}".format(self.pod_sut))
+        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
         thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context}
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
@@ -1447,13 +1476,13 @@ scrape_configs:
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
-        print("create_job")
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
-        print(jobname)
+        #print(jobname)
+        self.logger.debug('configuration.create_job({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
         start = now + timedelta(seconds=180)
@@ -1500,7 +1529,8 @@ scrape_configs:
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                     if e['name'] == 'DBMSBENCHMARKER_ALIAS':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = alias
-                    print(e)
+                    self.logger.debug('configuration.create_job({})'.format(str(e)))
+                    #print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
                 e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
@@ -1539,23 +1569,30 @@ scrape_configs:
 
 #@fire_and_forget
 def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context):
+    logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
     #path = self.experiment.path
     #loadData = self.dockertemplate['loadData']
     def executeCTL(command, pod, context):
         fullcommand = 'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'.format(context=context, pod=pod, command=command.replace('"','\\"'))
-        print(fullcommand)
+        logger.debug('executeCTL({})'.format(fullcommand))
+        #print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        logger.debug(stdout.decode('utf-8'))
+        logger.debug(stderr.decode('utf-8'))
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
     def kubectl(command, context):
         fullcommand = 'kubectl --context {context} {command}'.format(context=context, command=command)
-        print(fullcommand)
+        logger.debug('executeCTL({})'.format(fullcommand))
+        #print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
-        print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        logger.debug(stdout.decode('utf-8'))
+        logger.debug(stderr.decode('utf-8'))
         return stdout.decode('utf-8')
         #return os.system(fullcommand)
     #pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=experiment)
@@ -1568,14 +1605,14 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     # mark pod
     fullcommand = 'label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
-    print(fullcommand)
+    #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
         fullcommand = 'label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
-        print(fullcommand)
+        #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
@@ -1618,14 +1655,14 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
-    print(fullcommand)
+    #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
         fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
-        print(fullcommand)
+        #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()

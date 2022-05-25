@@ -1,5 +1,9 @@
 """
-    Class to managing experiments in a Kubernetes cluster
+:Date: 2022-05-01
+:Version: 0.5
+:Authors: Patrick Erdelt
+
+    Class to manage experiments in a Kubernetes cluster
     Copyright (C) 2020  Patrick Erdelt
 
     This program is free software: you can redistribute it and/or modify
@@ -24,7 +28,7 @@ import subprocess
 import os
 from os import makedirs, path
 import time
-from timeit import default_timer #as timer
+from timeit import default_timer
 import psutil
 import logging
 import socket
@@ -39,6 +43,7 @@ from dbmsbenchmarker import *
 
 class testdesign():
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.logger = logging.getLogger('bexhoma')
         if context is None:
             # use current context
             context = config.list_kube_config_contexts()[1]['name']
@@ -71,18 +76,31 @@ class testdesign():
         self.appname = self.config['credentials']['k8s']['appname']
         self.yamlfolder = yamlfolder
         # experiment:
-        self.setExperiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
-        self.setExperiment(instance, volume, docker, script)
-        self.setCode(code)
+        self.set_experiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
+        self.set_experiment(instance, volume, docker, script)
+        self.set_code(code)
         self.cluster_access()
     def cluster_access(self):
+        """
+        provide access to an K8s cluster by initializing connection handlers.
+        """
+        self.logger.debug('testdesign.cluster_access({})'.format(self.context))
         kubernetes.config.load_kube_config(context=self.context)
         self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
-        self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
+        #self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
         self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
         self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
     def set_code(self, code):
-        return self.setCode(code)
+        self.code = code
+        if self.code is not None:
+            resultfolder = self.config['benchmarker']['resultfolder']
+            resultfolder += '/'+str(self.code)
+            # store experiment list
+            filename = resultfolder+'/experiments.config'
+            if os.path.isfile(filename):
+                print("experiments found")
+                with open(filename, 'r') as f:
+                    self.experiments = ast.literal_eval(f.read())
     # can be overwritten by experiment
     def set_queryfile(self, queryfile):
         self.queryfile = queryfile
@@ -99,7 +117,7 @@ class testdesign():
         self.resources = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
-    def setCode(self, code):
+    def DEPRECATED_setCode(self, code):
         self.code = code
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
@@ -111,6 +129,7 @@ class testdesign():
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
     def logExperiment(self, experiment):
+        self.logger.debug('testdesign.logExperiment()')
         # TODO: update to new structure
         experiment['clusterconfig'] = self.clusterconfig
         experiment['configfolder'] = self.configfolder
@@ -123,17 +142,17 @@ class testdesign():
             filename = self.benchmark.path+'/experiments.config'
             with open(filename, 'w') as f:
                 f.write(str(self.experiments))
-    def setExperiments(self, instances=None, volumes=None, dockers=None):
+    def set_experiments(self, instances=None, volumes=None, dockers=None):
+        self.logger.debug('testdesign.set_experiments()')
         """ Read experiment details from cluster config"""
         self.instance = None
         self.instances = instances
         self.volumes = volumes
         self.dockers = dockers
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+        self.logger.debug('testdesign.set_experiment()')
         # Will be deprecated
-        return self.setExperiment(instance, volume, docker, script)
-    def setExperiment(self, instance=None, volume=None, docker=None, script=None):
-        # Will be deprecated
+        #return self.setExperiment(instance, volume, docker, script)
         self.bChangeInstance = True
         if instance is not None:
             self.i = instance
@@ -146,7 +165,23 @@ class testdesign():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def DEPRECATED_setExperiment(self, instance=None, volume=None, docker=None, script=None):
+        self.logger.debug('testdesign.setExperiment()')
+        # Will be deprecated?
+        self.bChangeInstance = True
+        if instance is not None:
+            self.i = instance
+        if volume is not None:
+            self.v = volume
+            self.volume = self.volumes[self.v]['id']
+        if docker is not None:
+            self.d = docker
+            self.docker = self.dockers[self.d]
+        if script is not None:
+            self.s = script
+            self.initscript = self.volumes[self.v]['initscripts'][self.s]
+    def DEPRECATED_prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        self.logger.debug('testdesign.prepareExperiment()')
         """ Per config: Startup SUT and Monitoring """
         self.setExperiment(instance, volume, docker, script)
         # check if is terminated
@@ -170,7 +205,8 @@ class testdesign():
         self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
-    def startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def DEPRECATED_startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        print("testdesign.startExperiment")
         """ Per config: Load Data """
         self.setExperiment(instance, volume, docker, script)
         self.getInfo(component='sut')
@@ -197,7 +233,8 @@ class testdesign():
         self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
-    def stopExperiment(self, delay=0):
+    def DEPRECATED_stopExperiment(self, delay=0):
+        print("testdesign.stopExperiment")
         self.getInfo(component='sut')
         self.stopPortforwarding()
         #for p in self.pods:
@@ -209,6 +246,7 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def cleanExperiment(self, delay=0):
+        print("testdesign.cleanExperiment")
         self.getInfo(component='sut')
         self.stopPortforwarding()
         for p in self.pvcs:
@@ -230,16 +268,17 @@ class testdesign():
         if delay > 0:
             self.delay(delay)
     def runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+        print("testdesign.runExperiment")
         self.prepareExperiment(instance, volume, docker, script, delay)
         self.startExperiment(delay=delay)
         self.runBenchmarks()
         self.stopExperiment()
         self.cleanExperiment()
     def wait(self, sec):
-        print("Waiting "+str(sec)+"s...", end="", flush=True)
+        print("Waiting {} s...".format(sec), end="", flush=True)
         intervals = int(sec)
         time.sleep(intervals)
-        print("done")
+        print("Done waiting {} s".format(sec))
         #print("Waiting "+str(sec)+"s")
         #intervals = int(sec)
         #intervalLength = 1
@@ -247,7 +286,7 @@ class testdesign():
         #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
-    def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
+    def DEPRECATED_generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
@@ -259,7 +298,7 @@ class testdesign():
         else:
             name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
         return name
-    def generateDeployment(self, app='', component='sut', experiment='', configuration=''):
+    def DEPRECATED_generateDeployment(self, app='', component='sut', experiment='', configuration=''):
         print("generateDeployment")
         if len(app)==0:
             app = self.appname
@@ -388,7 +427,7 @@ class testdesign():
                 print(exc)
         #return appname
         return deployment_experiment
-    def createDeployment(self, app='', component='sut', experiment='', configuration=''):
+    def DEPRECATED_createDeployment(self, app='', component='sut', experiment='', configuration=''):
         #self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         yamlfile = self.generateDeployment(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -397,6 +436,7 @@ class testdesign():
         #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
         self.kubectl('create -f '+yamlfile)
     def deleteDeployment(self, deployment):
+        self.logger.debug('testdesign.deleteDeployment()')
         self.kubectl('delete deployment '+deployment)
     def getDeployments(self, app='', component='', experiment='', configuration=''):
         label = ''
@@ -410,6 +450,7 @@ class testdesign():
         if len(configuration)>0:
             label += ',configuration='+configuration
         #print(label)
+        self.logger.debug('testdesign.getDeployments({})'.format(label))
         try: 
             api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -424,6 +465,7 @@ class testdesign():
             self.wait(2)
             return self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPods(self, app='', component='', experiment='', configuration='', status=''):
+        self.logger.debug('testdesign.getPods()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
         if len(app)==0:
@@ -439,7 +481,7 @@ class testdesign():
             field_selector = 'status.phase='+status
         else:
             field_selector = ''
-        logging.debug('getPods'+label)
+        self.logger.debug('getPods label='+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label, field_selector=field_selector)
             #pprint(api_response)
@@ -454,6 +496,7 @@ class testdesign():
             self.wait(2)
             return self.getPods(app=app, component=component, experiment=experiment, configuration=configuration, status=status)
     def getStatefulSets(self, app='', component='', experiment='', configuration=''):
+        self.logger.debug('testdesign.getStatefulSets()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
         if len(app)==0:
@@ -465,7 +508,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        logging.debug('getStatefulSets'+label)
+        self.logger.debug('getStatefulSets'+label)
         try: 
             api_response = self.v1apps.list_namespaced_stateful_set(self.namespace, label_selector=label)
             #pprint(api_response)
@@ -480,6 +523,7 @@ class testdesign():
             self.wait(2)
             return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPodStatus(self, pod, appname=''):
+        self.logger.debug('testdesign.getPodStatus()')
         try:
             if len(appname) == 0:
                 appname = self.appname
@@ -499,6 +543,7 @@ class testdesign():
             self.wait(2)
             return self.getPodStatus(pod=pod, appname=appname)
     def getPodsLabels(self, app='', component='', experiment='', configuration=''):
+        self.logger.debug('testdesign.getPodsLabels()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -524,6 +569,7 @@ class testdesign():
             self.wait(2)
             return self.getPodsLabels(app=app, component=component, experiment=experiment, configuration=configuration)
     def getServices(self, app='', component='', experiment='', configuration=''):
+        self.logger.debug('testdesign.getServices()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -534,7 +580,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        logging.debug('getServices'+label)
+        self.logger.debug('getServices'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -548,6 +594,7 @@ class testdesign():
             self.wait(2)
             return self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPorts(self, app='', component='', experiment='', configuration=''):
+        self.logger.debug('testdesign.getPorts()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -558,7 +605,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        logging.debug('getPorts'+label)
+        self.logger.debug('getPorts'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -572,6 +619,7 @@ class testdesign():
             self.wait(2)
             return self.getPorts(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPVCs(self, app='', component='', experiment='', configuration=''):
+        self.logger.debug('testdesign.getPVCs()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -582,7 +630,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        logging.debug('getPVCs'+label)
+        self.logger.debug('getPVCs'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -596,6 +644,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCs(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPVCsLabels(self, app='', component='', experiment='', configuration='', pvc=''):
+        self.logger.debug('testdesign.getPVCsLabels()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -606,7 +655,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        logging.debug('getPVCs'+label)
+        self.logger.debug('getPVCs'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -623,6 +672,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCsLabels(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def getPVCsSpecs(self, app='', component='', experiment='', configuration='', pvc=''):
+        self.logger.debug('testdesign.getPVCsSpecs()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -633,7 +683,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        logging.debug('getPVCs'+label)
+        self.logger.debug('getPVCs'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -650,6 +700,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCsSpecs(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def getPVCsStatus(self, app='', component='', experiment='', configuration='', pvc=''):
+        self.logger.debug('testdesign.getPVCsStatus()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -660,7 +711,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        logging.debug('getPVCs'+label)
+        self.logger.debug('getPVCs'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -677,7 +728,7 @@ class testdesign():
             self.wait(2)
             return self.getPVCsStatus(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def deleteStatefulSet(self, name):
-        print("deleteStatefulSet")
+        self.logger.debug('testdesign.deleteStatefulSet({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
@@ -688,7 +739,7 @@ class testdesign():
             self.wait(2)
             return self.deleteStatefulSet(name=name)
     def deletePod(self, name):
-        print("deletePod")
+        self.logger.debug('testdesign.deletePod({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
@@ -699,7 +750,7 @@ class testdesign():
             self.wait(2)
             return self.deletePod(name=name)
     def deletePVC(self, name):
-        print("deletePVC", name)
+        self.logger.debug('testdesign.deletePVC({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
@@ -710,7 +761,7 @@ class testdesign():
             self.wait(2)
             return self.deletePVC(name=name)
     def deleteService(self, name):
-        print("deleteService")
+        self.logger.debug('testdesign.deleteService({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_service(name, self.namespace, body=body)
@@ -720,8 +771,8 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.deleteService(name=name)
-    def startPortforwarding(self, service='', app='', component='sut'):
-        print("startPortforwarding")
+    def DEPRECATED_startPortforwarding(self, service='', app='', component='sut'):
+        self.logger.debug('testdesign.startPortforwarding()')
         ports = self.getPorts(app=app, component=component)
         if len(service) == 0:
             service = self.service
@@ -736,25 +787,26 @@ class testdesign():
             #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
             #forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
             your_command = " ".join(forward)
-            print(your_command)
+            #print(your_command)
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
-    def getChildProcesses(self):
-        print("getChildProcesses")
+    def DEPRECATED_getChildProcesses(self):
+        self.logger.debug('testdesign.getChildProcesses()')
         current_process = psutil.Process()
         children = current_process.children(recursive=False)
-        for child in children:
-            print('Child pid is {} {}'.format(child.pid, child.name))
-            print(child.cmdline())
+        #for child in children:
+        #    print('Child pid is {} {}'.format(child.pid, child.name))
+        #    print(child.cmdline())
     def stopPortforwarding(self):
-        print("stopPortforwarding")
+        self.logger.debug('testdesign.stopPortforwarding()')
         children = [p for p in psutil.process_iter(attrs=['pid', 'name']) if 'kubectl' in p.info['name']]
         for child in children:
             try:
-                print('Child pid is {} {}'.format(child.pid, child.name))
+                #print('Child pid is {} {}'.format(child.pid, child.name))
+                self.logger.debug('testdesign.stopPortforwarding() - Child {} {}'.format(child.pid, child.name))
                 command = child.cmdline()
-                print(command)
+                #print(command)
                 if len(command) > 0 and command[3] == 'port-forward':
-                    print("FOUND")
+                    self.logger.debug('testdesign.stopPortforwarding() - Found child {}'.format(child.name))
                     child.terminate()
             except Exception as e:
                 print(e)
@@ -773,7 +825,8 @@ class testdesign():
         self.pvcs = self.getPVCs()
     def kubectl(self, command):
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
-        print(fullcommand)
+        self.logger.debug('testdesign.kubectl({})'.format(fullcommand))
+        #print(fullcommand)
         return os.popen(fullcommand).read()# os.system(fullcommand)
     def executeCTL(self, command, pod='', container='', params=''):
         if len(pod) == 0:
@@ -784,12 +837,15 @@ class testdesign():
         else:
             fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
             #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
-        print(fullcommand)
+        #print(fullcommand)
+        self.logger.debug('testdesign.executeCTL({})'.format(fullcommand))
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
         try:
-            print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-            return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+            #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+            str_stdout = stdout.decode('utf-8')
+            str_stderr = stderr.decode('utf-8')
+            return "", str_stdout, str_stderr
         except Exception as e:
             print(e)
             print(stdout, stderr)
@@ -1361,7 +1417,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        logging.debug('getJobs'+label)
+        self.logger.debug('getJobs '+label)
         try: 
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
@@ -1389,7 +1445,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        logging.debug('getJobStatus'+label)
+        self.logger.debug('getJobStatus '+label)
         try: 
             if len(jobname) == 0:
                 jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
@@ -1407,7 +1463,7 @@ class testdesign():
             self.wait(2)
             return self.getJobStatus(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
-        print("deleteJob")
+        self.logger.debug('testdesign.deleteJob()')
         try: 
             if len(jobname) == 0:
                 jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
@@ -1422,7 +1478,7 @@ class testdesign():
             self.wait(2)
             return self.deleteJob(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client=''):
-        print("deleteJobPod")
+        self.logger.debug('testdesign.deleteJobPod()')
         body = kubernetes.client.V1DeleteOptions()
         try: 
             if len(jobname) == 0:
@@ -1453,7 +1509,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        logging.debug('getJobPods'+label)
+        self.logger.debug('getJobPods'+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
@@ -1469,13 +1525,13 @@ class testdesign():
             self.wait(2)
             return self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
-        print("create_job")
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
-        print(jobname)
+        self.logger.debug('testdesign.create_job({})'.format(jobname))
+        #print(jobname)
         yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         job_experiment = self.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         with open(self.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
@@ -1517,24 +1573,26 @@ class testdesign():
                 print(exc)
         return job_experiment
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-        print("create_monitoring")
+        #self.logger.debug('testdesign.create_monitoring()')
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         #if len(app) == 0:
         #    app = self.appname
         #if len(experiment) == 0:
         #    experiment = self.code
         #name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
-        print(name)
+        #print(name)
+        self.logger.debug('testdesign.create_monitoring({})'.format(name))
         return name
     def create_dashboard(self, app='', component='dashboard'):
-        print("create_dashboard")
+        #print("create_dashboard")
         if len(app) == 0:
             app = self.appname
         name = "{app}_{component}".format(app=app, component=component)
-        print(name)
+        #print(name)
+        self.logger.debug('testdesign.create_dashboard({})'.format(name))
         return name
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-        print("start_monitoring")
+        self.logger.debug('testdesign.start_monitoring()')
         if len(app) == 0:
             app = self.appname
         if len(experiment) == 0:
@@ -1585,9 +1643,11 @@ class testdesign():
         deployment ='deploymenttemplate-bexhoma-dashboard.yml'
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_dashboard(app, component)
-        print("Deploy "+deployment)
+        self.logger.debug('testdesign.start_dashboard({})'.format(deployment))
+        #print("Deploy "+deployment)
         self.kubectl('create -f '+self.yamlfolder+deployment)
     def stop_dashboard(self, app='', component='dashboard'):
+        self.logger.debug('testdesign.stop_dashboard()')
         deployments = self.getDeployments(app=app, component=component)
         for deployment in deployments:
             self.deleteDeployment(deployment)
@@ -1635,7 +1695,7 @@ class testdesign():
             fullcommand = 'logs '+pod+' --container='+container
         else:
             fullcommand = 'logs '+pod
-        print(fullcommand)
+        #print(fullcommand)
         output = self.kubectl(fullcommand)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()

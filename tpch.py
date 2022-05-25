@@ -33,6 +33,7 @@ if __name__ == '__main__':
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('mode', help='profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or just start the DBMS', choices=['profiling', 'run', 'start', 'load'])
+	parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
 	parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
@@ -54,7 +55,13 @@ if __name__ == '__main__':
 	parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared'])
 	parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
 	parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
+	# evaluate args
+	logger = logging.getLogger('bexhoma')
 	args = parser.parse_args()
+	# evaluate args
+	if args.debug:
+		logging.basicConfig(level=logging.DEBUG)
+	logging.basicConfig(level=logging.DEBUG)
 	# set parameter
 	monitoring = args.monitoring
 	connection = args.connection
@@ -125,7 +132,7 @@ if __name__ == '__main__':
 				'kubernetes.io/hostname': request_node_name
 			})		
 	# persistent storage
-	print(request_storage_type)
+	#print(request_storage_type)
 	experiment.set_storage(
 		storageClassName = request_storage_type,
 		storageSize = request_storage_size,#'100Gi',

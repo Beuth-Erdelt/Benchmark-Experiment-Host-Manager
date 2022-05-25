@@ -1,21 +1,29 @@
 """
-:Date: 2018-08-22
-:Version: 0.1
+:Date: 2022-05-01
+:Version: 0.5
 :Authors: Patrick Erdelt
 
-Demo of TPC-DS in a K8s Cluster.
+    Class for managing an experiment.
+    This is plugged into a cluster object.
+    It collects some configuation objects.
 
-# Compare 4 DBMS on different HW
-# 256 runs
-# no delay
-# Compare result sets
-# 2x each DBMS
-# MemSQL, OmniSci, MonetDB, PostgreSQL, maybe add MySQL, MariaDB, Kinetica?
-# Limit 4 CPUs
+    Two examples included, dealing with TPC-H and TPC-DS tests.
 
-This deals with the TPC-DS tests.
+    Copyright (C) 2020  Patrick Erdelt
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-#from bexhoma import *
 from dbmsbenchmarker import parameter, tools, inspector
 import logging
 import urllib3
@@ -315,7 +323,7 @@ class default():
 			# include sub directories
 			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-			self.cluster.executeCTL(command=cmd['zip_results'], pod=pod_dashboard)#self.yamlfolder+deployment)
+			self.cluster.executeCTL(command=cmd['zip_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
 			#print(fullcommand)
 			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			#stdout, stderr = proc.communicate()
@@ -340,26 +348,33 @@ class default():
 			pods = self.cluster.getPods(component='dashboard')
 			pod_dashboard = pods[0]
 		# copy logs and yamls to result folder
+		print("Copy configuration and logs", end="", flush=True)
 		directory = os.fsencode(self.path)
 		for file in os.listdir(directory):
-			 filename = os.fsdecode(file)
-			 if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
-				 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename)
+			filename = os.fsdecode(file)
+			if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error"): 
+				self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
+				print(".", end="", flush=True)
+		print("done!")
 		cmd = {}
 		cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-		self.cluster.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard)
+		self.cluster.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
+		print("Join results ", end="", flush=True)
 		cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-		self.cluster.executeCTL(command=cmd['merge_results'], pod=pod_dashboard)
+		self.cluster.executeCTL(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
+		print("done!")
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
+		print("Build evaluation cube ", end="", flush=True)
 		cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-		self.cluster.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard)
+		self.cluster.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
+		print("done!")
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -404,30 +419,41 @@ class default():
 	def work_benchmark_list(self, intervals=30, stop=True):
 		do = True
 		while do:
-			time.sleep(intervals)
+			#time.sleep(intervals)
+			self.wait(intervals)
+			# count number of running and pending pods
+			num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
+			num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 			for config in self.configurations:
-				# count number of running and pending pods
-				num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
-				num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 				# check if sut is running
 				if not config.sut_is_running():
-					print("{} is not running".format(config.configuration))
+					#print("{} is not running".format(config.configuration))
 					if not config.experiment_done:
 						if not config.sut_is_pending():
+							print("{} is not running yet - ".format(config.configuration), end="", flush=True)
 							if self.cluster.max_sut is not None:
-								print("{} running and {} pending pods".format(num_pods_running, num_pods_pending))
+								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut), end="", flush=True)
 								if num_pods_running+num_pods_pending < self.cluster.max_sut:
+									print("it will start now")
 									config.start_sut()
-									self.wait(10)
+									num_pods_pending = num_pods_pending + 1
+									#self.wait(10)
+								else:
+									print("it has to wait")
 							else:
+								print("it will start now")
 								config.start_sut()
-								self.wait(10)
+								num_pods_pending = num_pods_pending + 1
+								#self.wait(10)
+						else:
+							print("{} is pending".format(config.configuration))
 					continue
 				# check if loading is done
 				config.check_load_data()
 				# start loading
 				if not config.loading_started:
-					print("{} is not loaded".format(config.configuration))
+					if config.sut_is_running():
+						print("{} is not loaded yet".format(config.configuration))
 					if config.monitoring_active and not config.monitoring_is_running():
 						print("{} waits for monitoring".format(config.configuration))
 						if not config.monitoring_is_pending():
@@ -446,7 +472,7 @@ class default():
 							# config demands other delay
 							delay = config.dockertemplate['delay_prepare']
 						config.loading_after_time = now + timedelta(seconds=delay)
-						print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+						print("{} will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
 						continue
 				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
@@ -510,7 +536,8 @@ class default():
 			# status per pod
 			for p in pods:
 				status = self.cluster.getPodStatus(p)
-				print(p,status)
+				self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+				#print(p,status)
 				if status == 'Succeeded':
 					#if status != 'Running':
 					self.cluster.store_pod_log(p)
@@ -528,7 +555,8 @@ class default():
 			# status per job
 			for job in jobs:
 				success = self.cluster.getJobStatus(job)
-				print(job, success)
+				self.cluster.logger.debug('job {} has status {}'.format(job, success))
+				#print(job, success)
 				if success:
 					self.cluster.deleteJob(job)
 			if len(pods) == 0 and len(jobs) == 0:
@@ -536,13 +564,13 @@ class default():
 				for config in self.configurations:
 					#if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
 					if config.sut_is_pending():
-						print("{} pending".format(config.configuration))
+						self.cluster.logger.debug("{} pending".format(config.configuration))
 						do = True
 					if not config.loading_started:
-						print("{} not loaded".format(config.configuration))
+						self.cluster.logger.debug("{} not loaded".format(config.configuration))
 						do = True
 					if len(config.benchmark_list) > 0:
-						print("{} still benchmarks to run".format(config.configuration))
+						self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
 						do = True
 	def benchmark_list(self, list_clients):
 		for i, parallelism in enumerate(list_clients):
@@ -596,6 +624,7 @@ class default():
 					break
 	def stop_benchmarker(self, configuration=''):
 		# all jobs of configuration - benchmarker
+		self.cluster.logger.debug("experiment.stop_benchmarker({})".format(configuration))
 		app = self.appname
 		component = 'benchmarker'
 		jobs = self.cluster.getJobs(app, component, self.code, configuration)
