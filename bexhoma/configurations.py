@@ -470,6 +470,11 @@ scrape_configs:
                 storageSize = self.storage['storageSize']
             else:
                 storageSize = ''
+            if 'storageConfiguration' in self.storage:
+                storageConfiguration = self.storage['storageConfiguration']
+            else:
+                storageConfiguration = ''
+                self.storage['storageConfiguration'] = ''
         else:
             use_storage = False
         return use_storage
