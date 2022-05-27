@@ -2,210 +2,232 @@
 
 We need
 * a [config file](#clusterconfig) containing cluster information , say `cluster.config`
-* a [config folder](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/docs/Options.html#config-folder) for the benchmark tool, say `experiments/tpch/`, containing a config file `queries.config` for the [queries](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/docs/Options.html#query-file)
-* some additional data depending on if it is an [AWS](#on-aws) or a [k8s](#on-k8s) cluster
-* a python script managing the experimental workflow, say `experiment-tpch.py`
+* a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`, containing
+  * a [config file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html) `queries.config` for the workload
+  * folders for DDL scripts (per DBMS)
+* a python script managing the experimental workflow, say `tpch.py`, see [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py)
 
-## Clusterconfig
+## Cluster-Config
 
-The configuration of the cluster, that is the possible host settings, consists of these parts (see also [example](template-cluster.config) config file):
+The configuration of the cluster, that is the possible host and experiment settings, consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):
 
-**Result folder** for the benchmark tool:
+
+### Config of the Benchmark tool
+
+You probably can leave this as is.
+
 ```
 'benchmarker': {
-    'resultfolder': '/benchmarks' # Local path to results folder of benchmark tool
+    'resultfolder': './',                               # Local path to results folder of benchmark tool
+    'jarfolder': './jars/'                              # Optional: Local path to JDBC drivers
 },
 ```
 
-Information about the **volumes** containing the raw data for the DBMS to import. We also set a named list of **import scripts** per data set:
-```
-'volumes': {
-    'tpch': { # Volume: Name
-        'initscripts': { 
-            '1shard-SF1': [ # Init Script: Name
-                'initschema-tpch.sql',
-                'initdata-tpch-SF1.sql'
-            ],
-            '4shard-SF1': [ # Init Script: Name
-                'initschema-tpch-4shards.sql',
-                'initdata-tpch-SF1.sql'
-            ],
-        }
-    },
-    'gdelt': { # Volume: Name
-        'initscripts': {
-            '1shard': [ # Init Script: Name
-                'initschema-gdelt.sql',
-                'initdata-gdelt.sql'
-            ],
-            '4shard-time': [ # Init Script: Name
-                'initschema-gdelt-4shards.sql',
-                'initdata-gdelt.sql'
-            ],
-        }
-    }
-},
-```
+* `resultfolder`: Where the benchmarker puts it's result folders
+* `jarfolder`: Where the benchmarker expects the JDBC jar files
 
-Information about the **DBMS** to use:
-```
-'dockers': {
-    'OmniSci': {
-        'loadData': 'bin/omnisql -u admin -pHyperInteractive < {scriptname}', # DBMS: Command to Login and Run Scripts
-        'template': { # Template for Benchmark Tool
-            'version': 'CE v4.7',
-            'alias': '',
-            'JDBC': {
-                'driver': 'com.omnisci.jdbc.OmniSciDriver',
-                'url': 'jdbc:omnisci:{serverip}:9091:omnisci',
-                'auth': {'user': 'admin', 'password': 'HyperInteractive'},
-                'jar': 'omnisci-jdbc-4.7.1.jar' # DBMS: Local Path to JDBC Jar
-            }
-        },
-        'logfile': '/omnisci-storage/data/mapd_log/omnisci_server.INFO', # DBMS: Path to Log File on Server
-        'datadir': '/omnisci-storage/data/mapd_data/', # DBMS: Path to directory containing data storage
-        'priceperhourdollar': 0.0, # DBMS: Price per hour in USD if DBMS is rented
-    }
-}
-```
-This requires
-* a base name for the DBMS
-* a prepared docker image of the DBMS
-  * with an open port for a JDBC connection
-* a placeholder `template` for the benchmark tool
-* the JDBC driver jar locally available
-* a command running the init scripts with `{scriptname}` as a placeholder for the script name inside the container
-* `{serverip}` as a placeholder for the host address (localhost for k8s, an Elastic IP for AWS)
-* an optional `priceperhourdollar`
+Both folders are used to correspond with the Docker containers of the benchmarker and must match the settings inside of the image.
 
-### On k8s
 
-We need to add to the config file
+### Credentials of the Cluster
+
+You will have to adjust the name of the namespace `my_namespace`.
+The rest probably can stay as is.
+
 ```
 'credentials': {
     'k8s': {
-        'namespace': 'mynamespace', # K8s: Namespace of User
-        'clustername': 'My_k8s_cluster', # K8s: Name of Cluster (just for annotation)
-        'appname': 'dbmsbenchmarker', # K8s: To find corresponding deployments etc labels: app:
-        'port': 9091 # K8s: Local port for connecting via JDBC after port forwarding
-    }
-}
+        'appname': 'bexhoma',                           # K8s: To find corresponding deployments etc
+        'context': {
+            'my_context': {                             # K8s: Name of context of cluster
+                'namespace': 'my_namespace',            # K8s: Namespace of User
+                'clustername': 'my_cluster',            # K8s: Name of Cluster (just for annotation)
+                'service_sut': '{service}.{namespace}.svc.cluster.local',
+                'port': 9091,                           # K8s: Local port for connecting via JDBC after port forwarding
+            },
+        },
 ```
-This will tell the tool how to adress the cluster. An access token has to be installed at `~/.kube/config` with the corresponding `namespace` and all deployments, services, pods and pvcs of this tool will be recognized by
-```
-metadata:
-  labels:
-    app: dbmsbenchmarker
-```
-
-We also need to add for each DBMS which port we have to forward
-```
-'dockers': {
-    'OmniSci': {
-        'port': 3306, # k8s: remote port of the DBMC for connecting via JDBC
-    }
-}
-```
-
-For the deployments we either need yaml files containing all necessary information, i.e.
-* Deployment with container information
-* Service for networking
-* PVC for local storage
-
-or we need a template yaml file, c.f. [how to generate deployments](#prepare-experiment) and an [example](https://github.com/perdelt/kubecluster/blob/master/benchmarker/k8s/deploymenttemplate-OmniSci.yml).
-
-### On AWS
+* `my_context`: Context (name) of the cluster. Repeat this section for every K8s cluster you want to use. This also allows to useand compare several Clouds.
+* `namespace`: Namespace in the cluster.
+* `port`: Arbitrary (free) local port that is used to ping running DBMS.
 
 
-We additionally need
+### (Hardware) Monitoring
+
+This defines where to scrape the Prometheus metrics and is defined per context (cluster).
+The services and the monitoring pods can be installed automatically by bexhoma.
+
 ```
-'credentials': {
-    'AWS': {
-        'AWS_Access_Key_ID': '', # AWS Access: Key ID
-        'AWS_Secret_Access_Key': '', # AWS Access: Secret Access Key
-        'Default_region': 'eu-central-1', # AWS Access: Default region
         'monitor': {
-            'grafanatoken': 'Bearer 46363756756756476754756745', # Grafana: Access Token
-            'grafanaurl': 'http://127.0.0.1:3000/api/datasources/proxy/1/api/v1/', # Grafana: API URL
-            'exporter': {
-                'dcgm': docker run --runtime=nvidia --name gpu_monitor_dcgm --rm -d --publish 8000:8000 1234.dkr.ecr.eu-central-1.amazonaws.com/name/dcgm:latest',
-                'nvlink': 'docker run --runtime=nvidia --name gpu_monitor_nvlink --rm -d --publish 8001:8001 1234.dkr.ecr.eu-central-1.amazonaws.com/name/nvlink:latest',
-                'node': 'docker run --name cpu_monitor_prom --rm -d --publish 9100:9100 prom/node-exporter:latest'
-            } 
+            'service_monitoring': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',
+            'extend': 20,
+            'shift': 0,
+```
+
+* `extend`: Number of seconds the scraping interval should be extended (at both ends).
+* `shift`: Number of seconds the scraping interval should be shifted (into future).
+
+
+#### (Hardware) Metrics
+
+It follows a dict of hardware metrics that should be collected per DBMS.
+The attributes are set by bexhoms automatically so that corresponding pods can be identified.
+The host is found using the service of the DBMS.
+
+```
+    'metrics': {
+        'total_cpu_memory': {
+            'query': 'container_memory_working_set_bytes{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}/1024/1024',
+            'title': 'CPU Memory [MiB]'
         },
-        'worker': {
-            'ip': '127.1.2.3', # Elastic IP: IP Address
-            'allocid': 'eipalloc-1234512345', # Elastic IP: Allocation ID
-            'ppk': 'cluster.pem', # SSH: Local path to private key for acccessing instances in AWS cluster
-            'username': 'ubuntu', # SSH: User name 
+        'total_cpu_memory_cached': {
+            'query': 'container_memory_usage_bytes{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}/1024/1024',
+            'title': 'CPU Memory Cached [MiB]'
+        },
+        'total_cpu_util': {
+            'query': 'sum(irate(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}[1m]))',
+            'title': 'CPU Util [%]'
+        },
+        'total_cpu_throttled': {
+            'query': 'sum(irate(container_cpu_cfs_throttled_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}}[1m]))',
+            'title': 'CPU Throttle [%]'
+        },
+        'total_cpu_util_others': {
+            'query': 'sum(irate(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name!="dbms",id!="/"}}[1m]))',
+            'title': 'CPU Util Others [%]'
+        },
+        'total_cpu_util_s': {
+            'query': 'sum(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util [s]'
+        },
+        'total_cpu_util_user_s': {
+            'query': 'sum(container_cpu_user_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util User [s]'
+        },
+        'total_cpu_util_sys_s': {
+            'query': 'sum(container_cpu_system_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Util Sys [s]'
+        },
+        'total_cpu_throttled_s': {
+            'query': 'sum(container_cpu_cfs_throttled_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})',
+            'title': 'CPU Throttle [s]'
+        },
+        'total_cpu_util_others_s': {
+            'query': 'sum(container_cpu_usage_seconds_total{{job="monitor-node", container_label_io_kubernetes_container_name!="dbms",id!="/"}})',
+            'title': 'CPU Util Others [s]'
+        },
+        'total_network_rx': {
+            'query': 'sum(container_network_receive_bytes_total{{container_label_app="bexhoma", job="monitor-node"}})/1024/1024',
+            'title': 'Net Rx [MiB]'
+        },
+        'total_network_tx': {
+            'query': 'sum(container_network_transmit_bytes_total{{container_label_app="bexhoma", job="monitor-node"}})/1024/1024',
+            'title': 'Net Tx [MiB]'
+        },
+        'total_fs_read': {
+            'query': 'sum(container_fs_reads_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
+            'title': 'FS Read [MiB]'
+        },
+        'total_fs_write': {
+            'query': 'sum(container_fs_writes_bytes_total{{job="monitor-node", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
+            'title': 'FS Write [MiB]'
+        },
+        'total_gpu_util': {
+            'query': 'sum(DCGM_FI_DEV_GPU_UTIL{{UUID=~"{gpuid}"}})',
+            'title': 'GPU Util [%]'
+        },
+        'total_gpu_power': {
+            'query': 'sum(DCGM_FI_DEV_POWER_USAGE{{UUID=~"{gpuid}"}})',
+            'title': 'GPU Power Usage [W]'
+        },
+        'total_gpu_memory': {
+            'query': 'sum(DCGM_FI_DEV_FB_USED{{UUID=~"{gpuid}"}})',
+            'title': 'GPU Memory [MiB]'
         },
     }
-}
+        },
+    }
+},
 ```
-and for each volume an AWS Volume ID
+
+### Data Sources
+
+Data sources and imports can be adressed using a key.
+This is organized as follows:
+
 ```
 'volumes': {
-    'tpch': { # Volume: Name
-        'id': 'vol-1234512345', # AWS Volume ID
-    },
-    'gdelt': { # Volume: Name
-        'id': 'vol-9876987655', # AWS Volume ID
+    'tpch': {
+        'initscripts': {
+            'SF1': [
+                'initschema-tpch.sql',
+                'initdata-tpch-SF1.sql',
+                'initdata-tpch-SF1.sh'
+            ],
+            'SF1-index': [
+                'initschema-tpch.sql',
+                'initdata-tpch-SF1.sql',
+                'initdata-tpch-SF1.sh',
+                'initindexes-tpch.sql',
+            ],
+            'SF10': [
+                'initschema-tpch.sql',
+                'initdata-tpch-SF10.sql',
+                'initdata-tpch-SF10.sh'
+            ],
+            'SF10-index': [
+                'initschema-tpch.sql',
+                'initdata-tpch-SF10.sql',
+                'initdata-tpch-SF10.sh',
+                'initindexes-tpch.sql',
+            ],
+        }
     }
 },
 ```
-and for each instance some basic information
-```
-'instances': {
-    '1xK80': { # Instance: Name
-        'id': 'i-918273764645', # Instance: Id
-        'type': 'p2.xlarge', # Instance: Type
-        'priceperhourdollar': 1.326, # Instance: Price per hour (on demand)
-        'device': 'sdf', # Instance: Device name ec2volume.attach_to_instance(/dev/$device)
-        'deviceMount': 'xvdf', # Instance: Device mount name - 'sudo mount /dev/$deviceMount /data'
-        'RAM': '64G', # Instance: RAM
-        'GPU': '1xK80' # Instance: GPUs
-    },
-    '8xK80': { # Instance: Name
-        'id': 'i-192838475655', # Instance: Id
-        'type': 'p2.8xlarge', # Instance: Type
-        'priceperhourdollar': 10.608, # Instance: Price per hour (on demand)
-        'device': 'sdf', # Instance: Device name ec2volume.attach_to_instance(/dev/$device)
-        'deviceMount': 'xvdf', # Instance: Device mount name - 'sudo mount /dev/$deviceMount /data'
-        'RAM': '480G', # Instance: RAM
-        'GPU': '8xK80' # Instance: GPUs
-    },
-},
-```
-and for each DBMS the image source and docker command
+
+* `tpch`: Name of the data source.
+* `initscripts`: Dict of scripts to load the data source into a database.
+It consists of  
+  * a name, for example `SF1-index`,
+  * a list of script names.
+The scripts must be present in a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`.
+
+The data itself must reside on a persistent volume within the cluster, that will be mounted into the DBMS container.
+The examples above refer to `/data/tpch/SF1/` for example.
+
+
+### DBMS
+
+DBMS can be adressed using a key.
+We have to define some data per key, for example for the key `MonetDB` we use:
+
 ```
 'dockers': {
-    'OmniSci': {
-        'image': 'eu-central-1.amazonaws.com/myrepository/dbms:omnisci', # ECR: Path to DBMS Docker Image
-        'start': 'docker run -d --runtime=nvidia --name benchmark -p 6273:6273 -p 6275-6280:6275-6280 -p 9091:6274 -v /data:/data/ ', # Docker: Part of Command to Start Container
-    }
+   'MonetDB': {
+        'loadData': 'cd /home/monetdb;mclient demo < {scriptname}',
+        'template': {
+            'version': '11.37.11',
+            'alias': 'Columnwise',
+            'docker_alias': 'Columnwise',
+             'JDBC': {
+                'auth': ['monetdb', 'monetdb'],
+                'driver': 'nl.cwi.monetdb.jdbc.MonetDriver',
+                'jar': 'monetdb-jdbc-2.29.jar',
+                'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout=0'#?autocommit=true&so_timeout=0'
+            }
+        },
+        'logfile': '/tmp/monetdb5/dbfarm/merovingian.log',
+        'datadir': '/var/monetdb5/',
+        'priceperhourdollar': 0.0,
+    },
 }
 ```
 
-This requires
-* A managing host having access to AWS
-  * typically this means an `~/.aws` directory with config and credentials files
-* EC2 instances as experiment hosts having
-  * aws cli installed
-  * docker installed
-  * required ports open
-* EIP for attaching to the current experiment host
-* EBS volumes containing raw data
-* Optionally: ECR for simple docker registry
+This includes
+* `loadData`: A command to run a script inside of the DBMS. This will run inside of the container of the DBMS and is used to load data. `{scriptname}` is a placeholder for the script name inside the container.
+* `template`: [DBMS](https://dbmsbenchmarker.readthedocs.io/en/latest/DBMS.html) JDBC connection info that will be handed over to the benchmarker, c.f. [example](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file).
+Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.
+The JDBC driver jar must be locally available inside the container.
+* an optional `priceperhourdollar` that is currently ignored.
 
-### Monitoring
-
-Monitoring requires
-* A server having Prometheus installed
-  * With Prometheus scraping the fixed EIP for a fixed list of ports
-* A server (the same) having Grafana installed
-  * With Grafana importing metrics from Prometheus
-  * `grafanatoken` and `grafanaurl` to access this from DBMSBenchmarker
-* A dict of exporters given as docker commands
-  * Will be installed and activated automatically at each instance when `cluster.prepareExperiment()` is invoked.
-
-More information can be found [here](Monitoring.html)
