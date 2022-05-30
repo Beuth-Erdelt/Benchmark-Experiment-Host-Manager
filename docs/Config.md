@@ -7,6 +7,8 @@ We need
   * folders for DDL scripts (per DBMS)
 * a python script managing the experimental workflow, say `tpch.py`, see [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py)
 
+To use the predefined examples you will only have to change the context and namespace of the Kubernetes cluster - see below.
+
 ## Cluster-Config
 
 The configuration of the cluster, that is the possible host and experiment settings, consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):
@@ -190,7 +192,8 @@ This is organized as follows:
 * `initscripts`: Dict of scripts to load the data source into a database.
 It consists of  
   * a name, for example `SF1-index`,
-  * a list of script names.
+  * a list of script names.  
+  The scripts `.sql` are sent to the command line tool of the DBMS and the files `.sh` are executed as shell scripts.
 The scripts must be present in a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`.
 
 The data itself must reside on a persistent volume within the cluster, that will be mounted into the DBMS container.
@@ -214,7 +217,7 @@ We have to define some data per key, for example for the key `MonetDB` we use:
                 'auth': ['monetdb', 'monetdb'],
                 'driver': 'nl.cwi.monetdb.jdbc.MonetDriver',
                 'jar': 'monetdb-jdbc-2.29.jar',
-                'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout=0'#?autocommit=true&so_timeout=0'
+                'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout=0'
             }
         },
         'logfile': '/tmp/monetdb5/dbfarm/merovingian.log',
@@ -226,8 +229,10 @@ We have to define some data per key, for example for the key `MonetDB` we use:
 
 This includes
 * `loadData`: A command to run a script inside of the DBMS. This will run inside of the container of the DBMS and is used to load data. `{scriptname}` is a placeholder for the script name inside the container.
-* `template`: [DBMS](https://dbmsbenchmarker.readthedocs.io/en/latest/DBMS.html) JDBC connection info that will be handed over to the benchmarker, c.f. [example](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file).
-Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.
-The JDBC driver jar must be locally available inside the container.
+* `template`: [DBMS](https://dbmsbenchmarker.readthedocs.io/en/latest/DBMS.html) JDBC connection info that will be handed over to the benchmarker, c.f. [example](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file).  
+Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.  
+The JDBC driver jar must be locally available inside the container.  
+Some placeholders in the URL are: `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
+* `logfile` and `datadir` that contain information about where the DBMS stores logs and databases resp.
 * an optional `priceperhourdollar` that is currently ignored.
 
