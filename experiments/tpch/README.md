@@ -23,19 +23,28 @@ For more detail about options.
 ## Options
 
 ```
-usage: tpch [-h] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
-            [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME]
-            {profiling,run,start,load}
+usage: tpch.py [-h] [-db] [-c CONNECTION] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-ms MAX_SUT] [-dt]
+               [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-sf SCALING_FACTOR]
+               [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
+               [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
+               [-rnn REQUEST_NODE_NAME]
+               {profiling,run,start,load}
 
-Perform TPC-H inspired benchmarks in a Kubernetes cluster. This either profiles the imported data in several DBMS and compares some statistics, or runs the TPC-H queries. Optionally monitoring is actived. User can choose to detach the componenten of the benchmarking
-system, so that as much as possible is run inside a Kubernetes (K8s) cluster. User can also choose some parameters like number of runs per query and configuration and request some resources.
+Perform TPC-H inspired benchmarks in a Kubernetes cluster. This either profiles the imported data in several DBMS and
+compares some statistics, or runs the TPC-H queries. Optionally monitoring is actived. User can choose to detach the
+componenten of the benchmarking system, so that as much as possible is run inside a Kubernetes (K8s) cluster. User can
+also choose some parameters like number of runs per query and configuration and request some resources.
 
 positional arguments:
   {profiling,run,start,load}
-                        profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or just start the DBMS
+                        profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or
+                        just start the DBMS
 
 optional arguments:
   -h, --help            show this help message and exit
+  -db, --debug          dump debug informations
+  -c CONNECTION, --connection CONNECTION
+                        name of DBMS
   -cx CONTEXT, --context CONTEXT
                         context of Kubernetes (for a multi cluster environment), default is current context
   -e EXPERIMENT, --experiment EXPERIMENT
