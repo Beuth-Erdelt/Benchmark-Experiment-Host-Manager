@@ -651,6 +651,8 @@ scrape_configs:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
                         if self.dockerimage:
                             result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
+                        else:
+                            self.dockerimage = result[key]['spec']['template']['spec']['containers'][i]['image']
                     elif not self.monitoring_active:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
@@ -1119,6 +1121,7 @@ scrape_configs:
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = str(self.numExperimentsDone+1)
+        c['parameter']['dockerimage'] = self.dockerimage
         #print(c)
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
