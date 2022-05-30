@@ -23,7 +23,7 @@ See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Man
 1. Install the package `pip install bexhoma`
 1. Make sure you have a working `kubectl` installed  
   (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
-1. Adjust configuration [tbd in detail]
+1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
 1. Install data [tbd in detail]  

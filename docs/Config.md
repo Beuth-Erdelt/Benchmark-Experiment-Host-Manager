@@ -193,7 +193,7 @@ This is organized as follows:
 It consists of  
   * a name, for example `SF1-index`,
   * a list of script names.  
-  The scripts `.sql` are sent to the command line tool of the DBMS and the files `.sh` are executed as shell scripts.
+  The scripts `.sql` are sent to the command line tool of the DBMS (`loadData` - see below) and the files `.sh` are executed as shell scripts.
 The scripts must be present in a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`.
 
 The data itself must reside on a persistent volume within the cluster, that will be mounted into the DBMS container.
@@ -232,7 +232,7 @@ This includes
 * `template`: [DBMS](https://dbmsbenchmarker.readthedocs.io/en/latest/DBMS.html) JDBC connection info that will be handed over to the benchmarker, c.f. [example](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file).  
 Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.  
 The JDBC driver jar must be locally available inside the container.  
-Some placeholders in the URL are: `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
+Some placeholders in the URL are: `serverip` (set automatically to match the corresponding pod), `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
 * `logfile` and `datadir` that contain information about where the DBMS stores logs and databases resp.
 * an optional `priceperhourdollar` that is currently ignored.
 
