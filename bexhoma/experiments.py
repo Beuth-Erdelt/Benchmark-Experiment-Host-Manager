@@ -422,8 +422,8 @@ class default():
 			#time.sleep(intervals)
 			self.wait(intervals)
 			# count number of running and pending pods
-			num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
-			num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
+			num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
+			num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
 			for config in self.configurations:
 				# check if sut is running
 				if not config.sut_is_running():

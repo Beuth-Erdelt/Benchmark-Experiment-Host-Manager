@@ -2,7 +2,7 @@
 
 This image contains an instance of [Prometheus](https://prometheus.io/).
 
-It expects the config file (normally `/etc/prometheus/prometheus.yml`) in `$BEXHOMA_WORKERS`.
+It expects the config file (normally `/etc/prometheus/prometheus.yml`) as a string in `$BEXHOMA_WORKERS`.
 
 ## Build Commands
 

@@ -6,7 +6,8 @@ This Python tools helps **managing benchmark experiments of Database Management 
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
-This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud und Oracle Cloud and at Minikube installations.
+This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud und Oracle Cloud and at Minikube installations,
+running with Citus, Clickhouse, DB2, Exasol, MariaDB, MariaDB Columnstore, MemSQL, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
@@ -23,7 +24,7 @@ See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Man
 1. Install the package `pip install bexhoma`
 1. Make sure you have a working `kubectl` installed  
   (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
-1. Adjust configuration [tbd in detail]
+1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
 1. Install data [tbd in detail]  
@@ -52,8 +53,6 @@ The repository contains a [tool](experiments/tpch/) for running TPC-H (reading) 
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) as query executor [2] and evaluator [1].
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
 
-This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kinetica, MariaDB, MariaDB Columnstore, MemSQL, Mariadb, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
-
 ## References
 
 [1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
@@ -71,5 +70,3 @@ This module has been tested with Brytlyt, Citus, Clickhouse, DB2, Exasol, Kineti
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
-
-(old, slightly outdated [docs](docs/Docs_old.md))
