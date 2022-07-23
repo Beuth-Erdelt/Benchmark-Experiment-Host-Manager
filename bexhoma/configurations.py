@@ -299,6 +299,8 @@ class default():
             forward = ['kubectl', '--context {context}'.format(context=self.experiment.cluster.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             forward.extend(ports)
             your_command = " ".join(forward)
+            # we do not test at localhost (forwarded), because there might be conflicts
+            """
             self.logger.debug('configuration.start_loading({})'.format(your_command))
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
             # wait for port to be connected
@@ -308,6 +310,7 @@ class default():
                 # not answering
                 self.experiment.cluster.stopPortforwarding()
                 return False
+            """
             #while not dbmsactive:
             #    self.wait(10)
             #    dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
@@ -316,8 +319,9 @@ class default():
             if not self.loading_started:
                 #print("load_data")
                 self.load_data()
-            self.experiment.cluster.stopPortforwarding()
-            # store experiment
+            # we do not test at localhost (forwarded), because there might be conflicts
+            #self.experiment.cluster.stopPortforwarding()
+            # store experiment needs new format
             """
             experiment = {}
             experiment['delay'] = delay
