@@ -52,11 +52,13 @@ def manage():
 				connection = ''
 			cluster.stop_sut(configuration=connection)
 			cluster.stop_monitoring(configuration=connection)
+			cluster.stop_maintaining()
 			cluster.stop_benchmarker(configuration=connection)
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
 			cluster.stop_monitoring()
+			cluster.stop_maintaining()
 			cluster.stop_benchmarker()
 	elif args.mode == 'dashboard':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
@@ -165,6 +167,21 @@ def manage():
 				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 					print("Worker Pods", pods)
+				for pod in pods:
+					status = cluster.getPodStatus(pod)
+					#print(status)
+					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+				############
+				component = 'maintaining'
+				apps[configuration][component] = ''
+				if args.verbose:
+					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+					print("Stateful Sets", stateful_sets)
+					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					print("Maintaining Services", services)
+				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				if args.verbose:
+					print("Maintaining Pods", pods)
 				for pod in pods:
 					status = cluster.getPodStatus(pod)
 					#print(status)
