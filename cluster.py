@@ -49,11 +49,13 @@ if __name__ == '__main__':
 			experiment = experiments.default(cluster=cluster, code=cluster.code)
 			cluster.stop_sut()
 			cluster.stop_monitoring()
+			cluster.stop_maintaining()
 			cluster.stop_benchmarker()
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
 			cluster.stop_monitoring()
+			cluster.stop_maintaining()
 			cluster.stop_benchmarker()
 	elif args.mode == 'dashboard':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
