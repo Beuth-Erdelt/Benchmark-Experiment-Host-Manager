@@ -1558,6 +1558,64 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
+    def create_job_maintainer(self, connection, app='', component='maintainer', experiment='', configuration='', client='1', parallelism=1, alias=''):
+        if len(app) == 0:
+            app = self.appname
+        code = str(int(experiment))
+        #connection = configuration
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        #print(jobname)
+        self.logger.debug('configuration.create_job_maintainer({})'.format(jobname))
+        # determine start time
+        now = datetime.utcnow()
+        start = now + timedelta(seconds=180)
+        #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
+        #wait = (start-now).seconds
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        job_experiment = self.experiment.path+'/job-maintainer-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        with open(self.experiment.cluster.yamlfolder+"jobtemplate-maintainer.yml") as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+            except yaml.YAMLError as exc:
+                print(exc)
+        for dep in result:
+            if dep['kind'] == 'Job':
+                dep['metadata']['name'] = jobname
+                job = dep['metadata']['name']
+                dep['spec']['completions'] = parallelism
+                dep['spec']['parallelism'] = parallelism
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = str(experiment)
+                dep['metadata']['labels']['client'] = str(client)
+                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['spec']['template']['metadata']['labels']['app'] = app
+                dep['spec']['template']['metadata']['labels']['component'] = component
+                dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
+                dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                envs = dep['spec']['template']['spec']['containers'][0]['env']
+                for i,e in enumerate(envs):
+                    if e['name'] == 'SENSOR_DATABASE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+                    if e['name'] == 'SENSOR_RATE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
+                    if e['name'] == 'SENSOR_NUMBER':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                    self.logger.debug('configuration.create_job_maintainer({})'.format(str(e)))
+                    #print(e)
+        with open(job_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        return job_experiment
 
 
 
