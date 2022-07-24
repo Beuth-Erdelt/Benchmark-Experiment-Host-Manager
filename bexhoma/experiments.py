@@ -697,3 +697,28 @@ class tpch(default):
 	def set_queries_profiling(self):
 		self.set_queryfile('queries-tpch-profiling.config')
 
+class iot(default):
+	def __init__(self,
+			cluster,
+			code=None,
+			queryfile = 'queries-iot.config',
+			SF = '1',
+			numExperiments = 1,
+			timeout = 7200,
+			detached=False):
+		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+		self.set_experiment(volume='iot')
+		self.set_experiment(script='SF'+str(SF)+'-index')
+		self.cluster.set_configfolder('experiments/iot')
+		parameter.defaultParameters = {'SF': str(SF)}
+		self.set_queryfile(queryfile)
+		self.set_workload(
+			name = 'IoT Queries SF='+str(SF),
+			info = 'This experiment performs some IoT inspired queries.'
+			)
+		self.storage_label = 'tpch-'+str(SF)
+	def set_queries_full(self):
+		self.set_queryfile('queries-iot.config')
+	def set_queries_profiling(self):
+		self.set_queryfile('queries-iot-profiling.config')
+
