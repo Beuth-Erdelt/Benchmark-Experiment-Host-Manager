@@ -1613,10 +1613,11 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias=''):
         if len(app) == 0:
             app = self.appname
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('configuration.create_job_maintainer({})'.format(jobname))
@@ -1628,7 +1629,7 @@ scrape_configs:
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
-        job_experiment = self.experiment.path+'/job-maintaining-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        job_experiment = self.experiment.path+'/job-maintaining-{configuration}.yml'.format(configuration=configuration)
         with open(self.experiment.cluster.yamlfolder+"jobtemplate-maintaining.yml") as stream:
             try:
                 result=yaml.safe_load_all(stream)
@@ -1646,13 +1647,13 @@ scrape_configs:
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = str(experiment)
-                dep['metadata']['labels']['client'] = str(client)
+                #dep['metadata']['labels']['client'] = str(client)
                 dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
-                dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                #dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
