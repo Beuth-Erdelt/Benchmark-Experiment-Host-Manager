@@ -99,6 +99,7 @@ class default():
 		self.namespace = self.cluster.namespace#.config['credentials']['k8s']['namespace']
 		self.configurations = []
 		self.storage_label = ''
+		self.maintaining_active = False
 	def wait(self, sec):
 		print("Waiting "+str(sec)+"s...", end="", flush=True)
 		intervals = int(sec)
@@ -474,6 +475,15 @@ class default():
 						config.loading_after_time = now + timedelta(seconds=delay)
 						print("{} will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
 						continue
+				# check if maintaining
+				if config.loading_finished:
+					if config.monitoring_active and not config.monitoring_is_running():
+						print("{} waits for monitoring".format(config.configuration))
+						continue
+					if config.maintaining_active:
+						if not config.maintaining_is_running():
+							print("{} is not maintained yet".format(config.configuration))
+							config.start_maintaining()
 				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
 					if config.monitoring_active and not config.monitoring_is_running():
@@ -717,6 +727,7 @@ class iot(default):
 			info = 'This experiment performs some IoT inspired queries.'
 			)
 		self.storage_label = 'tpch-'+str(SF)
+		self.maintaining_active = True
 	def set_queries_full(self):
 		self.set_queryfile('queries-iot.config')
 	def set_queries_profiling(self):
