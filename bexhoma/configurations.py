@@ -379,7 +379,7 @@ class default():
         if len(experiment) == 0:
             experiment = self.code
         job = self.create_job_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=8)
-        self.logger.debug("Deploy "+deployment)
+        self.logger.debug("Deploy "+job)
         self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
