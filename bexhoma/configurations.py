@@ -91,6 +91,7 @@ class default():
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
         self.maintaining_active = experiment.maintaining_active
+        self.parallelism = 1
         self.storage_label = experiment.storage_label
         self.experiment_done = False
         self.dockerimage = dockerimage
@@ -371,14 +372,14 @@ class default():
         else:
             name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
         return name
-    def start_maintaining(self, app='', component='maintaining', experiment='', configuration=''):
+    def start_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1):
         if len(app) == 0:
             app = self.appname
         if len(configuration) == 0:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        job = self.create_job_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=8)
+        job = self.create_job_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=parallelism)
         self.logger.debug("Deploy "+job)
         self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
