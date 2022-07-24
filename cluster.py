@@ -167,6 +167,21 @@ if __name__ == '__main__':
 					#print(status)
 					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
 				############
+				component = 'maintaining'
+				apps[configuration][component] = ''
+				if args.verbose:
+					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+					print("Stateful Sets", stateful_sets)
+					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					print("Maintaining Services", services)
+				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				if args.verbose:
+					print("Maintaining Pods", pods)
+				for pod in pods:
+					status = cluster.getPodStatus(pod)
+					#print(status)
+					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+				############
 				component = 'monitoring'
 				apps[configuration][component] = ''
 				if args.verbose:
