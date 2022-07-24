@@ -90,6 +90,7 @@ class default():
         self.dialect = dialect
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
+        self.maintaining_active = experiment.maintaining_active
         self.storage_label = experiment.storage_label
         self.experiment_done = False
         self.dockerimage = dockerimage
