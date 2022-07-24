@@ -485,6 +485,26 @@ scrape_configs:
         services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
+    def stop_maintaining(self, app='', component='maintaining', experiment='', configuration=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        jobs = self.experiment.cluster.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.experiment.cluster.getJobStatus(job)
+            print(job, success)
+            self.experiment.cluster.deleteJob(job)
+        # all pods to these jobs
+        self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.experiment.cluster.getPodStatus(p)
+            print(p, status)
+            self.experiment.cluster.deletePod(p)
     def get_instance_from_resources(self):
         resources = experiments.DictToObject(self.resources)
         cpu = resources.requests.cpu
@@ -831,6 +851,8 @@ scrape_configs:
             self.experiment.cluster.deleteService(service)
         if self.experiment.monitoring_active:
             self.stop_monitoring()
+        if self.experiment.maintaining_active:
+            self.stop_maintaining()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def checkGPUs(self):
