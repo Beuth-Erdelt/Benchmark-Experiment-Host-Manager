@@ -1564,6 +1564,7 @@ scrape_configs:
         code = str(int(experiment))
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('configuration.create_job_maintainer({})'.format(jobname))
         # determine start time
@@ -1603,11 +1604,11 @@ scrape_configs:
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
                     if e['name'] == 'SENSOR_DATABASE':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
                     if e['name'] == 'SENSOR_RATE':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '0.1'
                     if e['name'] == 'SENSOR_NUMBER':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '18000'
                     self.logger.debug('configuration.create_job_maintainer({})'.format(str(e)))
                     #print(e)
         with open(job_experiment,"w+") as stream:
