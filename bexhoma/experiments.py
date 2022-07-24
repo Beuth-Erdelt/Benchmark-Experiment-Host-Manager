@@ -732,4 +732,30 @@ class iot(default):
 		self.set_queryfile('queries-iot.config')
 	def set_queries_profiling(self):
 		self.set_queryfile('queries-iot-profiling.config')
+	def set_querymanagement_maintaining(self,
+			numRun=128,
+			delay=5,
+			datatransfer=False):
+		self.set_querymanagement(
+			numWarmup = 0,
+			numCooldown = 0,
+			numRun = numRun,
+			delay = delay,
+			timer = {
+				'connection':
+				{
+					'active': True,
+					'delay': 0
+				},
+				'datatransfer':
+				{
+					'active': datatransfer,
+					'sorted': True,
+					'compare': 'result',
+					'store': [],
+					'precision': 0,
+				}
+			})
+		#self.monitoring_active = True
+		self.maintaining_active = True
 
