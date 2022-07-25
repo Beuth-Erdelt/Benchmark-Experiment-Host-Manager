@@ -1664,7 +1664,7 @@ class testdesign():
             success = self.getJobStatus(job)
             print(job, success)
             self.deleteJob(job)
-        # all pods to these jobs - automatically?
+        # all pods to these jobs - automatically stopped?
         #self.getJobPods(app, component, experiment, configuration)
         #pods = self.getJobPods(app, component, experiment, configuration)
         #for p in pods:

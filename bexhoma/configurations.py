@@ -499,13 +499,13 @@ scrape_configs:
             success = self.experiment.cluster.getJobStatus(job)
             print(job, success)
             self.experiment.cluster.deleteJob(job)
-        # all pods to these jobs
-        self.experiment.cluster.getJobPods(app, component, experiment, configuration)
-        pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
-        for p in pods:
-            status = self.experiment.cluster.getPodStatus(p)
-            print(p, status)
-            self.experiment.cluster.deletePod(p)
+        # all pods to these jobs - automatically stopped?
+        #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        #pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        #for p in pods:
+        #    status = self.experiment.cluster.getPodStatus(p)
+        #    print(p, status)
+        #    self.experiment.cluster.deletePod(p)
     def get_instance_from_resources(self):
         resources = experiments.DictToObject(self.resources)
         cpu = resources.requests.cpu
