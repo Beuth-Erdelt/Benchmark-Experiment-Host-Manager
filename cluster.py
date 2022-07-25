@@ -1,20 +1,20 @@
 """
-    This script contains some code snippets for testing the detached mode in Kubernetes
+	This script contains some code snippets for testing the detached mode in Kubernetes
 
-    Copyright (C) 2021  Patrick Erdelt
+	Copyright (C) 2021  Patrick Erdelt
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as
+	published by the Free Software Foundation, either version 3 of the
+	License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from bexhoma import *
 from dbmsbenchmarker import *
@@ -168,21 +168,26 @@ if __name__ == '__main__':
 					status = cluster.getPodStatus(pod)
 					#print(status)
 					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
-				############
-				component = 'maintaining'
-				apps[configuration][component] = ''
-				if args.verbose:
-					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-					print("Stateful Sets", stateful_sets)
-					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-					print("Maintaining Services", services)
-				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
-				if args.verbose:
-					print("Maintaining Pods", pods)
-				for pod in pods:
-					status = cluster.getPodStatus(pod)
-					#print(status)
-					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+					############
+					component = 'maintaining'
+					apps[configuration][component] = ''
+					if args.verbose:
+							stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+							print("Stateful Sets", stateful_sets)
+							services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+							print("Maintaining Services", services)
+					pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+					if args.verbose:
+							print("Maintaining Pods", pods)
+					num_pods = {}
+					for pod in pods:
+							status = cluster.getPodStatus(pod)
+							#print(status)
+							#apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+							num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
+					#print(num_pods)
+					for status in num_pods.keys():
+							apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
 				############
 				component = 'monitoring'
 				apps[configuration][component] = ''
