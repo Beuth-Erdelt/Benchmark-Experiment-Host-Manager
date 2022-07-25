@@ -1664,13 +1664,13 @@ class testdesign():
             success = self.getJobStatus(job)
             print(job, success)
             self.deleteJob(job)
-        # all pods to these jobs
-        self.getJobPods(app, component, experiment, configuration)
-        pods = self.getJobPods(app, component, experiment, configuration)
-        for p in pods:
-            status = self.getPodStatus(p)
-            print(p, status)
-            self.deletePod(p)
+        # all pods to these jobs - automatically?
+        #self.getJobPods(app, component, experiment, configuration)
+        #pods = self.getJobPods(app, component, experiment, configuration)
+        #for p in pods:
+        #    status = self.getPodStatus(p)
+        #    print(p, status)
+        #    self.deletePod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
