@@ -1430,7 +1430,9 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         #print("getJobStatus")
         label = ''
@@ -1461,7 +1463,9 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getJobStatus(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.getJobStatus(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         self.logger.debug('testdesign.deleteJob()')
         try: 
@@ -1476,7 +1480,9 @@ class testdesign():
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deleteJob(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.deleteJob(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         self.logger.debug('testdesign.deleteJobPod()')
         body = kubernetes.client.V1DeleteOptions()
@@ -1494,7 +1500,9 @@ class testdesign():
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deleteJobPod(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.deleteJobPod(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def getJobPods(self, app='', component='', experiment='', configuration='', client=''):
         #print("getJobPods")
         label = ''
@@ -1523,7 +1531,9 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         if len(app) == 0:
             app = self.appname
