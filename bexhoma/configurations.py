@@ -506,8 +506,8 @@ scrape_configs:
         for p in pods:
             status = self.experiment.cluster.getPodStatus(p)
             print(p, status)
-            if status == "Running":
-                self.experiment.cluster.deletePod(p)
+            #if status == "Running":
+            self.experiment.cluster.deletePod(p)
     def get_instance_from_resources(self):
         resources = experiments.DictToObject(self.resources)
         cpu = resources.requests.cpu

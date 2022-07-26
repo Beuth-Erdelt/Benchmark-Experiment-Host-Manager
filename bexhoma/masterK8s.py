@@ -1682,8 +1682,8 @@ class testdesign():
         for p in pods:
             status = self.getPodStatus(p)
             print(p, status)
-            if status == "Running":
-                self.deletePod(p)
+            #if status == "Running":
+            self.deletePod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
