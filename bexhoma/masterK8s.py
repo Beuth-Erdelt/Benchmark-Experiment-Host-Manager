@@ -1472,6 +1472,7 @@ class testdesign():
             if len(jobname) == 0:
                 jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 jobname = jobs[0]
+            self.logger.debug('testdesign.deleteJob({})'.format(jobname))
             api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
             #pprint(api_response.status.succeeded)
@@ -1494,6 +1495,7 @@ class testdesign():
                         self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                     return
                 #jobname = pods[0]
+            self.logger.debug('testdesign.deleteJobPod({})'.format(jobname))
             api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
             #pprint(api_response)
         except ApiException as e:
@@ -1676,11 +1678,12 @@ class testdesign():
             self.deleteJob(job)
         # all pods to these jobs - automatically stopped?
         #self.getJobPods(app, component, experiment, configuration)
-        #pods = self.getJobPods(app, component, experiment, configuration)
-        #for p in pods:
-        #    status = self.getPodStatus(p)
-        #    print(p, status)
-        #    self.deletePod(p)
+        pods = self.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.getPodStatus(p)
+            print(p, status)
+            if status == "Running":
+                self.deletePod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:

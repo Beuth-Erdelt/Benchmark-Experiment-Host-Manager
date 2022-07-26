@@ -433,7 +433,7 @@ class default():
 						if not config.sut_is_pending():
 							print("{} is not running yet - ".format(config.configuration), end="", flush=True)
 							if self.cluster.max_sut is not None:
-								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut), end="", flush=True)
+								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut))#, end="", flush=True)
 								if num_pods_running+num_pods_pending < self.cluster.max_sut:
 									print("it will start now")
 									config.start_sut()
@@ -565,7 +565,7 @@ class default():
 			# status per job
 			for job in jobs:
 				success = self.cluster.getJobStatus(job)
-				self.cluster.logger.debug('job {} has status {}'.format(job, success))
+				self.cluster.logger.debug('job {} has success status {}'.format(job, success))
 				#print(job, success)
 				if success:
 					self.cluster.deleteJob(job)
