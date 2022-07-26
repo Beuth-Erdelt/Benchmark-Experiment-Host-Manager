@@ -489,6 +489,9 @@ class default():
 					if config.monitoring_active and not config.monitoring_is_running():
 						print("{} waits for monitoring".format(config.configuration))
 						continue
+					if config.maintaining_active and not config.maintaining_is_running():
+						print("{} waits for maintaining".format(config.configuration))
+						continue
 					app = self.cluster.appname
 					component = 'benchmarker'
 					configuration = ''

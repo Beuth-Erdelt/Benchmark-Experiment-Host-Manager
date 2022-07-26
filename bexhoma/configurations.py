@@ -249,6 +249,7 @@ class default():
         component = 'maintaining'
         configuration = self.configuration
         pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        self.logger.debug("maintaining_is_running found {} pods".format(len(pods)))
         if len(pods) > 0:
             pod_sut = pods[0]
             status = self.experiment.cluster.getPodStatus(pod_sut)
