@@ -431,7 +431,7 @@ class default():
 					#print("{} is not running".format(config.configuration))
 					if not config.experiment_done:
 						if not config.sut_is_pending():
-							print("{} is not running yet - ".format(config.configuration), end="", flush=True)
+							print("{} is not running yet - ".format(config.configuration))#, end="", flush=True)
 							if self.cluster.max_sut is not None:
 								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut))#, end="", flush=True)
 								if num_pods_running+num_pods_pending < self.cluster.max_sut:

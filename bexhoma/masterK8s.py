@@ -1519,7 +1519,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        self.logger.debug('getJobPods'+label)
+        self.logger.debug('getJobPods '+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
