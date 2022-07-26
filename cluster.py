@@ -37,20 +37,33 @@ if __name__ == '__main__':
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status','dashboard', 'master'])
+	parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
 	parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
 	parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
 	parser.add_argument('-v', '--verbose', help='gives more details about Kubernetes objects', action='store_true')
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	clusterconfig = 'cluster.config'
+	# evaluate args
 	args = parser.parse_args()
+	if args.debug:
+		logging.basicConfig(level=logging.DEBUG)
+	#logging.basicConfig(level=logging.DEBUG)
+	if args.debug:
+		logger_bexhoma = logging.getLogger('bexhoma')
+		logger_bexhoma.setLevel(logging.DEBUG)
+		logger_loader = logging.getLogger('load_data_asynch')
+		logger_loader.setLevel(logging.DEBUG)
+	connection = args.connection
 	if args.mode == 'stop':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		if args.experiment is None:
 			experiment = experiments.default(cluster=cluster, code=cluster.code)
-			cluster.stop_sut()
-			cluster.stop_monitoring()
+			if connection is None:
+				connection = ''
+			cluster.stop_sut(configuration=connection)
+			cluster.stop_monitoring(configuration=connection)
 			cluster.stop_maintaining()
-			cluster.stop_benchmarker()
+			cluster.stop_benchmarker(configuration=connection)
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
@@ -62,7 +75,7 @@ if __name__ == '__main__':
 		cluster.connect_dashboard()
 	elif args.mode == 'master':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
-		cluster.connect_master(experiment=args.experiment, configuration=args.connection)
+		cluster.connect_master(experiment=args.experiment, configuration=connection)
 	elif args.mode == 'status':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		app = cluster.appname
