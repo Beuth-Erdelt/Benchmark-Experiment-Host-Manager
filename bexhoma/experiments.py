@@ -744,21 +744,7 @@ class iot(default):
 			numCooldown = 0,
 			numRun = numRun,
 			delay = delay,
-			timer = {
-				'connection':
-				{
-					'active': True,
-					'delay': 0
-				},
-				#'datatransfer':
-				#{
-				#	'active': datatransfer,
-				#	'sorted': True,
-				#	'compare': 'result',
-				#	'store': [],
-				#	'precision': 0,
-				#}
-			})
+			)
 		#self.monitoring_active = True
 		self.maintaining_active = True
 
