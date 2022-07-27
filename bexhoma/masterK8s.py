@@ -748,7 +748,9 @@ class testdesign():
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deletePod(name=name)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.deletePod(name=name)
     def deletePVC(self, name):
         self.logger.debug('testdesign.deletePVC({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
