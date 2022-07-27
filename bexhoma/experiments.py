@@ -99,6 +99,7 @@ class default():
 		self.namespace = self.cluster.namespace#.config['credentials']['k8s']['namespace']
 		self.configurations = []
 		self.storage_label = ''
+		self.maintaining_active = False
 	def wait(self, sec):
 		print("Waiting "+str(sec)+"s...", end="", flush=True)
 		intervals = int(sec)
@@ -430,9 +431,9 @@ class default():
 					#print("{} is not running".format(config.configuration))
 					if not config.experiment_done:
 						if not config.sut_is_pending():
-							print("{} is not running yet - ".format(config.configuration), end="", flush=True)
+							print("{} is not running yet - ".format(config.configuration))#, end="", flush=True)
 							if self.cluster.max_sut is not None:
-								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut), end="", flush=True)
+								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut))#, end="", flush=True)
 								if num_pods_running+num_pods_pending < self.cluster.max_sut:
 									print("it will start now")
 									config.start_sut()
@@ -474,10 +475,22 @@ class default():
 						config.loading_after_time = now + timedelta(seconds=delay)
 						print("{} will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
 						continue
+				# check if maintaining
+				if config.loading_finished:
+					if config.monitoring_active and not config.monitoring_is_running():
+						print("{} waits for monitoring".format(config.configuration))
+						continue
+					if config.maintaining_active:
+						if not config.maintaining_is_running():
+							print("{} is not maintained yet".format(config.configuration))
+							config.start_maintaining(parallelism=config.parallelism)
 				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
 					if config.monitoring_active and not config.monitoring_is_running():
 						print("{} waits for monitoring".format(config.configuration))
+						continue
+					if config.maintaining_active and not config.maintaining_is_running():
+						print("{} waits for maintaining".format(config.configuration))
 						continue
 					app = self.cluster.appname
 					component = 'benchmarker'
@@ -555,7 +568,7 @@ class default():
 			# status per job
 			for job in jobs:
 				success = self.cluster.getJobStatus(job)
-				self.cluster.logger.debug('job {} has status {}'.format(job, success))
+				self.cluster.logger.debug('job {} has success status {}'.format(job, success))
 				#print(job, success)
 				if success:
 					self.cluster.deleteJob(job)
@@ -696,4 +709,56 @@ class tpch(default):
 		self.set_queryfile('queries-tpch.config')
 	def set_queries_profiling(self):
 		self.set_queryfile('queries-tpch-profiling.config')
+
+class iot(default):
+	def __init__(self,
+			cluster,
+			code=None,
+			queryfile = 'queries-iot.config',
+			SF = '1',
+			numExperiments = 1,
+			timeout = 7200,
+			detached=False):
+		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+		self.set_experiment(volume='iot')
+		self.set_experiment(script='SF'+str(SF)+'-index')
+		self.cluster.set_configfolder('experiments/iot')
+		parameter.defaultParameters = {'SF': str(SF)}
+		self.set_queryfile(queryfile)
+		self.set_workload(
+			name = 'IoT Queries SF='+str(SF),
+			info = 'This experiment performs some IoT inspired queries.'
+			)
+		self.storage_label = 'tpch-'+str(SF)
+		self.maintaining_active = True
+	def set_queries_full(self):
+		self.set_queryfile('queries-iot.config')
+	def set_queries_profiling(self):
+		self.set_queryfile('queries-iot-profiling.config')
+	def set_querymanagement_maintaining(self,
+			numRun=128,
+			delay=5,
+			datatransfer=False):
+		self.set_querymanagement(
+			numWarmup = 0,
+			numCooldown = 0,
+			numRun = numRun,
+			delay = delay,
+			timer = {
+				'connection':
+				{
+					'active': True,
+					'delay': 0
+				},
+				#'datatransfer':
+				#{
+				#	'active': datatransfer,
+				#	'sorted': True,
+				#	'compare': 'result',
+				#	'store': [],
+				#	'precision': 0,
+				#}
+			})
+		#self.monitoring_active = True
+		self.maintaining_active = True
 

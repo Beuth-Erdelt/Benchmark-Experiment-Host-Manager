@@ -1430,7 +1430,9 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         #print("getJobStatus")
         label = ''
@@ -1461,13 +1463,16 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getJobStatus(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.getJobStatus(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         self.logger.debug('testdesign.deleteJob()')
         try: 
             if len(jobname) == 0:
                 jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 jobname = jobs[0]
+            self.logger.debug('testdesign.deleteJob({})'.format(jobname))
             api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
             #pprint(api_response.status.succeeded)
@@ -1476,7 +1481,9 @@ class testdesign():
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deleteJob(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.deleteJob(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         self.logger.debug('testdesign.deleteJobPod()')
         body = kubernetes.client.V1DeleteOptions()
@@ -1488,13 +1495,16 @@ class testdesign():
                         self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                     return
                 #jobname = pods[0]
+            self.logger.debug('testdesign.deleteJobPod({})'.format(jobname))
             api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
             #pprint(api_response)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deleteJobPod(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.deleteJobPod(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def getJobPods(self, app='', component='', experiment='', configuration='', client=''):
         #print("getJobPods")
         label = ''
@@ -1509,7 +1519,7 @@ class testdesign():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        self.logger.debug('getJobPods'+label)
+        self.logger.debug('getJobPods '+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
@@ -1523,7 +1533,9 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         if len(app) == 0:
             app = self.appname
@@ -1654,6 +1666,24 @@ class testdesign():
         services = self.getServices(app=app, component=component)
         for service in services:
             self.deleteService(service)
+    def stop_maintaining(self, experiment='', configuration=''):
+        # all jobs of configuration - benchmarker
+        app = self.appname
+        component = 'maintaining'
+        jobs = self.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.getJobStatus(job)
+            print(job, success)
+            self.deleteJob(job)
+        # all pods to these jobs - automatically stopped?
+        #self.getJobPods(app, component, experiment, configuration)
+        pods = self.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.getPodStatus(p)
+            print(p, status)
+            #if status == "Running":
+            self.deletePod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:

@@ -90,6 +90,8 @@ class default():
         self.dialect = dialect
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
+        self.maintaining_active = experiment.maintaining_active
+        self.parallelism = 1
         self.storage_label = experiment.storage_label
         self.experiment_done = False
         self.dockerimage = dockerimage
@@ -242,6 +244,29 @@ class default():
             if status == "Running":
                 return True
         return False
+    def maintaining_is_running(self):
+        app = self.appname
+        component = 'maintaining'
+        configuration = self.configuration
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        self.logger.debug("maintaining_is_running found {} pods".format(len(pods)))
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Running":
+                return True
+        return False
+    def maintaining_is_pending(self):
+        app = self.appname
+        component = 'maintaining'
+        configuration = self.configuration
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.getPodStatus(pod_sut)
+            if status == "Pending":
+                return True
+        return False
     def monitoring_is_running(self):
         app = self.appname
         component = 'monitoring'
@@ -299,6 +324,8 @@ class default():
             forward = ['kubectl', '--context {context}'.format(context=self.experiment.cluster.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             forward.extend(ports)
             your_command = " ".join(forward)
+            # we do not test at localhost (forwarded), because there might be conflicts
+            """
             self.logger.debug('configuration.start_loading({})'.format(your_command))
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
             # wait for port to be connected
@@ -308,6 +335,7 @@ class default():
                 # not answering
                 self.experiment.cluster.stopPortforwarding()
                 return False
+            """
             #while not dbmsactive:
             #    self.wait(10)
             #    dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
@@ -316,8 +344,9 @@ class default():
             if not self.loading_started:
                 #print("load_data")
                 self.load_data()
-            self.experiment.cluster.stopPortforwarding()
-            # store experiment
+            # we do not test at localhost (forwarded), because there might be conflicts
+            #self.experiment.cluster.stopPortforwarding()
+            # store experiment needs new format
             """
             experiment = {}
             experiment['delay'] = delay
@@ -344,6 +373,16 @@ class default():
         else:
             name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
         return name
+    def start_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1):
+        if len(app) == 0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        job = self.create_job_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=parallelism)
+        self.logger.debug("Deploy "+job)
+        self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         #if len(app) == 0:
@@ -448,6 +487,27 @@ scrape_configs:
         services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
+    def stop_maintaining(self, app='', component='maintaining', experiment='', configuration=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        jobs = self.experiment.cluster.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.experiment.cluster.getJobStatus(job)
+            print(job, success)
+            self.experiment.cluster.deleteJob(job)
+        # all pods to these jobs - automatically stopped? only if finished?
+        #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.experiment.cluster.getPodStatus(p)
+            print(p, status)
+            #if status == "Running":
+            self.experiment.cluster.deletePod(p)
     def get_instance_from_resources(self):
         resources = experiments.DictToObject(self.resources)
         cpu = resources.requests.cpu
@@ -794,6 +854,8 @@ scrape_configs:
             self.experiment.cluster.deleteService(service)
         if self.experiment.monitoring_active:
             self.stop_monitoring()
+        if self.experiment.maintaining_active:
+            self.stop_maintaining()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def checkGPUs(self):
@@ -1548,6 +1610,64 @@ scrape_configs:
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
         #if not path.isdir(self.path):
         #    makedirs(self.path)
+        with open(job_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        return job_experiment
+    #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias=''):
+        if len(app) == 0:
+            app = self.appname
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #print(jobname)
+        self.logger.debug('configuration.create_job_maintainer({})'.format(jobname))
+        # determine start time
+        now = datetime.utcnow()
+        start = now + timedelta(seconds=180)
+        #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
+        #wait = (start-now).seconds
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        job_experiment = self.experiment.path+'/job-maintaining-{configuration}.yml'.format(configuration=configuration)
+        with open(self.experiment.cluster.yamlfolder+"jobtemplate-maintaining.yml") as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+            except yaml.YAMLError as exc:
+                print(exc)
+        for dep in result:
+            if dep['kind'] == 'Job':
+                dep['metadata']['name'] = jobname
+                job = dep['metadata']['name']
+                dep['spec']['completions'] = parallelism
+                dep['spec']['parallelism'] = parallelism
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = str(experiment)
+                #dep['metadata']['labels']['client'] = str(client)
+                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['spec']['template']['metadata']['labels']['app'] = app
+                dep['spec']['template']['metadata']['labels']['component'] = component
+                dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
+                #dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                envs = dep['spec']['template']['spec']['containers'][0]['env']
+                for i,e in enumerate(envs):
+                    if e['name'] == 'SENSOR_DATABASE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
+                    if e['name'] == 'SENSOR_RATE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '0.1'
+                    if e['name'] == 'SENSOR_NUMBER':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '72000'
+                    self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                    #print(e)
         with open(job_experiment,"w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))

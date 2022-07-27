@@ -37,12 +37,22 @@ def manage():
 	# argparse
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard', 'master'])
+	parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
 	parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
 	parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
 	parser.add_argument('-v', '--verbose', help='gives more details about Kubernetes objects', action='store_true')
 	parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
 	clusterconfig = 'cluster.config'
+	# evaluate args
 	args = parser.parse_args()
+	if args.debug:
+		logging.basicConfig(level=logging.DEBUG)
+	#logging.basicConfig(level=logging.DEBUG)
+	if args.debug:
+		logger_bexhoma = logging.getLogger('bexhoma')
+		logger_bexhoma.setLevel(logging.DEBUG)
+		logger_loader = logging.getLogger('load_data_asynch')
+		logger_loader.setLevel(logging.DEBUG)
 	connection = args.connection
 	if args.mode == 'stop':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
@@ -52,11 +62,13 @@ def manage():
 				connection = ''
 			cluster.stop_sut(configuration=connection)
 			cluster.stop_monitoring(configuration=connection)
+			cluster.stop_maintaining()
 			cluster.stop_benchmarker(configuration=connection)
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
 			cluster.stop_monitoring()
+			cluster.stop_maintaining()
 			cluster.stop_benchmarker()
 	elif args.mode == 'dashboard':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
@@ -169,6 +181,26 @@ def manage():
 					status = cluster.getPodStatus(pod)
 					#print(status)
 					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+				############
+				component = 'maintaining'
+				apps[configuration][component] = ''
+				if args.verbose:
+						stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+						print("Stateful Sets", stateful_sets)
+						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+						print("Maintaining Services", services)
+				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				if args.verbose:
+						print("Maintaining Pods", pods)
+				num_pods = {}
+				for pod in pods:
+						status = cluster.getPodStatus(pod)
+						#print(status)
+						#apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+						num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
+				#print(num_pods)
+				for status in num_pods.keys():
+						apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
 				############
 				component = 'monitoring'
 				apps[configuration][component] = ''
