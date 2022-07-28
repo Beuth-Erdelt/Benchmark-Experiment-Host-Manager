@@ -440,9 +440,9 @@ class default():
 									num_pods_pending = num_pods_pending + 1
 									#self.wait(10)
 								else:
-									print("it has to wait")
+									print("{} has to wait".format(config.configuration))
 							else:
-								print("it will start now")
+								print("{} will start now".format(config.configuration))
 								config.start_sut()
 								num_pods_pending = num_pods_pending + 1
 								#self.wait(10)
