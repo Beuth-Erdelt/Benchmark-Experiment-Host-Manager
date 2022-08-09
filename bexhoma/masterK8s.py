@@ -522,20 +522,23 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getNodes(self, appname=''):
+    def getNodes(self, app='', type=''):
         self.logger.debug('testdesign.getNodes()')
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(type)>0:
+            label += ',type='+type
         try:
             if len(appname) == 0:
                 appname = self.appname
-            api_response = self.v1core.list_node(label_selector='app='+appname)
+            api_response = self.v1core.list_node(label_selector=label)
             #pprint(api_response)
             if len(api_response.items) > 0:
-                for item in api_response.items:
-                    if item.metadata.name == pod:
-                        return item.status.phase
-                return ""
+                return api_response.items
             else:
-                return ""
+                return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_node for getNodes: %s\n" % e)
             print("Create new access token")
