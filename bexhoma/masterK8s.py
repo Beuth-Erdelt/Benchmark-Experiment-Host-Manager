@@ -522,6 +522,26 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+    def getNodes(self, appname=''):
+        self.logger.debug('testdesign.getNodes()')
+        try:
+            if len(appname) == 0:
+                appname = self.appname
+            api_response = self.v1core.list_node(label_selector='app='+appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                for item in api_response.items:
+                    if item.metadata.name == pod:
+                        return item.status.phase
+                return ""
+            else:
+                return ""
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_node for getNodes: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getNodes(appname=appname)
     def getPodStatus(self, pod, appname=''):
         self.logger.debug('testdesign.getPodStatus()')
         try:
@@ -1795,3 +1815,21 @@ class testdesign():
 
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
+
+
+"""
+class aws():
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        super().__init__(clusterconfig, configfolder, yamlfolder, context, code, instance, volume, docker, script, queryfile)
+        self.cluster = self.contextdata['cluster']
+    def eksctl(self, command):
+        #fullcommand = 'eksctl --context {context} {command}'.format(context=self.context, command=command)
+        fullcommand = 'eksctl {command}'.format(command=command)
+        self.logger.debug('aws.eksctl({})'.format(fullcommand))
+        #print(fullcommand)
+        return os.popen(fullcommand).read()# os.system(fullcommand)
+    def scale_nodegroup(self, nodegroup, size):
+        #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
+        command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
+        return self.eksctl(command)
+"""

@@ -65,3 +65,22 @@ class kubernetes(masterK8s.testdesign):
 
 
 
+
+class aws(kubernetes):
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        self.code = code
+        kubernetes.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        self.cluster = self.contextdata['cluster']
+    def eksctl(self, command):
+        #fullcommand = 'eksctl --context {context} {command}'.format(context=self.context, command=command)
+        fullcommand = 'eksctl {command}'.format(command=command)
+        self.logger.debug('aws.eksctl({})'.format(fullcommand))
+        #print(fullcommand)
+        return os.popen(fullcommand).read()# os.system(fullcommand)
+    def scale_nodegroup(self, nodegroup, size):
+        #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
+        command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
+        return self.eksctl(command)
+
+
+
