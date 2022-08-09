@@ -531,8 +531,6 @@ class testdesign():
         if len(type)>0:
             label += ',type='+type
         try:
-            if len(appname) == 0:
-                appname = self.appname
             api_response = self.v1core.list_node(label_selector=label)
             #pprint(api_response)
             if len(api_response.items) > 0:
