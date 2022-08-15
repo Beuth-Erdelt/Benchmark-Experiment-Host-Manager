@@ -82,15 +82,17 @@ class aws(kubernetes):
         #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
         command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
         return self.eksctl(command)
-    def check_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
+    def get_nodegroup_size(self, nodegroup_type):
         resp = self.getNodes(type=nodegroup_type)
         num_nodes_aux_actual = len(resp)
+        self.logger.debug('aws.get_nodegroup_size({}) = {}'.format(nodegroup_type, num_nodes_aux_actual))
+        return num_nodes_aux_actual
+    def check_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
+        num_nodes_aux_actual = self.get_nodegroup_size(nodegroup_type)
         self.logger.debug('aws.check_nodegroup({}, {}) = {}'.format(nodegroup_type, num_nodes_aux_planned, num_nodes_aux_actual))
-        return num_nodes_aux_planned != num_nodes_aux_actual
+        return num_nodes_aux_planned == num_nodes_aux_actual
     def wait_for_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
-        num_nodes_aux_actual = self.check_nodegroup(nodegroup_type, num_nodes_aux_planned)
-        while (num_nodes_aux_planned != num_nodes_aux_actual):
-           num_nodes_aux_actual = self.check_nodegroup(nodegroup_type, num_nodes_aux_planned)
+        while (!self.check_nodegroup(nodegroup_type, num_nodes_aux_planned)):
            self.wait(30)
         print("Nodegroup {} ready".format(nodegroup_type))
         return True
