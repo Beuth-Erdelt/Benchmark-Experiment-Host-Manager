@@ -84,6 +84,7 @@ class aws(kubernetes):
     def check_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
         resp = self.getNodes(type=nodegroup_type)
         num_nodes_aux_actual = len(resp)
+        self.logger.debug('aws.check_nodegroup({}, {}) = {}'.format(nodegroup_type, num_nodes_aux_planned, num_nodes_aux_actual))
         return num_nodes_aux_planned != num_nodes_aux_actual
     def wait_for_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
         num_nodes_aux_actual = self.check_nodegroup(nodegroup_type, num_nodes_aux_planned)
