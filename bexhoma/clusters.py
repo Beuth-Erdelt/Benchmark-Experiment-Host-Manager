@@ -78,6 +78,7 @@ class aws(kubernetes):
         #print(fullcommand)
         return os.popen(fullcommand).read()# os.system(fullcommand)
     def scale_nodegroup(self, nodegroup, size):
+        print("aws.scale_nodegroup({nodegroup}, {size})".format(nodegroup, size))
         #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
         command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
         return self.eksctl(command)
