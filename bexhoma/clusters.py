@@ -81,6 +81,17 @@ class aws(kubernetes):
         #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
         command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
         return self.eksctl(command)
+    def check_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
+        resp = self.getNodes(type=nodegroup_type)
+        num_nodes_aux_actual = len(resp)
+        return num_nodes_aux_planned != num_nodes_aux_actual
+    def wait_for_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
+        num_nodes_aux_actual = self.check_nodegroup(nodegroup_type, num_nodes_aux_planned)
+        while (num_nodes_aux_planned != num_nodes_aux_actual):
+           num_nodes_aux_actual = self.check_nodegroup(nodegroup_type, num_nodes_aux_planned)
+           self.wait(30)
+        print("Nodegroup {} ready".format(nodegroup_type))
+        return True
 
 
 
