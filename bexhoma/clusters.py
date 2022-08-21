@@ -131,7 +131,7 @@ class aws(kubernetes):
         for nodegroup_name, size_default in nodegroup_names.items():
             if size is not None:
                 size_default = size
-            self.wait_for_nodegroup(nodegroup_name, size_default)
+            self.wait_for_nodegroup(nodegroup_name=nodegroup_name, num_nodes_aux_planned=size_default)
     def wait_for_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
         while (not self.check_nodegroup(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name, num_nodes_aux_planned=num_nodes_aux_planned)):
            self.wait(30)
