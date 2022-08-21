@@ -522,14 +522,16 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getNodes(self, app='', type=''):
+    def getNodes(self, app='', nodegroup_type='', nodegroup_name=''):
         self.logger.debug('testdesign.getNodes()')
         label = ''
         if len(app)==0:
             app = self.appname
         label += 'app='+app
-        if len(type)>0:
-            label += ',type='+type
+        if len(nodegroup_type)>0:
+            label += ',type='+nodegroup_type
+        if len(nodegroup_name)>0:
+            label += ',name='+nodegroup_name
         try:
             api_response = self.v1core.list_node(label_selector=label)
             #pprint(api_response)
@@ -542,7 +544,7 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getNodes(appname=appname)
+            return self.getNodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
     def getPodStatus(self, pod, appname=''):
         self.logger.debug('testdesign.getPodStatus()')
         try:

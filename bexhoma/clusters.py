@@ -77,24 +77,52 @@ class aws(kubernetes):
         self.logger.debug('aws.eksctl({})'.format(fullcommand))
         #print(fullcommand)
         return os.popen(fullcommand).read()# os.system(fullcommand)
-    def scale_nodegroup(self, nodegroup, size):
-        print("aws.scale_nodegroup({nodegroup}, {size})".format(nodegroup=nodegroup, size=size))
+    def getNodes(self, app='', nodegroup_type='', nodegroup_name=''):
+        self.logger.debug('aws.getNodes()')
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(nodegroup_type)>0:
+            label += ',type='+nodegroup_type
+        if len(nodegroup_name)>0:
+            label += ',alpha.eksctl.io/nodegroup-name='+nodegroup_name
+        try:
+            api_response = self.v1core.list_node(label_selector=label)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return api_response.items
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_node for getNodes: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getNodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+    def scale_nodegroup(self, nodegroup_name, size):
+        print("aws.scale_nodegroup({nodegroup_name}, {size})".format(nodegroup_name=nodegroup_name, size=size))
         #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
-        command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
+        command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup_name}".format(cluster=self.cluster, size=size, nodegroup_name=nodegroup_name)
         return self.eksctl(command)
-    def get_nodegroup_size(self, nodegroup_type):
-        resp = self.getNodes(type=nodegroup_type)
+        #if not self.check_nodegroup(nodegroup_type, num_nodes_aux_planned):
+        #    command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
+        #    return self.eksctl(command)
+        #else:
+        #    return ""
+    def get_nodegroup_size(self, nodegroup_type='', nodegroup_name=''):
+        resp = self.getNodes(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
         num_nodes_aux_actual = len(resp)
-        self.logger.debug('aws.get_nodegroup_size({}) = {}'.format(nodegroup_type, num_nodes_aux_actual))
+        self.logger.debug('aws.get_nodegroup_size({},{}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_actual))
         return num_nodes_aux_actual
-    def check_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
+    def check_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
         num_nodes_aux_actual = self.get_nodegroup_size(nodegroup_type)
-        self.logger.debug('aws.check_nodegroup({}, {}) = {}'.format(nodegroup_type, num_nodes_aux_planned, num_nodes_aux_actual))
+        self.logger.debug('aws.check_nodegroup({}, {}, {}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_planned, num_nodes_aux_actual))
         return num_nodes_aux_planned == num_nodes_aux_actual
-    def wait_for_nodegroup(self, nodegroup_type, num_nodes_aux_planned):
-        while (not self.check_nodegroup(nodegroup_type, num_nodes_aux_planned)):
+    def wait_for_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
+        while (not self.check_nodegroup(nodegroup_type=nodegroup_type, num_nodes_aux_planned=num_nodes_aux_planned)):
            self.wait(30)
-        print("Nodegroup {} ready".format(nodegroup_type))
+        print("Nodegroup {},{} ready".format(nodegroup_type, nodegroup_name))
         return True
 
 
