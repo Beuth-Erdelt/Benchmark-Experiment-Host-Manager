@@ -108,7 +108,7 @@ class aws(kubernetes):
             self.scale_nodegroup(nodegroup_name, size_default)
     def scale_nodegroup(self, nodegroup_name, size):
         print("aws.scale_nodegroup({nodegroup_name}, {size})".format(nodegroup_name=nodegroup_name, size=size))
-        if not self.check_nodegroup(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name, num_nodes_aux_planned=size):
+        if not self.check_nodegroup(nodegroup_name=nodegroup_name, num_nodes_aux_planned=size):
             #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
             command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup_name}".format(cluster=self.cluster, size=size, nodegroup_name=nodegroup_name)
             return self.eksctl(command)
