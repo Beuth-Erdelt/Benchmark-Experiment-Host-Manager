@@ -100,11 +100,18 @@ class aws(kubernetes):
             self.cluster_access()
             self.wait(2)
             return self.getNodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+    def scale_nodegroups(self, nodegroup_names, size=None):
+        print("aws.scale_nodegroups({nodegroup_names}, {size})".format(nodegroup_names=nodegroup_names, size=size))
+        for nodegroup_name, size_default in nodegroup_names.items():
+            if size is not None:
+                size_default = size
+            self.scale_nodegroup(nodegroup_name, size_default)
     def scale_nodegroup(self, nodegroup_name, size):
         print("aws.scale_nodegroup({nodegroup_name}, {size})".format(nodegroup_name=nodegroup_name, size=size))
-        #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
-        command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup_name}".format(cluster=self.cluster, size=size, nodegroup_name=nodegroup_name)
-        return self.eksctl(command)
+        if not self.check_nodegroup(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name, num_nodes_aux_planned=size):
+            #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
+            command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup_name}".format(cluster=self.cluster, size=size, nodegroup_name=nodegroup_name)
+            return self.eksctl(command)
         #if not self.check_nodegroup(nodegroup_type, num_nodes_aux_planned):
         #    command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
         #    return self.eksctl(command)
@@ -119,8 +126,14 @@ class aws(kubernetes):
         num_nodes_aux_actual = self.get_nodegroup_size(nodegroup_type)
         self.logger.debug('aws.check_nodegroup({}, {}, {}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_planned, num_nodes_aux_actual))
         return num_nodes_aux_planned == num_nodes_aux_actual
+    def wait_for_nodegroups(self, nodegroup_names, size=None):
+        print("aws.wait_for_nodegroups({nodegroup_names})".format(nodegroup_names=nodegroup_names))
+        for nodegroup_name, size_default in nodegroup_names.items():
+            if size is not None:
+                size_default = size
+            self.wait_for_nodegroup(nodegroup_name, size_default)
     def wait_for_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
-        while (not self.check_nodegroup(nodegroup_type=nodegroup_type, num_nodes_aux_planned=num_nodes_aux_planned)):
+        while (not self.check_nodegroup(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name, num_nodes_aux_planned=num_nodes_aux_planned)):
            self.wait(30)
         print("Nodegroup {},{} ready".format(nodegroup_type, nodegroup_name))
         return True
