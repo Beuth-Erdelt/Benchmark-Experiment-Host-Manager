@@ -123,7 +123,7 @@ class aws(kubernetes):
         self.logger.debug('aws.get_nodegroup_size({},{}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_actual))
         return num_nodes_aux_actual
     def check_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
-        num_nodes_aux_actual = self.get_nodegroup_size(nodegroup_type)
+        num_nodes_aux_actual = self.get_nodegroup_size(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
         self.logger.debug('aws.check_nodegroup({}, {}, {}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_planned, num_nodes_aux_actual))
         return num_nodes_aux_planned == num_nodes_aux_actual
     def wait_for_nodegroups(self, nodegroup_names, size=None):
