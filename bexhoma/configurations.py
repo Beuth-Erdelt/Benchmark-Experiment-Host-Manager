@@ -471,6 +471,13 @@ scrape_configs:
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = prometheus_config
                             #print(e)
                             self.logger.debug('configuration.start_monitoring({})'.format(str(e)))
+                        # set nodeSelector
+                        if 'monitoring' in self.nodes:
+                            if not 'nodeSelector' in dep['spec']['template']['spec']:
+                                dep['spec']['template']['spec']['nodeSelector'] = dict()
+                            if dep['spec']['template']['spec']['nodeSelector'] is None:
+                                dep['spec']['template']['spec']['nodeSelector'] = dict()
+                            dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['monitoring']
             except yaml.YAMLError as exc:
                 print(exc)
         with open(deployment_experiment,"w+") as stream:
@@ -818,6 +825,13 @@ scrape_configs:
                     else:
                         dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
                         self.resources['nodeSelector'][nodeSelector] = value
+                # set nodeSelector
+                if 'sut' in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['sut']
                 #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
@@ -1614,6 +1628,13 @@ scrape_configs:
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
                 e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+                # set nodeSelector
+                if 'benchmarker' in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['benchmarker']
         #if not path.isdir(self.path):
         #    makedirs(self.path)
         with open(job_experiment,"w+") as stream:
