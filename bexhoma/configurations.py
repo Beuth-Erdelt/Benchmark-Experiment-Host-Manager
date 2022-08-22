@@ -86,6 +86,8 @@ class default():
         self.set_eval_parameters(**self.experiment.eval_parameters)
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
         self.set_storage(**self.experiment.storage)
+        self.set_nodes(**self.experiment.nodes)
+        self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
         self.num_worker = worker
@@ -147,6 +149,10 @@ class default():
         self.ddl_parameters = kwargs
     def set_eval_parameters(self, **kwargs):
         self.eval_parameters = kwargs
+    def set_maintaining_parameters(self, **kwargs):
+        self.maintaining_parameters = kwargs
+    def set_nodes(self, **kwargs):
+        self.nodes = kwargs
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
         """ Read experiment details from cluster config"""
         #self.bChangeInstance = True
@@ -1658,14 +1664,28 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 #dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                # set nodeSelector
+                if 'maintaining' in self.nodes:
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['maintaining']
+                # set ENV variables - defaults
+                env_default = {}
+                if 'SENSOR_RATE' in self.maintaining_parameters:
+                    env_default['SENSOR_RATE'] = self.maintaining_parameters['SENSOR_RATE']
+                else:
+                    env_default['SENSOR_RATE'] = '0.1'
+                if 'SENSOR_NUMBER' in self.maintaining_parameters:
+                    env_default['SENSOR_NUMBER'] = self.maintaining_parameters['SENSOR_NUMBER']
+                else:
+                    env_default['SENSOR_NUMBER'] = '144000'
+                # set ENV variables - in YAML
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
                     if e['name'] == 'SENSOR_DATABASE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
                     if e['name'] == 'SENSOR_RATE':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '0.1'
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
                     if e['name'] == 'SENSOR_NUMBER':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '144000' # 4 hours
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
                     self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
                     #print(e)
         with open(job_experiment,"w+") as stream:

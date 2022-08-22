@@ -87,6 +87,8 @@ class default():
 		self.ddl_parameters = {}
 		self.eval_parameters = {}
 		self.storage = {}
+		self.nodes = {}
+		self.maintaining_parameters = {}
 		#self.connectionmanagement = {}
 		#self.connectionmanagement['numProcesses'] = None
 		#self.connectionmanagement['runsPerConnection'] = None
@@ -146,6 +148,10 @@ class default():
 		self.eval_parameters = kwargs
 	def set_storage(self, **kwargs):
 		self.storage = kwargs
+	def set_nodes(self, **kwargs):
+		self.nodes = kwargs
+	def set_maintaining_parameters(self, **kwargs):
+		self.maintaining_parameters = kwargs
 	def add_configuration(self, configuration):
 		self.configurations.append(configuration)
 	def __set_queryfile(self, queryfile):
@@ -483,7 +489,7 @@ class default():
 					if config.maintaining_active:
 						if not config.maintaining_is_running():
 							print("{} is not maintained yet".format(config.configuration))
-							config.start_maintaining(parallelism=config.parallelism)
+							config.start_maintaining(parallelism=config.num_maintaining)
 				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
 					if config.monitoring_active and not config.monitoring_is_running():
