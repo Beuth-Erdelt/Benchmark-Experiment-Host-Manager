@@ -1665,7 +1665,7 @@ scrape_configs:
                     if e['name'] == 'SENSOR_RATE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '0.1'
                     if e['name'] == 'SENSOR_NUMBER':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '72000'
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '144000' # 4 hours
                     self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
                     #print(e)
         with open(job_experiment,"w+") as stream:
