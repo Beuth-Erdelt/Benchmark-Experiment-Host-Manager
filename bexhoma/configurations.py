@@ -1668,6 +1668,8 @@ scrape_configs:
                 if 'maintaining' in self.nodes:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
                     dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['maintaining']
                 # set ENV variables - defaults
                 env_default = {}
