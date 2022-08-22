@@ -1689,7 +1689,7 @@ scrape_configs:
                     if e['name'] == 'SENSOR_RATE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
                     if e['name'] == 'SENSOR_NUMBER':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
                     self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
                     #print(e)
         with open(job_experiment,"w+") as stream:
