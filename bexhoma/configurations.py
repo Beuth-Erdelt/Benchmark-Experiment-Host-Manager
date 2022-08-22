@@ -1629,12 +1629,12 @@ scrape_configs:
                 e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
                 # set nodeSelector
-                if 'benchmarker' in self.nodes:
+                if 'benchmarking' in self.nodes:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()
                     if dep['spec']['template']['spec']['nodeSelector'] is None:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()
-                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['benchmarker']
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['benchmarking']
         #if not path.isdir(self.path):
         #    makedirs(self.path)
         with open(job_experiment,"w+") as stream:
