@@ -254,14 +254,15 @@ class default():
         app = self.appname
         component = 'maintaining'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
-        self.logger.debug("maintaining_is_running found {} pods".format(len(pods)))
-        if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
-            if status == "Running":
-                return True
-        return False
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Running")
+        self.logger.debug("maintaining_is_running found {} running pods".format(len(pods)))
+        return len(pods) == self.num_maintaining
+        #if len(pods) > 0:
+        #    pod_sut = pods[0]
+        #    status = self.experiment.cluster.getPodStatus(pod_sut)
+        #    if status == "Running":
+        #        return True
+        #return False
     def maintaining_is_pending(self):
         app = self.appname
         component = 'maintaining'
