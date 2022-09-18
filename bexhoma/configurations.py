@@ -757,10 +757,10 @@ scrape_configs:
                 node_cpu = ''
                 node_gpu = node
                 # should be overwritten by resources dict?
-                #if 'requests' in self.resources and 'cpu' in self.resources['requests']:
-                #   req_cpu = self.resources['requests']['cpu']
-                #if 'requests' in self.resources and 'memory' in self.resources['requests']:
-                #   req_mem = self.resources['requests']['memory']
+                if 'requests' in self.resources and 'cpu' in self.resources['requests']:
+                   req_cpu = self.resources['requests']['cpu']
+                if 'requests' in self.resources and 'memory' in self.resources['requests']:
+                   req_mem = self.resources['requests']['memory']
                 if 'limits' in self.resources and 'cpu' in self.resources['limits']:
                     limit_cpu = self.resources['limits']['cpu']
                 if 'limits' in self.resources and 'memory' in self.resources['limits']:
