@@ -81,6 +81,7 @@ class default():
 			timeout = timeout,
 			singleConnection = True)
 		self.numExperiments = numExperiments
+		self.max_sut = None
 		self.cluster.add_experiment(self)
 		self.appname = self.cluster.appname
 		self.resources = {}
@@ -429,8 +430,10 @@ class default():
 			#time.sleep(intervals)
 			self.wait(intervals)
 			# count number of running and pending pods
-			num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
-			num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
+			num_pods_running_experiment = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
+			num_pods_pending_experiment = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
+			num_pods_running_cluster = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
+			num_pods_pending_cluster = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 			for config in self.configurations:
 				# check if sut is running
 				if not config.sut_is_running():
@@ -438,19 +441,28 @@ class default():
 					if not config.experiment_done:
 						if not config.sut_is_pending():
 							print("{} is not running yet - ".format(config.configuration))#, end="", flush=True)
-							if self.cluster.max_sut is not None:
-								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut))#, end="", flush=True)
-								if num_pods_running+num_pods_pending < self.cluster.max_sut:
-									print("it will start now")
+							if self.cluster.max_sut is not None or self.max_sut is not None:
+								we_can_start_new_sut = True
+								if self.max_sut is not None:
+									print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+									if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
+										print("{} has to wait".format(config.configuration))
+										we_can_start_new_sut = False
+								if self.cluster.max_sut is not None:
+									print("In cluster: {} running and {} pending pods: max is {} pods".format(num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+									if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
+										print("{} has to wait".format(config.configuration))
+										we_can_start_new_sut = False
+								if we_can_start_new_sut:
+									print("{} will start now".format(config.configuration))
 									config.start_sut()
-									num_pods_pending = num_pods_pending + 1
-									#self.wait(10)
-								else:
-									print("{} has to wait".format(config.configuration))
+									num_pods_pending_experiment = num_pods_pending_experiment + 1
+									num_pods_pending_cluster = num_pods_pending_cluster + 1
 							else:
 								print("{} will start now".format(config.configuration))
 								config.start_sut()
-								num_pods_pending = num_pods_pending + 1
+								num_pods_pending_experiment = num_pods_pending_experiment + 1
+								num_pods_pending_cluster = num_pods_pending_cluster + 1
 								#self.wait(10)
 						else:
 							print("{} is pending".format(config.configuration))
