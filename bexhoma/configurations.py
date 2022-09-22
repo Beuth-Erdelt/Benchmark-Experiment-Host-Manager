@@ -948,12 +948,15 @@ scrape_configs:
         #fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
         result = self.experiment.cluster.kubectl('get pods/'+self.pod_sut+' -o=json')#self.yamlfolder+deployment)
         #result = os.popen(fullcommand).read()
-        datastore = json.loads(result)
-        #print(datastore)
-        if self.appname == datastore['metadata']['labels']['app']:
-            if self.pod_sut == datastore['metadata']['name']:
-                node = datastore['spec']['nodeName']
-                return node
+        try:
+            datastore = json.loads(result)
+            #print(datastore)
+            if self.appname == datastore['metadata']['labels']['app']:
+                if self.pod_sut == datastore['metadata']['name']:
+                    node = datastore['spec']['nodeName']
+                    return node
+        except Exception as e:
+            return ""
         return ""
     def getGPUs(self):
         self.logger.debug('configuration.getGPUs()')
