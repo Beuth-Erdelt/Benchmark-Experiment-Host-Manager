@@ -766,3 +766,41 @@ class iot(default):
 		#self.monitoring_active = True
 		self.maintaining_active = True
 
+class tsbs(default):
+	def __init__(self,
+			cluster,
+			code=None,
+			queryfile = 'queries-tsbs.config',
+			SF = '1',
+			numExperiments = 1,
+			timeout = 7200,
+			detached=False):
+		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+		self.set_experiment(volume='tsbs')
+		self.set_experiment(script='SF'+str(SF)+'-index')
+		self.cluster.set_configfolder('experiments/tsbs')
+		parameter.defaultParameters = {'SF': str(SF)}
+		self.set_queryfile(queryfile)
+		self.set_workload(
+			name = 'TSBS Queries SF='+str(SF),
+			info = 'This experiment performs some TSBS inspired queries.'
+			)
+		self.storage_label = 'tsbs-'+str(SF)
+		self.maintaining_active = True
+	def set_queries_full(self):
+		self.set_queryfile('queries-tsbs.config')
+	def set_queries_profiling(self):
+		self.set_queryfile('queries-tsbs-profiling.config')
+	def set_querymanagement_maintaining(self,
+			numRun=128,
+			delay=5,
+			datatransfer=False):
+		self.set_querymanagement(
+			numWarmup = 0,
+			numCooldown = 0,
+			numRun = numRun,
+			delay = delay,
+			)
+		#self.monitoring_active = True
+		self.maintaining_active = True
+
