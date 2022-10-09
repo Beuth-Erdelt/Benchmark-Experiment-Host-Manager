@@ -1664,7 +1664,10 @@ scrape_configs:
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         job_experiment = self.experiment.path+'/job-maintaining-{configuration}.yml'.format(configuration=configuration)
-        with open(self.experiment.cluster.yamlfolder+"jobtemplate-maintaining.yml") as stream:
+        jobtemplate = self.experiment.cluster.yamlfolder+"jobtemplate-maintaining.yml"
+        if len(self.experiment.jobtemplate_maintaining) > 0:
+            jobtemplate = self.experiment.cluster.yamlfolder+self.experiment.jobtemplate_maintaining
+        with open(jobtemplate) as stream:
             try:
                 result=yaml.safe_load_all(stream)
                 result = [data for data in result]
@@ -1709,6 +1712,8 @@ scrape_configs:
                 # set ENV variables - in YAML
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
+                    if e['name'] == 'BEXHOMA_HOST':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = servicename
                     if e['name'] == 'SENSOR_DATABASE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
                     if e['name'] == 'SENSOR_RATE':

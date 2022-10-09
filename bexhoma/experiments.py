@@ -90,6 +90,7 @@ class default():
 		self.storage = {}
 		self.nodes = {}
 		self.maintaining_parameters = {}
+		self.jobtemplate_maintaining = ""
 		#self.connectionmanagement = {}
 		#self.connectionmanagement['numProcesses'] = None
 		#self.connectionmanagement['runsPerConnection'] = None
@@ -787,6 +788,7 @@ class tsbs(default):
 			)
 		self.storage_label = 'tsbs-'+str(SF)
 		self.maintaining_active = True
+		self.jobtemplate_maintaining = "jobtemplate-maintaining-tsbs.yml"
 	def set_queries_full(self):
 		self.set_queryfile('queries-tsbs.config')
 	def set_queries_profiling(self):
