@@ -1710,18 +1710,35 @@ scrape_configs:
                 else:
                     env_default['SENSOR_NUMBER'] = '144000'
                 # set ENV variables - in YAML
-                envs = dep['spec']['template']['spec']['containers'][0]['env']
-                for i,e in enumerate(envs):
-                    if e['name'] == 'BEXHOMA_HOST':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = servicename
-                    if e['name'] == 'SENSOR_DATABASE':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
-                    if e['name'] == 'SENSOR_RATE':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
-                    if e['name'] == 'SENSOR_NUMBER':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
-                    self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
-                    #print(e)
+                # all init containers
+                if 'initContainers' in dep['spec']['template']['spec']:
+                    for num_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
+                        envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                        for i,e in enumerate(envs):
+                            if e['name'] == 'BEXHOMA_HOST':
+                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                            if e['name'] == 'SENSOR_DATABASE':
+                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
+                            if e['name'] == 'SENSOR_RATE':
+                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
+                            if e['name'] == 'SENSOR_NUMBER':
+                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
+                            self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                            #print(e)
+                # all containers
+                for num_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                    for i,e in enumerate(envs):
+                        if e['name'] == 'BEXHOMA_HOST':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                        if e['name'] == 'SENSOR_DATABASE':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
+                        if e['name'] == 'SENSOR_RATE':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
+                        if e['name'] == 'SENSOR_NUMBER':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
+                        self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                        #print(e)
         with open(job_experiment,"w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))
