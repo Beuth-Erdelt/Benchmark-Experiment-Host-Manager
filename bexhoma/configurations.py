@@ -254,9 +254,10 @@ class default():
         app = self.appname
         component = 'maintaining'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Running")
-        self.logger.debug("maintaining_is_running found {} running pods".format(len(pods)))
-        return len(pods) == self.num_maintaining
+        pods_running = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Running")
+        pods_succeeded = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Succeeded")
+        self.logger.debug("maintaining_is_running found {} running and {} succeeded pods".format(len(pods_running), len(pods_succeeded)))
+        return len(pods) + len(pods_succeeded) == self.num_maintaining
         #if len(pods) > 0:
         #    pod_sut = pods[0]
         #    status = self.experiment.cluster.getPodStatus(pod_sut)
