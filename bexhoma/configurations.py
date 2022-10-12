@@ -268,12 +268,12 @@ class default():
         app = self.appname
         component = 'maintaining'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Pending")
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
-            if status == "Pending":
-                return True
+            #status = self.experiment.cluster.getPodStatus(pod_sut)
+            #if status == "Pending":
+            return True
         return False
     def monitoring_is_running(self):
         app = self.appname

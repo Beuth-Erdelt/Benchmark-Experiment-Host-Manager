@@ -502,7 +502,10 @@ class default():
 					if config.maintaining_active:
 						if not config.maintaining_is_running():
 							print("{} is not maintained yet".format(config.configuration))
-							config.start_maintaining(parallelism=config.num_maintaining)
+							if not config.maintaining_is_pending():
+								config.start_maintaining(parallelism=config.num_maintaining)
+							else:
+								print("{} has pending maintaining".format(config.configuration))
 				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
 					if config.monitoring_active and not config.monitoring_is_running():
