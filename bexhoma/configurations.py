@@ -93,6 +93,7 @@ class default():
         self.num_worker = worker
         self.monitoring_active = experiment.monitoring_active
         self.maintaining_active = experiment.maintaining_active
+        self.loading_active = experiment.loading_active
         self.parallelism = 1
         self.storage_label = experiment.storage_label
         self.experiment_done = False
@@ -308,6 +309,16 @@ class default():
             if status == "Pending":
                 return True
         return False
+    def start_loading_pod(self, app='', component='loading', experiment='', configuration='', parallelism=1):
+        if len(app) == 0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        job = self.create_job_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism)
+        self.logger.debug("Deploy "+job)
+        self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def start_loading(self, delay=0):
         """ Per config: Load Data """
         app = self.appname
@@ -1738,6 +1749,107 @@ scrape_configs:
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
                         if e['name'] == 'SENSOR_NUMBER':
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
+                        self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                        #print(e)
+        with open(job_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        return job_experiment
+    def create_job_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
+        if len(app) == 0:
+            app = self.appname
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #print(jobname)
+        self.logger.debug('configuration.create_job_loading({})'.format(jobname))
+        # determine start time
+        now = datetime.utcnow()
+        start = now + timedelta(seconds=180)
+        #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
+        #wait = (start-now).seconds
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        job_experiment = self.experiment.path+'/job-loading-{configuration}.yml'.format(configuration=configuration)
+        jobtemplate = self.experiment.cluster.yamlfolder+"jobtemplate-loading.yml"
+        if len(self.experiment.jobtemplate_loading) > 0:
+            jobtemplate = self.experiment.cluster.yamlfolder+self.experiment.jobtemplate_loading
+        with open(jobtemplate) as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+            except yaml.YAMLError as exc:
+                print(exc)
+        for dep in result:
+            if dep['kind'] == 'Job':
+                dep['metadata']['name'] = jobname
+                job = dep['metadata']['name']
+                dep['spec']['completions'] = parallelism
+                dep['spec']['parallelism'] = parallelism
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = str(experiment)
+                #dep['metadata']['labels']['client'] = str(client)
+                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['spec']['template']['metadata']['labels']['app'] = app
+                dep['spec']['template']['metadata']['labels']['component'] = component
+                dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
+                #dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                # set nodeSelector
+                if 'loading' in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['loading']
+                # set ENV variables - defaults
+                env_default = {}
+                if 'SENSOR_RATE' in self.maintaining_parameters:
+                    env_default['SENSOR_RATE'] = self.maintaining_parameters['SENSOR_RATE']
+                else:
+                    env_default['SENSOR_RATE'] = '0.1'
+                if 'SENSOR_NUMBER' in self.maintaining_parameters:
+                    env_default['SENSOR_NUMBER'] = self.maintaining_parameters['SENSOR_NUMBER']
+                else:
+                    env_default['SENSOR_NUMBER'] = '144000'
+                # set ENV variables - in YAML
+                # all init containers
+                if 'initContainers' in dep['spec']['template']['spec']:
+                    for num_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
+                        envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                        for i,e in enumerate(envs):
+                            if e['name'] == 'BEXHOMA_HOST':
+                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                            if e['name'] == 'BEXHOMA_CLIENT':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+                            if e['name'] == 'BEXHOMA_EXPERIMENT':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = experiment
+                            if e['name'] == 'BEXHOMA_CONNECTION':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                            if e['name'] == 'BEXHOMA_SLEEP':
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+                            self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
+                            #print(e)
+                # all containers
+                for num_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                    for i,e in enumerate(envs):
+                        if e['name'] == 'BEXHOMA_HOST':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                        if e['name'] == 'BEXHOMA_CLIENT':
+                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+                        if e['name'] == 'BEXHOMA_EXPERIMENT':
+                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = experiment
+                        if e['name'] == 'BEXHOMA_CONNECTION':
+                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                        if e['name'] == 'BEXHOMA_SLEEP':
+                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                         self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
                         #print(e)
         with open(job_experiment,"w+") as stream:

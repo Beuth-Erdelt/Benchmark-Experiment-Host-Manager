@@ -91,6 +91,7 @@ class default():
 		self.nodes = {}
 		self.maintaining_parameters = {}
 		self.jobtemplate_maintaining = ""
+		self.jobtemplate_loading = ""
 		#self.connectionmanagement = {}
 		#self.connectionmanagement['numProcesses'] = None
 		#self.connectionmanagement['runsPerConnection'] = None
@@ -99,6 +100,7 @@ class default():
 		self.querymanagement = {}
 		self.workload = {}
 		self.monitoring_active = True
+		self.loading_active = False
 		# k8s:
 		self.namespace = self.cluster.namespace#.config['credentials']['k8s']['namespace']
 		self.configurations = []
@@ -482,7 +484,10 @@ class default():
 					now = datetime.utcnow()
 					if config.loading_after_time is not None:
 						if now >= config.loading_after_time:
-							config.start_loading()
+							if config.loading_active:
+								config.start_loading_pod()
+							else:
+								config.start_loading()
 						else:
 							print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
 							continue
