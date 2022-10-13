@@ -1709,6 +1709,24 @@ class testdesign():
             print(p, status)
             #if status == "Running":
             self.deletePod(p)
+    def stop_loading(self, experiment='', configuration=''):
+        # all jobs of configuration - benchmarker
+        app = self.appname
+        component = 'loading'
+        jobs = self.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.getJobStatus(job)
+            print(job, success)
+            self.deleteJob(job)
+        # all pods to these jobs - automatically stopped?
+        #self.getJobPods(app, component, experiment, configuration)
+        pods = self.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.getPodStatus(p)
+            print(p, status)
+            #if status == "Running":
+            self.deletePod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
