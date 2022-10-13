@@ -1760,6 +1760,10 @@ scrape_configs:
     def create_job_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
         if len(app) == 0:
             app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
