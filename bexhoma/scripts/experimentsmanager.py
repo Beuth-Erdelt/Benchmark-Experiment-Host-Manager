@@ -63,6 +63,7 @@ def manage():
 			cluster.stop_sut(configuration=connection)
 			cluster.stop_monitoring(configuration=connection)
 			cluster.stop_maintaining()
+			cluster.stop_loading()
 			cluster.stop_benchmarker(configuration=connection)
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)

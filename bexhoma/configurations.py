@@ -534,6 +534,27 @@ scrape_configs:
             print(p, status)
             #if status == "Running":
             self.experiment.cluster.deletePod(p)
+    def stop_loading(self, app='', component='loading', experiment='', configuration=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        jobs = self.experiment.cluster.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.experiment.cluster.getJobStatus(job)
+            print(job, success)
+            self.experiment.cluster.deleteJob(job)
+        # all pods to these jobs - automatically stopped? only if finished?
+        #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.experiment.cluster.getPodStatus(p)
+            print(p, status)
+            #if status == "Running":
+            self.experiment.cluster.deletePod(p)
     def get_instance_from_resources(self):
         resources = experiments.DictToObject(self.resources)
         cpu = resources.requests.cpu
