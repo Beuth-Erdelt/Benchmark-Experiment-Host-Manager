@@ -1510,28 +1510,49 @@ scrape_configs:
         else:
             return False
     def check_load_data(self):
-        # check if loading is done
-        pod_labels = self.experiment.cluster.getPodsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
-        #print(pod_labels)
-        if len(pod_labels) > 0:
-            pod = next(iter(pod_labels.keys()))
-            if 'loaded' in pod_labels[pod]:
-                self.loading_started = True
-                if pod_labels[pod]['loaded'] == 'True':
-                    self.loading_finished = True
+        loading_pods_active = True
+        # check if asynch loading inside cluster is done
+        if self.loading_active:
+            # success of job
+            app = self.experiment.cluster.appname
+            component = 'loading'
+            configuration = ''
+            success = self.experiment.cluster.getJobStatus(app=app, component=component, experiment=self.code, configuration=configuration)
+            jobs = self.experiment.cluster.getJobs(app, component, self.code, configuration)
+            # status per job
+            for job in jobs:
+                success = self.experiment.cluster.getJobStatus(job)
+                self.experiment.cluster.logger.debug('job {} has success status {}'.format(job, success))
+                #print(job, success)
+                if success:
+                    self.experiment.cluster.deleteJob(job)
+                    loading_pods_active = False
+        else:
+            loading_pods_active = False
+        # check if asynch loading outside cluster is done
+        # only if inside cluster if done
+        if not loading_pods_active:
+            pod_labels = self.experiment.cluster.getPodsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
+            #print(pod_labels)
+            if len(pod_labels) > 0:
+                pod = next(iter(pod_labels.keys()))
+                if 'loaded' in pod_labels[pod]:
+                    self.loading_started = True
+                    if pod_labels[pod]['loaded'] == 'True':
+                        self.loading_finished = True
+                    else:
+                        self.loading_finished = False
                 else:
-                    self.loading_finished = False
+                    self.loading_started = False
+                if 'timeLoadingStart' in pod_labels[pod]:
+                    self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+                if 'timeLoadingEnd' in pod_labels[pod]:
+                    self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+                if 'timeLoading' in pod_labels[pod]:
+                    self.timeLoading = float(pod_labels[pod]['timeLoading'])
             else:
                 self.loading_started = False
-            if 'timeLoadingStart' in pod_labels[pod]:
-                self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
-            if 'timeLoadingEnd' in pod_labels[pod]:
-                self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
-            if 'timeLoading' in pod_labels[pod]:
-                self.timeLoading = float(pod_labels[pod]['timeLoading'])
-        else:
-            self.loading_started = False
-            self.loading_finished = False
+                self.loading_finished = False
     def load_data(self):
         self.logger.debug('configuration.load_data()')
         self.loading_started = True
