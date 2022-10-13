@@ -1728,13 +1728,13 @@ scrape_configs:
                         envs = dep['spec']['template']['spec']['containers'][num_container]['env']
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_HOST':
-                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = servicename
                             if e['name'] == 'SENSOR_DATABASE':
-                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
                             if e['name'] == 'SENSOR_RATE':
-                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
                             if e['name'] == 'SENSOR_NUMBER':
-                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
                             self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
                             #print(e)
                 # all containers
@@ -1829,15 +1829,15 @@ scrape_configs:
                         envs = dep['spec']['template']['spec']['containers'][num_container]['env']
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_HOST':
-                                dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = servicename
                             if e['name'] == 'BEXHOMA_CLIENT':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = str(parallelism)
                             if e['name'] == 'BEXHOMA_EXPERIMENT':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = experiment
+                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = experiment
                             if e['name'] == 'BEXHOMA_CONNECTION':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = configuration
                             if e['name'] == 'BEXHOMA_SLEEP':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = '60'
                             self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
                             #print(e)
                 # all containers
