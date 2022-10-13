@@ -485,7 +485,7 @@ class default():
 					if config.loading_after_time is not None:
 						if now >= config.loading_after_time:
 							if config.loading_active:
-								config.start_loading_pod()
+								config.start_loading_pod(parallelism=config.num_loading)
 							else:
 								config.start_loading()
 						else:
