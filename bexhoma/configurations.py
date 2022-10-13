@@ -91,6 +91,8 @@ class default():
         self.experiment.add_configuration(self)
         self.dialect = dialect
         self.num_worker = worker
+        self.num_loading = 0
+        self.num_maintaining = 0
         self.monitoring_active = experiment.monitoring_active
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
@@ -910,6 +912,8 @@ scrape_configs:
             self.stop_monitoring()
         if self.experiment.maintaining_active:
             self.stop_maintaining()
+        if self.experiment.loading_active:
+            self.stop_loading()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def checkGPUs(self):
