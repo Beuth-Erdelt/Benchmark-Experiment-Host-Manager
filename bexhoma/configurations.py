@@ -1835,7 +1835,7 @@ scrape_configs:
                             if e['name'] == 'BEXHOMA_EXPERIMENT':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = experiment
                             if e['name'] == 'BEXHOMA_CONNECTION':
-                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                                dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
                             if e['name'] == 'BEXHOMA_SLEEP':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                             self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
@@ -1851,7 +1851,7 @@ scrape_configs:
                         if e['name'] == 'BEXHOMA_EXPERIMENT':
                             dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = experiment
                         if e['name'] == 'BEXHOMA_CONNECTION':
-                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
                         if e['name'] == 'BEXHOMA_SLEEP':
                             dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                         self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
