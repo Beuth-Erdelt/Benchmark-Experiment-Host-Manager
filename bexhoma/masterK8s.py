@@ -1480,7 +1480,8 @@ class testdesign():
                     return "no job"
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
-            #pprint(api_response)
+            pprint(api_response)
+            pprint(api_response.status.conditions[0].type)
             #pprint(api_response.status.succeeded)
             return api_response.status.succeeded
         except ApiException as e:
