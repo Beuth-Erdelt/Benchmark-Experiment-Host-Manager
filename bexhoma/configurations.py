@@ -1516,7 +1516,7 @@ scrape_configs:
             # success of job
             app = self.experiment.cluster.appname
             component = 'loading'
-            configuration = ''
+            configuration = self.configuration
             success = self.experiment.cluster.getJobStatus(app=app, component=component, experiment=self.code, configuration=configuration)
             jobs = self.experiment.cluster.getJobs(app, component, self.code, configuration)
             # status per job
@@ -1525,6 +1525,7 @@ scrape_configs:
                 self.experiment.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
+                    self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     self.experiment.cluster.deleteJob(job)
                     loading_pods_active = False
         else:
