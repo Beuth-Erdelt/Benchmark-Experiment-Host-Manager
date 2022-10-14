@@ -390,6 +390,28 @@ class default():
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
+	def stop_maintaining(self):
+		if len(self.configurations) > 0:
+			for config in self.configurations:
+				config.stop_maintaining()
+		else:
+			app = self.cluster.appname
+			component = 'maintaining'
+			configuration = ''
+			jobs = self.cluster.getJobs(app=app, component=component, experiment=self.code, configuration=configuration)
+			for job in jobs:
+				self.cluster.deleteJob(job)
+	def stop_loading(self):
+		if len(self.configurations) > 0:
+			for config in self.configurations:
+				config.stop_loading()
+		else:
+			app = self.cluster.appname
+			component = 'loading'
+			configuration = ''
+			jobs = self.cluster.getJobs(app=app, component=component, experiment=self.code, configuration=configuration)
+			for job in jobs:
+				self.cluster.deleteJob(job)
 	def stop_monitoring(self):
 		if len(self.configurations) > 0:
 			for config in self.configurations:
