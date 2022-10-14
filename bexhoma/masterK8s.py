@@ -1486,7 +1486,7 @@ class testdesign():
             # returns number of completed pods (?)
             #return api_response.status.succeeded
             # we want status of job (!)
-            if response.status.succeeded == 1 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
+            if api_response.status.succeeded == 1 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
                 return api_response.status.conditions[0].type == 'Complete'
             else:
                 return 0
