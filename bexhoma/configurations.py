@@ -1529,10 +1529,16 @@ scrape_configs:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     self.experiment.cluster.deleteJob(job)
                     pods = self.experiment.cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
-                    for p in pods:
-                        status = self.experiment.cluster.getPodStatus(p)
-                        print(p, status)
+                    for pod in pods:
+                        status = self.experiment.cluster.getPodStatus(pod)
+                        print(pod, status)
                         #if status == "Running":
+                        stdout = self.experiment.cluster.pod_log(pod)
+                        #stdin, stdout, stderr = self.pod_log(client_pod_name)
+                        filename_log = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod+'.log'
+                        f = open(filename_log, "w")
+                        f.write(stdout)
+                        f.close()
                         self.experiment.cluster.deletePod(p)
                     loading_pods_active = False
         else:
