@@ -63,12 +63,14 @@ if __name__ == '__main__':
 			cluster.stop_sut(configuration=connection)
 			cluster.stop_monitoring(configuration=connection)
 			cluster.stop_maintaining()
+			cluster.stop_loading()
 			cluster.stop_benchmarker(configuration=connection)
 		else:
 			experiment = experiments.default(cluster=cluster, code=args.experiment)
 			experiment.stop_sut()
 			cluster.stop_monitoring()
 			cluster.stop_maintaining()
+			cluster.stop_loading()
 			cluster.stop_benchmarker()
 	elif args.mode == 'dashboard':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
@@ -192,6 +194,26 @@ if __name__ == '__main__':
 				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 						print("Maintaining Pods", pods)
+				num_pods = {}
+				for pod in pods:
+						status = cluster.getPodStatus(pod)
+						#print(status)
+						#apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+						num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
+				#print(num_pods)
+				for status in num_pods.keys():
+						apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
+				############
+				component = 'loading'
+				apps[configuration][component] = ''
+				if args.verbose:
+						stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+						print("Stateful Sets", stateful_sets)
+						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+						print("Loading Services", services)
+				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				if args.verbose:
+						print("Loading Pods", pods)
 				num_pods = {}
 				for pod in pods:
 						status = cluster.getPodStatus(pod)

@@ -70,6 +70,7 @@ def manage():
 			experiment.stop_sut()
 			cluster.stop_monitoring()
 			cluster.stop_maintaining()
+			cluster.stop_loading()
 			cluster.stop_benchmarker()
 	elif args.mode == 'dashboard':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
