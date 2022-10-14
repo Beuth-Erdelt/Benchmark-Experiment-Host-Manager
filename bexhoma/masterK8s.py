@@ -1486,7 +1486,10 @@ class testdesign():
             # returns number of completed pods (?)
             #return api_response.status.succeeded
             # we want status of job (!)
-            return api_response.status.conditions[0].type == 'Completed'
+            if api_response.status.conditions is not None and len(api_response.status.conditions > 0):
+                return api_response.status.conditions[0].type == 'Completed'
+            else:
+                return 0
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
             print("Create new access token")
