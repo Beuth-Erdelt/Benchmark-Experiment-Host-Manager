@@ -1486,7 +1486,7 @@ class testdesign():
             # we want status of job (!)
             self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
             self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
-            if api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
+            if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
                 self.logger.debug(api_response.status.conditions[0].type)
                 return api_response.status.conditions[0].type == 'Complete'
             else:
