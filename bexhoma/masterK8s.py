@@ -1481,15 +1481,13 @@ class testdesign():
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
-            #pprint(api_response.status.conditions[0].type)
-            #pprint(api_response.status.succeeded)
-            # returns number of completed pods (?)
+            # returns number of completed pods (!)
             #return api_response.status.succeeded
             # we want status of job (!)
-            print("api_response.status.succeeded = {}".format(api_response.status.succeeded))
-            print("api_response.status.conditions = {}".format(api_response.status.conditions))
-            if api_response.status.succeeded == 1 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
-                print(api_response.status.conditions[0].type)
+            self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
+            self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
+            if api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
+                self.logger.debug(api_response.status.conditions[0].type)
                 return api_response.status.conditions[0].type == 'Complete'
             else:
                 return 0
