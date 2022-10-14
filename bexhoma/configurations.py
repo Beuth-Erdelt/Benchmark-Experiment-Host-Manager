@@ -1539,7 +1539,7 @@ scrape_configs:
                         f = open(filename_log, "w")
                         f.write(stdout)
                         f.close()
-                        self.experiment.cluster.deletePod(p)
+                        self.experiment.cluster.deletePod(pod)
                     loading_pods_active = False
         else:
             loading_pods_active = False
