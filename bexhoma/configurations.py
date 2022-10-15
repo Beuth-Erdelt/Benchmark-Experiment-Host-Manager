@@ -1533,9 +1533,19 @@ scrape_configs:
                         status = self.experiment.cluster.getPodStatus(pod)
                         print(pod, status)
                         #if status == "Running":
-                        stdout = self.experiment.cluster.pod_log(pod)
+                        # TODO: Find names of containers dynamically
+                        container = 'datagenerator'
+                        stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
                         #stdin, stdout, stderr = self.pod_log(client_pod_name)
-                        filename_log = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod+'.log'
+                        filename_log = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod+'.'+container+'.log'
+                        f = open(filename_log, "w")
+                        f.write(stdout)
+                        f.close()
+                        #
+                        container = 'sensor'
+                        stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
+                        #stdin, stdout, stderr = self.pod_log(client_pod_name)
+                        filename_log = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod+'.'+container+'.log'
                         f = open(filename_log, "w")
                         f.write(stdout)
                         f.close()
