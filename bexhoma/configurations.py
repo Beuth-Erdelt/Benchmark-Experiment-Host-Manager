@@ -1528,7 +1528,7 @@ scrape_configs:
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # mark pod
-                    pods_sut = self.experiment.cluster.getPods(app, component='sut', self.experiment.code, configuration)
+                    pods_sut = self.experiment.cluster.getPods(app=app, component='sut', experiment=experiment, configuration=configuration)
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
                         timeLoadingEnd = default_timer()
