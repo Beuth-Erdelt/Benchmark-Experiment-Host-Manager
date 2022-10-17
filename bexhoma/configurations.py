@@ -1542,10 +1542,9 @@ scrape_configs:
                     pods_sut = self.experiment.cluster.getPods(app=app, component='sut', experiment=experiment, configuration=configuration)
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
-                        timeLoadingEnd = default_timer()
-                        timeLoading = float(timeLoadingEnd) - float(self.timeLoadingStart)
-                        self.timeLoadingEnd = timeLoadingEnd
-                        self.timeLoading = float(self.timeLoading) + float(timeLoading)
+                        self.timeLoadingEnd = default_timer()
+                        self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
+                        #self.timeLoading = float(self.timeLoading) + float(timeLoading)
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
