@@ -1901,14 +1901,22 @@ scrape_configs:
                     dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['loading']
                 # set ENV variables - defaults
                 env_default = {}
-                if 'SENSOR_RATE' in self.maintaining_parameters:
-                    env_default['SENSOR_RATE'] = self.maintaining_parameters['SENSOR_RATE']
+                if 'PARALLEL' in self.maintaining_parameters:
+                    env_default['PARALLEL'] = self.maintaining_parameters['PARALLEL']
                 else:
-                    env_default['SENSOR_RATE'] = '0.1'
-                if 'SENSOR_NUMBER' in self.maintaining_parameters:
-                    env_default['SENSOR_NUMBER'] = self.maintaining_parameters['SENSOR_NUMBER']
+                    env_default['PARALLEL'] = '24'
+                if 'CHILD' in self.maintaining_parameters:
+                    env_default['CHILD'] = self.maintaining_parameters['1']
                 else:
-                    env_default['SENSOR_NUMBER'] = '144000'
+                    env_default['CHILD'] = '1'
+                if 'RNGSEED' in self.maintaining_parameters:
+                    env_default['RNGSEED'] = self.maintaining_parameters['RNGSEED']
+                else:
+                    env_default['RNGSEED'] = '123'
+                if 'SF' in self.maintaining_parameters:
+                    env_default['SF'] = self.maintaining_parameters['SF']
+                else:
+                    env_default['SF'] = '10'
                 # set ENV variables - in YAML
                 # all init containers
                 if 'initContainers' in dep['spec']['template']['spec']:
@@ -1918,13 +1926,21 @@ scrape_configs:
                             if e['name'] == 'BEXHOMA_HOST':
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = servicename
                             if e['name'] == 'BEXHOMA_CLIENT':
-                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = str(parallelism)
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(parallelism)
                             if e['name'] == 'BEXHOMA_EXPERIMENT':
-                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = experiment
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = experiment
                             if e['name'] == 'BEXHOMA_CONNECTION':
-                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = configuration
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = configuration
                             if e['name'] == 'BEXHOMA_SLEEP':
-                                dep['spec']['template']['spec']['initContainers'][0]['env'][i]['value'] = '60'
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = '60'
+                            if e['name'] == 'PARALLEL':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['PARALLEL'])
+                            if e['name'] == 'CHILD':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['CHILD'])
+                            if e['name'] == 'RNGSEED':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['RNGSEED'])
+                            if e['name'] == 'SF':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SF'])
                             self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
                             #print(e)
                 # all containers
@@ -1934,13 +1950,21 @@ scrape_configs:
                         if e['name'] == 'BEXHOMA_HOST':
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
                         if e['name'] == 'BEXHOMA_CLIENT':
-                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(parallelism)
                         if e['name'] == 'BEXHOMA_EXPERIMENT':
-                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = experiment
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = experiment
                         if e['name'] == 'BEXHOMA_CONNECTION':
-                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = configuration
                         if e['name'] == 'BEXHOMA_SLEEP':
-                            dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = '60'
+                        if e['name'] == 'PARALLEL':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['PARALLEL'])
+                        if e['name'] == 'CHILD':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['CHILD'])
+                        if e['name'] == 'RNGSEED':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['RNGSEED'])
+                        if e['name'] == 'SF':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SF'])
                         self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
                         #print(e)
         with open(job_experiment,"w+") as stream:
