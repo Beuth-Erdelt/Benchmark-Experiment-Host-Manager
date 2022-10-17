@@ -1527,19 +1527,30 @@ scrape_configs:
                 #print(job, success)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
-                    # mark pod
+                    # get labels (start) of sut
+                    pod_labels = self.experiment.cluster.getPodsLabels(app=app, component='sut', experiment=experiment, configuration=configuration)
+                    #print(pod_labels)
+                    if len(pod_labels) > 0:
+                        pod = next(iter(pod_labels.keys()))
+                        if 'timeLoadingStart' in pod_labels[pod]:
+                            self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+                        if 'timeLoadingEnd' in pod_labels[pod]:
+                            self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+                        if 'timeLoading' in pod_labels[pod]:
+                            self.timeLoading = float(pod_labels[pod]['timeLoading'])
+                    # mark pod with new end time and duration
                     pods_sut = self.experiment.cluster.getPods(app=app, component='sut', experiment=experiment, configuration=configuration)
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
                         timeLoadingEnd = default_timer()
                         timeLoading = timeLoadingEnd - self.timeLoadingStart
                         self.timeLoadingEnd = timeLoadingEnd
-                        self.timeLoading = timeLoading
+                        self.timeLoading = self.timeLoading + timeLoading
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
                         time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
                         # TODO: Also mark volume
@@ -1624,6 +1635,7 @@ scrape_configs:
         #loop.run_until_complete(asyncio.gather(*pending))
         #print(result)
         return
+        """
         self.timeLoadingStart = default_timer()
         # mark pod
         fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
@@ -1671,6 +1683,7 @@ scrape_configs:
         self.experiment.cluster.kubectl(fullcommand)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
+        """
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         if len(app) == 0:
             app = self.appname
