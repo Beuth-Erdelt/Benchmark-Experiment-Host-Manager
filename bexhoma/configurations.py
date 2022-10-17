@@ -1554,7 +1554,7 @@ scrape_configs:
                         time_now = str(datetime.now())
                         time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
                         self.timeLoadingEnd = int(time_now_int)
-                        self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart)
+                        self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
                         self.experiment.cluster.logger.debug("LOADING LABELS")
                         self.experiment.cluster.logger.debug(self.timeLoadingStart)
                         self.experiment.cluster.logger.debug(self.timeLoadingEnd)
