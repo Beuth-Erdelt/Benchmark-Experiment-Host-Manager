@@ -1533,9 +1533,9 @@ scrape_configs:
                     if len(pod_labels) > 0:
                         pod = next(iter(pod_labels.keys()))
                         if 'timeLoadingStart' in pod_labels[pod]:
-                            self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+                            self.timeLoadingStart = float(pod_labels[pod]['timeLoadingStart'])
                         if 'timeLoadingEnd' in pod_labels[pod]:
-                            self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+                            self.timeLoadingEnd = float(pod_labels[pod]['timeLoadingEnd'])
                         if 'timeLoading' in pod_labels[pod]:
                             self.timeLoading = float(pod_labels[pod]['timeLoading'])
                     # mark pod with new end time and duration
@@ -1543,9 +1543,9 @@ scrape_configs:
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
                         timeLoadingEnd = default_timer()
-                        timeLoading = timeLoadingEnd - self.timeLoadingStart
+                        timeLoading = float(timeLoadingEnd) - float(self.timeLoadingStart)
                         self.timeLoadingEnd = timeLoadingEnd
-                        self.timeLoading = self.timeLoading + timeLoading
+                        self.timeLoading = float(self.timeLoading) + float(timeLoading)
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
