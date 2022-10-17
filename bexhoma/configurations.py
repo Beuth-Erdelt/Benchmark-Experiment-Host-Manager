@@ -1527,6 +1527,23 @@ scrape_configs:
                 #print(job, success)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
+                    # mark pod
+                    pods_sut = self.experiment.cluster.getPods(app, component='sut', self.experiment.code, configuration)
+                    if len(pods_sut) > 0:
+                        pod_sut = pods_sut[0]
+                        timeLoadingEnd = default_timer()
+                        timeLoading = timeLoadingEnd - self.timeLoadingStart
+                        self.timeLoadingEnd = timeLoadingEnd
+                        self.timeLoading = timeLoading
+                        now = datetime.utcnow()
+                        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+                        time_now = str(datetime.now())
+                        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+                        #print(fullcommand)
+                        self.experiment.cluster.kubectl(fullcommand)
+                        # TODO: Also mark volume
+                    # delete job and all its pods
                     self.experiment.cluster.deleteJob(job)
                     pods = self.experiment.cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:
