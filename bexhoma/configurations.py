@@ -1529,7 +1529,7 @@ scrape_configs:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # get labels (start) of sut
                     pod_labels = self.experiment.cluster.getPodsLabels(app=app, component='sut', experiment=experiment, configuration=configuration)
-                    #print(pod_labels)
+                    print(pod_labels)
                     if len(pod_labels) > 0:
                         pod = next(iter(pod_labels.keys()))
                         if 'timeLoadingStart' in pod_labels[pod]:
@@ -1544,6 +1544,8 @@ scrape_configs:
                         pod_sut = pods_sut[0]
                         self.timeLoadingEnd = default_timer()
                         self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
+                        self.experiment.cluster.logger.debug("LOADING LABELS")
+                        self.experiment.cluster.logger.debug(self.timeLoading, float(self.timeLoadingEnd), float(self.timeLoadingStart))
                         #self.timeLoading = float(self.timeLoading) + float(timeLoading)
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
