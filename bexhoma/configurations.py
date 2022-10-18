@@ -1174,7 +1174,6 @@ scrape_configs:
         else:
             c['hostsystem']['limits_cpu'] = 0
             c['hostsystem']['limits_memory'] = 0
-        c['connection_parameter'] = self.connection_parameter
         #if len(cuda) > 0:
         #    c['hostsystem']['CUDA'] = cuda
         c['connectionmanagement'] = {}
@@ -1247,6 +1246,7 @@ scrape_configs:
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = str(self.numExperimentsDone+1)
         c['parameter']['dockerimage'] = self.dockerimage
+        c['parameter']['connection_parameter'] = self.connection_parameter
         #print(c)
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
