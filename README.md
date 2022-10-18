@@ -1,5 +1,6 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/Benchmark-Experiment-Host-Manager.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases/)
+[![PyPI version](https://badge.fury.io/py/bexhoma.svg)](https://badge.fury.io/py/bexhoma)
 
 # Benchmark Experiment Host Manager
 This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment**.
