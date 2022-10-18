@@ -81,12 +81,17 @@ class default():
 			timeout = timeout,
 			singleConnection = True)
 		self.numExperiments = numExperiments
+		self.max_sut = None
 		self.cluster.add_experiment(self)
 		self.appname = self.cluster.appname
 		self.resources = {}
 		self.ddl_parameters = {}
 		self.eval_parameters = {}
 		self.storage = {}
+		self.nodes = {}
+		self.maintaining_parameters = {}
+		self.jobtemplate_maintaining = ""
+		self.jobtemplate_loading = ""
 		#self.connectionmanagement = {}
 		#self.connectionmanagement['numProcesses'] = None
 		#self.connectionmanagement['runsPerConnection'] = None
@@ -95,6 +100,7 @@ class default():
 		self.querymanagement = {}
 		self.workload = {}
 		self.monitoring_active = True
+		self.loading_active = False
 		# k8s:
 		self.namespace = self.cluster.namespace#.config['credentials']['k8s']['namespace']
 		self.configurations = []
@@ -146,6 +152,10 @@ class default():
 		self.eval_parameters = kwargs
 	def set_storage(self, **kwargs):
 		self.storage = kwargs
+	def set_nodes(self, **kwargs):
+		self.nodes = kwargs
+	def set_maintaining_parameters(self, **kwargs):
+		self.maintaining_parameters = kwargs
 	def add_configuration(self, configuration):
 		self.configurations.append(configuration)
 	def __set_queryfile(self, queryfile):
@@ -380,6 +390,28 @@ class default():
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
+	def stop_maintaining(self):
+		if len(self.configurations) > 0:
+			for config in self.configurations:
+				config.stop_maintaining()
+		else:
+			app = self.cluster.appname
+			component = 'maintaining'
+			configuration = ''
+			jobs = self.cluster.getJobs(app=app, component=component, experiment=self.code, configuration=configuration)
+			for job in jobs:
+				self.cluster.deleteJob(job)
+	def stop_loading(self):
+		if len(self.configurations) > 0:
+			for config in self.configurations:
+				config.stop_loading()
+		else:
+			app = self.cluster.appname
+			component = 'loading'
+			configuration = ''
+			jobs = self.cluster.getJobs(app=app, component=component, experiment=self.code, configuration=configuration)
+			for job in jobs:
+				self.cluster.deleteJob(job)
 	def stop_monitoring(self):
 		if len(self.configurations) > 0:
 			for config in self.configurations:
@@ -423,8 +455,10 @@ class default():
 			#time.sleep(intervals)
 			self.wait(intervals)
 			# count number of running and pending pods
-			num_pods_running = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
-			num_pods_pending = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
+			num_pods_running_experiment = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
+			num_pods_pending_experiment = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
+			num_pods_running_cluster = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
+			num_pods_pending_cluster = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
 			for config in self.configurations:
 				# check if sut is running
 				if not config.sut_is_running():
@@ -432,19 +466,28 @@ class default():
 					if not config.experiment_done:
 						if not config.sut_is_pending():
 							print("{} is not running yet - ".format(config.configuration))#, end="", flush=True)
-							if self.cluster.max_sut is not None:
-								print("{} running and {} pending pods: max is {} pods in the cluster - ".format(num_pods_running, num_pods_pending, self.cluster.max_sut))#, end="", flush=True)
-								if num_pods_running+num_pods_pending < self.cluster.max_sut:
-									print("it will start now")
+							if self.cluster.max_sut is not None or self.max_sut is not None:
+								we_can_start_new_sut = True
+								if self.max_sut is not None:
+									print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+									if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
+										print("{} has to wait".format(config.configuration))
+										we_can_start_new_sut = False
+								if self.cluster.max_sut is not None:
+									print("In cluster: {} running and {} pending pods: max is {} pods".format(num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+									if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
+										print("{} has to wait".format(config.configuration))
+										we_can_start_new_sut = False
+								if we_can_start_new_sut:
+									print("{} will start now".format(config.configuration))
 									config.start_sut()
-									num_pods_pending = num_pods_pending + 1
-									#self.wait(10)
-								else:
-									print("it has to wait")
+									num_pods_pending_experiment = num_pods_pending_experiment + 1
+									num_pods_pending_cluster = num_pods_pending_cluster + 1
 							else:
-								print("it will start now")
+								print("{} will start now".format(config.configuration))
 								config.start_sut()
-								num_pods_pending = num_pods_pending + 1
+								num_pods_pending_experiment = num_pods_pending_experiment + 1
+								num_pods_pending_cluster = num_pods_pending_cluster + 1
 								#self.wait(10)
 						else:
 							print("{} is pending".format(config.configuration))
@@ -463,7 +506,11 @@ class default():
 					now = datetime.utcnow()
 					if config.loading_after_time is not None:
 						if now >= config.loading_after_time:
-							config.start_loading()
+							if config.loading_active:
+								config.start_loading()
+								config.start_loading_pod(parallelism=config.num_loading)
+							else:
+								config.start_loading()
 						else:
 							print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
 							continue
@@ -483,7 +530,10 @@ class default():
 					if config.maintaining_active:
 						if not config.maintaining_is_running():
 							print("{} is not maintained yet".format(config.configuration))
-							config.start_maintaining(parallelism=config.parallelism)
+							if not config.maintaining_is_pending():
+								config.start_maintaining(parallelism=config.num_maintaining)
+							else:
+								print("{} has pending maintaining".format(config.configuration))
 				# benchmark if loading is done and monitoring is ready
 				if config.loading_finished:
 					if config.monitoring_active and not config.monitoring_is_running():
@@ -744,21 +794,46 @@ class iot(default):
 			numCooldown = 0,
 			numRun = numRun,
 			delay = delay,
-			timer = {
-				'connection':
-				{
-					'active': True,
-					'delay': 0
-				},
-				#'datatransfer':
-				#{
-				#	'active': datatransfer,
-				#	'sorted': True,
-				#	'compare': 'result',
-				#	'store': [],
-				#	'precision': 0,
-				#}
-			})
+			)
+		#self.monitoring_active = True
+		self.maintaining_active = True
+
+class tsbs(default):
+	def __init__(self,
+			cluster,
+			code=None,
+			queryfile = 'queries-tsbs.config',
+			SF = '1',
+			numExperiments = 1,
+			timeout = 7200,
+			detached=False):
+		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+		self.set_experiment(volume='tsbs')
+		self.set_experiment(script='SF'+str(SF)+'-index')
+		self.cluster.set_configfolder('experiments/tsbs')
+		parameter.defaultParameters = {'SF': str(SF)}
+		self.set_queryfile(queryfile)
+		self.set_workload(
+			name = 'TSBS Queries SF='+str(SF),
+			info = 'This experiment performs some TSBS inspired queries.'
+			)
+		self.storage_label = 'tsbs-'+str(SF)
+		self.maintaining_active = True
+		self.jobtemplate_maintaining = "jobtemplate-maintaining-tsbs.yml"
+	def set_queries_full(self):
+		self.set_queryfile('queries-tsbs.config')
+	def set_queries_profiling(self):
+		self.set_queryfile('queries-tsbs-profiling.config')
+	def set_querymanagement_maintaining(self,
+			numRun=128,
+			delay=5,
+			datatransfer=False):
+		self.set_querymanagement(
+			numWarmup = 0,
+			numCooldown = 0,
+			numRun = numRun,
+			delay = delay,
+			)
 		#self.monitoring_active = True
 		self.maintaining_active = True
 

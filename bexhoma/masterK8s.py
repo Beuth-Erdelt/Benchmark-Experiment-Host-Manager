@@ -522,6 +522,29 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+    def getNodes(self, app='', nodegroup_type='', nodegroup_name=''):
+        self.logger.debug('testdesign.getNodes()')
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(nodegroup_type)>0:
+            label += ',type='+nodegroup_type
+        if len(nodegroup_name)>0:
+            label += ',name='+nodegroup_name
+        try:
+            api_response = self.v1core.list_node(label_selector=label)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                return api_response.items
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_node for getNodes: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.getNodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
     def getPodStatus(self, pod, appname=''):
         self.logger.debug('testdesign.getPodStatus()')
         try:
@@ -748,7 +771,9 @@ class testdesign():
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deletePod(name=name)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.deletePod(name=name)
     def deletePVC(self, name):
         self.logger.debug('testdesign.deletePVC({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
@@ -1456,8 +1481,16 @@ class testdesign():
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
-            #pprint(api_response.status.succeeded)
-            return api_response.status.succeeded
+            # returns number of completed pods (!)
+            #return api_response.status.succeeded
+            # we want status of job (!)
+            #self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
+            #self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
+            if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
+                self.logger.debug(api_response.status.conditions[0].type)
+                return api_response.status.conditions[0].type == 'Complete'
+            else:
+                return 0
         except ApiException as e:
             print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
             print("Create new access token")
@@ -1684,6 +1717,24 @@ class testdesign():
             print(p, status)
             #if status == "Running":
             self.deletePod(p)
+    def stop_loading(self, experiment='', configuration=''):
+        # all jobs of configuration - benchmarker
+        app = self.appname
+        component = 'loading'
+        jobs = self.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.getJobStatus(job)
+            print(job, success)
+            self.deleteJob(job)
+        # all pods to these jobs - automatically stopped?
+        #self.getJobPods(app, component, experiment, configuration)
+        pods = self.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.getPodStatus(p)
+            print(p, status)
+            #if status == "Running":
+            self.deletePod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
@@ -1793,3 +1844,21 @@ class testdesign():
 
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
+
+
+"""
+class aws():
+    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        super().__init__(clusterconfig, configfolder, yamlfolder, context, code, instance, volume, docker, script, queryfile)
+        self.cluster = self.contextdata['cluster']
+    def eksctl(self, command):
+        #fullcommand = 'eksctl --context {context} {command}'.format(context=self.context, command=command)
+        fullcommand = 'eksctl {command}'.format(command=command)
+        self.logger.debug('aws.eksctl({})'.format(fullcommand))
+        #print(fullcommand)
+        return os.popen(fullcommand).read()# os.system(fullcommand)
+    def scale_nodegroup(self, nodegroup, size):
+        #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
+        command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
+        return self.eksctl(command)
+"""

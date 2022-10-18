@@ -86,11 +86,16 @@ class default():
         self.set_eval_parameters(**self.experiment.eval_parameters)
         self.set_connectionmanagement(**self.experiment.connectionmanagement)
         self.set_storage(**self.experiment.storage)
+        self.set_nodes(**self.experiment.nodes)
+        self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
         self.num_worker = worker
+        self.num_loading = 0
+        self.num_maintaining = 0
         self.monitoring_active = experiment.monitoring_active
         self.maintaining_active = experiment.maintaining_active
+        self.loading_active = experiment.loading_active
         self.parallelism = 1
         self.storage_label = experiment.storage_label
         self.experiment_done = False
@@ -147,6 +152,10 @@ class default():
         self.ddl_parameters = kwargs
     def set_eval_parameters(self, **kwargs):
         self.eval_parameters = kwargs
+    def set_maintaining_parameters(self, **kwargs):
+        self.maintaining_parameters = kwargs
+    def set_nodes(self, **kwargs):
+        self.nodes = kwargs
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
         """ Read experiment details from cluster config"""
         #self.bChangeInstance = True
@@ -248,24 +257,26 @@ class default():
         app = self.appname
         component = 'maintaining'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
-        self.logger.debug("maintaining_is_running found {} pods".format(len(pods)))
-        if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
-            if status == "Running":
-                return True
-        return False
+        pods_running = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Running")
+        pods_succeeded = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Succeeded")
+        self.logger.debug("maintaining_is_running found {} running and {} succeeded pods".format(len(pods_running), len(pods_succeeded)))
+        return len(pods_running) + len(pods_succeeded) == self.num_maintaining
+        #if len(pods) > 0:
+        #    pod_sut = pods[0]
+        #    status = self.experiment.cluster.getPodStatus(pod_sut)
+        #    if status == "Running":
+        #        return True
+        #return False
     def maintaining_is_pending(self):
         app = self.appname
         component = 'maintaining'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Pending")
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
-            if status == "Pending":
-                return True
+            #status = self.experiment.cluster.getPodStatus(pod_sut)
+            #if status == "Pending":
+            return True
         return False
     def monitoring_is_running(self):
         app = self.appname
@@ -300,6 +311,16 @@ class default():
             if status == "Pending":
                 return True
         return False
+    def start_loading_pod(self, app='', component='loading', experiment='', configuration='', parallelism=1):
+        if len(app) == 0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        job = self.create_job_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism)
+        self.logger.debug("Deploy "+job)
+        self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def start_loading(self, delay=0):
         """ Per config: Load Data """
         app = self.appname
@@ -465,6 +486,13 @@ scrape_configs:
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = prometheus_config
                             #print(e)
                             self.logger.debug('configuration.start_monitoring({})'.format(str(e)))
+                        # set nodeSelector
+                        if 'monitoring' in self.nodes:
+                            if not 'nodeSelector' in dep['spec']['template']['spec']:
+                                dep['spec']['template']['spec']['nodeSelector'] = dict()
+                            if dep['spec']['template']['spec']['nodeSelector'] is None:
+                                dep['spec']['template']['spec']['nodeSelector'] = dict()
+                            dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['monitoring']
             except yaml.YAMLError as exc:
                 print(exc)
         with open(deployment_experiment,"w+") as stream:
@@ -488,6 +516,27 @@ scrape_configs:
         for service in services:
             self.experiment.cluster.deleteService(service)
     def stop_maintaining(self, app='', component='maintaining', experiment='', configuration=''):
+        if len(app)==0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        jobs = self.experiment.cluster.getJobs(app, component, experiment, configuration)
+        # status per job
+        for job in jobs:
+            success = self.experiment.cluster.getJobStatus(job)
+            print(job, success)
+            self.experiment.cluster.deleteJob(job)
+        # all pods to these jobs - automatically stopped? only if finished?
+        #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        for p in pods:
+            status = self.experiment.cluster.getPodStatus(p)
+            print(p, status)
+            #if status == "Running":
+            self.experiment.cluster.deletePod(p)
+    def stop_loading(self, app='', component='loading', experiment='', configuration=''):
         if len(app)==0:
             app = self.appname
         if len(configuration) == 0:
@@ -743,10 +792,10 @@ scrape_configs:
                 node_cpu = ''
                 node_gpu = node
                 # should be overwritten by resources dict?
-                #if 'requests' in self.resources and 'cpu' in self.resources['requests']:
-                #   req_cpu = self.resources['requests']['cpu']
-                #if 'requests' in self.resources and 'memory' in self.resources['requests']:
-                #   req_mem = self.resources['requests']['memory']
+                if 'requests' in self.resources and 'cpu' in self.resources['requests']:
+                   req_cpu = self.resources['requests']['cpu']
+                if 'requests' in self.resources and 'memory' in self.resources['requests']:
+                   req_mem = self.resources['requests']['memory']
                 if 'limits' in self.resources and 'cpu' in self.resources['limits']:
                     limit_cpu = self.resources['limits']['cpu']
                 if 'limits' in self.resources and 'memory' in self.resources['limits']:
@@ -812,6 +861,13 @@ scrape_configs:
                     else:
                         dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
                         self.resources['nodeSelector'][nodeSelector] = value
+                # set nodeSelector
+                if 'sut' in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['sut']
                 #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
             if dep['kind'] == 'Service':
                 service = dep['metadata']['name']
@@ -856,6 +912,8 @@ scrape_configs:
             self.stop_monitoring()
         if self.experiment.maintaining_active:
             self.stop_maintaining()
+        if self.experiment.loading_active:
+            self.stop_loading()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def checkGPUs(self):
@@ -927,12 +985,15 @@ scrape_configs:
         #fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
         result = self.experiment.cluster.kubectl('get pods/'+self.pod_sut+' -o=json')#self.yamlfolder+deployment)
         #result = os.popen(fullcommand).read()
-        datastore = json.loads(result)
-        #print(datastore)
-        if self.appname == datastore['metadata']['labels']['app']:
-            if self.pod_sut == datastore['metadata']['name']:
-                node = datastore['spec']['nodeName']
-                return node
+        try:
+            datastore = json.loads(result)
+            #print(datastore)
+            if self.appname == datastore['metadata']['labels']['app']:
+                if self.pod_sut == datastore['metadata']['name']:
+                    node = datastore['spec']['nodeName']
+                    return node
+        except Exception as e:
+            return ""
         return ""
     def getGPUs(self):
         self.logger.debug('configuration.getGPUs()')
@@ -1449,28 +1510,110 @@ scrape_configs:
         else:
             return False
     def check_load_data(self):
-        # check if loading is done
-        pod_labels = self.experiment.cluster.getPodsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
-        #print(pod_labels)
-        if len(pod_labels) > 0:
-            pod = next(iter(pod_labels.keys()))
-            if 'loaded' in pod_labels[pod]:
-                self.loading_started = True
-                if pod_labels[pod]['loaded'] == 'True':
-                    self.loading_finished = True
+        loading_pods_active = True
+        # check if asynch loading inside cluster is done
+        if self.loading_active:
+            # success of job
+            app = self.experiment.cluster.appname
+            component = 'loading'
+            experiment = self.code
+            configuration = self.configuration
+            success = self.experiment.cluster.getJobStatus(app=app, component=component, experiment=experiment, configuration=configuration)
+            jobs = self.experiment.cluster.getJobs(app, component, self.code, configuration)
+            # status per job
+            for job in jobs:
+                success = self.experiment.cluster.getJobStatus(job)
+                self.experiment.cluster.logger.debug('job {} has success status {}'.format(job, success))
+                #print(job, success)
+                if success:
+                    self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
+                    # get labels (start) of sut
+                    pod_labels = self.experiment.cluster.getPodsLabels(app=app, component='sut', experiment=experiment, configuration=configuration)
+                    #print(pod_labels)
+                    if len(pod_labels) > 0:
+                        pod = next(iter(pod_labels.keys()))
+                        if 'timeLoadingStart' in pod_labels[pod]:
+                            self.timeLoadingStart = float(pod_labels[pod]['timeLoadingStart'])
+                        if 'timeLoadingEnd' in pod_labels[pod]:
+                            self.timeLoadingEnd = float(pod_labels[pod]['timeLoadingEnd'])
+                        if 'timeLoading' in pod_labels[pod]:
+                            self.timeLoading = float(pod_labels[pod]['timeLoading'])
+                    # mark pod with new end time and duration
+                    pods_sut = self.experiment.cluster.getPods(app=app, component='sut', experiment=experiment, configuration=configuration)
+                    if len(pods_sut) > 0:
+                        pod_sut = pods_sut[0]
+                        #self.timeLoadingEnd = default_timer()
+                        #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
+                        #self.experiment.cluster.logger.debug("LOADING LABELS")
+                        #self.experiment.cluster.logger.debug(self.timeLoading)
+                        #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
+                        #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
+                        #self.timeLoading = float(self.timeLoading) + float(timeLoading)
+                        now = datetime.utcnow()
+                        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+                        time_now = str(datetime.now())
+                        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+                        self.timeLoadingEnd = int(time_now_int)
+                        self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
+                        self.experiment.cluster.logger.debug("LOADING LABELS")
+                        self.experiment.cluster.logger.debug(self.timeLoadingStart)
+                        self.experiment.cluster.logger.debug(self.timeLoadingEnd)
+                        self.experiment.cluster.logger.debug(self.timeLoading)
+                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
+                        #print(fullcommand)
+                        self.experiment.cluster.kubectl(fullcommand)
+                        # TODO: Also mark volume
+                    # delete job and all its pods
+                    self.experiment.cluster.deleteJob(job)
+                    pods = self.experiment.cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
+                    for pod in pods:
+                        status = self.experiment.cluster.getPodStatus(pod)
+                        print(pod, status)
+                        #if status == "Running":
+                        # TODO: Find names of containers dynamically
+                        container = 'datagenerator'
+                        stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
+                        #stdin, stdout, stderr = self.pod_log(client_pod_name)
+                        filename_log = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod+'.'+container+'.log'
+                        f = open(filename_log, "w")
+                        f.write(stdout)
+                        f.close()
+                        #
+                        container = 'sensor'
+                        stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
+                        #stdin, stdout, stderr = self.pod_log(client_pod_name)
+                        filename_log = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod+'.'+container+'.log'
+                        f = open(filename_log, "w")
+                        f.write(stdout)
+                        f.close()
+                        self.experiment.cluster.deletePod(pod)
+                    loading_pods_active = False
+        else:
+            loading_pods_active = False
+        # check if asynch loading outside cluster is done
+        # only if inside cluster if done
+        if not loading_pods_active:
+            pod_labels = self.experiment.cluster.getPodsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
+            #print(pod_labels)
+            if len(pod_labels) > 0:
+                pod = next(iter(pod_labels.keys()))
+                if 'loaded' in pod_labels[pod]:
+                    self.loading_started = True
+                    if pod_labels[pod]['loaded'] == 'True':
+                        self.loading_finished = True
+                    else:
+                        self.loading_finished = False
                 else:
-                    self.loading_finished = False
+                    self.loading_started = False
+                if 'timeLoadingStart' in pod_labels[pod]:
+                    self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+                if 'timeLoadingEnd' in pod_labels[pod]:
+                    self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+                if 'timeLoading' in pod_labels[pod]:
+                    self.timeLoading = float(pod_labels[pod]['timeLoading'])
             else:
                 self.loading_started = False
-            if 'timeLoadingStart' in pod_labels[pod]:
-                self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
-            if 'timeLoadingEnd' in pod_labels[pod]:
-                self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
-            if 'timeLoading' in pod_labels[pod]:
-                self.timeLoading = float(pod_labels[pod]['timeLoading'])
-        else:
-            self.loading_started = False
-            self.loading_finished = False
+                self.loading_finished = False
     def load_data(self):
         self.logger.debug('configuration.load_data()')
         self.loading_started = True
@@ -1501,6 +1644,7 @@ scrape_configs:
         #loop.run_until_complete(asyncio.gather(*pending))
         #print(result)
         return
+        """
         self.timeLoadingStart = default_timer()
         # mark pod
         fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
@@ -1548,6 +1692,7 @@ scrape_configs:
         self.experiment.cluster.kubectl(fullcommand)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
+        """
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         if len(app) == 0:
             app = self.appname
@@ -1608,6 +1753,13 @@ scrape_configs:
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
                 e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+                # set nodeSelector
+                if 'benchmarking' in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['benchmarking']
         #if not path.isdir(self.path):
         #    makedirs(self.path)
         with open(job_experiment,"w+") as stream:
@@ -1633,7 +1785,10 @@ scrape_configs:
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         job_experiment = self.experiment.path+'/job-maintaining-{configuration}.yml'.format(configuration=configuration)
-        with open(self.experiment.cluster.yamlfolder+"jobtemplate-maintaining.yml") as stream:
+        jobtemplate = self.experiment.cluster.yamlfolder+"jobtemplate-maintaining.yml"
+        if len(self.experiment.jobtemplate_maintaining) > 0:
+            jobtemplate = self.experiment.cluster.yamlfolder+self.experiment.jobtemplate_maintaining
+        with open(jobtemplate) as stream:
             try:
                 result=yaml.safe_load_all(stream)
                 result = [data for data in result]
@@ -1658,16 +1813,182 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 #dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
-                envs = dep['spec']['template']['spec']['containers'][0]['env']
-                for i,e in enumerate(envs):
-                    if e['name'] == 'SENSOR_DATABASE':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
-                    if e['name'] == 'SENSOR_RATE':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '0.1'
-                    if e['name'] == 'SENSOR_NUMBER':
-                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '72000'
-                    self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
-                    #print(e)
+                # set nodeSelector
+                if 'maintaining' in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['maintaining']
+                # set ENV variables - defaults
+                env_default = {}
+                if 'SENSOR_RATE' in self.maintaining_parameters:
+                    env_default['SENSOR_RATE'] = self.maintaining_parameters['SENSOR_RATE']
+                else:
+                    env_default['SENSOR_RATE'] = '0.1'
+                if 'SENSOR_NUMBER' in self.maintaining_parameters:
+                    env_default['SENSOR_NUMBER'] = self.maintaining_parameters['SENSOR_NUMBER']
+                else:
+                    env_default['SENSOR_NUMBER'] = '144000'
+                # set ENV variables - in YAML
+                # all init containers
+                if 'initContainers' in dep['spec']['template']['spec']:
+                    for num_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
+                        envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                        for i,e in enumerate(envs):
+                            if e['name'] == 'BEXHOMA_HOST':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = servicename
+                            if e['name'] == 'SENSOR_DATABASE':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
+                            if e['name'] == 'SENSOR_RATE':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
+                            if e['name'] == 'SENSOR_NUMBER':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
+                            self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                            #print(e)
+                # all containers
+                for num_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                    for i,e in enumerate(envs):
+                        if e['name'] == 'BEXHOMA_HOST':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                        if e['name'] == 'SENSOR_DATABASE':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = 'postgresql://postgres:@{}:9091/postgres'.format(servicename)
+                        if e['name'] == 'SENSOR_RATE':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
+                        if e['name'] == 'SENSOR_NUMBER':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
+                        self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                        #print(e)
+        with open(job_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        return job_experiment
+    def create_job_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
+        if len(app) == 0:
+            app = self.appname
+        if len(configuration) == 0:
+            configuration = self.configuration
+        if len(experiment) == 0:
+            experiment = self.code
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #print(jobname)
+        self.logger.debug('configuration.create_job_loading({})'.format(jobname))
+        # determine start time
+        now = datetime.utcnow()
+        start = now + timedelta(seconds=180)
+        #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
+        #wait = (start-now).seconds
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+        job_experiment = self.experiment.path+'/job-loading-{configuration}.yml'.format(configuration=configuration)
+        jobtemplate = self.experiment.cluster.yamlfolder+"jobtemplate-loading.yml"
+        if len(self.experiment.jobtemplate_loading) > 0:
+            jobtemplate = self.experiment.cluster.yamlfolder+self.experiment.jobtemplate_loading
+        with open(jobtemplate) as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+            except yaml.YAMLError as exc:
+                print(exc)
+        for dep in result:
+            if dep['kind'] == 'Job':
+                dep['metadata']['name'] = jobname
+                job = dep['metadata']['name']
+                dep['spec']['completions'] = parallelism
+                dep['spec']['parallelism'] = parallelism
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = str(experiment)
+                #dep['metadata']['labels']['client'] = str(client)
+                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['spec']['template']['metadata']['labels']['app'] = app
+                dep['spec']['template']['metadata']['labels']['component'] = component
+                dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
+                #dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                # set nodeSelector
+                if 'loading' in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['loading']
+                # set ENV variables - defaults
+                env_default = {}
+                if 'PARALLEL' in self.maintaining_parameters:
+                    env_default['PARALLEL'] = self.maintaining_parameters['PARALLEL']
+                else:
+                    env_default['PARALLEL'] = '24'
+                if 'CHILD' in self.maintaining_parameters:
+                    env_default['CHILD'] = self.maintaining_parameters['1']
+                else:
+                    env_default['CHILD'] = '1'
+                if 'RNGSEED' in self.maintaining_parameters:
+                    env_default['RNGSEED'] = self.maintaining_parameters['RNGSEED']
+                else:
+                    env_default['RNGSEED'] = '123'
+                if 'SF' in self.maintaining_parameters:
+                    env_default['SF'] = self.maintaining_parameters['SF']
+                else:
+                    env_default['SF'] = '10'
+                # set ENV variables - in YAML
+                # all init containers
+                if 'initContainers' in dep['spec']['template']['spec']:
+                    for num_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
+                        envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                        for i,e in enumerate(envs):
+                            if e['name'] == 'BEXHOMA_HOST':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = servicename
+                            if e['name'] == 'BEXHOMA_CLIENT':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(parallelism)
+                            if e['name'] == 'BEXHOMA_EXPERIMENT':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = experiment
+                            if e['name'] == 'BEXHOMA_CONNECTION':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = configuration
+                            if e['name'] == 'BEXHOMA_SLEEP':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = '60'
+                            if e['name'] == 'PARALLEL':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['PARALLEL'])
+                            if e['name'] == 'CHILD':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['CHILD'])
+                            if e['name'] == 'RNGSEED':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['RNGSEED'])
+                            if e['name'] == 'SF':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SF'])
+                            self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
+                            #print(e)
+                # all containers
+                for num_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                    for i,e in enumerate(envs):
+                        if e['name'] == 'BEXHOMA_HOST':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = servicename
+                        if e['name'] == 'BEXHOMA_CLIENT':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(parallelism)
+                        if e['name'] == 'BEXHOMA_EXPERIMENT':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = experiment
+                        if e['name'] == 'BEXHOMA_CONNECTION':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = configuration
+                        if e['name'] == 'BEXHOMA_SLEEP':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = '60'
+                        if e['name'] == 'PARALLEL':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['PARALLEL'])
+                        if e['name'] == 'CHILD':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['CHILD'])
+                        if e['name'] == 'RNGSEED':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['RNGSEED'])
+                        if e['name'] == 'SF':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SF'])
+                        self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                        #print(e)
         with open(job_experiment,"w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))
