@@ -319,6 +319,21 @@ class default():
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
+        # put list of clients to message queue
+        pods_messagequeue = self.experiment.cluster.getPods(component='messagequeue')
+        if len(pods_messagequeue) > 0:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        print("I am using messagequeue {}".format(pod_messagequeue))
+        redisQueue = 'bexhoma-maintain-{}-{}'.format(self.configuration, self.code)
+        #l = redisClient.lrange(redisQueue, 0, -1)
+        #print(l)
+        for i in range(1, self.num_loading+1):
+            #redisClient.rpush(redisQueue, i)
+            redisCommand = 'redis-cli rpush {redisQueue} {child} '.format(redisQueue=redisQueue, child=i)
+            self.experiment.cluster.executeCTL(command=redisCommand, pod=pod_messagequeue)
+        # start job
         job = self.create_job_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism)
         self.logger.debug("Deploy "+job)
         self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
@@ -1839,7 +1854,7 @@ scrape_configs:
                 # all init containers
                 if 'initContainers' in dep['spec']['template']['spec']:
                     for num_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
-                        envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                        envs = dep['spec']['template']['spec']['initContainers'][num_container]['env']
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_HOST':
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = servicename
@@ -1951,7 +1966,7 @@ scrape_configs:
                 # all init containers
                 if 'initContainers' in dep['spec']['template']['spec']:
                     for num_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
-                        envs = dep['spec']['template']['spec']['containers'][num_container]['env']
+                        envs = dep['spec']['template']['spec']['initContainers'][num_container]['env']
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_HOST':
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = servicename
@@ -1995,7 +2010,7 @@ scrape_configs:
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['RNGSEED'])
                         if e['name'] == 'SF':
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SF'])
-                        self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                        self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
                         #print(e)
         with open(job_experiment,"w+") as stream:
             try:
