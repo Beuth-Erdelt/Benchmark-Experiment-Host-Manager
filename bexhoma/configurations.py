@@ -100,6 +100,7 @@ class default():
         self.storage_label = experiment.storage_label
         self.experiment_done = False
         self.dockerimage = dockerimage
+        self.connection_parameter = {}
         # per configuration: sut+service
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
@@ -1173,6 +1174,7 @@ scrape_configs:
         else:
             c['hostsystem']['limits_cpu'] = 0
             c['hostsystem']['limits_memory'] = 0
+        c['connection_parameter'] = self.connection_parameter
         #if len(cuda) > 0:
         #    c['hostsystem']['CUDA'] = cuda
         c['connectionmanagement'] = {}
@@ -1820,6 +1822,9 @@ scrape_configs:
                     if dep['spec']['template']['spec']['nodeSelector'] is None:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()
                     dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['maintaining']
+                # store parameters in connection for evaluation
+                if len(self.maintaining_parameters):
+                    self.connection_parameter['maintaining_parameters'] = self.maintaining_parameters
                 # set ENV variables - defaults
                 env_default = {}
                 if 'SENSOR_RATE' in self.maintaining_parameters:
@@ -1921,6 +1926,9 @@ scrape_configs:
                     if dep['spec']['template']['spec']['nodeSelector'] is None:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()
                     dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['loading']
+                # store parameters in connection for evaluation
+                if len(self.maintaining_parameters):
+                    self.connection_parameter['loading_parameters'] = self.maintaining_parameters
                 # set ENV variables - defaults
                 env_default = {}
                 if 'PARALLEL' in self.maintaining_parameters:
