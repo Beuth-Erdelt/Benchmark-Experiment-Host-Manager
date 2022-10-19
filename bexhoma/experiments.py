@@ -57,14 +57,27 @@ class DictToObject(object):
 
 
 class default():
+	"""
+	Class for defining an experiment.
+	Settings are set generally.
+	This class should be overloaded to define specific experiments.
+	"""
 	def __init__(self,
 			cluster,
 			code=None,
 			numExperiments = 1,
 			timeout = 7200,
 			detached=False):
+		"""
+		Construct a new 'experiment' object.
+
+		:param cluster: Cluster object, typically refering to a K8s cluster
+		:param code: Unique identifier for the experiment. If none is given, it is created out of current time
+		:param numExperiments: DEPRECATED - will be ignored
+		:param timeout: Maximum timeout per query
+		:param detached: DEPRECATED - use only True
+		"""
 		self.cluster = cluster
-		#self.code = self.cluster.code
 		self.code = code
 		if self.code is None:
 			self.code = str(round(time.time()))
@@ -92,33 +105,34 @@ class default():
 		self.maintaining_parameters = {}
 		self.jobtemplate_maintaining = ""
 		self.jobtemplate_loading = ""
-		#self.connectionmanagement = {}
-		#self.connectionmanagement['numProcesses'] = None
-		#self.connectionmanagement['runsPerConnection'] = None
-		#self.connectionmanagement['timeout'] = None
-		#self.connectionmanagement['singleConnection'] = False
 		self.querymanagement = {}
 		self.workload = {}
 		self.monitoring_active = True
 		self.loading_active = False
 		# k8s:
-		self.namespace = self.cluster.namespace#.config['credentials']['k8s']['namespace']
+		self.namespace = self.cluster.namespace
 		self.configurations = []
 		self.storage_label = ''
 		self.maintaining_active = False
 	def wait(self, sec):
+		"""
+		Function for waiting some time and inform via output about this
+
+		:param sec: Number of seconds to wait
+		"""
 		print("Waiting "+str(sec)+"s...", end="", flush=True)
 		intervals = int(sec)
 		time.sleep(intervals)
 		print("done")
-		#print("Waiting "+str(sec)+"s")
-		#intervals = int(sec)
-		#intervalLength = 1
-		#for i in tqdm(range(intervals)):
-		#	time.sleep(intervalLength)
 	def delay(self, sec):
+		"""
+		Function for waiting some time and inform via output about this.
+		Synonymous for wait()
+
+		:param sec: Number of seconds to wait
+		"""
 		self.wait(sec)
-	def get_items(self, app='', component='', experiment='', configuration=''):
+	def OLD_get_items(self, app='', component='', experiment='', configuration=''):
 		if len(app) == 0:
 			app = self.cluster.appname
 		if len(experiment) == 0:
@@ -217,7 +231,18 @@ class default():
 		self.cluster.set_ddl_parameters(**kwargs)
 	def __set_workload(self, **kwargs):
 		self.cluster.set_workload(**kwargs)
-	def get_instance_from_resources(self):
+	def OLD_get_instance_from_resources(self):
+		"""
+		Function for running an actual benchmark run
+
+		:param connectiondata: Data about the connection, dict format
+		:param inputConfig: Data containing info about the benchmark run
+		:param numRun: Number of benchmark run
+		:param connectionname: Name of the connection
+		:param numQuery: Number of the query, 1...
+		:param path: Result path, for optional storing received data
+		:return: returns object of class singleRunOutput
+		"""
 		resources = DictToObject(self.cluster.resources)
 		cpu = resources.requests.cpu
 		memory = resources.requests.memory
@@ -226,7 +251,7 @@ class default():
 		gpu_type = resources.nodeSelector.gpu
 		instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
 		return instance
-	def run(self,
+	def DEPRECATED_run(self,
 			docker,
 			alias='',
 			dialect='',
@@ -255,7 +280,7 @@ class default():
 		self.cluster.stopExperiment()
 		self.cluster.cleanExperiment()
 		del gc.garbage[:]
-	def run_benchmarker_pod(self,
+	def DEPRECATED_run_benchmarker_pod(self,
 			docker,
 			alias='',
 			dialect='',
@@ -280,7 +305,7 @@ class default():
 		self.cluster.stopExperiment()
 		self.cluster.cleanExperiment()
 		del gc.garbage[:]
-	def prepare(self,
+	def OLD_prepare(self,
 			docker,
 			alias,
 			instance=''):
@@ -294,7 +319,7 @@ class default():
 			# config demands other delay
 			delay = self.cluster.docker['delay_prepare']
 		self.cluster.prepareExperiment(delay=delay)
-	def prepare_and_start(self,
+	def OLD_prepare_and_start(self,
 			docker,
 			alias,
 			instance=''):
@@ -309,13 +334,16 @@ class default():
 			delay = self.cluster.docker['delay_prepare']
 		self.cluster.prepareExperiment(delay=delay)
 		self.cluster.startExperiment(delay=60)
-	def reporting(self):
+	def OLD_reporting(self):
 		self.cluster.runReporting()
-	def clean(self):
+	def OLD_clean(self):
 		self.cluster.stopExperiment()
 		self.cluster.cleanExperiment()
 		del gc.garbage[:]
 	def zip(self):
+		"""
+		Zip the result folder in the dashboard pod.
+		"""
 		# remote:
 		pods = self.cluster.getPods(component='dashboard')
 		if len(pods) > 0:
@@ -341,7 +369,14 @@ class default():
 		# local:
 		#shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
 	def set_experiment(self, instance=None, volume=None, docker=None, script=None):
-		""" Read experiment details from cluster config"""
+		"""
+		Read experiment details from cluster config
+
+		:param instance: 
+		:param volume: 
+		:param docker: 
+		:param script: 
+		"""
 		#self.bChangeInstance = True
 		#if instance is not None:
 		#	self.i = instance
@@ -355,6 +390,15 @@ class default():
 			self.script = script
 			self.initscript = self.cluster.volumes[self.volume]['initscripts'][self.script]
 	def evaluate_results(self, pod_dashboard=''):
+		"""
+		Let the dashboard pod build the evaluations.
+		This is specific to dbmsbenchmarker.
+
+		1) All local logs are copied to the pod.
+		2) Benchmarker in the dashboard pod is updated (dev channel)
+		3) All results of all DBMS are joined (merge.py of benchmarker) in dashboard pod
+		4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
+		"""
 		if len(pod_dashboard) == 0:
 			pods = self.cluster.getPods(component='dashboard')
 			pod_dashboard = pods[0]
@@ -391,6 +435,11 @@ class default():
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
 	def stop_maintaining(self):
+		"""
+		Stop all maintaining jobs of this experiment.
+		If a list of dbms configurations is given, use them.
+		Otherwise tell the cluster to stop all maintaining jobs belonging to this experiment code.
+		"""
 		if len(self.configurations) > 0:
 			for config in self.configurations:
 				config.stop_maintaining()
@@ -402,6 +451,11 @@ class default():
 			for job in jobs:
 				self.cluster.deleteJob(job)
 	def stop_loading(self):
+		"""
+		Stop all loading jobs of this experiment.
+		If a list of dbms configurations is given, use them.
+		Otherwise tell the cluster to stop all loading jobs belonging to this experiment code.
+		"""
 		if len(self.configurations) > 0:
 			for config in self.configurations:
 				config.stop_loading()
@@ -413,6 +467,11 @@ class default():
 			for job in jobs:
 				self.cluster.deleteJob(job)
 	def stop_monitoring(self):
+		"""
+		Stop all monitoring deployments of this experiment.
+		If a list of dbms configurations is given, use them.
+		Otherwise tell the cluster to stop all monitoring deployments belonging to this experiment code.
+		"""
 		if len(self.configurations) > 0:
 			for config in self.configurations:
 				config.stop_monitoring()
@@ -423,13 +482,47 @@ class default():
 			deployments = self.cluster.getDeployments(app=app, component=component, experiment=self.code, configuration=configuration)
 			for deployment in deployments:
 				self.cluster.deleteDeployment(deployment)
+	def stop_benchmarker(self, configuration=''):
+		"""
+		Stop all benchmarker jobs of this experiment.
+		If a dbms configurations is given, use it.
+		Otherwise tell the cluster to stop all benchmarker jobs belonging to this experiment code.
+		"""
+		# all jobs of configuration - benchmarker
+		self.cluster.logger.debug("experiment.stop_benchmarker({})".format(configuration))
+		app = self.appname
+		component = 'benchmarker'
+		jobs = self.cluster.getJobs(app, component, self.code, configuration)
+		# status per job
+		for job in jobs:
+			success = self.cluster.getJobStatus(job)
+			print(job, success)
+			self.cluster.deleteJob(job)
+		# all pods to these jobs
+		#self.cluster.getJobPods(app, component, self.code, configuration)
+		pods = self.cluster.getJobPods(app, component, self.code, configuration)
+		for p in pods:
+			status = self.cluster.getPodStatus(p)
+			print(p, status)
+			self.cluster.deletePod(p)
 	def start_monitoring(self):
+		"""
+		Start monitoring for all dbms configurations of this experiment.
+		"""
 		for config in self.configurations:
 			config.start_monitoring()
 	def start_sut(self):#, configuration=None):
+		"""
+		Start all dbms configurations of this experiment.
+		"""
 		for config in self.configurations:
 			config.start_sut()
 	def stop_sut(self):
+		"""
+		Stop all SUT deployments of this experiment.
+		If a list of dbms configurations is given, use them.
+		Otherwise tell the cluster to stop all monitoring deployments belonging to this experiment code.
+		"""
 		if len(self.configurations) > 0:
 			for config in self.configurations:
 				config.stop_sut()
@@ -441,15 +534,40 @@ class default():
 			for deployment in deployments:
 				self.cluster.deleteDeployment(deployment)
 	def start_loading(self):
+		"""
+		Start all dbms configurations of this experiment to start loading data.
+		"""
 		for config in self.configurations:
 			config.start_loading()
-	def load_data(self):
+	def OLD_load_data(self):
+		"""
+		Start all dbms configurations of this experiment to load data.
+		"""
 		for config in self.configurations:
 			config.load_data()
 	def add_benchmark_list(self, list_clients):
+		"""
+		Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
+		This is applied to all dbms configurations of the experiment.
+
+		:param list_clients: List of (number of) benchmarker instances
+		"""
 		for config in self.configurations:
 			config.add_benchmark_list(list_clients)
 	def work_benchmark_list(self, intervals=30, stop=True):
+		"""
+		Run typical workflow:
+		1) start SUT
+		2) start monitoring
+		3) start loading
+		3a) at first scripts (schema or loading via pull)
+		3b) then optionally parallel loading pods
+		4) optionally start maintaining pods
+		5) at the same time as 4) run benchmarker jobs corresponding to list given via add_benchmark_list()
+
+		:param intervals: Seconds to wait before checking change of status
+		:param stop: Tells if SUT should be removed when all benchmarking has finished. Set to False if we want to have loaded SUTs for inspection.
+		"""
 		do = True
 		while do:
 			#time.sleep(intervals)
@@ -636,6 +754,12 @@ class default():
 						self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
 						do = True
 	def benchmark_list(self, list_clients):
+		"""
+		DEPRECATED? Is not used anymore.
+		Runs a given list of benchmarker applied to all running SUTs of experiment.
+
+		:param list_clients: List of (number of) benchmarker instances
+		"""
 		for i, parallelism in enumerate(list_clients):
 			client = str(i+1)
 			for config in self.configurations:
@@ -685,24 +809,6 @@ class default():
 						self.cluster.deleteJob(job)
 				if len(pods) == 0 and len(jobs) == 0:
 					break
-	def stop_benchmarker(self, configuration=''):
-		# all jobs of configuration - benchmarker
-		self.cluster.logger.debug("experiment.stop_benchmarker({})".format(configuration))
-		app = self.appname
-		component = 'benchmarker'
-		jobs = self.cluster.getJobs(app, component, self.code, configuration)
-		# status per job
-		for job in jobs:
-			success = self.cluster.getJobStatus(job)
-			print(job, success)
-			self.cluster.deleteJob(job)
-		# all pods to these jobs
-		#self.cluster.getJobPods(app, component, self.code, configuration)
-		pods = self.cluster.getJobPods(app, component, self.code, configuration)
-		for p in pods:
-			status = self.cluster.getPodStatus(p)
-			print(p, status)
-			self.cluster.deletePod(p)
 
 
 

@@ -130,7 +130,7 @@ class default():
         #    time.sleep(intervalLength)
     def delay(self, sec):
         self.wait(sec)
-    def get_items(self, app='', component='', experiment='', configuration=''):
+    def OLD_get_items(self, app='', component='', experiment='', configuration=''):
         if len(app) == 0:
             app = self.experiment.cluster.appname
         if len(experiment) == 0:

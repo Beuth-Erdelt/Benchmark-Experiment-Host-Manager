@@ -1267,7 +1267,7 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
         #self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
-    def runReporting(self):
+    def OLD_runReporting(self):
         evaluator.evaluator(self.benchmark, load=False, force=True)
         self.benchmark.generateReportsAll()
     def copyLog(self):
