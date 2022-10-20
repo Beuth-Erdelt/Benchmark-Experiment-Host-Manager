@@ -9,3 +9,5 @@ build/*
 bexhoma.egg-info/*
 dist/*
 .spyproject/*
+docs/html/*
+api/*
