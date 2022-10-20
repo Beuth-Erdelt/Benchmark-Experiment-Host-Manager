@@ -858,7 +858,7 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.deleteService(name=name)
-    def DEPRECATED_startPortforwarding(self, service='', app='', component='sut'):
+    def OLD_startPortforwarding(self, service='', app='', component='sut'):
         self.logger.debug('testdesign.startPortforwarding()')
         ports = self.getPorts(app=app, component=component)
         if len(service) == 0:
@@ -876,14 +876,14 @@ class testdesign():
             your_command = " ".join(forward)
             #print(your_command)
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
-    def DEPRECATED_getChildProcesses(self):
+    def OLD_getChildProcesses(self):
         self.logger.debug('testdesign.getChildProcesses()')
         current_process = psutil.Process()
         children = current_process.children(recursive=False)
         #for child in children:
         #    print('Child pid is {} {}'.format(child.pid, child.name))
         #    print(child.cmdline())
-    def stopPortforwarding(self):
+    def OLD_stopPortforwarding(self):
         self.logger.debug('testdesign.stopPortforwarding()')
         children = [p for p in psutil.process_iter(attrs=['pid', 'name']) if 'kubectl' in p.info['name']]
         for child in children:
@@ -1274,8 +1274,8 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.dataframer(self.benchmark))
         #self.benchmark.reporter.append(benchmarker.reporter.pickler(self.benchmark))
         # restart network
-        self.stopPortforwarding()
-        self.startPortforwarding()
+        #self.stopPortforwarding()
+        #self.startPortforwarding()
         # run or continue benchmarking
         if code is not None:
             self.benchmark.continueBenchmarks(overwrite = True)
@@ -1312,8 +1312,8 @@ class testdesign():
             working='connection'
             )
         self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
-        self.stopPortforwarding()
-        self.startPortforwarding()
+        #self.stopPortforwarding()
+        #self.startPortforwarding()
         self.benchmark.continueBenchmarks(overwrite = False)
         self.code = self.benchmark.code
         # prepare reporting
@@ -1367,7 +1367,7 @@ class testdesign():
             code = self.code
         if not isinstance(client, str):
             client = str(client)
-        self.stopPortforwarding()
+        #self.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.querymanagement
         # get connection config (sut)

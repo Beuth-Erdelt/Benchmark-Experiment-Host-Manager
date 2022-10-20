@@ -136,21 +136,6 @@ class default():
 		:param sec: Number of seconds to wait
 		"""
 		self.wait(sec)
-	def OLD_get_items(self, app='', component='', experiment='', configuration=''):
-		if len(app) == 0:
-			app = self.cluster.appname
-		if len(experiment) == 0:
-			experiment = self.code
-		print("get_items", app, component, experiment, configuration)
-		self.pods = self.cluster.get_pods(app, component, experiment, configuration)
-		print(self.pods)
-		self.deployments = self.cluster.get_deployments(app, component, experiment, configuration)
-		print(self.deployments)
-		self.services = self.cluster.getServices(app, component, experiment, configuration)
-		print(self.services)
-		self.jobs = self.cluster.getJobs(app, component, experiment, configuration, '')
-		print(self.jobs)
-		self.pvcs = self.cluster.getPVCs()
 	def set_queryfile(self, queryfile):
 		self.queryfile = queryfile
 	def set_configfolder(self, configfolder):
@@ -159,8 +144,8 @@ class default():
 		self.workload = kwargs
 	def set_querymanagement(self, **kwargs):
 		self.querymanagement = kwargs
-	# can be overwritten by configuration
 	def set_connectionmanagement(self, **kwargs):
+		# can be overwritten by configuration
 		self.connectionmanagement = kwargs
 	def set_resources(self, **kwargs):
 		self.resources = {**self.resources, **kwargs}
@@ -217,8 +202,8 @@ class default():
 				'connection':
 				{
 					'active': True,
-					'delay': delay
 				},
+					'delay': delay
 				'datatransfer':
 				{
 					'active': datatransfer,
@@ -235,115 +220,6 @@ class default():
 		self.cluster.set_ddl_parameters(**kwargs)
 	def __set_workload(self, **kwargs):
 		self.cluster.set_workload(**kwargs)
-	def OLD_get_instance_from_resources(self):
-		"""
-		Function for running an actual benchmark run
-
-		:param connectiondata: Data about the connection, dict format
-		:param inputConfig: Data containing info about the benchmark run
-		:param numRun: Number of benchmark run
-		:param connectionname: Name of the connection
-		:param numQuery: Number of the query, 1...
-		:param path: Result path, for optional storing received data
-		:return: returns object of class singleRunOutput
-		"""
-		resources = DictToObject(self.cluster.resources)
-		cpu = resources.requests.cpu
-		memory = resources.requests.memory
-		gpu = resources.requests.gpu
-		cpu_type = resources.nodeSelector.cpu
-		gpu_type = resources.nodeSelector.gpu
-		instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
-		return instance
-	def DEPRECATED_run(self,
-			docker,
-			alias='',
-			dialect='',
-			instance=''):
-		if self.detached:
-			return self.run_benchmarker_pod(docker, alias, dialect, instance)
-		self.cluster.set_experiment(docker=docker)
-		if len(instance) == 0:
-			instance = self.get_instance_from_resources()
-		if len(alias) == 0:
-			alias = self.cluster.docker['template']['alias']
-		self.cluster.set_experiment(instance=instance) 
-		# default: wait 60s
-		delay = 60
-		if 'delay_prepare' in self.cluster.docker:
-			# config demands other delay
-			delay = self.cluster.docker['delay_prepare']
-		self.cluster.prepareExperiment(delay=delay)
-		self.cluster.startExperiment(delay=60)
-		for i in range(1, self.num_experiment_to_apply+1):
-			self.cluster.stopPortforwarding()
-			self.cluster.startPortforwarding()
-			connection = self.cluster.getConnectionName()
-			#self.cluster.runBenchmarks(connection=connection+"-"+str(i), alias=alias+'-'+str(i))
-			self.cluster.runBenchmarks(connection=self.cluster.d+"-"+str(i), alias=alias+'-'+str(i), dialect=dialect)
-		self.cluster.stopExperiment()
-		self.cluster.cleanExperiment()
-		del gc.garbage[:]
-	def DEPRECATED_run_benchmarker_pod(self,
-			docker,
-			alias='',
-			dialect='',
-			instance=''):
-		if not self.detached:
-			return self.run(docker, alias, dialect, instance)
-		self.cluster.set_experiment(docker=docker)
-		if len(instance) == 0:
-			instance = self.get_instance_from_resources()
-		self.cluster.set_experiment(instance=instance) 
-		# default: wait 60s
-		delay = 60
-		if 'delay_prepare' in self.cluster.docker:
-			# config demands other delay
-			delay = self.cluster.docker['delay_prepare']
-		self.cluster.prepareExperiment(delay=delay)
-		self.cluster.startExperiment(delay=60)
-		for i in range(1, self.num_experiment_to_apply+1):
-			connection = self.cluster.getConnectionName()
-			#self.cluster.runBenchmarks(connection=connection+"-"+str(i), alias=alias+'-'+str(i))
-			self.cluster.run_benchmarker_pod(connection=self.cluster.d+"-"+str(i), alias=alias+'-'+str(i), dialect=dialect)
-		self.cluster.stopExperiment()
-		self.cluster.cleanExperiment()
-		del gc.garbage[:]
-	def OLD_prepare(self,
-			docker,
-			alias,
-			instance=''):
-		self.cluster.set_experiment(docker=docker)
-		if len(instance) == 0:
-			instance = self.get_instance_from_resources()
-		self.cluster.set_experiment(instance=instance)
-		# default: wait 60s
-		delay = 60
-		if 'delay_prepare' in self.cluster.docker:
-			# config demands other delay
-			delay = self.cluster.docker['delay_prepare']
-		self.cluster.prepareExperiment(delay=delay)
-	def OLD_prepare_and_start(self,
-			docker,
-			alias,
-			instance=''):
-		self.cluster.set_experiment(docker=docker)
-		if len(instance) == 0:
-			instance = self.get_instance_from_resources()
-		self.cluster.set_experiment(instance=instance)
-		# default: wait 60s
-		delay = 60
-		if 'delay_prepare' in self.cluster.docker:
-			# config demands other delay
-			delay = self.cluster.docker['delay_prepare']
-		self.cluster.prepareExperiment(delay=delay)
-		self.cluster.startExperiment(delay=60)
-	def OLD_reporting(self):
-		self.cluster.runReporting()
-	def OLD_clean(self):
-		self.cluster.stopExperiment()
-		self.cluster.cleanExperiment()
-		del gc.garbage[:]
 	def zip(self):
 		"""
 		Zip the result folder in the dashboard pod.
@@ -543,12 +419,6 @@ class default():
 		"""
 		for config in self.configurations:
 			config.start_loading()
-	def OLD_load_data(self):
-		"""
-		Start all dbms configurations of this experiment to load data.
-		"""
-		for config in self.configurations:
-			config.load_data()
 	def add_benchmark_list(self, list_clients):
 		"""
 		Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.

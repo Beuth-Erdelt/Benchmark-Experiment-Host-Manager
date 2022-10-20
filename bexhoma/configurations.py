@@ -1243,7 +1243,7 @@ scrape_configs:
             client = str(client)
         if len(dialect) == 0 and len(self.dialect) > 0:
             dialect = self.dialect
-        self.experiment.cluster.stopPortforwarding()
+        #self.experiment.cluster.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.experiment.querymanagement
         # get connection config (sut)
