@@ -138,7 +138,7 @@ class default():
         print("get_items", app, component, experiment, configuration)
         self.pods = self.experiment.cluster.getPods(app, component, experiment, configuration)
         print(self.pods)
-        self.deployments = self.experiment.cluster.getDeployments(app, component, experiment, configuration)
+        self.deployments = self.experiment.cluster.get_deployments(app, component, experiment, configuration)
         print(self.deployments)
         self.services = self.experiment.cluster.getServices(app, component, experiment, configuration)
         print(self.services)
@@ -525,9 +525,9 @@ scrape_configs:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
-            self.experiment.cluster.deleteDeployment(deployment)
+            self.experiment.cluster.delete_deployment(deployment)
         services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
@@ -624,7 +624,7 @@ scrape_configs:
         else:
             name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
-        deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
             return False
@@ -915,9 +915,9 @@ scrape_configs:
                 # remove the storage
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                 self.experiment.cluster.deletePVC(name_pvc)
-        deployments = self.experiment.cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
-            self.experiment.cluster.deleteDeployment(deployment)
+            self.experiment.cluster.delete_deployment(deployment)
         stateful_sets = self.experiment.cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
             self.experiment.cluster.deleteStatefulSet(stateful_set)

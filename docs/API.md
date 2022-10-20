@@ -382,7 +382,7 @@ for p in self.pvcs:
 for s in cluster.services:
     cluster.deleteService(s)
 for d in cluster.deployments:
-    cluster.deleteDeployment(d)
+    cluster.delete_deployment(d)
 for p in cluster.pods:
     status = cluster.getPodStatus(cluster.activepod)
     while status != "":
@@ -394,7 +394,7 @@ for p in cluster.pods:
 * `cluster.stopPortforwarding()`: Kills all processes starting with `kubectl port-forward` on the client system
 * `cluster.deletePVC()`: Deletes all PVCs in the current namespace and with fitting label app
 * `cluster.deleteService()`: Deletes all Services in the current namespace and with fitting label app
-* `cluster.deleteDeployment()`: Deletes all Deployments in the current namespace and with fitting label app
+* `cluster.delete_deployment()`: Deletes all Deployments in the current namespace and with fitting label app
 
 ### On AWS
 

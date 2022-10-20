@@ -144,7 +144,7 @@ class default():
 		print("get_items", app, component, experiment, configuration)
 		self.pods = self.cluster.getPods(app, component, experiment, configuration)
 		print(self.pods)
-		self.deployments = self.cluster.getDeployments(app, component, experiment, configuration)
+		self.deployments = self.cluster.get_deployments(app, component, experiment, configuration)
 		print(self.deployments)
 		self.services = self.cluster.getServices(app, component, experiment, configuration)
 		print(self.services)
@@ -483,9 +483,9 @@ class default():
 			app = self.cluster.appname
 			component = 'monitoring'
 			configuration = ''
-			deployments = self.cluster.getDeployments(app=app, component=component, experiment=self.code, configuration=configuration)
+			deployments = self.cluster.get_deployments(app=app, component=component, experiment=self.code, configuration=configuration)
 			for deployment in deployments:
-				self.cluster.deleteDeployment(deployment)
+				self.cluster.delete_deployment(deployment)
 	def stop_benchmarker(self, configuration=''):
 		"""
 		Stop all benchmarker jobs of this experiment.
@@ -534,9 +534,9 @@ class default():
 			app = self.cluster.appname
 			component = 'sut'
 			configuration = ''
-			deployments = self.cluster.getDeployments(app=app, component=component, experiment=self.code, configuration=configuration)
+			deployments = self.cluster.get_deployments(app=app, component=component, experiment=self.code, configuration=configuration)
 			for deployment in deployments:
-				self.cluster.deleteDeployment(deployment)
+				self.cluster.delete_deployment(deployment)
 	def start_loading(self):
 		"""
 		Start all dbms configurations of this experiment to start loading data.

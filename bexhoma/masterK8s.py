@@ -245,7 +245,7 @@ class testdesign():
         self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
-    def cleanExperiment(self, delay=0):
+    def DEPRECATED_cleanExperiment(self, delay=0):
         print("testdesign.cleanExperiment")
         self.getInfo(component='sut')
         self.stopPortforwarding()
@@ -254,7 +254,7 @@ class testdesign():
         for s in self.services:
             self.deleteService(s)
         for d in self.deployments:
-            self.deleteDeployment(d)
+            self.delete_deployment(d)
         for p in self.pods:
             status = self.getPodStatus(p)
             while status != "":
@@ -267,7 +267,7 @@ class testdesign():
         self.logExperiment(experiment)
         if delay > 0:
             self.delay(delay)
-    def runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
+    def DEPRECATED_runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
         print("testdesign.runExperiment")
         self.prepareExperiment(instance, volume, docker, script, delay)
         self.startExperiment(delay=delay)
@@ -435,10 +435,10 @@ class testdesign():
         print("Deploy "+yamlfile)
         #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
         self.kubectl('create -f '+yamlfile)
-    def deleteDeployment(self, deployment):
-        self.logger.debug('testdesign.deleteDeployment()')
+    def delete_deployment(self, deployment):
+        self.logger.debug('testdesign.delete_deployment()')
         self.kubectl('delete deployment '+deployment)
-    def getDeployments(self, app='', component='', experiment='', configuration=''):
+    def get_deployments(self, app='', component='', experiment='', configuration=''):
         label = ''
         if len(app)==0:
             app = self.appname
@@ -450,7 +450,7 @@ class testdesign():
         if len(configuration)>0:
             label += ',configuration='+configuration
         #print(label)
-        self.logger.debug('testdesign.getDeployments({})'.format(label))
+        self.logger.debug('testdesign.get_deployments({})'.format(label))
         try: 
             api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -463,7 +463,7 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+            return self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
     def getPods(self, app='', component='', experiment='', configuration='', status=''):
         self.logger.debug('testdesign.getPods()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
@@ -523,6 +523,13 @@ class testdesign():
             self.wait(2)
             return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
     def getNodes(self, app='', nodegroup_type='', nodegroup_name=''):
+        """
+        Get all nodes of a cluster.
+
+        :param app: Name of the pod
+        :param nodegroup_type: Type of the nodegroup, e.g. sut
+        :param nodegroup_name: Name of the nodegroup, e.g. sut_high_memory
+        """
         self.logger.debug('testdesign.getNodes()')
         label = ''
         if len(app)==0:
@@ -843,7 +850,7 @@ class testdesign():
             self.activepod = self.pods[0]
         else:
             self.activepod = None
-        self.deployments = self.getDeployments(app, component, experiment, configuration)
+        self.deployments = self.get_deployments(app, component, experiment, configuration)
         print(self.deployments)
         self.services = self.getServices(app, component, experiment, configuration)
         print(self.services)
@@ -1236,7 +1243,7 @@ class testdesign():
     def continueBenchmarks(self, connection=None, query=None):
         #configfolder='experiments/gdelt'
         self.getInfo(component='sut')
-        self.deployment = self.getDeployments()[0]
+        self.deployment = self.get_deployments()[0]
         self.connection = connection
         self.resultfolder = self.config['benchmarker']['resultfolder']
         resultfolder = self.resultfolder+ '/'+str(self.code)
@@ -1693,9 +1700,9 @@ class testdesign():
         self.kubectl('create -f '+self.yamlfolder+deployment)
     def stop_dashboard(self, app='', component='dashboard'):
         self.logger.debug('testdesign.stop_dashboard()')
-        deployments = self.getDeployments(app=app, component=component)
+        deployments = self.get_deployments(app=app, component=component)
         for deployment in deployments:
-            self.deleteDeployment(deployment)
+            self.delete_deployment(deployment)
         services = self.getServices(app=app, component=component)
         for service in services:
             self.deleteService(service)
@@ -1736,16 +1743,16 @@ class testdesign():
             #if status == "Running":
             self.deletePod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-        deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
-            self.deleteDeployment(deployment)
+            self.delete_deployment(deployment)
         services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
-        deployments = self.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
-            self.deleteDeployment(deployment)
+            self.delete_deployment(deployment)
         services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)

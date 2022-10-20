@@ -138,7 +138,7 @@ def manage():
 				apps[configuration][component] = ''
 				apps[configuration]['loaded [s]'] = ''
 				if args.verbose:
-					deployments = cluster.getDeployments(app=app, component=component, experiment=experiment, configuration=configuration)
+					deployments = cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Deployments", deployments)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("SUT Services", services)

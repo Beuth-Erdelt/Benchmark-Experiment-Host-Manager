@@ -3,7 +3,7 @@
 :Version: 0.5
 :Authors: Patrick Erdelt
 
-    Class to managing experiments in a cluster
+    Class to managing experiments in a Kubernetes (K8s) cluster
     Copyright (C) 2020  Patrick Erdelt
 
     This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,19 @@ from bexhoma import masterK8s, experiments
 
 
 class kubernetes(masterK8s.testdesign):
+    """
+    Class for containing specific Kubernetes (K8s) methods.
+    This class should be overloaded to define specific implementations of Kubernetes.
+    """
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        """
+        Construct a new 'kubernetes' object.
+
+        :param clusterconfig: Filename of the configuration of this cluster
+        :param configfolder: Folder where to find experiment files
+        :param context: Name of the context to use - important for kubectl to choose the cluster
+        :param code: Unique identifier of the experiments
+        """
         # list of configurations (connections, docker)
         # per configuration: sut+service
         # per configuration: monitoring+service
@@ -54,8 +66,20 @@ class kubernetes(masterK8s.testdesign):
         self.max_sut = None
         self.experiments = []
     def add_experiment(self, experiment):
+        """
+        Add an experiment to this cluster.
+
+        :param experiment: Experiment object
+        """
         self.experiments.append(experiment)
     def store_pod_log(self, pod_name, container=''):
+        """
+        Store the log of a pod in a local file in the experiment result folder.
+        Optionally the name of a container can be given (mandatory, if pod has multiple containers).
+
+        :param pod_name: Name of the pod
+        :param container: Name of the container
+        """
         # write pod log
         stdout = self.pod_log(pod_name, container)
         filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
@@ -67,17 +91,41 @@ class kubernetes(masterK8s.testdesign):
 
 
 class aws(kubernetes):
+    """
+    Class for containing Kubernetes methods specific to AWS.
+    """
     def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+        """
+        Construct a new 'aws' kubernetes object.
+
+        :param clusterconfig: Filename of the configuration of this cluster
+        :param configfolder: Folder where to find experiment files
+        :param context: Name of the context to use - important for kubectl to choose the cluster
+        :param code: Unique identifier of the experiments
+        """
         self.code = code
         kubernetes.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
         self.cluster = self.contextdata['cluster']
     def eksctl(self, command):
+        """
+        Runs an eksctl command.
+
+        :param command: An eksctl command
+        :return: stdout of the eksctl command
+        """
         #fullcommand = 'eksctl --context {context} {command}'.format(context=self.context, command=command)
         fullcommand = 'eksctl {command}'.format(command=command)
         self.logger.debug('aws.eksctl({})'.format(fullcommand))
-        #print(fullcommand)
         return os.popen(fullcommand).read()# os.system(fullcommand)
     def getNodes(self, app='', nodegroup_type='', nodegroup_name=''):
+        """
+        Get all nodes of a cluster.
+        This overwrites the cluster method with the AWS specific nodegroup-name label. 
+
+        :param app: Name of the pod
+        :param nodegroup_type: Type of the nodegroup, e.g. sut
+        :param nodegroup_name: Name of the nodegroup, e.g. sut_high_memory
+        """
         self.logger.debug('aws.getNodes()')
         label = ''
         if len(app)==0:
