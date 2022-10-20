@@ -1,7 +1,7 @@
 """
-:Date: 2022-05-01
-:Version: 0.5
-:Authors: Patrick Erdelt
+:Date: 2022-10-01
+:Version: 0.6.0
+:Authors: Patrick K. Erdelt
 
     Classes for managing an experiment.
     This is plugged into a cluster object.
@@ -10,10 +10,12 @@
     Two examples included, dealing with TPC-H and TPC-DS tests.
     Another example concerns TSBS experiment.
     Each experiment also should have an own folder having:
-    * a query file
-    * a subfolder for each dbms, that may run this experiment, including schema files
 
-    Copyright (C) 2020  Patrick Erdelt
+    1) a query file
+
+    2) a subfolder for each dbms, that may run this experiment, including schema files
+
+    Copyright (C) 2020  Patrick K. Erdelt
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -431,12 +433,19 @@ class default():
 	def work_benchmark_list(self, intervals=30, stop=True):
 		"""
 		Run typical workflow:
+
 		1) start SUT
+
 		2) start monitoring
+
 		3) start loading
-		3a) at first scripts (schema or loading via pull)
-		3b) then optionally parallel loading pods
+
+			3a) at first scripts (schema or loading via pull)
+
+			3b) then optionally parallel loading pods
+
 		4) optionally start maintaining pods
+
 		5) at the same time as 4) run benchmarker jobs corresponding to list given via add_benchmark_list()
 
 		:param intervals: Seconds to wait before checking change of status
