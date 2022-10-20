@@ -202,8 +202,8 @@ class default():
 				'connection':
 				{
 					'active': True,
-				},
 					'delay': delay
+				},
 				'datatransfer':
 				{
 					'active': datatransfer,
