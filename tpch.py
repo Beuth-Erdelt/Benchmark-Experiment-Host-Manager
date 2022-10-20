@@ -88,7 +88,7 @@ if __name__ == '__main__':
 	# set experiment
 	if code is None:
 		code = cluster.code
-	experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, detached=True, code=code, numExperiments=numExperiments)
+	experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, numExperiments=numExperiments)
 	if mode == 'run':
 		# we want all TPC-H queries
 		experiment.set_queries_full()
