@@ -352,11 +352,11 @@ class default():
 		pods = self.cluster.get_pods(component='dashboard')
 		if len(pods) > 0:
 			pod_dashboard = pods[0]
-			status = self.cluster.get_podstatus(pod_dashboard)
+			status = self.cluster.get_pod_status(pod_dashboard)
 			print(pod_dashboard, status)
 			while status != "Running":
 				self.wait(10)
-				status = self.cluster.get_podstatus(pod_dashboard)
+				status = self.cluster.get_pod_status(pod_dashboard)
 				print(pod_dashboard, status)
 			cmd = {}
 			# only zip first level
@@ -506,7 +506,7 @@ class default():
 		#self.cluster.getJobPods(app, component, self.code, configuration)
 		pods = self.cluster.getJobPods(app, component, self.code, configuration)
 		for p in pods:
-			status = self.cluster.get_podstatus(p)
+			status = self.cluster.get_pod_status(p)
 			print(p, status)
 			self.cluster.deletePod(p)
 	def start_monitoring(self):
@@ -720,7 +720,7 @@ class default():
 			pods = self.cluster.getJobPods(app, component, self.code, configuration)
 			# status per pod
 			for p in pods:
-				status = self.cluster.get_podstatus(p)
+				status = self.cluster.get_pod_status(p)
 				self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
 				#print(p,status)
 				if status == 'Succeeded':
@@ -789,7 +789,7 @@ class default():
 				pods = self.cluster.getJobPods(app, component, self.code, configuration)
 				# status per pod
 				for p in pods:
-					status = self.cluster.get_podstatus(p)
+					status = self.cluster.get_pod_status(p)
 					print(p,status)
 					if status == 'Succeeded':
 						#if status != 'Running':
