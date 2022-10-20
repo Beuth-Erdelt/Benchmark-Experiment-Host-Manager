@@ -613,8 +613,13 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.get_pvc_status(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
-    def deleteStatefulSet(self, name):
-        self.logger.debug('testdesign.deleteStatefulSet({})'.format(name))
+    def delete_stateful_set(self, name):
+        """
+        Delete a stateful set given by name
+
+        :param name: name of the stateful set to be deleted
+        """
+        self.logger.debug('testdesign.delete_stateful_set({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
@@ -623,7 +628,7 @@ class testdesign():
             print("Exception when calling AppsV1Api->delete_namespaced_stateful_set: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deleteStatefulSet(name=name)
+            return self.delete_stateful_set(name=name)
     def deletePod(self, name):
         self.logger.debug('testdesign.deletePod({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
@@ -1629,7 +1634,7 @@ class testdesign():
             self.deleteService(service)
         stateful_sets = self.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
-            self.deleteStatefulSet(stateful_set)
+            self.delete_stateful_set(stateful_set)
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def stop_benchmarker(self, experiment='', configuration=''):

@@ -920,7 +920,7 @@ scrape_configs:
             self.experiment.cluster.delete_deployment(deployment)
         stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
-            self.experiment.cluster.deleteStatefulSet(stateful_set)
+            self.experiment.cluster.delete_stateful_set(stateful_set)
         services = self.experiment.cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
