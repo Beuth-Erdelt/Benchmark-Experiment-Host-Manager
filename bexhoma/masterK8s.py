@@ -101,7 +101,7 @@ class testdesign():
                 print("experiments found")
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
-    # can be overwritten by experiment
+    # the following can be overwritten by experiment
     def set_queryfile(self, queryfile):
         self.queryfile = queryfile
     def set_configfolder(self, configfolder):
@@ -110,7 +110,7 @@ class testdesign():
         self.workload = kwargs
     def set_querymanagement(self, **kwargs):
         self.querymanagement = kwargs
-    # can be overwritten by experiment and configuration
+    # the following can be overwritten by experiment and configuration
     def set_connectionmanagement(self, **kwargs):
         self.connectionmanagement = kwargs
     def set_resources(self, **kwargs):
@@ -128,8 +128,16 @@ class testdesign():
                 print("experiments found")
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
-    def logExperiment(self, experiment):
-        self.logger.debug('testdesign.logExperiment()')
+    def log_experiment(self, experiment):
+        """
+        Function to log current step of experiment.
+        This is supposed to be written on disk for comprehension and repetition.
+        This should be reworked and yield a YAML format for example.
+        Moreover this should respect "new" workflows with detached parallel loaders for example.
+
+        :param experiment: Dict that stores parameters of current experiment stept
+        """
+        self.logger.debug('testdesign.log_experiment()')
         # TODO: update to new structure
         experiment['clusterconfig'] = self.clusterconfig
         experiment['configfolder'] = self.configfolder
@@ -165,115 +173,6 @@ class testdesign():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def DEPRECATED_setExperiment(self, instance=None, volume=None, docker=None, script=None):
-        self.logger.debug('testdesign.setExperiment()')
-        # Will be deprecated?
-        self.bChangeInstance = True
-        if instance is not None:
-            self.i = instance
-        if volume is not None:
-            self.v = volume
-            self.volume = self.volumes[self.v]['id']
-        if docker is not None:
-            self.d = docker
-            self.docker = self.dockers[self.d]
-        if script is not None:
-            self.s = script
-            self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def DEPRECATED_prepareExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
-        self.logger.debug('testdesign.prepareExperiment()')
-        """ Per config: Startup SUT and Monitoring """
-        self.setExperiment(instance, volume, docker, script)
-        # check if is terminated
-        self.createDeployment()
-        self.getInfo(component='sut')
-        status = self.get_pod_status(self.activepod)
-        while status != "Running":
-            print(status)
-            self.wait(10)
-            status = self.get_pod_status(self.activepod)
-        self.startPortforwarding()
-        self.getChildProcesses()
-        # store experiment
-        experiment = {}
-        experiment['delay'] = delay
-        experiment['step'] = "prepareExperiment"
-        experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.v
-        experiment['initscript'] = {self.s: self.initscript.copy()}
-        experiment['instance'] = self.i
-        self.logExperiment(experiment)
-        if delay > 0:
-            self.delay(delay)
-    def DEPRECATED_startExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
-        print("testdesign.startExperiment")
-        """ Per config: Load Data """
-        self.setExperiment(instance, volume, docker, script)
-        self.getInfo(component='sut')
-        status = self.get_pod_status(self.activepod)
-        while status != "Running":
-            print(status)
-            self.wait(10)
-            status = self.get_pod_status(self.activepod)
-        dbmsactive = self.checkDBMS(self.host, self.port)
-        while not dbmsactive:
-            self.startPortforwarding()
-            self.wait(10)
-            dbmsactive = self.checkDBMS(self.host, self.port)
-        self.wait(10)
-        self.loadData()
-        # store experiment
-        experiment = {}
-        experiment['delay'] = delay
-        experiment['step'] = "startExperiment"
-        experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.v
-        experiment['initscript'] = {self.s: self.initscript.copy()}
-        experiment['instance'] = self.i
-        self.logExperiment(experiment)
-        if delay > 0:
-            self.delay(delay)
-    def DEPRECATED_stopExperiment(self, delay=0):
-        print("testdesign.stopExperiment")
-        self.getInfo(component='sut')
-        self.stopPortforwarding()
-        #for p in self.pods:
-        #    self.deletePod(p)
-        experiment = {}
-        experiment['delay'] = delay
-        experiment['step'] = "stopExperiment"
-        self.logExperiment(experiment)
-        if delay > 0:
-            self.delay(delay)
-    def DEPRECATED_cleanExperiment(self, delay=0):
-        print("testdesign.cleanExperiment")
-        self.getInfo(component='sut')
-        self.stopPortforwarding()
-        for p in self.pvcs:
-            self.deletePVC(p)
-        for s in self.services:
-            self.deleteService(s)
-        for d in self.deployments:
-            self.delete_deployment(d)
-        for p in self.pods:
-            status = self.get_pod_status(p)
-            while status != "":
-                print(status)
-                self.wait(5)
-                status = self.get_pod_status(p)
-        experiment = {}
-        experiment['delay'] = delay
-        experiment['step'] = "cleanExperiment"
-        self.logExperiment(experiment)
-        if delay > 0:
-            self.delay(delay)
-    def DEPRECATED_runExperiment(self, instance=None, volume=None, docker=None, script=None, delay=0):
-        print("testdesign.runExperiment")
-        self.prepareExperiment(instance, volume, docker, script, delay)
-        self.startExperiment(delay=delay)
-        self.runBenchmarks()
-        self.stopExperiment()
-        self.cleanExperiment()
     def wait(self, sec):
         """
         Function for waiting some time and inform via output about this
@@ -297,155 +196,6 @@ class testdesign():
         :param sec: Number of seconds to wait
         """
         self.wait(sec)
-    def DEPRECATED_generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
-        if len(app)==0:
-            app = self.appname
-        if len(configuration) == 0:
-            configuration = self.d
-        if len(experiment) == 0:
-            experiment = self.code
-        if len(client) > 0:
-            name = "{app}-{component}-{configuration}-{experiment}-{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client).lower()
-        else:
-            name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
-        return name
-    def DEPRECATED_generateDeployment(self, app='', component='sut', experiment='', configuration=''):
-        print("generateDeployment")
-        if len(app)==0:
-            app = self.appname
-        if len(configuration) == 0:
-            configuration = self.d
-        if len(experiment) == 0:
-            experiment = self.code
-        instance = self.i
-        template = "deploymenttemplate-"+self.d+".yml"
-        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-        deployment_experiment = self.path+'/deployment-{name}.yml'.format(name=name)
-        # resources
-        specs = instance.split("-")
-        print(specs)
-        cpu = specs[0]
-        mem = specs[1]
-        node = ''
-        gpu = ''
-        if len(specs) > 2:
-            gpu = specs[2]
-            node= specs[3]
-        with open(self.yamlfolder+template) as stream:
-            try:
-                result=yaml.safe_load_all(stream)
-                result = [data for data in result]
-                #print(result)
-            except yaml.YAMLError as exc:
-                print(exc)
-        for dep in result:
-            if dep['kind'] == 'PersistentVolumeClaim':
-                pvc = dep['metadata']['name']
-                #print(pvc)
-            if dep['kind'] == 'Service':
-                dep['metadata']['name'] = name
-                self.service = dep['metadata']['name']
-                dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = component
-                dep['metadata']['labels']['configuration'] = configuration
-                dep['metadata']['labels']['experiment'] = experiment
-                dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                #print(pvc)
-            if dep['kind'] == 'Deployment':
-                dep['metadata']['name'] = name
-                dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = component
-                dep['metadata']['labels']['configuration'] = configuration
-                dep['metadata']['labels']['experiment'] = experiment
-                dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
-                dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
-                deployment = dep['metadata']['name']
-                appname = dep['spec']['template']['metadata']['labels']['app']
-                #print(deployment)
-                #print(appname)
-                # parameter from instance name
-                # request = limit
-                req_cpu = cpu
-                limit_cpu = cpu
-                req_mem = mem
-                limit_mem = mem
-                req_gpu = gpu
-                node_cpu = ''
-                node_gpu = node
-                # should be overwritten by resources dict?
-                #if 'requests' in self.resources and 'cpu' in self.resources['requests']:
-                #    req_cpu = self.resources['requests']['cpu']
-                #if 'requests' in self.resources and 'memory' in self.resources['requests']:
-                #    req_mem = self.resources['requests']['memory']
-                if 'limits' in self.resources and 'cpu' in self.resources['limits']:
-                    limit_cpu = self.resources['limits']['cpu']
-                if 'limits' in self.resources and 'memory' in self.resources['limits']:
-                    limit_mem = self.resources['limits']['memory']
-                #nodeSelector: {cpu: epyc-7542}
-                if 'nodeSelector' in self.resources and 'cpu' in self.resources['nodeSelector']:
-                    node_cpu = self.resources['nodeSelector']['cpu']
-                if 'nodeSelector' in self.resources and 'gpu' in self.resources['nodeSelector']:
-                    node_gpu = self.resources['nodeSelector']['gpu']
-                # we want to have a resource dict anyway!
-                self.resources = {}
-                self.resources['requests'] = {}
-                self.resources['requests']['cpu'] = req_cpu
-                self.resources['requests']['memory'] = req_mem
-                self.resources['requests']['gpu'] = req_gpu
-                self.resources['limits'] = {}
-                self.resources['limits']['cpu'] = limit_cpu
-                self.resources['limits']['memory'] = limit_mem
-                self.resources['nodeSelector'] = {}
-                self.resources['nodeSelector']['cpu'] = node_cpu
-                self.resources['nodeSelector']['gpu'] = node_gpu
-                #print(self.resources)
-                # put resources to yaml file
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = req_cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = limit_cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = req_mem
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = limit_mem
-                # remove limits if = 0
-                if limit_cpu == 0:
-                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu']
-                if limit_mem == 0:
-                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory']
-                # add resource gpu
-                #if len(specs) > 2:
-                if node_gpu:
-                    if not 'nodeSelector' in dep['spec']['template']['spec']:
-                        dep['spec']['template']['spec']['nodeSelector'] = {}
-                    if dep['spec']['template']['spec']['nodeSelector'] is None:
-                        dep['spec']['template']['spec']['nodeSelector'] = {}
-                    dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
-                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
-                # add resource cpu
-                #if node_cpu:
-                if not 'nodeSelector' in dep['spec']['template']['spec']:
-                    dep['spec']['template']['spec']['nodeSelector'] = {}
-                if dep['spec']['template']['spec']['nodeSelector'] is None:
-                    dep['spec']['template']['spec']['nodeSelector'] = {}
-                dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
-                if node_cpu == '':
-                    del dep['spec']['template']['spec']['nodeSelector']['cpu']
-            if dep['kind'] == 'Service':
-                service = dep['metadata']['name']
-                #print(service)
-        #with open(self.yamlfolder+"deployment-"+self.d+"-"+instance+".yml","w+") as stream:
-        with open(deployment_experiment,"w+") as stream:
-            try:
-                stream.write(yaml.dump_all(result))
-            except yaml.YAMLError as exc:
-                print(exc)
-        #return appname
-        return deployment_experiment
-    def DEPRECATED_createDeployment(self, app='', component='sut', experiment='', configuration=''):
-        #self.deployment ='deployment-'+self.d+'-'+self.i+'.yml'
-        #if not os.path.isfile(self.yamlfolder+self.deployment):
-        yamlfile = self.generateDeployment(app=app, component=component, experiment=experiment, configuration=configuration)
-        #print("Deploy "+self.deployment)
-        print("Deploy "+yamlfile)
-        #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
-        self.kubectl('create -f '+yamlfile)
     def delete_deployment(self, deployment):
         """
         Delete a deployment given by name.
@@ -1266,7 +1016,7 @@ class testdesign():
         experiment['step'] = "runBenchmarks"
         experiment['connection'] = connection
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
-        self.logExperiment(experiment)
+        self.log_experiment(experiment)
         # copy deployments
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
@@ -1431,7 +1181,7 @@ class testdesign():
         experiment['step'] = "runBenchmarks"
         experiment['connection'] = connection
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
-        self.logExperiment(experiment)
+        self.log_experiment(experiment)
         # copy deployments
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')

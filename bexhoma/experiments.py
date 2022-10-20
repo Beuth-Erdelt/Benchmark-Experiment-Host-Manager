@@ -144,8 +144,8 @@ class default():
 		self.workload = kwargs
 	def set_querymanagement(self, **kwargs):
 		self.querymanagement = kwargs
+	# the following can be overwritten by configuration
 	def set_connectionmanagement(self, **kwargs):
-		# can be overwritten by configuration
 		self.connectionmanagement = kwargs
 	def set_resources(self, **kwargs):
 		self.resources = {**self.resources, **kwargs}
