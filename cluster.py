@@ -82,12 +82,12 @@ if __name__ == '__main__':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		app = cluster.appname
 		# get all volumes
-		pvcs = cluster.getPVCs(app=app, component='storage', experiment='', configuration='')
+		pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
 		#print("PVCs", pvcs)
 		volumes = {}
 		for pvc in pvcs:
 			volumes[pvc] = {}
-			pvcs_labels = cluster.getPVCsLabels(app=app, component='storage', experiment='', configuration='', pvc=pvc)
+			pvcs_labels = cluster.get_pvc_labels(app=app, component='storage', experiment='', configuration='', pvc=pvc)
 			#print("PVCsLabels", pvcs_labels)
 			pvc_labels = pvcs_labels[0]
 			volumes[pvc]['configuration'] = pvc_labels['configuration']
@@ -99,13 +99,13 @@ if __name__ == '__main__':
 				volumes[pvc]['timeLoading [s]'] = ""
 			volumes[pvc]['dbms'] = pvc_labels['dbms']
 			#volumes[pvc]['labels'] = pvcs_label
-			pvcs_specs = cluster.getPVCsSpecs(app=app, component='storage', experiment='', configuration='', pvc=pvc)
+			pvcs_specs = cluster.get_pvc_specs(app=app, component='storage', experiment='', configuration='', pvc=pvc)
 			pvc_specs = pvcs_specs[0]
 			#print("PVCsSpecs", pvcs_specs)
 			#volumes[pvc]['specs'] = pvc_specs
 			volumes[pvc]['storage_class_name'] = pvc_specs.storage_class_name
 			volumes[pvc]['storage'] = pvc_specs.resources.requests['storage']
-			pvcs_status = cluster.getPVCsStatus(app=app, component='storage', experiment='', configuration='', pvc=pvc)
+			pvcs_status = cluster.get_pvc_status(app=app, component='storage', experiment='', configuration='', pvc=pvc)
 			#print("PVCsStatus", pvcs_status)
 			volumes[pvc]['status'] = pvcs_status[0].phase
 		#print(volumes)
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 				if args.verbose:
 					deployments = cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Deployments", deployments)
-					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("SUT Services", services)
 				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 				if args.verbose:
 					stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Stateful Sets", stateful_sets)
-					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Worker Services", services)
 				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
@@ -189,7 +189,7 @@ if __name__ == '__main__':
 				if args.verbose:
 						stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Stateful Sets", stateful_sets)
-						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+						services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Maintaining Services", services)
 				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
@@ -209,7 +209,7 @@ if __name__ == '__main__':
 				if args.verbose:
 						stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Stateful Sets", stateful_sets)
-						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+						services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Loading Services", services)
 				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
@@ -229,7 +229,7 @@ if __name__ == '__main__':
 				if args.verbose:
 					stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Stateful Sets", stateful_sets)
-					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+					services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Monitoring Services", services)
 				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:

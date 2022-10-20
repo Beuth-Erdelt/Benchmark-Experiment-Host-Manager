@@ -403,8 +403,16 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.get_pods_labels(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getServices(self, app='', component='', experiment='', configuration=''):
-        self.logger.debug('testdesign.getServices()')
+    def get_services(self, app='', component='', experiment='', configuration=''):
+        """
+        Return all services matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the service belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
+        self.logger.debug('testdesign.get_services()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -415,7 +423,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('getServices'+label)
+        self.logger.debug('get_services'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -427,9 +435,17 @@ class testdesign():
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getPorts(self, app='', component='', experiment='', configuration=''):
-        self.logger.debug('testdesign.getPorts()')
+            return self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+    def get_ports_of_service(self, app='', component='', experiment='', configuration=''):
+        """
+        Return all ports of a services matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the service belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
+        self.logger.debug('testdesign.get_ports_of_service()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -440,7 +456,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('getPorts'+label)
+        self.logger.debug('get_ports_of_service'+label)
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -452,9 +468,17 @@ class testdesign():
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.getPorts(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getPVCs(self, app='', component='', experiment='', configuration=''):
-        self.logger.debug('testdesign.getPVCs()')
+            return self.get_ports_of_service(app=app, component=component, experiment=experiment, configuration=configuration)
+    def get_pvc(self, app='', component='', experiment='', configuration=''):
+        """
+        Return all persistent volume claims matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the pvc belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
+        self.logger.debug('testdesign.get_pvc()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -465,7 +489,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('getPVCs'+label)
+        self.logger.debug('get_pvc'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -477,9 +501,18 @@ class testdesign():
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.getPVCs(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getPVCsLabels(self, app='', component='', experiment='', configuration='', pvc=''):
-        self.logger.debug('testdesign.getPVCsLabels()')
+            return self.get_pvc(app=app, component=component, experiment=experiment, configuration=configuration)
+    def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
+        """
+        Return all labels of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
+
+        :param app: app the pvc belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param pvc: Name of the PVC
+        """
+        self.logger.debug('testdesign.get_pvc_labels()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -490,7 +523,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('getPVCs'+label)
+        self.logger.debug('get_pvc'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -505,9 +538,18 @@ class testdesign():
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.getPVCsLabels(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
-    def getPVCsSpecs(self, app='', component='', experiment='', configuration='', pvc=''):
-        self.logger.debug('testdesign.getPVCsSpecs()')
+            return self.get_pvc_labels(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
+    def get_pvc_specs(self, app='', component='', experiment='', configuration='', pvc=''):
+        """
+        Return all specs of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
+
+        :param app: app the pvc belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param pvc: Name of the PVC
+        """
+        self.logger.debug('testdesign.get_pvc_specs()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -518,7 +560,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('getPVCs'+label)
+        self.logger.debug('get_pvc'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -533,9 +575,18 @@ class testdesign():
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.getPVCsSpecs(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
-    def getPVCsStatus(self, app='', component='', experiment='', configuration='', pvc=''):
-        self.logger.debug('testdesign.getPVCsStatus()')
+            return self.get_pvc_specs(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
+    def get_pvc_status(self, app='', component='', experiment='', configuration='', pvc=''):
+        """
+        Return status of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
+
+        :param app: app the pvc belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param pvc: Name of the PVC
+        """
+        self.logger.debug('testdesign.get_pvc_status()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -546,7 +597,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('getPVCs'+label)
+        self.logger.debug('get_pvc'+label)
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -561,7 +612,7 @@ class testdesign():
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.getPVCsStatus(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
+            return self.get_pvc_status(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
     def deleteStatefulSet(self, name):
         self.logger.debug('testdesign.deleteStatefulSet({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
@@ -610,7 +661,7 @@ class testdesign():
             return self.deleteService(name=name)
     def OLD_startPortforwarding(self, service='', app='', component='sut'):
         self.logger.debug('testdesign.startPortforwarding()')
-        ports = self.getPorts(app=app, component=component)
+        ports = self.get_ports_of_service(app=app, component=component)
         if len(service) == 0:
             service = self.service
         if len(service) == 0:
@@ -657,9 +708,9 @@ class testdesign():
             self.activepod = None
         self.deployments = self.get_deployments(app, component, experiment, configuration)
         print(self.deployments)
-        self.services = self.getServices(app, component, experiment, configuration)
+        self.services = self.get_services(app, component, experiment, configuration)
         print(self.services)
-        self.pvcs = self.getPVCs()
+        self.pvcs = self.get_pvc()
     def kubectl(self, command):
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
         self.logger.debug('testdesign.kubectl({})'.format(fullcommand))
@@ -1508,7 +1559,7 @@ class testdesign():
         deployments = self.get_deployments(app=app, component=component)
         for deployment in deployments:
             self.delete_deployment(deployment)
-        services = self.getServices(app=app, component=component)
+        services = self.get_services(app=app, component=component)
         for service in services:
             self.deleteService(service)
     def stop_maintaining(self, experiment='', configuration=''):
@@ -1551,14 +1602,14 @@ class testdesign():
         deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.delete_deployment(deployment)
-        services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        services = self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.delete_deployment(deployment)
-        services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        services = self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
         stateful_sets = self.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -1641,7 +1692,7 @@ class testdesign():
             experiment = ''
         if configuration is None:
             configuration = ''
-        pods_master = self.getServices(component='sut', experiment=experiment, configuration=configuration)
+        pods_master = self.get_services(component='sut', experiment=experiment, configuration=configuration)
         if len(pods_master) > 0:
             pod_master = pods_master[0]
             print("Connect to {}".format(pod_master))

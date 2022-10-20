@@ -140,9 +140,9 @@ class default():
         print(self.pods)
         self.deployments = self.experiment.cluster.get_deployments(app, component, experiment, configuration)
         print(self.deployments)
-        self.services = self.experiment.cluster.getServices(app, component, experiment, configuration)
+        self.services = self.experiment.cluster.get_services(app, component, experiment, configuration)
         print(self.services)
-        self.pvcs = self.experiment.cluster.getPVCs()
+        self.pvcs = self.experiment.cluster.get_pvc()
     def set_connectionmanagement(self, **kwargs):
         self.connectionmanagement = kwargs
     def set_resources(self, **kwargs):
@@ -195,7 +195,7 @@ class default():
         experiment['volume'] = self.v
         experiment['initscript'] = {self.s: self.initscript.copy()}
         experiment['instance'] = self.i
-        self.logExperiment(experiment)
+        self.log_experiment(experiment)
         """
         if delay > 0:
             self.delay(delay)
@@ -227,7 +227,7 @@ class default():
         experiment['volume'] = self.v
         experiment['initscript'] = {self.s: self.initscript.copy()}
         experiment['instance'] = self.i
-        self.logExperiment(experiment)
+        self.log_experiment(experiment)
         """
         if delay > 0:
             self.delay(delay)
@@ -355,9 +355,9 @@ class default():
             #    self.wait(10)
             #    status = self.experiment.cluster.get_pod_status(pod_sut)
             print("ckeck if {} is running".format(pod_sut))
-            services = self.experiment.cluster.getServices(app, component, self.experiment.code, configuration)
+            services = self.experiment.cluster.get_services(app, component, self.experiment.code, configuration)
             service = services[0]
-            ports = self.experiment.cluster.getPorts(app, component, self.experiment.code, configuration)
+            ports = self.experiment.cluster.get_ports_of_service(app, component, self.experiment.code, configuration)
             forward = ['kubectl', '--context {context}'.format(context=self.experiment.cluster.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
             forward.extend(ports)
             your_command = " ".join(forward)
@@ -392,7 +392,7 @@ class default():
             experiment['volume'] = self.v
             experiment['initscript'] = {self.s: self.initscript.copy()}
             experiment['instance'] = self.i
-            self.logExperiment(experiment)
+            self.log_experiment(experiment)
             """
             if delay > 0:
                 self.delay(delay)
@@ -528,7 +528,7 @@ scrape_configs:
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.delete_deployment(deployment)
-        services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        services = self.experiment.cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
     def stop_maintaining(self, app='', component='maintaining', experiment='', configuration=''):
@@ -672,12 +672,12 @@ scrape_configs:
                         dep['spec']['resources']['requests']['storage'] = self.storage['storageSize']
                     #print(dep['spec']['accessModes']) # list
                     #print(dep['spec']['resources']['requests']['storage'])
-                    pvcs = self.experiment.cluster.getPVCs(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                    pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                     #print(pvcs)
                     if len(pvcs) > 0:
                         print("Storage {} exists".format(name_pvc))
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
-                        pvcs_labels = self.experiment.cluster.getPVCsLabels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                        pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                         self.logger.debug(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
@@ -921,7 +921,7 @@ scrape_configs:
         stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
             self.experiment.cluster.deleteStatefulSet(stateful_set)
-        services = self.experiment.cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
+        services = self.experiment.cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.deleteService(service)
         if self.experiment.monitoring_active:
@@ -1326,7 +1326,7 @@ scrape_configs:
         experiment['step'] = "runBenchmarks"
         experiment['connection'] = connection
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
-        self.experiment.cluster.logExperiment(experiment)
+        self.experiment.cluster.log_experiment(experiment)
         # copy deployments
         #if os.path.isfile(self.yamlfolder+self.deployment):
         #    shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')

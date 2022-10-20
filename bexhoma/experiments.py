@@ -161,10 +161,6 @@ class default():
 		self.maintaining_parameters = kwargs
 	def add_configuration(self, configuration):
 		self.configurations.append(configuration)
-	def __set_queryfile(self, queryfile):
-		self.cluster.set_queryfile(queryfile)
-	def __set_configfolder(self, configfolder):
-		self.cluster.set_configfolder(configfolder)
 	def set_querymanagement_quicktest(self,
 			numRun=1,
 			datatransfer=False):
@@ -214,11 +210,15 @@ class default():
 				}
 			})
 		self.monitoring_active = True
-	def __set_resources(self, **kwargs):
-		__self.cluster.set_resources(**kwargs)
-	def __set_ddl_parameters(self, **kwargs):
+	def DEPRECATED__set_queryfile(self, queryfile):
+		self.cluster.set_queryfile(queryfile)
+	def DEPRECATED__set_configfolder(self, configfolder):
+		self.cluster.set_configfolder(configfolder)
+	def DEPRECATED__set_resources(self, **kwargs):
+		self.cluster.set_resources(**kwargs)
+	def DEPRECATED__set_ddl_parameters(self, **kwargs):
 		self.cluster.set_ddl_parameters(**kwargs)
-	def __set_workload(self, **kwargs):
+	def DEPRECATED__set_workload(self, **kwargs):
 		self.cluster.set_workload(**kwargs)
 	def zip(self):
 		"""
