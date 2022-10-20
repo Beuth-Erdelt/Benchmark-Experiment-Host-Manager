@@ -3,11 +3,15 @@
 :Version: 0.5
 :Authors: Patrick Erdelt
 
-    Class for managing an experiment.
+    Classes for managing an experiment.
     This is plugged into a cluster object.
     It collects some configuation objects.
 
     Two examples included, dealing with TPC-H and TPC-DS tests.
+    Another example concerns TSBS experiment.
+    Each experiment also should have an own folder having:
+    * a query file
+    * a subfolder for each dbms, that may run this experiment, including schema files
 
     Copyright (C) 2020  Patrick Erdelt
 
@@ -67,13 +71,13 @@ class default():
 			code=None,
 			numExperiments = 1,
 			timeout = 7200,
-			detached=False):
+			detached=True):
 		"""
 		Construct a new 'experiment' object.
 
 		:param cluster: Cluster object, typically refering to a K8s cluster
 		:param code: Unique identifier for the experiment. If none is given, it is created out of current time
-		:param numExperiments: DEPRECATED - will be ignored
+		:param numExperiments: How many times should the experiment be repeated at every configuration?
 		:param timeout: Maximum timeout per query
 		:param detached: DEPRECATED - use only True
 		"""
@@ -813,9 +817,30 @@ class default():
 
 
 
+"""
+############################################################################
+Some more concrete implementations
+############################################################################
+"""
+
+
+
+"""
+############################################################################
+TPC-DS
+############################################################################
+"""
+
 
 
 class tpcds(default):
+	"""
+	Class for defining an TPC-DS experiment.
+	This sets
+	* the folder to the experiment - including query file and schema informations per dbms
+	* name and information about the experiment
+	* additional parameters - here SF (the scaling factor)
+	"""
 	def __init__(self,
 			cluster,
 			code=None,
@@ -823,8 +848,9 @@ class tpcds(default):
 			SF = '100',
 			numExperiments = 1,
 			timeout = 7200,
-			detached=False):
-		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+			#detached=False
+			):
+		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
 		self.set_experiment(volume='tpcds')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tpcds')
@@ -841,7 +867,20 @@ class tpcds(default):
 		self.set_queryfile('queries-tpcds-profiling.config')
 
 
+"""
+############################################################################
+TPC-H
+############################################################################
+"""
+
 class tpch(default):
+	"""
+	Class for defining an TPC-H experiment.
+	This sets
+	* the folder to the experiment - including query file and schema informations per dbms
+	* name and information about the experiment
+	* additional parameters - here SF (the scaling factor)
+	"""
 	def __init__(self,
 			cluster,
 			code=None,
@@ -849,8 +888,9 @@ class tpch(default):
 			SF = '100',
 			numExperiments = 1,
 			timeout = 7200,
-			detached=False):
-		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+			#detached=False
+			):
+		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
 		self.set_experiment(volume='tpch')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tpch')
@@ -866,7 +906,23 @@ class tpch(default):
 	def set_queries_profiling(self):
 		self.set_queryfile('queries-tpch-profiling.config')
 
+
+
+"""
+############################################################################
+Simple IoT example experiment
+############################################################################
+"""
+
+
 class iot(default):
+	"""
+	Class for defining an TSBS experiment.
+	This sets
+	* the folder to the experiment - including query file and schema informations per dbms
+	* name and information about the experiment
+	* additional parameters - here SF (the scaling factor)
+	"""
 	def __init__(self,
 			cluster,
 			code=None,
@@ -874,8 +930,9 @@ class iot(default):
 			SF = '1',
 			numExperiments = 1,
 			timeout = 7200,
-			detached=False):
-		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+			#detached=False
+			):
+		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
 		self.set_experiment(volume='iot')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/iot')
@@ -904,7 +961,23 @@ class iot(default):
 		#self.monitoring_active = True
 		self.maintaining_active = True
 
+
+
+"""
+############################################################################
+TSBS
+############################################################################
+"""
+
+
 class tsbs(default):
+	"""
+	Class for defining an TSBS experiment.
+	This sets
+	* the folder to the experiment - including query file and schema informations per dbms
+	* name and information about the experiment
+	* additional parameters - here SF (the scaling factor)
+	"""
 	def __init__(self,
 			cluster,
 			code=None,
@@ -912,8 +985,9 @@ class tsbs(default):
 			SF = '1',
 			numExperiments = 1,
 			timeout = 7200,
-			detached=False):
-		default.__init__(self, cluster, code, numExperiments, timeout, detached)
+			#detached=False
+			):
+		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
 		self.set_experiment(volume='tsbs')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tsbs')
