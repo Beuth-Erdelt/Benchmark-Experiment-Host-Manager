@@ -932,8 +932,8 @@ scrape_configs:
             self.stop_loading()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
-    def checkGPUs(self):
-        self.logger.debug('configuration.checkGPUs()')
+    def get_host_gpus(self):
+        self.logger.debug('configuration.get_host_gpus)')
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'

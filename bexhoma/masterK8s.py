@@ -698,7 +698,7 @@ class testdesign():
                     child.terminate()
             except Exception as e:
                 print(e)
-    def getInfo(self, app='', component='', experiment='', configuration=''):
+    def DEPRECATED_getInfo(self, app='', component='', experiment='', configuration=''):
         print("get_pods", app, component, experiment, configuration)
         self.pods = self.get_pods(app, component, experiment, configuration)
         print(self.pods)
@@ -712,11 +712,26 @@ class testdesign():
         print(self.services)
         self.pvcs = self.get_pvc()
     def kubectl(self, command):
+        """
+        Runs an kubectl command in the current context.
+
+        :param command: An eksctl command
+        :return: stdout of the kubectl command
+        """
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
         self.logger.debug('testdesign.kubectl({})'.format(fullcommand))
         #print(fullcommand)
         return os.popen(fullcommand).read()# os.system(fullcommand)
     def executeCTL(self, command, pod='', container='', params=''):
+        """
+        Runs an shell command remotely inside a container of a pod.
+
+        :param command: A shell command
+        :param pod: The name of the pod
+        :param container: The name of the container in the pod
+        :param params: Optional parameters, currently ignored
+        :return: stdout of the shell command
+        """
         if len(pod) == 0:
             pod = self.activepod
         command_clean = command.replace('"','\\"')
@@ -739,7 +754,7 @@ class testdesign():
             print(stdout, stderr)
             return "", stdout, stderr
         return "", "", ""
-    def prepareInit(self):
+    def DEPRECATED_prepareInit(self):
         print("prepareInit")
         cmd = {}
         cmd['prepare_init'] = 'mkdir -p /data/'+self.configfolder+'/'+self.d
@@ -768,7 +783,7 @@ class testdesign():
                 filename = self.d+'/'+script
                 if os.path.isfile(self.configfolder+'/'+filename):
                     self.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
-    def loadData(self):
+    def DEPRECATED_loadData(self):
         self.prepareInit()
         print("loadData")
         self.timeLoadingStart = default_timer()
@@ -783,7 +798,7 @@ class testdesign():
                 self.executeCTL(shellcommand.format(scriptname=scriptfolder+c), container='dbms')
         self.timeLoadingEnd = default_timer()
         self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
-    def checkGPUs(self):
+    def DEPRECATED_get_host_gpus(self):
         print("checkGPUs")
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
@@ -801,7 +816,7 @@ class testdesign():
         finally:
             s.close()
         return found
-    def getMemory(self):
+    def DEPRECATED_getMemory(self):
         print("getMemory")
         command = "grep MemTotal /proc/meminfo | awk '{print \\$2}'"
         stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
@@ -809,7 +824,7 @@ class testdesign():
         mem = stdout#os.popen(fullcommand).read()
         mem =  int(mem.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
         return mem
-    def getCPU(self):
+    def DEPRECATED_getCPU(self):
         print("getCPU")
         command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
         #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command+'"'
@@ -819,7 +834,7 @@ class testdesign():
         cpu = cpu.replace('model name\t: ', '')
         #cpu = cpu.replace('model name\t: ', 'CPU: ')
         return cpu.replace('\n','')
-    def getCores(self):
+    def DEPRECATED_getCores(self):
         print("getCores")
         cmd = {}
         command = 'grep -c ^processor /proc/cpuinfo'
@@ -828,7 +843,7 @@ class testdesign():
         cores = stdout#os.popen(fullcommand).read()
         #cores = os.popen(fullcommand).read()
         return int(cores)
-    def getHostsystem(self):
+    def DEPRECATED_getHostsystem(self):
         print("getHostsystem")
         cmd = {}
         command = 'uname -r'
@@ -837,7 +852,7 @@ class testdesign():
         host = stdout#os.popen(fullcommand).read()
         #host = os.popen(fullcommand).read()
         return host.replace('\n','')
-    def getNode(self):
+    def DEPRECATED_getNode(self):
         print("getNode")
         cmd = {}
         fullcommand = 'kubectl get pods/'+self.activepod+' -o=json'
@@ -848,7 +863,7 @@ class testdesign():
                 node = datastore['spec']['nodeName']
                 return node
         return ""
-    def getGPUs(self):
+    def DEPRECATED_getGPUs(self):
         print("getGPUs")
         cmd = {}
         command = 'nvidia-smi -L'
@@ -862,7 +877,7 @@ class testdesign():
         for i,j in c.items():
             result += str(j)+" x "+i
         return result
-    def getGPUIDs(self):
+    def DEPRECATED_getGPUIDs(self):
         print("getGPUIDs")
         cmd = {}
         command = 'nvidia-smi -L'
@@ -877,7 +892,7 @@ class testdesign():
             if len(id) > 0:
                 result.append(id)
         return result
-    def getCUDA(self):
+    def DEPRECATED_getCUDA(self):
         print("getCUDA")
         cmd = {}
         command = 'nvidia-smi | grep \'CUDA\''
@@ -886,7 +901,7 @@ class testdesign():
         stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
         cuda = stdout#os.popen(fullcommand).read()
         return cuda.replace('|', '').replace('\n','').strip()
-    def __getTimediff(self):
+    def OLD__getTimediff(self):
         print("getTimediff")
         cmd = {}
         command = 'date +"%s"'
@@ -898,7 +913,7 @@ class testdesign():
         #print(timestamp_remote)
         #print(timestamp_local)
         return int(timestamp_remote)-int(timestamp_local)
-    def getDiskSpaceUsedData(self):
+    def DEPRECATED_getDiskSpaceUsedData(self):
         print("getDiskSpaceUsedData")
         cmd = {}
         if 'datadir' in self.docker:
@@ -909,7 +924,7 @@ class testdesign():
         cmd['disk_space_used'] = command
         stdin, stdout, stderr = self.executeCTL(cmd['disk_space_used'], container='dbms')
         return int(stdout.replace('\n',''))
-    def getDiskSpaceUsed(self):
+    def DEPRECATED_getDiskSpaceUsed(self):
         print("getDiskSpaceUsed")
         cmd = {}
         command = "df / | awk 'NR == 2{print \\$3}'"
@@ -920,13 +935,13 @@ class testdesign():
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
         return int(disk.replace('\n',''))
-    def getConnectionName(self):
+    def DEPRECATED_getConnectionName(self):
         return self.d+"-"+self.s+"-"+self.i+'-'+self.contextdata['clustername']
-    def get_connection_config(self, connection=None, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
+    def DEPRECATED_get_connection_config(self, connection=None, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         if connection is None:
             connection = self.getConnectionName()
         print("get_connection_config")
-        self.getInfo(component='sut')
+        #self.getInfo(component='sut')
         mem = self.getMemory()
         cpu = self.getCPU()
         cores = self.getCores()
@@ -1008,7 +1023,7 @@ class testdesign():
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.v, DBNAME=self.v.upper())
         return c
-    def runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
+    def DEPRECATED_runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -1096,10 +1111,10 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
         #self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
-    def continueBenchmarks(self, connection=None, query=None):
+    def OLD_continueBenchmarks(self, connection=None, query=None):
         #configfolder='experiments/gdelt'
-        self.getInfo(component='sut')
-        self.deployment = self.get_deployments()[0]
+        #self.getInfo(component='sut')
+        #self.deployment = self.get_deployments()[0]
         self.connection = connection
         self.resultfolder = self.config['benchmarker']['resultfolder']
         resultfolder = self.resultfolder+ '/'+str(self.code)
@@ -1155,7 +1170,7 @@ class testdesign():
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
-    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
+    def DEPRECATED_run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
         if len(configfolder) == 0:
@@ -1708,20 +1723,3 @@ class testdesign():
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
 
-
-"""
-class aws():
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
-        super().__init__(clusterconfig, configfolder, yamlfolder, context, code, instance, volume, docker, script, queryfile)
-        self.cluster = self.contextdata['cluster']
-    def eksctl(self, command):
-        #fullcommand = 'eksctl --context {context} {command}'.format(context=self.context, command=command)
-        fullcommand = 'eksctl {command}'.format(command=command)
-        self.logger.debug('aws.eksctl({})'.format(fullcommand))
-        #print(fullcommand)
-        return os.popen(fullcommand).read()# os.system(fullcommand)
-    def scale_nodegroup(self, nodegroup, size):
-        #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
-        command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
-        return self.eksctl(command)
-"""
