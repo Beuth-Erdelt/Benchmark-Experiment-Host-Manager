@@ -489,6 +489,15 @@ class testdesign():
             self.wait(2)
             return self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
     def get_pods(self, app='', component='', experiment='', configuration='', status=''):
+        """
+        Return all pods matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the pod belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param status: Status of the pod
+        """
         self.logger.debug('testdesign.get_pods()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
@@ -519,8 +528,16 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.get_pods(app=app, component=component, experiment=experiment, configuration=configuration, status=status)
-    def getStatefulSets(self, app='', component='', experiment='', configuration=''):
-        self.logger.debug('testdesign.getStatefulSets()')
+    def get_stateful_sets(self, app='', component='', experiment='', configuration=''):
+        """
+        Return all stateful sets matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the set belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
+        self.logger.debug('testdesign.get_stateful_sets()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
         if len(app)==0:
@@ -532,7 +549,7 @@ class testdesign():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('getStatefulSets'+label)
+        self.logger.debug('get_stateful_sets'+label)
         try: 
             api_response = self.v1apps.list_namespaced_stateful_set(self.namespace, label_selector=label)
             #pprint(api_response)
@@ -545,8 +562,8 @@ class testdesign():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getNodes(self, app='', nodegroup_type='', nodegroup_name=''):
+            return self.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+    def get_nodes(self, app='', nodegroup_type='', nodegroup_name=''):
         """
         Get all nodes of a cluster.
 
@@ -554,7 +571,7 @@ class testdesign():
         :param nodegroup_type: Type of the nodegroup, e.g. sut
         :param nodegroup_name: Name of the nodegroup, e.g. sut_high_memory
         """
-        self.logger.debug('testdesign.getNodes()')
+        self.logger.debug('testdesign.get_nodes()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -571,11 +588,11 @@ class testdesign():
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_node for getNodes: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_node for get_nodes: %s\n" % e)
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getNodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+            return self.get_nodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
     def get_podstatus(self, pod, appname=''):
         self.logger.debug('testdesign.get_podstatus()')
         try:
@@ -1780,7 +1797,7 @@ class testdesign():
         services = self.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.deleteService(service)
-        stateful_sets = self.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+        stateful_sets = self.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
             self.deleteStatefulSet(stateful_set)
         if component == 'sut':

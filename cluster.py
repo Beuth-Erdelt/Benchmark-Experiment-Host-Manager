@@ -172,7 +172,7 @@ if __name__ == '__main__':
 				component = 'worker'
 				apps[configuration][component] = ''
 				if args.verbose:
-					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+					stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Stateful Sets", stateful_sets)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Worker Services", services)
@@ -187,7 +187,7 @@ if __name__ == '__main__':
 				component = 'maintaining'
 				apps[configuration][component] = ''
 				if args.verbose:
-						stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+						stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Stateful Sets", stateful_sets)
 						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Maintaining Services", services)
@@ -207,7 +207,7 @@ if __name__ == '__main__':
 				component = 'loading'
 				apps[configuration][component] = ''
 				if args.verbose:
-						stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+						stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Stateful Sets", stateful_sets)
 						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Loading Services", services)
@@ -227,7 +227,7 @@ if __name__ == '__main__':
 				component = 'monitoring'
 				apps[configuration][component] = ''
 				if args.verbose:
-					stateful_sets = cluster.getStatefulSets(app=app, component=component, experiment=experiment, configuration=configuration)
+					stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Stateful Sets", stateful_sets)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Monitoring Services", services)

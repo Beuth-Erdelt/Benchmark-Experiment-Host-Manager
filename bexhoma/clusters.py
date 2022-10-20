@@ -117,7 +117,7 @@ class aws(kubernetes):
         fullcommand = 'eksctl {command}'.format(command=command)
         self.logger.debug('aws.eksctl({})'.format(fullcommand))
         return os.popen(fullcommand).read()# os.system(fullcommand)
-    def getNodes(self, app='', nodegroup_type='', nodegroup_name=''):
+    def get_nodes(self, app='', nodegroup_type='', nodegroup_name=''):
         """
         Get all nodes of a cluster.
         This overwrites the cluster method with the AWS specific nodegroup-name label. 
@@ -126,7 +126,7 @@ class aws(kubernetes):
         :param nodegroup_type: Type of the nodegroup, e.g. sut
         :param nodegroup_name: Name of the nodegroup, e.g. sut_high_memory
         """
-        self.logger.debug('aws.getNodes()')
+        self.logger.debug('aws.get_nodes()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -143,11 +143,11 @@ class aws(kubernetes):
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_node for getNodes: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_node for get_nodes: %s\n" % e)
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getNodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+            return self.get_nodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
     def scale_nodegroups(self, nodegroup_names, size=None):
         print("aws.scale_nodegroups({nodegroup_names}, {size})".format(nodegroup_names=nodegroup_names, size=size))
         for nodegroup_name, size_default in nodegroup_names.items():
@@ -166,7 +166,7 @@ class aws(kubernetes):
         #else:
         #    return ""
     def get_nodegroup_size(self, nodegroup_type='', nodegroup_name=''):
-        resp = self.getNodes(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+        resp = self.get_nodes(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
         num_nodes_aux_actual = len(resp)
         self.logger.debug('aws.get_nodegroup_size({},{}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_actual))
         return num_nodes_aux_actual
