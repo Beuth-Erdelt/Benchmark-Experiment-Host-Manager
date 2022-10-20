@@ -136,7 +136,7 @@ class default():
         if len(experiment) == 0:
             experiment = self.experiment.code
         print("get_items", app, component, experiment, configuration)
-        self.pods = self.experiment.cluster.getPods(app, component, experiment, configuration)
+        self.pods = self.experiment.cluster.get_pods(app, component, experiment, configuration)
         print(self.pods)
         self.deployments = self.experiment.cluster.get_deployments(app, component, experiment, configuration)
         print(self.deployments)
@@ -178,12 +178,12 @@ class default():
         #self.createDeployment()
         self.create_sut()
         self.get_items(component='sut')
-        pods = self.experiment.cluster.getPods(component='sut')
-        status = self.getPodStatus(pods[0])
+        pods = self.experiment.cluster.get_pods(component='sut')
+        status = self.get_podstatus(pods[0])
         while status != "Running":
             print(status)
             self.wait(10)
-            status = self.getPodStatus(pods[0])
+            status = self.get_podstatus(pods[0])
         self.experiment.cluster.startPortforwarding()
         self.experiment.cluster.getChildProcesses()
         # store experiment
@@ -204,12 +204,12 @@ class default():
         #self.setExperiment(instance, volume, docker, script)
         self.get_items(component='sut')
         self.get_items(component='sut')
-        pods = self.experiment.cluster.getPods(component='sut')
-        status = self.getPodStatus(pods[0])
+        pods = self.experiment.cluster.get_pods(component='sut')
+        status = self.get_podstatus(pods[0])
         while status != "Running":
             print(status)
             self.wait(10)
-            status = self.getPodStatus(pods[0])
+            status = self.get_podstatus(pods[0])
         dbmsactive = self.checkDBMS(self.host, self.port)
         while not dbmsactive:
             self.startPortforwarding()
@@ -236,10 +236,10 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
+            status = self.experiment.cluster.get_podstatus(pod_sut)
             if status == "Pending":
                 return True
         return False
@@ -247,10 +247,10 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
+            status = self.experiment.cluster.get_podstatus(pod_sut)
             if status == "Running":
                 return True
         return False
@@ -258,13 +258,13 @@ class default():
         app = self.appname
         component = 'maintaining'
         configuration = self.configuration
-        pods_running = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Running")
-        pods_succeeded = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Succeeded")
+        pods_running = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration, status="Running")
+        pods_succeeded = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration, status="Succeeded")
         self.logger.debug("maintaining_is_running found {} running and {} succeeded pods".format(len(pods_running), len(pods_succeeded)))
         return len(pods_running) + len(pods_succeeded) == self.num_maintaining
         #if len(pods) > 0:
         #    pod_sut = pods[0]
-        #    status = self.experiment.cluster.getPodStatus(pod_sut)
+        #    status = self.experiment.cluster.get_podstatus(pod_sut)
         #    if status == "Running":
         #        return True
         #return False
@@ -272,10 +272,10 @@ class default():
         app = self.appname
         component = 'maintaining'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration, status="Pending")
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration, status="Pending")
         if len(pods) > 0:
             pod_sut = pods[0]
-            #status = self.experiment.cluster.getPodStatus(pod_sut)
+            #status = self.experiment.cluster.get_podstatus(pod_sut)
             #if status == "Pending":
             return True
         return False
@@ -283,10 +283,10 @@ class default():
         app = self.appname
         component = 'monitoring'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
+            status = self.experiment.cluster.get_podstatus(pod_sut)
             if status == "Running":
                 return True
         return False
@@ -294,10 +294,10 @@ class default():
         app = self.appname
         component = 'monitoring'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
+            status = self.experiment.cluster.get_podstatus(pod_sut)
             if status == "Pending":
                 return True
         return False
@@ -305,10 +305,10 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
+            status = self.experiment.cluster.get_podstatus(pod_sut)
             if status == "Pending":
                 return True
         return False
@@ -320,7 +320,7 @@ class default():
         if len(experiment) == 0:
             experiment = self.code
         # put list of clients to message queue
-        pods_messagequeue = self.experiment.cluster.getPods(component='messagequeue')
+        pods_messagequeue = self.experiment.cluster.get_pods(component='messagequeue')
         if len(pods_messagequeue) > 0:
             pod_messagequeue = pods_messagequeue[0]
         else:
@@ -342,10 +342,10 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
-        pods = self.experiment.cluster.getPods(app, component, self.experiment.code, configuration)
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
-            status = self.experiment.cluster.getPodStatus(pod_sut)
+            status = self.experiment.cluster.get_podstatus(pod_sut)
             if status != "Running":
                 return False
             if self.num_worker > 0:
@@ -353,7 +353,7 @@ class default():
             #while status != "Running":
             #    print(pod_sut, status)
             #    self.wait(10)
-            #    status = self.experiment.cluster.getPodStatus(pod_sut)
+            #    status = self.experiment.cluster.get_podstatus(pod_sut)
             print("ckeck if {} is running".format(pod_sut))
             services = self.experiment.cluster.getServices(app, component, self.experiment.code, configuration)
             service = services[0]
@@ -482,7 +482,7 @@ scrape_configs:
       - targets: ['{master}:9400']""".format(master=name_sut)
                         # services of workers
                         name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
-                        pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+                        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                         i = 0
                         for pod in pods_worker:
                             print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
@@ -548,7 +548,7 @@ scrape_configs:
         #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
         pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
         for p in pods:
-            status = self.experiment.cluster.getPodStatus(p)
+            status = self.experiment.cluster.get_podstatus(p)
             print(p, status)
             #if status == "Running":
             self.experiment.cluster.deletePod(p)
@@ -569,7 +569,7 @@ scrape_configs:
         #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
         pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
         for p in pods:
-            status = self.experiment.cluster.getPodStatus(p)
+            status = self.experiment.cluster.get_podstatus(p)
             print(p, status)
             #if status == "Running":
             self.experiment.cluster.deletePod(p)
@@ -1151,12 +1151,12 @@ scrape_configs:
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
-        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         pod_sut = self.pod_sut
         c['hostsystem'] = self.get_server_infos()
         c['worker'] = []
-        pods = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+        pods = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         for pod in pods:
             self.pod_sut = pod
             c['worker'].append(self.get_server_infos())
@@ -1251,7 +1251,7 @@ scrape_configs:
         service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
         service_namespace = self.experiment.cluster.contextdata['namespace']
         service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
-        pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=self.code)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
         self.pod_sut = pods[0]
         #service_port = config_K8s['port']
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
@@ -1339,7 +1339,7 @@ scrape_configs:
             self.wait(10)
             pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
-        status = self.experiment.cluster.getPodStatus(client_pod_name)
+        status = self.experiment.cluster.get_podstatus(client_pod_name)
         self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
         print("Waiting for job {}: ".format(client_pod_name), end="", flush=True)
         while status != "Running":
@@ -1352,7 +1352,7 @@ scrape_configs:
                 self.wait(10, silent=True)
                 pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
             client_pod_name = pods[0]
-            status = self.experiment.cluster.getPodStatus(client_pod_name)
+            status = self.experiment.cluster.get_podstatus(client_pod_name)
         print("found")
         # copy config to pod
         cmd = {}
@@ -1457,7 +1457,7 @@ scrape_configs:
     """
     def copyLog(self):
         print("copyLog")
-        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         if len(self.dockertemplate['logfile']):
             cmd = {}
@@ -1467,7 +1467,7 @@ scrape_configs:
             stdin, stdout, stderr = self.executeCTL(command=cmd['save_log'], pod=self.pod_sut)
     def prepareInit(self):
         self.logger.debug('configuration.prepareInit()')
-        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         #cmd = {}
         #cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
@@ -1501,26 +1501,26 @@ scrape_configs:
                     #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
     def attach_worker(self):
         if self.num_worker > 0:
-            pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+            pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
             name_worker = self.generate_component_name(component='worker', experiment=self.code, configuration=self.configuration)
             if len(pods) > 0:
                 pod_sut = pods[0]
                 num_worker = 0
                 while num_worker < self.num_worker:
                     num_worker = 0
-                    pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+                    pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                     for pod in pods_worker:
                         #stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
-                        status = self.experiment.cluster.getPodStatus(pod)
+                        status = self.experiment.cluster.get_podstatus(pod)
                         if status == "Running":
                             num_worker = num_worker+1
                     print(self.configuration, "Workers", num_worker, "of", self.num_worker)
-                pods_worker = self.experiment.cluster.getPods(component='worker', configuration=self.configuration, experiment=self.code)
+                pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
     def check_sut(self):
-        pods = self.experiment.cluster.getPods(app=self.appname, component='sut', configuration=self.configuration, experiment=self.code)
+        pods = self.experiment.cluster.get_pods(app=self.appname, component='sut', configuration=self.configuration, experiment=self.code)
         if len(pods) > 0:
             self.pod_sut = pods[0]
             return True
@@ -1545,7 +1545,7 @@ scrape_configs:
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # get labels (start) of sut
-                    pod_labels = self.experiment.cluster.getPodsLabels(app=app, component='sut', experiment=experiment, configuration=configuration)
+                    pod_labels = self.experiment.cluster.get_podsLabels(app=app, component='sut', experiment=experiment, configuration=configuration)
                     #print(pod_labels)
                     if len(pod_labels) > 0:
                         pod = next(iter(pod_labels.keys()))
@@ -1556,7 +1556,7 @@ scrape_configs:
                         if 'timeLoading' in pod_labels[pod]:
                             self.timeLoading = float(pod_labels[pod]['timeLoading'])
                     # mark pod with new end time and duration
-                    pods_sut = self.experiment.cluster.getPods(app=app, component='sut', experiment=experiment, configuration=configuration)
+                    pods_sut = self.experiment.cluster.get_pods(app=app, component='sut', experiment=experiment, configuration=configuration)
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
                         #self.timeLoadingEnd = default_timer()
@@ -1584,7 +1584,7 @@ scrape_configs:
                     self.experiment.cluster.deleteJob(job)
                     pods = self.experiment.cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:
-                        status = self.experiment.cluster.getPodStatus(pod)
+                        status = self.experiment.cluster.get_podstatus(pod)
                         print(pod, status)
                         #if status == "Running":
                         # TODO: Find names of containers dynamically
@@ -1610,7 +1610,7 @@ scrape_configs:
         # check if asynch loading outside cluster is done
         # only if inside cluster if done
         if not loading_pods_active:
-            pod_labels = self.experiment.cluster.getPodsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
+            pod_labels = self.experiment.cluster.get_podsLabels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
             #print(pod_labels)
             if len(pod_labels) > 0:
                 pod = next(iter(pod_labels.keys()))
@@ -1635,7 +1635,7 @@ scrape_configs:
         self.logger.debug('configuration.load_data()')
         self.loading_started = True
         self.prepareInit()
-        pods = self.experiment.cluster.getPods(component='sut', configuration=self.configuration, experiment=self.code)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
         scriptfolder = '/tmp/'
@@ -2070,7 +2070,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         logger.debug(stderr.decode('utf-8'))
         return stdout.decode('utf-8')
         #return os.system(fullcommand)
-    #pods = self.experiment.cluster.getPods(component='sut', configuration=configuration, experiment=experiment)
+    #pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=experiment)
     #pod_sut = pods[0]
     #print("load_data")
     timeLoadingStart = default_timer()

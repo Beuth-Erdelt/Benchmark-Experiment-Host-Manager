@@ -187,11 +187,11 @@ This yields a fully loaded DBMS with a fixed port on the virtual machine in a do
 The command `cluster.startExperiment()` (basically) is short for:
 ```
 cluster.getInfo()
-status = cluster.getPodStatus(self.activepod)
+status = cluster.get_podstatus(self.activepod)
 while status != "Running":
     print(status)
     cluster.wait(10)
-    status = cluster.getPodStatus(self.activepod)
+    status = cluster.get_podstatus(self.activepod)
 dbmsactive = cluster.checkDBMS(cluster.host, 9091)
 while not dbmsactive:
     cluster.startPortforwarding()
@@ -199,7 +199,7 @@ while not dbmsactive:
     dbmsactive = cluster.checkDBMS(cluster.host, 9091)
 self.loadData()
 ```
-* `cluster.getPodStatus()`: Checks status of pod (if pod is running)
+* `cluster.get_podstatus()`: Checks status of pod (if pod is running)
 * Setup Network `cluster.startPortforwarding()`: Forwards the port of the DBMS in the pod to localhost:fixedport (same for all containers) 
 * `cluster.checkDBMS(ip, port)`: Opens a socket to localhost:port to check if dbms is answering
 * `cluster.loadData()`: Uploads and runs init scripts to load data to dbms
@@ -384,11 +384,11 @@ for s in cluster.services:
 for d in cluster.deployments:
     cluster.delete_deployment(d)
 for p in cluster.pods:
-    status = cluster.getPodStatus(cluster.activepod)
+    status = cluster.get_podstatus(cluster.activepod)
     while status != "":
         print(status)
         time.sleep(5)
-        status = cluster.getPodStatus(cluster.activepod)
+        status = cluster.get_podstatus(cluster.activepod)
 ```
 
 * `cluster.stopPortforwarding()`: Kills all processes starting with `kubectl port-forward` on the client system

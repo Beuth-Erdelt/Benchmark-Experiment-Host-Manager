@@ -142,7 +142,7 @@ class default():
 		if len(experiment) == 0:
 			experiment = self.code
 		print("get_items", app, component, experiment, configuration)
-		self.pods = self.cluster.getPods(app, component, experiment, configuration)
+		self.pods = self.cluster.get_pods(app, component, experiment, configuration)
 		print(self.pods)
 		self.deployments = self.cluster.get_deployments(app, component, experiment, configuration)
 		print(self.deployments)
@@ -349,14 +349,14 @@ class default():
 		Zip the result folder in the dashboard pod.
 		"""
 		# remote:
-		pods = self.cluster.getPods(component='dashboard')
+		pods = self.cluster.get_pods(component='dashboard')
 		if len(pods) > 0:
 			pod_dashboard = pods[0]
-			status = self.cluster.getPodStatus(pod_dashboard)
+			status = self.cluster.get_podstatus(pod_dashboard)
 			print(pod_dashboard, status)
 			while status != "Running":
 				self.wait(10)
-				status = self.cluster.getPodStatus(pod_dashboard)
+				status = self.cluster.get_podstatus(pod_dashboard)
 				print(pod_dashboard, status)
 			cmd = {}
 			# only zip first level
@@ -404,7 +404,7 @@ class default():
 		4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
 		"""
 		if len(pod_dashboard) == 0:
-			pods = self.cluster.getPods(component='dashboard')
+			pods = self.cluster.get_pods(component='dashboard')
 			pod_dashboard = pods[0]
 		# copy logs and yamls to result folder
 		print("Copy configuration and logs", end="", flush=True)
@@ -506,7 +506,7 @@ class default():
 		#self.cluster.getJobPods(app, component, self.code, configuration)
 		pods = self.cluster.getJobPods(app, component, self.code, configuration)
 		for p in pods:
-			status = self.cluster.getPodStatus(p)
+			status = self.cluster.get_podstatus(p)
 			print(p, status)
 			self.cluster.deletePod(p)
 	def start_monitoring(self):
@@ -577,10 +577,10 @@ class default():
 			#time.sleep(intervals)
 			self.wait(intervals)
 			# count number of running and pending pods
-			num_pods_running_experiment = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
-			num_pods_pending_experiment = len(self.cluster.getPods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
-			num_pods_running_cluster = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Running'))
-			num_pods_pending_cluster = len(self.cluster.getPods(app = self.appname, component = 'sut', status = 'Pending'))
+			num_pods_running_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
+			num_pods_pending_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
+			num_pods_running_cluster = len(self.cluster.get_pods(app = self.appname, component = 'sut', status = 'Running'))
+			num_pods_pending_cluster = len(self.cluster.get_pods(app = self.appname, component = 'sut', status = 'Pending'))
 			for config in self.configurations:
 				# check if sut is running
 				if not config.sut_is_running():
@@ -691,7 +691,7 @@ class default():
 								print("{} can be stopped".format(config.configuration))
 								app = self.cluster.appname
 								component = 'sut'
-								pods = self.cluster.getPods(app, component, self.code, config.configuration)
+								pods = self.cluster.get_pods(app, component, self.code, config.configuration)
 								if len(pods) > 0:
 									pod_sut = pods[0]
 									self.cluster.store_pod_log(pod_sut, 'dbms')
@@ -720,7 +720,7 @@ class default():
 			pods = self.cluster.getJobPods(app, component, self.code, configuration)
 			# status per pod
 			for p in pods:
-				status = self.cluster.getPodStatus(p)
+				status = self.cluster.get_podstatus(p)
 				self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
 				#print(p,status)
 				if status == 'Succeeded':
@@ -789,7 +789,7 @@ class default():
 				pods = self.cluster.getJobPods(app, component, self.code, configuration)
 				# status per pod
 				for p in pods:
-					status = self.cluster.getPodStatus(p)
+					status = self.cluster.get_podstatus(p)
 					print(p,status)
 					if status == 'Succeeded':
 						#if status != 'Running':

@@ -187,11 +187,11 @@ class testdesign():
         # check if is terminated
         self.createDeployment()
         self.getInfo(component='sut')
-        status = self.getPodStatus(self.activepod)
+        status = self.get_podstatus(self.activepod)
         while status != "Running":
             print(status)
             self.wait(10)
-            status = self.getPodStatus(self.activepod)
+            status = self.get_podstatus(self.activepod)
         self.startPortforwarding()
         self.getChildProcesses()
         # store experiment
@@ -210,11 +210,11 @@ class testdesign():
         """ Per config: Load Data """
         self.setExperiment(instance, volume, docker, script)
         self.getInfo(component='sut')
-        status = self.getPodStatus(self.activepod)
+        status = self.get_podstatus(self.activepod)
         while status != "Running":
             print(status)
             self.wait(10)
-            status = self.getPodStatus(self.activepod)
+            status = self.get_podstatus(self.activepod)
         dbmsactive = self.checkDBMS(self.host, self.port)
         while not dbmsactive:
             self.startPortforwarding()
@@ -256,11 +256,11 @@ class testdesign():
         for d in self.deployments:
             self.delete_deployment(d)
         for p in self.pods:
-            status = self.getPodStatus(p)
+            status = self.get_podstatus(p)
             while status != "":
                 print(status)
                 self.wait(5)
-                status = self.getPodStatus(p)
+                status = self.get_podstatus(p)
         experiment = {}
         experiment['delay'] = delay
         experiment['step'] = "cleanExperiment"
@@ -275,6 +275,11 @@ class testdesign():
         self.stopExperiment()
         self.cleanExperiment()
     def wait(self, sec):
+        """
+        Function for waiting some time and inform via output about this
+
+        :param sec: Number of seconds to wait
+        """
         print("Waiting {} s...".format(sec), end="", flush=True)
         intervals = int(sec)
         time.sleep(intervals)
@@ -285,6 +290,12 @@ class testdesign():
         #for i in tqdm(range(intervals)):
         #    time.sleep(intervalLength)
     def delay(self, sec):
+        """
+        Function for waiting some time and inform via output about this.
+        Synonymous for wait()
+
+        :param sec: Number of seconds to wait
+        """
         self.wait(sec)
     def DEPRECATED_generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
         if len(app)==0:
@@ -436,9 +447,22 @@ class testdesign():
         #self.kubectl('kubectl create -f '+self.yamlfolder+self.deployment)
         self.kubectl('create -f '+yamlfile)
     def delete_deployment(self, deployment):
+        """
+        Delete a deployment given by name.
+
+        :param deployment: Name of the deployment to be deleted.
+        """
         self.logger.debug('testdesign.delete_deployment()')
         self.kubectl('delete deployment '+deployment)
     def get_deployments(self, app='', component='', experiment='', configuration=''):
+        """
+        Return all deployments matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the deployment belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
         label = ''
         if len(app)==0:
             app = self.appname
@@ -464,8 +488,8 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
-    def getPods(self, app='', component='', experiment='', configuration='', status=''):
-        self.logger.debug('testdesign.getPods()')
+    def get_pods(self, app='', component='', experiment='', configuration='', status=''):
+        self.logger.debug('testdesign.get_pods()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
         label = ''
         if len(app)==0:
@@ -481,7 +505,7 @@ class testdesign():
             field_selector = 'status.phase='+status
         else:
             field_selector = ''
-        self.logger.debug('getPods label='+label)
+        self.logger.debug('get_pods label='+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label, field_selector=field_selector)
             #pprint(api_response)
@@ -490,11 +514,11 @@ class testdesign():
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod for getPods: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for get_pods: %s\n" % e)
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getPods(app=app, component=component, experiment=experiment, configuration=configuration, status=status)
+            return self.get_pods(app=app, component=component, experiment=experiment, configuration=configuration, status=status)
     def getStatefulSets(self, app='', component='', experiment='', configuration=''):
         self.logger.debug('testdesign.getStatefulSets()')
         # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
@@ -552,8 +576,8 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.getNodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
-    def getPodStatus(self, pod, appname=''):
-        self.logger.debug('testdesign.getPodStatus()')
+    def get_podstatus(self, pod, appname=''):
+        self.logger.debug('testdesign.get_podstatus()')
         try:
             if len(appname) == 0:
                 appname = self.appname
@@ -567,13 +591,13 @@ class testdesign():
             else:
                 return ""
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod for getPodStatus: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for get_podstatus: %s\n" % e)
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getPodStatus(pod=pod, appname=appname)
-    def getPodsLabels(self, app='', component='', experiment='', configuration=''):
-        self.logger.debug('testdesign.getPodsLabels()')
+            return self.get_podstatus(pod=pod, appname=appname)
+    def get_podsLabels(self, app='', component='', experiment='', configuration=''):
+        self.logger.debug('testdesign.get_podsLabels()')
         label = ''
         if len(app)==0:
             app = self.appname
@@ -593,11 +617,11 @@ class testdesign():
                     pod_labels[item.metadata.name] = item.metadata.labels
             return pod_labels
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod for getPodsLabels: %s\n" % e)
+            print("Exception when calling CoreV1Api->list_namespaced_pod for get_podsLabels: %s\n" % e)
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.getPodsLabels(app=app, component=component, experiment=experiment, configuration=configuration)
+            return self.get_podsLabels(app=app, component=component, experiment=experiment, configuration=configuration)
     def getServices(self, app='', component='', experiment='', configuration=''):
         self.logger.debug('testdesign.getServices()')
         label = ''
@@ -843,8 +867,8 @@ class testdesign():
             except Exception as e:
                 print(e)
     def getInfo(self, app='', component='', experiment='', configuration=''):
-        print("getPods", app, component, experiment, configuration)
-        self.pods = self.getPods(app, component, experiment, configuration)
+        print("get_pods", app, component, experiment, configuration)
+        self.pods = self.get_pods(app, component, experiment, configuration)
         print(self.pods)
         if len(self.pods) > 0:
             self.activepod = self.pods[0]
@@ -1387,12 +1411,12 @@ class testdesign():
         self.wait(10)
         pods = self.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
-        status = self.getPodStatus(client_pod_name)
+        status = self.get_podstatus(client_pod_name)
         print(client_pod_name, status)
         while status != "Running":
             print(client_pod_name, status)
             self.wait(10)
-            status = self.getPodStatus(client_pod_name)
+            status = self.get_podstatus(client_pod_name)
         # copy config to pod
         cmd = {}
         cmd['prepare_log'] = ('mkdir /results/{code}'.format(self.code)).replace('"','\\"')
@@ -1720,7 +1744,7 @@ class testdesign():
         #self.getJobPods(app, component, experiment, configuration)
         pods = self.getJobPods(app, component, experiment, configuration)
         for p in pods:
-            status = self.getPodStatus(p)
+            status = self.get_podstatus(p)
             print(p, status)
             #if status == "Running":
             self.deletePod(p)
@@ -1738,7 +1762,7 @@ class testdesign():
         #self.getJobPods(app, component, experiment, configuration)
         pods = self.getJobPods(app, component, experiment, configuration)
         for p in pods:
-            status = self.getPodStatus(p)
+            status = self.get_podstatus(p)
             print(p, status)
             #if status == "Running":
             self.deletePod(p)
@@ -1775,7 +1799,7 @@ class testdesign():
         self.getJobPods(app, component, experiment, configuration)
         pods = self.getJobPods(app, component, experiment, configuration)
         for p in pods:
-            status = self.getPodStatus(p)
+            status = self.get_podstatus(p)
             print(p, status)
             self.deletePod(p)
     def pod_log(self, pod, container=''):
@@ -1792,7 +1816,7 @@ class testdesign():
         return output
     def evaluate_results(self, pod_dashboard=''):
         if len(pod_dashboard) == 0:
-            pods = self.getPods(component='dashboard')
+            pods = self.get_pods(component='dashboard')
             pod_dashboard = pods[0]
         # copy logs and yamls to result folder
         directory = os.fsencode(self.path)
@@ -1821,7 +1845,7 @@ class testdesign():
         #stdout, stderr = proc.communicate()
     def connect_dashboard(self):
         print("connect_dashboard")
-        pods_dashboard = self.getPods(component='dashboard')
+        pods_dashboard = self.get_pods(component='dashboard')
         if len(pods_dashboard) > 0:
             pod_dashboard = pods_dashboard[0]
             cmd = {}

@@ -115,7 +115,7 @@ def manage():
 			h = ['Volumes'] + list(df.columns)
 			print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
 		# get all pods
-		pod_labels = cluster.getPodsLabels(app=app)
+		pod_labels = cluster.get_podsLabels(app=app)
 		#print("Pod Labels", pod_labels)
 		experiment_set = set()
 		for pod, labels in pod_labels.items():
@@ -126,7 +126,7 @@ def manage():
 			if args.verbose:
 				print(experiment)
 			apps = {}
-			pod_labels = cluster.getPodsLabels(app=app, experiment=experiment)
+			pod_labels = cluster.get_podsLabels(app=app, experiment=experiment)
 			configurations = set()
 			for pod, labels in pod_labels.items():
 				if 'configuration' in labels:
@@ -142,11 +142,11 @@ def manage():
 					print("Deployments", deployments)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("SUT Services", services)
-				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 					print("SUT Pods", pods)
 				for pod in pods:
-					status = cluster.getPodStatus(pod)
+					status = cluster.get_podstatus(pod)
 					#print(status)
 					if pod in pod_labels and 'experimentRun' in pod_labels[pod]:
 						experimentRun = '{}. '.format(pod_labels[pod]['experimentRun'])
@@ -176,11 +176,11 @@ def manage():
 					print("Stateful Sets", stateful_sets)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Worker Services", services)
-				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 					print("Worker Pods", pods)
 				for pod in pods:
-					status = cluster.getPodStatus(pod)
+					status = cluster.get_podstatus(pod)
 					#print(status)
 					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
 				############
@@ -191,12 +191,12 @@ def manage():
 						print("Stateful Sets", stateful_sets)
 						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Maintaining Services", services)
-				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 						print("Maintaining Pods", pods)
 				num_pods = {}
 				for pod in pods:
-						status = cluster.getPodStatus(pod)
+						status = cluster.get_podstatus(pod)
 						#print(status)
 						#apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
 						num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
@@ -211,12 +211,12 @@ def manage():
 						print("Stateful Sets", stateful_sets)
 						services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 						print("Loading Services", services)
-				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 						print("Loading Pods", pods)
 				num_pods = {}
 				for pod in pods:
-						status = cluster.getPodStatus(pod)
+						status = cluster.get_podstatus(pod)
 						#print(status)
 						#apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
 						num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
@@ -231,11 +231,11 @@ def manage():
 					print("Stateful Sets", stateful_sets)
 					services = cluster.getServices(app=app, component=component, experiment=experiment, configuration=configuration)
 					print("Monitoring Services", services)
-				pods = cluster.getPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 					print("Monitoring Pods", pods)
 				for pod in pods:
-					status = cluster.getPodStatus(pod)
+					status = cluster.get_podstatus(pod)
 					#print(status)
 					apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
 				############
@@ -252,7 +252,7 @@ def manage():
 				if args.verbose:
 					print("Benchmarker Pods", pods)
 				for pod in pods:
-					status = cluster.getPodStatus(pod)
+					status = cluster.get_podstatus(pod)
 					#print(status)
 					if pod in pod_labels and 'client' in pod_labels[pod]:
 						experimentRun = '{}. '.format(pod_labels[pod]['client'])
