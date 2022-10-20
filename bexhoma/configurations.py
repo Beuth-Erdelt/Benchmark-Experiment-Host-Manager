@@ -52,7 +52,7 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
-    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, numExperiments=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, num_experiment_to_apply=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.logger = logging.getLogger('bexhoma')
         self.experiment = experiment
         #self.code = code
@@ -70,11 +70,11 @@ class default():
             self.script = self.experiment.script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
         self.alias = alias
-        if numExperiments is not None:
-            self.numExperiments = numExperiments
+        if num_experiment_to_apply is not None:
+            self.num_experiment_to_apply = num_experiment_to_apply
         else:
-            self.numExperiments = self.experiment.numExperiments
-        self.numExperimentsDone = 0
+            self.num_experiment_to_apply = self.experiment.num_experiment_to_apply
+        self.num_experiment_to_apply_done = 0
         self.clients = clients
         #if self.code is None:
         #    self.code = str(round(time.time()))
@@ -759,7 +759,7 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
-                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
@@ -1259,7 +1259,7 @@ scrape_configs:
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
-        c['parameter']['numExperiment'] = str(self.numExperimentsDone+1)
+        c['parameter']['numExperiment'] = str(self.num_experiment_to_apply_done+1)
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
         #print(c)
@@ -1745,13 +1745,13 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
-                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
-                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
@@ -1823,13 +1823,13 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 #dep['metadata']['labels']['client'] = str(client)
-                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 #dep['spec']['template']['metadata']['labels']['client'] = str(client)
-                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 # set nodeSelector
                 if 'maintaining' in self.nodes:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
@@ -1927,13 +1927,13 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 #dep['metadata']['labels']['client'] = str(client)
-                dep['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 #dep['spec']['template']['metadata']['labels']['client'] = str(client)
-                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.numExperimentsDone+1)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 # set nodeSelector
                 if 'loading' in self.nodes:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:

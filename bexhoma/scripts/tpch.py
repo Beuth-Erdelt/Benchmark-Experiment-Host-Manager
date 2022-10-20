@@ -62,7 +62,7 @@ def do_benchmark():
 	SF = str(args.scaling_factor)
 	timeout = int(args.timeout)
 	numRun = int(args.num_run)
-	numExperiments = int(args.num_config)
+	num_experiment_to_apply = int(args.num_config)
 	cpu = str(args.request_cpu)
 	memory = str(args.request_ram)
 	cpu_type = str(args.request_cpu_type)
@@ -81,7 +81,7 @@ def do_benchmark():
 	# set experiment
 	if code is None:
 		code = cluster.code
-	experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, detached=True, code=code, numExperiments=numExperiments)
+	experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
 	if mode == 'run':
 		# we want all TPC-H queries
 		experiment.set_queries_full()

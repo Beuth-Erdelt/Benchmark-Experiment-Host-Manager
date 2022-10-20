@@ -69,7 +69,7 @@ class default():
 	def __init__(self,
 			cluster,
 			code=None,
-			numExperiments = 1,
+			num_experiment_to_apply = 1,
 			timeout = 7200,
 			detached=True):
 		"""
@@ -77,7 +77,7 @@ class default():
 
 		:param cluster: Cluster object, typically refering to a K8s cluster
 		:param code: Unique identifier for the experiment. If none is given, it is created out of current time
-		:param numExperiments: How many times should the experiment be repeated at every configuration?
+		:param num_experiment_to_apply: How many times should the experiment be repeated at every configuration?
 		:param timeout: Maximum timeout per query
 		:param detached: DEPRECATED - use only True
 		"""
@@ -97,7 +97,7 @@ class default():
 			runsPerConnection = 0,
 			timeout = timeout,
 			singleConnection = True)
-		self.numExperiments = numExperiments
+		self.num_experiment_to_apply = num_experiment_to_apply
 		self.max_sut = None
 		self.cluster.add_experiment(self)
 		self.appname = self.cluster.appname
@@ -275,7 +275,7 @@ class default():
 			delay = self.cluster.docker['delay_prepare']
 		self.cluster.prepareExperiment(delay=delay)
 		self.cluster.startExperiment(delay=60)
-		for i in range(1, self.numExperiments+1):
+		for i in range(1, self.num_experiment_to_apply+1):
 			self.cluster.stopPortforwarding()
 			self.cluster.startPortforwarding()
 			connection = self.cluster.getConnectionName()
@@ -302,7 +302,7 @@ class default():
 			delay = self.cluster.docker['delay_prepare']
 		self.cluster.prepareExperiment(delay=delay)
 		self.cluster.startExperiment(delay=60)
-		for i in range(1, self.numExperiments+1):
+		for i in range(1, self.num_experiment_to_apply+1):
 			connection = self.cluster.getConnectionName()
 			#self.cluster.runBenchmarks(connection=connection+"-"+str(i), alias=alias+'-'+str(i))
 			self.cluster.run_benchmarker_pod(connection=self.cluster.d+"-"+str(i), alias=alias+'-'+str(i), dialect=dialect)
@@ -678,9 +678,9 @@ class default():
 							parallelism = config.benchmark_list.pop(0)
 							client = str(config.client)
 							config.client = config.client+1
-							print("Done {} of {} benchmarks. This will be client {}".format(config.numExperimentsDone, config.numExperiments, client))
-							if config.numExperiments > 1:
-								connection=config.configuration+'-'+str(config.numExperimentsDone+1)+'-'+client
+							print("Done {} of {} benchmarks. This will be client {}".format(config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+							if config.num_experiment_to_apply > 1:
+								connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
 							else:
 								connection=config.configuration+'-'+client
 							print("Running benchmark {}".format(connection))
@@ -696,8 +696,8 @@ class default():
 									pod_sut = pods[0]
 									self.cluster.store_pod_log(pod_sut, 'dbms')
 								config.stop_sut()
-								config.numExperimentsDone = config.numExperimentsDone + 1
-								if config.numExperimentsDone < config.numExperiments:
+								config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
+								if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
 									print("{} starts again".format(config.configuration))
 									config.benchmark_list = config.benchmark_list_template.copy()
 									# wait for PV to be gone completely
@@ -846,11 +846,11 @@ class tpcds(default):
 			code=None,
 			queryfile = 'queries-tpcds.config',
 			SF = '100',
-			numExperiments = 1,
+			num_experiment_to_apply = 1,
 			timeout = 7200,
 			#detached=False
 			):
-		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
+		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='tpcds')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tpcds')
@@ -886,11 +886,11 @@ class tpch(default):
 			code=None,
 			queryfile = 'queries-tpch.config',
 			SF = '100',
-			numExperiments = 1,
+			num_experiment_to_apply = 1,
 			timeout = 7200,
 			#detached=False
 			):
-		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
+		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='tpch')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tpch')
@@ -928,11 +928,11 @@ class iot(default):
 			code=None,
 			queryfile = 'queries-iot.config',
 			SF = '1',
-			numExperiments = 1,
+			num_experiment_to_apply = 1,
 			timeout = 7200,
 			#detached=False
 			):
-		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
+		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='iot')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/iot')
@@ -983,11 +983,11 @@ class tsbs(default):
 			code=None,
 			queryfile = 'queries-tsbs.config',
 			SF = '1',
-			numExperiments = 1,
+			num_experiment_to_apply = 1,
 			timeout = 7200,
 			#detached=False
 			):
-		default.__init__(self, cluster, code, numExperiments, timeout)#, detached)
+		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='tsbs')
 		self.set_experiment(script='SF'+str(SF)+'-index')
 		self.cluster.set_configfolder('experiments/tsbs')
