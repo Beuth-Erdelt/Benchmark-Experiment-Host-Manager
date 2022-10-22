@@ -242,13 +242,13 @@ def manage():
 				component = 'benchmarker'
 				apps[configuration][component] = ''
 				if args.verbose:
-					jobs = cluster.getJobs(app=app, component=component, experiment=experiment, configuration=configuration)
+					jobs = cluster.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration)
 					# status per job
 					for job in jobs:
-						success = cluster.getJobStatus(job)
+						success = cluster.get_job_status(job)
 						print(job, success)
 				# all pods to these jobs
-				pods = cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
+				pods = cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
 				if args.verbose:
 					print("Benchmarker Pods", pods)
 				for pod in pods:

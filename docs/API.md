@@ -192,16 +192,16 @@ while status != "Running":
     print(status)
     cluster.wait(10)
     status = cluster.get_pod_status(self.activepod)
-dbmsactive = cluster.checkDBMS(cluster.host, 9091)
+dbmsactive = cluster.check_DBMS_connection(cluster.host, 9091)
 while not dbmsactive:
     cluster.startPortforwarding()
     cluster.wait(10)
-    dbmsactive = cluster.checkDBMS(cluster.host, 9091)
+    dbmsactive = cluster.check_DBMS_connection(cluster.host, 9091)
 self.loadData()
 ```
 * `cluster.get_pod_status()`: Checks status of pod (if pod is running)
 * Setup Network `cluster.startPortforwarding()`: Forwards the port of the DBMS in the pod to localhost:fixedport (same for all containers) 
-* `cluster.checkDBMS(ip, port)`: Opens a socket to localhost:port to check if dbms is answering
+* `cluster.check_DBMS_connection(ip, port)`: Opens a socket to localhost:port to check if dbms is answering
 * `cluster.loadData()`: Uploads and runs init scripts to load data to dbms
 
 We check the pod and the network connection again, since the pod may have changed due to restart.
@@ -212,15 +212,15 @@ The command `cluster.startExperiment()` (basically) is short for:
 ```
 cluster.setExperiment(instance, volume, docker, script)
 cluster.startDocker()
-dbmsactive = cluster.checkDBMS(cluster.host, port)
+dbmsactive = cluster.check_DBMS_connection(cluster.host, port)
 while not dbmsactive:
     cluster.wait(10)
-    dbmsactive = cluster.checkDBMS(cluster.host, port)
+    dbmsactive = cluster.check_DBMS_connection(cluster.host, port)
 cluster.loadData()
 ```
 
 * `cluster.startDocker()`: Starts a docker container of a dbms
-* `cluster.checkDBMS(ip, port)`: Opens a socket to ip:port to check if dbms is answering
+* `cluster.check_DBMS_connection(ip, port)`: Opens a socket to ip:port to check if dbms is answering
 * `cluster.loadData()`: Uploads and runs init scripts to load data to dbms
 
 ## Run Benchmarks
@@ -342,11 +342,11 @@ The command `cluster.stopExperiment()` (basically) is short for:
 cluster.getInfo()
 cluster.stopPortforwarding()
 #for p in cluster.pods:
-#    cluster.deletePod(p)
+#    cluster.delete_pod(p)
 ```
 
 * `cluster.stopPortforwarding()`: Disconnects network from current pod
-* ~~`cluster.deletePod()`: Deletes all pods belonging to namespace / matching label app. Note that the deployment will automatically start a new (clean) pod. Also note that the pod nevertheless will keep data if the storage device has been mounted.~~
+* ~~`cluster.delete_pod()`: Deletes all pods belonging to namespace / matching label app. Note that the deployment will automatically start a new (clean) pod. Also note that the pod nevertheless will keep data if the storage device has been mounted.~~
 
 **Note: The pod is not deleted anymore**
 
@@ -378,9 +378,9 @@ The command `cluster.cleanExperiment()` (basically) is short for:
 ```
 cluster.stopPortforwarding()
 for p in self.pvcs:
-    self.deletePVC(p)
+    self.delete_pvc(p)
 for s in cluster.services:
-    cluster.deleteService(s)
+    cluster.delete_service(s)
 for d in cluster.deployments:
     cluster.delete_deployment(d)
 for p in cluster.pods:
@@ -392,8 +392,8 @@ for p in cluster.pods:
 ```
 
 * `cluster.stopPortforwarding()`: Kills all processes starting with `kubectl port-forward` on the client system
-* `cluster.deletePVC()`: Deletes all PVCs in the current namespace and with fitting label app
-* `cluster.deleteService()`: Deletes all Services in the current namespace and with fitting label app
+* `cluster.delete_pvc()`: Deletes all PVCs in the current namespace and with fitting label app
+* `cluster.delete_service()`: Deletes all Services in the current namespace and with fitting label app
 * `cluster.delete_deployment()`: Deletes all Deployments in the current namespace and with fitting label app
 
 ### On AWS

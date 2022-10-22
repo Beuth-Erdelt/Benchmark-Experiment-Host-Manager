@@ -629,8 +629,13 @@ class testdesign():
             self.cluster_access()
             self.wait(2)
             return self.delete_stateful_set(name=name)
-    def deletePod(self, name):
-        self.logger.debug('testdesign.deletePod({})'.format(name))
+    def delete_pod(self, name):
+        """
+        Delete a pod given by name
+
+        :param name: name of the pod to be deleted
+        """
+        self.logger.debug('testdesign.delete_pod({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
@@ -641,9 +646,14 @@ class testdesign():
             self.wait(2)
             # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.deletePod(name=name)
-    def deletePVC(self, name):
-        self.logger.debug('testdesign.deletePVC({})'.format(name))
+                return self.delete_pod(name=name)
+    def delete_pvc(self, name):
+        """
+        Delete a service given by name
+
+        :param name: name of the stateful set to be deleted
+        """
+        self.logger.debug('testdesign.delete_pvc({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
@@ -652,9 +662,14 @@ class testdesign():
             print("Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deletePVC(name=name)
-    def deleteService(self, name):
-        self.logger.debug('testdesign.deleteService({})'.format(name))
+            return self.delete_pvc(name=name)
+    def delete_service(self, name):
+        """
+        Delete a service given by name
+
+        :param name: name of the stateful set to be deleted
+        """
+        self.logger.debug('testdesign.delete_service({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_service(name, self.namespace, body=body)
@@ -663,7 +678,7 @@ class testdesign():
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.deleteService(name=name)
+            return self.delete_service(name=name)
     def OLD_startPortforwarding(self, service='', app='', component='sut'):
         self.logger.debug('testdesign.startPortforwarding()')
         ports = self.get_ports_of_service(app=app, component=component)
@@ -808,7 +823,16 @@ class testdesign():
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
         stdin, stdout, stderr = self.executeCTL(cmd['check_gpus'], container='dbms')
-    def checkDBMS(self, ip, port):
+    def check_DBMS_connection(self, ip, port):
+        """
+        CHeck if DBMS is open for connections.
+        Tries to open a socket to ip:port.
+        Returns True if this is possible.
+
+        :param ip: IP of the host to connect to
+        :param port: Port of the server on the host to connect to
+        :return: True, iff connecting is possible
+        """
         found = False
         s = socket.socket()
         s.settimeout(10)
@@ -1261,7 +1285,7 @@ class testdesign():
         # start pod
         self.kubectl('create -f '+yamlfile)
         self.wait(10)
-        pods = self.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+        pods = self.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
         status = self.get_pod_status(client_pod_name)
         print(client_pod_name, status)
@@ -1287,9 +1311,9 @@ class testdesign():
         self.kubectl('cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.kubectl('cp '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+client_pod_name+':/results/'+str(self.code)+'/protocol.json')
         self.wait(10)
-        jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
+        jobs = self.get_jobs(component=component, configuration=configuration, experiment=self.code, client=client)
         jobname = jobs[0]
-        while not self.getJobStatus(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
+        while not self.get_job_status(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
             print("job running")
             self.wait(60)
         # write pod log
@@ -1300,8 +1324,8 @@ class testdesign():
         f.write(stdout)
         f.close()
         # delete job and pods
-        self.deleteJob(jobname=jobname)
-        self.deleteJobPod(component=component, configuration=configuration, experiment=self.code, client=client)
+        self.delete_job(jobname=jobname)
+        self.delete_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
         self.wait(60)
         # prepare reporting
         #self.copy_results()
@@ -1311,7 +1335,16 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         #evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
-    def getJobs(self, app='', component='', experiment='', configuration='', client=''):
+    def get_jobs(self, app='', component='', experiment='', configuration='', client=''):
+        """
+        Return all jobs matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED?
+        """
         #print("getJobs")
         label = ''
         if len(app)==0:
@@ -1340,8 +1373,18 @@ class testdesign():
             self.wait(2)
             # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
-    def getJobStatus(self, jobname='', app='', component='', experiment='', configuration='', client=''):
+                return self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+    def get_job_status(self, jobname='', app='', component='', experiment='', configuration='', client=''):
+        """
+        Return status of a jobs given by name or matching a set of labels (component/ experiment/ configuration)
+
+        :param jobname: Name of the job we want to know the status of
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED?
+        """
         #print("getJobStatus")
         label = ''
         if len(app)==0:
@@ -1358,7 +1401,7 @@ class testdesign():
         self.logger.debug('getJobStatus '+label)
         try: 
             if len(jobname) == 0:
-                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                jobs = self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 if len(jobs) == 0:
                     return "no job"
                 jobname = jobs[0]
@@ -1381,14 +1424,24 @@ class testdesign():
             self.wait(2)
             # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.getJobStatus(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
-    def deleteJob(self, jobname='', app='', component='', experiment='', configuration='', client=''):
-        self.logger.debug('testdesign.deleteJob()')
+                return self.get_job_status(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+    def delete_job(self, jobname='', app='', component='', experiment='', configuration='', client=''):
+        """
+        Delete a job given by name or matching a set of labels (component/ experiment/ configuration)
+
+        :param jobname: Name of the job we want to delete
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED?
+        """
+        self.logger.debug('testdesign.delete_job()')
         try: 
             if len(jobname) == 0:
-                jobs = self.getJobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                jobs = self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 jobname = jobs[0]
-            self.logger.debug('testdesign.deleteJob({})'.format(jobname))
+            self.logger.debug('testdesign.delete_job({})'.format(jobname))
             api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
             #pprint(api_response.status.succeeded)
@@ -1399,19 +1452,29 @@ class testdesign():
             self.wait(2)
             # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.deleteJob(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
-    def deleteJobPod(self, jobname='', app='', component='', experiment='', configuration='', client=''):
-        self.logger.debug('testdesign.deleteJobPod()')
+                return self.delete_job(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+    def delete_job_pods(self, jobname='', app='', component='', experiment='', configuration='', client=''):
+        """
+        Delete all pods of a job given by name or matching a set of labels (component/ experiment/ configuration)
+
+        :param jobname: Name of the job we want to delete the pods of
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED?
+        """
+        self.logger.debug('testdesign.delete_job_pods()')
         body = kubernetes.client.V1DeleteOptions()
         try: 
             if len(jobname) == 0:
-                pods = self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                pods = self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                 if len(pods) > 0:
                     for pod in pods:
-                        self.deleteJobPod(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                        self.delete_job_pods(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
                     return
                 #jobname = pods[0]
-            self.logger.debug('testdesign.deleteJobPod({})'.format(jobname))
+            self.logger.debug('testdesign.delete_job_pods({})'.format(jobname))
             api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
             #pprint(api_response)
         except ApiException as e:
@@ -1420,8 +1483,17 @@ class testdesign():
             self.wait(2)
             # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.deleteJobPod(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
-    def getJobPods(self, app='', component='', experiment='', configuration='', client=''):
+                return self.delete_job_pods(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+    def get_job_pods(self, app='', component='', experiment='', configuration='', client=''):
+        """
+        Return all pods of a jobs matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED?
+        """
         #print("getJobPods")
         label = ''
         if len(app)==0:
@@ -1451,7 +1523,7 @@ class testdesign():
             self.wait(2)
             # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                return self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
         if len(app) == 0:
             app = self.appname
@@ -1581,57 +1653,57 @@ class testdesign():
             self.delete_deployment(deployment)
         services = self.get_services(app=app, component=component)
         for service in services:
-            self.deleteService(service)
+            self.delete_service(service)
     def stop_maintaining(self, experiment='', configuration=''):
         # all jobs of configuration - benchmarker
         app = self.appname
         component = 'maintaining'
-        jobs = self.getJobs(app, component, experiment, configuration)
+        jobs = self.get_jobs(app, component, experiment, configuration)
         # status per job
         for job in jobs:
-            success = self.getJobStatus(job)
+            success = self.get_job_status(job)
             print(job, success)
-            self.deleteJob(job)
+            self.delete_job(job)
         # all pods to these jobs - automatically stopped?
-        #self.getJobPods(app, component, experiment, configuration)
-        pods = self.getJobPods(app, component, experiment, configuration)
+        #self.get_job_pods(app, component, experiment, configuration)
+        pods = self.get_job_pods(app, component, experiment, configuration)
         for p in pods:
             status = self.get_pod_status(p)
             print(p, status)
             #if status == "Running":
-            self.deletePod(p)
+            self.delete_pod(p)
     def stop_loading(self, experiment='', configuration=''):
         # all jobs of configuration - benchmarker
         app = self.appname
         component = 'loading'
-        jobs = self.getJobs(app, component, experiment, configuration)
+        jobs = self.get_jobs(app, component, experiment, configuration)
         # status per job
         for job in jobs:
-            success = self.getJobStatus(job)
+            success = self.get_job_status(job)
             print(job, success)
-            self.deleteJob(job)
+            self.delete_job(job)
         # all pods to these jobs - automatically stopped?
-        #self.getJobPods(app, component, experiment, configuration)
-        pods = self.getJobPods(app, component, experiment, configuration)
+        #self.get_job_pods(app, component, experiment, configuration)
+        pods = self.get_job_pods(app, component, experiment, configuration)
         for p in pods:
             status = self.get_pod_status(p)
             print(p, status)
             #if status == "Running":
-            self.deletePod(p)
+            self.delete_pod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.delete_deployment(deployment)
         services = self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
-            self.deleteService(service)
+            self.delete_service(service)
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.delete_deployment(deployment)
         services = self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
-            self.deleteService(service)
+            self.delete_service(service)
         stateful_sets = self.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
             self.delete_stateful_set(stateful_set)
@@ -1641,19 +1713,19 @@ class testdesign():
         # all jobs of configuration - benchmarker
         app = self.appname
         component = 'benchmarker'
-        jobs = self.getJobs(app, component, experiment, configuration)
+        jobs = self.get_jobs(app, component, experiment, configuration)
         # status per job
         for job in jobs:
-            success = self.getJobStatus(job)
+            success = self.get_job_status(job)
             print(job, success)
-            self.deleteJob(job)
+            self.delete_job(job)
         # all pods to these jobs
-        self.getJobPods(app, component, experiment, configuration)
-        pods = self.getJobPods(app, component, experiment, configuration)
+        self.get_job_pods(app, component, experiment, configuration)
+        pods = self.get_job_pods(app, component, experiment, configuration)
         for p in pods:
             status = self.get_pod_status(p)
             print(p, status)
-            self.deletePod(p)
+            self.delete_pod(p)
     def pod_log(self, pod, container=''):
         if len(container) > 0:
             fullcommand = 'logs '+pod+' --container='+container

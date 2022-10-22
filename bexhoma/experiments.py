@@ -329,9 +329,9 @@ class default():
 			app = self.cluster.appname
 			component = 'maintaining'
 			configuration = ''
-			jobs = self.cluster.getJobs(app=app, component=component, experiment=self.code, configuration=configuration)
+			jobs = self.cluster.get_jobs(app=app, component=component, experiment=self.code, configuration=configuration)
 			for job in jobs:
-				self.cluster.deleteJob(job)
+				self.cluster.delete_job(job)
 	def stop_loading(self):
 		"""
 		Stop all loading jobs of this experiment.
@@ -345,9 +345,9 @@ class default():
 			app = self.cluster.appname
 			component = 'loading'
 			configuration = ''
-			jobs = self.cluster.getJobs(app=app, component=component, experiment=self.code, configuration=configuration)
+			jobs = self.cluster.get_jobs(app=app, component=component, experiment=self.code, configuration=configuration)
 			for job in jobs:
-				self.cluster.deleteJob(job)
+				self.cluster.delete_job(job)
 	def stop_monitoring(self):
 		"""
 		Stop all monitoring deployments of this experiment.
@@ -374,19 +374,19 @@ class default():
 		self.cluster.logger.debug("experiment.stop_benchmarker({})".format(configuration))
 		app = self.appname
 		component = 'benchmarker'
-		jobs = self.cluster.getJobs(app, component, self.code, configuration)
+		jobs = self.cluster.get_jobs(app, component, self.code, configuration)
 		# status per job
 		for job in jobs:
-			success = self.cluster.getJobStatus(job)
+			success = self.cluster.get_job_status(job)
 			print(job, success)
-			self.cluster.deleteJob(job)
+			self.cluster.delete_job(job)
 		# all pods to these jobs
-		#self.cluster.getJobPods(app, component, self.code, configuration)
-		pods = self.cluster.getJobPods(app, component, self.code, configuration)
+		#self.cluster.get_job_pods(app, component, self.code, configuration)
+		pods = self.cluster.get_job_pods(app, component, self.code, configuration)
 		for p in pods:
 			status = self.cluster.get_pod_status(p)
 			print(p, status)
-			self.cluster.deletePod(p)
+			self.cluster.delete_pod(p)
 	def start_monitoring(self):
 		"""
 		Start monitoring for all dbms configurations of this experiment.
@@ -546,7 +546,7 @@ class default():
 					app = self.cluster.appname
 					component = 'benchmarker'
 					configuration = ''
-					pods = self.cluster.getJobPods(app, component, self.code, configuration=config.configuration)
+					pods = self.cluster.get_job_pods(app, component, self.code, configuration=config.configuration)
 					if len(pods) > 0:
 						# still pods there
 						print("{} has running benchmarks".format(config.configuration))
@@ -594,9 +594,9 @@ class default():
 			app = self.cluster.appname
 			component = 'benchmarker'
 			configuration = ''
-			jobs = self.cluster.getJobs(app, component, self.code, configuration)
+			jobs = self.cluster.get_jobs(app, component, self.code, configuration)
 			# all pods to these jobs
-			pods = self.cluster.getJobPods(app, component, self.code, configuration)
+			pods = self.cluster.get_job_pods(app, component, self.code, configuration)
 			# status per pod
 			for p in pods:
 				status = self.cluster.get_pod_status(p)
@@ -605,24 +605,24 @@ class default():
 				if status == 'Succeeded':
 					#if status != 'Running':
 					self.cluster.store_pod_log(p)
-					self.cluster.deletePod(p)
+					self.cluster.delete_pod(p)
 				if status == 'Failed':
 					#if status != 'Running':
 					self.cluster.store_pod_log(p)
-					self.cluster.deletePod(p)
+					self.cluster.delete_pod(p)
 			# success of job
 			app = self.cluster.appname
 			component = 'benchmarker'
 			configuration = ''
-			success = self.cluster.getJobStatus(app=app, component=component, experiment=self.code, configuration=configuration)
-			jobs = self.cluster.getJobs(app, component, self.code, configuration)
+			success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
+			jobs = self.cluster.get_jobs(app, component, self.code, configuration)
 			# status per job
 			for job in jobs:
-				success = self.cluster.getJobStatus(job)
+				success = self.cluster.get_job_status(job)
 				self.cluster.logger.debug('job {} has success status {}'.format(job, success))
 				#print(job, success)
 				if success:
-					self.cluster.deleteJob(job)
+					self.cluster.delete_job(job)
 			if len(pods) == 0 and len(jobs) == 0:
 				do = False
 				for config in self.configurations:
@@ -663,9 +663,9 @@ class default():
 				app = self.cluster.appname
 				component = 'benchmarker'
 				configuration = ''
-				jobs = self.cluster.getJobs(app, component, self.code, configuration)
+				jobs = self.cluster.get_jobs(app, component, self.code, configuration)
 				# all pods to these jobs
-				pods = self.cluster.getJobPods(app, component, self.code, configuration)
+				pods = self.cluster.get_job_pods(app, component, self.code, configuration)
 				# status per pod
 				for p in pods:
 					status = self.cluster.get_pod_status(p)
@@ -673,23 +673,23 @@ class default():
 					if status == 'Succeeded':
 						#if status != 'Running':
 						self.cluster.store_pod_log(p)
-						self.cluster.deletePod(p)
+						self.cluster.delete_pod(p)
 					if status == 'Failed':
 						#if status != 'Running':
 						self.cluster.store_pod_log(p)
-						self.cluster.deletePod(p)
+						self.cluster.delete_pod(p)
 				# success of job
 				app = self.cluster.appname
 				component = 'benchmarker'
 				configuration = ''
-				success = self.cluster.getJobStatus(app=app, component=component, experiment=self.code, configuration=configuration)
-				jobs = self.cluster.getJobs(app, component, self.code, configuration)
+				success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
+				jobs = self.cluster.get_jobs(app, component, self.code, configuration)
 				# status per job
 				for job in jobs:
-					success = self.cluster.getJobStatus(job)
+					success = self.cluster.get_job_status(job)
 					print(job, success)
 					if success:
-						self.cluster.deleteJob(job)
+						self.cluster.delete_job(job)
 				if len(pods) == 0 and len(jobs) == 0:
 					break
 

@@ -210,11 +210,11 @@ class default():
             print(status)
             self.wait(10)
             status = self.get_pod_status(pods[0])
-        dbmsactive = self.checkDBMS(self.host, self.port)
+        dbmsactive = self.check_DBMS_connection(self.host, self.port)
         while not dbmsactive:
             self.startPortforwarding()
             self.wait(10)
-            dbmsactive = self.checkDBMS(self.host, self.port)
+            dbmsactive = self.check_DBMS_connection(self.host, self.port)
         self.wait(10)
         print("load_data")
         self.load_data()
@@ -367,7 +367,7 @@ class default():
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
             # wait for port to be connected
             self.wait(2)
-            dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            dbmsactive = self.check_DBMS_connection(self.experiment.cluster.host, self.experiment.cluster.port)
             if not dbmsactive:
                 # not answering
                 self.experiment.cluster.stopPortforwarding()
@@ -375,7 +375,7 @@ class default():
             """
             #while not dbmsactive:
             #    self.wait(10)
-            #    dbmsactive = self.checkDBMS(self.experiment.cluster.host, self.experiment.cluster.port)
+            #    dbmsactive = self.check_DBMS_connection(self.experiment.cluster.host, self.experiment.cluster.port)
             #self.wait(10)
             self.check_load_data()
             if not self.loading_started:
@@ -530,7 +530,7 @@ scrape_configs:
             self.experiment.cluster.delete_deployment(deployment)
         services = self.experiment.cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
-            self.experiment.cluster.deleteService(service)
+            self.experiment.cluster.delete_service(service)
     def stop_maintaining(self, app='', component='maintaining', experiment='', configuration=''):
         if len(app)==0:
             app = self.appname
@@ -538,20 +538,20 @@ scrape_configs:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        jobs = self.experiment.cluster.getJobs(app, component, experiment, configuration)
+        jobs = self.experiment.cluster.get_jobs(app, component, experiment, configuration)
         # status per job
         for job in jobs:
-            success = self.experiment.cluster.getJobStatus(job)
+            success = self.experiment.cluster.get_job_status(job)
             print(job, success)
-            self.experiment.cluster.deleteJob(job)
+            self.experiment.cluster.delete_job(job)
         # all pods to these jobs - automatically stopped? only if finished?
-        #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
-        pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        #self.experiment.cluster.get_job_pods(app, component, experiment, configuration)
+        pods = self.experiment.cluster.get_job_pods(app, component, experiment, configuration)
         for p in pods:
             status = self.experiment.cluster.get_pod_status(p)
             print(p, status)
             #if status == "Running":
-            self.experiment.cluster.deletePod(p)
+            self.experiment.cluster.delete_pod(p)
     def stop_loading(self, app='', component='loading', experiment='', configuration=''):
         if len(app)==0:
             app = self.appname
@@ -559,20 +559,20 @@ scrape_configs:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        jobs = self.experiment.cluster.getJobs(app, component, experiment, configuration)
+        jobs = self.experiment.cluster.get_jobs(app, component, experiment, configuration)
         # status per job
         for job in jobs:
-            success = self.experiment.cluster.getJobStatus(job)
+            success = self.experiment.cluster.get_job_status(job)
             print(job, success)
-            self.experiment.cluster.deleteJob(job)
+            self.experiment.cluster.delete_job(job)
         # all pods to these jobs - automatically stopped? only if finished?
-        #self.experiment.cluster.getJobPods(app, component, experiment, configuration)
-        pods = self.experiment.cluster.getJobPods(app, component, experiment, configuration)
+        #self.experiment.cluster.get_job_pods(app, component, experiment, configuration)
+        pods = self.experiment.cluster.get_job_pods(app, component, experiment, configuration)
         for p in pods:
             status = self.experiment.cluster.get_pod_status(p)
             print(p, status)
             #if status == "Running":
-            self.experiment.cluster.deletePod(p)
+            self.experiment.cluster.delete_pod(p)
     def get_instance_from_resources(self):
         resources = experiments.DictToObject(self.resources)
         cpu = resources.requests.cpu
@@ -914,7 +914,7 @@ scrape_configs:
             if use_storage:
                 # remove the storage
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-                self.experiment.cluster.deletePVC(name_pvc)
+                self.experiment.cluster.delete_pvc(name_pvc)
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.delete_deployment(deployment)
@@ -923,7 +923,7 @@ scrape_configs:
             self.experiment.cluster.delete_stateful_set(stateful_set)
         services = self.experiment.cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
-            self.experiment.cluster.deleteService(service)
+            self.experiment.cluster.delete_service(service)
         if self.experiment.monitoring_active:
             self.stop_monitoring()
         if self.experiment.maintaining_active:
@@ -938,8 +938,8 @@ scrape_configs:
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
         stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut, container='dbms')
-    def checkDBMS(self, ip, port):
-        self.logger.debug('configuration.checkDBMS()')
+    def check_DBMS_connection(self, ip, port):
+        self.logger.debug('configuration.check_DBMS_connection()')
         found = False
         s = socket.socket()
         s.settimeout(10)
@@ -1337,7 +1337,7 @@ scrape_configs:
         pods = []
         while len(pods) == 0:
             self.wait(10)
-            pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+            pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
         client_pod_name = pods[0]
         status = self.experiment.cluster.get_pod_status(client_pod_name)
         self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
@@ -1350,7 +1350,7 @@ scrape_configs:
             pods = []
             while len(pods) == 0:
                 self.wait(10, silent=True)
-                pods = self.experiment.cluster.getJobPods(component=component, configuration=configuration, experiment=self.code, client=client)
+                pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
             client_pod_name = pods[0]
             status = self.experiment.cluster.get_pod_status(client_pod_name)
         print("found")
@@ -1397,9 +1397,9 @@ scrape_configs:
             #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         """
         self.wait(10)
-        jobs = self.getJobs(component=component, configuration=configuration, experiment=self.code, client=client)
+        jobs = self.get_jobs(component=component, configuration=configuration, experiment=self.code, client=client)
         jobname = jobs[0]
-        while not self.getJobStatus(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
+        while not self.get_job_status(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
             print("job running")
             self.wait(60)
         # write pod log
@@ -1409,8 +1409,8 @@ scrape_configs:
         f.write(stdout)
         f.close()
         # delete job and pods
-        self.deleteJob(jobname=jobname)
-        self.deleteJobPod(component=component, configuration=configuration, experiment=self.code, client=client)
+        self.delete_job(jobname=jobname)
+        self.delete_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
         self.wait(60)
         # prepare reporting
         #self.copy_results()
@@ -1535,11 +1535,11 @@ scrape_configs:
             component = 'loading'
             experiment = self.code
             configuration = self.configuration
-            success = self.experiment.cluster.getJobStatus(app=app, component=component, experiment=experiment, configuration=configuration)
-            jobs = self.experiment.cluster.getJobs(app, component, self.code, configuration)
+            success = self.experiment.cluster.get_job_status(app=app, component=component, experiment=experiment, configuration=configuration)
+            jobs = self.experiment.cluster.get_jobs(app, component, self.code, configuration)
             # status per job
             for job in jobs:
-                success = self.experiment.cluster.getJobStatus(job)
+                success = self.experiment.cluster.get_job_status(job)
                 self.experiment.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
@@ -1581,8 +1581,8 @@ scrape_configs:
                         self.experiment.cluster.kubectl(fullcommand)
                         # TODO: Also mark volume
                     # delete job and all its pods
-                    self.experiment.cluster.deleteJob(job)
-                    pods = self.experiment.cluster.getJobPods(app=app, component=component, experiment=experiment, configuration=configuration)
+                    self.experiment.cluster.delete_job(job)
+                    pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:
                         status = self.experiment.cluster.get_pod_status(pod)
                         print(pod, status)
@@ -1603,7 +1603,7 @@ scrape_configs:
                         f = open(filename_log, "w")
                         f.write(stdout)
                         f.close()
-                        self.experiment.cluster.deletePod(pod)
+                        self.experiment.cluster.delete_pod(pod)
                     loading_pods_active = False
         else:
             loading_pods_active = False
