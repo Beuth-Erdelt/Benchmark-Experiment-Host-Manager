@@ -649,7 +649,7 @@ class testdesign():
                 return self.delete_pod(name=name)
     def delete_pvc(self, name):
         """
-        Delete a service given by name
+        Delete a persistent volume claim given by name
 
         :param name: name of the stateful set to be deleted
         """
