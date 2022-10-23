@@ -1196,6 +1196,18 @@ class testdesign():
             cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'], container='dbms')
             i = i + 1
+    def pod_log(self, pod, container=''):
+        if len(container) > 0:
+            fullcommand = 'logs '+pod+' --container='+container
+        else:
+            fullcommand = 'logs '+pod
+        #print(fullcommand)
+        output = self.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        return output
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
@@ -1525,6 +1537,17 @@ class testdesign():
             if not e.status == 404:
                 return self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
+        """
+        Creates a job and sets labels (component/ experiment/ configuration).
+        TODO: Set ENV
+
+        :param connection: ONLY FOR DBMSBENCHMARKER, should be ENV
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED? Is part of the template name
+        """
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
@@ -1572,26 +1595,25 @@ class testdesign():
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+    def DEPRECATED_create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         #self.logger.debug('testdesign.create_monitoring()')
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-        #if len(app) == 0:
-        #    app = self.appname
-        #if len(experiment) == 0:
-        #    experiment = self.code
-        #name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
-        #print(name)
         self.logger.debug('testdesign.create_monitoring({})'.format(name))
         return name
-    def create_dashboard(self, app='', component='dashboard'):
-        #print("create_dashboard")
+    def create_dashboard_name(self, app='', component='dashboard'):
+        """
+        Creates a suitable name for the dashboard component.
+
+        :param app: app the dashboard belongs to
+        :param component: Component name, should be 'dashboard' typically
+        """
         if len(app) == 0:
             app = self.appname
         name = "{app}_{component}".format(app=app, component=component)
         #print(name)
-        self.logger.debug('testdesign.create_dashboard({})'.format(name))
+        self.logger.debug('testdesign.create_dashboard_name({})'.format(name))
         return name
-    def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+    def DEPRECATED_start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         self.logger.debug('testdesign.start_monitoring()')
         if len(app) == 0:
             app = self.appname
@@ -1640,13 +1662,24 @@ class testdesign():
         print("Deploy "+deployment)
         self.kubectl('create -f '+deployment_experiment)#self.yamlfolder+deployment)
     def start_dashboard(self, app='', component='dashboard'):
-        deployment ='deploymenttemplate-bexhoma-dashboard.yml'
-        #if not os.path.isfile(self.yamlfolder+self.deployment):
-        name = self.create_dashboard(app, component)
+        """
+        Starts the dashboard component and its service.
+        Manifest is expected in 'deploymenttemplate-bexhoma-dashboard.yml'
+
+        :param app: app the dashboard belongs to
+        :param component: Component name, should be 'dashboard' typically
+        """
+        deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
+        name = self.create_dashboard_name(app, component)
         self.logger.debug('testdesign.start_dashboard({})'.format(deployment))
-        #print("Deploy "+deployment)
         self.kubectl('create -f '+self.yamlfolder+deployment)
     def stop_dashboard(self, app='', component='dashboard'):
+        """
+        Stops the dashboard component and its service.
+
+        :param app: app the dashboard belongs to
+        :param component: Component name, should be 'dashboard' typically
+        """
         self.logger.debug('testdesign.stop_dashboard()')
         deployments = self.get_deployments(app=app, component=component)
         for deployment in deployments:
@@ -1655,6 +1688,13 @@ class testdesign():
         for service in services:
             self.delete_service(service)
     def stop_maintaining(self, experiment='', configuration=''):
+        """
+        Stops all maintaining components (jobs and their pods) in the cluster.
+        Can be limited to a specific experiment or dbms configuration.
+
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
         # all jobs of configuration - benchmarker
         app = self.appname
         component = 'maintaining'
@@ -1673,7 +1713,13 @@ class testdesign():
             #if status == "Running":
             self.delete_pod(p)
     def stop_loading(self, experiment='', configuration=''):
-        # all jobs of configuration - benchmarker
+        """
+        Stops all loading components (jobs and their pods) in the cluster.
+        Can be limited to a specific experiment or dbms configuration.
+
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
         app = self.appname
         component = 'loading'
         jobs = self.get_jobs(app, component, experiment, configuration)
@@ -1691,6 +1737,13 @@ class testdesign():
             #if status == "Running":
             self.delete_pod(p)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        """
+        Stops all monitoring components (deployments and their pods) in the cluster and their service.
+        Can be limited to a specific experiment or dbms configuration.
+
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
         deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.delete_deployment(deployment)
@@ -1698,6 +1751,13 @@ class testdesign():
         for service in services:
             self.delete_service(service)
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
+        """
+        Stops all sut components (deployments and their pods, stateful sets and services) in the cluster.
+        Can be limited to a specific experiment or dbms configuration.
+
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
         deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.delete_deployment(deployment)
@@ -1710,7 +1770,13 @@ class testdesign():
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
     def stop_benchmarker(self, experiment='', configuration=''):
-        # all jobs of configuration - benchmarker
+        """
+        Stops all benchmarking components (jobs and their pods) in the cluster.
+        Can be limited to a specific experiment or dbms configuration.
+
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
         app = self.appname
         component = 'benchmarker'
         jobs = self.get_jobs(app, component, experiment, configuration)
@@ -1726,19 +1792,7 @@ class testdesign():
             status = self.get_pod_status(p)
             print(p, status)
             self.delete_pod(p)
-    def pod_log(self, pod, container=''):
-        if len(container) > 0:
-            fullcommand = 'logs '+pod+' --container='+container
-        else:
-            fullcommand = 'logs '+pod
-        #print(fullcommand)
-        output = self.kubectl(fullcommand)
-        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        #stdout, stderr = proc.communicate()
-        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-        return output
-    def evaluate_results(self, pod_dashboard=''):
+    def DEPRECATED_evaluate_results(self, pod_dashboard=''):
         if len(pod_dashboard) == 0:
             pods = self.get_pods(component='dashboard')
             pod_dashboard = pods[0]
@@ -1768,6 +1822,11 @@ class testdesign():
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
     def connect_dashboard(self):
+        """
+        Connects to the dashboard component.
+        This means the output ports of the dashboard component are forwarded to localhost.
+        Expect results be available under port 8050 (dashboard) and 8888 (Jupyter).
+        """
         print("connect_dashboard")
         pods_dashboard = self.get_pods(component='dashboard')
         if len(pods_dashboard) > 0:
@@ -1779,6 +1838,14 @@ class testdesign():
             #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #stdout, stderr = proc.communicate()
     def connect_master(self, experiment='', configuration=''):
+        """
+        Connects to the master node of a sut component.
+        This means the output ports of the component are forwarded to localhost.
+        Must be limited to a specific experiment or dbms configuration.
+
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
         print("connect_master")
         if experiment is None:
             experiment = ''
