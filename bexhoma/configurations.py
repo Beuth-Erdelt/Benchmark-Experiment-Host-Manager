@@ -61,13 +61,10 @@ class default():
 		This is plugged into an experiment object.
 
         :param experiment: Unique identifier of the experiment
-        :param docker: Unique identifier of the experiment
-        :param configuration: Unique identifier of the experiment
+        :param docker: Name of the Docker image
+        :param configuration: Name of the configuration
         :param script: Unique identifier of the experiment
         :param alias: Unique identifier of the experiment
-
-        :attribute experiment: Unique identifier of the experiment
-        :attribute docker: Name of the docker image of the dbms
 
 		Copyright (C) 2020  Patrick K. Erdelt
 
@@ -86,15 +83,14 @@ class default():
 	"""
 	def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, num_experiment_to_apply=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
 		self.logger = logging.getLogger('bexhoma')
-		self.experiment = experiment
-		#self.code = code
-		self.docker = docker
+		self.experiment = experiment #: Unique identifier of the experiment
+		self.docker = docker #: Name of the Docker image
 		if len(configuration) == 0:
 			configuration = docker
-		self.configuration = configuration
+		self.configuration = configuration #: Name of the configuration, default: Name of the Docker image
 		self.volume = self.experiment.volume
 		if docker is not None:
-			self.dockertemplate = copy.deepcopy(self.experiment.cluster.dockers[self.docker])
+			self.dockertemplate = copy.deepcopy(self.experiment.cluster.dockers[self.docker]) #: Template of the Docker information taken from cluster.config
 		if script is not None:
 			self.script = script
 			self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
@@ -108,8 +104,6 @@ class default():
 			self.num_experiment_to_apply = self.experiment.num_experiment_to_apply
 		self.num_experiment_to_apply_done = 0
 		self.clients = clients
-		#if self.code is None:
-		#	self.code = str(round(time.time()))
 		self.appname = self.experiment.cluster.appname
 		self.code = self.experiment.cluster.code
 		self.resources = {}
@@ -133,9 +127,6 @@ class default():
 		self.experiment_done = False
 		self.dockerimage = dockerimage
 		self.connection_parameter = {}
-		# per configuration: sut+service
-		# per configuration: monitoring+service
-		# per configuration: list of benchmarker
 		self.reset_sut()
 	def reset_sut(self):
 		"""
