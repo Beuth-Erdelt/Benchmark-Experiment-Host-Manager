@@ -136,7 +136,7 @@ class testdesign():
         self.experiments_configfolder = experiments_configfolder
     def set_workload(self, **kwargs):
         """
-        Sets mata data about the experiments, for example name and description.
+        Sets mata data about the experiments for example name and description.
 
         :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
         """

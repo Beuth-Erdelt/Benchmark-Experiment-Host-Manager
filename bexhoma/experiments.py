@@ -137,19 +137,64 @@ class default():
 		"""
 		self.wait(sec)
 	def set_queryfile(self, queryfile):
+		"""
+		Sets the name of a query file of the experiment.
+		This is for the benchmarker component (dbmsbenchmarker).
+
+		:param code: Unique identifier of an experiment
+		"""
 		self.queryfile = queryfile
 	def set_experiments_configfolder(self, experiments_configfolder):
+		"""
+		Sets the configuration folder for the experiment.
+		Bexhoma expects subfolders for expeiment types, for example tpch.
+		In there, bexhoma looks for query.config files (for dbmsbenchmarker) and subfolders containing the schema per dbms.
+
+		:param experiments_configfolder: Relative path to an experiment folder
+		"""
 		self.experiments_configfolder = experiments_configfolder
 	def set_workload(self, **kwargs):
+		"""
+		Sets mata data about the experiment, for example name and description.
+
+		:param kwargs: Dict of meta data, example 'name' => 'TPC-H'
+		"""
 		self.workload = kwargs
 	def set_querymanagement(self, **kwargs):
+		"""
+		Sets query management data for the experiment.
+		This is for the benchmarker component (dbmsbenchmarker).
+
+		:param kwargs: Dict of meta data, example 'numRun' => 3
+		"""
 		self.querymanagement = kwargs
 	# the following can be overwritten by configuration
 	def set_connectionmanagement(self, **kwargs):
+		"""
+		Sets connection management data for the experiment.
+		This is for the benchmarker component (dbmsbenchmarker).
+		Can be overwritten by configuration.
+
+		:param kwargs: Dict of meta data, example 'timout' => 60
+		"""
 		self.connectionmanagement = kwargs
 	def set_resources(self, **kwargs):
+		"""
+		Sets resources for the experiment.
+		This is for the SUT component.
+		Can be overwritten by experiment and configuration.
+
+		:param kwargs: Dict of meta data, example 'requests' => {'cpu' => 4}
+		"""
 		self.resources = {**self.resources, **kwargs}
 	def set_ddl_parameters(self, **kwargs):
+		"""
+		Sets DDL parameters for the experiments.
+		This substitutes placeholders in DDL script.
+		Can be overwritten by configuration.
+
+		:param kwargs: Dict of meta data, example 'index' => 'btree'
+		"""
 		self.ddl_parameters = kwargs
 	def set_eval_parameters(self, **kwargs):
 		self.eval_parameters = kwargs
@@ -160,6 +205,13 @@ class default():
 	def set_maintaining_parameters(self, **kwargs):
 		self.maintaining_parameters = kwargs
 	def add_configuration(self, configuration):
+		"""
+		Adds a configuration object to the list of configurations of this experiment.
+		When a new configuration object is instanciated, an experiment object has to be provided.
+		This method is then called automatically.
+
+		:param configuration: Configuration object
+		"""
 		self.configurations.append(configuration)
 	def set_querymanagement_quicktest(self,
 			numRun=1,
