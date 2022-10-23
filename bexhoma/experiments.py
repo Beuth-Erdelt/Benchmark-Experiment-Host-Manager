@@ -210,16 +210,6 @@ class default():
 				}
 			})
 		self.monitoring_active = True
-	def DEPRECATED__set_queryfile(self, queryfile):
-		self.cluster.set_queryfile(queryfile)
-	def DEPRECATED__set_experiments_configfolder(self, experiments_configfolder):
-		self.cluster.set_experiments_configfolder(experiments_configfolder)
-	def DEPRECATED__set_resources(self, **kwargs):
-		self.cluster.set_resources(**kwargs)
-	def DEPRECATED__set_ddl_parameters(self, **kwargs):
-		self.cluster.set_ddl_parameters(**kwargs)
-	def DEPRECATED__set_workload(self, **kwargs):
-		self.cluster.set_workload(**kwargs)
 	def zip(self):
 		"""
 		Zip the result folder in the dashboard pod.
