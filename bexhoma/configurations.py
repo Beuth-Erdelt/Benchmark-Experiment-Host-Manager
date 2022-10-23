@@ -1,12 +1,12 @@
 """
-:Date: 2022-05-01
-:Version: 0.5
-:Authors: Patrick Erdelt
+:Date: 2022-10-01
+:Version: 0.6.0
+:Authors: Patrick K. Erdelt
 
 	Class for managing an DBMS configuation.
 	This is plugged into an experiment object.
 
-	Copyright (C) 2020  Patrick Erdelt
+	Copyright (C) 2020  Patrick K. Erdelt
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as
@@ -52,6 +52,38 @@ from bexhoma import masterK8s, experiments
 
 
 class default():
+	"""
+	:Date: 2022-10-01
+	:Version: 0.6.0
+	:Authors: Patrick K. Erdelt
+
+		Class for managing an DBMS configuation.
+		This is plugged into an experiment object.
+
+        :param experiment: Unique identifier of the experiment
+        :param docker: Unique identifier of the experiment
+        :param configuration: Unique identifier of the experiment
+        :param script: Unique identifier of the experiment
+        :param alias: Unique identifier of the experiment
+
+        :attribute experiment: Unique identifier of the experiment
+        :attribute docker: Name of the docker image of the dbms
+
+		Copyright (C) 2020  Patrick K. Erdelt
+
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU Affero General Public License as
+		published by the Free Software Foundation, either version 3 of the
+		License, or (at your option) any later version.
+
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU Affero General Public License for more details.
+
+		You should have received a copy of the GNU Affero General Public License
+		along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	"""
 	def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, num_experiment_to_apply=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
 		self.logger = logging.getLogger('bexhoma')
 		self.experiment = experiment
@@ -117,7 +149,7 @@ class default():
 	def add_benchmark_list(self, list_clients):
 		"""
 		Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
-		Example: [1,2,1] means sequentially we will have 1, then 2 and then 1 benchmarker instances.
+		Example: `[1,2,1]` means sequentially we will have 1, then 2 and then 1 benchmarker instances.
 
 		:param list_clients: List of (number of) benchmarker instances
 		"""
@@ -169,6 +201,13 @@ class default():
 		"""
 		self.connectionmanagement = kwargs
 	def set_resources(self, **kwargs):
+		"""
+		Sets resources for the experiment.
+		This is for the SUT component.
+		Can be overwritten by experiment and configuration.
+
+		:param kwargs: Dict of meta data, example 'requests' => {'cpu' => 4}
+		"""
 		self.resources = {**self.resources, **kwargs}
 	def set_storage(self, **kwargs):
 		"""
@@ -186,6 +225,13 @@ class default():
 		"""
 		self.storage = kwargs
 	def set_ddl_parameters(self, **kwargs):
+		"""
+		Sets DDL parameters for the experiments.
+		This substitutes placeholders in DDL script.
+		Can be overwritten by configuration.
+
+		:param kwargs: Dict of meta data, example 'index' => 'btree'
+		"""
 		self.ddl_parameters = kwargs
 	def set_eval_parameters(self, **kwargs):
 		"""
@@ -281,6 +327,11 @@ class default():
 			self.delay(delay)
 		# end
 	def sut_is_pending(self):
+		"""
+		Returns True, iff system-under-test (dbms) is in pending state.
+
+		:return: True, if dbms is in pendig state
+		"""
 		app = self.appname
 		component = 'sut'
 		configuration = self.configuration
@@ -292,6 +343,11 @@ class default():
 				return True
 		return False
 	def sut_is_running(self):
+		"""
+		Returns True, iff system-under-test (dbms) is running.
+
+		:return: True, if dbms is running
+		"""
 		app = self.appname
 		component = 'sut'
 		configuration = self.configuration
@@ -303,6 +359,11 @@ class default():
 				return True
 		return False
 	def maintaining_is_running(self):
+		"""
+		Returns True, iff maintaining is running.
+
+		:return: True, if dbms is running
+		"""
 		app = self.appname
 		component = 'maintaining'
 		configuration = self.configuration
@@ -317,6 +378,11 @@ class default():
 		#		return True
 		#return False
 	def maintaining_is_pending(self):
+		"""
+		Returns True, iff maintaining is in pending state.
+
+		:return: True, if maintaining is in pendig state
+		"""
 		app = self.appname
 		component = 'maintaining'
 		configuration = self.configuration
@@ -328,6 +394,11 @@ class default():
 			return True
 		return False
 	def monitoring_is_running(self):
+		"""
+		Returns True, iff monitoring is running.
+
+		:return: True, if monitoring is running
+		"""
 		app = self.appname
 		component = 'monitoring'
 		configuration = self.configuration
@@ -339,6 +410,11 @@ class default():
 				return True
 		return False
 	def monitoring_is_pending(self):
+		"""
+		Returns True, iff monitoring is in pending state.
+
+		:return: True, if monitoring is in pendig state
+		"""
 		app = self.appname
 		component = 'monitoring'
 		configuration = self.configuration
@@ -349,18 +425,16 @@ class default():
 			if status == "Pending":
 				return True
 		return False
-	def sut_is_pending(self):
-		app = self.appname
-		component = 'sut'
-		configuration = self.configuration
-		pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
-		if len(pods) > 0:
-			pod_sut = pods[0]
-			status = self.experiment.cluster.get_pod_status(pod_sut)
-			if status == "Pending":
-				return True
-		return False
 	def start_loading_pod(self, app='', component='loading', experiment='', configuration='', parallelism=1):
+		"""
+		Starts a job for parallel data ingestion.
+
+		:param app: app the job belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param parallelism: Number of parallel pods in job
+		"""
 		if len(app) == 0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -386,7 +460,11 @@ class default():
 		self.logger.debug("Deploy "+job)
 		self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
 	def start_loading(self, delay=0):
-		""" Per config: Load Data """
+		"""
+		Starts data ingestion by calling scripts inside the sut (dbms) container.
+
+		:param delay: Number of seconds to wait after calling scripts
+		"""
 		app = self.appname
 		component = 'sut'
 		configuration = self.configuration
@@ -447,6 +525,16 @@ class default():
 			return True
 		# end
 	def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
+		"""
+		Generate a name for the component.
+		Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param client: Number of the client, if it comes from a sequence of same components (in particular benchmarker)
+		"""
 		if len(app)==0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -459,6 +547,15 @@ class default():
 			name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
 		return name
 	def start_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1):
+		"""
+		Starts a maintaining job.
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param parallelism: Number of parallel pods in job
+		"""
 		if len(app) == 0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -469,15 +566,27 @@ class default():
 		self.logger.debug("Deploy "+job)
 		self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
 	def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+		"""
+		Generate a name for the monitoring component.
+		Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-		#if len(app) == 0:
-		#	app = self.appname
-		#if len(experiment) == 0:
-		#	experiment = self.code
-		#name = "{app}_{component}_{configuration}_{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment)
 		self.logger.debug("configuration.create_monitoring({})".format(name))
 		return name
 	def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+		"""
+		Starts a monitoring deployment.
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		if not self.experiment.monitoring_active:
 			return
 		if len(app) == 0:
@@ -567,6 +676,14 @@ scrape_configs:
 		self.logger.debug("Deploy "+deployment)
 		self.experiment.cluster.kubectl('create -f '+deployment_experiment)#self.yamlfolder+deployment)
 	def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+		"""
+		Stops a monitoring deployment and removes its service.
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		if len(app)==0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -580,6 +697,14 @@ scrape_configs:
 		for service in services:
 			self.experiment.cluster.delete_service(service)
 	def stop_maintaining(self, app='', component='maintaining', experiment='', configuration=''):
+		"""
+		Stops a monitoring deployment and removes all its pods.
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		if len(app)==0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -601,6 +726,14 @@ scrape_configs:
 			#if status == "Running":
 			self.experiment.cluster.delete_pod(p)
 	def stop_loading(self, app='', component='loading', experiment='', configuration=''):
+		"""
+		Stops a loading job and removes all its pods.
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		if len(app)==0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -622,6 +755,15 @@ scrape_configs:
 			#if status == "Running":
 			self.experiment.cluster.delete_pod(p)
 	def get_instance_from_resources(self):
+		"""
+		Generates an instance name out of the resource parameters that are set using `set_resources()`.
+		Should be DEPRECATED and replaced by something better.
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		resources = experiments.DictToObject(self.resources)
 		cpu = resources.requests.cpu
 		memory = resources.requests.memory
@@ -631,6 +773,10 @@ scrape_configs:
 		instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
 		return instance
 	def use_storage(self):
+		"""
+		Return True, iff storage for the database should be used.
+		Otherwise database is inside ephemeral-storage.
+		"""
 		if len(self.storage) > 0:
 			use_storage = True
 			if 'storageClassName' in self.storage:
@@ -652,11 +798,18 @@ scrape_configs:
 			use_storage = False
 		return use_storage
 	def start_sut(self, app='', component='sut', experiment='', configuration=''):
-		#print("Storage", self.storage)
-		#print(self.storage)
+		"""
+		Start the system-under-test (dbms).
+		This also controls optional worker and storage.
+		Resources are set according to `set_resources()`.
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		use_storage = self.use_storage()
 		#storage_label = 'tpc-ds-1'
-		#print("generateDeployment")
 		if len(app)==0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -948,6 +1101,15 @@ scrape_configs:
 		#	self.start_monitoring()
 		return True
 	def stop_sut(self, app='', component='sut', experiment='', configuration=''):
+		"""
+		Stops a sut deployment and removes all its services and (optionally) stateful sets.
+		It also stops and removes all related components (monitoring, maintaining, loading).
+
+		:param app: app the component belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		"""
 		if len(app)==0:
 			app = self.appname
 		if len(configuration) == 0:
@@ -981,12 +1143,27 @@ scrape_configs:
 		if component == 'sut':
 			self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
 	def get_host_gpus(self):
+		"""
+		Returns information about the sut's host GPUs.
+		Basically this calls `nvidia-smi` on the host.
+
+		:return: GPUs of the host
+		"""
 		self.logger.debug('configuration.get_host_gpus)')
-		print("checkGPUs")
+		#print("checkGPUs")
 		cmd = {}
 		cmd['check_gpus'] = 'nvidia-smi'
 		stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut, container='dbms')
 	def check_DBMS_connection(self, ip, port):
+		"""
+		Check if DBMS is open for connections.
+		Tries to open a socket to ip:port.
+		Returns True if this is possible.
+
+		:param ip: IP of the host to connect to
+		:param port: Port of the server on the host to connect to
+		:return: True, iff connecting is possible
+		"""
 		self.logger.debug('configuration.check_DBMS_connection()')
 		found = False
 		s = socket.socket()
@@ -1000,8 +1177,14 @@ scrape_configs:
 		finally:
 			s.close()
 		return found
-	def getMemory(self):
-		self.logger.debug('configuration.getMemory()')
+	def get_host_memory(self):
+		"""
+		Returns information about the sut's host RAM.
+		Basically this calls `grep MemTotal /proc/meminfo` on the host.
+
+		:return: RAM of the host
+		"""
+		self.logger.debug('configuration.get_host_memory()')
 		try:
 			command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
 			#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -1012,8 +1195,14 @@ scrape_configs:
 		except Exception as e:
 			logging.error(e)
 			return 0
-	def getCPU(self):
-		self.logger.debug('configuration.getCPU()')
+	def get_host_cpu(self):
+		"""
+		Returns information about the sut's host CPU.
+		Basically this calls `more /proc/cpuinfo | grep 'model name'` on the host.
+
+		:return: CPU of the host
+		"""
+		self.logger.debug('configuration.get_host_cpu()')
 		command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 		#cpu = os.popen(fullcommand).read()
@@ -1022,8 +1211,14 @@ scrape_configs:
 		cpu = cpu.replace('model name\t: ', '')
 		#cpu = cpu.replace('model name\t: ', 'CPU: ')
 		return cpu.replace('\n','')
-	def getCores(self):
-		self.logger.debug('configuration.getCores()')
+	def get_host_cores(self):
+		"""
+		Returns information about the sut's host CPU's cores.
+		Basically this calls `grep -c ^processor /proc/cpuinfo` on the host.
+
+		:return: CPU's cores of the host
+		"""
+		self.logger.debug('configuration.get_host_cores()')
 		cmd = {}
 		command = 'grep -c ^processor /proc/cpuinfo'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -1034,8 +1229,14 @@ scrape_configs:
 			return int(cores)
 		else:
 			return 0
-	def getHostsystem(self):
-		self.logger.debug('configuration.getHostsystem()')
+	def get_host_system(self):
+		"""
+		Returns information about the sut's host OS.
+		Basically this calls `uname -r` on the host.
+
+		:return: OS of the host
+		"""
+		self.logger.debug('configuration.get_host_system()')
 		cmd = {}
 		command = 'uname -r'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -1043,8 +1244,14 @@ scrape_configs:
 		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
 		host = stdout#os.popen(fullcommand).read()
 		return host.replace('\n','')
-	def getNode(self):
-		self.logger.debug('configuration.getNode()')
+	def get_host_node(self):
+		"""
+		Returns information about the sut's host name.
+		Basically this calls `kubectl get pod` to receive the information.
+
+		:return: Node name of the host
+		"""
+		self.logger.debug('configuration.get_host_node()')
 		cmd = {}
 		#fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
 		result = self.experiment.cluster.kubectl('get pods/'+self.pod_sut+' -o=json')#self.yamlfolder+deployment)
@@ -1059,8 +1266,14 @@ scrape_configs:
 		except Exception as e:
 			return ""
 		return ""
-	def getGPUs(self):
-		self.logger.debug('configuration.getGPUs()')
+	def get_host_gpus(self):
+		"""
+		Returns information about the sut's host GPUs.
+		Basically this calls `nvidia-smi -L` on the host and aggregates result.
+
+		:return: GPUs of the host
+		"""
+		self.logger.debug('configuration.get_host_gpus()')
 		cmd = {}
 		command = 'nvidia-smi -L'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -1073,8 +1286,14 @@ scrape_configs:
 		for i,j in c.items():
 			result += str(j)+" x "+i
 		return result
-	def getGPUIDs(self):
-		self.logger.debug('configuration.getGPUIDs()')
+	def get_host_gpu_ids(self):
+		"""
+		Returns information about the sut's host GPUs.
+		Basically this calls `nvidia-smi -L` on the host and generates a list of UUIDs of the GPUs.
+
+		:return: List of GPU UUIDs of the host
+		"""
+		self.logger.debug('configuration.get_host_gpu_ids()')
 		cmd = {}
 		command = 'nvidia-smi -L'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -1088,8 +1307,14 @@ scrape_configs:
 			if len(id) > 0:
 				result.append(id)
 		return result
-	def getCUDA(self):
-		self.logger.debug('configuration.getCUDA()')
+	def get_host_cuda(self):
+		"""
+		Returns information about the sut's host CUDA version.
+		Basically this calls `nvidia-smi | grep 'CUDA'` on the host.
+
+		:return: CUDA version of the host
+		"""
+		self.logger.debug('configuration.get_host_cuda()')
 		cmd = {}
 		command = 'nvidia-smi | grep \'CUDA\''
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
@@ -1152,20 +1377,24 @@ scrape_configs:
 		# pipe to awk sometimes does not work
 		#return int(disk.split('\t')[0])
 		return 0
-	#def getConnectionName(self):
-	#	return self.d+"-"+self.s+"-"+self.i+'-'+config_K8s['clustername']
-	def get_server_infos(self):
+	def get_host_all(self):
+		"""
+		Calls all `get_host_x()` methods.
+		Returns information about the sut's host as a dict.
+
+		:return: Dict of informations about the host
+		"""
 		server = {}
-		server['RAM'] = self.getMemory()
-		server['CPU'] = self.getCPU()
-		server['GPU'] = self.getGPUs()
-		server['GPUIDs'] = self.getGPUIDs()
-		server['Cores'] = self.getCores()
-		server['host'] = self.getHostsystem()
-		server['node'] = self.getNode()
+		server['RAM'] = self.get_host_memory()
+		server['CPU'] = self.get_host_cpu()
+		server['GPU'] = self.get_host_gpus()
+		server['GPUIDs'] = self.get_host_gpu_ids()
+		server['Cores'] = self.get_host_cores()
+		server['host'] = self.get_host_system()
+		server['node'] = self.get_host_node()
 		server['disk'] = self.getDiskSpaceUsed()
 		server['datadisk'] = self.getDiskSpaceUsedData()
-		server['cuda'] = self.getCUDA()
+		server['cuda'] = self.get_host_cuda()
 		return server
 	def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
 		#if connection is None:
@@ -1173,12 +1402,12 @@ scrape_configs:
 		"""
 		print("get_connection_config")
 		#self.getInfo(component='sut')
-		mem = self.getMemory()
-		cpu = self.getCPU()
-		cores = self.getCores()
-		host = self.getHostsystem()
-		cuda = self.getCUDA()
-		gpu = self.getGPUs()
+		mem = self.get_host_memory()
+		cpu = self.get_host_cpu()
+		cores = self.get_host_cores()
+		host = self.get_host_system()
+		cuda = self.get_host_cuda()
+		gpu = self.get_host_gpus()
 		"""
 		info = []
 		self.connection = connection
@@ -1199,30 +1428,18 @@ scrape_configs:
 		c['info'] = info
 		c['timeLoad'] = self.timeLoading
 		c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
+		# get hosts information
 		pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
 		self.pod_sut = pods[0]
 		pod_sut = self.pod_sut
-		c['hostsystem'] = self.get_server_infos()
+		c['hostsystem'] = self.get_host_all()
+		# get worker information
 		c['worker'] = []
 		pods = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
 		for pod in pods:
 			self.pod_sut = pod
-			c['worker'].append(self.get_server_infos())
+			c['worker'].append(self.get_host_all())
 		self.pod_sut = pod_sut
-		"""
-		c['hostsystem'] = {}
-		c['hostsystem']['RAM'] = mem
-		c['hostsystem']['CPU'] = cpu
-		c['hostsystem']['GPU'] = gpu
-		c['hostsystem']['GPUIDs'] = self.getGPUIDs()
-		c['hostsystem']['Cores'] = cores
-		c['hostsystem']['host'] = host
-		c['hostsystem']['node'] = self.getNode()
-		c['hostsystem']['disk'] = self.getDiskSpaceUsed()
-		c['hostsystem']['datadisk'] = self.getDiskSpaceUsedData()
-		"""
-		#c['hostsystem']['instance'] = self.instance['type']
-		#c['hostsystem']['resources'] = self.resources
 		# take latest resources
 		# TODO: read from yaml file
 		if 'requests' in self.resources:

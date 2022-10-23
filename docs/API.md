@@ -294,28 +294,28 @@ Results are inspected best using the [dashboard](https://github.com/Beuth-Erdelt
 
 Some information is given by configuration (JDBC data e.g.), some is collected from the experiment host:
 ```
-cluster.getMemory()
-cluster.getCPU()
-cluster.getCores()
-cluster.getHostsystem()
+cluster.get_host_memory()
+cluster.get_host_cpu()
+cluster.get_host_cores()
+cluster.get_host_system()
 cluster.getDiskSpaceUsed()
 cluster.getDiskSpaceUsedData()
-cluster.getCUDA()
-cluster.getGPUs()
+cluster.get_host_cuda()
+cluster.get_host_gpus()
 cluster.copyInits()
 cluster.copyLog()
 cluster.downloadLog()
 ```
 
 Most of these run inside the docker container:
-* `cluster.getMemory()`: Collects `grep MemTotal /proc/meminfo | awk '{print $2}'` and multiplies by 1024
-* `cluster.getCPU()`: Collects `cat /proc/cpuinfo | grep \'model name\' | head -n 1`
-* `cluster.getCores()`: Collects `grep -c ^processor /proc/cpuinfo`
-* `cluster.getHostsystem()`: Collects `uname -r`
+* `cluster.get_host_memory()`: Collects `grep MemTotal /proc/meminfo | awk '{print $2}'` and multiplies by 1024
+* `cluster.get_host_cpu()`: Collects `cat /proc/cpuinfo | grep \'model name\' | head -n 1`
+* `cluster.get_host_cores()`: Collects `grep -c ^processor /proc/cpuinfo`
+* `cluster.get_host_system()`: Collects `uname -r`
 * `cluster.getDiskSpaceUsed()`: Collects `df / | awk 'NR == 2{print $3}'`
 * `cluster.getDiskSpaceUsedData()`: Collects `du datadir | awk 'END{ FS=OFS=\"\t\" }END{print $1}'` inside docker container, where `datadir` is set in config of DBMS
-* `cluster.getCUDA()`: Collects `nvidia-smi | grep \'CUDA\'`
-* `cluster.getGPUs()`: Collects `nvidia-smi -L` and then aggregates the type using `Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])`
+* `cluster.get_host_cuda()`: Collects `nvidia-smi | grep \'CUDA\'`
+* `cluster.get_host_gpus()`: Collects `nvidia-smi -L` and then aggregates the type using `Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])`
 * `cluster.copyInits()`: Copy init scripts to benchmark result folder on host
 * `cluster.copyLog()`: Copy DBMS logs to benchmark result folder on host
 * `cluster.downloadLog()`: Downloads the benchmark result folder from host to local result folder
