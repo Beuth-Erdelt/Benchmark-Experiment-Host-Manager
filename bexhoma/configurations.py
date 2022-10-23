@@ -619,15 +619,15 @@ class default():
 
 scrape_configs:
   - job_name: '{master}'
-	scrape_interval: 3s
-	scrape_timeout: 3s
-	static_configs:
-	  - targets: ['{master}:9300']
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['{master}:9300']
   - job_name: 'monitor-gpu'
-	scrape_interval: 3s
-	scrape_timeout: 3s
-	static_configs:
-	  - targets: ['{master}:9400']""".format(master=name_sut)
+    scrape_interval: 3s
+    scrape_timeout: 3s
+    static_configs:
+      - targets: ['{master}:9400']""".format(master=name_sut)
 						# services of workers
 						name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
 						pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
