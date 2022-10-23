@@ -6,14 +6,12 @@
     Classes for managing an experiment.
     This is plugged into a cluster object.
     It collects some configuation objects.
-
-    Two examples included, dealing with TPC-H and TPC-DS tests.
+    Two examples are included, dealing with TPC-H and TPC-DS tests.
     Another example concerns TSBS experiment.
     Each experiment also should have an own folder having:
 
-    1) a query file
-
-    2) a subfolder for each dbms, that may run this experiment, including schema files
+    1. a query file
+    1. a subfolder for each dbms, that may run this experiment, including schema files
 
     Copyright (C) 2020  Patrick K. Erdelt
 
@@ -319,7 +317,7 @@ class default():
 	def stop_maintaining(self):
 		"""
 		Stop all maintaining jobs of this experiment.
-		If a list of dbms configurations is given, use them.
+		If a list of dbms configurations is set, use it.
 		Otherwise tell the cluster to stop all maintaining jobs belonging to this experiment code.
 		"""
 		if len(self.configurations) > 0:
@@ -335,7 +333,7 @@ class default():
 	def stop_loading(self):
 		"""
 		Stop all loading jobs of this experiment.
-		If a list of dbms configurations is given, use them.
+		If a list of dbms configurations is set, use it.
 		Otherwise tell the cluster to stop all loading jobs belonging to this experiment code.
 		"""
 		if len(self.configurations) > 0:
@@ -351,7 +349,7 @@ class default():
 	def stop_monitoring(self):
 		"""
 		Stop all monitoring deployments of this experiment.
-		If a list of dbms configurations is given, use them.
+		If a list of dbms configurations is set, use it.
 		Otherwise tell the cluster to stop all monitoring deployments belonging to this experiment code.
 		"""
 		if len(self.configurations) > 0:
@@ -402,7 +400,7 @@ class default():
 	def stop_sut(self):
 		"""
 		Stop all SUT deployments of this experiment.
-		If a list of dbms configurations is given, use them.
+		If a list of dbms configurations is set, use it.
 		Otherwise tell the cluster to stop all monitoring deployments belonging to this experiment code.
 		"""
 		if len(self.configurations) > 0:
