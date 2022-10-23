@@ -148,12 +148,37 @@ class default():
     def set_resources(self, **kwargs):
         self.resources = {**self.resources, **kwargs}
     def set_storage(self, **kwargs):
+        """
+        Sets parameters for the storage that might be attached to components.
+        This is in particular for the database of dbms under test.
+        Example:
+
+        `storageClassName = 'ssd',
+        storageSize = '100Gi',
+        keep = False`
+
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of meta data, example 'storageSize' => '100Gi'
+        """
         self.storage = kwargs
     def set_ddl_parameters(self, **kwargs):
         self.ddl_parameters = kwargs
     def set_eval_parameters(self, **kwargs):
+        """
+        Sets some arbitrary parameters that are supposed to be handed over to the benchmarker component.
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of meta data, example 'type' => 'noindex'
+        """
         self.eval_parameters = kwargs
     def set_maintaining_parameters(self, **kwargs):
+        """
+        Sets ENV for maintaining components.
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
         self.maintaining_parameters = kwargs
     def set_nodes(self, **kwargs):
         self.nodes = kwargs

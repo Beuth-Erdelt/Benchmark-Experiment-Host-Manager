@@ -3,30 +3,30 @@
 :Version: 0.6.0
 :Authors: Patrick K. Erdelt
 
-    Classes for managing an experiment.
-    This is plugged into a cluster object.
-    It collects some configuation objects.
-    Two examples are included, dealing with TPC-H and TPC-DS tests.
-    Another example concerns TSBS experiment.
-    Each experiment also should have an own folder having:
+	Classes for managing an experiment.
+	This is plugged into a cluster object.
+	It collects some configuation objects.
+	Two examples are included, dealing with TPC-H and TPC-DS tests.
+	Another example concerns TSBS experiment.
+	Each experiment also should have an own folder having:
 
-    1. a query file
-    1. a subfolder for each dbms, that may run this experiment, including schema files
+	1. a query file
+	1. a subfolder for each dbms, that may run this experiment, including schema files
 
-    Copyright (C) 2020  Patrick K. Erdelt
+	Copyright (C) 2020  Patrick K. Erdelt
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as
+	published by the Free Software Foundation, either version 3 of the
+	License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbmsbenchmarker import parameter, tools, inspector
 import logging
@@ -197,12 +197,37 @@ class default():
 		"""
 		self.ddl_parameters = kwargs
 	def set_eval_parameters(self, **kwargs):
+		"""
+		Sets some arbitrary parameters that are supposed to be handed over to the benchmarker component.
+		Can be overwritten by configuration.
+
+		:param kwargs: Dict of meta data, example 'type' => 'noindex'
+		"""
 		self.eval_parameters = kwargs
 	def set_storage(self, **kwargs):
+		"""
+		Sets parameters for the storage that might be attached to components.
+		This is in particular for the database of dbms under test.
+		Example:
+
+		`storageClassName = 'ssd',
+		storageSize = '100Gi',
+		keep = False`
+
+		Can be overwritten by configuration.
+
+        :param kwargs: Dict of meta data, example 'storageSize' => '100Gi'
+		"""
 		self.storage = kwargs
 	def set_nodes(self, **kwargs):
 		self.nodes = kwargs
 	def set_maintaining_parameters(self, **kwargs):
+		"""
+		Sets ENV for maintaining components.
+		Can be overwritten by configuration.
+
+		:param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+		"""
 		self.maintaining_parameters = kwargs
 	def add_configuration(self, configuration):
 		"""
@@ -216,6 +241,16 @@ class default():
 	def set_querymanagement_quicktest(self,
 			numRun=1,
 			datatransfer=False):
+		"""
+		Sets some parameters that are supposed to be suitable for a quick functional test:
+
+		* small number of runs
+		* no delay
+		* optional data transfer
+		* no monitoring
+		:param numRun: Number of runs per query (this is for the benchmarker component)
+		:param datatransfer: If data should we retrieved and compared
+		"""
 		self.set_querymanagement(
 			numWarmup = 0,
 			numCooldown = 0,
@@ -241,6 +276,17 @@ class default():
 			numRun=256,
 			delay=10,
 			datatransfer=False):
+		"""
+		Sets some parameters that are supposed to be suitable for a monitoring test:
+
+		* high number of runs
+		* optional delay
+		* optional data transfer
+		* monitoring active
+		:param numRun: Number of runs per query (this is for the benchmarker component)
+		:param delay: Number of seconds to wait between queries (this is for the benchmarker component)
+		:param datatransfer: If data should we retrieved and compared
+		"""
 		self.set_querymanagement(
 			numWarmup = 0,
 			numCooldown = 0,
@@ -457,7 +503,7 @@ class default():
 				self.cluster.delete_deployment(deployment)
 	def start_loading(self):
 		"""
-		Start all dbms configurations of this experiment to start loading data.
+		Tells all dbms configurations of this experiment to start loading data.
 		"""
 		for config in self.configurations:
 			config.start_loading()
