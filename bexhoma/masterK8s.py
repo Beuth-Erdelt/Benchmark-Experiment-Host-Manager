@@ -1,10 +1,15 @@
 """
-:Date: 2022-05-01
-:Version: 0.5
-:Authors: Patrick Erdelt
+:Date: 2022-10-01
+:Version: 0.6.0
+:Authors: Patrick K. Erdelt
 
-    Class to manage experiments in a Kubernetes cluster
-    Copyright (C) 2020  Patrick Erdelt
+    Class to manage experiments in a Kubernetes cluster.
+    TODO:
+
+    * Remove instance / volume references from IaaS
+    *  
+
+    Copyright (C) 2020  Patrick K. Erdelt
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -42,7 +47,7 @@ import ast
 from dbmsbenchmarker import *
 
 class testdesign():
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, clusterconfig='cluster.config', experiments_configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.logger = logging.getLogger('bexhoma')
         if context is None:
             # use current context
@@ -53,7 +58,7 @@ class testdesign():
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
-        self.configfolder = configfolder
+        self.experiments_configfolder = experiments_configfolder
         self.resultfolder = self.config['benchmarker']['resultfolder']
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
@@ -91,6 +96,13 @@ class testdesign():
         self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
         self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
     def set_code(self, code):
+        """
+        Sets the unique identifier of an experiment.
+        Use case: We start a cluster (without experiment), then define an experiment, which creates an identifier.
+        This identifier will be set in the cluster as the default experiment.
+
+        :param code: Unique identifier of an experiment
+        """
         self.code = code
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
@@ -103,19 +115,64 @@ class testdesign():
                     self.experiments = ast.literal_eval(f.read())
     # the following can be overwritten by experiment
     def set_queryfile(self, queryfile):
+        """
+        Sets the name of a query file of an experiment.
+        This is for the benchmarker component (dbmsbenchmarker).
+
+        :param code: Unique identifier of an experiment
+        """
         self.queryfile = queryfile
-    def set_configfolder(self, configfolder):
-        self.configfolder = configfolder
+    def set_experiments_configfolder(self, experiments_configfolder):
+        """
+        Sets the configuration folder for the experiments.
+        Bexhoma expects subfolders for expeiment types, for example tpch.
+        In there, bexhoma looks for query.config files (for dbmsbenchmarker) and subfolders containing the schema per dbms.
+
+        :param experiments_configfolder: Relative path to an experiment folder
+        """
+        self.experiments_configfolder = experiments_configfolder
     def set_workload(self, **kwargs):
+        """
+        Sets mata data about the experiments, for example name and description.
+
+        :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
+        """
         self.workload = kwargs
     def set_querymanagement(self, **kwargs):
+        """
+        Sets query management data for the experiments.
+        This is for the benchmarker component (dbmsbenchmarker).
+
+        :param kwargs: Dict of meta data, example 'numRun' => 3
+        """
         self.querymanagement = kwargs
     # the following can be overwritten by experiment and configuration
     def set_connectionmanagement(self, **kwargs):
+        """
+        Sets connection management data for the experiments.
+        This is for the benchmarker component (dbmsbenchmarker).
+        Can be overwritten by experiment and configuration.
+
+        :param kwargs: Dict of meta data, example 'timout' => 60
+        """
         self.connectionmanagement = kwargs
     def set_resources(self, **kwargs):
+        """
+        Sets resources for the experiments.
+        This is for the SUT component.
+        Can be overwritten by experiment and configuration.
+
+        :param kwargs: Dict of meta data, example 'requests' => {'cpu' => 4}
+        """
         self.resources = kwargs
     def set_ddl_parameters(self, **kwargs):
+        """
+        Sets DDL parameters for the experiments.
+        This substitutes placeholders in DDL script.
+        Can be overwritten by experiment and configuration.
+
+        :param kwargs: Dict of meta data, example 'index' => 'btree'
+        """
         self.ddl_parameters = kwargs
     def DEPRECATED_setCode(self, code):
         self.code = code
@@ -140,7 +197,7 @@ class testdesign():
         self.logger.debug('testdesign.log_experiment()')
         # TODO: update to new structure
         experiment['clusterconfig'] = self.clusterconfig
-        experiment['configfolder'] = self.configfolder
+        experiment['experiments_configfolder'] = self.experiments_configfolder
         experiment['yamlfolder'] = self.yamlfolder
         experiment['queryfile'] = self.queryfile
         experiment['clustertype'] = "K8s"
@@ -151,6 +208,14 @@ class testdesign():
             with open(filename, 'w') as f:
                 f.write(str(self.experiments))
     def set_experiments(self, instances=None, volumes=None, dockers=None):
+        """
+        Assigns dicts containing information about instances, volumes and dbms (docker images).
+        This typically comes from a cluster.config.
+
+        :param instances: Dict of instances (DEPRECATED, was for IaaS?)
+        :param volumes: Dict of volumes, that carry data
+        :param dockers: Dict of docker images and meta data about how to usw
+        """
         self.logger.debug('testdesign.set_experiments()')
         """ Read experiment details from cluster config"""
         self.instance = None
@@ -158,6 +223,16 @@ class testdesign():
         self.volumes = volumes
         self.dockers = dockers
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+        """
+        Sets a specific setting for an experiment.
+        In particular this sets instance, volume and dbms (docker image) and name of a list of DDL scrips.
+        This typically comes from a cluster.config.
+
+        :param instances: Dict of instances (DEPRECATED, was for IaaS?)
+        :param volumes: Dict of volumes, that carry data
+        :param dockers: Dict of docker images and meta data about how to usw
+        :param script: Name of list of DDL scripts, that are run when start_loading() is called
+        """
         self.logger.debug('testdesign.set_experiment()')
         # Will be deprecated
         #return self.setExperiment(instance, volume, docker, script)
@@ -651,7 +726,7 @@ class testdesign():
         """
         Delete a persistent volume claim given by name
 
-        :param name: name of the stateful set to be deleted
+        :param name: name of the pvc to be deleted
         """
         self.logger.debug('testdesign.delete_pvc({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
@@ -667,7 +742,7 @@ class testdesign():
         """
         Delete a service given by name
 
-        :param name: name of the stateful set to be deleted
+        :param name: name of the service to be deleted
         """
         self.logger.debug('testdesign.delete_service({})'.format(name))
         body = kubernetes.client.V1DeleteOptions()
@@ -777,9 +852,9 @@ class testdesign():
     def DEPRECATED_prepareInit(self):
         print("prepareInit")
         cmd = {}
-        cmd['prepare_init'] = 'mkdir -p /data/'+self.configfolder+'/'+self.d
+        cmd['prepare_init'] = 'mkdir -p /data/'+self.experiments_configfolder+'/'+self.d
         stdin, stdout, stderr = self.executeCTL(command=cmd['prepare_init'], container='dbms')
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiments_configfolder, docker=self.d)
         # the inits are in the result folder?
         #i = 0
         #for script in self.initscript:
@@ -790,24 +865,24 @@ class testdesign():
         if len(self.ddl_parameters):
             for script in self.initscript:
                 filename_template = self.d+'/'+script
-                if os.path.isfile(self.configfolder+'/'+filename_template):
-                    with open(self.configfolder+'/'+filename_template, "r") as initscript_template:
+                if os.path.isfile(self.experiments_configfolder+'/'+filename_template):
+                    with open(self.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
                         data = initscript_template.read()
                         data = data.format(**self.ddl_parameters)
                         filename_filled = self.d+'/filled_'+script
-                        with open(self.configfolder+'/'+filename_filled, "w") as initscript_filled:
+                        with open(self.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
-                        self.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename_filled, to_name=self.activepod+':'+scriptfolder+script))
+                        self.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiments_configfolder+'/'+filename_filled, to_name=self.activepod+':'+scriptfolder+script))
         else:
             for script in self.initscript:
                 filename = self.d+'/'+script
-                if os.path.isfile(self.configfolder+'/'+filename):
-                    self.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
+                if os.path.isfile(self.experiments_configfolder+'/'+filename):
+                    self.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiments_configfolder+'/'+filename, to_name=self.activepod+':'+scriptfolder+script))
     def DEPRECATED_loadData(self):
         self.prepareInit()
         print("loadData")
         self.timeLoadingStart = default_timer()
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiments_configfolder, docker=self.d)
         shellcommand = 'sh {scriptname}'
         commands = self.initscript
         for c in commands:
@@ -1052,11 +1127,11 @@ class testdesign():
                     c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.v, DBNAME=self.v.upper())
         return c
-    def DEPRECATED_runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None):
+    def DEPRECATED_runBenchmarks(self, connection=None, code=None, info=[], resultfolder='', experiments_configfolder='', alias='', dialect='', query=None):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
-        if len(configfolder) == 0:
-            configfolder = self.configfolder
+        if len(experiments_configfolder) == 0:
+            experiments_configfolder = self.experiments_configfolder
         if connection is None:
             connection = self.getConnectionName()
         if code is None:
@@ -1074,11 +1149,11 @@ class testdesign():
             working='connection'
             )
         # read config for benchmarker
-        connectionfile = configfolder+'/connections.config'
+        connectionfile = experiments_configfolder+'/connections.config'
         if self.queryfile is not None:
-            queryfile = configfolder+'/'+self.queryfile
+            queryfile = experiments_configfolder+'/'+self.queryfile
         else:
-            queryfile = configfolder+'/queries.config'
+            queryfile = experiments_configfolder+'/queries.config'
         self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)
@@ -1141,7 +1216,7 @@ class testdesign():
         #self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
     def OLD_continueBenchmarks(self, connection=None, query=None):
-        #configfolder='experiments/gdelt'
+        #experiments_configfolder='experiments/gdelt'
         #self.getInfo(component='sut')
         #self.deployment = self.get_deployments()[0]
         self.connection = connection
@@ -1190,7 +1265,7 @@ class testdesign():
         cmd = {}
         cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
         stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], container='dbms')
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.configfolder, docker=self.d)
+        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiments_configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
             cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
@@ -1211,11 +1286,11 @@ class testdesign():
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
-    def DEPRECATED_run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
+    def DEPRECATED_run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', experiments_configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1'):
         if len(resultfolder) == 0:
             resultfolder = self.config['benchmarker']['resultfolder']
-        if len(configfolder) == 0:
-            configfolder = self.configfolder
+        if len(experiments_configfolder) == 0:
+            experiments_configfolder = self.experiments_configfolder
         if connection is None:
             connection = self.getConnectionName()
         if len(configuration) == 0:
@@ -1254,11 +1329,11 @@ class testdesign():
         self.code = self.benchmark.code
         print("Code", self.code)
         # read config for benchmarker
-        connectionfile = configfolder+'/connections.config'
+        connectionfile = experiments_configfolder+'/connections.config'
         if self.queryfile is not None:
-            queryfile = configfolder+'/'+self.queryfile
+            queryfile = experiments_configfolder+'/'+self.queryfile
         else:
-            queryfile = configfolder+'/queries.config'
+            queryfile = experiments_configfolder+'/queries.config'
         self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)

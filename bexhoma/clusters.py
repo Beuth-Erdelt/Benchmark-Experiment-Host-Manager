@@ -48,12 +48,12 @@ class kubernetes(masterK8s.testdesign):
     Class for containing specific Kubernetes (K8s) methods.
     This class should be overloaded to define specific implementations of Kubernetes.
     """
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, clusterconfig='cluster.config', experiments_configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         """
         Construct a new 'kubernetes' object.
 
         :param clusterconfig: Filename of the configuration of this cluster
-        :param configfolder: Folder where to find experiment files
+        :param experiments_configfolder: Folder where to find experiment files
         :param context: Name of the context to use - important for kubectl to choose the cluster
         :param code: Unique identifier of the experiments
         """
@@ -62,7 +62,7 @@ class kubernetes(masterK8s.testdesign):
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
         self.code = code
-        masterK8s.testdesign.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        masterK8s.testdesign.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
         self.max_sut = None
         self.experiments = []
     def add_experiment(self, experiment):
@@ -94,17 +94,17 @@ class aws(kubernetes):
     """
     Class for containing Kubernetes methods specific to AWS.
     """
-    def __init__(self, clusterconfig='cluster.config', configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+    def __init__(self, clusterconfig='cluster.config', experiments_configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         """
         Construct a new 'aws' kubernetes object.
 
         :param clusterconfig: Filename of the configuration of this cluster
-        :param configfolder: Folder where to find experiment files
+        :param experiments_configfolder: Folder where to find experiment files
         :param context: Name of the context to use - important for kubectl to choose the cluster
         :param code: Unique identifier of the experiments
         """
         self.code = code
-        kubernetes.__init__(self, clusterconfig=clusterconfig, configfolder=configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        kubernetes.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
         self.cluster = self.contextdata['cluster']
     def eksctl(self, command):
         """

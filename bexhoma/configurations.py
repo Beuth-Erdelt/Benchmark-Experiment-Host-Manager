@@ -1227,12 +1227,12 @@ scrape_configs:
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
-    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
+    def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', experiments_configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
         self.logger.debug('configuration.run_benchmarker_pod()')
         if len(resultfolder) == 0:
             resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
-        if len(configfolder) == 0:
-            configfolder = self.experiment.cluster.configfolder
+        if len(experiments_configfolder) == 0:
+            experiments_configfolder = self.experiment.cluster.experiments_configfolder
         if connection is None:
             connection = self.configuration#self.getConnectionName()
         if len(configuration) == 0:
@@ -1287,11 +1287,11 @@ scrape_configs:
         #print("Code", self.code)
         self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
-        connectionfile = configfolder+'/connections.config'
+        connectionfile = experiments_configfolder+'/connections.config'
         if self.experiment.queryfile is not None:
-            queryfile = configfolder+'/'+self.experiment.queryfile
+            queryfile = experiments_configfolder+'/'+self.experiment.queryfile
         else:
-            queryfile = configfolder+'/queries.config'
+            queryfile = experiments_configfolder+'/queries.config'
         self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
         if c['name'] in self.benchmark.dbms:
             print("Rerun connection "+connection)
@@ -1470,9 +1470,9 @@ scrape_configs:
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         #cmd = {}
-        #cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.configfolder+'/'+self.configuration
+        #cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.experiments_configfolder+'/'+self.configuration
         #stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
-        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.experiments_configfolder, docker=self.docker)
         scriptfolder = '/tmp/'
         # the inits are in the result folder?
         #i = 0
@@ -1484,21 +1484,21 @@ scrape_configs:
         if len(self.ddl_parameters):
             for script in self.initscript:
                 filename_template = self.docker+'/'+script
-                if os.path.isfile(self.experiment.cluster.configfolder+'/'+filename_template):
-                    with open(self.experiment.cluster.configfolder+'/'+filename_template, "r") as initscript_template:
+                if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
+                    with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
                         data = initscript_template.read()
                         data = data.format(**self.ddl_parameters)
                         filename_filled = self.docker+'/filled_'+script
-                        with open(self.experiment.cluster.configfolder+'/'+filename_filled, "w") as initscript_filled:
+                        with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
-                        self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
+                        self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
         else:
             for script in self.initscript:
                 filename = self.docker+'/'+script
-                if os.path.isfile(self.experiment.cluster.configfolder+'/'+filename):
-                    self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
+                if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename):
+                    self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
                     stdin, stdout, stderr = self.executeCTL("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script), self.pod_sut)
-                    #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
+                    #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
     def attach_worker(self):
         if self.num_worker > 0:
             pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -1637,7 +1637,7 @@ scrape_configs:
         self.prepareInit()
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+        #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.experiments_configfolder, docker=self.docker)
         scriptfolder = '/tmp/'
         commands = self.initscript.copy()
         #print("load_data asynch")
@@ -2092,7 +2092,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
     # scripts
-    #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.configfolder, docker=self.docker)
+    #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.experiments_configfolder, docker=self.docker)
     #shellcommand = '[ -f {scriptname} ] && sh {scriptname}'
     shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     #commands = self.initscript

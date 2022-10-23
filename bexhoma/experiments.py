@@ -140,8 +140,8 @@ class default():
 		self.wait(sec)
 	def set_queryfile(self, queryfile):
 		self.queryfile = queryfile
-	def set_configfolder(self, configfolder):
-		self.configfolder = configfolder
+	def set_experiments_configfolder(self, experiments_configfolder):
+		self.experiments_configfolder = experiments_configfolder
 	def set_workload(self, **kwargs):
 		self.workload = kwargs
 	def set_querymanagement(self, **kwargs):
@@ -214,8 +214,8 @@ class default():
 		self.monitoring_active = True
 	def DEPRECATED__set_queryfile(self, queryfile):
 		self.cluster.set_queryfile(queryfile)
-	def DEPRECATED__set_configfolder(self, configfolder):
-		self.cluster.set_configfolder(configfolder)
+	def DEPRECATED__set_experiments_configfolder(self, experiments_configfolder):
+		self.cluster.set_experiments_configfolder(experiments_configfolder)
 	def DEPRECATED__set_resources(self, **kwargs):
 		self.cluster.set_resources(**kwargs)
 	def DEPRECATED__set_ddl_parameters(self, **kwargs):
@@ -732,7 +732,7 @@ class tpcds(default):
 		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='tpcds')
 		self.set_experiment(script='SF'+str(SF)+'-index')
-		self.cluster.set_configfolder('experiments/tpcds')
+		self.cluster.set_experiments_configfolder('experiments/tpcds')
 		self.set_queryfile(queryfile)
 		parameter.defaultParameters = {'SF': str(SF)}
 		self.set_workload(
@@ -772,7 +772,7 @@ class tpch(default):
 		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='tpch')
 		self.set_experiment(script='SF'+str(SF)+'-index')
-		self.cluster.set_configfolder('experiments/tpch')
+		self.cluster.set_experiments_configfolder('experiments/tpch')
 		parameter.defaultParameters = {'SF': str(SF)}
 		self.set_queryfile(queryfile)
 		self.set_workload(
@@ -814,7 +814,7 @@ class iot(default):
 		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='iot')
 		self.set_experiment(script='SF'+str(SF)+'-index')
-		self.cluster.set_configfolder('experiments/iot')
+		self.cluster.set_experiments_configfolder('experiments/iot')
 		parameter.defaultParameters = {'SF': str(SF)}
 		self.set_queryfile(queryfile)
 		self.set_workload(
@@ -869,7 +869,7 @@ class tsbs(default):
 		default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
 		self.set_experiment(volume='tsbs')
 		self.set_experiment(script='SF'+str(SF)+'-index')
-		self.cluster.set_configfolder('experiments/tsbs')
+		self.cluster.set_experiments_configfolder('experiments/tsbs')
 		parameter.defaultParameters = {'SF': str(SF)}
 		self.set_queryfile(queryfile)
 		self.set_workload(
