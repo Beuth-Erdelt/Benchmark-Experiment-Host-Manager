@@ -10,8 +10,8 @@
 	Another example concerns TSBS experiment.
 	Each experiment also should have an own folder having:
 
-	1. a query file
-	1. a subfolder for each dbms, that may run this experiment, including schema files
+	* a query file
+	* a subfolder for each dbms, that may run this experiment, including schema files
 
 	Copyright (C) 2020  Patrick K. Erdelt
 
@@ -248,6 +248,7 @@ class default():
 		* no delay
 		* optional data transfer
 		* no monitoring
+
 		:param numRun: Number of runs per query (this is for the benchmarker component)
 		:param datatransfer: If data should we retrieved and compared
 		"""
@@ -283,6 +284,7 @@ class default():
 		* optional delay
 		* optional data transfer
 		* monitoring active
+
 		:param numRun: Number of runs per query (this is for the benchmarker component)
 		:param delay: Number of seconds to wait between queries (this is for the benchmarker component)
 		:param datatransfer: If data should we retrieved and compared
@@ -510,6 +512,7 @@ class default():
 	def add_benchmark_list(self, list_clients):
 		"""
 		Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
+		Example `[1,2,1]` means sequentially we will have 1, then 2 and then 1 benchmarker instances.
 		This is applied to all dbms configurations of the experiment.
 
 		:param list_clients: List of (number of) benchmarker instances
@@ -521,17 +524,9 @@ class default():
 		Run typical workflow:
 
 		1) start SUT
-
 		2) start monitoring
-
-		3) start loading
-
-			3a) at first scripts (schema or loading via pull)
-
-			3b) then optionally parallel loading pods
-
+		3) start loading (at first scripts (schema or loading via pull), then optionally parallel loading pods)
 		4) optionally start maintaining pods
-
 		5) at the same time as 4) run benchmarker jobs corresponding to list given via add_benchmark_list()
 
 		:param intervals: Seconds to wait before checking change of status
