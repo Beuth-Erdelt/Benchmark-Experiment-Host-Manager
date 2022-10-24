@@ -23,10 +23,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import time
-import kubernetes.client
+import kubernetes.client as kubernetes_client
+import kubernetes.config as kubernetes_config
 from kubernetes.client.rest import ApiException
 from pprint import pprint
-from kubernetes import client, config
+#from kubernetes import client, config
 import subprocess
 import os
 from os import makedirs, path
@@ -119,11 +120,11 @@ class testbed():
         provide access to an K8s cluster by initializing connection handlers.
         """
         self.logger.debug('testbed.cluster_access({})'.format(self.context))
-        kubernetes.config.load_kube_config(context=self.context)
-        self.v1core = client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
-        #self.v1beta = kubernetes.client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
-        self.v1apps = kubernetes.client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
-        self.v1batches = kubernetes.client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
+        kubernetes_config.load_kube_config(context=self.context)
+        self.v1core = kubernetes_client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
+        #self.v1beta = kubernetes_client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1apps = kubernetes_client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1batches = kubernetes_client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
     def set_code(self, code):
         """
         Sets the unique identifier of an experiment.
