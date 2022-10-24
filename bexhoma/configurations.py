@@ -1490,18 +1490,41 @@ scrape_configs:
 		c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
 		#print(c)
 		return c#.copy()
-	def run_benchmarker_pod(self, connection=None, code=None, info=[], resultfolder='', experiments_configfolder='', alias='', dialect='', query=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1):
+	def run_benchmarker_pod(self,
+		connection=None,
+		alias='',
+		dialect='',
+		query=None,
+		app='',
+		component='benchmarker',
+		experiment='',
+		configuration='',
+		client='1',
+		parallelism=1):
+		"""
+		Runs the benchmarker job.
+		Sets meta data in the connection.config.
+		Copy query.config and connection.config to the first pod of the job (result folder mounted into every pod)
+
+		:param connection: Name of configuration prolonged by number of runs of the sut (installations) and number of client in a sequence of
+		:param alias: An alias can be given if we want to anonymize the dbms
+		:param dialect: A name of a SQL dialect can be given
+		:param query: The benchmark can be fixed to a specific query
+		:param app: app the job belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param client: Number of benchmarker this is in a sequence of
+		:param parallelism: Number of parallel benchmarker pods we want to have
+		"""
 		self.logger.debug('configuration.run_benchmarker_pod()')
-		if len(resultfolder) == 0:
-			resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
-		if len(experiments_configfolder) == 0:
-			experiments_configfolder = self.experiment.cluster.experiments_configfolder
+		resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
+		experiments_configfolder = self.experiment.cluster.experiments_configfolder
 		if connection is None:
 			connection = self.configuration#self.getConnectionName()
 		if len(configuration) == 0:
 			configuration = connection
-		if code is None:
-			code = self.code
+		code = self.code
 		if not isinstance(client, str):
 			client = str(client)
 		if len(dialect) == 0 and len(self.dialect) > 0:
@@ -1590,9 +1613,6 @@ scrape_configs:
 		experiment['connection'] = connection
 		experiment['connectionmanagement'] = self.connectionmanagement.copy()
 		self.experiment.cluster.log_experiment(experiment)
-		# copy deployments
-		#if os.path.isfile(self.yamlfolder+self.deployment):
-		#	shutil.copy(self.yamlfolder+self.deployment, self.benchmark.path+'/'+connection+'.yml')
 		# create pod
 		yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
 		# start pod
@@ -1621,19 +1641,8 @@ scrape_configs:
 		cmd = {}
 		cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
 		stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=client_pod_name)
-		#disk = stdout#os.popen(fullcommand).read()
-		#fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
-		#print(fullcommand)
-		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		#stdout, stderr = proc.communicate()
-		#print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-		#stdin, stdout, stderr = self.executeCTL_client(cmd['prepare_log'])
-		#cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/queries.config')+' /results/'+str(self.code)+'/queries.config'
-		#stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
 		stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
 		self.logger.debug('copy config queries.config: {}'.format(stdout))
-		#cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=self.benchmark.path+'/connections.config')+' /results/'+str(self.code)+'/connections.config'
-		#stdin, stdout, stderr = self.executeCTL_client(cmd['copy_init_scripts'])
 		stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
 		self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
 		# copy twice to be more sure it worked
@@ -1646,43 +1655,8 @@ scrape_configs:
 		# get monitoring for loading
 		if self.monitoring_active:
 			cmd = {}
-			#cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
-			#fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-			#print(fullcommand)
-			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-			#stdout, stderr = proc.communicate()
 			cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
 			stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
-			#fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['fetch_loading_metrics'].replace('"','\\"')+'"'
-			#print(fullcommand)
-			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-			#stdout, stderr = proc.communicate()
-			#print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-		"""
-		self.wait(10)
-		jobs = self.get_jobs(component=component, configuration=configuration, experiment=self.code, client=client)
-		jobname = jobs[0]
-		while not self.get_job_status(jobname=jobname, component=component, configuration=configuration, experiment=self.code, client=client):
-			print("job running")
-			self.wait(60)
-		# write pod log
-		stdin, stdout, stderr = self.pod_log(client_pod_name)
-		filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+client_pod_name+'.log'
-		f = open(filename_log, "w")
-		f.write(stdout)
-		f.close()
-		# delete job and pods
-		self.delete_job(jobname=jobname)
-		self.delete_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
-		self.wait(60)
-		# prepare reporting
-		#self.copy_results()
-		self.copyInits()
-		self.copyLog()
-		self.downloadLog()
-		#self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
-		#evaluator.evaluator(self.benchmark, load=False, force=True)
-		"""
 	def execute_command_in_pod_sut(self, command, pod='', container='dbms', params=''):
 		"""
 		Runs an shell command remotely inside a container of a pod.
@@ -1917,6 +1891,7 @@ scrape_configs:
 	def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
 		"""
 		Creates a job template for the benchmarker.
+		This sets meta data in the template and ENV.
 
 		:param app: app the job belongs to
 		:param component: Component, for example sut or monitoring
@@ -2003,6 +1978,17 @@ scrape_configs:
 		return job_experiment
 	#def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
 	def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias=''):
+		"""
+		Creates a job template for maintaining.
+		This sets meta data in the template and ENV.
+
+		:param app: app the job belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param parallelism: Number of parallel pods in job
+		:return: Name of file in YAML format containing the maintaining job
+		"""
 		if len(app) == 0:
 			app = self.appname
 		jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2103,6 +2089,17 @@ scrape_configs:
 				print(exc)
 		return job_experiment
 	def create_job_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
+		"""
+		Creates a job template for loading.
+		This sets meta data in the template and ENV.
+
+		:param app: app the job belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param parallelism: Number of parallel pods in job
+		:return: Name of file in YAML format containing the loading job
+		"""
 		if len(app) == 0:
 			app = self.appname
 		if len(configuration) == 0:
