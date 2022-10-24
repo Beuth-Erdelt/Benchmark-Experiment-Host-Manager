@@ -1907,6 +1907,7 @@ scrape_configs:
 		if len(app) == 0:
 			app = self.appname
 		code = str(int(experiment))
+		experimentRun = str(self.num_experiment_to_apply_done+1)
 		jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
 		self.logger.debug('configuration.create_manifest_benchmarker({})'.format(jobname))
 		# determine start time
@@ -1914,17 +1915,16 @@ scrape_configs:
 		now_string = now.strftime('%Y-%m-%d %H:%M:%S')
 		start = now + timedelta(seconds=180)
 		start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-		e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
+		e = {'DBMSBENCHMARKER_NOW': now_string,
+			'DBMSBENCHMARKER_START': start_string,
+			'DBMSBENCHMARKER_CLIENT': str(parallelism),
+			'DBMSBENCHMARKER_CODE': code,
+			'DBMSBENCHMARKER_CONNECTION': connections,
+			'DBMSBENCHMARKER_SLEEP': str(60),
+			'DBMSBENCHMARKER_ALIAS': alias}
 		env = {**env, **e}
-		e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
-		env = {**env, **e}
-		e ={'name': 'DBMSBENCHMARKER_CLIENT', 'value': str(parallelism)}
-		e ={'name': 'DBMSBENCHMARKER_CODE', 'value': code}
-		e ={'name': 'DBMSBENCHMARKER_CONNECTION', 'value': connections}
-		e ={'name': 'DBMSBENCHMARKER_SLEEP', 'value': str(60)}
-		e ={'name': 'DBMSBENCHMARKER_ALIAS', 'value': alias}
 		job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-		return cluster.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, client=client, parallelism=parallelism, env=env, template=template)
+		return cluster.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template=template)
 		# OLD
 		with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
 			try:
