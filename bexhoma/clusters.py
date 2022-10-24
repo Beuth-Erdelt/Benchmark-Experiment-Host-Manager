@@ -714,7 +714,7 @@ class testbed():
         :param name: name of the stateful set to be deleted
         """
         self.logger.debug('testbed.delete_stateful_set({})'.format(name))
-        body = kubernetes.client.V1DeleteOptions()
+        body = kubernetes_client.V1DeleteOptions()
         try: 
             api_response = self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
             #pprint(api_response)
@@ -730,7 +730,7 @@ class testbed():
         :param name: name of the pod to be deleted
         """
         self.logger.debug('testbed.delete_pod({})'.format(name))
-        body = kubernetes.client.V1DeleteOptions()
+        body = kubernetes_client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
             #pprint(api_response)
@@ -748,7 +748,7 @@ class testbed():
         :param name: name of the pvc to be deleted
         """
         self.logger.debug('testbed.delete_pvc({})'.format(name))
-        body = kubernetes.client.V1DeleteOptions()
+        body = kubernetes_client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
             #pprint(api_response)
@@ -764,7 +764,7 @@ class testbed():
         :param name: name of the service to be deleted
         """
         self.logger.debug('testbed.delete_service({})'.format(name))
-        body = kubernetes.client.V1DeleteOptions()
+        body = kubernetes_client.V1DeleteOptions()
         try: 
             api_response = self.v1core.delete_namespaced_service(name, self.namespace, body=body)
             #pprint(api_response)
@@ -1090,7 +1090,7 @@ class testbed():
         :param client: DEPRECATED?
         """
         self.logger.debug('testbed.delete_job_pods()')
-        body = kubernetes.client.V1DeleteOptions()
+        body = kubernetes_client.V1DeleteOptions()
         try: 
             if len(jobname) == 0:
                 pods = self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
