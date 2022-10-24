@@ -256,7 +256,7 @@ cluster.set_connectionmanagement(
 
 The workload is set in the configuration of the experiment
 ```
-cluster = testdesign(queryfile = queryfile)
+cluster = testbed(queryfile = queryfile)
 ```
 
 The workload can be further manipulated:

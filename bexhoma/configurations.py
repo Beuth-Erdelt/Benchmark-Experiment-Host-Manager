@@ -45,7 +45,7 @@ from datetime import datetime, timedelta
 import threading
 
 from dbmsbenchmarker import *
-from bexhoma import masterK8s, experiments
+from bexhoma import clusters, experiments
 
 
 
