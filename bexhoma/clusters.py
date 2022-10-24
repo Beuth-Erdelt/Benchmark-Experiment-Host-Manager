@@ -1,13 +1,13 @@
 """
-:Date: 2022-05-01
-:Version: 0.5
-:Authors: Patrick Erdelt
+:Date: 2022-10-01
+:Version: 0.6.0
+:Authors: Patrick K. Erdelt
 
-    Classes to manage testbeds.
+    Module to manage testbeds.
     Historically this supported different implementations based on IaaS.
     All methods will be deprecated except for Kubernetes (K8s), so the structure will change in future.
 
-    Copyright (C) 2020  Patrick Erdelt
+    Copyright (C) 2020  Patrick K. Erdelt
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -1486,14 +1486,14 @@ class testbed():
 
 class kubernetes(testbed):
     """
-    :Date: 2022-05-01
-    :Version: 0.5
-    :Authors: Patrick Erdelt
+    :Date: 2022-10-01
+    :Version: 0.6.0
+    :Authors: Patrick K. Erdelt
 
         Class for containing specific Kubernetes (K8s) methods.
         This class can be overloaded to define specific implementations of Kubernetes, for example AWS.
 
-        Copyright (C) 2020  Patrick Erdelt
+        Copyright (C) 2020  Patrick K. Erdelt
 
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU Affero General Public License as
@@ -1522,7 +1522,7 @@ class kubernetes(testbed):
         # per configuration: monitoring+service
         # per configuration: list of benchmarker
         self.code = code
-        masterK8s.testbed.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        testbed.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
         self.max_sut = None
         self.experiments = []
     def add_experiment(self, experiment):
@@ -1554,14 +1554,14 @@ class kubernetes(testbed):
 
 class aws(kubernetes):
     """
-    :Date: 2022-05-01
-    :Version: 0.5
-    :Authors: Patrick Erdelt
+    :Date: 2022-10-01
+    :Version: 0.6.0
+    :Authors: Patrick K. Erdelt
 
         Class for containing Kubernetes methods specific to AWS.
         This adds handling of nodegroups for elasticity.
 
-        Copyright (C) 2020  Patrick Erdelt
+        Copyright (C) 2020  Patrick K. Erdelt
 
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU Affero General Public License as
