@@ -1122,12 +1122,11 @@ class testdesign():
 			# try again, if not failed due to "not found"
 			if not e.status == 404:
 				return self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
-	def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1'):
+	def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, env={}, template=''):
 		"""
 		Creates a job and sets labels (component/ experiment/ configuration).
 		TODO: Set ENV
 
-		:param connection: ONLY FOR DBMSBENCHMARKER, should be ENV
 		:param app: app the job belongs to
 		:param component: Component, for example sut or monitoring
 		:param experiment: Unique identifier of the experiment
@@ -1139,11 +1138,18 @@ class testdesign():
 		code = str(int(experiment))
 		#connection = configuration
 		jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
-		self.logger.debug('testdesign.create_job({})'.format(jobname))
 		#print(jobname)
-		yamlfile = self.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
-		job_experiment = self.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-		with open(self.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
+		self.logger.debug('configuration.create_manifest_benchmarker({})'.format(jobname))
+		# determine start time
+		now = datetime.utcnow()
+		start = now + timedelta(seconds=180)
+		#start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
+		#wait = (start-now).seconds
+		now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+		start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+		#yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
+		job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+		with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
 			try:
 				result=yaml.safe_load_all(stream)
 				result = [data for data in result]
@@ -1154,25 +1160,45 @@ class testdesign():
 			if dep['kind'] == 'Job':
 				dep['metadata']['name'] = jobname
 				job = dep['metadata']['name']
+				dep['spec']['completions'] = parallelism
+				dep['spec']['parallelism'] = parallelism
 				dep['metadata']['labels']['app'] = app
 				dep['metadata']['labels']['component'] = component
 				dep['metadata']['labels']['configuration'] = configuration
 				dep['metadata']['labels']['experiment'] = str(experiment)
 				dep['metadata']['labels']['client'] = str(client)
+				dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
 				dep['spec']['template']['metadata']['labels']['app'] = app
 				dep['spec']['template']['metadata']['labels']['component'] = component
 				dep['spec']['template']['metadata']['labels']['configuration'] = configuration
 				dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
 				dep['spec']['template']['metadata']['labels']['client'] = str(client)
+				dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
 				envs = dep['spec']['template']['spec']['containers'][0]['env']
 				for i,e in enumerate(envs):
+					if e['name'] == 'DBMSBENCHMARKER_CLIENT':
+						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
 					if e['name'] == 'DBMSBENCHMARKER_CODE':
 						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
 					if e['name'] == 'DBMSBENCHMARKER_CONNECTION':
 						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
 					if e['name'] == 'DBMSBENCHMARKER_SLEEP':
 						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
-					print(e)
+					if e['name'] == 'DBMSBENCHMARKER_ALIAS':
+						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = alias
+					self.logger.debug('configuration.create_manifest_benchmarker({})'.format(str(e)))
+					#print(e)
+				e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
+				dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+				e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
+				dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+				# set nodeSelector
+				if 'benchmarking' in self.nodes:
+					if not 'nodeSelector' in dep['spec']['template']['spec']:
+						dep['spec']['template']['spec']['nodeSelector'] = dict()
+					if dep['spec']['template']['spec']['nodeSelector'] is None:
+						dep['spec']['template']['spec']['nodeSelector'] = dict()
+					dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['benchmarking']
 		#if not path.isdir(self.path):
 		#	makedirs(self.path)
 		with open(job_experiment,"w+") as stream:

@@ -1888,6 +1888,102 @@ scrape_configs:
 		thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
 		thread.start()
 		return
+	def create_manifest_benchmarker(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias='', env={}, template=''):
+		"""
+		Creates a job template for the benchmarker.
+		This sets meta data in the template and ENV.
+
+		:param app: app the job belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param client: Number of benchmarker if there is a sequence of benchmarkers
+		:param parallelism: Number of parallel pods in job
+		:param alias: Alias name of the dbms
+		:param env: Dict of environment variables
+		:param template: Template for the job manifest 
+		:return: Name of file in YAML format containing the benchmarker job
+		"""
+		if len(app) == 0:
+			app = self.appname
+		code = str(int(experiment))
+		jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+		self.logger.debug('configuration.create_manifest_benchmarker({})'.format(jobname))
+		# determine start time
+		now = datetime.utcnow()
+		now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+		start = now + timedelta(seconds=180)
+		start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+		e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
+		env = {**env, **e}
+		e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
+		env = {**env, **e}
+		e ={'name': 'DBMSBENCHMARKER_CLIENT', 'value': str(parallelism)}
+		e ={'name': 'DBMSBENCHMARKER_CODE', 'value': code}
+		e ={'name': 'DBMSBENCHMARKER_CONNECTION', 'value': connections}
+		e ={'name': 'DBMSBENCHMARKER_SLEEP', 'value': str(60)}
+		e ={'name': 'DBMSBENCHMARKER_ALIAS', 'value': alias}
+		job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+		return cluster.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, client=client, parallelism=parallelism, env=env, template=template)
+		# OLD
+		with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
+			try:
+				result=yaml.safe_load_all(stream)
+				result = [data for data in result]
+				#print(result)
+			except yaml.YAMLError as exc:
+				print(exc)
+		for dep in result:
+			if dep['kind'] == 'Job':
+				dep['metadata']['name'] = jobname
+				job = dep['metadata']['name']
+				dep['spec']['completions'] = parallelism
+				dep['spec']['parallelism'] = parallelism
+				dep['metadata']['labels']['app'] = app
+				dep['metadata']['labels']['component'] = component
+				dep['metadata']['labels']['configuration'] = configuration
+				dep['metadata']['labels']['experiment'] = str(experiment)
+				dep['metadata']['labels']['client'] = str(client)
+				dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
+				dep['spec']['template']['metadata']['labels']['app'] = app
+				dep['spec']['template']['metadata']['labels']['component'] = component
+				dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+				dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
+				dep['spec']['template']['metadata']['labels']['client'] = str(client)
+				dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
+				envs = dep['spec']['template']['spec']['containers'][0]['env']
+				for i,e in enumerate(envs):
+					if e['name'] == 'DBMSBENCHMARKER_CLIENT':
+						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+					if e['name'] == 'DBMSBENCHMARKER_CODE':
+						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
+					if e['name'] == 'DBMSBENCHMARKER_CONNECTION':
+						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+					if e['name'] == 'DBMSBENCHMARKER_SLEEP':
+						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+					if e['name'] == 'DBMSBENCHMARKER_ALIAS':
+						dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = alias
+					self.logger.debug('configuration.create_manifest_benchmarker({})'.format(str(e)))
+					#print(e)
+				e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
+				dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+				e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
+				dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+				# set nodeSelector
+				if 'benchmarking' in self.nodes:
+					if not 'nodeSelector' in dep['spec']['template']['spec']:
+						dep['spec']['template']['spec']['nodeSelector'] = dict()
+					if dep['spec']['template']['spec']['nodeSelector'] is None:
+						dep['spec']['template']['spec']['nodeSelector'] = dict()
+					dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['benchmarking']
+		#if not path.isdir(self.path):
+		#   makedirs(self.path)
+		with open(job_experiment,"w+") as stream:
+			try:
+				stream.write(yaml.dump_all(result))
+			except yaml.YAMLError as exc:
+				print(exc)
+		return job_experiment
 	def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
 		"""
 		Creates a job template for the benchmarker.
