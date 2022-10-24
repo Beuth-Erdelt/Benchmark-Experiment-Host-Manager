@@ -121,10 +121,10 @@ class testbed():
         """
         self.logger.debug('testbed.cluster_access({})'.format(self.context))
         kubernetes_config.load_kube_config(context=self.context)
-        self.v1core = kubernetes_client.CoreV1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1core = kubernetes_client.CoreV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
         #self.v1beta = kubernetes_client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
-        self.v1apps = kubernetes_client.AppsV1Api(api_client=config.new_client_from_config(context=self.context))
-        self.v1batches = kubernetes_client.BatchV1Api(api_client=config.new_client_from_config(context=self.context))
+        self.v1apps = kubernetes_client.AppsV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
+        self.v1batches = kubernetes_client.BatchV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
     def set_code(self, code):
         """
         Sets the unique identifier of an experiment.
