@@ -81,7 +81,7 @@ class testbed():
         self.logger = logging.getLogger('bexhoma')
         if context is None:
             # use current context
-            context = config.list_kube_config_contexts()[1]['name']
+            context = kubernetes_config.list_kube_config_contexts()[1]['name']
         self.context = context
         self.experiments = []
         self.benchmark = None
