@@ -1238,6 +1238,24 @@ class testdesign():
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testdesign.start_dashboard({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+    def start_messagequeue(self, app='', component='messagequeue'):
+        """
+        Starts the message queue.
+        Manifest is expected in 'deploymenttemplate-bexhoma-messagequeue.yml'
+
+        :param app: app the messagequeue belongs to
+        :param component: Component name, should be 'messagequeue' typically
+        """
+        pods_dashboard = self.get_pods(component=component)
+        if len(pods_dashboard) > 0:
+            # dashboard exists
+            self.logger.debug('testdesign.start_messagequeue()=exists')
+            return
+        else:
+            deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
+            name = self.create_dashboard_name(app, component)
+            self.logger.debug('testdesign.start_messagequeue({})'.format(deployment))
+            self.kubectl('create -f '+self.yamlfolder+deployment)
     def stop_dashboard(self, app='', component='dashboard'):
         """
         Stops the dashboard component and its service.
