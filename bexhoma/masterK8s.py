@@ -796,7 +796,7 @@ class testdesign():
 		self.logger.debug('testdesign.kubectl({})'.format(fullcommand))
 		#print(fullcommand)
 		return os.popen(fullcommand).read()# os.system(fullcommand)
-	def executeCTL(self, command, pod='', container='', params=''):
+	def execute_command_in_pod(self, command, pod='', container='', params=''):
 		"""
 		Runs an shell command remotely inside a container of a pod.
 
@@ -815,7 +815,7 @@ class testdesign():
 			fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
 			#fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
 		#print(fullcommand)
-		self.logger.debug('testdesign.executeCTL({})'.format(fullcommand))
+		self.logger.debug('testdesign.execute_command_in_pod({})'.format(fullcommand))
 		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		stdout, stderr = proc.communicate()
 		try:
@@ -855,7 +855,7 @@ class testdesign():
 		cmd = {}
 		command = 'date +"%s"'
 		fullcommand = 'kubectl exec '+cluster.activepod+' --container=dbms -- bash -c "'+command+'"'
-		#stdin, stdout, stderr = self.executeCTL(command=command, pod=self.activepod, container='dbms')
+		#stdin, stdout, stderr = self.execute_command_in_pod(command=command, pod=self.activepod, container='dbms')
 		#gpus = stdout#os.popen(fullcommand).read()
 		timestamp_remote = os.popen(fullcommand).read()
 		timestamp_local = os.popen(command).read()
@@ -904,19 +904,19 @@ class testdesign():
 		if len(self.docker['logfile']):
 			cmd = {}
 			cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-			stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod(cmd['prepare_log'], container='dbms')
 			cmd['save_log'] = 'cp '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
-			stdin, stdout, stderr = self.executeCTL(cmd['save_log'], container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod(cmd['save_log'], container='dbms')
 	def copyInits(self):
 		print("copyInits")
 		cmd = {}
 		cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-		stdin, stdout, stderr = self.executeCTL(cmd['prepare_log'], container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod(cmd['prepare_log'], container='dbms')
 		scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiments_configfolder, docker=self.d)
 		i = 0
 		for script in self.initscript:
 			cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
-			stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'], container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod(cmd['copy_init_scripts'], container='dbms')
 			i = i + 1
 	def pod_log(self, pod, container=''):
 		if len(container) > 0:

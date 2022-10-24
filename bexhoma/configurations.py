@@ -60,11 +60,11 @@ class default():
 		Class for managing an DBMS configuation.
 		This is plugged into an experiment object.
 
-        :param experiment: Unique identifier of the experiment
-        :param docker: Name of the Docker image
-        :param configuration: Name of the configuration
-        :param script: Unique identifier of the experiment
-        :param alias: Unique identifier of the experiment
+		:param experiment: Unique identifier of the experiment
+		:param docker: Name of the Docker image
+		:param configuration: Name of the configuration
+		:param script: Unique identifier of the experiment
+		:param alias: Unique identifier of the experiment
 
 		Copyright (C) 2020  Patrick K. Erdelt
 
@@ -107,6 +107,7 @@ class default():
 		self.appname = self.experiment.cluster.appname
 		self.code = self.experiment.cluster.code
 		self.resources = {}
+		self.pod_sut = '' #: Name of the sut's master pod
 		self.set_resources(**self.experiment.resources)
 		self.set_ddl_parameters(**self.experiment.ddl_parameters)
 		self.set_eval_parameters(**self.experiment.eval_parameters)
@@ -445,7 +446,7 @@ class default():
 		for i in range(1, self.num_loading+1):
 			#redisClient.rpush(redisQueue, i)
 			redisCommand = 'redis-cli rpush {redisQueue} {child} '.format(redisQueue=redisQueue, child=i)
-			self.experiment.cluster.executeCTL(command=redisCommand, pod=pod_messagequeue)
+			self.experiment.cluster.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
 		# start job
 		job = self.create_job_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism)
 		self.logger.debug("Deploy "+job)
@@ -619,15 +620,15 @@ class default():
 
 scrape_configs:
   - job_name: '{master}'
-    scrape_interval: 3s
-    scrape_timeout: 3s
-    static_configs:
-      - targets: ['{master}:9300']
+	scrape_interval: 3s
+	scrape_timeout: 3s
+	static_configs:
+	  - targets: ['{master}:9300']
   - job_name: 'monitor-gpu'
-    scrape_interval: 3s
-    scrape_timeout: 3s
-    static_configs:
-      - targets: ['{master}:9400']""".format(master=name_sut)
+	scrape_interval: 3s
+	scrape_timeout: 3s
+	static_configs:
+	  - targets: ['{master}:9400']""".format(master=name_sut)
 						# services of workers
 						name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
 						pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
@@ -1144,7 +1145,7 @@ scrape_configs:
 		#print("checkGPUs")
 		cmd = {}
 		cmd['check_gpus'] = 'nvidia-smi'
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['check_gpus'], self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['check_gpus'])
 	def check_DBMS_connection(self, ip, port):
 		"""
 		Check if DBMS is open for connections.
@@ -1179,7 +1180,7 @@ scrape_configs:
 		try:
 			command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
 			#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-			stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 			result = stdout#os.popen(fullcommand).read()
 			mem =  int(result.replace(" ","").replace("MemTotal:","").replace("kB",""))*1024#/1024/1024/1024
 			return mem
@@ -1197,7 +1198,7 @@ scrape_configs:
 		command = 'more /proc/cpuinfo | grep \'model name\' | head -n 1'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 		#cpu = os.popen(fullcommand).read()
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 		cpu = stdout#os.popen(fullcommand).read()
 		cpu = cpu.replace('model name\t: ', '')
 		#cpu = cpu.replace('model name\t: ', 'CPU: ')
@@ -1214,7 +1215,7 @@ scrape_configs:
 		command = 'grep -c ^processor /proc/cpuinfo'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 		#cores = os.popen(fullcommand).read()
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 		cores = stdout#os.popen(fullcommand).read()
 		if len(cores)>0:
 			return int(cores)
@@ -1232,7 +1233,7 @@ scrape_configs:
 		command = 'uname -r'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 		#host = os.popen(fullcommand).read()
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 		host = stdout#os.popen(fullcommand).read()
 		return host.replace('\n','')
 	def get_host_node(self):
@@ -1269,7 +1270,7 @@ scrape_configs:
 		command = 'nvidia-smi -L'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 		#gpus = os.popen(fullcommand).read()
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 		gpus = stdout#os.popen(fullcommand).read()
 		l = gpus.split("\n")
 		c = Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])
@@ -1289,7 +1290,7 @@ scrape_configs:
 		command = 'nvidia-smi -L'
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 		#gpus = os.popen(fullcommand).read()
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 		gpus = stdout#os.popen(fullcommand).read()
 		l = gpus.split("\n")
 		result = []
@@ -1310,7 +1311,7 @@ scrape_configs:
 		command = 'nvidia-smi | grep \'CUDA\''
 		#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 		#cuda = os.popen(fullcommand).read()
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 		cuda = stdout#os.popen(fullcommand).read()
 		return cuda.replace('|', '').replace('\n','').strip()
 	def getTimediff(self):
@@ -1318,15 +1319,21 @@ scrape_configs:
 		cmd = {}
 		command = 'date +"%s"'
 		#fullcommand = 'kubectl exec '+cluster.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+		stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 		timestamp_remote = stdout#os.popen(fullcommand).read()
 		#timestamp_remote = os.popen(fullcommand).read()
 		timestamp_local = os.popen(command).read()
 		#print(timestamp_remote)
 		#print(timestamp_local)
 		return int(timestamp_remote)-int(timestamp_local)
-	def getDiskSpaceUsedData(self):
-		self.logger.debug('configuration.getDiskSpaceUsedData()')
+	def get_host_diskspace_used_data(self):
+		"""
+		Returns information about the sut's host disk space used for the data (the database).
+		Basically this calls `du` on the host directory that is mentioned in cluster.config as to store the database.
+
+		:return: Size of disk used for database in Bytes
+		"""
+		self.logger.debug('configuration.get_host_diskspace_used_data()')
 		cmd = {}
 		if 'datadir' in self.dockertemplate:
 			datadir = self.dockertemplate['datadir']
@@ -1335,25 +1342,31 @@ scrape_configs:
 		try:
 			command = "du "+datadir+" | awk 'END{print \\$1}'"
 			cmd['disk_space_used'] = command
-			stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut, container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
 			return int(stdout.replace('\n',''))
 		except Exception as e:
 			# Windows
 			command = "du "+datadir+" | awk 'END{print $1}'"
 			cmd['disk_space_used'] = command
-			stdin, stdout, stderr = self.experiment.cluster.executeCTL(cmd['disk_space_used'], self.pod_sut, container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
 			if len(stdout) > 0:
 				return int(stdout.replace('\n',''))
 		return 0
-	def getDiskSpaceUsed(self):
-		self.logger.debug('configuration.getDiskSpaceUsed()')
+	def get_host_diskspace_used(self):
+		"""
+		Returns information about the sut's host disk space.
+		Basically this calls `df /` on the host.
+
+		:return: Size of disk in Bytes
+		"""
+		self.logger.debug('configuration.get_host_diskspace_used()')
 		disk = ''
 		cmd = {}
 		try:
 			command = "df / | awk 'NR == 2{print \\$3}'"
 			#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 			#disk = os.popen(fullcommand).read()
-			stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 			disk = stdout#os.popen(fullcommand).read()
 			return int(disk.replace('\n',''))
 		except Exception as e:
@@ -1361,7 +1374,7 @@ scrape_configs:
 			command = "df / | awk 'NR == 2{print $3}'"
 			#fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
 			#disk = os.popen(fullcommand).read()
-			stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=command, pod=self.pod_sut, container='dbms')
+			stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
 			disk = stdout#os.popen(fullcommand).read()
 			if len(disk) > 0:
 				return int(disk.replace('\n',''))
@@ -1383,22 +1396,16 @@ scrape_configs:
 		server['Cores'] = self.get_host_cores()
 		server['host'] = self.get_host_system()
 		server['node'] = self.get_host_node()
-		server['disk'] = self.getDiskSpaceUsed()
-		server['datadisk'] = self.getDiskSpaceUsedData()
+		server['disk'] = self.get_host_diskspace_used()
+		server['datadisk'] = self.get_host_diskspace_used_data()
 		server['cuda'] = self.get_host_cuda()
 		return server
 	def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
-		#if connection is None:
-		#	connection = self.getConnectionName()
 		"""
-		print("get_connection_config")
-		#self.getInfo(component='sut')
-		mem = self.get_host_memory()
-		cpu = self.get_host_cpu()
-		cores = self.get_host_cores()
-		host = self.get_host_system()
-		cuda = self.get_host_cuda()
-		gpu = self.get_host_gpus()
+		Returns information about the sut's host disk space.
+		Basically this calls `df /` on the host.
+
+		:return: Size of disk in Bytes
 		"""
 		info = []
 		self.connection = connection
@@ -1613,7 +1620,7 @@ scrape_configs:
 		# copy config to pod
 		cmd = {}
 		cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-		stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=cmd['prepare_log'], pod=client_pod_name)
+		stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=client_pod_name)
 		#disk = stdout#os.popen(fullcommand).read()
 		#fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['prepare_log'].replace('"','\\"')+'"'
 		#print(fullcommand)
@@ -1645,7 +1652,7 @@ scrape_configs:
 			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			#stdout, stderr = proc.communicate()
 			cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
-			stdin, stdout, stderr = self.experiment.cluster.executeCTL(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
+			stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
 			#fullcommand = 'kubectl exec '+client_pod_name+' -- bash -c "'+cmd['fetch_loading_metrics'].replace('"','\\"')+'"'
 			#print(fullcommand)
 			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -1676,41 +1683,25 @@ scrape_configs:
 		#self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
 		#evaluator.evaluator(self.benchmark, load=False, force=True)
 		"""
-	def kubectl(self, command):
-		fullcommand = 'kubectl --context {context} {command}'.format(context=self.experiment.cluster.context, command=command)
-		#print(fullcommand)
-		self.logger.debug('configuration.kubectl({})'.format(fullcommand))
-		return os.system(fullcommand)
-	def executeCTL(self, command, pod='', container='', params=''):
+	def execute_command_in_pod_sut(self, command, pod='', container='dbms', params=''):
+		"""
+		Runs an shell command remotely inside a container of a pod.
+		This defaults to the current sut's pod and the container "dbms"
+
+		:param command: A shell command
+		:param pod: The name of the pod - default current sut's pod
+		:param container: The name of the container in the pod - default dbms
+		:param params: Optional parameters, currently ignored
+		:return: stdout of the shell command
+		"""
 		if len(pod) == 0:
-			pod = self.activepod
-		command_clean = command.replace('"','\\"')
-		if len(container) > 0:
-			fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.experiment.cluster.context, pod=pod, container=container, command=command_clean)
-		else:
-			fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.experiment.cluster.context, pod=pod, command=command_clean)
-			#fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
-		#print(fullcommand)
-		self.logger.debug('configuration.executeCTL({})'.format(fullcommand))
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
-		#print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-		str_stdout = stdout.decode('utf-8')
-		str_stderr = stderr.decode('utf-8')
-		return "", str_stdout, str_stderr
-		#return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-	"""
-	def kubectl(self, command):
-		print(command)
-		os.system(command)
-	def executeCTL(self, command, pod):
-		fullcommand = 'kubectl exec '+pod+' --container=dbms -- bash -c "'+command.replace('"','\\"')+'"'
-		print(fullcommand)
-		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		stdout, stderr = proc.communicate()
-		print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-		return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-	"""
+			pod=self.pod_sut
+			#pod = self.activepod
+		if len(container) == 0:
+			container='dbms'
+		if self.pod_sut == '':
+			self.check_sut()
+		return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
 	def copyLog(self):
 		print("copyLog")
 		pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -1718,25 +1709,20 @@ scrape_configs:
 		if len(self.dockertemplate['logfile']):
 			cmd = {}
 			cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-			stdin, stdout, stderr = self.executeCTL(command=cmd['prepare_log'], pod=self.pod_sut)
+			stdin, stdout, stderr = self.execute_command_in_pod_sut(command=cmd['prepare_log'])
 			cmd['save_log'] = 'cp '+self.dockertemplate['logfile']+' /data/'+str(self.code)+'/'+self.configuration+'.log'
-			stdin, stdout, stderr = self.executeCTL(command=cmd['save_log'], pod=self.pod_sut)
-	def prepareInit(self):
-		self.logger.debug('configuration.prepareInit()')
+			stdin, stdout, stderr = self.execute_command_in_pod_sut(command=cmd['save_log'])
+	def prepare_init_dbms(self):
+		"""
+		Prepares to load data into the dbms.
+		This copies the DDL scripts to /tmp on the host of the sut.
+		Optionally parameters in DDL script are replaced by ddl_parameters.
+		The files are renamed `filled_` then.
+		"""
+		self.logger.debug('configuration.prepare_init_dbms()')
 		pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
 		self.pod_sut = pods[0]
-		#cmd = {}
-		#cmd['prepare_init'] = 'mkdir -p /data/'+self.experiment.cluster.experiments_configfolder+'/'+self.configuration
-		#stdin, stdout, stderr = self.executeCTL(cmd['prepare_init'], self.pod_sut)
-		#scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.experiments_configfolder, docker=self.docker)
 		scriptfolder = '/tmp/'
-		# the inits are in the result folder?
-		#i = 0
-		#for script in self.initscript:
-		#	#cmd['copy_init_scripts'] = 'cp {scriptname} /data/{code}/{connection}_init_{nr}.log'.format(scriptname=scriptfolder+script, code=self.code, connection=self.connection, nr=i)
-		#	cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
-		#	stdin, stdout, stderr = self.executeCTL(cmd['copy_init_scripts'])
-		#	i = i + 1
 		if len(self.ddl_parameters):
 			for script in self.initscript:
 				filename_template = self.docker+'/'+script
@@ -1753,9 +1739,13 @@ scrape_configs:
 				filename = self.docker+'/'+script
 				if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename):
 					self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
-					stdin, stdout, stderr = self.executeCTL("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script), self.pod_sut)
+					stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script))
 					#self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
 	def attach_worker(self):
+		"""
+		Attaches worker nodes to the master of the sut.
+		This runs the dockertemplate['attachWorker'] command.
+		"""
 		if self.num_worker > 0:
 			pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
 			name_worker = self.generate_component_name(component='worker', experiment=self.code, configuration=self.configuration)
@@ -1766,7 +1756,7 @@ scrape_configs:
 					num_worker = 0
 					pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
 					for pod in pods_worker:
-						#stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+						#stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
 						status = self.experiment.cluster.get_pod_status(pod)
 						if status == "Running":
 							num_worker = num_worker+1
@@ -1774,8 +1764,12 @@ scrape_configs:
 				pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
 				for pod in pods_worker:
 					self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
-					stdin, stdout, stderr = self.executeCTL(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+					stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
 	def check_sut(self):
+		"""
+		Check if the pod of the sut is running.
+		If yes, store it's name in `self.pod_sut`.
+		"""
 		pods = self.experiment.cluster.get_pods(app=self.appname, component='sut', configuration=self.configuration, experiment=self.code)
 		if len(pods) > 0:
 			self.pod_sut = pods[0]
@@ -1783,6 +1777,12 @@ scrape_configs:
 		else:
 			return False
 	def check_load_data(self):
+		"""
+		Check if loading of the sut has finished.
+		If yes, store timeLoadingStart, timeLoadingEnd, timeLoading as labels and in this object as attributes.
+		If there is a loading job: check if all pods are completed. Copy the logs of the containers in the pods and remove the pods. 
+		If there is no loading job: Read the labels. If loaded is True, store the timings in this object as attributes.
+		"""
 		loading_pods_active = True
 		# check if asynch loading inside cluster is done
 		if self.loading_active:
@@ -1888,18 +1888,18 @@ scrape_configs:
 				self.loading_started = False
 				self.loading_finished = False
 	def load_data(self):
+		"""
+		Start loading data into the sut.
+		This runs `load_data_asynch()` as an asynchronous thread.
+		At first `prepare_init_dbms()` is run.
+		"""
 		self.logger.debug('configuration.load_data()')
 		self.loading_started = True
-		self.prepareInit()
+		self.prepare_init_dbms()
 		pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
 		self.pod_sut = pods[0]
-		#scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.experiments_configfolder, docker=self.docker)
 		scriptfolder = '/tmp/'
 		commands = self.initscript.copy()
-		#print("load_data asynch")
-		#if len(self.ddl_parameters):
-		#	for i,c in enumerate(commands):
-		#		commands[i] = '/filled_'+c
 		use_storage = self.use_storage()
 		if use_storage:
 			#storage_label = 'tpc-ds-1'
@@ -1913,60 +1913,20 @@ scrape_configs:
 		thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context}
 		thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
 		thread.start()
-		#pending = asyncio.all_tasks()
-		#loop.run_until_complete(asyncio.gather(*pending))
-		#print(result)
 		return
-		"""
-		self.timeLoadingStart = default_timer()
-		# mark pod
-		fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(self.timeLoadingStart)
-		print(fullcommand)
-		self.experiment.cluster.kubectl(fullcommand)
-		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		#stdout, stderr = proc.communicate()
-		# scripts
-		shellcommand = 'sh {scriptname}'
-		for c in commands:
-			filename, file_extension = os.path.splitext(c)
-			if file_extension.lower() == '.sql':
-				#if len(self.ddl_parameters):
-				#	filename_script = scriptfolder+'/filled_'+c
-				#else:
-				#	filename_script = scriptfolder+c
-				filename_script = scriptfolder+c
-				stdin, stdout, stderr = self.executeCTL(self.dockertemplate['loadData'].format(scriptname=filename_script), self.pod_sut)
-				filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
-				print(filename_log)
-				if len(stdout) > 0:
-					with open(filename_log,'w') as file:
-						file.write(stdout)
-				filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
-				print(filename_log)
-				if len(stderr) > 0:
-					with open(filename_log,'w') as file:
-						file.write(stderr)
-			elif file_extension.lower() == '.sh':
-				stdin, stdout, stderr = self.executeCTL(shellcommand.format(scriptname=filename_script), self.pod_sut)
-				filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
-				print(filename_log)
-				if len(stdout) > 0:
-					with open(filename_log,'w') as file:
-						file.write(stdout)
-				filename_log = self.experiment.path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=self.configuration, filename=filename, extension=file_extension.lower())
-				print(filename_log)
-				if len(stderr) > 0:
-					with open(filename_log,'w') as file:
-						file.write(stderr)
-		self.timeLoadingEnd = default_timer()
-		self.timeLoading = self.timeLoadingEnd - self.timeLoadingStart
-		fullcommand = 'label pods '+self.pod_sut+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(self.timeLoadingStart, self.timeLoadingEnd, self.timeLoading)
-		print(fullcommand)
-		self.experiment.cluster.kubectl(fullcommand)
-		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-		#stdout, stderr = proc.communicate()
-		"""
 	def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
+		"""
+		Creates a job template for the benchmarker.
+
+		:param app: app the job belongs to
+		:param component: Component, for example sut or monitoring
+		:param experiment: Unique identifier of the experiment
+		:param configuration: Name of the dbms configuration
+		:param client: Number of benchmarker if there is a sequence of benchmarkers
+		:param parallelism: Number of parallel pods in job
+		:param alias: Alias name of the dbms
+		:return: Name of file in YAML format containing the benchmarker job
+		"""
 		if len(app) == 0:
 			app = self.appname
 		code = str(int(experiment))
@@ -2282,6 +2242,7 @@ scrape_configs:
 
 
 # kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
+# kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma -l component=loading
 
 
 
@@ -2305,9 +2266,9 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
 	#	file.write('started')
 	#path = self.experiment.path
 	#loadData = self.dockertemplate['loadData']
-	def executeCTL(command, pod, context):
+	def execute_command_in_pod_sut(command, pod, context):
 		fullcommand = 'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'.format(context=context, pod=pod, command=command.replace('"','\\"'))
-		logger.debug('executeCTL({})'.format(fullcommand))
+		logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
 		#print(fullcommand)
 		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		stdout, stderr = proc.communicate()
@@ -2317,7 +2278,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
 		return "", stdout.decode('utf-8'), stderr.decode('utf-8')
 	def kubectl(command, context):
 		fullcommand = 'kubectl --context {context} {command}'.format(context=context, command=command)
-		logger.debug('executeCTL({})'.format(fullcommand))
+		logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
 		#print(fullcommand)
 		proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		stdout, stderr = proc.communicate()
@@ -2355,7 +2316,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
 	for c in commands:
 		filename, file_extension = os.path.splitext(c)
 		if file_extension.lower() == '.sql':
-			stdin, stdout, stderr = executeCTL(loadData.format(scriptname=scriptfolder+c), pod_sut, context)
+			stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c), pod_sut, context)
 			filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
 			#print(filename_log)
 			if len(stdout) > 0:
@@ -2367,7 +2328,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
 				with open(filename_log,'w') as file:
 					file.write(stderr)
 		elif file_extension.lower() == '.sh':
-			stdin, stdout, stderr = executeCTL(shellcommand.format(scriptname=scriptfolder+c), pod_sut, context)
+			stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c), pod_sut, context)
 			filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
 			#print(filename_log)
 			if len(stdout) > 0:

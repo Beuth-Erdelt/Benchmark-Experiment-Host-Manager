@@ -332,7 +332,7 @@ class default():
 			# include sub directories
 			#cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
 			#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-			self.cluster.executeCTL(command=cmd['zip_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+			self.cluster.execute_command_in_pod(command=cmd['zip_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
 			#print(fullcommand)
 			#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			#stdout, stderr = proc.communicate()
@@ -384,13 +384,13 @@ class default():
 		cmd = {}
 		cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['update_dbmsbenchmarker'].replace('"','\\"')+'"'
-		self.cluster.executeCTL(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
+		self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
 		#print(fullcommand)
 		#proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 		#stdout, stderr = proc.communicate()
 		print("Join results ", end="", flush=True)
 		cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-		self.cluster.executeCTL(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
+		self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
 		print("done!")
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['merge_results'].replace('"','\\"')+'"'
 		#print(fullcommand)
@@ -398,7 +398,7 @@ class default():
 		#stdout, stderr = proc.communicate()
 		print("Build evaluation cube ", end="", flush=True)
 		cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-		self.cluster.executeCTL(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
+		self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
 		print("done!")
 		#fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['evaluate_results'].replace('"','\\"')+'"'
 		#print(fullcommand)

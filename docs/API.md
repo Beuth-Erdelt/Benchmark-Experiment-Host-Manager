@@ -298,8 +298,8 @@ cluster.get_host_memory()
 cluster.get_host_cpu()
 cluster.get_host_cores()
 cluster.get_host_system()
-cluster.getDiskSpaceUsed()
-cluster.getDiskSpaceUsedData()
+cluster.get_host_diskspace_used()
+cluster.get_host_diskspace_used_data()
 cluster.get_host_cuda()
 cluster.get_host_gpus()
 cluster.copyInits()
@@ -312,8 +312,8 @@ Most of these run inside the docker container:
 * `cluster.get_host_cpu()`: Collects `cat /proc/cpuinfo | grep \'model name\' | head -n 1`
 * `cluster.get_host_cores()`: Collects `grep -c ^processor /proc/cpuinfo`
 * `cluster.get_host_system()`: Collects `uname -r`
-* `cluster.getDiskSpaceUsed()`: Collects `df / | awk 'NR == 2{print $3}'`
-* `cluster.getDiskSpaceUsedData()`: Collects `du datadir | awk 'END{ FS=OFS=\"\t\" }END{print $1}'` inside docker container, where `datadir` is set in config of DBMS
+* `cluster.get_host_diskspace_used()`: Collects `df / | awk 'NR == 2{print $3}'`
+* `cluster.get_host_diskspace_used_data()`: Collects `du datadir | awk 'END{ FS=OFS=\"\t\" }END{print $1}'` inside docker container, where `datadir` is set in config of DBMS
 * `cluster.get_host_cuda()`: Collects `nvidia-smi | grep \'CUDA\'`
 * `cluster.get_host_gpus()`: Collects `nvidia-smi -L` and then aggregates the type using `Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])`
 * `cluster.copyInits()`: Copy init scripts to benchmark result folder on host
