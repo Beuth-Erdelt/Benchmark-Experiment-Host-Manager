@@ -1247,6 +1247,25 @@ class testbed():
         #print(name)
         self.logger.debug('testbed.create_dashboard_name({})'.format(name))
         return name
+    def dashboard_is_running(self):
+        """
+        Returns True, iff dashboard is running.
+
+        :return: True, if dashboard is running
+        """
+        app = self.appname
+        component = 'dashboard'
+        pods_dashboard = self.get_pods(app=app, component=component)
+        if len(pods_dashboard) > 0:
+            # dashboard exists
+            self.logger.debug('testbed.dashboard_is_running()=exists')
+            pod_dashboard = pods_dashboard[0]
+            status = self.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            if status == "Running":
+                self.logger.debug('testbed.dashboard_is_running() is running')
+                return True
+        return False
     def start_dashboard(self, app='', component='dashboard'):
         """
         Starts the dashboard component and its service.
@@ -1255,17 +1274,6 @@ class testbed():
         :param app: app the dashboard belongs to
         :param component: Component name, should be 'dashboard' typically
         """
-        pods_dashboard = self.get_pods(component=component)
-        if len(pods_dashboard) > 0:
-            # dashboard exists
-            self.logger.debug('testbed.start_dashboard()=exists')
-            pod_dashboard = pods_dashboard[0]
-            status = self.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
-            if status == "Running":
-                self.logger.debug('testbed.start_dashboard() is running')
-                return
-        # we start a new dashboard instance
         deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
         name = self.create_dashboard_name(app, component)
         self.logger.debug('testbed.start_dashboard({})'.format(deployment))
