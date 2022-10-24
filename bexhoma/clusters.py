@@ -1259,12 +1259,17 @@ class testbed():
         if len(pods_dashboard) > 0:
             # dashboard exists
             self.logger.debug('testbed.start_dashboard()=exists')
-            return
-        else:
-            deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
-            name = self.create_dashboard_name(app, component)
-            self.logger.debug('testbed.start_dashboard({})'.format(deployment))
-            self.kubectl('create -f '+self.yamlfolder+deployment)
+            pod_dashboard = pods_dashboard[0]
+            status = self.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            if status == "Running":
+                self.logger.debug('testbed.start_dashboard() is running')
+                return
+        # we start a new dashboard instance
+        deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
+        name = self.create_dashboard_name(app, component)
+        self.logger.debug('testbed.start_dashboard({})'.format(deployment))
+        self.kubectl('create -f '+self.yamlfolder+deployment)
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
