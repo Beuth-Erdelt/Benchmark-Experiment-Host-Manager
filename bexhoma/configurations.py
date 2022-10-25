@@ -22,13 +22,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import time
-import kubernetes.client
-from kubernetes.client.rest import ApiException
+#import kubernetes.client
+#from kubernetes.client.rest import ApiException
 from pprint import pprint
-from kubernetes import client, config
+#from kubernetes import client, config
 import subprocess
 import os
-import time
 from timeit import default_timer
 import psutil
 import logging
@@ -41,10 +40,10 @@ import json
 import ast
 import copy
 from datetime import datetime, timedelta
-
 import threading
 
 from dbmsbenchmarker import *
+
 from bexhoma import clusters, experiments
 
 
@@ -103,7 +102,7 @@ class default():
         else:
             self.num_experiment_to_apply = self.experiment.num_experiment_to_apply
         self.num_experiment_to_apply_done = 0
-        self.clients = clients
+        #self.clients = clients
         self.appname = self.experiment.cluster.appname
         self.code = self.experiment.cluster.code
         self.resources = {}
@@ -117,27 +116,34 @@ class default():
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
+        # scaling of other components
         self.num_worker = worker
         self.num_loading = 0
         self.num_maintaining = 0
+        # are there other components?
         self.monitoring_active = experiment.monitoring_active
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
-        self.parallelism = 1
+        #self.parallelism = 1
         self.storage_label = experiment.storage_label
-        self.experiment_done = False
-        self.dockerimage = dockerimage
-        self.connection_parameter = {}
+        self.experiment_done = False #: True, iff the SUT has performed the experiment completely
+        self.dockerimage = dockerimage #: Name of the Docker image of the SUT
+        self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
+        self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
+        self.loading_started = False #: Time as an integer when initial loading has started
+        self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
+        self.loading_finished = False #: Time as an integer when initial loading has finished
+        self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are       
         self.reset_sut()
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
         """
-        self.timeLoading = 0
-        self.loading_started = False
-        self.loading_after_time = None
-        self.loading_finished = False
-        self.client = 1        
+        self.timeLoading = 0 #: Time the system has taken for the initial loading of data
+        self.loading_started = False #: Time as an integer when initial loading has started
+        self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
+        self.loading_finished = False #: Time as an integer when initial loading has finished
+        self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are       
     def add_benchmark_list(self, list_clients):
         """
         Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
