@@ -19,6 +19,8 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
+If you encounter any issues, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues).
+
 ## Installation
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
@@ -53,6 +55,19 @@ The repository contains a [tool](experiments/tpch/) for running TPC-H (reading) 
 
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], as query executor and evaluator as in [1,2].
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
+
+## Contributing, Bug Reports
+
+If you have any question or found a bug, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues).
+In any bug report, please let us know:
+
+* Which operating system and hardware (32 bit or 64 bit) you are using
+* Python version
+* Bexhoma version (or git commit/date)
+* Traceback that occurs (the full error message)
+
+We are always looking for people interested in helping with code development, documentation writing, technical administration, and whatever else comes up.
+If you wish to contribute, please first read the [contribution section](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/CONTRIBUTING.md) or visit the [documentation](https://bexhoma.readthedocs.io/en/latest/CONTRIBUTING.html).
 
 ## References
 

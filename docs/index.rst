@@ -18,6 +18,7 @@
     ./DBMS.md
     ./Deployments.md
     ./Monitoring.md
+    ./CONTRIBUTING.md
     ...
 
 
