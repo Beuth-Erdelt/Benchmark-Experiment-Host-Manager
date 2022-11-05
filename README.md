@@ -51,23 +51,29 @@ The repository contains a [tool](experiments/tpch/) for running TPC-H (reading) 
 
 ## More Informations
 
-For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) as query executor [2] and evaluator [1].
+For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager), [3], as query executor and evaluator as in [1,2].
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
 
 ## References
 
-[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
+If you use Bexhoma in work contributing to a scientific publication, we kindly ask that you cite our application note [2] or [1]:
 
+[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
 > Erdelt P.K. (2021)
 > A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
 > Lecture Notes in Computer Science, vol 12752. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-84924-5_6
 
-
-[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://www.researchgate.net/publication/353236865_Orchestrating_DBMS_Benchmarking_in_the_Cloud_with_Kubernetes)
+[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://doi.org/10.1007/978-3-030-94437-7_6)
 > Erdelt P.K. (2022)
 > Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
+
+[3] [DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python](https://doi.org/10.21105/joss.04628)
+> Erdelt P.K., Jestel J. (2022).
+> DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python.
+> Journal of Open Source Software, 7(79), 4628
+> https://doi.org/10.21105/joss.04628
