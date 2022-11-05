@@ -7,8 +7,9 @@ This Python tools helps **managing benchmark experiments of Database Management 
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
-This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud und Oracle Cloud and at Minikube installations,
-running with Citus, Clickhouse, DB2, Exasol, MariaDB, MariaDB Columnstore, MemSQL, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
+This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
+running with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
+.
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
