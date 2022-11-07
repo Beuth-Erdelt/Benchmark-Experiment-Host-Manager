@@ -644,7 +644,7 @@ class default():
                             else:
                                 connection=config.configuration+'-'+client
                             print("Running benchmark {}".format(connection))
-                            config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
+                            config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                         else:
                             # no list element left
                             if stop:
