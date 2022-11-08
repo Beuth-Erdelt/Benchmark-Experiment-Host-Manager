@@ -896,7 +896,7 @@ class tpcc(default):
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/tpcc')
         parameter.defaultParameters = {'SF': str(SF)}
-        self.set_queryfile(queryfile)
+        #self.set_queryfile(queryfile)
         self.set_workload(
             name = 'TPC-C Queries SF='+str(SF),
             info = 'This experiment performs some TPC-C inspired workloads.'
@@ -934,7 +934,7 @@ class iot(default):
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/iot')
         parameter.defaultParameters = {'SF': str(SF)}
-        #self.set_queryfile(queryfile)
+        self.set_queryfile(queryfile)
         self.set_workload(
             name = 'IoT Queries SF='+str(SF),
             info = 'This experiment performs some IoT inspired queries.'
