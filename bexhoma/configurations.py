@@ -2455,7 +2455,7 @@ class hammerdb(default):
         elif isinstance(c['JDBC']['jar'], str):
             c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
         #print(c)
-        self.logger.debug('configuration.run_benchmarker_pod_hammerdb(): {}'.format(self.benchmark.connections))
+        self.logger.debug('configuration.run_benchmarker_pod_hammerdb(): {}'.format(connection))
         # store experiment
         experiment = {}
         experiment['delay'] = 0
