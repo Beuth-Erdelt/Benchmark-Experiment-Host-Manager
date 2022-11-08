@@ -868,6 +868,42 @@ class tpch(default):
         self.set_queryfile('queries-tpch-profiling.config')
 
 
+"""
+############################################################################
+TPC-C
+############################################################################
+"""
+
+class tpcc(default):
+    """
+    Class for defining an TPC-C experiment (in the HammerDB version).
+    This sets
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    * additional parameters - here SF (the scaling factor), i.e. number of warehouses
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            #queryfile = 'queries-tpch.config',
+            SF = '1',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.set_experiment(volume='tpcc')
+        self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.cluster.set_experiments_configfolder('experiments/tpcc')
+        parameter.defaultParameters = {'SF': str(SF)}
+        self.set_queryfile(queryfile)
+        self.set_workload(
+            name = 'TPC-C Queries SF='+str(SF),
+            info = 'This experiment performs some TPC-C inspired workloads.'
+            )
+        self.storage_label = 'tpch-'+str(SF)
+
+
 
 """
 ############################################################################
