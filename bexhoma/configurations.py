@@ -114,6 +114,7 @@ class default():
         self.set_storage(**self.experiment.storage)
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
+        self.set_loading_parameters(**self.experiment.loading_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
         # scaling of other components
@@ -247,6 +248,14 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.maintaining_parameters = kwargs
+    def set_loading_parameters(self, **kwargs):
+        """
+        Sets ENV for loading components.
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.loading_parameters = kwargs
     def set_nodes(self, **kwargs):
         self.nodes = kwargs
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
@@ -2263,24 +2272,24 @@ scrape_configs:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()
                     dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['loading']
                 # store parameters in connection for evaluation
-                if len(self.maintaining_parameters):
-                    self.connection_parameter['loading_parameters'] = self.maintaining_parameters
+                if len(self.loading_parameters):
+                    self.connection_parameter['loading_parameters'] = self.loading_parameters
                 # set ENV variables - defaults
                 env_default = {}
-                if 'PARALLEL' in self.maintaining_parameters:
-                    env_default['PARALLEL'] = self.maintaining_parameters['PARALLEL']
+                if 'PARALLEL' in self.loading_parameters:
+                    env_default['PARALLEL'] = self.loading_parameters['PARALLEL']
                 else:
                     env_default['PARALLEL'] = '24'
-                if 'CHILD' in self.maintaining_parameters:
-                    env_default['CHILD'] = self.maintaining_parameters['1']
+                if 'CHILD' in self.loading_parameters:
+                    env_default['CHILD'] = self.loading_parameters['1']
                 else:
                     env_default['CHILD'] = '1'
-                if 'RNGSEED' in self.maintaining_parameters:
-                    env_default['RNGSEED'] = self.maintaining_parameters['RNGSEED']
+                if 'RNGSEED' in self.loading_parameters:
+                    env_default['RNGSEED'] = self.loading_parameters['RNGSEED']
                 else:
                     env_default['RNGSEED'] = '123'
-                if 'SF' in self.maintaining_parameters:
-                    env_default['SF'] = self.maintaining_parameters['SF']
+                if 'SF' in self.loading_parameters:
+                    env_default['SF'] = self.loading_parameters['SF']
                 else:
                     env_default['SF'] = '10'
                 # set ENV variables - in YAML

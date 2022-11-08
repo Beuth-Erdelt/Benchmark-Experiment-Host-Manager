@@ -107,6 +107,7 @@ class default():
         self.storage = {}
         self.nodes = {}
         self.maintaining_parameters = {}
+        self.loading_parameters = {}
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         self.querymanagement = {}
@@ -229,6 +230,14 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.maintaining_parameters = kwargs
+    def set_loading_parameters(self, **kwargs):
+        """
+        Sets ENV for loading components.
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.loading_parameters = kwargs
     def add_configuration(self, configuration):
         """
         Adds a configuration object to the list of configurations of this experiment.
