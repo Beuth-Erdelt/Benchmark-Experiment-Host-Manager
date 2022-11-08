@@ -934,7 +934,7 @@ class iot(default):
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/iot')
         parameter.defaultParameters = {'SF': str(SF)}
-        self.set_queryfile(queryfile)
+        #self.set_queryfile(queryfile)
         self.set_workload(
             name = 'IoT Queries SF='+str(SF),
             info = 'This experiment performs some IoT inspired queries.'
