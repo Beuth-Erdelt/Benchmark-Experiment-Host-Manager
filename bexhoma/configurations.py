@@ -2549,6 +2549,24 @@ class hammerdb(default):
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
+                # set ENV variables - defaults
+                env_default = {}
+                if 'PARALLEL' in self.loading_parameters:
+                    env_default['PARALLEL'] = self.loading_parameters['PARALLEL']
+                else:
+                    env_default['PARALLEL'] = '24'
+                if 'CHILD' in self.loading_parameters:
+                    env_default['CHILD'] = self.loading_parameters['1']
+                else:
+                    env_default['CHILD'] = '1'
+                if 'RNGSEED' in self.loading_parameters:
+                    env_default['RNGSEED'] = self.loading_parameters['RNGSEED']
+                else:
+                    env_default['RNGSEED'] = '123'
+                if 'SF' in self.loading_parameters:
+                    env_default['SF'] = self.loading_parameters['SF']
+                else:
+                    env_default['SF'] = '10'
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
@@ -2568,6 +2586,14 @@ class hammerdb(default):
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = experiment
                     if e['name'] == 'BEXHOMA_CONNECTION':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = configuration
+                    if e['name'] == 'PARALLEL':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['PARALLEL'])
+                    if e['name'] == 'CHILD':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['CHILD'])
+                    if e['name'] == 'RNGSEED':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['RNGSEED'])
+                    if e['name'] == 'SF':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SF'])
                     self.logger.debug('configuration.create_job({})'.format(str(e)))
                     #print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
