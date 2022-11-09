@@ -2570,7 +2570,7 @@ class hammerdb(default):
                 if 'HAMMERDB_VUSERS' in self.loading_parameters:
                     env_default['HAMMERDB_VUSERS'] = self.loading_parameters['HAMMERDB_VUSERS']
                 else:
-                    env_default['HAMMERDB_VUSERS'] = '1,2,4,8'
+                    env_default['HAMMERDB_VUSERS'] = '1 2 4 8'
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
