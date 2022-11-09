@@ -2567,6 +2567,10 @@ class hammerdb(default):
                     env_default['SF'] = self.loading_parameters['SF']
                 else:
                     env_default['SF'] = '10'
+                if 'HAMMERDB_VUSERS' in self.loading_parameters:
+                    env_default['HAMMERDB_VUSERS'] = self.loading_parameters['HAMMERDB_VUSERS']
+                else:
+                    env_default['HAMMERDB_VUSERS'] = '1,2,4,8'
                 for i,e in enumerate(envs):
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
@@ -2594,6 +2598,8 @@ class hammerdb(default):
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['RNGSEED'])
                     if e['name'] == 'SF':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SF'])
+                    if e['name'] == 'HAMMERDB_VUSERS':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['HAMMERDB_VUSERS'])
                     self.logger.debug('configuration.create_job({})'.format(str(e)))
                     #print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
