@@ -3,11 +3,12 @@
 # -- Project information
 
 project = 'Bexhoma'
-copyright = '2021, Patrick Erdelt'
-author = 'Patrick Erdelt'
+copyright = '2021, Patrick K. Erdelt'
+author = 'Patrick K. Erdelt'
 
-release = '0.1'
-version = '0.1.0'
+release = '0.6'
+version = '0.6.1'
+language = 'en'
 
 # -- General configuration
 
@@ -31,10 +32,17 @@ templates_path = ['_templates']
 
 # -- Options for HTML output
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'bizstyle'
 html_static_path = ['_static']
 
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
 
 #source_suffix = ['.rst', '.md']
+
+todo_include_todos = True
+
+import os
+import sys
+#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../'))
