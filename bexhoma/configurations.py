@@ -2424,7 +2424,7 @@ class hammerdb(default):
         :param client: Number of benchmarker this is in a sequence of
         :param parallelism: Number of parallel benchmarker pods we want to have
         """
-        self.logger.debug('configuration.run_benchmarker_pod_hammerdb()')
+        self.logger.debug('hammerdb.run_benchmarker_pod_hammerdb()')
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
         experiments_configfolder = self.experiment.cluster.experiments_configfolder
         if connection is None:
@@ -2522,7 +2522,7 @@ class hammerdb(default):
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
-        self.logger.debug('configuration.create_job_hammerdb({})'.format(jobname))
+        self.logger.debug('hammerdb.create_job_hammerdb({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
         start = now + timedelta(seconds=180)
@@ -2636,6 +2636,7 @@ class hammerdb(default):
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
+        self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
         if len(app) == 0:
             app = self.appname
         if connection is None:
