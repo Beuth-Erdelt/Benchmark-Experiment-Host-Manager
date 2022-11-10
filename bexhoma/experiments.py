@@ -713,6 +713,7 @@ class default():
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
+                    config.end_benchmarker()
                     self.cluster.delete_job(job)
             if len(pods) == 0 and len(jobs) == 0:
                 do = False

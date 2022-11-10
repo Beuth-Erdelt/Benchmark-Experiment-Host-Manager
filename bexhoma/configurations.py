@@ -41,6 +41,9 @@ import ast
 import copy
 from datetime import datetime, timedelta
 import threading
+import re
+import pandas as pd
+import pickle
 
 from dbmsbenchmarker import *
 
@@ -1909,6 +1912,11 @@ scrape_configs:
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         return
+    def end_benchmarker(self):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+        """
     def create_manifest_benchmarker(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias='', env={}, template=''):
         """
         Creates a job template for the benchmarker.
@@ -2496,6 +2504,7 @@ class hammerdb(default):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
+        This sets some settings specific to HammerDB.
 
         :param app: app the job belongs to
         :param component: Component, for example sut or monitoring
@@ -2622,8 +2631,47 @@ class hammerdb(default):
                 print(exc)
         return job_experiment
     #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
-
-
+    def end_benchmarker(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+        """
+        if len(app) == 0:
+            app = self.appname
+        if connection is None:
+            connection = self.configuration#self.getConnectionName()
+        if len(configuration) == 0:
+            configuration = connection
+        code = self.code
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            status = self.experiment.cluster.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            while status != "Running":
+                self.wait(10)
+                status = self.experiment.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+            filename_logs = '/results/{}/{}*'.format(self.code, jobname)
+            filename_df = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
+            cmd = {}
+            cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            list_nopm = re.findall('achieved (.+?) NOPM', stdout)
+            list_tpm = re.findall('from (.+?) ', stdout)
+            cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            if len(list_nopm) and len(list_tpm) and len(list_vuser):
+                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
+                df.columns = ['NOPM','TPM', 'VUSERS']
+                print(df)
+                filename = 
+                f = open(filename, "wb")
+                pickle.dump(df, f)
+                f.close()
+                #self.loading_parameters['HAMMERDB_VUSERS']
 
 # https://stackoverflow.com/questions/37278647/fire-and-forget-python-async-await/53255955#53255955
 
