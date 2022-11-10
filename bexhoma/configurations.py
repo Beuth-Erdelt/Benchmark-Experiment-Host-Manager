@@ -2667,8 +2667,7 @@ class hammerdb(default):
                 df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
                 df.columns = ['NOPM','TPM', 'VUSERS']
                 print(df)
-                filename = 
-                f = open(filename, "wb")
+                f = open(filename_df, "wb")
                 pickle.dump(df, f)
                 f.close()
                 #self.loading_parameters['HAMMERDB_VUSERS']
