@@ -1,5 +1,5 @@
-bexhoma package
-===============
+bexhoma package API
+===================
 
 Subpackages
 -----------

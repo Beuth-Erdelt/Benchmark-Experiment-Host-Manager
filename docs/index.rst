@@ -11,7 +11,6 @@
     :caption: Table of Contents:
     :hidden:
 
-    ./bexhoma
     ../README.md
     ./Example-TPC-H.md
     ./Concept.md
@@ -20,6 +19,7 @@
     ./Deployments.md
     ./Monitoring.md
     ./CONTRIBUTING.md
+    ./bexhoma
 
 
 .. mdinclude:: ../README.md
