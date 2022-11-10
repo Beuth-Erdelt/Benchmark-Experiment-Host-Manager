@@ -2636,7 +2636,6 @@ class hammerdb(default):
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
-        self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
         if len(app) == 0:
             app = self.appname
         if connection is None:
@@ -2645,6 +2644,7 @@ class hammerdb(default):
             configuration = connection
         code = self.code
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
         pods = self.experiment.cluster.get_pods(component='dashboard')
         if len(pods) > 0:
             pod_dashboard = pods[0]
@@ -2658,10 +2658,12 @@ class hammerdb(default):
             filename_df = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
             cmd = {}
             cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
             list_nopm = re.findall('achieved (.+?) NOPM', stdout)
             list_tpm = re.findall('from (.+?) ', stdout)
             cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
             list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
             if len(list_nopm) and len(list_tpm) and len(list_vuser):
