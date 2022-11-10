@@ -2654,7 +2654,8 @@ class hammerdb(default):
                 self.wait(10)
                 status = self.experiment.cluster.get_pod_status(pod_dashboard)
                 print(pod_dashboard, status)
-            filename_logs = '/results/{}/{}*'.format(self.code, jobname)
+            filename_logs = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
+            #filename_logs = '/results/{}/{}*'.format(self.code, jobname)
             filename_df = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
             cmd = {}
             cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
