@@ -2631,7 +2631,7 @@ class hammerdb(default):
                 print(exc)
         return job_experiment
     #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
-    def end_benchmarker(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    def end_benchmarker(self, connection=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
