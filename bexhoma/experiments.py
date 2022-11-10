@@ -536,7 +536,7 @@ class default():
         2) start monitoring
         3) start loading (at first scripts (schema or loading via pull), then optionally parallel loading pods)
         4) optionally start maintaining pods
-        5) at the same time as 4) run benchmarker jobs corresponding to list given via add_benchmark_list()
+        5) at the same time as 4. run benchmarker jobs corresponding to list given via add_benchmark_list()
 
         :param intervals: Seconds to wait before checking change of status
         :param stop: Tells if SUT should be removed when all benchmarking has finished. Set to False if we want to have loaded SUTs for inspection.
@@ -808,6 +808,7 @@ class tpcds(default):
     """
     Class for defining an TPC-DS experiment.
     This sets
+    
     * the folder to the experiment - including query file and schema informations per dbms
     * name and information about the experiment
     * additional parameters - here SF (the scaling factor)
@@ -848,6 +849,7 @@ class tpch(default):
     """
     Class for defining an TPC-H experiment.
     This sets
+
     * the folder to the experiment - including query file and schema informations per dbms
     * name and information about the experiment
     * additional parameters - here SF (the scaling factor)
@@ -888,6 +890,7 @@ class tpcc(default):
     """
     Class for defining an TPC-C experiment (in the HammerDB version).
     This sets
+
     * the folder to the experiment - including query file and schema informations per dbms
     * name and information about the experiment
     * additional parameters - here SF (the scaling factor), i.e. number of warehouses
@@ -926,6 +929,7 @@ class iot(default):
     """
     Class for defining an TSBS experiment.
     This sets
+
     * the folder to the experiment - including query file and schema informations per dbms
     * name and information about the experiment
     * additional parameters - here SF (the scaling factor)
@@ -981,6 +985,7 @@ class tsbs(default):
     """
     Class for defining an TSBS experiment.
     This sets
+
     * the folder to the experiment - including query file and schema informations per dbms
     * name and information about the experiment
     * additional parameters - here SF (the scaling factor)
