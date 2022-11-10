@@ -1982,6 +1982,8 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
+                    if e['name'] == 'BEXHOMA_CLIENT':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(client)
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
                     if e['name'] == 'DBMSBENCHMARKER_CODE':
@@ -2070,6 +2072,8 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
+                    if e['name'] == 'BEXHOMA_CLIENT':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(client)
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
                     if e['name'] == 'DBMSBENCHMARKER_CODE':
@@ -2583,6 +2587,8 @@ class hammerdb(default):
                 else:
                     env_default['HAMMERDB_VUSERS'] = '1 2 4 8'
                 for i,e in enumerate(envs):
+                    if e['name'] == 'BEXHOMA_CLIENT':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(client)
                     if e['name'] == 'DBMSBENCHMARKER_CLIENT':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
                     if e['name'] == 'DBMSBENCHMARKER_CODE':
