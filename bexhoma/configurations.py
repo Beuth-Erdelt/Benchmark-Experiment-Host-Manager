@@ -2434,6 +2434,8 @@ class hammerdb(default):
         code = self.code
         if not isinstance(client, str):
             client = str(client)
+        if not self.client:
+            self.client = client
         if len(dialect) == 0 and len(self.dialect) > 0:
             dialect = self.dialect
         #self.experiment.cluster.stopPortforwarding()
@@ -2631,7 +2633,7 @@ class hammerdb(default):
                 print(exc)
         return job_experiment
     #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
-    def end_benchmarker(self, connection=None, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    def end_benchmarker(self, connection=None, app='', component='benchmarker', experiment='', configuration='', client=None, parallelism=1, alias=''):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
@@ -2642,6 +2644,8 @@ class hammerdb(default):
             connection = self.configuration#self.getConnectionName()
         if len(configuration) == 0:
             configuration = connection
+        if client is None:
+            client = self.client
         code = self.code
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
