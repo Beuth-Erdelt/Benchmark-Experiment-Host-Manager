@@ -2666,6 +2666,9 @@ class hammerdb(default):
             print(cmd['extract_results'])
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
             list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            print(list_nopm)
+            print(list_tpm)
+            print(list_vuser)
             if len(list_nopm) and len(list_tpm) and len(list_vuser):
                 df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
                 df.columns = ['NOPM','TPM', 'VUSERS']
