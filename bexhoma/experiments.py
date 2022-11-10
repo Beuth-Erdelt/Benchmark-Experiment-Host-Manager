@@ -413,6 +413,51 @@ class default():
         #print(fullcommand)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
+        ############ HammerDB
+        """if len(app) == 0:
+            app = self.appname
+        if connection is None:
+            connection = self.configuration#self.getConnectionName()
+        if len(configuration) == 0:
+            configuration = connection
+        code = self.code
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        #self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            status = self.experiment.cluster.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            while status != "Running":
+                self.wait(10)
+                status = self.experiment.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+            filename_logs = '/results/{}/{}*'.format(self.code, 'bexhoma-benchmarker-')
+            filename_df = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
+            cmd = {}
+            cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            list_nopm = re.findall('achieved (.+?) NOPM', stdout)
+            list_tpm = re.findall('from (.+?) ', stdout)
+            cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            print(list_nopm)
+            print(list_tpm)
+            print(list_vuser)
+            if len(list_nopm) and len(list_tpm) and len(list_vuser):
+                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
+                df.columns = ['NOPM','TPM', 'VUSERS']
+                print(df)
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+                #self.loading_parameters['HAMMERDB_VUSERS']
+        """
     def stop_maintaining(self):
         """
         Stop all maintaining jobs of this experiment.
