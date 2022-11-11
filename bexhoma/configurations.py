@@ -2631,7 +2631,7 @@ class hammerdb(default):
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['HAMMERDB_VUSERS'])
                     if e['name'] == 'HAMMERDB_TYPE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['HAMMERDB_TYPE'])
-                    self.logger.debug('configuration.create_job({})'.format(str(e)))
+                    self.logger.debug('configuration.create_job_hammerdb({})'.format(str(e)))
                     #print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
