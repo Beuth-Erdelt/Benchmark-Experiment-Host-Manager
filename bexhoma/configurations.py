@@ -2304,6 +2304,10 @@ scrape_configs:
                     env_default['SF'] = self.loading_parameters['SF']
                 else:
                     env_default['SF'] = '10'
+                if 'HAMMERDB_TYPE' in self.loading_parameters:
+                    env_default['HAMMERDB_TYPE'] = self.loading_parameters['HAMMERDB_TYPE']
+                else:
+                    env_default['HAMMERDB_TYPE'] = 'posgresql'
                 # set ENV variables - in YAML
                 # all init containers
                 if 'initContainers' in dep['spec']['template']['spec']:
@@ -2328,6 +2332,8 @@ scrape_configs:
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['RNGSEED'])
                             if e['name'] == 'SF':
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SF'])
+                            if e['name'] == 'HAMMERDB_TYPE':
+                                dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['HAMMERDB_TYPE'])
                             self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
                             #print(e)
                 # all containers
@@ -2352,6 +2358,8 @@ scrape_configs:
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['RNGSEED'])
                         if e['name'] == 'SF':
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SF'])
+                        if e['name'] == 'HAMMERDB_TYPE':
+                            dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['HAMMERDB_TYPE'])
                         self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
                         #print(e)
         with open(job_experiment,"w+") as stream:
@@ -2586,6 +2594,10 @@ class hammerdb(default):
                     env_default['HAMMERDB_VUSERS'] = self.loading_parameters['HAMMERDB_VUSERS']
                 else:
                     env_default['HAMMERDB_VUSERS'] = '1 2 4 8'
+                if 'HAMMERDB_TYPE' in self.loading_parameters:
+                    env_default['HAMMERDB_TYPE'] = self.loading_parameters['HAMMERDB_TYPE']
+                else:
+                    env_default['HAMMERDB_TYPE'] = 'postgresql'
                 for i,e in enumerate(envs):
                     if e['name'] == 'BEXHOMA_CLIENT':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(client)
@@ -2617,6 +2629,8 @@ class hammerdb(default):
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['SF'])
                     if e['name'] == 'HAMMERDB_VUSERS':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['HAMMERDB_VUSERS'])
+                    if e['name'] == 'HAMMERDB_TYPE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['HAMMERDB_TYPE'])
                     self.logger.debug('configuration.create_job({})'.format(str(e)))
                     #print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
