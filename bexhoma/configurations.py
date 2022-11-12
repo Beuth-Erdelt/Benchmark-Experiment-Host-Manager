@@ -2534,6 +2534,7 @@ class hammerdb(default):
         code = str(int(experiment))
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        self.benchmarker_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('hammerdb.create_job_hammerdb({})'.format(jobname))
@@ -2668,6 +2669,7 @@ class hammerdb(default):
             client = self.client
         code = self.code
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        jobname = self.benchmarker_jobname
         self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
         pods = self.experiment.cluster.get_pods(component='dashboard')
         if len(pods) > 0:
