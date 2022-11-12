@@ -38,6 +38,7 @@ import time
 import os
 import subprocess
 from datetime import datetime, timedelta
+import pandas as pd
 
 
 urllib3.disable_warnings()
@@ -414,6 +415,13 @@ class default():
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
         ############ HammerDB
+        #self.path = "/home/perdelt/benchmarks/1668286639/"
+        directory = os.fsencode(self.path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.endswith(".pickle"): 
+                df = pd.read_pickle(self.path+filename)
+                print(df)
         """if len(app) == 0:
             app = self.appname
         if connection is None:
