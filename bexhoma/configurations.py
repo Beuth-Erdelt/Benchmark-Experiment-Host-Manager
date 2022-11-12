@@ -2033,7 +2033,7 @@ scrape_configs:
             app = self.appname
         code = str(int(experiment))
         #connection = configuration
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(self.num_experiment_to_apply_done)+"-"+str(client))
         #print(jobname)
         self.logger.debug('configuration.create_job({})'.format(jobname))
         # determine start time
@@ -2533,7 +2533,7 @@ class hammerdb(default):
             app = self.appname
         code = str(int(experiment))
         #connection = configuration
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(self.num_experiment_to_apply_done)+"-"+str(client))
         self.benchmarker_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
