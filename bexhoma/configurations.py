@@ -2286,6 +2286,7 @@ scrape_configs:
                 # store parameters in connection for evaluation
                 if len(self.loading_parameters):
                     self.connection_parameter['loading_parameters'] = self.loading_parameters
+                print("self.loading_parameters", self.loading_parameters)
                 # set ENV variables - defaults
                 env_default = {}
                 if 'PARALLEL' in self.loading_parameters:
