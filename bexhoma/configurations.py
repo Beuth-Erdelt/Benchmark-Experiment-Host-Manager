@@ -1638,7 +1638,8 @@ scrape_configs:
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.experiment.cluster.log_experiment(experiment)
         # create pod
-        yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
+        #yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
+        yamlfile = self.create_manifest_benchmarker(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, client=client, parallelism=parallelism, alias=c['alias'], env=env, template=template)
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
@@ -2066,8 +2067,9 @@ scrape_configs:
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
         job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return cluster.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template=template)
+        return cluster.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-dbmsbenchmarker.yml")
         # OLD
+        """
         with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
             try:
                 result=yaml.safe_load_all(stream)
@@ -2128,7 +2130,8 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
+        """
+    def DEPRECATED_create_job(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
