@@ -2718,7 +2718,7 @@ class hammerdb(default):
                 query='loading'
                 for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
                     print(m)
-                    monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, self.timeLoadingStart, self.timeLoadingEnd, '{result_path}/{code}/'.format(result_path=self.benchmark.path, code=code))
+                    monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, str(self.timeLoadingStart), str(self.timeLoadingEnd), '{result_path}/{code}/'.format(result_path=self.benchmark.path, code=code))
         # get monitoring for loading
         #if self.monitoring_active:
         #    cmd = {}
