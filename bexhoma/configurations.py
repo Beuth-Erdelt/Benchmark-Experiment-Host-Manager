@@ -2669,14 +2669,13 @@ class hammerdb(default):
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        e = {'DBMSBENCHMARKER_NOW': now_string,
+        env = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': start_string,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
-        env = {**env, **e}
         env = {**env, **self.loading_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml")
