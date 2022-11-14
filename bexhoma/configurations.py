@@ -2255,7 +2255,7 @@ scrape_configs:
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
-            'DBMSBENCHMARKER_ALIAS': alias
+            'DBMSBENCHMARKER_ALIAS': alias,
             'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename)}
         env = {**env, **self.maintaining_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
