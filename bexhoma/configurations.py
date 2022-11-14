@@ -1639,7 +1639,7 @@ scrape_configs:
         self.experiment.cluster.log_experiment(experiment)
         # create pod
         #yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
-        yamlfile = self.create_manifest_benchmarker(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, client=client, parallelism=parallelism, alias=c['alias'], env=env, template=template)
+        yamlfile = self.create_manifest_benchmarker(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, client=client, parallelism=parallelism, alias=c['alias'])#, env=env, template=template)
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
