@@ -457,7 +457,7 @@ class default():
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
         # start job
-        job = self.create_job_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism)
+        job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism)
         self.logger.debug("Deploy "+job)
         self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def start_loading(self, delay=0):
@@ -563,7 +563,7 @@ class default():
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        job = self.create_job_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=parallelism)
+        job = self.create_manifest_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=parallelism)
         self.logger.debug("Deploy "+job)
         self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
@@ -1639,7 +1639,7 @@ scrape_configs:
         self.experiment.cluster.log_experiment(experiment)
         # create pod
         #yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
-        yamlfile = self.create_manifest_benchmarker(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, client=client, parallelism=parallelism, alias=c['alias'])#, env=env, template=template)
+        yamlfile = self.create_manifest_benchmarking(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, client=client, parallelism=parallelism, alias=c['alias'])#, env=env, template=template)
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
@@ -2033,7 +2033,7 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_manifest_benchmarker(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias='', env={}, template=''):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias='', env={}, template=''):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
@@ -2055,7 +2055,7 @@ scrape_configs:
         experimentRun = str(self.num_experiment_to_apply_done+1)
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         self.benchmarker_jobname = jobname
-        self.logger.debug('configuration.create_manifest_benchmarker({})'.format(jobname))
+        self.logger.debug('configuration.create_manifest_benchmarking({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -2112,7 +2112,7 @@ scrape_configs:
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
                     if e['name'] == 'DBMSBENCHMARKER_ALIAS':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = alias
-                    self.logger.debug('configuration.create_manifest_benchmarker({})'.format(str(e)))
+                    self.logger.debug('configuration.create_manifest_benchmarking({})'.format(str(e)))
                     #print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
@@ -2224,8 +2224,8 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
-    def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias=''):
+    #def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias=''):
         """
         Creates a job template for maintaining.
         This sets meta data in the template and ENV.
@@ -2240,11 +2240,13 @@ scrape_configs:
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
+        experimentRun = str(self.num_experiment_to_apply_done+1)
+        connection = self.configuration#self.getConnectionName()
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         self.maintaining_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
-        self.logger.debug('hammerdb.create_job_maintaining({})'.format(jobname))
+        self.logger.debug('hammerdb.create_manifest_maintaining({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -2254,7 +2256,7 @@ scrape_configs:
             'DBMSBENCHMARKER_START': start_string,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
-            #'DBMSBENCHMARKER_CONNECTION': connection,
+            'DBMSBENCHMARKER_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias,
             'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename)}
@@ -2336,7 +2338,7 @@ scrape_configs:
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
                             if e['name'] == 'SENSOR_NUMBER':
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
-                            self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                            self.logger.debug('configuration.create_manifest_maintaining({})'.format(str(e)))
                             #print(e)
                 # all containers
                 for num_container, container in enumerate(dep['spec']['template']['spec']['containers']):
@@ -2350,7 +2352,7 @@ scrape_configs:
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_RATE'])
                         if e['name'] == 'SENSOR_NUMBER':
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SENSOR_NUMBER'])
-                        self.logger.debug('configuration.create_job_maintaining({})'.format(str(e)))
+                        self.logger.debug('configuration.create_manifest_maintaining({})'.format(str(e)))
                         #print(e)
         with open(job_experiment,"w+") as stream:
             try:
@@ -2359,7 +2361,7 @@ scrape_configs:
                 print(exc)
         return job_experiment
         """
-    def create_job_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
+    def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
         """
         Creates a job template for loading.
         This sets meta data in the template and ENV.
@@ -2380,7 +2382,7 @@ scrape_configs:
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
-        self.logger.debug('configuration.create_job_loading({})'.format(jobname))
+        self.logger.debug('configuration.create_manifest_loading({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
         start = now + timedelta(seconds=180)
@@ -2484,7 +2486,7 @@ scrape_configs:
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['SF'])
                             if e['name'] == 'HAMMERDB_TYPE':
                                 dep['spec']['template']['spec']['initContainers'][num_container]['env'][i]['value'] = str(env_default['HAMMERDB_TYPE'])
-                            self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
+                            self.logger.debug('configuration.create_manifest_loading({})'.format(str(e)))
                             #print(e)
                 # all containers
                 for num_container, container in enumerate(dep['spec']['template']['spec']['containers']):
@@ -2510,7 +2512,7 @@ scrape_configs:
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['SF'])
                         if e['name'] == 'HAMMERDB_TYPE':
                             dep['spec']['template']['spec']['containers'][num_container]['env'][i]['value'] = str(env_default['HAMMERDB_TYPE'])
-                        self.logger.debug('configuration.create_job_loading({})'.format(str(e)))
+                        self.logger.debug('configuration.create_manifest_loading({})'.format(str(e)))
                         #print(e)
         with open(job_experiment,"w+") as stream:
             try:
@@ -2637,7 +2639,7 @@ class hammerdb(default):
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.experiment.cluster.log_experiment(experiment)
         # create pod
-        yamlfile = self.create_job_hammerdb(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
+        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
@@ -2665,7 +2667,7 @@ class hammerdb(default):
         #    cmd = {}
         #    cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
         #    stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
-    def create_job_hammerdb(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
@@ -2689,7 +2691,7 @@ class hammerdb(default):
         self.benchmarker_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
-        self.logger.debug('hammerdb.create_job_hammerdb({})'.format(jobname))
+        self.logger.debug('hammerdb.create_manifest_benchmarking({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -2800,7 +2802,7 @@ class hammerdb(default):
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['HAMMERDB_VUSERS'])
                     if e['name'] == 'HAMMERDB_TYPE':
                         dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(env_default['HAMMERDB_TYPE'])
-                    self.logger.debug('configuration.create_job_hammerdb({})'.format(str(e)))
+                    self.logger.debug('configuration.create_manifest_benchmarking({})'.format(str(e)))
                     #print(e)
                 e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
                 dep['spec']['template']['spec']['containers'][0]['env'].append(e)
@@ -2822,7 +2824,7 @@ class hammerdb(default):
                 print(exc)
         return job_experiment
         """
-    #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    #def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
     def end_benchmarker(self, connection=None, app='', component='benchmarker', experiment='', configuration='', client=None, parallelism=1, alias=''):
         """
         Ends a benchmarker job.
