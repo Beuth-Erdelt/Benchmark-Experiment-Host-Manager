@@ -416,7 +416,7 @@ class default():
         #stdout, stderr = proc.communicate()
         ############ HammerDB
         #self.path = "/home/perdelt/benchmarks/1668286639/"
-        directory = os.fsencode(self.path)
+        directory = os.fsencode(self.path)+"/"
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.endswith(".pickle"): 
