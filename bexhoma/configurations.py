@@ -2665,6 +2665,23 @@ class hammerdb(default):
         self.logger.debug('hammerdb.create_job_hammerdb({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start = now + timedelta(seconds=180)
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        e = {'DBMSBENCHMARKER_NOW': now_string,
+            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_CLIENT': str(parallelism),
+            'DBMSBENCHMARKER_CODE': code,
+            #'DBMSBENCHMARKER_CONNECTION': connections,
+            'DBMSBENCHMARKER_SLEEP': str(60),
+            'DBMSBENCHMARKER_ALIAS': alias}
+        env = {**env, **e}
+        env = {**env, **self.loading_parameters}
+        #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        return cluster.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml")
+        """
+        # determine start time
+        now = datetime.utcnow()
         start = now + timedelta(seconds=180)
         #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
         #wait = (start-now).seconds
@@ -2778,6 +2795,7 @@ class hammerdb(default):
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
+        """
     #def create_job_maintaining(self, app='', component='maintaining', experiment='', configuration='', client='1', parallelism=1, alias=''):
     def end_benchmarker(self, connection=None, app='', component='benchmarker', experiment='', configuration='', client=None, parallelism=1, alias=''):
         """
