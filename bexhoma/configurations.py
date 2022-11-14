@@ -2713,12 +2713,12 @@ class hammerdb(default):
         if self.monitoring_active:
             for connection_number, connection_data in self.benchmark.dbms.items():
                 #connection = self.benchmark.dbms[c['name']]
-                #print(connection_number, connection_data)
-                #print(connection_data.connectiondata['monitoring']['prometheus_url'])
+                print(connection_number, connection_data)
+                print(connection_data.connectiondata['monitoring']['prometheus_url'])
                 query='loading'
                 for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
                     print(m)
-                    monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, int(self.timeLoadingStart), int(self.timeLoadingEnd), '{result_path}/{code}/'.format(result_path=self.benchmark.path, code=code))
+                    monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, int(self.timeLoadingStart), int(self.timeLoadingEnd), '{result_path}'.format(result_path=self.benchmark.path))
         # get monitoring for loading
         #if self.monitoring_active:
         #    cmd = {}
