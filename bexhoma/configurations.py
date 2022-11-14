@@ -1918,7 +1918,7 @@ scrape_configs:
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='1', client='1', parallelism=1, env={}, template='', nodegroup=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='1', client='1', parallelism=1, env={}, template='', nodegroup='', jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -1932,7 +1932,8 @@ scrape_configs:
             app = self.appname
         code = str(int(experiment))
         #connection = configuration
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        if not len(jobname):
+            jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         env['BEXHOMA_HOST'] = servicename
@@ -2053,6 +2054,7 @@ scrape_configs:
         code = str(int(experiment))
         experimentRun = str(self.num_experiment_to_apply_done+1)
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        self.benchmarker_jobname = jobname
         self.logger.debug('configuration.create_manifest_benchmarker({})'.format(jobname))
         # determine start time
         now = datetime.utcnow()
@@ -2658,8 +2660,9 @@ class hammerdb(default):
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
+        experimentRun = str(self.num_experiment_to_apply_done+1)
         #connection = configuration
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(self.num_experiment_to_apply_done+1)+"-"+str(client))
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(experimentRun)+"-"+str(client))
         self.benchmarker_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
@@ -2678,7 +2681,7 @@ class hammerdb(default):
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml")
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml", jobname=jobname)
         """
         # determine start time
         now = datetime.utcnow()
