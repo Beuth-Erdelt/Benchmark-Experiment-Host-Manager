@@ -2240,6 +2240,27 @@ scrape_configs:
         if len(app) == 0:
             app = self.appname
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.maintaining_jobname = jobname
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #print(jobname)
+        self.logger.debug('hammerdb.create_job_maintaining({})'.format(jobname))
+        # determine start time
+        now = datetime.utcnow()
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start = now + timedelta(seconds=180)
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        env = {'DBMSBENCHMARKER_NOW': now_string,
+            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_CLIENT': str(parallelism),
+            'DBMSBENCHMARKER_CODE': code,
+            'DBMSBENCHMARKER_CONNECTION': connection,
+            'DBMSBENCHMARKER_SLEEP': str(60),
+            'DBMSBENCHMARKER_ALIAS': alias
+            'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename)}
+        env = {**env, **self.maintaining_parameters}
+        #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-maintaining.yml", jobname=jobname)
+        """
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('configuration.create_job_maintainer({})'.format(jobname))
@@ -2336,6 +2357,7 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
+        """
     def create_job_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
         """
         Creates a job template for loading.
