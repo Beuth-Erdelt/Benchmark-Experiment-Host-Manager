@@ -1917,6 +1917,119 @@ scrape_configs:
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='1', client='1', parallelism=1, env={}, template='', nodegroup=''):
+        """
+        Creates a job and sets labels (component/ experiment/ configuration).
+
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED? Is part of the template name
+        """
+        if len(app) == 0:
+            app = self.appname
+        code = str(int(experiment))
+        #connection = configuration
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #print(jobname)
+        env['BEXHOMA_HOST'] = servicename
+        env['BEXHOMA_CLIENT'] = str(parallelism)
+        env['BEXHOMA_EXPERIMENT'] = experiment
+        env['BEXHOMA_CONNECTION'] = configuration
+        env['BEXHOMA_SLEEP'] = '60'
+        env['PARALLEL'] = str(parallelism)
+        print(env)
+        self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
+        #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        job_experiment = self.experiment.path+'/job-{component}-{configuration}-{client}.yml'.format(component=component, configuration=configuration, client=client)
+        #with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
+        with open(self.experiment.cluster.yamlfolder+template) as stream:
+            try:
+                result=yaml.safe_load_all(stream)
+                result = [data for data in result]
+                #print(result)
+            except yaml.YAMLError as exc:
+                print(exc)
+        for dep in result:
+            if dep['kind'] == 'Job':
+                dep['metadata']['name'] = jobname
+                job = dep['metadata']['name']
+                dep['spec']['completions'] = parallelism
+                dep['spec']['parallelism'] = parallelism
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = component
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = str(experiment)
+                dep['metadata']['labels']['client'] = str(client)
+                dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
+                dep['spec']['template']['metadata']['labels']['app'] = app
+                dep['spec']['template']['metadata']['labels']['component'] = component
+                dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
+                dep['spec']['template']['metadata']['labels']['client'] = str(client)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
+                for i_container, c in enumerate(dep['spec']['template']['spec']['containers']):
+                    print(i_container)
+                    env_manifest = {}
+                    envs = c['env']
+                    for i,e in enumerate(envs):
+                        env_manifest[e['name']] = e['value']
+                    print(env_manifest)
+                    env_merged = {**env_manifest, **env}
+                    print(env_merged)
+                    self.logger.debug('configuration.create_manifest_job({})'.format(str(env_merged)))
+                    dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i,e in env_merged.items():
+                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i, 'value':str(e)})
+                for i_container, c in enumerate(dep['spec']['template']['spec']['initContainers']):
+                    print(i_container)
+                    env_manifest = {}
+                    envs = c['env']
+                    for i,e in enumerate(envs):
+                        env_manifest[e['name']] = e['value']
+                    print(env_manifest)
+                    env_merged = {**env_manifest, **env}
+                    print(env_merged)
+                    dep['spec']['template']['spec']['initContainers'][i_container]['env'] = []
+                    for i,e in env_merged.items():
+                        dep['spec']['template']['spec']['initContainers'][i_container]['env'].append({'name':i, 'value':str(e)})
+                """
+                envs = dep['spec']['template']['spec']['containers'][0]['env']
+                for i,e in enumerate(envs):
+                    if e['name'] == 'DBMSBENCHMARKER_CLIENT':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = str(parallelism)
+                    if e['name'] == 'DBMSBENCHMARKER_CODE':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = code
+                    if e['name'] == 'DBMSBENCHMARKER_CONNECTION':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = connection
+                    if e['name'] == 'DBMSBENCHMARKER_SLEEP':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = '60'
+                    if e['name'] == 'DBMSBENCHMARKER_ALIAS':
+                        dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = alias
+                    self.logger.debug('configuration.create_manifest_job({})'.format(str(e)))
+                    #print(e)
+                e = {'name': 'DBMSBENCHMARKER_NOW', 'value': now_string}
+                dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+                e = {'name': 'DBMSBENCHMARKER_START', 'value': start_string}
+                dep['spec']['template']['spec']['containers'][0]['env'].append(e)
+                """
+                # set nodeSelector
+                if len(nodegroup) and nodegroup in self.nodes:
+                    if not 'nodeSelector' in dep['spec']['template']['spec']:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    if dep['spec']['template']['spec']['nodeSelector'] is None:
+                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes[nodegroup]
+        #if not path.isdir(self.path):
+        #    makedirs(self.path)
+        with open(job_experiment,"w+") as stream:
+            try:
+                stream.write(yaml.dump_all(result))
+            except yaml.YAMLError as exc:
+                print(exc)
+        return job_experiment
     def create_manifest_benchmarker(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias='', env={}, template=''):
         """
         Creates a job template for the benchmarker.
@@ -2246,6 +2359,14 @@ scrape_configs:
         #wait = (start-now).seconds
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        # store parameters in connection for evaluation
+        if len(self.loading_parameters):
+            self.connection_parameter['loading_parameters'] = self.loading_parameters
+        print("self.loading_parameters", self.loading_parameters)
+        env = self.loading_parameters
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=self.num_experiment_to_apply_done+1, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading')
+        ###################
+        """
         #yamlfile = self.experiment.cluster.yamlfolder+"job-dbmsbenchmarker-"+code+".yml"
         job_experiment = self.experiment.path+'/job-loading-{configuration}.yml'.format(configuration=configuration)
         jobtemplate = self.experiment.cluster.yamlfolder+"jobtemplate-loading.yml"
@@ -2283,10 +2404,6 @@ scrape_configs:
                     if dep['spec']['template']['spec']['nodeSelector'] is None:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()
                     dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['loading']
-                # store parameters in connection for evaluation
-                if len(self.loading_parameters):
-                    self.connection_parameter['loading_parameters'] = self.loading_parameters
-                print("self.loading_parameters", self.loading_parameters)
                 # set ENV variables - defaults
                 env_default = {}
                 if 'PARALLEL' in self.loading_parameters:
@@ -2369,6 +2486,7 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
+        """
 
 
 

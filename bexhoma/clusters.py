@@ -1149,7 +1149,7 @@ class testbed():
             # try again, if not failed due to "not found"
             if not e.status == 404:
                 return self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='1', client='1', parallelism=1, env={}, template=''):
+    def DEPRECATED_create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='1', client='1', parallelism=1, env={}, template=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
         TODO: Set ENV
