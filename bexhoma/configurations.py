@@ -2710,14 +2710,15 @@ class hammerdb(default):
             client_pod_name = pods[0]
             status = self.experiment.cluster.get_pod_status(client_pod_name)
         print("found")
-        for connection_number, connection_data in self.benchmark.dbms.items():
-            #connection = self.benchmark.dbms[c['name']]
-            print(connection_number, connection_data)
-            print(connection_data.connectiondata['monitoring']['prometheus_url'])
-            query='loading'
-            for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
-                print(m)
-                dbmsbenchmarker.monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, self.timeLoadingStart, self.timeLoadingEnd, '{result_path}/{code}/'.format(result_path=self.benchmark.path, code=code))
+        if self.monitoring_active:
+            for connection_number, connection_data in self.benchmark.dbms.items():
+                #connection = self.benchmark.dbms[c['name']]
+                #print(connection_number, connection_data)
+                #print(connection_data.connectiondata['monitoring']['prometheus_url'])
+                query='loading'
+                for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
+                    print(m)
+                    dbmsbenchmarker.monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, self.timeLoadingStart, self.timeLoadingEnd, '{result_path}/{code}/'.format(result_path=self.benchmark.path, code=code))
         # get monitoring for loading
         #if self.monitoring_active:
         #    cmd = {}
