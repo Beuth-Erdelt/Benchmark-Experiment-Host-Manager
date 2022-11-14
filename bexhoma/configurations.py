@@ -2239,6 +2239,7 @@ scrape_configs:
         """
         if len(app) == 0:
             app = self.appname
+        code = str(int(experiment))
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         self.maintaining_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
@@ -2253,7 +2254,7 @@ scrape_configs:
             'DBMSBENCHMARKER_START': start_string,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
-            'DBMSBENCHMARKER_CONNECTION': connection,
+            #'DBMSBENCHMARKER_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias,
             'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename)}
