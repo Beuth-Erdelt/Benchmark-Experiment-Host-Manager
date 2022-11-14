@@ -2633,6 +2633,52 @@ class hammerdb(default):
             c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
         #print(c)
         self.logger.debug('configuration.run_benchmarker_pod_hammerdb(): {}'.format(connection))
+        self.benchmark = benchmarker.benchmarker(
+            fixedConnection=connection,
+            fixedQuery=query,
+            result_path=resultfolder,
+            batch=True,
+            working='connection',
+            code=code
+            )
+        #self.benchmark.code = '1611607321'
+        self.code = self.benchmark.code
+        #print("Code", self.code)
+        self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
+        # read config for benchmarker
+        connectionfile = experiments_configfolder+'/connections.config'
+        if self.experiment.queryfile is not None:
+            queryfile = experiments_configfolder+'/'+self.experiment.queryfile
+        else:
+            queryfile = experiments_configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        if c['name'] in self.benchmark.dbms:
+            print("Rerun connection "+connection)
+            # TODO: Find and replace connection info
+        else:
+            self.benchmark.connections.append(c)
+        # NEVER rerun, only one connection in config for detached:
+        self.benchmark.connections = [c]
+        #print(self.benchmark.connections)
+        #self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
+        self.benchmark.dbms[c['name']] = tools.dbms(c, False)
+        # copy or generate config folder (query and connection)
+        # add connection to existing list
+        # or: generate new connection list
+        filename = self.benchmark.path+'/connections.config'
+        with open(filename, 'w') as f:
+            f.write(str(self.benchmark.connections))
+        # write appended query config
+        if len(self.experiment.workload) > 0:
+            for k,v in self.experiment.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
+        # generate all parameters and store in protocol
+        self.benchmark.reporterStore.readProtocol()
+        self.benchmark.generateAllParameters()
+        self.benchmark.reporterStore.writeProtocol()
         # store experiment
         experiment = {}
         experiment['delay'] = 0
@@ -2664,6 +2710,13 @@ class hammerdb(default):
             client_pod_name = pods[0]
             status = self.experiment.cluster.get_pod_status(client_pod_name)
         print("found")
+        for connection_number, connection_data in experiments.dbms.items():
+            #connection = self.benchmark.dbms[c['name']]
+            print(connection_data.connectiondata['monitoring']['prometheus_url'])
+            query='loading'
+            for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
+                print(m)
+                dbmsbenchmarker.monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, self.timeLoadingStart, self.timeLoadingEnd, '{result_path}/{code}/'.format(result_path=self.benchmark.path, code=code))
         # get monitoring for loading
         #if self.monitoring_active:
         #    cmd = {}
