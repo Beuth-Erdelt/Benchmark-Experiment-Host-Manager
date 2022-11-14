@@ -2062,7 +2062,7 @@ scrape_configs:
             'DBMSBENCHMARKER_START': start_string,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
-            'DBMSBENCHMARKER_CONNECTION': connections,
+            'DBMSBENCHMARKER_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
@@ -2672,7 +2672,7 @@ class hammerdb(default):
             'DBMSBENCHMARKER_START': start_string,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
-            #'DBMSBENCHMARKER_CONNECTION': connections,
+            'DBMSBENCHMARKER_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
