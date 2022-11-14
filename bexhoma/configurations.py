@@ -2712,6 +2712,7 @@ class hammerdb(default):
         print("found")
         for connection_number, connection_data in self.benchmark.dbms.items():
             #connection = self.benchmark.dbms[c['name']]
+            print(connection_number, connection_data)
             print(connection_data.connectiondata['monitoring']['prometheus_url'])
             query='loading'
             for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
