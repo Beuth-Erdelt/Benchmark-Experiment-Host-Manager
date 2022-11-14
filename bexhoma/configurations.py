@@ -2710,7 +2710,7 @@ class hammerdb(default):
             client_pod_name = pods[0]
             status = self.experiment.cluster.get_pod_status(client_pod_name)
         print("found")
-        for connection_number, connection_data in experiments.dbms.items():
+        for connection_number, connection_data in self.benchmark.dbms.items():
             #connection = self.benchmark.dbms[c['name']]
             print(connection_data.connectiondata['monitoring']['prometheus_url'])
             query='loading'
