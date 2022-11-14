@@ -1984,18 +1984,19 @@ scrape_configs:
                     dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     for i,e in env_merged.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i, 'value':str(e)})
-                for i_container, c in enumerate(dep['spec']['template']['spec']['initContainers']):
-                    print(i_container)
-                    env_manifest = {}
-                    envs = c['env']
-                    for i,e in enumerate(envs):
-                        env_manifest[e['name']] = e['value']
-                    print(env_manifest)
-                    env_merged = {**env_manifest, **env}
-                    print(env_merged)
-                    dep['spec']['template']['spec']['initContainers'][i_container]['env'] = []
-                    for i,e in env_merged.items():
-                        dep['spec']['template']['spec']['initContainers'][i_container]['env'].append({'name':i, 'value':str(e)})
+                if 'initContainers' in dep['spec']['template']['spec']:
+                    for i_container, c in enumerate(dep['spec']['template']['spec']['initContainers']):
+                        print(i_container)
+                        env_manifest = {}
+                        envs = c['env']
+                        for i,e in enumerate(envs):
+                            env_manifest[e['name']] = e['value']
+                        print(env_manifest)
+                        env_merged = {**env_manifest, **env}
+                        print(env_merged)
+                        dep['spec']['template']['spec']['initContainers'][i_container]['env'] = []
+                        for i,e in env_merged.items():
+                            dep['spec']['template']['spec']['initContainers'][i_container]['env'].append({'name':i, 'value':str(e)})
                 """
                 envs = dep['spec']['template']['spec']['containers'][0]['env']
                 for i,e in enumerate(envs):
