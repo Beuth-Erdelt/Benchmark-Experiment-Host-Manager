@@ -2350,7 +2350,7 @@ class hammerdb(default):
             if self.monitoring_active:
                 cmd = {}
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
-                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard)
+                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
     def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         """
         Creates a job template for the benchmarker.
