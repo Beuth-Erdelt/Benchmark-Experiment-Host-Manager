@@ -2314,7 +2314,11 @@ class hammerdb(default):
             status = self.experiment.cluster.get_pod_status(client_pod_name)
         print("found")
         # get monitoring for loading
+        """
         if self.monitoring_active:
+            print("get monitoring for loading")
+            logger = logging.getLogger('dbmsbenchmarker')
+            logging.basicConfig(level=logging.DEBUG)
             for connection_number, connection_data in self.benchmark.dbms.items():
                 #connection = self.benchmark.dbms[c['name']]
                 print(connection_number, connection_data)
@@ -2323,6 +2327,30 @@ class hammerdb(default):
                 for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
                     print(m)
                     monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, int(self.timeLoadingStart), int(self.timeLoadingEnd), '{result_path}'.format(result_path=self.benchmark.path))
+        """
+        # copy config to pod - dashboard
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            cmd = {}
+            cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard)
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            self.logger.debug('copy config queries.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            # copy twice to be more sure it worked
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            self.logger.debug('copy config connections.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            self.logger.debug('copy config protocol.json: {}'.format(stdout))
+            # get monitoring for loading
+            if self.monitoring_active:
+                cmd = {}
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard)
     def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
         """
         Creates a job template for the benchmarker.
