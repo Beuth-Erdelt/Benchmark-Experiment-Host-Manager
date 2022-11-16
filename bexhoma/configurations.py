@@ -741,6 +741,7 @@ scrape_configs:
             f = open(filename_log, "w")
             f.write(stdout)
             f.close()
+            self.experiment.cluster.delete_pod(pod)
     def stop_loading(self, app='', component='loading', experiment='', configuration=''):
         """
         Stops a loading job and removes all its pods.
