@@ -525,7 +525,7 @@ class default():
                 self.delay(delay)
             return True
         # end
-    def generate_component_name(self, app='', component='', experiment='', configuration='', client=''):
+    def generate_component_name(self, app='', component='', experiment='', configuration='', experimentRun='', client=''):
         """
         Generate a name for the component.
         Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`
@@ -542,10 +542,12 @@ class default():
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
+        if len(experimentRun) != 0:
+            experimentRun = '-'+str(self.num_experiment_to_apply_done)
         if len(client) > 0:
-            name = "{app}-{component}-{configuration}-{experiment}-{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, client=client).lower()
+            name = "{app}-{component}-{configuration}-{experiment}{experimentRun}-{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, experimentRun=experimentRun, client=client).lower()
         else:
-            name = "{app}-{component}-{configuration}-{experiment}".format(app=app, component=component, configuration=configuration, experiment=experiment).lower()
+            name = "{app}-{component}-{configuration}-{experiment}{experimentRun}".format(app=app, component=component, configuration=configuration, experiment=experiment, experimentRun=experimentRun).lower()
         return name
     def start_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1):
         """
@@ -1554,6 +1556,7 @@ scrape_configs:
             client = str(client)
         if len(dialect) == 0 and len(self.dialect) > 0:
             dialect = self.dialect
+        experimentRun = str(self.num_experiment_to_apply_done+1)
         #self.experiment.cluster.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.experiment.querymanagement
@@ -1570,7 +1573,7 @@ scrape_configs:
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
-        c['parameter']['numExperiment'] = str(self.num_experiment_to_apply_done+1)
+        c['parameter']['numExperiment'] = experimentRun
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
         #print(c)
@@ -1640,7 +1643,7 @@ scrape_configs:
         self.experiment.cluster.log_experiment(experiment)
         # create pod
         #yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
-        yamlfile = self.create_manifest_benchmarking(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, client=client, parallelism=parallelism, alias=c['alias'])#, env=env, template=template)
+        yamlfile = self.create_manifest_benchmarking(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'])#, env=env, template=template)
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
@@ -1919,7 +1922,7 @@ scrape_configs:
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='1', client='1', parallelism=1, env={}, template='', nodegroup='', jobname=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -1927,14 +1930,22 @@ scrape_configs:
         :param component: Component, for example sut or monitoring
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
-        :param client: DEPRECATED? Is part of the template name
+        :param experimentRun: Number of run of the configuration in this experiment
+        :param client: Number of client of the job for this experiment run
+        :param parallelism: Number of parallel pods in this job
+        :param env: Dict of environment variables for the job manifest
+        :param template: Template name of the job manifest
+        :param nodegroup: Nodegroup of the pods of the job
+        :param jobname: Name of the job
         """
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
+        if not experimentRun:
+            experimentRun = str(self.num_experiment_to_apply_done+1)
         #connection = configuration
         if not len(jobname):
-            jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+            jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         env['BEXHOMA_HOST'] = servicename
@@ -1946,7 +1957,7 @@ scrape_configs:
         print(env)
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        job_experiment = self.experiment.path+'/job-{component}-{configuration}-{client}.yml'.format(component=component, configuration=configuration, client=client)
+        job_experiment = self.experiment.path+'/job-{component}-{configuration}-{experimentRun}-{client}.yml'.format(component=component, configuration=configuration, experimentRun=experimentRun, client=client)
         #with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
         with open(self.experiment.cluster.yamlfolder+template) as stream:
             try:
@@ -1966,13 +1977,13 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
-                dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
+                dep['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
-                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
+                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
                 for i_container, c in enumerate(dep['spec']['template']['spec']['containers']):
                     print(i_container)
                     env_manifest = {}
@@ -2032,9 +2043,9 @@ scrape_configs:
             app = self.appname
         code = str(int(experiment))
         experimentRun = str(self.num_experiment_to_apply_done+1)
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
-        self.benchmarker_jobname = jobname
-        self.logger.debug('configuration.create_manifest_benchmarking({})'.format(jobname))
+        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        #self.benchmarker_jobname = jobname
+        self.logger.debug('configuration.create_manifest_benchmarking()')
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -2048,7 +2059,7 @@ scrape_configs:
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
-        job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{experimentRun}-{client}.yml'.format(configuration=configuration, client=client)
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-dbmsbenchmarker.yml")
     def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias=''):
         """
@@ -2067,11 +2078,11 @@ scrape_configs:
         code = str(int(experiment))
         experimentRun = str(self.num_experiment_to_apply_done+1)
         connection = self.configuration#self.getConnectionName()
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-        self.maintaining_jobname = jobname
+        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        #self.maintaining_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
-        self.logger.debug('hammerdb.create_manifest_maintaining({})'.format(jobname))
+        self.logger.debug('configuration.create_manifest_maintaining()')
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -2087,7 +2098,10 @@ scrape_configs:
             'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename)}
         env = {**env, **self.maintaining_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template="jobtemplate-maintaining.yml", jobname=jobname)
+        template = "jobtemplate-maintaining.yml"
+        if len(self.experiment.jobtemplate_maintaining) > 0:
+            template = self.experiment.jobtemplate_maintaining
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template)#, jobname=jobname)
     def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
         """
         Creates a job template for loading.
@@ -2108,17 +2122,17 @@ scrape_configs:
             experiment = self.code
         experimentRun = str(self.num_experiment_to_apply_done+1)
         connection = self.configuration#self.getConnectionName()
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        #servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
-        self.logger.debug('configuration.create_manifest_loading({})'.format(jobname))
+        self.logger.debug('configuration.create_manifest_loading()')
         # determine start time
-        now = datetime.utcnow()
-        start = now + timedelta(seconds=180)
+        #now = datetime.utcnow()
+        #start = now + timedelta(seconds=180)
         #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
         #wait = (start-now).seconds
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        #now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        #start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         # store parameters in connection for evaluation
         if len(self.loading_parameters):
             self.connection_parameter['loading_parameters'] = self.loading_parameters
@@ -2209,6 +2223,7 @@ class hammerdb(default):
             self.client = client
         if len(dialect) == 0 and len(self.dialect) > 0:
             dialect = self.dialect
+        experimentRun = str(self.num_experiment_to_apply_done+1)
         #self.experiment.cluster.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.experiment.querymanagement
@@ -2225,7 +2240,7 @@ class hammerdb(default):
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
-        c['parameter']['numExperiment'] = str(self.num_experiment_to_apply_done+1)
+        c['parameter']['numExperiment'] = experimentRun
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
         #print(c)
@@ -2291,7 +2306,7 @@ class hammerdb(default):
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.experiment.cluster.log_experiment(experiment)
         # create pod
-        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
+        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'])
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
@@ -2352,7 +2367,7 @@ class hammerdb(default):
                 cmd = {}
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias=''):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias=''):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
@@ -2372,7 +2387,7 @@ class hammerdb(default):
         code = str(int(experiment))
         experimentRun = str(self.num_experiment_to_apply_done+1)
         #connection = configuration
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(experimentRun)+"-"+str(client))
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
         self.benchmarker_jobname = jobname
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
@@ -2406,7 +2421,7 @@ class hammerdb(default):
         if client is None:
             client = self.client
         code = self.code
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         jobname = self.benchmarker_jobname
         self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
         pods = self.experiment.cluster.get_pods(component='dashboard')
