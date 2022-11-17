@@ -543,7 +543,7 @@ class default():
         if len(experiment) == 0:
             experiment = self.code
         if len(experimentRun) != 0:
-            experimentRun = '-'+str(self.num_experiment_to_apply_done)
+            experimentRun = '-'+experimentRun
         if len(client) > 0:
             name = "{app}-{component}-{configuration}-{experiment}{experimentRun}-{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, experimentRun=experimentRun, client=client).lower()
         else:
@@ -1922,7 +1922,7 @@ scrape_configs:
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', jobname=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup=''):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -1944,8 +1944,8 @@ scrape_configs:
         if not experimentRun:
             experimentRun = str(self.num_experiment_to_apply_done+1)
         #connection = configuration
-        if not len(jobname):
-            jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client))
+        #if not len(jobname):
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         env['BEXHOMA_HOST'] = servicename
@@ -2406,7 +2406,7 @@ class hammerdb(default):
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml", jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml")#, jobname=jobname)
     def end_benchmarker(self, connection=None, app='', component='benchmarker', experiment='', configuration='', client=None, parallelism=1, alias=''):
         """
         Ends a benchmarker job.
