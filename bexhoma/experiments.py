@@ -482,6 +482,13 @@ class default():
             jobs = self.cluster.get_jobs(app=app, component=component, experiment=self.code, configuration=configuration)
             for job in jobs:
                 self.cluster.delete_job(job)
+            # all pods to these jobs
+            #self.cluster.get_job_pods(app, component, self.code, configuration)
+            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
+            for p in pods:
+                status = self.cluster.get_pod_status(p)
+                print(p, status)
+                self.cluster.delete_pod(p)
     def stop_loading(self):
         """
         Stop all loading jobs of this experiment.
@@ -498,6 +505,13 @@ class default():
             jobs = self.cluster.get_jobs(app=app, component=component, experiment=self.code, configuration=configuration)
             for job in jobs:
                 self.cluster.delete_job(job)
+            # all pods to these jobs
+            #self.cluster.get_job_pods(app, component, self.code, configuration)
+            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
+            for p in pods:
+                status = self.cluster.get_pod_status(p)
+                print(p, status)
+                self.cluster.delete_pod(p)
     def stop_monitoring(self):
         """
         Stop all monitoring deployments of this experiment.
