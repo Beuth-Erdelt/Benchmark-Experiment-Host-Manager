@@ -2023,7 +2023,7 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', client='1', parallelism=1, alias='', env={}, template=''):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', env={}, template=''):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
