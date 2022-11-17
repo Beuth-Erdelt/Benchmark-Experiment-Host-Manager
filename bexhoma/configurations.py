@@ -616,6 +616,7 @@ class default():
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
                         dep['metadata']['labels']['experiment'] = experiment
+                        dep['metadata']['labels']['volume'] = self.volume
                         dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     if dep['kind'] == 'Deployment':
                         deployment = dep['metadata']['name'] = name
@@ -623,6 +624,7 @@ class default():
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
                         dep['metadata']['labels']['experiment'] = str(experiment)
+                        dep['metadata']['labels']['volume'] = self.volume
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                         envs = dep['spec']['template']['spec']['containers'][0]['env']
@@ -882,6 +884,7 @@ scrape_configs:
                     dep['metadata']['labels']['configuration'] = configuration
                     dep['metadata']['labels']['experiment'] = self.storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
+                    dep['metadata']['labels']['volume'] = self.volume
                     dep['metadata']['labels']['loaded'] = "False"
                     if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
                         dep['spec']['storageClassName'] = self.storage['storageClassName']
@@ -921,6 +924,7 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
+                dep['metadata']['labels']['volume'] = self.volume
                 dep['spec']['replicas'] = self.num_worker
                 dep['spec']['serviceName'] = name_worker
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
@@ -950,6 +954,7 @@ scrape_configs:
                     dep['metadata']['labels']['configuration'] = configuration
                     dep['metadata']['labels']['experiment'] = experiment
                     dep['metadata']['labels']['dbms'] = self.docker
+                    dep['metadata']['labels']['volume'] = self.volume
                     dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     if not self.monitoring_active:
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
@@ -962,6 +967,7 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
+                dep['metadata']['labels']['volume'] = self.volume
                 dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
@@ -979,6 +985,7 @@ scrape_configs:
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
+                dep['metadata']['labels']['volume'] = self.volume
                 dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
@@ -1953,6 +1960,7 @@ scrape_configs:
         env['BEXHOMA_EXPERIMENT'] = experiment
         env['BEXHOMA_CONNECTION'] = configuration
         env['BEXHOMA_SLEEP'] = '60'
+        env['BEXHOMA_VOLUME'] = self.volume
         env['PARALLEL'] = str(parallelism)
         print(env)
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
@@ -1978,12 +1986,14 @@ scrape_configs:
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
                 dep['metadata']['labels']['experimentRun'] = str(experimentRun)
+                dep['metadata']['labels']['volume'] = self.volume
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
+                dep['spec']['template']['metadata']['labels']['volume'] = self.volume
                 for i_container, c in enumerate(dep['spec']['template']['spec']['containers']):
                     print(i_container)
                     env_manifest = {}
