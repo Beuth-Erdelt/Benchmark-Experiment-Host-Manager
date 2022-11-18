@@ -404,19 +404,19 @@ class default():
         print("done!")
         # download evaluation cubes
         filename = 'evaluation.json'
-        cmd['download_results'] = 'cp {from} {to} -c dashboard'.format(from=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
         filename = 'evaluation.dict'
-        cmd['download_results'] = 'cp {from} {to} -c dashboard'.format(from=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
         filename = 'connections.config'
-        cmd['download_results'] = 'cp {from} {to} -c dashboard'.format(from=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
         filename = 'queries.config'
-        cmd['download_results'] = 'cp {from} {to} -c dashboard'.format(from=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
         filename = 'protocol.json'
-        cmd['download_results'] = 'cp {from} {to} -c dashboard'.format(from=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
         ############ HammerDB
         #self.path = "/home/perdelt/benchmarks/1668286639/"
