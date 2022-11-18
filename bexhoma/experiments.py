@@ -348,6 +348,45 @@ class default():
             #stdout, stderr = proc.communicate()
         # local:
         #shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
+    def test_results(self):
+        """
+        Zip the result folder in the dashboard pod.
+        """
+        # remote:
+        pods = self.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            status = self.cluster.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            while status != "Running":
+                self.wait(10)
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+            cmd = {}
+            # only zip first level
+            #cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+            # zip complete folder
+            cmd['test_results'] = 'python test-result.py -e {code} -r /results/;echo $?'.format(code=self.code)
+            # include sub directories
+            #cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
+            #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['test_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            try:
+                if len(stdout) > 0:
+                    print(stdout)
+                    return int(stdout.splitlines()[-1:][0])
+                else:
+                    return 1
+            except Exception as e:
+                return 1
+            finally:
+                return 1
+            #print(fullcommand)
+            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #stdout, stderr = proc.communicate()
+        return 1
+        # local:
+        #shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
         """
         Read experiment details from cluster config
