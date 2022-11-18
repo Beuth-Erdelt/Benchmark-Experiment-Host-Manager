@@ -1189,7 +1189,7 @@ class testbed():
         :param app: app the dashboard belongs to
         :param component: Component name, should be 'dashboard' typically
         """
-        if len(self.get_dashboard()):
+        if len(self.get_dashboard_pod_name()):
             # there already is a dashboard pod
             return
         else:
@@ -1225,10 +1225,10 @@ class testbed():
         pods_dashboard = self.get_pods(component=component)
         if len(pods_dashboard) > 0:
             # dashboard exists
-            self.logger.debug('testbed.get_dashboard()=exists')
+            self.logger.debug('testbed.get_dashboard_pod_name()=exists')
             return pods_dashboard[0]
         else:
-            self.logger.debug('testbed.get_dashboard()=not exists')
+            self.logger.debug('testbed.get_dashboard_pod_name()=not exists')
             return ""
     def restart_dashboard(self, app='', component='dashboard'):
         """
