@@ -325,9 +325,9 @@ class default():
         Zip the result folder in the dashboard pod.
         """
         # remote:
-        pods = self.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
+        pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+        if len(pod_dashboard) > 0:
+            #pod_dashboard = pods[0]
             status = self.cluster.get_pod_status(pod_dashboard)
             print(pod_dashboard, status)
             while status != "Running":
@@ -353,9 +353,9 @@ class default():
         Zip the result folder in the dashboard pod.
         """
         # remote:
-        pods = self.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
+        pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+        if len(pod_dashboard) > 0:
+            #pod_dashboard = pods[0]
             status = self.cluster.get_pod_status(pod_dashboard)
             print(pod_dashboard, status)
             while status != "Running":
@@ -419,8 +419,15 @@ class default():
         4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
         """
         if len(pod_dashboard) == 0:
-            pods = self.cluster.get_pods(component='dashboard')
-            pod_dashboard = pods[0]
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    print(pod_dashboard, status)
         # copy logs and yamls to result folder
         print("Copy configuration and logs", end="", flush=True)
         directory = os.fsencode(self.path)

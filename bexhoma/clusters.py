@@ -1166,15 +1166,15 @@ class testbed():
         """
         Returns True, iff dashboard is running.
 
-        :return: True, if dashboard is running
+        :return: True, iff dashboard is running
         """
         app = self.appname
         component = 'dashboard'
-        pods_dashboard = self.get_pods(app=app, component=component)
-        if len(pods_dashboard) > 0:
+        pod_dashboard = self.get_dashboard_pod_name(app=app, component=component)
+        if len(pod_dashboard) > 0:
             # dashboard exists
             self.logger.debug('testbed.dashboard_is_running()=exists')
-            pod_dashboard = pods_dashboard[0]
+            #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_dashboard)
             print(pod_dashboard, status)
             if status == "Running":
@@ -1183,16 +1183,20 @@ class testbed():
         return False
     def start_dashboard(self, app='', component='dashboard'):
         """
-        Starts the dashboard component and its service.
-        Manifest is expected in 'deploymenttemplate-bexhoma-dashboard.yml'
+        Starts the dashboard component and its service, if there is no such pod.
+        Manifest is expected in 'deploymenttemplate-bexhoma-dashboard.yml'.
 
         :param app: app the dashboard belongs to
         :param component: Component name, should be 'dashboard' typically
         """
-        deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
-        name = self.create_dashboard_name(app, component)
-        self.logger.debug('testbed.start_dashboard({})'.format(deployment))
-        self.kubectl('create -f '+self.yamlfolder+deployment)
+        if len(self.get_dashboard()):
+            # there already is a dashboard pod
+            return
+        else:
+            deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
+            name = self.create_dashboard_name(app, component)
+            self.logger.debug('testbed.start_dashboard({})'.format(deployment))
+            self.kubectl('create -f '+self.yamlfolder+deployment)
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
@@ -1201,8 +1205,8 @@ class testbed():
         :param app: app the messagequeue belongs to
         :param component: Component name, should be 'messagequeue' typically
         """
-        pods_dashboard = self.get_pods(component=component)
-        if len(pods_dashboard) > 0:
+        pods_messagequeue = self.get_pods(component=component)
+        if len(pods_messagequeue) > 0:
             # dashboard exists
             self.logger.debug('testbed.start_messagequeue()=exists')
             return
@@ -1211,6 +1215,32 @@ class testbed():
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+    def get_dashboard_pod_name(self, app='', component='dashboard'):
+        """
+        Returns the name of the dashboard pod.
+
+        :param app: app the dashboard belongs to
+        :param component: Component name, should be 'dashboard' typically
+        """
+        pods_dashboard = self.get_pods(component=component)
+        if len(pods_dashboard) > 0:
+            # dashboard exists
+            self.logger.debug('testbed.get_dashboard()=exists')
+            return pods_dashboard[0]
+        else:
+            self.logger.debug('testbed.get_dashboard()=not exists')
+            return ""
+    def restart_dashboard(self, app='', component='dashboard'):
+        """
+        Stops the dashboard component and its service.
+
+        :param app: app the dashboard belongs to
+        :param component: Component name, should be 'dashboard' typically
+        """
+        self.logger.debug('testbed.restart_dashboard()')
+        pod_dashboard = self.get_dashboard_pod_name(app=app, component=component)
+        if len(pod_dashboard) > 0:
+            self.delete_pod(pod_dashboard)
     def stop_dashboard(self, app='', component='dashboard'):
         """
         Stops the dashboard component and its service.
@@ -1337,9 +1367,9 @@ class testbed():
         Expect results be available under port 8050 (dashboard) and 8888 (Jupyter).
         """
         print("connect_dashboard")
-        pods_dashboard = self.get_pods(component='dashboard')
-        if len(pods_dashboard) > 0:
-            pod_dashboard = pods_dashboard[0]
+        pod_dashboard = self.get_dashboard_pod_name(component='dashboard')
+        if len(pod_dashboard) > 0:
+            #pod_dashboard = pods_dashboard[0]
             cmd = {}
             fullcommand = 'port-forward pod/{pod} 8050:8050 8888:8888 --address 0.0.0.0'.format(pod=pod_dashboard)
             self.kubectl(fullcommand)
