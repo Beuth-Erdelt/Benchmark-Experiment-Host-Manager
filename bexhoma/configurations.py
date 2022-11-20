@@ -1931,7 +1931,7 @@ scrape_configs:
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=num_pods):#, jobname=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -2036,7 +2036,7 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', env={}, template='', num_pods=num_pods):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', env={}, template='', num_pods=1):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
