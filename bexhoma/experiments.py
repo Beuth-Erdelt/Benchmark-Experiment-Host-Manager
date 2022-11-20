@@ -235,6 +235,23 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.maintaining_parameters = kwargs
+    def set_maintaining(self, parallel, num_pods=None):
+        """
+        Sets job parameters for maintaining components: Number of parallel pods and optionally (if different) total number of pods.
+        By default total number of pods is set to number of parallel pods.
+        Can be overwritten by configuration.
+
+        :param parallel: Number of parallel pods
+        :param num_pods: Optionally (if different) total number of pods
+        """
+        self.num_maintaining = parallel
+        if not num_pods is None:
+            self.num_maintaining_pods = num_pods
+        else:
+            self.num_maintaining_pods = parallel
+        # total number at least number of parallel
+        if self.num_maintaining_pods < self.num_maintaining:
+            self.num_maintaining_pods = self.num_maintaining
     def set_loading_parameters(self, **kwargs):
         """
         Sets ENV for loading components.
@@ -257,20 +274,9 @@ class default():
             self.num_loading_pods = num_pods
         else:
             self.num_loading_pods = parallel
-    def set_maintaining(self, parallel, num_pods=None):
-        """
-        Sets job parameters for maintaining components: Number of parallel pods and optionally (if different) total number of pods.
-        By default total number of pods is set to number of parallel pods.
-        Can be overwritten by configuration.
-
-        :param parallel: Number of parallel pods
-        :param num_pods: Optionally (if different) total number of pods
-        """
-        self.num_maintaining = parallel
-        if not num_pods is None:
-            self.num_maintaining_pods = num_pods
-        else:
-            self.num_maintaining_pods = parallel
+        # total number at least number of parallel
+        if self.num_loading_pods < self.num_loading:
+            self.num_loading_pods = self.num_loading
     def add_configuration(self, configuration):
         """
         Adds a configuration object to the list of configurations of this experiment.
