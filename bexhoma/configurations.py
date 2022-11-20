@@ -124,6 +124,8 @@ class default():
         self.num_worker = worker
         self.num_loading = 0
         self.num_maintaining = 0
+        self.num_loading_pods = 0
+        self.num_maintaining_pods = 0
         # are there other components?
         self.monitoring_active = experiment.monitoring_active
         self.maintaining_active = experiment.maintaining_active
@@ -435,7 +437,7 @@ class default():
             if status == "Pending":
                 return True
         return False
-    def start_loading_pod(self, app='', component='loading', experiment='', configuration='', parallelism=1):
+    def start_loading_pod(self, app='', component='loading', experiment='', configuration='', parallelism=1, num_pods=1):
         """
         Starts a job for parallel data ingestion.
 
@@ -457,7 +459,7 @@ class default():
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
         # start job
-        job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism)
+        job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
         self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def start_loading(self, delay=0):
@@ -549,7 +551,7 @@ class default():
         else:
             name = "{app}-{component}-{configuration}-{experiment}{experimentRun}".format(app=app, component=component, configuration=configuration, experiment=experiment, experimentRun=experimentRun).lower()
         return name
-    def start_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1):
+    def start_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, num_pods=1):
         """
         Starts a maintaining job.
 
@@ -565,7 +567,7 @@ class default():
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        job = self.create_manifest_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=parallelism)
+        job = self.create_manifest_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
         self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
@@ -1650,7 +1652,7 @@ scrape_configs:
         self.experiment.cluster.log_experiment(experiment)
         # create pod
         #yamlfile = self.create_job(connection=connection, component=component, configuration=configuration, experiment=self.code, client=client, parallelism=parallelism, alias=c['alias'])
-        yamlfile = self.create_manifest_benchmarking(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'])#, env=env, template=template)
+        yamlfile = self.create_manifest_benchmarking(connection=connection, app=app, component='benchmarker', experiment=self.code, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)#, env=env, template=template)
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
@@ -1929,7 +1931,7 @@ scrape_configs:
         Ends a benchmarker job.
         This is for storing or cleaning measures.
         """
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup=''):#, jobname=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=num_pods):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -1962,6 +1964,7 @@ scrape_configs:
         env['BEXHOMA_SLEEP'] = '60'
         env['BEXHOMA_VOLUME'] = self.volume
         env['PARALLEL'] = str(parallelism)
+        env['NUM_PODS'] = str(num_pods)
         print(env)
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
@@ -1978,7 +1981,7 @@ scrape_configs:
             if dep['kind'] == 'Job':
                 dep['metadata']['name'] = jobname
                 job = dep['metadata']['name']
-                dep['spec']['completions'] = parallelism
+                dep['spec']['completions'] = num_pods
                 dep['spec']['parallelism'] = parallelism
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
@@ -2033,7 +2036,7 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', env={}, template=''):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', env={}, template='', num_pods=num_pods):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
@@ -2070,8 +2073,8 @@ scrape_configs:
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{experimentRun}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-dbmsbenchmarker.yml")
-    def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias=''):
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-dbmsbenchmarker.yml", num_pods=num_pods)
+    def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1):
         """
         Creates a job template for maintaining.
         This sets meta data in the template and ENV.
@@ -2111,8 +2114,8 @@ scrape_configs:
         template = "jobtemplate-maintaining.yml"
         if len(self.experiment.jobtemplate_maintaining) > 0:
             template = self.experiment.jobtemplate_maintaining
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template)#, jobname=jobname)
-    def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias=''):
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, num_pods=num_pods)#, jobname=jobname)
+    def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias='', num_pods=1):
         """
         Creates a job template for loading.
         This sets meta data in the template and ENV.
@@ -2151,7 +2154,7 @@ scrape_configs:
         template = "jobtemplate-loading.yml"
         if len(self.experiment.jobtemplate_loading) > 0:
             template = self.experiment.jobtemplate_loading
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading')
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods)
 
 
 
@@ -2316,7 +2319,7 @@ class hammerdb(default):
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.experiment.cluster.log_experiment(experiment)
         # create pod
-        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'])
+        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
         pods = []
@@ -2377,7 +2380,7 @@ class hammerdb(default):
                 cmd = {}
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias=''):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
@@ -2410,13 +2413,14 @@ class hammerdb(default):
         env = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': start_string,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
+            'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml")#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml", num_pods=num_pods)#, jobname=jobname)
     def end_benchmarker(self, connection=None, app='', component='benchmarker', experiment='', configuration='', client=None, parallelism=1, alias=''):
         """
         Ends a benchmarker job.

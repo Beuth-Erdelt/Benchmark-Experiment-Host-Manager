@@ -115,11 +115,15 @@ class default():
         self.workload = {}
         self.monitoring_active = True
         self.loading_active = False
+        self.num_loading = 0
+        self.num_loading_pods = 0
+        self.maintaining_active = False
+        self.num_maintaining = 0
+        self.num_maintaining_pods = 0
         # k8s:
         self.namespace = self.cluster.namespace
         self.configurations = []
         self.storage_label = ''
-        self.maintaining_active = False
     def wait(self, sec):
         """
         Function for waiting some time and inform via output about this
@@ -239,6 +243,34 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
+    def set_loading(self, parallel, num_pods=None):
+        """
+        Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
+        By default total number of pods is set to number of parallel pods.
+        Can be overwritten by configuration.
+
+        :param parallel: Number of parallel pods
+        :param num_pods: Optionally (if different) total number of pods
+        """
+        self.num_loading = parallel
+        if not num_pods is None:
+            self.num_loading_pods = num_pods
+        else:
+            self.num_loading_pods = parallel
+    def set_maintaining(self, parallel, num_pods=None):
+        """
+        Sets job parameters for maintaining components: Number of parallel pods and optionally (if different) total number of pods.
+        By default total number of pods is set to number of parallel pods.
+        Can be overwritten by configuration.
+
+        :param parallel: Number of parallel pods
+        :param num_pods: Optionally (if different) total number of pods
+        """
+        self.num_maintaining = parallel
+        if not num_pods is None:
+            self.num_maintaining_pods = num_pods
+        else:
+            self.num_maintaining_pods = parallel
     def add_configuration(self, configuration):
         """
         Adds a configuration object to the list of configurations of this experiment.
@@ -672,7 +704,7 @@ class default():
                         if now >= config.loading_after_time:
                             if config.loading_active:
                                 config.start_loading()
-                                config.start_loading_pod(parallelism=config.num_loading)
+                                config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
                             else:
                                 config.start_loading()
                         else:
@@ -695,7 +727,7 @@ class default():
                         if not config.maintaining_is_running():
                             print("{} is not maintained yet".format(config.configuration))
                             if not config.maintaining_is_pending():
-                                config.start_maintaining(parallelism=config.num_maintaining)
+                                config.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
                             else:
                                 print("{} has pending maintaining".format(config.configuration))
                 # start benchmarking, if loading is done and monitoring is ready
