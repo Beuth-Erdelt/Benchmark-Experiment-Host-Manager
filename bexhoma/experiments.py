@@ -1040,8 +1040,7 @@ class tpcc(default):
 
         :param jobname: Name of the job to clean
         """
-        if len(app) == 0:
-            app = self.appname
+        #app = self.appname
         #code = self.code
         #experiment = code
         #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
