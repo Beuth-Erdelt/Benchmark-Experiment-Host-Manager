@@ -130,6 +130,8 @@ class default():
         self.monitoring_active = experiment.monitoring_active
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
+        self.jobtemplate_maintaining = ""
+        self.jobtemplate_loading = ""
         #self.parallelism = 1
         self.storage_label = experiment.storage_label
         self.experiment_done = False #: True, iff the SUT has performed the experiment completely
