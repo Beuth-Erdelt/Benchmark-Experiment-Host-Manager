@@ -639,7 +639,7 @@ class default():
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
         print("start_monitoring of {}".format(name_sut))
-        deployment_experiment = self.experiment.path+'/deployment-{name}.yml'.format(name=name)
+        deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:
             try:
                 result=yaml.safe_load_all(stream)
@@ -886,7 +886,7 @@ scrape_configs:
         if len(deployments) > 0:
             # sut is already running
             return False
-        deployment_experiment = self.experiment.path+'/deployment-{name}.yml'.format(name=name)
+        deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         # resources
         specs = instance.split("-")
         #print(specs)
@@ -2002,7 +2002,7 @@ scrape_configs:
         print(env)
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        job_experiment = self.experiment.path+'/job-{component}-{configuration}-{experimentRun}-{client}.yml'.format(component=component, configuration=configuration, experimentRun=experimentRun, client=client)
+        job_experiment = self.experiment.path+'/{app}-{component}-{configuration}-{experimentRun}-{client}.yml'.format(app=app, component=component, configuration=configuration, experimentRun=experimentRun, client=client)
         #with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
         with open(self.experiment.cluster.yamlfolder+template) as stream:
             try:
