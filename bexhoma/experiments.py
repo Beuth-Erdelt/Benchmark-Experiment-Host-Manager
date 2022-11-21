@@ -824,7 +824,7 @@ class default():
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
-                    config.end_benchmarker()
+                    self.end_benchmarking(job)
                     self.cluster.delete_job(job)
             if len(pods) == 0 and len(jobs) == 0:
                 do = False
@@ -895,6 +895,13 @@ class default():
                         self.cluster.delete_job(job)
                 if len(pods) == 0 and len(jobs) == 0:
                     break
+    def end_benchmarking(self, jobname):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
 
 
 
@@ -1026,6 +1033,57 @@ class tpcc(default):
             info = 'This experiment performs some TPC-C inspired workloads.'
             )
         self.storage_label = 'tpch-'+str(SF)
+    def end_benchmarking(self,jobname):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        if len(app) == 0:
+            app = self.appname
+        #code = self.code
+        #experiment = code
+        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        #jobname = self.benchmarker_jobname
+        self.logger.debug('tpcc.end_benchmarker({})'.format(jobname))
+        pods = self.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            status = self.cluster.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            while status != "Running":
+                self.wait(10)
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+            filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
+            #filename_logs = '/results/{}/{}*'.format(self.code, jobname)
+            filename_df = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
+            cmd = {}
+            cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdout = os.popen(cmd['extract_results']).read()
+            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            list_nopm = re.findall('achieved (.+?) NOPM', stdout)
+            list_tpm = re.findall('from (.+?) ', stdout)
+            cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdout = os.popen(cmd['extract_results']).read()
+            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            print(list_nopm)
+            print(list_tpm)
+            print(list_vuser)
+            if len(list_nopm) and len(list_tpm) and len(list_vuser):
+                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
+                df.columns = ['NOPM','TPM', 'VUSERS']
+                print(df)
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+                #self.loading_parameters['HAMMERDB_VUSERS']
 
 
 
