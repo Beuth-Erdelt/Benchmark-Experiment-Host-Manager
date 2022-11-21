@@ -264,11 +264,11 @@ class default():
         :param parallel: Number of parallel pods
         :param num_pods: Optionally (if different) total number of pods
         """
-        self.num_maintaining = parallel
+        self.num_maintaining = int(parallel)
         if not num_pods is None:
-            self.num_maintaining_pods = num_pods
+            self.num_maintaining_pods = int(num_pods)
         else:
-            self.num_maintaining_pods = parallel
+            self.num_maintaining_pods = int(parallel)
         # total number at least number of parallel
         if self.num_maintaining_pods < self.num_maintaining:
             self.num_maintaining_pods = self.num_maintaining
@@ -289,11 +289,11 @@ class default():
         :param parallel: Number of parallel pods
         :param num_pods: Optionally (if different) total number of pods
         """
-        self.num_loading = parallel
+        self.num_loading = int(parallel)
         if not num_pods is None:
-            self.num_loading_pods = num_pods
+            self.num_loading_pods = int(num_pods)
         else:
-            self.num_loading_pods = parallel
+            self.num_loading_pods = int(parallel)
         # total number at least number of parallel
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
