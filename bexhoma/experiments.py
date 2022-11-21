@@ -902,6 +902,7 @@ class default():
 
         :param jobname: Name of the job to clean
         """
+        self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
 
 
 
@@ -1045,7 +1046,7 @@ class tpcc(default):
         #experiment = code
         #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         #jobname = self.benchmarker_jobname
-        self.cluster.logger.debug('tpcc.end_benchmarker({})'.format(jobname))
+        self.cluster.logger.debug('tpcc.end_benchmarking({})'.format(jobname))
         pods = self.cluster.get_pods(component='dashboard')
         if len(pods) > 0:
             pod_dashboard = pods[0]
