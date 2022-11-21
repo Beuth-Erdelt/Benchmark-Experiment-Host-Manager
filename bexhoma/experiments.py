@@ -1045,7 +1045,7 @@ class tpcc(default):
         #experiment = code
         #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         #jobname = self.benchmarker_jobname
-        self.logger.debug('tpcc.end_benchmarker({})'.format(jobname))
+        self.cluster.logger.debug('tpcc.end_benchmarker({})'.format(jobname))
         pods = self.cluster.get_pods(component='dashboard')
         if len(pods) > 0:
             pod_dashboard = pods[0]
