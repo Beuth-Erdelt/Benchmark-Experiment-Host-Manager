@@ -2470,11 +2470,15 @@ class hammerdb(default):
             connection = self.configuration#self.getConnectionName()
         if len(configuration) == 0:
             configuration = connection
+            #configuration = self.configuration
         if client is None:
             client = self.client
+        experimentRun = str(self.num_experiment_to_apply_done+1)
         code = self.code
+        experiment = code
         #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
-        jobname = self.benchmarker_jobname
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        #jobname = self.benchmarker_jobname
         self.logger.debug('hammerdb.end_benchmarker({})'.format(jobname))
         pods = self.experiment.cluster.get_pods(component='dashboard')
         if len(pods) > 0:
