@@ -41,9 +41,6 @@ import ast
 import copy
 from datetime import datetime, timedelta
 import threading
-import re
-import pandas as pd
-import pickle
 
 from dbmsbenchmarker import *
 
