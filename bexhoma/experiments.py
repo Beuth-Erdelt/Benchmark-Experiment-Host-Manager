@@ -1062,6 +1062,14 @@ class tpcc(default):
             #filename_logs = '/results/{}/{}*'.format(self.code, jobname)
             filename_df = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
             cmd = {}
+            # get connection name
+            cmd['extract_results'] = 'grep -R BEXHOMA_CONNECTION {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdout = os.popen(cmd['extract_results']).read()
+            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)', stdout)
+            # get NOPM and TPM
             cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
             print(cmd['extract_results'])
             stdout = os.popen(cmd['extract_results']).read()
@@ -1069,18 +1077,22 @@ class tpcc(default):
             print(stdout)
             list_nopm = re.findall('achieved (.+?) NOPM', stdout)
             list_tpm = re.findall('from (.+?) ', stdout)
+            # get vuser
             cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
             print(cmd['extract_results'])
             stdout = os.popen(cmd['extract_results']).read()
             #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
             print(stdout)
             list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            # what we have found
             print(list_nopm)
             print(list_tpm)
             print(list_vuser)
+            # build DataFrame
             if len(list_nopm) and len(list_tpm) and len(list_vuser):
                 df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
                 df.columns = ['NOPM','TPM', 'VUSERS']
+                df.index.name = str(connection_name)
                 print(df)
                 f = open(filename_df, "wb")
                 pickle.dump(df, f)
