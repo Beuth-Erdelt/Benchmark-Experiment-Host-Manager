@@ -1068,7 +1068,7 @@ class tpcc(default):
             stdout = os.popen(cmd['extract_results']).read()
             #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
             print(stdout)
-            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)', stdout)
+            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
             # get NOPM and TPM
             cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
             print(cmd['extract_results'])
@@ -1092,7 +1092,8 @@ class tpcc(default):
             if len(list_nopm) and len(list_tpm) and len(list_vuser):
                 df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
                 df.columns = ['NOPM','TPM', 'VUSERS']
-                df.index.name = str(connection_name)
+                if len(connection_name) > 0:
+                    df.index.name = str(connection_name[0])
                 print(df)
                 f = open(filename_df, "wb")
                 pickle.dump(df, f)
