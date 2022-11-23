@@ -1221,6 +1221,7 @@ class testbed():
 
         :param app: app the dashboard belongs to
         :param component: Component name, should be 'dashboard' typically
+        :return: name of the dashboard pod
         """
         pods_dashboard = self.get_pods(component=component)
         if len(pods_dashboard) > 0:

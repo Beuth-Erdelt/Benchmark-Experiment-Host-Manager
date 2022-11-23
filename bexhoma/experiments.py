@@ -390,9 +390,11 @@ class default():
         #shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
     def test_results(self):
         """
-        Zip the result folder in the dashboard pod.
+        Run test script in dashboard pod.
+        Extract exit code.
+
+        :return: exit code of test script
         """
-        # remote:
         pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
         if len(pod_dashboard) > 0:
             #pod_dashboard = pods[0]
@@ -421,12 +423,7 @@ class default():
                 return 1
             finally:
                 return 1
-            #print(fullcommand)
-            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            #stdout, stderr = proc.communicate()
         return 1
-        # local:
-        #shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
         """
         Read experiment details from cluster config
@@ -1099,6 +1096,28 @@ class tpcc(default):
                 pickle.dump(df, f)
                 f.close()
                 #self.loading_parameters['HAMMERDB_VUSERS']
+    def test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        try:
+            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+            #path = '../benchmarks/1669163583'
+            directory = os.fsencode(path)
+            for file in os.listdir(directory):
+                filename = os.fsdecode(file)
+                if filename.endswith(".pickle"): 
+                    df = pd.read_pickle(path+"/"+filename)
+                    print(df)
+                    print(df.index.name)
+                    print(list(df['VUSERS']))
+                    print(" ".join(l))
+            return 0
+        except Exception as e:
+            return 1
 
 
 
