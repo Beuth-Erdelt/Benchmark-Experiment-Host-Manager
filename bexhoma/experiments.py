@@ -1231,4 +1231,21 @@ class tsbs(default):
             )
         #self.monitoring_active = True
         self.maintaining_active = True
+    def end_benchmarking(self, jobname):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        self.cluster.logger.debug('tsbs.end_benchmarking({})'.format(jobname))
+        filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
+        cmd = {}
+        # get connection name
+        cmd['extract_results'] = 'grep -R loaded {filename_logs}'.format(filename_logs=filename_logs)
+        print(cmd['extract_results'])
+        stdout = os.popen(cmd['extract_results']).read()
+        #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+        print(stdout)
+        return super().end_benchmarking(jobname)
 
