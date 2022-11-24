@@ -1882,6 +1882,7 @@ scrape_configs:
                         self.experiment.cluster.kubectl(fullcommand)
                         # TODO: Also mark volume
                     # delete job and all its pods
+                    self.experiment.end_loading(job)
                     self.experiment.cluster.delete_job(job)
                     pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:

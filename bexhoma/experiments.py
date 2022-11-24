@@ -902,6 +902,14 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
+    def end_loading(self, jobname):
+        """
+        Ends a loading job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        self.cluster.logger.debug('default.end_loading({})'.format(jobname))
 
 
 
@@ -1231,14 +1239,14 @@ class tsbs(default):
             )
         #self.monitoring_active = True
         self.maintaining_active = True
-    def end_benchmarking(self, jobname):
+    def end_loading(self, jobname):
         """
-        Ends a benchmarker job.
+        Ends a loading job.
         This is for storing or cleaning measures.
 
         :param jobname: Name of the job to clean
         """
-        self.cluster.logger.debug('tsbs.end_benchmarking({})'.format(jobname))
+        self.cluster.logger.debug('tsbs.end_loading({})'.format(jobname))
         filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
         cmd = {}
         # get connection name
@@ -1247,5 +1255,5 @@ class tsbs(default):
         stdout = os.popen(cmd['extract_results']).read()
         #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
         print(stdout)
-        return super().end_benchmarking(jobname)
+        return super().end_loading(jobname)
 
