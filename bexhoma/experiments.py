@@ -1257,3 +1257,126 @@ class tsbs(default):
         print(stdout)
         return super().end_loading(jobname)
 
+"""
+############################################################################
+YCSB
+############################################################################
+"""
+
+class ycsb(default):
+    """
+    Class for defining an YCSB experiment.
+    This sets
+
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    * additional parameters - here SF (the scaling factor), i.e. number of rows divided by 10.000
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            #queryfile = 'queries-tpch.config',
+            SF = '1',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.set_experiment(volume='ycsb')
+        self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.cluster.set_experiments_configfolder('experiments/ycsb')
+        parameter.defaultParameters = {'SF': str(SF)}
+        self.set_queryfile('queries.config')
+        self.set_workload(
+            name = 'YCSB Queries SF='+str(SF),
+            info = 'This experiment performs some YCSB inspired workloads.'
+            )
+        self.storage_label = 'tpch-'+str(SF)
+    def TODO_end_benchmarking(self,jobname):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        #app = self.appname
+        #code = self.code
+        #experiment = code
+        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
+        #jobname = self.benchmarker_jobname
+        self.cluster.logger.debug('tpcc.end_benchmarking({})'.format(jobname))
+        pods = self.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            status = self.cluster.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            while status != "Running":
+                self.wait(10)
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+            filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
+            #filename_logs = '/results/{}/{}*'.format(self.code, jobname)
+            filename_df = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
+            cmd = {}
+            # get connection name
+            cmd['extract_results'] = 'grep -R BEXHOMA_CONNECTION {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdout = os.popen(cmd['extract_results']).read()
+            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
+            # get NOPM and TPM
+            cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdout = os.popen(cmd['extract_results']).read()
+            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            list_nopm = re.findall('achieved (.+?) NOPM', stdout)
+            list_tpm = re.findall('from (.+?) ', stdout)
+            # get vuser
+            cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
+            print(cmd['extract_results'])
+            stdout = os.popen(cmd['extract_results']).read()
+            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            print(stdout)
+            list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            # what we have found
+            print(list_nopm)
+            print(list_tpm)
+            print(list_vuser)
+            # build DataFrame
+            if len(list_nopm) and len(list_tpm) and len(list_vuser):
+                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
+                df.columns = ['NOPM','TPM', 'VUSERS']
+                if len(connection_name) > 0:
+                    df.index.name = str(connection_name[0])
+                print(df)
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+                #self.loading_parameters['HAMMERDB_VUSERS']
+    def TODO_test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        try:
+            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+            #path = '../benchmarks/1669163583'
+            directory = os.fsencode(path)
+            for file in os.listdir(directory):
+                filename = os.fsdecode(file)
+                if filename.endswith(".pickle"): 
+                    df = pd.read_pickle(path+"/"+filename)
+                    print(df)
+                    print(df.index.name)
+                    print(list(df['VUSERS']))
+                    print(" ".join(l))
+            return 0
+        except Exception as e:
+            return 1
+
+
+
