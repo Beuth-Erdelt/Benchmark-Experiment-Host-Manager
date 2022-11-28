@@ -1407,14 +1407,14 @@ class ycsb(default):
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarking") and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
                 print(filename)
                 df = self.log_to_df(path+"/"+filename)
                 filename_df = path+"/"+filename+".df.pickle"
                 f = open(filename_df, "wb")
                 pickle.dump(df, f)
                 f.close()
-        return super().end_loading(jobname)
+        return super().end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
