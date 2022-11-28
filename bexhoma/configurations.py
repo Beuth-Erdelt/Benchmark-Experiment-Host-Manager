@@ -1986,6 +1986,8 @@ scrape_configs:
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
+        c = copy.deepcopy(self.dockertemplate['template'])
+        env['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         env['BEXHOMA_HOST'] = servicename
         env['BEXHOMA_CLIENT'] = str(parallelism)
         env['BEXHOMA_EXPERIMENT'] = experiment
