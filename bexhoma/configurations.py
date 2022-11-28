@@ -1974,7 +1974,7 @@ scrape_configs:
         :param env: Dict of environment variables for the job manifest
         :param template: Template name of the job manifest
         :param nodegroup: Nodegroup of the pods of the job
-        :param jobname: Name of the job
+        :param num_pods: Number of pods that run in total
         """
         if len(app) == 0:
             app = self.appname
