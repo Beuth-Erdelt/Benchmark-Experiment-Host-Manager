@@ -2003,8 +2003,8 @@ scrape_configs:
         env['BEXHOMA_VOLUME'] = self.volume
         env['PARALLEL'] = str(parallelism)
         env['NUM_PODS'] = str(num_pods)
-        print(env)
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
+        self.logger.debug(env)
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         job_experiment = self.experiment.path+'/{app}-{component}-{configuration}-{experimentRun}-{client}.yml'.format(app=app, component=component, configuration=configuration, experimentRun=experimentRun, client=client)
         #with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
@@ -2036,28 +2036,28 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['spec']['template']['metadata']['labels']['volume'] = self.volume
                 for i_container, c in enumerate(dep['spec']['template']['spec']['containers']):
-                    print(i_container)
+                    #print(i_container)
                     env_manifest = {}
                     envs = c['env']
                     for i,e in enumerate(envs):
                         env_manifest[e['name']] = e['value']
-                    print(env_manifest)
+                    #print(env_manifest)
                     env_merged = {**env_manifest, **env}
-                    print(env_merged)
+                    #print(env_merged)
                     self.logger.debug('configuration.create_manifest_job({})'.format(str(env_merged)))
                     dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     for i,e in env_merged.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i, 'value':str(e)})
                 if 'initContainers' in dep['spec']['template']['spec']:
                     for i_container, c in enumerate(dep['spec']['template']['spec']['initContainers']):
-                        print(i_container)
+                        #print(i_container)
                         env_manifest = {}
                         envs = c['env']
                         for i,e in enumerate(envs):
                             env_manifest[e['name']] = e['value']
-                        print(env_manifest)
+                        #print(env_manifest)
                         env_merged = {**env_manifest, **env}
-                        print(env_merged)
+                        #print(env_merged)
                         dep['spec']['template']['spec']['initContainers'][i_container]['env'] = []
                         for i,e in env_merged.items():
                             dep['spec']['template']['spec']['initContainers'][i_container]['env'].append({'name':i, 'value':str(e)})
