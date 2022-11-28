@@ -1987,6 +1987,11 @@ scrape_configs:
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         c = copy.deepcopy(self.dockertemplate['template'])
+        c['connectionmanagement'] = {}
+        c['connectionmanagement']['numProcesses'] = self.connectionmanagement['numProcesses']
+        c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
+        c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
+        c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
         env['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         env['BEXHOMA_USER'] = c['JDBC']['auth'][0]
         env['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
