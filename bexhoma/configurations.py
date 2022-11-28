@@ -1995,6 +1995,7 @@ scrape_configs:
         env['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         env['BEXHOMA_USER'] = c['JDBC']['auth'][0]
         env['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
+        env['BEXHOMA_DRIVER'] = c['JDBC']['driver']
         env['BEXHOMA_HOST'] = servicename
         env['BEXHOMA_CLIENT'] = str(parallelism)
         env['BEXHOMA_EXPERIMENT'] = experiment
