@@ -1355,7 +1355,67 @@ class ycsb(default):
                 pickle.dump(df, f)
                 f.close()
                 #self.loading_parameters['HAMMERDB_VUSERS']
-    def TODO_test_results(self):
+    def log_to_df(self, filename):
+        with open(filename) as f:
+            lines = f.readlines()
+        stdout = "".join(lines)
+        connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
+        result = []
+        #for line in s.split("\n"):
+        for line in lines:
+            line = line.strip('\n')
+            cells = line.split(", ")
+            #print(cells)
+            if len(cells[0]) and cells[0][0] == "[":
+                result.append(line.split(", "))
+        print(result)
+        df = pd.DataFrame(result)
+        df.columns = ['category', 'type', 'value']
+        df.index.name = connection_name[0]
+        return df
+    def end_loading(self, jobname):
+        """
+        Ends a loading job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        self.cluster.logger.debug('ycsb.end_loading({})'.format(jobname))
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = '../benchmarks/1669640632'
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-") and filename.endswith(".sensor.log"):
+                print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                filename_df = path+"/"+filename+".df.pickle"
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+        return super().end_loading(jobname)
+    def end_benchmarking(self, jobname):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        self.cluster.logger.debug('ycsb.end_benchmarking({})'.format(jobname))
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = '../benchmarks/1669640632'
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-benchmarking") and filename.endswith(".log"):
+                print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                filename_df = path+"/"+filename+".df.pickle"
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+        return super().end_loading(jobname)
+    def test_results(self):
         """
         Run test script locally.
         Extract exit code.
@@ -1371,9 +1431,6 @@ class ycsb(default):
                 if filename.endswith(".pickle"): 
                     df = pd.read_pickle(path+"/"+filename)
                     print(df)
-                    print(df.index.name)
-                    print(list(df['VUSERS']))
-                    print(" ".join(l))
             return 0
         except Exception as e:
             return 1
