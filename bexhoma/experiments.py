@@ -1293,23 +1293,27 @@ class ycsb(default):
             )
         self.storage_label = 'tpch-'+str(SF)
     def log_to_df(self, filename):
-        with open(filename) as f:
-            lines = f.readlines()
-        stdout = "".join(lines)
-        connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
-        result = []
-        #for line in s.split("\n"):
-        for line in lines:
-            line = line.strip('\n')
-            cells = line.split(", ")
-            #print(cells)
-            if len(cells[0]) and cells[0][0] == "[":
-                result.append(line.split(", "))
-        #print(result)
-        df = pd.DataFrame(result)
-        df.columns = ['category', 'type', 'value']
-        df.index.name = connection_name[0]
-        return df
+        try:
+            with open(filename) as f:
+                lines = f.readlines()
+            stdout = "".join(lines)
+            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
+            result = []
+            #for line in s.split("\n"):
+            for line in lines:
+                line = line.strip('\n')
+                cells = line.split(", ")
+                #print(cells)
+                if len(cells[0]) and cells[0][0] == "[":
+                    result.append(line.split(", "))
+            #print(result)
+            df = pd.DataFrame(result)
+            df.columns = ['category', 'type', 'value']
+            df.index.name = connection_name[0]
+            return df
+        except Exception as e:
+            print(e)
+            return pd.DataFrame()
     def end_loading(self, jobname):
         """
         Ends a loading job.
