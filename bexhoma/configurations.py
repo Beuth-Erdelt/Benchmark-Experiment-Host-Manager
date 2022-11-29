@@ -1996,6 +1996,10 @@ scrape_configs:
         env['BEXHOMA_USER'] = c['JDBC']['auth'][0]
         env['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
         env['BEXHOMA_DRIVER'] = c['JDBC']['driver']
+        if isinstance(c['JDBC']['jar'], str):
+            env['BEXHOMA_DRIVER'] = c['JDBC']['jar']
+        else:
+            env['BEXHOMA_DRIVER'] = c['JDBC']['jar'][0]
         env['BEXHOMA_HOST'] = servicename
         env['BEXHOMA_CLIENT'] = str(parallelism)
         env['BEXHOMA_EXPERIMENT'] = experiment
