@@ -2183,17 +2183,19 @@ scrape_configs:
         #print(jobname)
         self.logger.debug('configuration.create_manifest_loading()')
         # determine start time
-        #now = datetime.utcnow()
-        #start = now + timedelta(seconds=180)
-        #start = datetime.strptime('2021-03-04 23:15:25', '%Y-%m-%d %H:%M:%S')
-        #wait = (start-now).seconds
-        #now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        #start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        now = datetime.utcnow()
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start = now + timedelta(seconds=30)
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        env = {'DBMSBENCHMARKER_NOW': now_string,
+            'DBMSBENCHMARKER_START': start_string,
+            }
         # store parameters in connection for evaluation
         if len(self.loading_parameters):
             self.connection_parameter['loading_parameters'] = self.loading_parameters
         print("self.loading_parameters", self.loading_parameters)
-        env = self.loading_parameters
+        #env = self.loading_parameters
+        env = {**env, **self.loading_parameters}
         template = "jobtemplate-loading.yml"
         if len(self.experiment.jobtemplate_loading) > 0:
             template = self.experiment.jobtemplate_loading
