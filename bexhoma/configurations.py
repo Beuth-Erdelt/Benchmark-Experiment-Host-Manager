@@ -2116,7 +2116,7 @@ scrape_configs:
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{experimentRun}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-dbmsbenchmarker.yml", num_pods=num_pods)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-dbmsbenchmarker.yml", num_pods=num_pods, nodegroup='benchmarking')
     def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1):
         """
         Creates a job template for maintaining.
@@ -2157,7 +2157,7 @@ scrape_configs:
         template = "jobtemplate-maintaining.yml"
         if len(self.experiment.jobtemplate_maintaining) > 0:
             template = self.experiment.jobtemplate_maintaining
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, num_pods=num_pods)#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, num_pods=num_pods, nodegroup='maintaining')#, jobname=jobname)
     def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias='', num_pods=1):
         """
         Creates a job template for loading.
@@ -2465,7 +2465,7 @@ class hammerdb(default):
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml", num_pods=num_pods)#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
 
 
 
@@ -2726,7 +2726,7 @@ class ycsb(default):
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods)#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
 
 
 
