@@ -1881,6 +1881,17 @@ scrape_configs:
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
                         # TODO: Also mark volume
+                        use_storage = self.use_storage()
+                        if use_storage:
+                            #storage_label = 'tpc-ds-1'
+                            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
+                            volume = name_pvc
+                        else:
+                            volume = ''
+                        if volume:
+                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
+                            #print(fullcommand)
+                            self.experiment.cluster.kubectl(fullcommand)
                     # delete job and all its pods
                     self.experiment.cluster.delete_job(job)
                     pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
