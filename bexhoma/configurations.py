@@ -2193,9 +2193,10 @@ scrape_configs:
         # store parameters in connection for evaluation
         if len(self.loading_parameters):
             self.connection_parameter['loading_parameters'] = self.loading_parameters
-        print("self.loading_parameters", self.loading_parameters)
+        #print("self.loading_parameters", self.loading_parameters)
         #env = self.loading_parameters
         env = {**env, **self.loading_parameters}
+        print("create_manifest_loading:env=", env)
         template = "jobtemplate-loading.yml"
         if len(self.experiment.jobtemplate_loading) > 0:
             template = self.experiment.jobtemplate_loading
