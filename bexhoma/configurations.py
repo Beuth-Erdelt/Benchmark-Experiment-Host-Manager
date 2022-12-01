@@ -1883,8 +1883,10 @@ scrape_configs:
                         # TODO: Also mark volume
                         use_storage = self.use_storage()
                         if use_storage:
-                            #storage_label = 'tpc-ds-1'
-                            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
+                            if self.storage['storageConfiguration']:
+                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+                            else:
+                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
                             volume = name_pvc
                         else:
                             volume = ''
