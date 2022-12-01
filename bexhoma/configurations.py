@@ -516,7 +516,7 @@ class default():
             #    print(pod_sut, status)
             #    self.wait(10)
             #    status = self.experiment.cluster.get_pod_status(pod_sut)
-            print("ckeck if {} is running".format(pod_sut))
+            print("check if {} is running".format(pod_sut))
             services = self.experiment.cluster.get_services(app, component, self.experiment.code, configuration)
             service = services[0]
             ports = self.experiment.cluster.get_ports_of_service(app, component, self.experiment.code, configuration)
@@ -948,6 +948,8 @@ scrape_configs:
                             if 'timeLoadingEnd' in pvc_labels:
                                 yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
+                        # we do not need loading pods
+                        self.loading_active = False
             if dep['kind'] == 'StatefulSet':
                 if self.num_worker == 0:
                     del result[key]
