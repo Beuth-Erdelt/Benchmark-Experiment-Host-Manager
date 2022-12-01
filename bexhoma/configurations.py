@@ -138,7 +138,9 @@ class default():
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
         self.loading_finished = False #: Time as an integer when initial loading has finished
-        self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are       
+        self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are  
+        self.timeLoadingStart = 0
+        self.timeLoadingEnd = 0     
         self.reset_sut()
     def reset_sut(self):
         """
@@ -1893,7 +1895,7 @@ scrape_configs:
                         else:
                             volume = ''
                         if volume:
-                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
+                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
                             #print(fullcommand)
                             self.experiment.cluster.kubectl(fullcommand)
                     # delete job and all its pods
