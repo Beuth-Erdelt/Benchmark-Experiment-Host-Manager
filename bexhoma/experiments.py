@@ -727,6 +727,8 @@ class default():
                 if config.loading_finished:
                     if config.monitoring_active and not config.monitoring_is_running():
                         print("{} waits for monitoring".format(config.configuration))
+                        if not config.monitoring_is_pending():
+                            config.start_monitoring()
                         continue
                     if config.maintaining_active:
                         if not config.maintaining_is_running():
