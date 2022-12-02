@@ -7,7 +7,7 @@
 ----------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 4
     :caption: Table of Contents:
     :hidden:
 
@@ -18,7 +18,16 @@
     ./DBMS.md
     ./Deployments.md
     ./Monitoring.md
-    ...
+    ./CONTRIBUTING.md
+    ./bexhoma
 
 
 .. mdinclude:: ../README.md
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

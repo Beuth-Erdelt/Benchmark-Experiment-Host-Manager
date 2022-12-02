@@ -1,4 +1,4 @@
 """
 The clustermanager module
 """
-__all__ = ["masterK8s", "clusters", "experiments", "configurations"]
+__all__ = ["clusters", "experiments", "configurations"]

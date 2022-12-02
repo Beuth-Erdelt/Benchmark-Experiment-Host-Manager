@@ -24,13 +24,13 @@ We will explain this structure in the following.
 On **k8s**:
 
 ```
-cluster = masterK8s.testdesign(clusterconfig='cluster.config', configfolder='experiments/tpch', yamlfolder='k8s/')
+cluster = clusters.testbed(clusterconfig='cluster.config', experiments_configfolder='experiments/tpch', yamlfolder='k8s/')
 ```
 
 On **AWS**:
 
 ```
-cluster = masterAWS.testdesign(clusterconfig='cluster.config', configfolder='experiments/tpch')
+cluster = masterAWS.testbed(clusterconfig='cluster.config', experiments_configfolder='experiments/tpch')
 ```
 
 ## Example: TPC-H Benchmark for 3 DBMS on 1 Virtual Machine
@@ -63,7 +63,7 @@ This means we provide
 
 ```
 # set config
-cluster = masterAWS.testdesign(clusterconfig='cluster.config', configfolder='experiments/tpch')
+cluster = masterAWS.testbed(clusterconfig='cluster.config', experiments_configfolder='experiments/tpch')
 
 cluster.setExperiment(volume='tpch', script='1shard-SF1', instance='1xK80')
 cluster.runExperiment(docker='OmniSci')
@@ -82,7 +82,7 @@ cluster.runExperiment(volume='tpch', docker='MemSQL', script='1shard-SF1', insta
 If we do not want to restart the instance:
 
 ```
-cluster = masterAWS.testdesign(clusterconfig='cluster.config', configfolder='experiments/tpch')
+cluster = masterAWS.testbed(clusterconfig='cluster.config', experiments_configfolder='experiments/tpch')
 
 cluster.setExperiment(volume='tpch', script='1shard-SF1', instance='1xK80')
 cluster.prepareExperiment()
@@ -123,7 +123,7 @@ This means we provide
 * Run experiment on 3 different instances
 
 ```
-cluster = masterAWS.testdesign(clusterconfig='cluster.config', configfolder='experiments/tpch')
+cluster = masterAWS.testbed(clusterconfig='cluster.config', experiments_configfolder='experiments/tpch')
 
 cluster.setExperiment(volume='tpch', docker='OmniSci', script='1shard-SF1')
 cluster.runExperiment(instance='1xK80')

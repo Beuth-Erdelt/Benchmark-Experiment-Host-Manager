@@ -1,13 +1,15 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/Benchmark-Experiment-Host-Manager.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases/)
+[![PyPI version](https://badge.fury.io/py/bexhoma.svg)](https://badge.fury.io/py/bexhoma)
 
-# Benchmark Experiment Host Manager
+# Benchmark Experiment Host Manager (Bexhoma)
 This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment**.
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
-This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud und Oracle Cloud and at Minikube installations,
-running with Citus, Clickhouse, DB2, Exasol, MariaDB, MariaDB Columnstore, MemSQL, MonetDB, MySQL, OmniSci, Oracle DB, PostgreSQL, SingleStore, SQL Server and SAP HANA.
+This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
+running with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
+.
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
@@ -17,6 +19,8 @@ The basic workflow is [1,2]: start a virtual machine, install monitoring softwar
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
+
+If you encounter any issues, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues).
 
 ## Installation
 
@@ -50,23 +54,42 @@ The repository contains a [tool](experiments/tpch/) for running TPC-H (reading) 
 
 ## More Informations
 
-For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) as query executor [2] and evaluator [1].
+For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], as query executor and evaluator as in [1,2].
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
+
+## Contributing, Bug Reports
+
+If you have any question or found a bug, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues).
+In any bug report, please let us know:
+
+* Which operating system and hardware (32 bit or 64 bit) you are using
+* Python version
+* Bexhoma version (or git commit/date)
+* Traceback that occurs (the full error message)
+
+We are always looking for people interested in helping with code development, documentation writing, technical administration, and whatever else comes up.
+If you wish to contribute, please first read the [contribution section](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/CONTRIBUTING.md) or visit the [documentation](https://bexhoma.readthedocs.io/en/latest/CONTRIBUTING.html).
 
 ## References
 
-[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
+If you use Bexhoma in work contributing to a scientific publication, we kindly ask that you cite our application note [2] or [1]:
 
+[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
 > Erdelt P.K. (2021)
 > A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
 > Lecture Notes in Computer Science, vol 12752. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-84924-5_6
 
-
-[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://www.researchgate.net/publication/353236865_Orchestrating_DBMS_Benchmarking_in_the_Cloud_with_Kubernetes)
+[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://doi.org/10.1007/978-3-030-94437-7_6)
 > Erdelt P.K. (2022)
 > Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
 > In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
+
+[3] [DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python](https://doi.org/10.21105/joss.04628)
+> Erdelt P.K., Jestel J. (2022).
+> DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python.
+> Journal of Open Source Software, 7(79), 4628
+> https://doi.org/10.21105/joss.04628
