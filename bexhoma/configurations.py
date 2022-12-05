@@ -1076,11 +1076,12 @@ scrape_configs:
                     #print("Container", container)
                     if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
-                        for j, vol in enumerate(container['volumeMounts']):
-                            if vol['name'] == 'benchmark-storage-volume':
-                                #print(vol['mountPath'])
-                                if not use_storage:
-                                    del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                        if 'volumeMounts' an container and len(container['volumeMounts']) > 0:
+                            for j, vol in enumerate(container['volumeMounts']):
+                                if vol['name'] == 'benchmark-storage-volume':
+                                    #print(vol['mountPath'])
+                                    if not use_storage:
+                                        del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
                         if self.dockerimage:
                             result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                         else:
