@@ -888,6 +888,8 @@ scrape_configs:
             # sut is already running
             return False
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
+        # ENV
+        env = {}
         # resources
         specs = instance.split("-")
         #print(specs)
@@ -956,6 +958,14 @@ scrape_configs:
                 if self.num_worker == 0:
                     del result[key]
                     continue
+                # generate list of worker names
+                list_of_workers = []
+                for worker in range(self.num_worker):
+                    worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker, worker, name_worker)
+                    list_of_workers.append(worker_full_name)
+                list_of_workers_as_string = ",".join(list_of_workers)
+                env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
+                # set meta data
                 dep['metadata']['name'] = name_worker
                 #self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
@@ -979,6 +989,19 @@ scrape_configs:
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                    # get and set ENV
+                    env_manifest = {}
+                    envs = container['env']
+                    for num_env, e in enumerate(envs):
+                        env_manifest[e['name']] = e['value']
+                    print(env_manifest)
+                    env_merged = {**env_manifest, **env}
+                    #print(env_merged)
+                    self.logger.debug('configuration.create_manifest_statefulset({})'.format(str(env_merged)))
+                    dep['spec']['template']['spec']['containers'][i]['env'] = []
+                    for i,e in env_merged.items():
+                        dep['spec']['template']['spec']['containers'][i]['env'].append({'name':i, 'value':str(e)})
+                # remove storage template if not used
                 if not use_storage and 'volumeClaimTemplates' in result[key]['spec']:
                     del result[key]['spec']['volumeClaimTemplates']
                 #print(pvc)
