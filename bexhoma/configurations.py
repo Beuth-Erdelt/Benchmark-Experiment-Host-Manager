@@ -1005,8 +1005,17 @@ scrape_configs:
                     for i_env,e in env.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                 # remove storage template if not used
-                if not use_storage and 'volumeClaimTemplates' in result[key]['spec']:
-                    del result[key]['spec']['volumeClaimTemplates']
+                if 'volumeClaimTemplates' in result[key]['spec']:
+                    if not use_storage:
+                        del result[key]['spec']['volumeClaimTemplates']
+                    else:
+                        if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
+                            dep['spec']['volumeClaimTemplates']['spec']['storageClassName'] = self.storage['storageClassName']
+                            #print(dep['spec']['storageClassName'])
+                        else:
+                            del result[key]['spec']['storageClassName']
+                        if len(self.storage['storageSize']) > 0:
+                            dep['spec']['volumeClaimTemplates']['spec']['resources']['requests']['storage'] = self.storage['storageSize']
                 #print(pvc)
             if dep['kind'] == 'Job':
                 # set meta data
