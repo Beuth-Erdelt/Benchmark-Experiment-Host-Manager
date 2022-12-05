@@ -990,16 +990,16 @@ scrape_configs:
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
                     # get and set ENV
-                    env_manifest = {}
-                    envs = container['env']
-                    for num_env, e in enumerate(envs):
-                        env_manifest[e['name']] = e['value']
-                    print(env_manifest)
-                    env_merged = {**env_manifest, **env}
+                    #env_manifest = {}
+                    #envs = container['env']
+                    #for num_env, e in enumerate(envs):
+                    #    env_manifest[e['name']] = e['value']
+                    #print(env_manifest)
+                    #env_merged = {**env_manifest, **env}
                     #print(env_merged)
-                    self.logger.debug('configuration.create_manifest_statefulset({})'.format(str(env_merged)))
-                    dep['spec']['template']['spec']['containers'][i]['env'] = []
-                    for i,e in env_merged.items():
+                    self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
+                    #dep['spec']['template']['spec']['containers'][i]['env'] = []
+                    for i,e in env.items():
                         dep['spec']['template']['spec']['containers'][i]['env'].append({'name':i, 'value':str(e)})
                 # remove storage template if not used
                 if not use_storage and 'volumeClaimTemplates' in result[key]['spec']:
