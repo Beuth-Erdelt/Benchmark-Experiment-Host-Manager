@@ -1076,7 +1076,7 @@ scrape_configs:
                     #print("Container", container)
                     if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
-                        if 'volumeMounts' an container and len(container['volumeMounts']) > 0:
+                        if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
                             for j, vol in enumerate(container['volumeMounts']):
                                 if vol['name'] == 'benchmark-storage-volume':
                                     #print(vol['mountPath'])
