@@ -1092,15 +1092,16 @@ scrape_configs:
                             del result[key]['spec']['template']['spec']['containers'][i]
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i]
-                for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
-                    if vol['name'] == 'benchmark-storage-volume':
-                        if not use_storage:
-                            del result[key]['spec']['template']['spec']['volumes'][i]
-                        else:
-                            vol['persistentVolumeClaim']['claimName'] = name_pvc
-                    if 'hostPath' in vol and not self.monitoring_active:
-                        # we only need hostPath for monitoring
-                            del result[key]['spec']['template']['spec']['volumes'][i]
+                if 'volumes' in dep['spec']['template']['spec']:
+                    for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
+                        if vol['name'] == 'benchmark-storage-volume':
+                            if not use_storage:
+                                del result[key]['spec']['template']['spec']['volumes'][i]
+                            else:
+                                vol['persistentVolumeClaim']['claimName'] = name_pvc
+                        if 'hostPath' in vol and not self.monitoring_active:
+                            # we only need hostPath for monitoring
+                                del result[key]['spec']['template']['spec']['volumes'][i]
                 # init containers only for persistent volumes
                 if 'initContainers' in result[key]['spec']['template']['spec'] and not use_storage:
                     del result[key]['spec']['template']['spec']['initContainers']
