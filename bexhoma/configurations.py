@@ -961,7 +961,7 @@ scrape_configs:
                 # generate list of worker names
                 list_of_workers = []
                 for worker in range(self.num_worker):
-                    worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker, worker, name_worker)
+                    worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
                     list_of_workers.append(worker_full_name)
                 list_of_workers_as_string = ",".join(list_of_workers)
                 env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
