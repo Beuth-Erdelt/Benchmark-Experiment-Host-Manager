@@ -1009,13 +1009,14 @@ scrape_configs:
                     if not use_storage:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
+                        print(result[key]['spec']['volumeClaimTemplates'])
                         if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
-                            dep['spec']['volumeClaimTemplates']['spec']['storageClassName'] = self.storage['storageClassName']
+                            dep['spec']['volumeClaimTemplates'][0]['spec']['storageClassName'] = self.storage['storageClassName']
                             #print(dep['spec']['storageClassName'])
                         else:
                             del result[key]['spec']['storageClassName']
                         if len(self.storage['storageSize']) > 0:
-                            dep['spec']['volumeClaimTemplates']['spec']['resources']['requests']['storage'] = self.storage['storageSize']
+                            dep['spec']['volumeClaimTemplates'][0]['spec']['resources']['requests']['storage'] = self.storage['storageSize']
                 #print(pvc)
             if dep['kind'] == 'Job':
                 # set meta data
