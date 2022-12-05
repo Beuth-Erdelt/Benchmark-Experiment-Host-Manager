@@ -979,7 +979,7 @@ scrape_configs:
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                for i, container in enumerate(dep['spec']['template']['spec']['containers']):
+                for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
@@ -988,7 +988,7 @@ scrape_configs:
                             if vol['name'] == 'bexhoma-workers':
                                 #print(vol['mountPath'])
                                 if not use_storage:
-                                    del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                                    del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                     # get and set ENV
                     #env_manifest = {}
                     #envs = container['env']
@@ -998,9 +998,9 @@ scrape_configs:
                     #env_merged = {**env_manifest, **env}
                     #print(env_merged)
                     self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
-                    #dep['spec']['template']['spec']['containers'][i]['env'] = []
-                    for i,e in env.items():
-                        dep['spec']['template']['spec']['containers'][i]['env'].append({'name':i, 'value':str(e)})
+                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i_env,e in env.items():
+                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                 # remove storage template if not used
                 if not use_storage and 'volumeClaimTemplates' in result[key]['spec']:
                     del result[key]['spec']['volumeClaimTemplates']
