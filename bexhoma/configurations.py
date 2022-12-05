@@ -1045,7 +1045,11 @@ scrape_configs:
                     dep['metadata']['labels']['experiment'] = experiment
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['volume'] = self.volume
-                    dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
                     if not self.monitoring_active:
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
@@ -1058,7 +1062,11 @@ scrape_configs:
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
-                dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                dep['spec']['selector']['configuration'] = configuration
+                dep['spec']['selector']['experiment'] = experiment
+                dep['spec']['selector']['dbms'] = self.docker
+                dep['spec']['selector']['volume'] = self.volume
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
                 if not self.monitoring_active:
