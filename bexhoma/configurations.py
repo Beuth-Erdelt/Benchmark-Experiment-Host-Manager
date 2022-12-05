@@ -890,6 +890,16 @@ scrape_configs:
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         # ENV
         env = {}
+        # generate list of worker names
+        list_of_workers = []
+        for worker in range(self.num_worker):
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            list_of_workers.append(worker_full_name)
+        list_of_workers_as_string = ",".join(list_of_workers)
+        env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
+        if self.num_worker > 0:
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            env['BEXHOMA_WORKER_FIRST'] = worker_full_name
         # resources
         specs = instance.split("-")
         #print(specs)
@@ -958,13 +968,6 @@ scrape_configs:
                 if self.num_worker == 0:
                     del result[key]
                     continue
-                # generate list of worker names
-                list_of_workers = []
-                for worker in range(self.num_worker):
-                    worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
-                    list_of_workers.append(worker_full_name)
-                list_of_workers_as_string = ",".join(list_of_workers)
-                env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
                 # set meta data
                 dep['metadata']['name'] = name_worker
                 #self.service = dep['metadata']['name']
@@ -1005,6 +1008,21 @@ scrape_configs:
                 if not use_storage and 'volumeClaimTemplates' in result[key]['spec']:
                     del result[key]['spec']['volumeClaimTemplates']
                 #print(pvc)
+            if dep['kind'] == 'Job':
+                # set meta data
+                dep['metadata']['name'] = name_worker
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = 'worker'
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['dbms'] = self.docker
+                dep['metadata']['labels']['volume'] = self.volume
+                for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    #container = dep['spec']['template']['spec']['containers'][0]['name']
+                    self.logger.debug('configuration.add_env({})'.format(env))
+                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i_env,e in env.items():
+                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
                     if self.num_worker == 0:
