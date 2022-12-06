@@ -1688,6 +1688,7 @@ scrape_configs:
         c['parameter']['numExperiment'] = experimentRun
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
+        c['parameter']['storage_parameter'] = self.storage
         #print(c)
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
