@@ -1482,9 +1482,14 @@ scrape_configs:
             # Windows
             command = "du "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
-            if len(stdout) > 0:
-                return int(stdout.replace('\n',''))
+            try:
+                stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
+                if len(stdout) > 0:
+                    size_str = stdout.replace('\n','')
+                    if len(size_str) > 0:
+                        return int(size_str)
+            except Exception as e:
+                return 0
         return 0
     def get_host_diskspace_used(self):
         """
