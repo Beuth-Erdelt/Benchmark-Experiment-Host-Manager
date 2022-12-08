@@ -81,7 +81,7 @@ def manage():
 	elif args.mode == 'status':
 		cluster = clusters.kubernetes(clusterconfig, context=args.context)
 		app = cluster.appname
-		# get all volumes
+		# get all storage volumes
 		pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
 		#print("PVCs", pvcs)
 		volumes = {}
@@ -114,6 +114,39 @@ def manage():
 			#print(df)
 			h = ['Volumes'] + list(df.columns)
 			print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
+        # get all worker volumes
+        pvcs = cluster.get_pvc(app=app, component='worker', experiment='', configuration='')
+        #print("PVCs", pvcs)
+        volumes = {}
+        for pvc in pvcs:
+            volumes[pvc] = {}
+            pvcs_labels = cluster.get_pvc_labels(app=app, component='worker', experiment='', configuration='', pvc=pvc)
+            #print("PVCsLabels", pvcs_labels)
+            pvc_labels = pvcs_labels[0]
+            volumes[pvc]['configuration'] = pvc_labels['configuration']
+            volumes[pvc]['experiment'] = pvc_labels['experiment']
+            #volumes[pvc]['loaded [s]'] = pvc_labels['loaded']
+            #if 'timeLoading' in pvc_labels:
+            #    volumes[pvc]['timeLoading [s]'] = pvc_labels['timeLoading']
+            #else:
+            #    volumes[pvc]['timeLoading [s]'] = ""
+            volumes[pvc]['dbms'] = pvc_labels['dbms']
+            #volumes[pvc]['labels'] = pvcs_label
+            pvcs_specs = cluster.get_pvc_specs(app=app, component='worker', experiment='', configuration='', pvc=pvc)
+            pvc_specs = pvcs_specs[0]
+            #print("PVCsSpecs", pvcs_specs)
+            #volumes[pvc]['specs'] = pvc_specs
+            volumes[pvc]['storage_class_name'] = pvc_specs.storage_class_name
+            volumes[pvc]['storage'] = pvc_specs.resources.requests['storage']
+            pvcs_status = cluster.get_pvc_status(app=app, component='worker', experiment='', configuration='', pvc=pvc)
+            #print("PVCsStatus", pvcs_status)
+            volumes[pvc]['status'] = pvcs_status[0].phase
+        #print(volumes)
+        if len(volumes) > 0:
+            df = pd.DataFrame(volumes).T
+            #print(df)
+            h = ['Volumes of Workers'] + list(df.columns)
+            print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
 		# get all pods
 		pod_labels = cluster.get_pods_labels(app=app)
 		#print("Pod Labels", pod_labels)
