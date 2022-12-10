@@ -652,6 +652,7 @@ class default():
                         dep['metadata']['labels']['app'] = app
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['dbms'] = self.docker
                         dep['metadata']['labels']['experiment'] = experiment
                         dep['metadata']['labels']['volume'] = self.volume
                         dep['spec']['selector'] = dep['metadata']['labels'].copy()
@@ -660,6 +661,7 @@ class default():
                         dep['metadata']['labels']['app'] = app
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['dbms'] = self.docker
                         dep['metadata']['labels']['experiment'] = str(experiment)
                         dep['metadata']['labels']['volume'] = self.volume
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
