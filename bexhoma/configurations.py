@@ -2116,6 +2116,7 @@ scrape_configs:
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
                 dep['metadata']['labels']['experimentRun'] = str(experimentRun)
@@ -2123,6 +2124,7 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['dbms'] = self.docker
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
