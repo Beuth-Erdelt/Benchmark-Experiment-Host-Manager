@@ -1253,7 +1253,7 @@ scrape_configs:
                 # remove the storage
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                 self.experiment.cluster.delete_pvc(name_pvc)
-                worker_pvcs = self.get_pvc(app=app, component='worker', experiment=experiment, configuration=configuration)
+                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=configuration)
                 for name_pvc in worker_pvcs:
                     self.experiment.cluster.delete_pvc(name_pvc)
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
