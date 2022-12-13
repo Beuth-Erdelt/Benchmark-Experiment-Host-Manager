@@ -115,6 +115,7 @@ class default():
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.set_loading_parameters(**self.experiment.loading_parameters)
+        self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
         # scaling of other components
@@ -279,6 +280,14 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
+    def set_benchmarking_parameters(self, **kwargs):
+        """
+        Sets ENV for benchmarking components.
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.benchmarking_parameters = kwargs
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
@@ -2559,6 +2568,7 @@ class hammerdb(default):
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
+        env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
 
@@ -2820,6 +2830,7 @@ class ycsb(default):
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
+        env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
 

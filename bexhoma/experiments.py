@@ -111,6 +111,7 @@ class default():
         self.nodes = {}
         self.maintaining_parameters = {}
         self.loading_parameters = {}
+        self.benchmarking_parameters = {}
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         self.querymanagement = {}
@@ -279,6 +280,14 @@ class default():
         # total number at least number of parallel
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
+    def set_benchmarking_parameters(self, **kwargs):
+        """
+        Sets ENV for benchmarking components.
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.benchmarking_parameters = kwargs
     def add_configuration(self, configuration):
         """
         Adds a configuration object to the list of configurations of this experiment.
