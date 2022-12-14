@@ -1883,6 +1883,7 @@ scrape_configs:
                 pod_sut = pods[0]
                 num_worker = 0
                 while num_worker < self.num_worker:
+                    self.wait(5)
                     num_worker = 0
                     pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                     for pod in pods_worker:
