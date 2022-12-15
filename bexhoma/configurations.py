@@ -1015,6 +1015,12 @@ scrape_configs:
                     #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     for i_env,e in env.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
+                # remove volumes
+                for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
+                    if vol['name'] == 'bexhoma-workers':
+                        #print(vol['mountPath'])
+                        if not use_storage:
+                            del result[key]['spec']['template']['spec']['volumes'][j]
                 # remove storage template if not used
                 if 'volumeClaimTemplates' in result[key]['spec']:
                     if not use_storage:
