@@ -1393,3 +1393,126 @@ class ycsb(default):
 
 
 
+"""
+############################################################################
+Benchbase
+############################################################################
+"""
+
+class benchbase(default):
+    """
+    Class for defining an YCSB experiment.
+    This sets
+
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    * additional parameters - here SF (the scaling factor), i.e. number of rows divided by 10.000
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            #queryfile = 'queries-tpch.config',
+            SF = '1',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.set_experiment(volume='benchbase')
+        self.set_experiment(script='Empty')
+        self.cluster.set_experiments_configfolder('experiments/benchbase')
+        parameter.defaultParameters = {'SF': str(SF)}
+        self.set_queryfile('queries.config')
+        self.set_workload(
+            name = 'Benchbase Queries SF='+str(SF),
+            info = 'This experiment performs some Benchbase workloads.'
+            )
+        self.storage_label = 'tpch-'+str(SF)
+    def log_to_df(self, filename):
+        try:
+            with open(filename) as f:
+                lines = f.readlines()
+            stdout = "".join(lines)
+            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
+            result = []
+            #for line in s.split("\n"):
+            for line in lines:
+                line = line.strip('\n')
+                cells = line.split(", ")
+                #print(cells)
+                if len(cells[0]) and cells[0][0] == "[":
+                    result.append(line.split(", "))
+            #print(result)
+            df = pd.DataFrame(result)
+            df.columns = ['category', 'type', 'value']
+            df.index.name = connection_name[0]
+            return df
+        except Exception as e:
+            print(e)
+            return pd.DataFrame()
+    def end_loading(self, jobname):
+        """
+        Ends a loading job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        self.cluster.logger.debug('benchbase.end_loading({})'.format(jobname))
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = '../benchmarks/1669640632'
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-") and filename.endswith(".sensor.log"):
+                print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                filename_df = path+"/"+filename+".df.pickle"
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+        return super().end_loading(jobname)
+    def end_benchmarking(self, jobname):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        self.cluster.logger.debug('benchbase.end_benchmarking({})'.format(jobname))
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = '../benchmarks/1669640632'
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+                print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                filename_df = path+"/"+filename+".df.pickle"
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+        return super().end_benchmarking(jobname)
+    def test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        self.cluster.logger.debug('benchbase.test_results()')
+        try:
+            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+            #path = '../benchmarks/1669163583'
+            directory = os.fsencode(path)
+            for file in os.listdir(directory):
+                filename = os.fsdecode(file)
+                if filename.endswith(".pickle"): 
+                    df = pd.read_pickle(path+"/"+filename)
+                    print(filename)
+                    print(df)
+            return 0
+        except Exception as e:
+            return 1
+
+
+

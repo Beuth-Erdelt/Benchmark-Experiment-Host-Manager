@@ -2843,6 +2843,284 @@ class ycsb(default):
 
 
 
+
+class benchbase(default):
+    """
+    :Date: 2022-10-01
+    :Version: 0.6.0
+    :Authors: Patrick K. Erdelt
+
+        Class for managing an DBMS configuation.
+        This is plugged into an experiment object.
+
+        :param experiment: Unique identifier of the experiment
+        :param docker: Name of the Docker image
+        :param configuration: Name of the configuration
+        :param script: Unique identifier of the experiment
+        :param alias: Unique identifier of the experiment
+
+        Copyright (C) 2020  Patrick K. Erdelt
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Affero General Public License as
+        published by the Free Software Foundation, either version 3 of the
+        License, or (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Affero General Public License for more details.
+
+        You should have received a copy of the GNU Affero General Public License
+        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    """
+    def run_benchmarker_pod(self,
+        connection=None,
+        alias='',
+        dialect='',
+        query=None,
+        app='',
+        component='benchmarker',
+        experiment='',
+        configuration='',
+        client='1',
+        parallelism=1):
+        """
+        Runs the benchmarker job.
+        Sets meta data in the connection.config.
+        Copy query.config and connection.config to the first pod of the job (result folder mounted into every pod)
+
+        :param connection: Name of configuration prolonged by number of runs of the sut (installations) and number of client in a sequence of
+        :param alias: An alias can be given if we want to anonymize the dbms
+        :param dialect: A name of a SQL dialect can be given
+        :param query: The benchmark can be fixed to a specific query
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: Number of benchmarker this is in a sequence of
+        :param parallelism: Number of parallel benchmarker pods we want to have
+        """
+        self.logger.debug('benchbase.run_benchmarker_pod()')
+        resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
+        experiments_configfolder = self.experiment.cluster.experiments_configfolder
+        if connection is None:
+            connection = self.configuration#self.getConnectionName()
+        if len(configuration) == 0:
+            configuration = connection
+        code = self.code
+        if not isinstance(client, str):
+            client = str(client)
+        if not self.client:
+            self.client = client
+        if len(dialect) == 0 and len(self.dialect) > 0:
+            dialect = self.dialect
+        experimentRun = str(self.num_experiment_to_apply_done+1)
+        #self.experiment.cluster.stopPortforwarding()
+        # set query management for new query file
+        tools.query.template = self.experiment.querymanagement
+        # get connection config (sut)
+        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
+        service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
+        service_namespace = self.experiment.cluster.contextdata['namespace']
+        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
+        self.pod_sut = pods[0]
+        #service_port = config_K8s['port']
+        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
+        #c['parameter'] = {}
+        c['parameter'] = self.eval_parameters
+        c['parameter']['parallelism'] = parallelism
+        c['parameter']['client'] = client
+        c['parameter']['numExperiment'] = experimentRun
+        c['parameter']['dockerimage'] = self.dockerimage
+        c['parameter']['connection_parameter'] = self.connection_parameter
+        #print(c)
+        #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
+        if isinstance(c['JDBC']['jar'], list):
+            for i, j in enumerate(c['JDBC']['jar']):
+                c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
+        elif isinstance(c['JDBC']['jar'], str):
+            c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
+        #print(c)
+        self.logger.debug('benchbase.run_benchmarker_pod(): {}'.format(connection))
+        self.benchmark = benchmarker.benchmarker(
+            fixedConnection=connection,
+            fixedQuery=query,
+            result_path=resultfolder,
+            batch=True,
+            working='connection',
+            code=code
+            )
+        #self.benchmark.code = '1611607321'
+        self.code = self.benchmark.code
+        #print("Code", self.code)
+        self.logger.debug('benchbase.run_benchmarker_pod(Code={})'.format(self.code))
+        # read config for benchmarker
+        connectionfile = experiments_configfolder+'/connections.config'
+        if self.experiment.queryfile is not None:
+            queryfile = experiments_configfolder+'/'+self.experiment.queryfile
+        else:
+            queryfile = experiments_configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        if c['name'] in self.benchmark.dbms:
+            print("Rerun connection "+connection)
+            # TODO: Find and replace connection info
+        else:
+            self.benchmark.connections.append(c)
+        # NEVER rerun, only one connection in config for detached:
+        self.benchmark.connections = [c]
+        #print(self.benchmark.connections)
+        #self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
+        self.benchmark.dbms[c['name']] = tools.dbms(c, False)
+        # copy or generate config folder (query and connection)
+        # add connection to existing list
+        # or: generate new connection list
+        filename = self.benchmark.path+'/connections.config'
+        with open(filename, 'w') as f:
+            f.write(str(self.benchmark.connections))
+        # write appended query config
+        if len(self.experiment.workload) > 0:
+            for k,v in self.experiment.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
+        # generate all parameters and store in protocol
+        self.benchmark.reporterStore.readProtocol()
+        self.benchmark.generateAllParameters()
+        self.benchmark.reporterStore.writeProtocol()
+        # store experiment
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "runBenchmarks"
+        experiment['connection'] = connection
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.experiment.cluster.log_experiment(experiment)
+        # create pod
+        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
+        # start pod
+        self.experiment.cluster.kubectl('create -f '+yamlfile)
+        pods = []
+        while len(pods) == 0:
+            self.wait(10)
+            pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
+        client_pod_name = pods[0]
+        status = self.experiment.cluster.get_pod_status(client_pod_name)
+        self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+        print("Waiting for job {}: ".format(client_pod_name), end="", flush=True)
+        while status != "Running" and status != "Succeeded":
+            self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+            print(".", end="", flush=True)
+            #self.wait(10)
+            # maybe pod had to be restarted
+            pods = []
+            while len(pods) == 0:
+                self.wait(10, silent=True)
+                pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
+            client_pod_name = pods[0]
+            status = self.experiment.cluster.get_pod_status(client_pod_name)
+        print("found")
+        # get monitoring for loading
+        """
+        if self.monitoring_active:
+            print("get monitoring for loading")
+            logger = logging.getLogger('dbmsbenchmarker')
+            logging.basicConfig(level=logging.DEBUG)
+            for connection_number, connection_data in self.benchmark.dbms.items():
+                #connection = self.benchmark.dbms[c['name']]
+                print(connection_number, connection_data)
+                print(connection_data.connectiondata['monitoring']['prometheus_url'])
+                query='loading'
+                for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
+                    print(m)
+                    monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, int(self.timeLoadingStart), int(self.timeLoadingEnd), '{result_path}'.format(result_path=self.benchmark.path))
+        """
+        # copy config to pod - dashboard
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            cmd = {}
+            cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard)
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            self.logger.debug('copy config queries.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            # copy twice to be more sure it worked
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            self.logger.debug('copy config connections.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            self.logger.debug('copy config protocol.json: {}'.format(stdout))
+            # get monitoring for loading
+            if self.monitoring_active:
+                cmd = {}
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
+        """
+        Creates a job template for the benchmarker.
+        This sets meta data in the template and ENV.
+        This sets some settings specific to YCSB.
+
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: Number of benchmarker if there is a sequence of benchmarkers
+        :param parallelism: Number of parallel pods in job
+        :param alias: Alias name of the dbms
+        :return: Name of file in YAML format containing the benchmarker job
+        """
+        if len(app) == 0:
+            app = self.appname
+        code = str(int(experiment))
+        experimentRun = str(self.num_experiment_to_apply_done+1)
+        #connection = configuration
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
+        #self.benchmarker_jobname = jobname
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #print(jobname)
+        self.logger.debug('benchbase.create_manifest_benchmarking({})'.format(jobname))
+        # determine start time
+        now = datetime.utcnow()
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start = now + timedelta(seconds=180)
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        env = {'DBMSBENCHMARKER_NOW': now_string,
+            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_CLIENT': str(parallelism),
+            'DBMSBENCHMARKER_PODS': str(num_pods),
+            'DBMSBENCHMARKER_CODE': code,
+            'DBMSBENCHMARKER_CONNECTION': connection,
+            'DBMSBENCHMARKER_SLEEP': str(60),
+            'DBMSBENCHMARKER_ALIAS': alias}
+        env = {**env, **self.loading_parameters}
+        env = {**env, **self.benchmarking_parameters}
+        #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-benchbase.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # https://stackoverflow.com/questions/37278647/fire-and-forget-python-async-await/53255955#53255955
 
 #import asyncio
