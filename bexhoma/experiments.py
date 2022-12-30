@@ -1434,19 +1434,15 @@ class benchbase(default):
                 lines = f.readlines()
             stdout = "".join(lines)
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
-            result = []
-            #for line in s.split("\n"):
-            for line in lines:
-                line = line.strip('\n')
-                cells = line.split(", ")
-                #print(cells)
-                if len(cells[0]) and cells[0][0] == "[":
-                    result.append(line.split(", "))
-            #print(result)
-            df = pd.DataFrame(result)
-            df.columns = ['category', 'type', 'value']
-            df.index.name = connection_name[0]
-            return df
+            log = re.findall('####BEXHOMA####(.+?)####BEXHOMA####', data,re.DOTALL)
+            if len(log) > 0:
+                result = json.loads(log[0])
+                df = pd.json_normalize(result)
+                df.index.name = connection_name[0]
+                return df
+            else:
+                print("no results found in log")
+                return pd.DataFrame()
         except Exception as e:
             print(e)
             return pd.DataFrame()
