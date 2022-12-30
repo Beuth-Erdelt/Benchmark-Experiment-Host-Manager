@@ -1489,6 +1489,7 @@ class benchbase(default):
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('benchbase.end_benchmarking({})'.format(jobname))
+        df_collected = None
         path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         #path = '../benchmarks/1669640632'
         directory = os.fsencode(path)
@@ -1501,6 +1502,17 @@ class benchbase(default):
                 f = open(filename_df, "wb")
                 pickle.dump(df, f)
                 f.close()
+                if not df.empty:
+                    if df_collected is not None:
+                        df.columns = [df.index.name]
+                        df_collected = pd.concat([df_collected, df])
+                    else:
+                        df.columns = [df.index.name]
+                        df_collected = df.copy()
+        filename_df = path+"/"+jobname+".all.df.pickle"
+        f = open(filename_df, "wb")
+        pickle.dump(df_collected, f)
+        f.close()
         return super().end_benchmarking(jobname)
     def test_results(self):
         """
