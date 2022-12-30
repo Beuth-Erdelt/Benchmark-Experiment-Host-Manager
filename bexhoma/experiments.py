@@ -1448,6 +1448,10 @@ class benchbase(default):
         except Exception as e:
             print(e)
             return pd.DataFrame()
+    def get_parts_of_name(self, name):
+        parts_name = re.findall('{(.+?)}', self.name_format)
+        parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
+        return dict(zip(parts_name, parts_values))
     def end_loading(self, jobname):
         """
         Ends a loading job.
@@ -1470,6 +1474,10 @@ class benchbase(default):
                 pickle.dump(df, f)
                 f.close()
                 if not df.empty:
+                    if self.name_format is not None:
+                        name_parts = self.get_parts_of_name(df.index.name)
+                        for col, value in name_parts.items():
+                            df[col] = value
                     if df_collected is not None:
                         df.columns = [df.index.name]
                         df_collected = pd.concat([df_collected, df])
