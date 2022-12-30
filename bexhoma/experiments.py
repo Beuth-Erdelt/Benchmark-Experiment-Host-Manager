@@ -1485,7 +1485,7 @@ class benchbase(default):
                         df_collected = pd.concat([df_collected, df])
                     else:
                         df_collected = df.copy()
-        if not df_collected.empty:
+        if not df_collected is None and not df_collected.empty:
             df_collected.set_index('connection', inplace=True)
             filename_df = path+"/"+jobname+".all.df.pickle"
             f = open(filename_df, "wb")
@@ -1524,7 +1524,7 @@ class benchbase(default):
                         df_collected = pd.concat([df_collected, df])
                     else:
                         df_collected = df.copy()
-        if not df_collected.empty:
+        if not df_collected is None and not df_collected.empty:
             df_collected.set_index('connection', inplace=True)
             filename_df = path+"/"+jobname+".all.df.pickle"
             f = open(filename_df, "wb")
