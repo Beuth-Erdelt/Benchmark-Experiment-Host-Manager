@@ -1434,11 +1434,12 @@ class benchbase(default):
                 lines = f.readlines()
             stdout = "".join(lines)
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
-            log = re.findall('####BEXHOMA####(.+?)####BEXHOMA####', data,re.DOTALL)
+            log = re.findall('####BEXHOMA####(.+?)####BEXHOMA####', stdout, re.DOTALL)
             if len(log) > 0:
                 result = json.loads(log[0])
                 df = pd.json_normalize(result)
                 df.index.name = connection_name[0]
+                print(df)
                 return df
             else:
                 print("no results found in log")
