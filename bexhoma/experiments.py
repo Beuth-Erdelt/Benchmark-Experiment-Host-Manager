@@ -124,6 +124,7 @@ class default():
         self.maintaining_active = False
         self.num_maintaining = 0
         self.num_maintaining_pods = 0
+        self.name_format = None
         # k8s:
         self.namespace = self.cluster.namespace
         self.configurations = []
@@ -1476,18 +1477,20 @@ class benchbase(default):
                 if not df.empty:
                     if self.name_format is not None:
                         name_parts = self.get_parts_of_name(df.index.name)
+                        print(name_parts)
                         for col, value in name_parts.items():
                             df[col] = value
+                    df['connection'] = df.index.name
                     if df_collected is not None:
-                        df.columns = [df.index.name]
                         df_collected = pd.concat([df_collected, df])
                     else:
-                        df.columns = [df.index.name]
                         df_collected = df.copy()
-        filename_df = path+"/"+jobname+".all.df.pickle"
-        f = open(filename_df, "wb")
-        pickle.dump(df_collected, f)
-        f.close()
+        if not df_collected.empty:
+            df_collected.set_index('connection', inplace=True)
+            filename_df = path+"/"+jobname+".all.df.pickle"
+            f = open(filename_df, "wb")
+            pickle.dump(df_collected, f)
+            f.close()
         return super().end_loading(jobname)
     def end_benchmarking(self, jobname):
         """
@@ -1511,6 +1514,11 @@ class benchbase(default):
                 pickle.dump(df, f)
                 f.close()
                 if not df.empty:
+                    if self.name_format is not None:
+                        name_parts = self.get_parts_of_name(df.index.name)
+                        print(name_parts)
+                        for col, value in name_parts.items():
+                            df[col] = value
                     df['connection'] = df.index.name
                     if df_collected is not None:
                         df_collected = pd.concat([df_collected, df])
