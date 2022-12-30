@@ -1472,7 +1472,7 @@ class benchbase(default):
                 if not df.empty:
                     if df_collected is not None:
                         df.columns = [df.index.name]
-                        df_collected.append(df)
+                        df_collected = pd.concat([df_collected, df])
                     else:
                         df.columns = [df.index.name]
                         df_collected = df.copy()
