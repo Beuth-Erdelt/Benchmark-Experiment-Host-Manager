@@ -2519,17 +2519,17 @@ class hammerdb(default):
             pod_dashboard = pods[0]
             cmd = {}
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard)
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
             self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
             # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
             self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
             # get monitoring for loading
             if self.monitoring_active:
@@ -2781,17 +2781,17 @@ class ycsb(default):
             pod_dashboard = pods[0]
             cmd = {}
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard)
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
             self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
             # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
             self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
             # get monitoring for loading
             if self.monitoring_active:
@@ -3042,17 +3042,17 @@ class benchbase(default):
             pod_dashboard = pods[0]
             cmd = {}
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard)
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container='dashboard')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
             self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
             # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
             self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
             # get monitoring for loading
             if self.monitoring_active:
