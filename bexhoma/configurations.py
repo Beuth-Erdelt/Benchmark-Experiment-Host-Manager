@@ -1787,7 +1787,7 @@ scrape_configs:
         status = self.experiment.cluster.get_pod_status(client_pod_name)
         self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
         print("Waiting for job {}: ".format(client_pod_name), end="", flush=True)
-        while status != "Running":
+        while status != "Running" and status != "Succeeded":
             self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
             print(".", end="", flush=True)
             #self.wait(10)
