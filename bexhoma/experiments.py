@@ -1630,6 +1630,7 @@ class benchbase(default):
             )
         self.storage_label = 'tpch-'+str(SF)
     def log_to_df(self, filename):
+        self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
             with open(filename) as f:
                 lines = f.readlines()
@@ -1640,10 +1641,11 @@ class benchbase(default):
                 result = json.loads(log[0])
                 df = pd.json_normalize(result)
                 df.index.name = connection_name[0]
-                print(df)
+                self.cluster.logger.debug(df)
+                #print(df)
                 return df
             else:
-                print("no results found in log")
+                print("no results found in log file {}".format(filename))
                 return pd.DataFrame()
         except Exception as e:
             print(e)
@@ -1712,7 +1714,7 @@ class benchbase(default):
             filename = os.fsdecode(file)
             #if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
             if filename.startswith(jobname) and filename.endswith(".log"):
-                print(filename)
+                #print(filename)
                 df = self.log_to_df(path+"/"+filename)
                 filename_df = path+"/"+filename+".df.pickle"
                 f = open(filename_df, "wb")
@@ -1774,7 +1776,7 @@ class benchbase(default):
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
-                print(filename)
+                #print(filename)
                 df = self.log_to_df(path+"/"+filename)
                 #filename_df = path+"/"+filename+".df.pickle"
                 #f = open(filename_df, "wb")
@@ -1783,7 +1785,7 @@ class benchbase(default):
                 if not df.empty:
                     if self.name_format is not None:
                         name_parts = self.get_parts_of_name(df.index.name)
-                        print(name_parts)
+                        #print(name_parts)
                         for col, value in name_parts.items():
                             df[col] = value
                     df['connection'] = df.index.name
@@ -1797,6 +1799,7 @@ class benchbase(default):
             f = open(filename_df, "wb")
             pickle.dump(df_collected, f)
             f.close()
+            self.cluster.logger.debug(df_collected)
 
 
 
