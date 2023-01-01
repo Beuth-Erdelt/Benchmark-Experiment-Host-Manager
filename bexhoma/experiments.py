@@ -1392,6 +1392,205 @@ class ycsb(default):
             return 0
         except Exception as e:
             return 1
+    def get_result(self, component='loading'):
+        df_prev = pd.DataFrame()
+        pod_numbers = {}
+        if component == "loading":
+            ending = "sensor.log"
+        else:
+            component = "benchmarker"
+            ending = ".log"
+        connections = dict()
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-"+component) and filename.endswith(".df.pickle"):
+                #print(filename)
+                #experiment_number = re.findall('{}(.+?).{}'.format(name, ending), filename)
+                #print(experiment_number)
+                c = re.findall('bexhoma-{}-(.+?)-{}'.format(component, self.code), filename)
+                if len(c) == 0:
+                    #print("empty")
+                    continue
+                connection = c[0]
+                if connection in connections:
+                    connections[connection].append(filename)
+                else:
+                    connections[connection] = [filename]
+        #print(connections)
+        dfs = dict()
+        for connection, files in connections.items():
+            #print(connection)
+            dfs[connection] = pd.DataFrame()
+            for filename in files:
+                #print(filename)
+                experiment_number = re.findall('bexhoma-{}-{}-{}-(.+?).{}'.format(component, connection, self.code, ending), filename)
+                if len(experiment_number) == 0:
+                    #print("empty")
+                    continue
+                experiment_number = experiment_number[0]
+                connection_name = experiment_number#+"-"+client_number
+                if connection_name in pod_numbers:
+                    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
+                else:
+                    pod_numbers[connection_name] = 1
+                try:
+                    df = pd.read_pickle(path+"/"+filename)
+                    if not df.empty:
+                        df.columns = ['category', 'type', df.index.name+"-"+connection_name]#+"-"+str(pod_numbers[connection_name])]
+                        if dfs[connection].empty:
+                            dfs[connection] = df
+                        else:
+                            dfs[connection] = pd.merge(dfs[connection], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
+                except Exception as e:
+                    print(e)
+        return dfs
+    def get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+        try:
+            df2=df[df['type'] == type]
+            s=df2[df2['category'] == category]
+            total = s.drop(columns=['category','type']).apply(pd.to_numeric).sum(axis=1)
+            return total.iloc[0]
+        except Exception as e:
+            print(e)
+            print(df)
+            return 0.0
+    def get_result_max(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+        try:
+            df2=df[df['type'] == type]
+            s=df2[df2['category'] == category]
+            total = s.drop(columns=['category','type']).apply(pd.to_numeric).max(axis=1)
+            return total.iloc[0]
+        except Exception as e:
+            print(e)
+            print(df)
+            return 0.0
+    def get_result_avg(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+        try:
+            df2=df[df['type'] == type]
+            s=df2[df2['category'] == category]
+            total = s.drop(columns=['category','type']).apply(pd.to_numeric).mean(axis=1)
+            return total.iloc[0]
+        except Exception as e:
+            print(e)
+            print(df)
+            return 0.0
+    def get_parts_of_name(self, name):
+        parts_name = re.findall('{(.+?)}', self.name_format)
+        parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
+        return dict(zip(parts_name, parts_values))
+    def get_overview_loading(self, dfs={}):
+        tps = []
+        if len(dfs) == 0:
+            dfs = self.get_result(component="loading")
+        for connection, df in dfs.items():
+            #print(connection)
+            if df.empty:
+                print(connection, "is empty")
+                continue
+            #parts = re.findall('-(.+?)-', connection.replace("-","--")+"--")
+            parts = self.get_parts_of_name(connection)
+            #print(parts)
+            #threads = int(parts[0])
+            #pods = int(parts[1])
+            #worker = int(parts[2])
+            #target = int(parts[2])
+            insert_Operations = float(self.get_result_sum(df, category='[INSERT]', type='Operations'))
+            insert_OK = float(self.get_result_sum(df, category='[INSERT]', type='Return=OK'))
+            overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
+            overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
+            insert_AverageLatency = float(self.get_result_avg(df, category='[INSERT]', type='AverageLatency(us)'))
+            insert_95thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='95thPercentileLatency(us)'))
+            insert_99thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='99thPercentileLatency(us)'))
+            list_values_name = list(parts.values())
+            #print(list_values_name)
+            list_values_df = [overall_Throughput, insert_Operations, insert_OK, overall_RunTime, insert_AverageLatency, insert_95thPercentileLatency, insert_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            #print(list_values_df)
+            list_values_name.extend(list_values_df)
+            #print('combined', list_values_name)
+            tps.append(list_values_name)
+            #print(target, worker, pods, overall_Throughput, overall_RunTime, overall_Throughput, total_tps/pods)
+        #print(tps)
+        df_totals = pd.DataFrame(tps)
+        #print(list(parts.keys()))
+        columns = list(parts.keys())
+        columns.extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
+        #print(columns)
+        df_totals.columns = columns
+        #list(parts.keys()).extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
+        df_totals = df_totals.astype({'target':'float','pods':'int'})
+        df_totals = df_totals.sort_values(['target','pods'])
+        return df_totals
+    def get_overview_benchmarking(self, dfs={}):
+        tps = []
+        if len(dfs) == 0:
+            dfs = self.get_result(component="benchmarking")
+        for connection, df in dfs.items():
+            #print(connection)
+            if df.empty:
+                print(connection, "is empty")
+                continue
+            parts = self.get_parts_of_name(connection)
+            #parts = re.findall('-(.+?)-', connection.replace("-","--")+"--")
+            #print(parts)
+            #threads = int(parts[1])
+            #pods = int(parts[1])
+            #worker = int(parts[2])
+            #target = int(parts[3])
+            #print(df)
+            read_Operations = float(self.get_result_sum(df, category='[READ]', type='Operations'))
+            read_OK = float(self.get_result_sum(df, category='[READ]', type='Return=OK'))
+            read_AverageLatency = float(self.get_result_avg(df, category='[READ]', type='AverageLatency(us)'))
+            read_95thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='95thPercentileLatency(us)'))
+            read_99thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='99thPercentileLatency(us)'))
+            update_Operations = float(self.get_result_sum(df, category='[UPDATE]', type='Operations'))
+            update_OK = float(self.get_result_sum(df, category='[UPDATE]', type='Return=OK'))
+            update_AverageLatency = float(self.get_result_avg(df, category='[UPDATE]', type='AverageLatency(us)'))
+            update_95thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='95thPercentileLatency(us)'))
+            update_99thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='99thPercentileLatency(us)'))
+            overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
+            overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
+            list_values_name = list(parts.values())
+            #print(list_values_name)
+            list_values_df = [overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
+                        update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            #print(list_values_df)
+            list_values_name.extend(list_values_df)
+            #print('combined', list_values_name)
+            tps.append(list_values_name)
+            #tps.append(list(parts.values()).extend([target, worker, pods, overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
+            #            update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/pods]))
+            #print(target, worker, pods, overall_Throughput, overall_RunTime, overall_Throughput, total_tps/pods)
+        #print(tps)
+        df_totals = pd.DataFrame(tps)
+        columns = list(parts.keys())
+        columns.extend(['overall_Throughput', 'overall_RunTime', 
+                             'read_Operations', 'read_OK', 'read_AverageLatency', 'read_95thPercentileLatency', 'read_99thPercentileLatency',
+                             'update_Operations', 'update_OK', 'update_AverageLatency', 'update_95thPercentileLatency', 'update_99thPercentileLatency',
+                             'total_tps_per_pod'])
+        #print(columns)
+        df_totals.columns = columns
+        df_totals = df_totals.astype({'target':'float','pods':'int'})
+        df_totals = df_totals.sort_values(['target','pods'])
+        return df_totals
+    def evaluate_results(self, pod_dashboard=''):
+        """
+        Build a DataFrame locally that contains all benchmarking results.
+        This is specific to ycsb.
+        """
+        self.cluster.logger.debug('ycsb.evaluate_results()')
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        df = self.get_overview_loading()
+        filename_df = path+"/bexhoma-loading.all.df.pickle"
+        f = open(filename_df, "wb")
+        pickle.dump(df, f)
+        f.close()
+        df = self.get_overview_benchmarking()
+        filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
+        f = open(filename_df, "wb")
+        pickle.dump(df, f)
+        f.close()
 
 
 
