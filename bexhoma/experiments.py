@@ -1461,7 +1461,7 @@ class benchbase(default):
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('benchbase.end_loading({})'.format(jobname))
-        df_collected = None
+        #df_collected = None
         path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         #path = '../benchmarks/1669640632'
         directory = os.fsencode(path)
@@ -1474,6 +1474,7 @@ class benchbase(default):
                 f = open(filename_df, "wb")
                 pickle.dump(df, f)
                 f.close()
+                """
                 if not df.empty:
                     if self.name_format is not None:
                         name_parts = self.get_parts_of_name(df.index.name)
@@ -1485,12 +1486,15 @@ class benchbase(default):
                         df_collected = pd.concat([df_collected, df])
                     else:
                         df_collected = df.copy()
+                """
+        """
         if not df_collected is None and not df_collected.empty:
             df_collected.set_index('connection', inplace=True)
             filename_df = path+"/"+jobname+".all.df.pickle"
             f = open(filename_df, "wb")
             pickle.dump(df_collected, f)
             f.close()
+        """
         return super().end_loading(jobname)
     def end_benchmarking(self, jobname):
         """
@@ -1500,9 +1504,8 @@ class benchbase(default):
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('benchbase.end_benchmarking({})'.format(jobname))
-        df_collected = None
+        #df_collected = None
         path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
@@ -1513,6 +1516,7 @@ class benchbase(default):
                 f = open(filename_df, "wb")
                 pickle.dump(df, f)
                 f.close()
+                """
                 if not df.empty:
                     if self.name_format is not None:
                         name_parts = self.get_parts_of_name(df.index.name)
@@ -1524,12 +1528,15 @@ class benchbase(default):
                         df_collected = pd.concat([df_collected, df])
                     else:
                         df_collected = df.copy()
+                """
+        """
         if not df_collected is None and not df_collected.empty:
             df_collected.set_index('connection', inplace=True)
             filename_df = path+"/"+jobname+".all.df.pickle"
             f = open(filename_df, "wb")
             pickle.dump(df_collected, f)
             f.close()
+        """
         return super().end_benchmarking(jobname)
     def test_results(self):
         """
@@ -1552,6 +1559,42 @@ class benchbase(default):
             return 0
         except Exception as e:
             return 1
+    def evaluate_results(self, pod_dashboard=''):
+        """
+        Build a DataFrame locally that contains all benchmarking results.
+        This is specific to benchbase.
+        """
+        self.cluster.logger.debug('benchbase.evaluate_results()')
+        df_collected = None
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = '../benchmarks/1669640632'
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+                print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                #filename_df = path+"/"+filename+".df.pickle"
+                #f = open(filename_df, "wb")
+                #pickle.dump(df, f)
+                #f.close()
+                if not df.empty:
+                    if self.name_format is not None:
+                        name_parts = self.get_parts_of_name(df.index.name)
+                        print(name_parts)
+                        for col, value in name_parts.items():
+                            df[col] = value
+                    df['connection'] = df.index.name
+                    if df_collected is not None:
+                        df_collected = pd.concat([df_collected, df])
+                    else:
+                        df_collected = df.copy()
+        if not df_collected is None and not df_collected.empty:
+            df_collected.set_index('connection', inplace=True)
+            filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
+            f = open(filename_df, "wb")
+            pickle.dump(df_collected, f)
+            f.close()
 
 
 
