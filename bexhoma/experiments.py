@@ -1457,13 +1457,15 @@ class benchbase(default):
         """
         Ends a loading job.
         This is for storing or cleaning measures.
+        Currently does nothing, since loading does not generate measures.
 
         :param jobname: Name of the job to clean
         """
+        return super().end_loading(jobname)
+        # legacy code
         self.cluster.logger.debug('benchbase.end_loading({})'.format(jobname))
         #df_collected = None
         path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
@@ -1509,7 +1511,8 @@ class benchbase(default):
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+            #if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+            if filename.startswith(jobname) and filename.endswith(".log"):
                 print(filename)
                 df = self.log_to_df(path+"/"+filename)
                 filename_df = path+"/"+filename+".df.pickle"
