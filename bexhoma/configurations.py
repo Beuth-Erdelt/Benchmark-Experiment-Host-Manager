@@ -2110,7 +2110,8 @@ scrape_configs:
         env['BEXHOMA_CLIENT'] = str(parallelism)
         env['BEXHOMA_EXPERIMENT'] = experiment
         #env['BEXHOMA_CONNECTION'] = connection # only exists for benchmarker
-        env['BEXHOMA_CONNECTION'] = configuration
+        if not 'BEXHOMA_CONNECTION' in env:
+            env['BEXHOMA_CONNECTION'] = configuration
         env['BEXHOMA_CONFIGURATION'] = configuration
         env['BEXHOMA_SLEEP'] = '60'
         env['BEXHOMA_VOLUME'] = self.volume

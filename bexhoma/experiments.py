@@ -1163,14 +1163,14 @@ class tpcc(default):
                 #f.close()
                 if not df.empty:
                     df['configuration'] = df.index.name
-                    df['index'] = df.index.map(str)
-                    df['connection'] = df['configuration']+"-"+df['index']
-                    df.drop('index', axis=1, inplace=True)
                     if df_collected is not None:
                         df_collected = pd.concat([df_collected, df])
                     else:
                         df_collected = df.copy()
         if not df_collected is None and not df_collected.empty:
+            df_collected['index'] = df_collected.index.map(str)
+            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
+            df_collected.drop('index', axis=1, inplace=True)
             df_collected.set_index('connection', inplace=True)
             filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
             f = open(filename_df, "wb")
