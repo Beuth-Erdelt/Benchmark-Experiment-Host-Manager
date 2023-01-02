@@ -1144,9 +1144,9 @@ class tpcc(default):
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
-        This is specific to benchbase.
+        This is specific to HammerDB.
         """
-        self.cluster.logger.debug('benchbase.evaluate_results()')
+        self.cluster.logger.debug('tpcc.evaluate_results()')
         df_collected = None
         path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         #path = '../benchmarks/1669640632'
@@ -1824,12 +1824,15 @@ class benchbase(default):
                         #print(name_parts)
                         for col, value in name_parts.items():
                             df[col] = value
-                    df['connection'] = df.index.name
+                    df['configuration'] = df.index.name
                     if df_collected is not None:
                         df_collected = pd.concat([df_collected, df])
                     else:
                         df_collected = df.copy()
         if not df_collected is None and not df_collected.empty:
+            df_collected['index'] = df_collected.index.map(str)
+            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
+            df_collected.drop('index', axis=1, inplace=True)
             df_collected.set_index('connection', inplace=True)
             filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
             f = open(filename_df, "wb")
