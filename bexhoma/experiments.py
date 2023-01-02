@@ -1162,9 +1162,9 @@ class tpcc(default):
                 #pickle.dump(df, f)
                 #f.close()
                 if not df.empty:
-                    df['connection'] = df.index.name
+                    df['configuration'] = df.index.name
                     df['index'] = df.index.map(str)
-                    df['connection'] = df['connection']+"-"+df['index']
+                    df['connection'] = df['configuration']+"-"+df['index']
                     df.drop('index', axis=1, inplace=True)
                     if df_collected is not None:
                         df_collected = pd.concat([df_collected, df])
