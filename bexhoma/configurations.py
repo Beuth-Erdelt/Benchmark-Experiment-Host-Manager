@@ -2109,7 +2109,9 @@ scrape_configs:
         env['BEXHOMA_HOST'] = servicename
         env['BEXHOMA_CLIENT'] = str(parallelism)
         env['BEXHOMA_EXPERIMENT'] = experiment
+        #env['BEXHOMA_CONNECTION'] = connection # only exists for benchmarker
         env['BEXHOMA_CONNECTION'] = configuration
+        env['BEXHOMA_CONFIGURATION'] = configuration
         env['BEXHOMA_SLEEP'] = '60'
         env['BEXHOMA_VOLUME'] = self.volume
         env['PARALLEL'] = str(parallelism)
@@ -2220,6 +2222,7 @@ scrape_configs:
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
@@ -2257,6 +2260,7 @@ scrape_configs:
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias,
             'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename)}
@@ -2572,6 +2576,7 @@ class hammerdb(default):
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
@@ -2834,6 +2839,7 @@ class ycsb(default):
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
@@ -3095,6 +3101,7 @@ class benchbase(default):
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
