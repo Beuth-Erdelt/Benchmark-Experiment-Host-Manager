@@ -1103,15 +1103,19 @@ class tpcc(default):
             stdout = os.popen(cmd['extract_results']).read()
             #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
             print(stdout)
-            list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            #list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            list_vuser_pod = re.findall(str(self.code)+'-(.+?).log:Vuser 1:(.+?) Active', stdout)
+            list_pods = [x for (x,y) in list_vuser_pod]
+            list_vuser = [y for (x,y) in list_vuser_pod]
             # what we have found
             print(list_nopm)
             print(list_tpm)
             print(list_vuser)
+            print(list_pods)
             # build DataFrame
             if len(list_nopm) and len(list_tpm) and len(list_vuser):
-                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
-                df.columns = ['NOPM','TPM', 'VUSERS']
+                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser, list_pods)))
+                df.columns = ['NOPM','TPM', 'VUSERS', 'pods']
                 if len(connection_name) > 0:
                     df.index.name = str(connection_name[0])
                 print(df)
