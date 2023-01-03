@@ -1493,6 +1493,8 @@ class ycsb(default):
                             dfs[connection_name] = pd.merge(dfs[connection_name], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
                 except Exception as e:
                     print(e)
+        print("### All DataFrames ###")
+        print(dfs)
         return dfs
     def get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
