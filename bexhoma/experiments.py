@@ -1484,7 +1484,7 @@ class ycsb(default):
                     df = pd.read_pickle(path+"/"+filename)
                     if not df.empty:
                         connection_name = df.index.name+"-"+connection_number
-                        print("found", connection_name)
+                        print("found", connection_name, df)
                         df.columns = ['category', 'type', connection_name]#+"-"+str(pod_numbers[connection_name])]
                         if dfs[connection_name].empty:
                             dfs[connection_name] = df
