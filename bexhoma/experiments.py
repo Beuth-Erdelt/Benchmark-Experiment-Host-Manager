@@ -1720,7 +1720,8 @@ class benchbase(default):
         # legacy code
         self.cluster.logger.debug('benchbase.end_loading({})'.format(jobname))
         #df_collected = None
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
@@ -1762,7 +1763,8 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.end_benchmarking({})'.format(jobname))
         #df_collected = None
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
@@ -1805,7 +1807,8 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.test_results()')
         try:
-            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+            #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+            path = self.path
             #path = '../benchmarks/1669163583'
             directory = os.fsencode(path)
             for file in os.listdir(directory):
@@ -1822,16 +1825,18 @@ class benchbase(default):
         Build a DataFrame locally that contains all benchmarking results.
         This is specific to benchbase.
         """
-        self.cluster.logger.debug('benchbase.evaluate_results()')
+        #self.cluster.logger.debug('benchbase.evaluate_results()')
         df_collected = None
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
         #path = '../benchmarks/1669640632'
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log.df.pickle"):
                 #print(filename)
-                df = self.log_to_df(path+"/"+filename)
+                #df = self.log_to_df(path+"/"+filename)
+                df = pd.read_pickle(path+"/"+filename)
                 #filename_df = path+"/"+filename+".df.pickle"
                 #f = open(filename_df, "wb")
                 #pickle.dump(df, f)
@@ -1848,7 +1853,7 @@ class benchbase(default):
                     else:
                         df_collected = df.copy()
         if not df_collected is None and not df_collected.empty:
-            df_collected['index'] = df_collected.index.map(str)
+            df_collected['index'] = (df_collected.groupby('configuration').cumcount() + 1).map(str)#df_collected.index.map(str)
             df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
             df_collected.drop('index', axis=1, inplace=True)
             df_collected.set_index('connection', inplace=True)
@@ -1856,7 +1861,9 @@ class benchbase(default):
             f = open(filename_df, "wb")
             pickle.dump(df_collected, f)
             f.close()
-            self.cluster.logger.debug(df_collected)
+            #print(df_collected)
+            return df_collected
+            #self.cluster.logger.debug(df_collected)
 
 
 
