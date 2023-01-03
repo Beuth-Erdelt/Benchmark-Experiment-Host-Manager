@@ -1476,8 +1476,6 @@ class ycsb(default):
                 # into 1-1 
                 connection_number = experiment_components[0][0]+"-"+experiment_components[0][1]#experiment_number#+"-"+client_number
                 print("connection_number", connection_number)
-                connection_name = df.index.name+"-"+connection_number
-                print("connection_name", connection_name)
                 #if connection_name in pod_numbers:
                 #    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
                 #else:
@@ -1485,6 +1483,7 @@ class ycsb(default):
                 try:
                     df = pd.read_pickle(path+"/"+filename)
                     if not df.empty:
+                        connection_name = df.index.name+"-"+connection_number
                         print("found", connection_name)
                         df.columns = ['category', 'type', connection_name]#+"-"+str(pod_numbers[connection_name])]
                         if dfs[connection_name].empty:
