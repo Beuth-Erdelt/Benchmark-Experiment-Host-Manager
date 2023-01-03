@@ -2115,6 +2115,7 @@ scrape_configs:
         env['BEXHOMA_CONFIGURATION'] = configuration
         env['BEXHOMA_SLEEP'] = '60'
         env['BEXHOMA_VOLUME'] = self.volume
+        env['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
         env['PARALLEL'] = str(parallelism)
         env['NUM_PODS'] = str(num_pods)
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
