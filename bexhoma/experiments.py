@@ -1432,69 +1432,6 @@ class ycsb(default):
             return 0
         except Exception as e:
             return 1
-    def get_result(self, component='loading'):
-        df_prev = pd.DataFrame()
-        #pod_numbers = {}
-        if component == "loading":
-            ending = "sensor.log"
-        else:
-            component = "benchmarker"
-            ending = ".log"
-        connections = dict()
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-"+component) and filename.endswith(".df.pickle"):
-                #print(filename)
-                #experiment_number = re.findall('{}(.+?).{}'.format(name, ending), filename)
-                #print(experiment_number)
-                c = re.findall('bexhoma-{}-(.+?)-{}'.format(component, self.code), filename)
-                if len(c) == 0:
-                    #print("empty")
-                    continue
-                connection = c[0]
-                if connection in connections:
-                    connections[connection].append(filename)
-                else:
-                    connections[connection] = [filename]
-        #print(connections)
-        dfs = dict()
-        for connection, files in connections.items():
-            #print(connection)
-            dfs[connection] = pd.DataFrame()
-            for filename in files:
-                #print(filename)
-                #experiment_number = re.findall('bexhoma-{}-{}-{}-(.+?).{}'.format(component, connection, self.code, ending), filename)
-                experiment_components = re.findall('bexhoma-{}-{}-{}-(.+?)-(.+?)-(.+?).{}'.format(component, connection, self.code, ending), filename)
-                if len(experiment_components) == 0:
-                    #print("empty")
-                    continue
-                print("experiment_components", experiment_components)
-                #experiment_number = experiment_number[0]
-                # turns bexhoma-loading-postgresql-8-1-1024-1672704339-1-1-22gkq.sensor.log.df.pickle
-                # into 1-1 
-                connection_number = experiment_components[0][0]+"-"+experiment_components[0][1]#experiment_number#+"-"+client_number
-                print("connection_number", connection_number)
-                #if connection_name in pod_numbers:
-                #    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
-                #else:
-                #    pod_numbers[connection_name] = 1
-                try:
-                    df = pd.read_pickle(path+"/"+filename)
-                    if not df.empty:
-                        connection_name = df.index.name+"-"+connection_number
-                        print("found", connection_name, df)
-                        df.columns = ['category', 'type', connection_name]#+"-"+str(pod_numbers[connection_name])]
-                        if dfs[connection_name].empty:
-                            dfs[connection_name] = df
-                        else:
-                            dfs[connection_name] = pd.merge(dfs[connection_name], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
-                except Exception as e:
-                    print(e)
-        print("### All DataFrames ###")
-        print(dfs)
-        return dfs
     def get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
@@ -1553,8 +1490,9 @@ class ycsb(default):
             insert_95thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='95thPercentileLatency(us)'))
             insert_99thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='99thPercentileLatency(us)'))
             list_values_name = list(parts.values())
+            num_pods = len(df.columns)-2
             #print(list_values_name)
-            list_values_df = [overall_Throughput, insert_Operations, insert_OK, overall_RunTime, insert_AverageLatency, insert_95thPercentileLatency, insert_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            list_values_df = [connection, num_pods, overall_Throughput, insert_Operations, insert_OK, overall_RunTime, insert_AverageLatency, insert_95thPercentileLatency, insert_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
             #print(list_values_df)
             list_values_name.extend(list_values_df)
             #print('combined', list_values_name)
@@ -1564,7 +1502,7 @@ class ycsb(default):
         df_totals = pd.DataFrame(tps)
         #print(list(parts.keys()))
         columns = list(parts.keys())
-        columns.extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
+        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
         #print(columns)
         df_totals.columns = columns
         #list(parts.keys()).extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
@@ -1601,8 +1539,9 @@ class ycsb(default):
             overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
             overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
             list_values_name = list(parts.values())
+            num_pods = len(df.columns)-2
             #print(list_values_name)
-            list_values_df = [overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
+            list_values_df = [connection, num_pods, overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
                         update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
             #print(list_values_df)
             list_values_name.extend(list_values_df)
@@ -1614,7 +1553,7 @@ class ycsb(default):
         #print(tps)
         df_totals = pd.DataFrame(tps)
         columns = list(parts.keys())
-        columns.extend(['overall_Throughput', 'overall_RunTime', 
+        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'overall_RunTime', 
                              'read_Operations', 'read_OK', 'read_AverageLatency', 'read_95thPercentileLatency', 'read_99thPercentileLatency',
                              'update_Operations', 'update_OK', 'update_AverageLatency', 'update_95thPercentileLatency', 'update_99thPercentileLatency',
                              'total_tps_per_pod'])
@@ -1629,7 +1568,8 @@ class ycsb(default):
         This is specific to ycsb.
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
         df = self.get_overview_loading()
         filename_df = path+"/bexhoma-loading.all.df.pickle"
         f = open(filename_df, "wb")
@@ -1640,6 +1580,71 @@ class ycsb(default):
         f = open(filename_df, "wb")
         pickle.dump(df, f)
         f.close()
+    def get_result(self, component='loading'):
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
+        df_prev = pd.DataFrame()
+        #pod_numbers = {}
+        if component == "loading":
+            ending = "sensor.log"
+        else:
+            component = "benchmarker"
+            ending = ".log"
+        connections = dict()
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-"+component) and filename.endswith(".df.pickle"):
+                #print(filename)
+                #experiment_number = re.findall('{}(.+?).{}'.format(name, ending), filename)
+                #print(experiment_number)
+                c = re.findall('bexhoma-{}-(.+?)-{}'.format(component, self.code), filename)
+                if len(c) == 0:
+                    #print("empty")
+                    continue
+                connection = c[0]
+                if connection in connections:
+                    connections[connection].append(filename)
+                else:
+                    connections[connection] = [filename]
+        #print(connections)
+        dfs = dict()
+        for connection, files in connections.items():
+            #print(connection)
+            #dfs[connection] = pd.DataFrame()
+            for filename in files:
+                #print(filename)
+                #experiment_number = re.findall('bexhoma-{}-{}-{}-(.+?).{}'.format(component, connection, self.code, ending), filename)
+                experiment_components = re.findall('bexhoma-{}-{}-{}-(.+?)-(.+?)-(.+?).{}'.format(component, connection, self.code, ending), filename)
+                if len(experiment_components) == 0:
+                    #print("empty")
+                    continue
+                #print("experiment_components", experiment_components)
+                #experiment_number = experiment_number[0]
+                # turns bexhoma-loading-postgresql-8-1-1024-1672704339-1-1-22gkq.sensor.log.df.pickle
+                # into 1-1 
+                connection_number = experiment_components[0][0]+"-"+experiment_components[0][1]#experiment_number#+"-"+client_number
+                #print("connection_number", connection_number)
+                #if connection_name in pod_numbers:
+                #    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
+                #else:
+                #    pod_numbers[connection_name] = 1
+                try:
+                    df = pd.read_pickle(path+"/"+filename)
+                    if not df.empty:
+                        connection_name = df.index.name+"-"+connection_number
+                        #print("found", connection_name, df)
+                        df.columns = ['category', 'type', connection_name]#+"-"+str(pod_numbers[connection_name])]
+                        if not connection_name in dfs or dfs[connection_name].empty:
+                            dfs[connection_name] = df
+                        else:
+                            dfs[connection_name] = pd.merge(dfs[connection_name], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
+                except Exception as e:
+                    print(e)
+        #print("### All DataFrames ###")
+        #print(dfs)
+        return dfs
 
 
 
