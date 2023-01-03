@@ -1474,7 +1474,7 @@ class ycsb(default):
                 #experiment_number = experiment_number[0]
                 # turns bexhoma-loading-postgresql-8-1-1024-1672704339-1-1-22gkq.sensor.log.df.pickle
                 # into 1-1 
-                connection_number = experiment_components[0][0]+"-"+experiment_components[0][0]#experiment_number#+"-"+client_number
+                connection_number = experiment_components[0][0]+"-"+experiment_components[0][1]#experiment_number#+"-"+client_number
                 print("connection_number", connection_number)
                 connection_name = df.index.name+"-"+connection_number
                 print("connection_name", connection_name)
