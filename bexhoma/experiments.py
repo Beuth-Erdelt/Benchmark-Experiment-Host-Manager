@@ -1098,7 +1098,7 @@ class tpcc(default):
             list_nopm = re.findall('achieved (.+?) NOPM', stdout)
             list_tpm = re.findall('from (.+?) ', stdout)
             # get vuser
-            cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
+            cmd['extract_results'] = 'grep -H -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
             print(cmd['extract_results'])
             stdout = os.popen(cmd['extract_results']).read()
             #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
