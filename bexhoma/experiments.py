@@ -1434,7 +1434,7 @@ class ycsb(default):
             return 1
     def get_result(self, component='loading'):
         df_prev = pd.DataFrame()
-        pod_numbers = {}
+        #pod_numbers = {}
         if component == "loading":
             ending = "sensor.log"
         else:
@@ -1465,27 +1465,32 @@ class ycsb(default):
             dfs[connection] = pd.DataFrame()
             for filename in files:
                 #print(filename)
-                experiment_number = re.findall('bexhoma-{}-{}-{}-(.+?).{}'.format(component, connection, self.code, ending), filename)
-                if len(experiment_number) == 0:
+                #experiment_number = re.findall('bexhoma-{}-{}-{}-(.+?).{}'.format(component, connection, self.code, ending), filename)
+                experiment_components = re.findall('bexhoma-{}-{}-{}-(.+?)-(.+?)-(.+?).{}'.format(component, connection, self.code, ending), filename)
+                if len(experiment_components) == 0:
                     #print("empty")
                     continue
-                print("experiment_number", experiment_number)
-                experiment_number = experiment_number[0]
-                connection_name = experiment_number#+"-"+client_number
+                print("experiment_components", experiment_components)
+                #experiment_number = experiment_number[0]
+                # turns bexhoma-loading-postgresql-8-1-1024-1672704339-1-1-22gkq.sensor.log.df.pickle
+                # into 1-1 
+                connection_number = experiment_components[0][0]+"-"+experiment_components[0][0]#experiment_number#+"-"+client_number
+                print("connection_number", connection_number)
+                connection_name = df.index.name+"-"+connection_number
                 print("connection_name", connection_name)
-                if connection_name in pod_numbers:
-                    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
-                else:
-                    pod_numbers[connection_name] = 1
+                #if connection_name in pod_numbers:
+                #    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
+                #else:
+                #    pod_numbers[connection_name] = 1
                 try:
                     df = pd.read_pickle(path+"/"+filename)
                     if not df.empty:
-                        print("found", df.index.name+"-"+connection_name)
-                        df.columns = ['category', 'type', df.index.name+"-"+connection_name]#+"-"+str(pod_numbers[connection_name])]
-                        if dfs[connection].empty:
-                            dfs[connection] = df
+                        print("found", connection_name)
+                        df.columns = ['category', 'type', connection_name]#+"-"+str(pod_numbers[connection_name])]
+                        if dfs[connection_name].empty:
+                            dfs[connection_name] = df
                         else:
-                            dfs[connection] = pd.merge(dfs[connection], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
+                            dfs[connection_name] = pd.merge(dfs[connection_name], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
                 except Exception as e:
                     print(e)
         return dfs
