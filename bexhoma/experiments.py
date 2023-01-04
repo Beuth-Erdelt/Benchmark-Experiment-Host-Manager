@@ -1674,7 +1674,7 @@ class benchbase(default):
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         self.set_experiment(volume='benchbase')
-        self.set_experiment(script='Empty')
+        self.set_experiment(script='Schema')
         self.cluster.set_experiments_configfolder('experiments/benchbase')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')
