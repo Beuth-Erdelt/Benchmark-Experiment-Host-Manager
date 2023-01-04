@@ -1677,10 +1677,11 @@ scrape_configs:
         :param parallelism: Number of parallel benchmarker pods we want to have
         """
         self.logger.debug('configuration.run_benchmarker_pod()')
+        # set general parameter
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
         experiments_configfolder = self.experiment.cluster.experiments_configfolder
         if connection is None:
-            connection = self.configuration#self.getConnectionName()
+            connection = self.configuration
         if len(configuration) == 0:
             configuration = connection
         code = self.code
@@ -1689,7 +1690,6 @@ scrape_configs:
         if len(dialect) == 0 and len(self.dialect) > 0:
             dialect = self.dialect
         experimentRun = str(self.num_experiment_to_apply_done+1)
-        #self.experiment.cluster.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.experiment.querymanagement
         # get connection config (sut)
@@ -1699,9 +1699,7 @@ scrape_configs:
         service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        #service_port = config_K8s['port']
-        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
-        #c['parameter'] = {}
+        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
@@ -1709,18 +1707,12 @@ scrape_configs:
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
         c['parameter']['storage_parameter'] = self.storage
-        #print(c)
-        #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
             for i, j in enumerate(c['JDBC']['jar']):
                 c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
         elif isinstance(c['JDBC']['jar'], str):
             c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
         #print(c)
-        #print(self.dockertemplate)
-        #print(self.experiment.cluster.dockers[self.docker])
-        #if code is not None:
-        #    resultfolder += '/'+str(int(code))
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
             fixedQuery=query,
@@ -1729,9 +1721,7 @@ scrape_configs:
             working='connection',
             code=code
             )
-        #self.benchmark.code = '1611607321'
-        self.code = self.benchmark.code
-        #print("Code", self.code)
+        #self.code = self.benchmark.code
         self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
         connectionfile = experiments_configfolder+'/connections.config'
@@ -2540,7 +2530,7 @@ class hammerdb(default):
             # get monitoring for loading
             if self.monitoring_active:
                 cmd = {}
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
     def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
         """
