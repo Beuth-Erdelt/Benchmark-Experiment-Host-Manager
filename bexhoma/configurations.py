@@ -2452,6 +2452,9 @@ class hammerdb(default):
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
+        filename = self.benchmark.path+'/'+c['name']+'.config'
+        with open(filename, 'w') as f:
+            f.write(str(c))
         # write appended query config
         if len(self.experiment.workload) > 0:
             for k,v in self.experiment.workload.items():
