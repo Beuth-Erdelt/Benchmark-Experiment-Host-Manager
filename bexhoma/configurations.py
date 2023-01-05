@@ -2102,7 +2102,7 @@ scrape_configs:
         else:
             env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
         env_default['BEXHOMA_HOST'] = servicename
-        env_default['BEXHOMA_CLIENT'] = self.client
+        env_default['BEXHOMA_CLIENT'] = int(self.client)-1
         #env_default['BEXHOMA_CLIENT'] = str(parallelism) # why?
         env_default['BEXHOMA_EXPERIMENT'] = experiment
         #env['BEXHOMA_CONNECTION'] = connection # only exists for benchmarker
