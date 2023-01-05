@@ -2091,26 +2091,26 @@ scrape_configs:
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
-        env['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
-        env['BEXHOMA_USER'] = c['JDBC']['auth'][0]
-        env['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
-        env['BEXHOMA_DRIVER'] = c['JDBC']['driver']
+        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
+        env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
+        env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
+        env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
         if isinstance(c['JDBC']['jar'], str):
-            env['BEXHOMA_JAR'] = c['JDBC']['jar']
+            env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
         else:
-            env['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
-        env['BEXHOMA_HOST'] = servicename
-        env['BEXHOMA_CLIENT'] = str(parallelism)
-        env['BEXHOMA_EXPERIMENT'] = experiment
+            env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
+        env_default['BEXHOMA_HOST'] = servicename
+        env_default['BEXHOMA_CLIENT'] = str(parallelism)
+        env_default['BEXHOMA_EXPERIMENT'] = experiment
         #env['BEXHOMA_CONNECTION'] = connection # only exists for benchmarker
-        if not 'BEXHOMA_CONNECTION' in env:
-            env['BEXHOMA_CONNECTION'] = configuration
-        env['BEXHOMA_CONFIGURATION'] = configuration
-        env['BEXHOMA_SLEEP'] = '60'
-        env['BEXHOMA_VOLUME'] = self.volume
-        env['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
-        env['PARALLEL'] = str(parallelism)
-        env['NUM_PODS'] = str(num_pods)
+        env_default['BEXHOMA_CONNECTION'] = configuration
+        env_default['BEXHOMA_CONFIGURATION'] = configuration
+        env_default['BEXHOMA_SLEEP'] = '60'
+        env_default['BEXHOMA_VOLUME'] = self.volume
+        env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
+        env_default['PARALLEL'] = str(parallelism)
+        env_default['NUM_PODS'] = str(num_pods)
+        env = {**env_default, **env}
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
         self.logger.debug(env)
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
