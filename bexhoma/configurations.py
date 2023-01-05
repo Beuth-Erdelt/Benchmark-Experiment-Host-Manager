@@ -2091,6 +2091,7 @@ scrape_configs:
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
+        env_default = dict()
         env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
         env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
