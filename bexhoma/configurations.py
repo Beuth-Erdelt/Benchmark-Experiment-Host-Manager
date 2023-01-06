@@ -1675,7 +1675,7 @@ scrape_configs:
         query = "loading"
         for m, metric in connection_data['monitoring']['metrics'].items():
             print("Metric", m)
-            monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
+            monitor.metrics.fetchMetric(query, m, connection_name, connection_data, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
     def run_benchmarker_pod(self,
         connection=None,
         alias='',
