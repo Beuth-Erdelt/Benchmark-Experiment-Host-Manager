@@ -1670,8 +1670,8 @@ scrape_configs:
         print(c)
         connection_data = c
         connection_name = connection
-        time_start = self.timeLoadingStart
-        time_end = self.timeLoadingEnd
+        time_start = int(self.timeLoadingStart)
+        time_end = int(self.timeLoadingEnd)
         query = "loading"
         for m, metric in connection_data['monitoring']['metrics'].items():
             print("Metric", m)
