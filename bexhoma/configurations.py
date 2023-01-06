@@ -1649,7 +1649,7 @@ scrape_configs:
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
-    def fetch_metrics_loading(self, connection=None):
+    def fetch_metrics_loading(self, connection=None, configuration=''):
         self.logger.debug('configuration.fetch_metrics()')
         # set general parameter
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
