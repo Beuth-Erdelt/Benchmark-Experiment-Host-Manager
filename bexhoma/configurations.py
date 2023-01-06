@@ -1673,9 +1673,23 @@ scrape_configs:
         time_start = int(self.timeLoadingStart)
         time_end = int(self.timeLoadingEnd)
         query = "loading"
-        for m, metric in connection_data['monitoring']['metrics'].items():
-            print("Metric", m)
-            monitor.metrics.fetchMetric(query, m, connection_name, connection_data, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
+        # store configuration
+        filename = self.benchmark.path+'/'+c['name']+'.config'
+        with open(filename, 'w') as f:
+            f.write(str([c]))
+        # find dashboard pod
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+        # copy to dashboard
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+c['name']+'.config'+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        self.logger.debug('copy configuration.config: {}'.format(stdout))
+        cmd = {}
+        cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+        stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+        #for m, metric in connection_data['monitoring']['metrics'].items():
+        #    print("Metric", m)
+        #    monitor.metrics.fetchMetric(query, m, connection_name, connection_data, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
     def run_benchmarker_pod(self,
         connection=None,
         alias='',
