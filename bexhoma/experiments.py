@@ -851,7 +851,7 @@ class default():
                         self.cluster.logger.debug("{} not loaded".format(config.configuration))
                         do = True
                     if len(config.benchmark_list) > 0:
-                        self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
+                        self.cluster.logger.debug("{} still benchmarks to run: {}".format(config.configuration, config.benchmark_list))
                         do = True
     def benchmark_list(self, list_clients):
         """
