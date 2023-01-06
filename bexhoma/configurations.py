@@ -1649,6 +1649,33 @@ scrape_configs:
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
+    def fetch_metrics_loading(self, connection=None):
+        self.logger.debug('configuration.fetch_metrics()')
+        # set general parameter
+        resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
+        experiments_configfolder = self.experiment.cluster.experiments_configfolder
+        if connection is None:
+            connection = self.configuration
+        if len(configuration) == 0:
+            configuration = connection
+        code = self.code
+        # get connection config (sut)
+        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
+        service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
+        service_namespace = self.experiment.cluster.contextdata['namespace']
+        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
+        self.pod_sut = pods[0]
+        c = self.get_connection_config(connection, serverip=service_host, monitoring_host=monitoring_host)
+        print(c)
+        connection_data = c
+        connection_name = connection
+        time_start = self.timeLoadingStart
+        time_end = self.timeLoadingEnd
+        query = "loading"
+        for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
+            print("Metric", m)
+            monitor.metrics.fetchMetric(query, m, connection_name, connection_data.connectiondata, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
     def run_benchmarker_pod(self,
         connection=None,
         alias='',
@@ -2006,10 +2033,19 @@ scrape_configs:
                         self.experiment.cluster.delete_pod(pod)
                     self.experiment.end_loading(job)
                     loading_pods_active = False
+                    if self.monitoring_active:
+                        #cmd = {}
+                        #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                        #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                        #self.experiment.cluster.logger.debug('load_metrics:{}'.format(cmd['fetch_loading_metrics']))
+                        #stdout = os.popen(cmd['fetch_loading_metrics']).read()# os.system(fullcommand)
+                        #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
+                        #print(stdout)
+                        self.fetch_metrics_loading(connection=self.configuration)
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
-        # only if inside cluster if done
+        # only if inside cluster is done
         if not loading_pods_active:
             pod_labels = self.experiment.cluster.get_pods_labels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
             #print(pod_labels)
