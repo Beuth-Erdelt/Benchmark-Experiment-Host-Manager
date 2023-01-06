@@ -1736,7 +1736,7 @@ scrape_configs:
         else:
             self.benchmark.connections.append(c)
         # NEVER rerun, only one connection in config for detached:
-        self.benchmark.connections = [c]
+        #self.benchmark.connections = [c]
         #print(self.benchmark.connections)
         self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
@@ -2714,7 +2714,7 @@ class ycsb(default):
         else:
             self.benchmark.connections.append(c)
         # NEVER rerun, only one connection in config for detached:
-        self.benchmark.connections = [c]
+        #self.benchmark.connections = [c]
         #print(self.benchmark.connections)
         #self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
@@ -2979,7 +2979,7 @@ class benchbase(default):
         else:
             self.benchmark.connections.append(c)
         # NEVER rerun, only one connection in config for detached:
-        self.benchmark.connections = [c]
+        #self.benchmark.connections = [c]
         #print(self.benchmark.connections)
         #self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
