@@ -1691,6 +1691,7 @@ scrape_configs:
         cmd = {}
         cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -cf {} -c {} -e {} -ts {} -te {}'.format(file, connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
         stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+        print(stdin, stdout, stderr)
         #for m, metric in connection_data['monitoring']['metrics'].items():
         #    print("Metric", m)
         #    monitor.metrics.fetchMetric(query, m, connection_name, connection_data, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
