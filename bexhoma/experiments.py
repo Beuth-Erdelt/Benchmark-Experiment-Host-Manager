@@ -41,6 +41,7 @@ from datetime import datetime, timedelta
 import re
 import pandas as pd
 import pickle
+import json
 
 
 urllib3.disable_warnings()
@@ -111,6 +112,7 @@ class default():
         self.nodes = {}
         self.maintaining_parameters = {}
         self.loading_parameters = {}
+        self.benchmarking_parameters = {}
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         self.querymanagement = {}
@@ -122,6 +124,7 @@ class default():
         self.maintaining_active = False
         self.num_maintaining = 0
         self.num_maintaining_pods = 0
+        self.name_format = None
         # k8s:
         self.namespace = self.cluster.namespace
         self.configurations = []
@@ -279,6 +282,14 @@ class default():
         # total number at least number of parallel
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
+    def set_benchmarking_parameters(self, **kwargs):
+        """
+        Sets ENV for benchmarking components.
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.benchmarking_parameters = kwargs
     def add_configuration(self, configuration):
         """
         Adds a configuration object to the list of configurations of this experiment.
@@ -840,7 +851,7 @@ class default():
                         self.cluster.logger.debug("{} not loaded".format(config.configuration))
                         do = True
                     if len(config.benchmark_list) > 0:
-                        self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
+                        self.cluster.logger.debug("{} still benchmarks to run: {}".format(config.configuration, config.benchmark_list))
                         do = True
     def benchmark_list(self, list_clients):
         """
@@ -1087,20 +1098,24 @@ class tpcc(default):
             list_nopm = re.findall('achieved (.+?) NOPM', stdout)
             list_tpm = re.findall('from (.+?) ', stdout)
             # get vuser
-            cmd['extract_results'] = 'grep -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
+            cmd['extract_results'] = 'grep -H -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
             print(cmd['extract_results'])
             stdout = os.popen(cmd['extract_results']).read()
             #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
             print(stdout)
-            list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            #list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
+            list_vuser_pod = re.findall(str(self.code)+'-(.+?).log:Vuser 1:(.+?) Active', stdout)
+            list_pods = [x for (x,y) in list_vuser_pod]
+            list_vuser = [y for (x,y) in list_vuser_pod]
             # what we have found
             print(list_nopm)
             print(list_tpm)
             print(list_vuser)
+            print(list_pods)
             # build DataFrame
             if len(list_nopm) and len(list_tpm) and len(list_vuser):
-                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser)))
-                df.columns = ['NOPM','TPM', 'VUSERS']
+                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser, list_pods)))
+                df.columns = ['NOPM','TPM', 'VUSERS', 'pods']
                 if len(connection_name) > 0:
                     df.index.name = str(connection_name[0])
                 print(df)
@@ -1130,6 +1145,42 @@ class tpcc(default):
             return 0
         except Exception as e:
             return 1
+    def evaluate_results(self, pod_dashboard=''):
+        """
+        Build a DataFrame locally that contains all benchmarking results.
+        This is specific to HammerDB.
+        """
+        self.cluster.logger.debug('tpcc.evaluate_results()')
+        df_collected = None
+        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        #path = '../benchmarks/1669640632'
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".df.pickle"):
+                #print(filename)
+                df = pd.read_pickle(path+"/"+filename)
+                #df = self.log_to_df(path+"/"+filename)
+                #filename_df = path+"/"+filename+".df.pickle"
+                #f = open(filename_df, "wb")
+                #pickle.dump(df, f)
+                #f.close()
+                if not df.empty:
+                    df['configuration'] = df.index.name
+                    if df_collected is not None:
+                        df_collected = pd.concat([df_collected, df])
+                    else:
+                        df_collected = df.copy()
+        if not df_collected is None and not df_collected.empty:
+            df_collected['index'] = df_collected.index.map(str)
+            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
+            df_collected.drop('index', axis=1, inplace=True)
+            df_collected.set_index('connection', inplace=True)
+            filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
+            f = open(filename_df, "wb")
+            pickle.dump(df_collected, f)
+            f.close()
+            self.cluster.logger.debug(df_collected)
 
 
 
@@ -1381,6 +1432,438 @@ class ycsb(default):
             return 0
         except Exception as e:
             return 1
+    def get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+        try:
+            df2=df[df['type'] == type]
+            s=df2[df2['category'] == category]
+            total = s.drop(columns=['category','type']).apply(pd.to_numeric).sum(axis=1)
+            return total.iloc[0]
+        except Exception as e:
+            print(e)
+            print(df)
+            return 0.0
+    def get_result_max(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+        try:
+            df2=df[df['type'] == type]
+            s=df2[df2['category'] == category]
+            total = s.drop(columns=['category','type']).apply(pd.to_numeric).max(axis=1)
+            return total.iloc[0]
+        except Exception as e:
+            print(e)
+            print(df)
+            return 0.0
+    def get_result_avg(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+        try:
+            df2=df[df['type'] == type]
+            s=df2[df2['category'] == category]
+            total = s.drop(columns=['category','type']).apply(pd.to_numeric).mean(axis=1)
+            return total.iloc[0]
+        except Exception as e:
+            print(e)
+            print(df)
+            return 0.0
+    def get_parts_of_name(self, name):
+        parts_name = re.findall('{(.+?)}', self.name_format)
+        parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
+        return dict(zip(parts_name, parts_values))
+    def get_overview_loading(self, dfs={}):
+        tps = []
+        if len(dfs) == 0:
+            dfs = self.get_result(component="loading")
+        for connection, df in dfs.items():
+            #print(connection)
+            if df.empty:
+                print(connection, "is empty")
+                continue
+            #parts = re.findall('-(.+?)-', connection.replace("-","--")+"--")
+            parts = self.get_parts_of_name(connection)
+            #print(parts)
+            #threads = int(parts[0])
+            #pods = int(parts[1])
+            #worker = int(parts[2])
+            #target = int(parts[2])
+            insert_Operations = float(self.get_result_sum(df, category='[INSERT]', type='Operations'))
+            insert_OK = float(self.get_result_sum(df, category='[INSERT]', type='Return=OK'))
+            overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
+            overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
+            insert_AverageLatency = float(self.get_result_avg(df, category='[INSERT]', type='AverageLatency(us)'))
+            insert_95thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='95thPercentileLatency(us)'))
+            insert_99thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='99thPercentileLatency(us)'))
+            list_values_name = list(parts.values())
+            num_pods = len(df.columns)-2
+            #print(list_values_name)
+            list_values_df = [connection, num_pods, overall_Throughput, insert_Operations, insert_OK, overall_RunTime, insert_AverageLatency, insert_95thPercentileLatency, insert_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            #print(list_values_df)
+            list_values_name.extend(list_values_df)
+            #print('combined', list_values_name)
+            tps.append(list_values_name)
+            #print(target, worker, pods, overall_Throughput, overall_RunTime, overall_Throughput, total_tps/pods)
+        #print(tps)
+        df_totals = pd.DataFrame(tps)
+        #print(list(parts.keys()))
+        columns = list(parts.keys())
+        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
+        #print(columns)
+        df_totals.columns = columns
+        #list(parts.keys()).extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
+        df_totals = df_totals.astype({'target':'float','pods':'int'})
+        df_totals = df_totals.sort_values(['target','pods'])
+        return df_totals
+    def get_overview_benchmarking(self, dfs={}):
+        tps = []
+        if len(dfs) == 0:
+            dfs = self.get_result(component="benchmarking")
+        for connection, df in dfs.items():
+            #print(connection)
+            if df.empty:
+                print(connection, "is empty")
+                continue
+            parts = self.get_parts_of_name(connection)
+            #parts = re.findall('-(.+?)-', connection.replace("-","--")+"--")
+            #print(parts)
+            #threads = int(parts[1])
+            #pods = int(parts[1])
+            #worker = int(parts[2])
+            #target = int(parts[3])
+            #print(df)
+            read_Operations = float(self.get_result_sum(df, category='[READ]', type='Operations'))
+            read_OK = float(self.get_result_sum(df, category='[READ]', type='Return=OK'))
+            read_AverageLatency = float(self.get_result_avg(df, category='[READ]', type='AverageLatency(us)'))
+            read_95thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='95thPercentileLatency(us)'))
+            read_99thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='99thPercentileLatency(us)'))
+            update_Operations = float(self.get_result_sum(df, category='[UPDATE]', type='Operations'))
+            update_OK = float(self.get_result_sum(df, category='[UPDATE]', type='Return=OK'))
+            update_AverageLatency = float(self.get_result_avg(df, category='[UPDATE]', type='AverageLatency(us)'))
+            update_95thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='95thPercentileLatency(us)'))
+            update_99thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='99thPercentileLatency(us)'))
+            overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
+            overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
+            list_values_name = list(parts.values())
+            num_pods = len(df.columns)-2
+            #print(list_values_name)
+            list_values_df = [connection, num_pods, overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
+                        update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            #print(list_values_df)
+            list_values_name.extend(list_values_df)
+            #print('combined', list_values_name)
+            tps.append(list_values_name)
+            #tps.append(list(parts.values()).extend([target, worker, pods, overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
+            #            update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/pods]))
+            #print(target, worker, pods, overall_Throughput, overall_RunTime, overall_Throughput, total_tps/pods)
+        #print(tps)
+        df_totals = pd.DataFrame(tps)
+        columns = list(parts.keys())
+        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'overall_RunTime', 
+                             'read_Operations', 'read_OK', 'read_AverageLatency', 'read_95thPercentileLatency', 'read_99thPercentileLatency',
+                             'update_Operations', 'update_OK', 'update_AverageLatency', 'update_95thPercentileLatency', 'update_99thPercentileLatency',
+                             'total_tps_per_pod'])
+        #print(columns)
+        df_totals.columns = columns
+        df_totals = df_totals.astype({'target':'float','pods':'int'})
+        df_totals = df_totals.sort_values(['target','pods'])
+        return df_totals
+    def evaluate_results(self, pod_dashboard=''):
+        """
+        Build a DataFrame locally that contains all benchmarking results.
+        This is specific to ycsb.
+        """
+        self.cluster.logger.debug('ycsb.evaluate_results()')
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
+        df = self.get_overview_loading()
+        filename_df = path+"/bexhoma-loading.all.df.pickle"
+        f = open(filename_df, "wb")
+        pickle.dump(df, f)
+        f.close()
+        df = self.get_overview_benchmarking()
+        filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
+        f = open(filename_df, "wb")
+        pickle.dump(df, f)
+        f.close()
+    def get_result(self, component='loading'):
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
+        df_prev = pd.DataFrame()
+        #pod_numbers = {}
+        if component == "loading":
+            ending = "sensor.log"
+        else:
+            component = "benchmarker"
+            ending = ".log"
+        connections = dict()
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-"+component) and filename.endswith(".df.pickle"):
+                #print(filename)
+                #experiment_number = re.findall('{}(.+?).{}'.format(name, ending), filename)
+                #print(experiment_number)
+                c = re.findall('bexhoma-{}-(.+?)-{}'.format(component, self.code), filename)
+                if len(c) == 0:
+                    #print("empty")
+                    continue
+                connection = c[0]
+                if connection in connections:
+                    connections[connection].append(filename)
+                else:
+                    connections[connection] = [filename]
+        #print(connections)
+        dfs = dict()
+        for connection, files in connections.items():
+            #print(connection)
+            #dfs[connection] = pd.DataFrame()
+            for filename in files:
+                #print(filename)
+                #experiment_number = re.findall('bexhoma-{}-{}-{}-(.+?).{}'.format(component, connection, self.code, ending), filename)
+                experiment_components = re.findall('bexhoma-{}-{}-{}-(.+?)-(.+?)-(.+?).{}'.format(component, connection, self.code, ending), filename)
+                if len(experiment_components) == 0:
+                    #print("empty")
+                    continue
+                #print("experiment_components", experiment_components)
+                #experiment_number = experiment_number[0]
+                # turns bexhoma-loading-postgresql-8-1-1024-1672704339-1-1-22gkq.sensor.log.df.pickle
+                # into 1-1 
+                connection_number = experiment_components[0][0]+"-"+experiment_components[0][1]#experiment_number#+"-"+client_number
+                #print("connection_number", connection_number)
+                #if connection_name in pod_numbers:
+                #    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
+                #else:
+                #    pod_numbers[connection_name] = 1
+                try:
+                    df = pd.read_pickle(path+"/"+filename)
+                    if not df.empty:
+                        connection_name = df.index.name+"-"+connection_number
+                        #print("found", connection_name, df)
+                        df.columns = ['category', 'type', connection_name]#+"-"+str(pod_numbers[connection_name])]
+                        if not connection_name in dfs or dfs[connection_name].empty:
+                            dfs[connection_name] = df
+                        else:
+                            dfs[connection_name] = pd.merge(dfs[connection_name], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
+                except Exception as e:
+                    print(e)
+        #print("### All DataFrames ###")
+        #print(dfs)
+        return dfs
+
+
+
+"""
+############################################################################
+Benchbase
+############################################################################
+"""
+
+class benchbase(default):
+    """
+    Class for defining an YCSB experiment.
+    This sets
+
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    * additional parameters - here SF (the scaling factor), i.e. number of rows divided by 10.000
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            #queryfile = 'queries-tpch.config',
+            SF = '1',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.set_experiment(volume='benchbase')
+        self.set_experiment(script='Schema')
+        self.cluster.set_experiments_configfolder('experiments/benchbase')
+        parameter.defaultParameters = {'SF': str(SF)}
+        self.set_queryfile('queries.config')
+        self.set_workload(
+            name = 'Benchbase Queries SF='+str(SF),
+            info = 'This experiment performs some Benchbase workloads.'
+            )
+        self.storage_label = 'tpch-'+str(SF)
+    def log_to_df(self, filename):
+        self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
+        try:
+            with open(filename) as f:
+                lines = f.readlines()
+            stdout = "".join(lines)
+            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
+            log = re.findall('####BEXHOMA####(.+?)####BEXHOMA####', stdout, re.DOTALL)
+            if len(log) > 0:
+                result = json.loads(log[0])
+                df = pd.json_normalize(result)
+                df.index.name = connection_name[0]
+                self.cluster.logger.debug(df)
+                #print(df)
+                return df
+            else:
+                print("no results found in log file {}".format(filename))
+                return pd.DataFrame()
+        except Exception as e:
+            print(e)
+            return pd.DataFrame()
+    def get_parts_of_name(self, name):
+        parts_name = re.findall('{(.+?)}', self.name_format)
+        parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
+        return dict(zip(parts_name, parts_values))
+    def end_loading(self, jobname):
+        """
+        Ends a loading job.
+        This is for storing or cleaning measures.
+        Currently does nothing, since loading does not generate measures.
+
+        :param jobname: Name of the job to clean
+        """
+        return super().end_loading(jobname)
+        # legacy code
+        self.cluster.logger.debug('benchbase.end_loading({})'.format(jobname))
+        #df_collected = None
+        path = self.path
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-") and filename.endswith(".sensor.log"):
+                print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                filename_df = path+"/"+filename+".df.pickle"
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+                """
+                if not df.empty:
+                    if self.name_format is not None:
+                        name_parts = self.get_parts_of_name(df.index.name)
+                        print(name_parts)
+                        for col, value in name_parts.items():
+                            df[col] = value
+                    df['connection'] = df.index.name
+                    if df_collected is not None:
+                        df_collected = pd.concat([df_collected, df])
+                    else:
+                        df_collected = df.copy()
+                """
+        """
+        if not df_collected is None and not df_collected.empty:
+            df_collected.set_index('connection', inplace=True)
+            filename_df = path+"/"+jobname+".all.df.pickle"
+            f = open(filename_df, "wb")
+            pickle.dump(df_collected, f)
+            f.close()
+        """
+        return super().end_loading(jobname)
+    def end_benchmarking(self, jobname):
+        """
+        Ends a benchmarker job.
+        This is for storing or cleaning measures.
+
+        :param jobname: Name of the job to clean
+        """
+        self.cluster.logger.debug('benchbase.end_benchmarking({})'.format(jobname))
+        #df_collected = None
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            #if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+            if filename.startswith(jobname) and filename.endswith(".log"):
+                #print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                filename_df = path+"/"+filename+".df.pickle"
+                f = open(filename_df, "wb")
+                pickle.dump(df, f)
+                f.close()
+                """
+                if not df.empty:
+                    if self.name_format is not None:
+                        name_parts = self.get_parts_of_name(df.index.name)
+                        print(name_parts)
+                        for col, value in name_parts.items():
+                            df[col] = value
+                    df['connection'] = df.index.name
+                    if df_collected is not None:
+                        df_collected = pd.concat([df_collected, df])
+                    else:
+                        df_collected = df.copy()
+                """
+        """
+        if not df_collected is None and not df_collected.empty:
+            df_collected.set_index('connection', inplace=True)
+            filename_df = path+"/"+jobname+".all.df.pickle"
+            f = open(filename_df, "wb")
+            pickle.dump(df_collected, f)
+            f.close()
+        """
+        return super().end_benchmarking(jobname)
+    def test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        self.cluster.logger.debug('benchbase.test_results()')
+        try:
+            #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+            path = self.path
+            #path = '../benchmarks/1669163583'
+            directory = os.fsencode(path)
+            for file in os.listdir(directory):
+                filename = os.fsdecode(file)
+                if filename.endswith(".pickle"): 
+                    df = pd.read_pickle(path+"/"+filename)
+                    print(filename)
+                    print(df)
+            return 0
+        except Exception as e:
+            return 1
+    def evaluate_results(self, pod_dashboard=''):
+        """
+        Build a DataFrame locally that contains all benchmarking results.
+        This is specific to benchbase.
+        """
+        #self.cluster.logger.debug('benchbase.evaluate_results()')
+        df_collected = None
+        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+        path = self.path
+        #path = '../benchmarks/1669640632'
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log.df.pickle"):
+                #print(filename)
+                #df = self.log_to_df(path+"/"+filename)
+                df = pd.read_pickle(path+"/"+filename)
+                #filename_df = path+"/"+filename+".df.pickle"
+                #f = open(filename_df, "wb")
+                #pickle.dump(df, f)
+                #f.close()
+                if not df.empty:
+                    if self.name_format is not None:
+                        name_parts = self.get_parts_of_name(df.index.name)
+                        #print(name_parts)
+                        for col, value in name_parts.items():
+                            df[col] = value
+                    df['configuration'] = df.index.name
+                    if df_collected is not None:
+                        df_collected = pd.concat([df_collected, df])
+                    else:
+                        df_collected = df.copy()
+        if not df_collected is None and not df_collected.empty:
+            df_collected['index'] = (df_collected.groupby('configuration').cumcount() + 1).map(str)#df_collected.index.map(str)
+            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
+            df_collected.drop('index', axis=1, inplace=True)
+            df_collected.set_index('connection', inplace=True)
+            filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
+            f = open(filename_df, "wb")
+            pickle.dump(df_collected, f)
+            f.close()
+            #print(df_collected)
+            return df_collected
+            #self.cluster.logger.debug(df_collected)
 
 
 

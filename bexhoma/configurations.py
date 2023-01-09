@@ -115,6 +115,7 @@ class default():
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.set_loading_parameters(**self.experiment.loading_parameters)
+        self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
         # scaling of other components
@@ -279,6 +280,14 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
+    def set_benchmarking_parameters(self, **kwargs):
+        """
+        Sets ENV for benchmarking components.
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.benchmarking_parameters = kwargs
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
@@ -652,6 +661,7 @@ class default():
                         dep['metadata']['labels']['app'] = app
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['dbms'] = self.docker
                         dep['metadata']['labels']['experiment'] = experiment
                         dep['metadata']['labels']['volume'] = self.volume
                         dep['spec']['selector'] = dep['metadata']['labels'].copy()
@@ -660,6 +670,7 @@ class default():
                         dep['metadata']['labels']['app'] = app
                         dep['metadata']['labels']['component'] = component
                         dep['metadata']['labels']['configuration'] = configuration
+                        dep['metadata']['labels']['dbms'] = self.docker
                         dep['metadata']['labels']['experiment'] = str(experiment)
                         dep['metadata']['labels']['volume'] = self.volume
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
@@ -888,6 +899,18 @@ scrape_configs:
             # sut is already running
             return False
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
+        # ENV
+        env = {}
+        # generate list of worker names
+        list_of_workers = []
+        for worker in range(self.num_worker):
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            list_of_workers.append(worker_full_name)
+        list_of_workers_as_string = ",".join(list_of_workers)
+        env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
+        if self.num_worker > 0:
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            env['BEXHOMA_WORKER_FIRST'] = worker_full_name
         # resources
         specs = instance.split("-")
         #print(specs)
@@ -956,6 +979,7 @@ scrape_configs:
                 if self.num_worker == 0:
                     del result[key]
                     continue
+                # set meta data
                 dep['metadata']['name'] = name_worker
                 #self.service = dep['metadata']['name']
                 dep['metadata']['labels']['app'] = app
@@ -969,7 +993,7 @@ scrape_configs:
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                for i, container in enumerate(dep['spec']['template']['spec']['containers']):
+                for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
@@ -978,10 +1002,54 @@ scrape_configs:
                             if vol['name'] == 'bexhoma-workers':
                                 #print(vol['mountPath'])
                                 if not use_storage:
-                                    del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
-                if not use_storage and 'volumeClaimTemplates' in result[key]['spec']:
-                    del result[key]['spec']['volumeClaimTemplates']
+                                    del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                    # get and set ENV
+                    #env_manifest = {}
+                    #envs = container['env']
+                    #for num_env, e in enumerate(envs):
+                    #    env_manifest[e['name']] = e['value']
+                    #print(env_manifest)
+                    #env_merged = {**env_manifest, **env}
+                    #print(env_merged)
+                    self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
+                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i_env,e in env.items():
+                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
+                # remove volumes
+                for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
+                    if vol['name'] == 'bexhoma-workers':
+                        #print(vol['mountPath'])
+                        if not use_storage:
+                            del result[key]['spec']['template']['spec']['volumes'][j]
+                # remove storage template if not used
+                if 'volumeClaimTemplates' in result[key]['spec']:
+                    if not use_storage:
+                        del result[key]['spec']['volumeClaimTemplates']
+                    else:
+                        print(result[key]['spec']['volumeClaimTemplates'])
+                        if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
+                            dep['spec']['volumeClaimTemplates'][0]['spec']['storageClassName'] = self.storage['storageClassName']
+                            #print(dep['spec']['storageClassName'])
+                        else:
+                            del result[key]['spec']['storageClassName']
+                        if len(self.storage['storageSize']) > 0:
+                            dep['spec']['volumeClaimTemplates'][0]['spec']['resources']['requests']['storage'] = self.storage['storageSize']
                 #print(pvc)
+            if dep['kind'] == 'Job':
+                # set meta data
+                dep['metadata']['name'] = name_worker
+                dep['metadata']['labels']['app'] = app
+                dep['metadata']['labels']['component'] = 'worker'
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['dbms'] = self.docker
+                dep['metadata']['labels']['volume'] = self.volume
+                for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    #container = dep['spec']['template']['spec']['containers'][0]['name']
+                    self.logger.debug('configuration.add_env({})'.format(env))
+                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i_env,e in env.items():
+                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] != 'bexhoma-service':
                     if self.num_worker == 0:
@@ -994,7 +1062,11 @@ scrape_configs:
                     dep['metadata']['labels']['experiment'] = experiment
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['volume'] = self.volume
-                    dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
                     if not self.monitoring_active:
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
@@ -1007,7 +1079,11 @@ scrape_configs:
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
-                dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                dep['spec']['selector']['configuration'] = configuration
+                dep['spec']['selector']['experiment'] = experiment
+                dep['spec']['selector']['dbms'] = self.docker
+                dep['spec']['selector']['volume'] = self.volume
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
                 if not self.monitoring_active:
@@ -1035,11 +1111,12 @@ scrape_configs:
                     #print("Container", container)
                     if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
-                        for j, vol in enumerate(container['volumeMounts']):
-                            if vol['name'] == 'benchmark-storage-volume':
-                                #print(vol['mountPath'])
-                                if not use_storage:
-                                    del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                        if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
+                            for j, vol in enumerate(container['volumeMounts']):
+                                if vol['name'] == 'benchmark-storage-volume':
+                                    #print(vol['mountPath'])
+                                    if not use_storage:
+                                        del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
                         if self.dockerimage:
                             result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                         else:
@@ -1050,15 +1127,16 @@ scrape_configs:
                             del result[key]['spec']['template']['spec']['containers'][i]
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i]
-                for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
-                    if vol['name'] == 'benchmark-storage-volume':
-                        if not use_storage:
-                            del result[key]['spec']['template']['spec']['volumes'][i]
-                        else:
-                            vol['persistentVolumeClaim']['claimName'] = name_pvc
-                    if 'hostPath' in vol and not self.monitoring_active:
-                        # we only need hostPath for monitoring
-                            del result[key]['spec']['template']['spec']['volumes'][i]
+                if 'volumes' in dep['spec']['template']['spec']:
+                    for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
+                        if vol['name'] == 'benchmark-storage-volume':
+                            if not use_storage:
+                                del result[key]['spec']['template']['spec']['volumes'][i]
+                            else:
+                                vol['persistentVolumeClaim']['claimName'] = name_pvc
+                        if 'hostPath' in vol and not self.monitoring_active:
+                            # we only need hostPath for monitoring
+                                del result[key]['spec']['template']['spec']['volumes'][i]
                 # init containers only for persistent volumes
                 if 'initContainers' in result[key]['spec']['template']['spec'] and not use_storage:
                     del result[key]['spec']['template']['spec']['initContainers']
@@ -1190,6 +1268,9 @@ scrape_configs:
                 # remove the storage
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                 self.experiment.cluster.delete_pvc(name_pvc)
+                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=configuration)
+                for name_pvc in worker_pvcs:
+                    self.experiment.cluster.delete_pvc(name_pvc)
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.delete_deployment(deployment)
@@ -1421,9 +1502,14 @@ scrape_configs:
             # Windows
             command = "du "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
-            stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
-            if len(stdout) > 0:
-                return int(stdout.replace('\n',''))
+            try:
+                stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
+                if len(stdout) > 0:
+                    size_str = stdout.replace('\n','')
+                    if len(size_str) > 0:
+                        return int(size_str)
+            except Exception as e:
+                return 0
         return 0
     def get_host_diskspace_used(self):
         """
@@ -1563,6 +1649,52 @@ scrape_configs:
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
+    def fetch_metrics_loading(self, connection=None, configuration=''):
+        self.logger.debug('configuration.fetch_metrics()')
+        # set general parameter
+        resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
+        experiments_configfolder = self.experiment.cluster.experiments_configfolder
+        if connection is None:
+            connection = self.configuration
+        if len(configuration) == 0:
+            configuration = connection
+        code = self.code
+        # get connection config (sut)
+        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
+        service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
+        service_namespace = self.experiment.cluster.contextdata['namespace']
+        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
+        self.pod_sut = pods[0]
+        c = self.get_connection_config(connection, serverip=service_host, monitoring_host=monitoring_host)
+        print(c)
+        connection_data = c
+        connection_name = connection
+        time_start = int(self.timeLoadingStart)
+        time_end = int(self.timeLoadingEnd)
+        query = "loading"
+        # store configuration
+        basepath_local = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'
+        basepath_remote = '/results/'+str(self.code)+'/'
+        file = c['name']+'.config'
+        file_local = basepath_local+file
+        file_remote = basepath_remote+file
+        with open(file_local, 'w') as f:
+            f.write(str([c]))
+        # find dashboard pod
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+        # copy to dashboard
+        stdout = self.experiment.cluster.kubectl('cp '+file_local+" "+pod_dashboard+':'+file_remote)
+        self.logger.debug('copy configuration.config: {}'.format(stdout))
+        cmd = {}
+        cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -cf {} -c {} -e {} -ts {} -te {}'.format(file, connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+        stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+        print(stdin, stdout, stderr)
+        #for m, metric in connection_data['monitoring']['metrics'].items():
+        #    print("Metric", m)
+        #    monitor.metrics.fetchMetric(query, m, connection_name, connection_data, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
     def run_benchmarker_pod(self,
         connection=None,
         alias='',
@@ -1591,10 +1723,11 @@ scrape_configs:
         :param parallelism: Number of parallel benchmarker pods we want to have
         """
         self.logger.debug('configuration.run_benchmarker_pod()')
+        # set general parameter
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
         experiments_configfolder = self.experiment.cluster.experiments_configfolder
         if connection is None:
-            connection = self.configuration#self.getConnectionName()
+            connection = self.configuration
         if len(configuration) == 0:
             configuration = connection
         code = self.code
@@ -1603,7 +1736,6 @@ scrape_configs:
         if len(dialect) == 0 and len(self.dialect) > 0:
             dialect = self.dialect
         experimentRun = str(self.num_experiment_to_apply_done+1)
-        #self.experiment.cluster.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.experiment.querymanagement
         # get connection config (sut)
@@ -1613,27 +1745,20 @@ scrape_configs:
         service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
         self.pod_sut = pods[0]
-        #service_port = config_K8s['port']
-        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
-        #c['parameter'] = {}
+        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = experimentRun
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
-        #print(c)
-        #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
+        c['parameter']['storage_parameter'] = self.storage
         if isinstance(c['JDBC']['jar'], list):
             for i, j in enumerate(c['JDBC']['jar']):
                 c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
         elif isinstance(c['JDBC']['jar'], str):
             c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
         #print(c)
-        #print(self.dockertemplate)
-        #print(self.experiment.cluster.dockers[self.docker])
-        #if code is not None:
-        #    resultfolder += '/'+str(int(code))
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
             fixedQuery=query,
@@ -1642,9 +1767,7 @@ scrape_configs:
             working='connection',
             code=code
             )
-        #self.benchmark.code = '1611607321'
-        self.code = self.benchmark.code
-        #print("Code", self.code)
+        #self.code = self.benchmark.code
         self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
         connectionfile = experiments_configfolder+'/connections.config'
@@ -1659,7 +1782,7 @@ scrape_configs:
         else:
             self.benchmark.connections.append(c)
         # NEVER rerun, only one connection in config for detached:
-        self.benchmark.connections = [c]
+        #self.benchmark.connections = [c]
         #print(self.benchmark.connections)
         self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
@@ -1669,6 +1792,9 @@ scrape_configs:
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
+        filename = self.benchmark.path+'/'+c['name']+'.config'
+        with open(filename, 'w') as f:
+            f.write(str([c]))
         # write appended query config
         if len(self.experiment.workload) > 0:
             for k,v in self.experiment.workload.items():
@@ -1700,7 +1826,7 @@ scrape_configs:
         status = self.experiment.cluster.get_pod_status(client_pod_name)
         self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
         print("Waiting for job {}: ".format(client_pod_name), end="", flush=True)
-        while status != "Running":
+        while status != "Running" and status != "Succeeded":
             self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
             print(".", end="", flush=True)
             #self.wait(10)
@@ -1718,10 +1844,10 @@ scrape_configs:
         stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=client_pod_name)
         stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+client_pod_name+':/results/'+str(self.code)+'/queries.config')
         self.logger.debug('copy config queries.config: {}'.format(stdout))
-        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+c['name']+'.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
         self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
         # copy twice to be more sure it worked
-        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
+        stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+c['name']+'.config '+client_pod_name+':/results/'+str(self.code)+'/'+c['name']+'.config')
         self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
         stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+client_pod_name+':/results/'+str(self.code)+'/connections.config')
         self.logger.debug('copy config connections.config: {}'.format(stdout))
@@ -1730,7 +1856,8 @@ scrape_configs:
         # get monitoring for loading
         if self.monitoring_active:
             cmd = {}
-            cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+            #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+            cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
     def execute_command_in_pod_sut(self, command, pod='', container='dbms', params=''):
         """
@@ -1802,6 +1929,7 @@ scrape_configs:
                 pod_sut = pods[0]
                 num_worker = 0
                 while num_worker < self.num_worker:
+                    self.wait(5)
                     num_worker = 0
                     pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                     for pod in pods_worker:
@@ -1924,10 +2052,19 @@ scrape_configs:
                         self.experiment.cluster.delete_pod(pod)
                     self.experiment.end_loading(job)
                     loading_pods_active = False
+                    if self.monitoring_active:
+                        #cmd = {}
+                        #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                        #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                        #self.experiment.cluster.logger.debug('load_metrics:{}'.format(cmd['fetch_loading_metrics']))
+                        #stdout = os.popen(cmd['fetch_loading_metrics']).read()# os.system(fullcommand)
+                        #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
+                        #print(stdout)
+                        self.fetch_metrics_loading(connection=self.configuration)
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
-        # only if inside cluster if done
+        # only if inside cluster is done
         if not loading_pods_active:
             pod_labels = self.experiment.cluster.get_pods_labels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
             #print(pod_labels)
@@ -1959,6 +2096,7 @@ scrape_configs:
         self.logger.debug('configuration.load_data()')
         self.loading_started = True
         self.prepare_init_dbms()
+        service_name = self.generate_component_name(component='sut', configuration=self.configuration, experiment=self.code)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
@@ -1971,9 +2109,9 @@ scrape_configs:
         else:
             volume = ''
         print("start loading asynch {}".format(self.pod_sut))
-        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+")")
+        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context}
+        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context, 'service_name':service_name}
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         return
@@ -2009,22 +2147,28 @@ scrape_configs:
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
-        env['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
-        env['BEXHOMA_USER'] = c['JDBC']['auth'][0]
-        env['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
-        env['BEXHOMA_DRIVER'] = c['JDBC']['driver']
+        env_default = dict()
+        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
+        env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
+        env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
+        env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
         if isinstance(c['JDBC']['jar'], str):
-            env['BEXHOMA_JAR'] = c['JDBC']['jar']
+            env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
         else:
-            env['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
-        env['BEXHOMA_HOST'] = servicename
-        env['BEXHOMA_CLIENT'] = str(parallelism)
-        env['BEXHOMA_EXPERIMENT'] = experiment
-        env['BEXHOMA_CONNECTION'] = configuration
-        env['BEXHOMA_SLEEP'] = '60'
-        env['BEXHOMA_VOLUME'] = self.volume
-        env['PARALLEL'] = str(parallelism)
-        env['NUM_PODS'] = str(num_pods)
+            env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
+        env_default['BEXHOMA_HOST'] = servicename
+        env_default['BEXHOMA_CLIENT'] = int(self.client)-1
+        #env_default['BEXHOMA_CLIENT'] = str(parallelism) # why?
+        env_default['BEXHOMA_EXPERIMENT'] = experiment
+        #env['BEXHOMA_CONNECTION'] = connection # only exists for benchmarker
+        env_default['BEXHOMA_CONNECTION'] = configuration
+        env_default['BEXHOMA_CONFIGURATION'] = configuration
+        env_default['BEXHOMA_SLEEP'] = '60'
+        env_default['BEXHOMA_VOLUME'] = self.volume
+        env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
+        env_default['PARALLEL'] = str(parallelism)
+        env_default['NUM_PODS'] = str(num_pods)
+        env = {**env_default, **env}
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
         self.logger.debug(env)
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
@@ -2046,6 +2190,7 @@ scrape_configs:
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
                 dep['metadata']['labels']['experimentRun'] = str(experimentRun)
@@ -2053,6 +2198,7 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['dbms'] = self.docker
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
@@ -2129,6 +2275,7 @@ scrape_configs:
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
@@ -2166,6 +2313,7 @@ scrape_configs:
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias,
             'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename)}
@@ -2202,7 +2350,7 @@ scrape_configs:
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=30)
+        start = now + timedelta(seconds=60)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         env = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': start_string,
@@ -2355,7 +2503,7 @@ class hammerdb(default):
         else:
             self.benchmark.connections.append(c)
         # NEVER rerun, only one connection in config for detached:
-        self.benchmark.connections = [c]
+        #self.benchmark.connections = [c]
         #print(self.benchmark.connections)
         #self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
@@ -2365,6 +2513,9 @@ class hammerdb(default):
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
+        filename = self.benchmark.path+'/'+c['name']+'.config'
+        with open(filename, 'w') as f:
+            f.write(str(c))
         # write appended query config
         if len(self.experiment.workload) > 0:
             for k,v in self.experiment.workload.items():
@@ -2428,22 +2579,22 @@ class hammerdb(default):
             pod_dashboard = pods[0]
             cmd = {}
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard)
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
             self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
             # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
             self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
             # get monitoring for loading
             if self.monitoring_active:
                 cmd = {}
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
     def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
         """
@@ -2481,9 +2632,11 @@ class hammerdb(default):
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
+        env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-hammerdb-tpcc.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
 
@@ -2616,7 +2769,7 @@ class ycsb(default):
         else:
             self.benchmark.connections.append(c)
         # NEVER rerun, only one connection in config for detached:
-        self.benchmark.connections = [c]
+        #self.benchmark.connections = [c]
         #print(self.benchmark.connections)
         #self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
         self.benchmark.dbms[c['name']] = tools.dbms(c, False)
@@ -2626,6 +2779,9 @@ class ycsb(default):
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
+        filename = self.benchmark.path+'/'+c['name']+'.config'
+        with open(filename, 'w') as f:
+            f.write(str(c))
         # write appended query config
         if len(self.experiment.workload) > 0:
             for k,v in self.experiment.workload.items():
@@ -2689,22 +2845,22 @@ class ycsb(default):
             pod_dashboard = pods[0]
             cmd = {}
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard)
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
             self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
             # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
             self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
             self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
             # get monitoring for loading
             if self.monitoring_active:
                 cmd = {}
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -ts {} -te {}'.format(self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
     def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
         """
@@ -2742,11 +2898,295 @@ class ycsb(default):
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **self.loading_parameters}
+        env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
+
+
+
+
+class benchbase(default):
+    """
+    :Date: 2022-10-01
+    :Version: 0.6.0
+    :Authors: Patrick K. Erdelt
+
+        Class for managing an DBMS configuation.
+        This is plugged into an experiment object.
+
+        :param experiment: Unique identifier of the experiment
+        :param docker: Name of the Docker image
+        :param configuration: Name of the configuration
+        :param script: Unique identifier of the experiment
+        :param alias: Unique identifier of the experiment
+
+        Copyright (C) 2020  Patrick K. Erdelt
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Affero General Public License as
+        published by the Free Software Foundation, either version 3 of the
+        License, or (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Affero General Public License for more details.
+
+        You should have received a copy of the GNU Affero General Public License
+        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    """
+    def run_benchmarker_pod(self,
+        connection=None,
+        alias='',
+        dialect='',
+        query=None,
+        app='',
+        component='benchmarker',
+        experiment='',
+        configuration='',
+        client='1',
+        parallelism=1):
+        """
+        Runs the benchmarker job.
+        Sets meta data in the connection.config.
+        Copy query.config and connection.config to the first pod of the job (result folder mounted into every pod)
+
+        :param connection: Name of configuration prolonged by number of runs of the sut (installations) and number of client in a sequence of
+        :param alias: An alias can be given if we want to anonymize the dbms
+        :param dialect: A name of a SQL dialect can be given
+        :param query: The benchmark can be fixed to a specific query
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: Number of benchmarker this is in a sequence of
+        :param parallelism: Number of parallel benchmarker pods we want to have
+        """
+        self.logger.debug('benchbase.run_benchmarker_pod()')
+        resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
+        experiments_configfolder = self.experiment.cluster.experiments_configfolder
+        if connection is None:
+            connection = self.configuration#self.getConnectionName()
+        if len(configuration) == 0:
+            configuration = connection
+        code = self.code
+        if not isinstance(client, str):
+            client = str(client)
+        if not self.client:
+            self.client = client
+        if len(dialect) == 0 and len(self.dialect) > 0:
+            dialect = self.dialect
+        experimentRun = str(self.num_experiment_to_apply_done+1)
+        #self.experiment.cluster.stopPortforwarding()
+        # set query management for new query file
+        tools.query.template = self.experiment.querymanagement
+        # get connection config (sut)
+        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
+        service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
+        service_namespace = self.experiment.cluster.contextdata['namespace']
+        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
+        self.pod_sut = pods[0]
+        #service_port = config_K8s['port']
+        c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
+        #c['parameter'] = {}
+        c['parameter'] = self.eval_parameters
+        c['parameter']['parallelism'] = parallelism
+        c['parameter']['client'] = client
+        c['parameter']['numExperiment'] = experimentRun
+        c['parameter']['dockerimage'] = self.dockerimage
+        c['parameter']['connection_parameter'] = self.connection_parameter
+        #print(c)
+        #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
+        if isinstance(c['JDBC']['jar'], list):
+            for i, j in enumerate(c['JDBC']['jar']):
+                c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
+        elif isinstance(c['JDBC']['jar'], str):
+            c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
+        #print(c)
+        self.logger.debug('benchbase.run_benchmarker_pod(): {}'.format(connection))
+        self.benchmark = benchmarker.benchmarker(
+            fixedConnection=connection,
+            fixedQuery=query,
+            result_path=resultfolder,
+            batch=True,
+            working='connection',
+            code=code
+            )
+        #self.benchmark.code = '1611607321'
+        self.code = self.benchmark.code
+        #print("Code", self.code)
+        self.logger.debug('benchbase.run_benchmarker_pod(Code={})'.format(self.code))
+        # read config for benchmarker
+        connectionfile = experiments_configfolder+'/connections.config'
+        if self.experiment.queryfile is not None:
+            queryfile = experiments_configfolder+'/'+self.experiment.queryfile
+        else:
+            queryfile = experiments_configfolder+'/queries.config'
+        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        if c['name'] in self.benchmark.dbms:
+            print("Rerun connection "+connection)
+            # TODO: Find and replace connection info
+        else:
+            self.benchmark.connections.append(c)
+        # NEVER rerun, only one connection in config for detached:
+        #self.benchmark.connections = [c]
+        #print(self.benchmark.connections)
+        #self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(self.benchmark.connections))
+        self.benchmark.dbms[c['name']] = tools.dbms(c, False)
+        # copy or generate config folder (query and connection)
+        # add connection to existing list
+        # or: generate new connection list
+        filename = self.benchmark.path+'/connections.config'
+        with open(filename, 'w') as f:
+            f.write(str(self.benchmark.connections))
+        filename = self.benchmark.path+'/'+c['name']+'.config'
+        with open(filename, 'w') as f:
+            f.write(str(c))
+        # write appended query config
+        if len(self.experiment.workload) > 0:
+            for k,v in self.experiment.workload.items():
+                self.benchmark.queryconfig[k] = v
+            filename = self.benchmark.path+'/queries.config'
+            with open(filename, 'w') as f:
+                f.write(str(self.benchmark.queryconfig))
+        # generate all parameters and store in protocol
+        self.benchmark.reporterStore.readProtocol()
+        self.benchmark.generateAllParameters()
+        self.benchmark.reporterStore.writeProtocol()
+        # store experiment
+        experiment = {}
+        experiment['delay'] = 0
+        experiment['step'] = "runBenchmarks"
+        experiment['connection'] = connection
+        experiment['connectionmanagement'] = self.connectionmanagement.copy()
+        self.experiment.cluster.log_experiment(experiment)
+        # create pod
+        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
+        # start pod
+        self.experiment.cluster.kubectl('create -f '+yamlfile)
+        pods = []
+        while len(pods) == 0:
+            self.wait(10)
+            pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
+        client_pod_name = pods[0]
+        status = self.experiment.cluster.get_pod_status(client_pod_name)
+        self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+        print("Waiting for job {}: ".format(client_pod_name), end="", flush=True)
+        while status != "Running" and status != "Succeeded":
+            self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+            print(".", end="", flush=True)
+            #self.wait(10)
+            # maybe pod had to be restarted
+            pods = []
+            while len(pods) == 0:
+                self.wait(10, silent=True)
+                pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
+            client_pod_name = pods[0]
+            status = self.experiment.cluster.get_pod_status(client_pod_name)
+        print("found")
+        # get monitoring for loading
+        """
+        if self.monitoring_active:
+            print("get monitoring for loading")
+            logger = logging.getLogger('dbmsbenchmarker')
+            logging.basicConfig(level=logging.DEBUG)
+            for connection_number, connection_data in self.benchmark.dbms.items():
+                #connection = self.benchmark.dbms[c['name']]
+                print(connection_number, connection_data)
+                print(connection_data.connectiondata['monitoring']['prometheus_url'])
+                query='loading'
+                for m, metric in connection_data.connectiondata['monitoring']['metrics'].items():
+                    print(m)
+                    monitor.metrics.fetchMetric(query, m, connection_number, connection_data.connectiondata, int(self.timeLoadingStart), int(self.timeLoadingEnd), '{result_path}'.format(result_path=self.benchmark.path))
+        """
+        # copy config to pod - dashboard
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            cmd = {}
+            cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container='dashboard')
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            self.logger.debug('copy config queries.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            # copy twice to be more sure it worked
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            self.logger.debug('copy config connections.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            self.logger.debug('copy config protocol.json: {}'.format(stdout))
+            # get monitoring for loading
+            if self.monitoring_active:
+                cmd = {}
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
+        """
+        Creates a job template for the benchmarker.
+        This sets meta data in the template and ENV.
+        This sets some settings specific to YCSB.
+
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: Number of benchmarker if there is a sequence of benchmarkers
+        :param parallelism: Number of parallel pods in job
+        :param alias: Alias name of the dbms
+        :return: Name of file in YAML format containing the benchmarker job
+        """
+        if len(app) == 0:
+            app = self.appname
+        code = str(int(experiment))
+        experimentRun = str(self.num_experiment_to_apply_done+1)
+        #connection = configuration
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
+        #self.benchmarker_jobname = jobname
+        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        #print(jobname)
+        self.logger.debug('benchbase.create_manifest_benchmarking({})'.format(jobname))
+        # determine start time
+        now = datetime.utcnow()
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        start = now + timedelta(seconds=180)
+        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        env = {'DBMSBENCHMARKER_NOW': now_string,
+            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_CLIENT': str(parallelism),
+            'DBMSBENCHMARKER_PODS': str(num_pods),
+            'DBMSBENCHMARKER_CODE': code,
+            'DBMSBENCHMARKER_CONNECTION': connection,
+            'BEXHOMA_CONNECTION': connection,
+            'DBMSBENCHMARKER_SLEEP': str(60),
+            'DBMSBENCHMARKER_ALIAS': alias}
+        env = {**env, **self.loading_parameters}
+        env = {**env, **self.benchmarking_parameters}
+        #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-benchbase.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2762,7 +3202,7 @@ class ycsb(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
@@ -2818,7 +3258,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     for c in commands:
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
-            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c), pod_sut, context)
+            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
@@ -2830,7 +3270,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 with open(filename_log,'w') as file:
                     file.write(stderr)
         elif file_extension.lower() == '.sh':
-            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c), pod_sut, context)
+            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:

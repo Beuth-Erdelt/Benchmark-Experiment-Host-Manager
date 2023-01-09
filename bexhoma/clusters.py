@@ -752,11 +752,13 @@ class testbed():
         try: 
             api_response = self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
             #pprint(api_response)
+            return True
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.delete_pvc(name=name)
+            return False
+            #return self.delete_pvc(name=name)
     def delete_service(self, name):
         """
         Delete a service given by name
