@@ -1056,6 +1056,7 @@ class tpcc(default):
             info = 'This experiment performs some TPC-C inspired workloads.'
             )
         self.storage_label = 'tpch-'+str(SF)
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
     def end_benchmarking(self,jobname):
         """
         Ends a benchmarker job.
@@ -1347,6 +1348,7 @@ class ycsb(default):
             info = 'This experiment performs some YCSB inspired workloads.'
             )
         self.storage_label = 'tpch-'+str(SF)
+        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
     def log_to_df(self, filename):
         try:
             with open(filename) as f:
@@ -1683,6 +1685,7 @@ class benchbase(default):
             info = 'This experiment performs some Benchbase workloads.'
             )
         self.storage_label = 'tpch-'+str(SF)
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
