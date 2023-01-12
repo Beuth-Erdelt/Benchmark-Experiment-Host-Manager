@@ -1802,7 +1802,7 @@ scrape_configs:
             f.write(str(self.benchmark.connections))
         filename = self.benchmark.path+'/'+c['name']+'.config'
         with open(filename, 'w') as f:
-            f.write(str(c))
+            f.write([c])
         # write appended query config
         if len(self.experiment.workload) > 0:
             for k,v in self.experiment.workload.items():
