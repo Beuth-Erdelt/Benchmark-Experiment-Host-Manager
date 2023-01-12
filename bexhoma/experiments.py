@@ -1083,7 +1083,7 @@ class tpcc(default):
 
         :return: exit code of test script
         """
-        self.cluster.logger.debug('tpcc.test_results({})'.format(jobname))
+        self.cluster.logger.debug('tpcc.test_results()')
         self.evaluator.test_results()
     def OLD_test_results(self):
         """
@@ -1343,7 +1343,7 @@ class ycsb(default):
 
         :return: exit code of test script
         """
-        self.cluster.logger.debug('ycsb.test_results({})'.format(jobname))
+        self.cluster.logger.debug('ycsb.test_results()')
         self.evaluator.test_results()
     def OLD_test_results(self):
         """
@@ -1730,7 +1730,7 @@ class benchbase(default):
 
         :return: exit code of test script
         """
-        self.cluster.logger.debug('benchbase.test_results({})'.format(jobname))
+        self.cluster.logger.debug('benchbase.test_results()')
         self.evaluator.test_results()
     def OLD_test_results(self):
         """
