@@ -1102,7 +1102,11 @@ class tpcc(default):
         """
         self.cluster.logger.debug('tpcc.test_results()')
         self.evaluator.test_results()
-        self.get_workflow_list()
+        workflow = self.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
     def OLD_test_results(self):
         """
         Run test script locally.
@@ -1363,7 +1367,11 @@ class ycsb(default):
         """
         self.cluster.logger.debug('ycsb.test_results()')
         self.evaluator.test_results()
-        self.get_workflow_list()
+        workflow = self.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
     def OLD_test_results(self):
         """
         Run test script locally.
@@ -1751,7 +1759,11 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.test_results()')
         self.evaluator.test_results()
-        self.get_workflow_list()
+        workflow = self.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
     def OLD_test_results(self):
         """
         Run test script locally.
