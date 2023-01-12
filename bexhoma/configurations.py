@@ -44,7 +44,7 @@ import threading
 
 from dbmsbenchmarker import *
 
-from bexhoma import clusters, experiments
+from bexhoma import clusters, experiments, evaluators
 
 
 

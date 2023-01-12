@@ -43,6 +43,7 @@ import pandas as pd
 import pickle
 import json
 
+from bexhoma import evaluators
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
