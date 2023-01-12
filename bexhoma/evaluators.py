@@ -926,18 +926,18 @@ class tpcc(logger):
         :return: exit code of test script
         """
         try:
-            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
+            #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
             #path = '../benchmarks/1669163583'
-            directory = os.fsencode(path)
+            directory = os.fsencode(self.path)
             for file in os.listdir(directory):
                 filename = os.fsdecode(file)
                 if filename.endswith(".pickle"): 
-                    df = pd.read_pickle(path+"/"+filename)
+                    df = pd.read_pickle(self.path+"/"+filename)
                     print(df)
                     print(df.index.name)
                     print(list(df['VUSERS']))
                     print(" ".join(l))
-            return 0
+            return super().test_results()
         except Exception as e:
             return 1
     def benchmarking_set_datatypes(self, df):
