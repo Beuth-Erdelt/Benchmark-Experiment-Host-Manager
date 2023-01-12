@@ -651,6 +651,23 @@ class default():
         """
         for config in self.configurations:
             config.add_benchmark_list(list_clients)
+    def get_workflow_list(self):
+        """
+        Returns benchmarking workflow as dict of lists of lists.
+        Keys are connection names.
+        Values are lists of lists.
+        Each inner list is for example added by add_benchmark_list(), c.f.
+        Inner lists are repeated according to self.num_experiment_to_apply.
+        Example: {'PostgreSQL-24-1-16384': [[1, 2]], 'MySQL-24-1-16384': [[1, 2]], 'PostgreSQL-24-1-32768': [[1, 2]], 'MySQL-24-1-32768': [[1, 2]]}
+
+        :return: Dict of benchmarking workflow
+        """
+        workflow = {}
+        for configuration in self.configurations:
+            workflow[configuration.configuration] = [configuration.benchmark_list_template for i in range(configuration.num_experiment_to_apply)]
+        self.cluster.logger.debug('default.get_workflow_list({})'.format(workflow))
+        #print(workflow)
+        return workflow
     def work_benchmark_list(self, intervals=30, stop=True):
         """
         Run typical workflow:
@@ -1085,6 +1102,7 @@ class tpcc(default):
         """
         self.cluster.logger.debug('tpcc.test_results()')
         self.evaluator.test_results()
+        self.get_workflow_list()
     def OLD_test_results(self):
         """
         Run test script locally.
@@ -1345,6 +1363,7 @@ class ycsb(default):
         """
         self.cluster.logger.debug('ycsb.test_results()')
         self.evaluator.test_results()
+        self.get_workflow_list()
     def OLD_test_results(self):
         """
         Run test script locally.
@@ -1732,6 +1751,7 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.test_results()')
         self.evaluator.test_results()
+        self.get_workflow_list()
     def OLD_test_results(self):
         """
         Run test script locally.
