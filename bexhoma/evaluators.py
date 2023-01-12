@@ -214,7 +214,7 @@ class logger(base):
         Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
         This DataFrame is stored as a pickled file.
         """
-        directory = os.fsencode(self.path+"/"+self.code)
+        directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
@@ -229,7 +229,7 @@ class logger(base):
         Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
         This DataFrame is stored as a pickled file.
         """
-        directory = os.fsencode(self.path+"/"+self.code)
+        directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log"):
@@ -372,6 +372,8 @@ class logger(base):
             if self.include_loading:
                 df = self.get_df_loading()
                 print(df)
+            workflow = self.reconstruct_workflow()
+            print(workflow)
             return 0
         except Exception as e:
             print(e)
