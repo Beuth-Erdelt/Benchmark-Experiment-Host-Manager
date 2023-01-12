@@ -130,7 +130,7 @@ class default():
         self.namespace = self.cluster.namespace
         self.configurations = []
         self.storage_label = ''
-        self.evaluator = evaluator.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def wait(self, sec):
         """
         Function for waiting some time and inform via output about this
@@ -919,7 +919,7 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
-        self.evaluator.end_benchmarking(jobname)
+        self.evaluators.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """
         Ends a loading job.
@@ -928,7 +928,7 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
-        self.evaluator.end_loading(jobname)
+        self.evaluators.end_loading(jobname)
 
 
 
@@ -1061,7 +1061,7 @@ class tpcc(default):
             )
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
-        self.evaluator = evaluator.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def OLD_end_benchmarking(self,jobname):
         """
         Ends a benchmarker job.
@@ -1075,7 +1075,7 @@ class tpcc(default):
         #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         #jobname = self.benchmarker_jobname
         self.cluster.logger.debug('tpcc.end_benchmarking({})'.format(jobname))
-        self.evaluator.end_benchmarking(jobname)
+        self.evaluators.end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
@@ -1084,7 +1084,7 @@ class tpcc(default):
         :return: exit code of test script
         """
         self.cluster.logger.debug('tpcc.test_results({})'.format(jobname))
-        self.evaluator.test_results()
+        self.evaluators.test_results()
     def OLD_test_results(self):
         """
         Run test script locally.
@@ -1092,7 +1092,7 @@ class tpcc(default):
 
         :return: exit code of test script
         """
-        #self.evaluator.test_results()
+        #self.evaluators.test_results()
         try:
             path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
             #path = '../benchmarks/1669163583'
@@ -1114,7 +1114,7 @@ class tpcc(default):
         This is specific to HammerDB.
         """
         self.cluster.logger.debug('tpcc.evaluate_results()')
-        self.evaluator.evaluate_results(pod_dashboard)
+        self.evaluators.evaluate_results(pod_dashboard)
 
 
 
@@ -1282,7 +1282,7 @@ class ycsb(default):
             )
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
-        self.evaluator = evaluator.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def log_to_df(self, filename):
         try:
             with open(filename) as f:
@@ -1334,7 +1334,7 @@ class ycsb(default):
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('ycsb.end_benchmarking({})'.format(jobname))
-        self.evaluator.end_benchmarking(jobname)
+        self.evaluators.end_benchmarking(jobname)
         return super().end_benchmarking(jobname)
     def test_results(self):
         """
@@ -1344,7 +1344,7 @@ class ycsb(default):
         :return: exit code of test script
         """
         self.cluster.logger.debug('ycsb.test_results({})'.format(jobname))
-        self.evaluator.test_results()
+        self.evaluators.test_results()
     def OLD_test_results(self):
         """
         Run test script locally.
@@ -1502,7 +1502,7 @@ class ycsb(default):
         This is specific to YCSB.
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
-        self.evaluator.evaluate_results(pod_dashboard)
+        self.evaluators.evaluate_results(pod_dashboard)
     def get_result(self, component='loading'):
         #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         path = self.path
@@ -1607,7 +1607,7 @@ class benchbase(default):
             )
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
-        self.evaluator = evaluator.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
@@ -1731,7 +1731,7 @@ class benchbase(default):
         :return: exit code of test script
         """
         self.cluster.logger.debug('benchbase.test_results({})'.format(jobname))
-        self.evaluator.test_results()
+        self.evaluators.test_results()
     def OLD_test_results(self):
         """
         Run test script locally.
@@ -1760,6 +1760,6 @@ class benchbase(default):
         This is specific to Benchbase.
         """
         self.cluster.logger.debug('benchbase.evaluate_results()')
-        self.evaluator.evaluate_results(pod_dashboard)
+        self.evaluators.evaluate_results(pod_dashboard)
 
 
