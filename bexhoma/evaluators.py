@@ -53,6 +53,7 @@ class base:
         self.code = code
         self.include_loading = include_loading
         self.include_benchmarking = include_benchmarking
+        self.workflow = dict()
     def end_benchmarking(self, jobname):
         """
         Ends a benchmarker job.
@@ -935,10 +936,12 @@ class tpcc(logger):
                     df = pd.read_pickle(self.path+"/"+filename)
                     print(df)
                     print(df.index.name)
-                    print(list(df['VUSERS']))
-                    print(" ".join(l))
+                    print(list(df['vusers']))
+                    print("vusers", " ".join(l))
             return super().test_results()
         except Exception as e:
+            print(e)
+            print(traceback.format_exc())
             return 1
     def benchmarking_set_datatypes(self, df):
         """
