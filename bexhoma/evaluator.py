@@ -365,12 +365,17 @@ class logger(base):
 
         :return: exit code of test script
         """
-        if self.include_benchmarking:
-            df = self.get_df_benchmarking()
-            print(df)
-        if self.include_loading:
-            df = self.get_df_loading()
-            print(df)
+        try:
+            if self.include_benchmarking:
+                df = self.get_df_benchmarking()
+                print(df)
+            if self.include_loading:
+                df = self.get_df_loading()
+                print(df)
+            return 0
+        except Exception as e:
+            print(e)
+            return 1
 
 
 
