@@ -2248,7 +2248,8 @@ scrape_configs:
                         #stdout = os.popen(cmd['fetch_loading_metrics']).read()# os.system(fullcommand)
                         #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=client_pod_name)
                         #print(stdout)
-                        self.fetch_metrics_loading(connection=self.configuration)
+                        # currently, only benchmarking fetches loading metrics
+                        #self.fetch_metrics_loading(connection=self.configuration)
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done

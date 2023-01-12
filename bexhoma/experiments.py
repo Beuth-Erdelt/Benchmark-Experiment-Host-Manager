@@ -129,6 +129,7 @@ class default():
         self.namespace = self.cluster.namespace
         self.configurations = []
         self.storage_label = ''
+        self.evaluator = evaluator.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def wait(self, sec):
         """
         Function for waiting some time and inform via output about this
@@ -917,6 +918,7 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
+        self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """
         Ends a loading job.
@@ -925,6 +927,7 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
+        self.evaluator.end_loading(jobname)
 
 
 
@@ -1057,7 +1060,8 @@ class tpcc(default):
             )
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
-    def end_benchmarking(self,jobname):
+        self.evaluator = evaluator.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def OLD_end_benchmarking(self,jobname):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
@@ -1070,60 +1074,7 @@ class tpcc(default):
         #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
         #jobname = self.benchmarker_jobname
         self.cluster.logger.debug('tpcc.end_benchmarking({})'.format(jobname))
-        pods = self.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-            status = self.cluster.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
-            while status != "Running":
-                self.wait(10)
-                status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
-            filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
-            #filename_logs = '/results/{}/{}*'.format(self.code, jobname)
-            filename_df = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
-            cmd = {}
-            # get connection name
-            cmd['extract_results'] = 'grep -R BEXHOMA_CONNECTION {filename_logs}'.format(filename_logs=filename_logs)
-            print(cmd['extract_results'])
-            stdout = os.popen(cmd['extract_results']).read()
-            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            print(stdout)
-            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
-            # get NOPM and TPM
-            cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
-            print(cmd['extract_results'])
-            stdout = os.popen(cmd['extract_results']).read()
-            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            print(stdout)
-            list_nopm = re.findall('achieved (.+?) NOPM', stdout)
-            list_tpm = re.findall('from (.+?) ', stdout)
-            # get vuser
-            cmd['extract_results'] = 'grep -H -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
-            print(cmd['extract_results'])
-            stdout = os.popen(cmd['extract_results']).read()
-            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            print(stdout)
-            #list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
-            list_vuser_pod = re.findall(str(self.code)+'-(.+?).log:Vuser 1:(.+?) Active', stdout)
-            list_pods = [x for (x,y) in list_vuser_pod]
-            list_vuser = [y for (x,y) in list_vuser_pod]
-            # what we have found
-            print(list_nopm)
-            print(list_tpm)
-            print(list_vuser)
-            print(list_pods)
-            # build DataFrame
-            if len(list_nopm) and len(list_tpm) and len(list_vuser):
-                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser, list_pods)))
-                df.columns = ['NOPM','TPM', 'VUSERS', 'pods']
-                if len(connection_name) > 0:
-                    df.index.name = str(connection_name[0])
-                print(df)
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-                #self.loading_parameters['HAMMERDB_VUSERS']
+        self.evaluator.end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
@@ -1131,6 +1082,16 @@ class tpcc(default):
 
         :return: exit code of test script
         """
+        self.cluster.logger.debug('tpcc.test_results({})'.format(jobname))
+        self.evaluator.test_results()
+    def OLD_test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        #self.evaluator.test_results()
         try:
             path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
             #path = '../benchmarks/1669163583'
@@ -1152,36 +1113,7 @@ class tpcc(default):
         This is specific to HammerDB.
         """
         self.cluster.logger.debug('tpcc.evaluate_results()')
-        df_collected = None
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".df.pickle"):
-                #print(filename)
-                df = pd.read_pickle(path+"/"+filename)
-                #df = self.log_to_df(path+"/"+filename)
-                #filename_df = path+"/"+filename+".df.pickle"
-                #f = open(filename_df, "wb")
-                #pickle.dump(df, f)
-                #f.close()
-                if not df.empty:
-                    df['configuration'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-        if not df_collected is None and not df_collected.empty:
-            df_collected['index'] = df_collected.index.map(str)
-            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
-            df_collected.drop('index', axis=1, inplace=True)
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-            self.cluster.logger.debug(df_collected)
+        self.evaluator.evaluate_results(pod_dashboard)
 
 
 
@@ -1295,7 +1227,7 @@ class tsbs(default):
             )
         #self.monitoring_active = True
         self.maintaining_active = True
-    def end_loading(self, jobname):
+    def OLD_end_loading(self, jobname):
         """
         Ends a loading job.
         This is for storing or cleaning measures.
@@ -1349,6 +1281,7 @@ class ycsb(default):
             )
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
+        self.evaluator = evaluator.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def log_to_df(self, filename):
         try:
             with open(filename) as f:
@@ -1371,7 +1304,7 @@ class ycsb(default):
         except Exception as e:
             print(e)
             return pd.DataFrame()
-    def end_loading(self, jobname):
+    def OLD_end_loading(self, jobname):
         """
         Ends a loading job.
         This is for storing or cleaning measures.
@@ -1392,7 +1325,7 @@ class ycsb(default):
                 pickle.dump(df, f)
                 f.close()
         return super().end_loading(jobname)
-    def end_benchmarking(self, jobname):
+    def OLD_end_benchmarking(self, jobname):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
@@ -1400,20 +1333,18 @@ class ycsb(default):
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('ycsb.end_benchmarking({})'.format(jobname))
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
-                print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
+        self.evaluator.end_benchmarking(jobname)
         return super().end_benchmarking(jobname)
     def test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        self.cluster.logger.debug('ycsb.test_results({})'.format(jobname))
+        self.evaluator.test_results()
+    def OLD_test_results(self):
         """
         Run test script locally.
         Extract exit code.
@@ -1567,21 +1498,10 @@ class ycsb(default):
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
-        This is specific to ycsb.
+        This is specific to YCSB.
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        path = self.path
-        df = self.get_overview_loading()
-        filename_df = path+"/bexhoma-loading.all.df.pickle"
-        f = open(filename_df, "wb")
-        pickle.dump(df, f)
-        f.close()
-        df = self.get_overview_benchmarking()
-        filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
-        f = open(filename_df, "wb")
-        pickle.dump(df, f)
-        f.close()
+        self.evaluator.evaluate_results(pod_dashboard)
     def get_result(self, component='loading'):
         #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         path = self.path
@@ -1686,6 +1606,7 @@ class benchbase(default):
             )
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
+        self.evaluator = evaluator.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
@@ -1711,7 +1632,7 @@ class benchbase(default):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
-    def end_loading(self, jobname):
+    def OLD_end_loading(self, jobname):
         """
         Ends a loading job.
         This is for storing or cleaning measures.
@@ -1757,7 +1678,7 @@ class benchbase(default):
             f.close()
         """
         return super().end_loading(jobname)
-    def end_benchmarking(self, jobname):
+    def OLD_end_benchmarking(self, jobname):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
@@ -1808,6 +1729,15 @@ class benchbase(default):
 
         :return: exit code of test script
         """
+        self.cluster.logger.debug('benchbase.test_results({})'.format(jobname))
+        self.evaluator.test_results()
+    def OLD_test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
         self.cluster.logger.debug('benchbase.test_results()')
         try:
             #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
@@ -1826,47 +1756,9 @@ class benchbase(default):
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
-        This is specific to benchbase.
+        This is specific to Benchbase.
         """
-        #self.cluster.logger.debug('benchbase.evaluate_results()')
-        df_collected = None
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        path = self.path
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log.df.pickle"):
-                #print(filename)
-                #df = self.log_to_df(path+"/"+filename)
-                df = pd.read_pickle(path+"/"+filename)
-                #filename_df = path+"/"+filename+".df.pickle"
-                #f = open(filename_df, "wb")
-                #pickle.dump(df, f)
-                #f.close()
-                if not df.empty:
-                    if self.name_format is not None:
-                        name_parts = self.get_parts_of_name(df.index.name)
-                        #print(name_parts)
-                        for col, value in name_parts.items():
-                            df[col] = value
-                    df['configuration'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-        if not df_collected is None and not df_collected.empty:
-            df_collected['index'] = (df_collected.groupby('configuration').cumcount() + 1).map(str)#df_collected.index.map(str)
-            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
-            df_collected.drop('index', axis=1, inplace=True)
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-            #print(df_collected)
-            return df_collected
-            #self.cluster.logger.debug(df_collected)
-
+        self.cluster.logger.debug('benchbase.evaluate_results()')
+        self.evaluator.evaluate_results(pod_dashboard)
 
 
