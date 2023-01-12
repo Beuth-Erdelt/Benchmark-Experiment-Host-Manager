@@ -936,8 +936,9 @@ class tpcc(logger):
                     df = pd.read_pickle(self.path+"/"+filename)
                     print(df)
                     print(df.index.name)
-                    print(list(df['vusers']))
-                    print("vusers", " ".join(l))
+                    list_vusers = list(df['vusers'])
+                    print(list_vusers)
+                    print("vusers", " ".join(list_vusers))
             return super().test_results()
         except Exception as e:
             print(e)
