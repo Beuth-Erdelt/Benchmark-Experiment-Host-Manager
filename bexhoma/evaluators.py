@@ -369,11 +369,11 @@ class logger(base):
             if self.include_benchmarking:
                 df = self.get_df_benchmarking()
                 print(df)
+                workflow = self.reconstruct_workflow(df)
+                print(workflow)
             if self.include_loading:
                 df = self.get_df_loading()
                 print(df)
-            workflow = self.reconstruct_workflow()
-            print(workflow)
             return 0
         except Exception as e:
             print(e)
