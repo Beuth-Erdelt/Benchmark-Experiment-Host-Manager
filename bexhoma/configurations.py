@@ -2250,6 +2250,7 @@ scrape_configs:
                         #print(stdout)
                         # currently, only benchmarking fetches loading metrics
                         #self.fetch_metrics_loading(connection=self.configuration)
+                        pass
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
