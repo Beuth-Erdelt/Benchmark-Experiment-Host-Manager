@@ -118,6 +118,7 @@ class default():
         self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
+        self.use_distributed_datasource = False #: True, iff the SUT should mount 'benchmark-data-volume' as source of (non-generated) data
         # scaling of other components
         self.num_worker = worker
         self.num_loading = 0
@@ -878,6 +879,7 @@ scrape_configs:
         :param configuration: Name of the dbms configuration
         """
         use_storage = self.use_storage()
+        use_data = self.use_distributed_datasource
         #storage_label = 'tpc-ds-1'
         if len(app)==0:
             app = self.appname
@@ -1117,6 +1119,10 @@ scrape_configs:
                                     #print(vol['mountPath'])
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                                if vol['name'] == 'benchmark-data-volume':
+                                    #print(vol['mountPath'])
+                                    if not use_data:
+                                        del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
                         if self.dockerimage:
                             result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                         else:
@@ -1134,6 +1140,9 @@ scrape_configs:
                                 del result[key]['spec']['template']['spec']['volumes'][i]
                             else:
                                 vol['persistentVolumeClaim']['claimName'] = name_pvc
+                        if vol['name'] == 'benchmark-data-volume':
+                            if not use_data:
+                                del result[key]['spec']['template']['spec']['volumes'][i]
                         if 'hostPath' in vol and not self.monitoring_active:
                             # we only need hostPath for monitoring
                                 del result[key]['spec']['template']['spec']['volumes'][i]
