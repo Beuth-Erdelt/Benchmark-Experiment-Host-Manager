@@ -119,6 +119,8 @@ class default():
         self.querymanagement = {}
         self.workload = {}
         self.monitoring_active = True
+        self.prometheus_interval = "3s"
+        self.prometheus_timeout = "3s"
         self.loading_active = False
         self.num_loading = 0
         self.num_loading_pods = 0

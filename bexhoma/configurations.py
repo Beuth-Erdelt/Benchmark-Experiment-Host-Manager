@@ -127,6 +127,8 @@ class default():
         self.num_maintaining_pods = 0
         # are there other components?
         self.monitoring_active = experiment.monitoring_active
+        self.prometheus_interval = experiment.prometheus_interval
+        self.prometheus_timeout = experiment.prometheus_timeout
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
         self.jobtemplate_maintaining = ""
@@ -677,8 +679,8 @@ class default():
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                         envs = dep['spec']['template']['spec']['containers'][0]['env']
-                        prometheus_interval = "15s"
-                        prometheus_timeout = "15s"
+                        #prometheus_interval = "15s"
+                        #prometheus_timeout = "15s"
                         prometheus_config = """global:
   scrape_interval: 15s
 
@@ -692,7 +694,7 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=prometheus_interval, prometheus_timeout=prometheus_timeout)
+      - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # services of workers
                         name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
                         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
@@ -704,7 +706,7 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i, prometheus_interval=prometheus_interval, prometheus_timeout=prometheus_timeout)
+      - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
