@@ -1890,7 +1890,7 @@ scrape_configs:
             # get monitoring for loading
             if self.monitoring_active:
                 cmd = {}
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
                 self.logger.debug(stdout)
     def OLD_run_benchmarker_pod(self,
