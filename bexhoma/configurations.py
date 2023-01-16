@@ -677,20 +677,22 @@ class default():
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                         envs = dep['spec']['template']['spec']['containers'][0]['env']
+                        prometheus_interval = "15s"
+                        prometheus_timeout = "15s"
                         prometheus_config = """global:
   scrape_interval: 15s
 
 scrape_configs:
   - job_name: '{master}'
-    scrape_interval: 5s
-    scrape_timeout: 5s
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
     static_configs:
       - targets: ['{master}:9300']
   - job_name: 'monitor-gpu'
-    scrape_interval: 5s
-    scrape_timeout: 5s
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{master}:9400']""".format(master=name_sut)
+      - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=prometheus_interval, prometheus_timeout=prometheus_timeout)
                         # services of workers
                         name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
                         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
@@ -699,10 +701,10 @@ scrape_configs:
                             print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
   - job_name: '{worker}'
-    scrape_interval: 5s
-    scrape_timeout: 5s
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i)
+      - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i, prometheus_interval=prometheus_interval, prometheus_timeout=prometheus_timeout)
                             i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
