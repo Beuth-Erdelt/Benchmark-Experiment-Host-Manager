@@ -682,13 +682,13 @@ class default():
 
 scrape_configs:
   - job_name: '{master}'
-    scrape_interval: 3s
-    scrape_timeout: 3s
+    scrape_interval: 5s
+    scrape_timeout: 5s
     static_configs:
       - targets: ['{master}:9300']
   - job_name: 'monitor-gpu'
-    scrape_interval: 3s
-    scrape_timeout: 3s
+    scrape_interval: 5s
+    scrape_timeout: 5s
     static_configs:
       - targets: ['{master}:9400']""".format(master=name_sut)
                         # services of workers
@@ -699,8 +699,8 @@ scrape_configs:
                             print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
   - job_name: '{worker}'
-    scrape_interval: 3s
-    scrape_timeout: 3s
+    scrape_interval: 5s
+    scrape_timeout: 5s
     static_configs:
       - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i)
                             i = i + 1
