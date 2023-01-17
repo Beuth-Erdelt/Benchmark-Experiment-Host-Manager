@@ -1139,6 +1139,40 @@ class tpcc(default):
         """
         self.cluster.logger.debug('tpcc.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    print(pod_dashboard, status)
+        # copy logs and yamls to result folder
+        #print("Copy configuration and logs", end="", flush=True)
+        #directory = os.fsencode(self.path)
+        #for file in os.listdir(directory):
+        #    filename = os.fsdecode(file)
+        #    if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error") or filename.endswith(".pickle"): 
+        #        self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
+        #        print(".", end="", flush=True)
+        #print("done!")
+        cmd = {}
+        #cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
+        #self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
+        #print("Join results ", end="", flush=True)
+        #cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
+        #self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
+        #print("done!")
+        #print("Build evaluation cube ", end="", flush=True)
+        #cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
+        #self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
+        #print("done!")
+        # download all results from cluster
+        #filename = 'evaluation.json'
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
 
 
 
