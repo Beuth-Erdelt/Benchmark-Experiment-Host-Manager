@@ -941,7 +941,7 @@ class default():
         # mark pod with new end time and duration
         job_labels = self.cluster.get_jobs_labels(app=self.cluster.appname, component='benchmarker', experiment=self.code)
         if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
-            start_time = job_labels[jobname]['start_time']
+            start_time = int(job_labels[jobname]['start_time'])
             #self.timeLoadingEnd = default_timer()
             #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
             #self.experiment.cluster.logger.debug("LOADING LABELS")
