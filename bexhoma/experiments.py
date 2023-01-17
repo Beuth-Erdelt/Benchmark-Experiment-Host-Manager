@@ -942,6 +942,7 @@ class default():
         job_labels = self.cluster.get_jobs_labels(app=self.cluster.appname, component='benchmarker', experiment=self.code)
         if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
             start_time = int(job_labels[jobname]['start_time'])
+            connection = job_labels[jobname]['connection']
             #self.timeLoadingEnd = default_timer()
             #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
             #self.experiment.cluster.logger.debug("LOADING LABELS")
@@ -954,9 +955,10 @@ class default():
             time_now = str(datetime.now())
             end_time = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
             self.cluster.logger.debug("BENCHMARKING LABELS")
-            self.cluster.logger.debug("start_time", start_time)
-            self.cluster.logger.debug("end_time", end_time)
-            self.cluster.logger.debug("duration", end_time-start_time)
+            self.cluster.logger.debug("connection: "+str(connection))
+            self.cluster.logger.debug("start_time: "+str(start_time))
+            self.cluster.logger.debug("end_time: "+str(end_time))
+            self.cluster.logger.debug("duration: "+str(end_time-start_time))
             #fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
             #print(fullcommand)
             #self.experiment.cluster.kubectl(fullcommand)
@@ -967,7 +969,7 @@ class default():
                 # get monitoring for loading
                 if self.monitoring_active:
                     cmd = {}
-                    cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(self, self.code, start_time, end_time)
+                    cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(connection, self.code, start_time, end_time)
                     stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
                     self.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
