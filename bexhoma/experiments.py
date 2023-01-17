@@ -938,18 +938,38 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
-        """
-        # copy config to pod - dashboard
-        pods = self.experiment.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-            # get monitoring for loading
-            if self.monitoring_active:
-                cmd = {}
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(self, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-                self.logger.debug(stdout)
-        """
+        # mark pod with new end time and duration
+        job_labels = self.cluster.get_jobs_labels(app=app, component='benchmarker', experiment=self.code)
+        if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
+            start_time = job_labels[jobname]['start_time']
+            #self.timeLoadingEnd = default_timer()
+            #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
+            #self.experiment.cluster.logger.debug("LOADING LABELS")
+            #self.experiment.cluster.logger.debug(self.timeLoading)
+            #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
+            #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
+            #self.timeLoading = float(self.timeLoading) + float(timeLoading)
+            now = datetime.utcnow()
+            now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+            time_now = str(datetime.now())
+            end_time = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            self.cluster.logger.debug("BENCHMARKING LABELS")
+            self.cluster.logger.debug("start_time", start_time)
+            self.cluster.logger.debug("end_time", end_time)
+            self.cluster.logger.debug("duration", end_time-start_time)
+            #fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
+            #print(fullcommand)
+            #self.experiment.cluster.kubectl(fullcommand)
+            # copy config to pod - dashboard
+            pods = self.cluster.get_pods(component='dashboard')
+            if len(pods) > 0:
+                pod_dashboard = pods[0]
+                # get monitoring for loading
+                if self.monitoring_active:
+                    cmd = {}
+                    cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(self, self.code, start_time, end_time)
+                    stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+                    self.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """

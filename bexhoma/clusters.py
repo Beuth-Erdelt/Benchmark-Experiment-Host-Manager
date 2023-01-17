@@ -1001,6 +1001,48 @@ class testbed():
             # try again, if not failed due to "not found"
             if not e.status == 404:
                 return self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+    def get_jobs_labels(self, app='', component='', experiment='', configuration='', client=''):
+        """
+        Return all jobs matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED?
+        """
+        #print("getJobs")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
+        self.logger.debug('get_jobs_labels '+label)
+        job_labels = {}
+        try:
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
+            pprint(api_response)
+            if len(api_response.items) > 0:
+                for item in api_response.items:
+                    job_labels[item.metadata.name] = item.metadata.labels
+                return job_labels
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.get_jobs_labels(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def get_job_status(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         """
         Return status of a jobs given by name or matching a set of labels (component/ experiment/ configuration)
