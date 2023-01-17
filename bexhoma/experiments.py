@@ -969,8 +969,8 @@ class default():
                 # get monitoring for loading
                 if self.monitoring_active:
                     cmd = {}
-                    cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(connection, self.code, start_time, end_time)
-                    stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+                    cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(connection, self.code, start_time, end_time)
+                    stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                     self.cluster.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
@@ -1600,6 +1600,10 @@ class ycsb(default):
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        # download results
+        cmd = {}
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
     def get_result(self, component='loading'):
         #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         path = self.path
@@ -1863,5 +1867,9 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        # download results
+        cmd = {}
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
 
 
