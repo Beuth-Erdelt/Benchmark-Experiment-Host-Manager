@@ -2415,7 +2415,7 @@ scrape_configs:
                 dep['metadata']['labels']['client'] = str(client)
                 dep['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['metadata']['labels']['volume'] = self.volume
-                dep['metadata']['labels']['start_time'] = time_now_int
+                dep['metadata']['labels']['start_time'] = str(time_now_int)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
@@ -2425,7 +2425,7 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['spec']['template']['metadata']['labels']['volume'] = self.volume
-                dep['spec']['template']['metadata']['labels']['start_time'] = time_now_int
+                dep['spec']['template']['metadata']['labels']['start_time'] = str(time_now_int)
                 for i_container, c in enumerate(dep['spec']['template']['spec']['containers']):
                     #print(i_container)
                     env_manifest = {}
