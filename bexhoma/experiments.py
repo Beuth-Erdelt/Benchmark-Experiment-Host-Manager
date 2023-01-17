@@ -938,6 +938,18 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
+        """
+        # copy config to pod - dashboard
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            # get monitoring for loading
+            if self.monitoring_active:
+                cmd = {}
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(self, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+                self.logger.debug(stdout)
+        """
         self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """

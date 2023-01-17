@@ -1749,10 +1749,18 @@ scrape_configs:
             self.client = client
         if len(dialect) == 0 and len(self.dialect) > 0:
             dialect = self.dialect
+        # set more parameters
         experimentRun = str(self.num_experiment_to_apply_done+1)
         #self.experiment.cluster.stopPortforwarding()
         # set query management for new query file
         tools.query.template = self.experiment.querymanagement
+        # store information about current benchmark
+        self.current_benchmark_connection = connection
+        now = datetime.utcnow()
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        time_now = str(datetime.now())
+        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        self.current_benchmark_start = int(time_now_int)
         # get connection config (sut)
         monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
         service_name = self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
@@ -1894,7 +1902,7 @@ scrape_configs:
             # get monitoring for loading
             if self.monitoring_active:
                 cmd = {}
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -e {} -ts {} -te {}'.format(connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
                 self.logger.debug(stdout)
     def OLD_run_benchmarker_pod(self,
@@ -2319,7 +2327,7 @@ scrape_configs:
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         return
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1):#, jobname=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection=''):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -2345,6 +2353,13 @@ scrape_configs:
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
+        # start (create) time of the job
+        now = datetime.utcnow()
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        time_now = str(datetime.now())
+        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        #self.current_benchmark_start = int(time_now_int)
+        # parameter of the configuration
         c = copy.deepcopy(self.dockertemplate['template'])
         c['connectionmanagement'] = {}
         c['connectionmanagement']['numProcesses'] = self.connectionmanagement['numProcesses']
@@ -2394,19 +2409,23 @@ scrape_configs:
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['connection'] = connection
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
                 dep['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['metadata']['labels']['volume'] = self.volume
+                dep['metadata']['labels']['start_time'] = time_now_int
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
                 dep['spec']['template']['metadata']['labels']['configuration'] = configuration
+                dep['spec']['template']['metadata']['labels']['connection'] = connection
                 dep['spec']['template']['metadata']['labels']['dbms'] = self.docker
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['spec']['template']['metadata']['labels']['volume'] = self.volume
+                dep['spec']['template']['metadata']['labels']['start_time'] = time_now_int
                 for i_container, c in enumerate(dep['spec']['template']['spec']['containers']):
                     #print(i_container)
                     env_manifest = {}
@@ -2484,8 +2503,8 @@ scrape_configs:
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{experimentRun}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-dbmsbenchmarker.yml", num_pods=num_pods, nodegroup='benchmarking')
-    def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1):
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-dbmsbenchmarker.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)
+    def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection=''):
         """
         Creates a job template for maintaining.
         This sets meta data in the template and ENV.
@@ -2526,8 +2545,8 @@ scrape_configs:
         template = "jobtemplate-maintaining.yml"
         if len(self.experiment.jobtemplate_maintaining) > 0:
             template = self.experiment.jobtemplate_maintaining
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, num_pods=num_pods, nodegroup='maintaining')#, jobname=jobname)
-    def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias='', num_pods=1):
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, num_pods=num_pods, nodegroup='maintaining', connection=connection)#, jobname=jobname)
+    def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection=''):
         """
         Creates a job template for loading.
         This sets meta data in the template and ENV.
@@ -2571,7 +2590,7 @@ scrape_configs:
             template = self.experiment.jobtemplate_loading
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection)
 
 
 
@@ -2842,7 +2861,7 @@ class hammerdb(default):
         env = {**env, **self.loading_parameters}
         env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-hammerdb.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-hammerdb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)#, jobname=jobname)
 
 
 
@@ -3108,7 +3127,7 @@ class ycsb(default):
         env = {**env, **self.loading_parameters}
         env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)#, jobname=jobname)
 
 
 
@@ -3373,7 +3392,7 @@ class benchbase(default):
         env = {**env, **self.loading_parameters}
         env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-benchbase.yml", num_pods=num_pods, nodegroup='benchmarking')#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-benchbase.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)#, jobname=jobname)
 
 
 
