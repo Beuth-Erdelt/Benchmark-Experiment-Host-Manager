@@ -971,7 +971,7 @@ class default():
                     cmd = {}
                     cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -e {} -ts {} -te {}'.format(connection, self.code, start_time, end_time)
                     stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-                    self.logger.debug(stdout)
+                    self.cluster.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """
