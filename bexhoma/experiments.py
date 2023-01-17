@@ -1183,6 +1183,14 @@ class tpcc(default):
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     print(pod_dashboard, status)
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
         # copy logs and yamls to result folder
         #print("Copy configuration and logs", end="", flush=True)
         #directory = os.fsencode(self.path)
@@ -1601,7 +1609,6 @@ class ycsb(default):
         self.cluster.logger.debug('ycsb.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
         # download results
-        cmd = {}
         if len(pod_dashboard) == 0:
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
@@ -1612,6 +1619,15 @@ class ycsb(default):
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     print(pod_dashboard, status)
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+        cmd = {}
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
     def get_result(self, component='loading'):
@@ -1878,7 +1894,6 @@ class benchbase(default):
         self.cluster.logger.debug('benchbase.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
         # download results
-        cmd = {}
         if len(pod_dashboard) == 0:
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
@@ -1889,6 +1904,15 @@ class benchbase(default):
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     print(pod_dashboard, status)
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+        cmd = {}
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
 
