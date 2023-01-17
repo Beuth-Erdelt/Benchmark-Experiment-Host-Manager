@@ -1602,6 +1602,16 @@ class ycsb(default):
         self.evaluator.evaluate_results(pod_dashboard)
         # download results
         cmd = {}
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    print(pod_dashboard, status)
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
     def get_result(self, component='loading'):
@@ -1869,6 +1879,16 @@ class benchbase(default):
         self.evaluator.evaluate_results(pod_dashboard)
         # download results
         cmd = {}
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    print(pod_dashboard, status)
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
 
