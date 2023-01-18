@@ -89,7 +89,7 @@ class testbed():
             configfile=f.read()
             self.config = eval(configfile)
         self.experiments_configfolder = experiments_configfolder
-        self.resultfolder = self.config['benchmarker']['resultfolder']
+        self.resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
         self.timeLoading = 0
