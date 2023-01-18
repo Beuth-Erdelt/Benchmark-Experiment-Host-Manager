@@ -978,7 +978,7 @@ class default():
                     filename = 'connections.config'
                     cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     stdout = self.cluster.kubectl(cmd['upload_connection_file'])
-                    self.logger.debug(stdout)
+                    self.cluster.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """
