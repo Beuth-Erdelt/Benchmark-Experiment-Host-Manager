@@ -1911,7 +1911,7 @@ scrape_configs:
                 # upload connections infos again, metrics has overwritten it
                 filename = 'connections.config'
                 cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                 self.logger.debug(stdout)
     def execute_command_in_pod_sut(self, command, pod='', container='dbms', params=''):
         """
