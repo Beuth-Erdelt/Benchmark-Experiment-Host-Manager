@@ -1662,7 +1662,7 @@ scrape_configs:
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
-    def fetch_metrics_loading(self, connection=None, configuration=''):
+    def OLD_fetch_metrics_loading(self, connection=None, configuration=''):
         self.logger.debug('configuration.fetch_metrics()')
         # set general parameter
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
@@ -1907,6 +1907,11 @@ scrape_configs:
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
                 self.logger.debug(stdout)
                 self.logger.debug(stderr)
+                # upload connections infos again, metrics has overwritten it
+                filename = 'connections.config'
+                cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                self.logger.debug(stdout)
     def OLD_run_benchmarker_pod(self,
         connection=None,
         alias='',
