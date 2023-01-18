@@ -1028,7 +1028,7 @@ class testbed():
         job_labels = {}
         try:
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
-            pprint(api_response)
+            #pprint(api_response)
             if len(api_response.items) > 0:
                 for item in api_response.items:
                     job_labels[item.metadata.name] = item.metadata.labels
