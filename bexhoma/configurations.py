@@ -1906,6 +1906,7 @@ scrape_configs:
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
                 self.logger.debug(stdout)
+                self.logger.debug(stderr)
     def OLD_run_benchmarker_pod(self,
         connection=None,
         alias='',
