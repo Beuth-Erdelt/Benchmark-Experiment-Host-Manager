@@ -1496,7 +1496,7 @@ scrape_configs:
         return int(timestamp_remote)-int(timestamp_local)
     def get_host_diskspace_used_data(self):
         """
-        Returns information about the sut's host disk space used for the data (the database).
+        Returns information about the sut's host disk space used for the data (the database) in kilobyte.
         Basically this calls `du` on the host directory that is mentioned in cluster.config as to store the database.
 
         :return: Size of disk used for database in Bytes
