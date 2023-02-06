@@ -2042,44 +2042,6 @@ scrape_configs:
                             self.timeLoadingEnd = float(pod_labels[pod]['timeLoadingEnd'])
                         if 'timeLoading' in pod_labels[pod]:
                             self.timeLoading = float(pod_labels[pod]['timeLoading'])
-                    # mark pod with new end time and duration
-                    pods_sut = self.experiment.cluster.get_pods(app=app, component='sut', experiment=experiment, configuration=configuration)
-                    if len(pods_sut) > 0:
-                        pod_sut = pods_sut[0]
-                        #self.timeLoadingEnd = default_timer()
-                        #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
-                        #self.experiment.cluster.logger.debug("LOADING LABELS")
-                        #self.experiment.cluster.logger.debug(self.timeLoading)
-                        #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
-                        #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
-                        #self.timeLoading = float(self.timeLoading) + float(timeLoading)
-                        now = datetime.utcnow()
-                        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-                        time_now = str(datetime.now())
-                        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-                        self.timeLoadingEnd = int(time_now_int)
-                        self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
-                        self.experiment.cluster.logger.debug("LOADING LABELS")
-                        self.experiment.cluster.logger.debug(self.timeLoadingStart)
-                        self.experiment.cluster.logger.debug(self.timeLoadingEnd)
-                        self.experiment.cluster.logger.debug(self.timeLoading)
-                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
-                        #print(fullcommand)
-                        self.experiment.cluster.kubectl(fullcommand)
-                        # TODO: Also mark volume
-                        use_storage = self.use_storage()
-                        if use_storage:
-                            if self.storage['storageConfiguration']:
-                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
-                            else:
-                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
-                            volume = name_pvc
-                        else:
-                            volume = ''
-                        if volume:
-                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
-                            #print(fullcommand)
-                            self.experiment.cluster.kubectl(fullcommand)
                     # delete job and all its pods
                     self.experiment.cluster.delete_job(job)
                     pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2117,6 +2079,105 @@ scrape_configs:
                         # currently, only benchmarking fetches loading metrics
                         #self.fetch_metrics_loading(connection=self.configuration)
                         pass
+                    # mark pod with new end time and duration
+                    pods_sut = self.experiment.cluster.get_pods(app=app, component='sut', experiment=experiment, configuration=configuration)
+                    if len(pods_sut) > 0:
+                        pod_sut = pods_sut[0]
+                        def get_timing(path, jobname):
+                            def extract_timing(jobname, container):
+                                def get_job_timing(filename):
+                                    """
+                                    Transforms a log file in text format into list of pairs of timing information.
+                                    This reads BEXHOMA_START and BEXHOMA_END
+
+                                    :param filename: Name of the log file 
+                                    :return: List of pairs (start,end) per pod
+                                    """
+                                    try:
+                                        with open(filename) as f:
+                                            lines = f.readlines()
+                                        stdout = "".join(lines)
+                                        pod_name = filename[filename.rindex("-")+1:-len(".log")]
+                                        timing_start = re.findall('BEXHOMA_START:(.+?)\n', stdout)[0]
+                                        timing_end = re.findall('BEXHOMA_END:(.+?)\n', stdout)[0]
+                                        return (int(timing_start), int(timing_end))
+                                    except Exception as e:
+                                        print(e)
+                                        return (0,0)
+                                directory = os.fsencode(path)
+                                timing = []
+                                for file in os.listdir(directory):
+                                    filename = os.fsdecode(file)
+                                    if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
+                                        #print(filename)
+                                        (timing_start, timing_end) = get_job_timing(path+"/"+filename)
+                                        #print(df)
+                                        if (timing_start, timing_end) == (0,0):
+                                            print("Error in "+filename)
+                                        else:
+                                            timing.append((timing_start, timing_end))
+                                print(timing)
+                                return timing
+                            timing_datagenerator = extract_timing(jobname, container="datagenerator")
+                            total_time = 0
+                            if len(timing_datagenerator) > 0:
+                                print([end-start for (start,end) in timing_datagenerator])
+                                timing_start = min([start for (start,end) in timing_datagenerator])
+                                timing_end = max([end for (start,end) in timing_datagenerator])
+                                total_time = timing_end - timing_start
+                                print("Generator", total_time)
+                            timing_sensor = extract_timing(jobname, container="sensor")
+                            if len(timing_sensor) > 0:
+                                print([end-start for (start,end) in timing_sensor])
+                                timing_start = min([start for (start,end) in timing_sensor])
+                                timing_end = max([end for (start,end) in timing_sensor])
+                                total_time = timing_end - timing_start
+                                print("Loader", total_time)
+                            if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
+                                timing_total = timing_datagenerator + timing_sensor
+                                timing_start = min([start for (start,end) in timing_total])
+                                timing_end = max([end for (start,end) in timing_total])
+                                total_time = timing_end - timing_start
+                                print("Total", total_time)
+                            return total_time
+                        #self.timeLoadingEnd = default_timer()
+                        #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
+                        #self.experiment.cluster.logger.debug("LOADING LABELS")
+                        #self.experiment.cluster.logger.debug(self.timeLoading)
+                        #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
+                        #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
+                        #self.timeLoading = float(self.timeLoading) + float(timeLoading)
+                        total_time = get_timing(self.experiment.path, job)
+                        now = datetime.utcnow()
+                        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+                        time_now = str(datetime.now())
+                        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+                        self.timeLoadingEnd = int(time_now_int)
+                        # this sets the loading time to the max span of pods
+                        self.timeLoading = total_time + self.timeLoading
+                        # this sets the loading time to the span until "now" (including waiting and starting overhead)
+                        #self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
+                        self.experiment.cluster.logger.debug("LOADING LABELS")
+                        self.experiment.cluster.logger.debug(self.timeLoadingStart)
+                        self.experiment.cluster.logger.debug(self.timeLoadingEnd)
+                        self.experiment.cluster.logger.debug(self.timeLoading)
+                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
+                        #print(fullcommand)
+                        self.experiment.cluster.kubectl(fullcommand)
+                        # TODO: Also mark volume
+                        use_storage = self.use_storage()
+                        if use_storage:
+                            if self.storage['storageConfiguration']:
+                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+                            else:
+                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+                            volume = name_pvc
+                        else:
+                            volume = ''
+                        if volume:
+                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
+                            #print(fullcommand)
+                            self.experiment.cluster.kubectl(fullcommand)
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
