@@ -2138,6 +2138,7 @@ scrape_configs:
                                 print("Loader", total_time)
                             if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
                                 timing_total = timing_datagenerator + timing_sensor
+                                print(timing_total)
                                 timing_start = min([start for (start,end) in timing_total])
                                 timing_end = max([end for (start,end) in timing_total])
                                 total_time = timing_end - timing_start
