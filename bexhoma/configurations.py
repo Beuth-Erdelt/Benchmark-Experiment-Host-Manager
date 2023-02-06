@@ -2105,10 +2105,12 @@ scrape_configs:
                                         print(e)
                                         return (0,0)
                                 directory = os.fsencode(path)
+                                print(jobname)
                                 timing = []
                                 for file in os.listdir(directory):
                                     filename = os.fsdecode(file)
-                                    if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
+                                    #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
+                                    if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
                                         #print(filename)
                                         (timing_start, timing_end) = get_job_timing(path+"/"+filename)
                                         #print(df)
