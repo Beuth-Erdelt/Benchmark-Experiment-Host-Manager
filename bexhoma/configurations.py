@@ -27,6 +27,7 @@ import time
 from pprint import pprint
 #from kubernetes import client, config
 import subprocess
+import re
 import os
 from timeit import default_timer
 import psutil
@@ -2105,7 +2106,7 @@ scrape_configs:
                                         print(e)
                                         return (0,0)
                                 directory = os.fsencode(path)
-                                print(jobname)
+                                #print(jobname)
                                 timing = []
                                 for file in os.listdir(directory):
                                     filename = os.fsdecode(file)
