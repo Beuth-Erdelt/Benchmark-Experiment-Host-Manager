@@ -2157,10 +2157,12 @@ scrape_configs:
                         time_now = str(datetime.now())
                         time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
                         self.timeLoadingEnd = int(time_now_int)
-                        # this sets the loading time to the max span of pods
-                        self.timeLoading = total_time + self.timeLoading
-                        # this sets the loading time to the span until "now" (including waiting and starting overhead)
-                        #self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
+                        if total_time > 0:
+                            # this sets the loading time to the max span of pods
+                            self.timeLoading = total_time + self.timeLoading
+                        else:
+                            # this sets the loading time to the span until "now" (including waiting and starting overhead)
+                            self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
                         self.experiment.cluster.logger.debug("LOADING LABELS")
                         self.experiment.cluster.logger.debug(self.timeLoadingStart)
                         self.experiment.cluster.logger.debug(self.timeLoadingEnd)
