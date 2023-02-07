@@ -141,6 +141,7 @@ class default():
         self.dockerimage = dockerimage #: Name of the Docker image of the SUT
         self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
         self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
+        self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
         self.loading_finished = False #: Time as an integer when initial loading has finished
@@ -1599,6 +1600,7 @@ scrape_configs:
         c['script'] = self.script
         c['info'] = info
         c['timeLoad'] = self.timeLoading
+        c['timeGenerate'] = self.timeGenerating
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
         # get hosts information
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -2122,12 +2124,15 @@ scrape_configs:
                                 print(timing)
                                 return timing
                             timing_datagenerator = extract_timing(jobname, container="datagenerator")
+                            generator_time = 0
+                            loader_time = 0
                             total_time = 0
                             if len(timing_datagenerator) > 0:
                                 print([end-start for (start,end) in timing_datagenerator])
                                 timing_start = min([start for (start,end) in timing_datagenerator])
                                 timing_end = max([end for (start,end) in timing_datagenerator])
                                 total_time = timing_end - timing_start
+                                generator_time = total_time
                                 print("Generator", total_time)
                             timing_sensor = extract_timing(jobname, container="sensor")
                             if len(timing_sensor) > 0:
@@ -2135,6 +2140,7 @@ scrape_configs:
                                 timing_start = min([start for (start,end) in timing_sensor])
                                 timing_end = max([end for (start,end) in timing_sensor])
                                 total_time = timing_end - timing_start
+                                loader_time = total_time
                                 print("Loader", total_time)
                             if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
                                 timing_total = timing_datagenerator + timing_sensor
@@ -2143,7 +2149,7 @@ scrape_configs:
                                 timing_end = max([end for (start,end) in timing_total])
                                 total_time = timing_end - timing_start
                                 print("Total", total_time)
-                            return total_time
+                            return total_time, generator_time, loader_time
                         #self.timeLoadingEnd = default_timer()
                         #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
                         #self.experiment.cluster.logger.debug("LOADING LABELS")
@@ -2151,7 +2157,7 @@ scrape_configs:
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
                         #self.timeLoading = float(self.timeLoading) + float(timeLoading)
-                        total_time = get_timing(self.experiment.path, job)
+                        total_time, generator_time, loader_time = get_timing(self.experiment.path, job)
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
@@ -2163,11 +2169,12 @@ scrape_configs:
                         else:
                             # this sets the loading time to the span until "now" (including waiting and starting overhead)
                             self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
+                        self.timeGenerating = generator_time
                         self.experiment.cluster.logger.debug("LOADING LABELS")
                         self.experiment.cluster.logger.debug(self.timeLoadingStart)
                         self.experiment.cluster.logger.debug(self.timeLoadingEnd)
                         self.experiment.cluster.logger.debug(self.timeLoading)
-                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
+                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={} timeGenerator={}'.format(time_now_int, self.timeLoading, generator_time)
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
                         # TODO: Also mark volume
