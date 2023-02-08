@@ -1122,20 +1122,6 @@ class tpcc(default):
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-    def OLD_end_benchmarking(self,jobname):
-        """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        #app = self.appname
-        #code = self.code
-        #experiment = code
-        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
-        #jobname = self.benchmarker_jobname
-        self.cluster.logger.debug('tpcc.end_benchmarking({})'.format(jobname))
-        self.evaluator.end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
@@ -1150,29 +1136,6 @@ class tpcc(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def OLD_test_results(self):
-        """
-        Run test script locally.
-        Extract exit code.
-
-        :return: exit code of test script
-        """
-        #self.evaluator.test_results()
-        try:
-            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-            #path = '../benchmarks/1669163583'
-            directory = os.fsencode(path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"): 
-                    df = pd.read_pickle(path+"/"+filename)
-                    print(df)
-                    print(df.index.name)
-                    print(list(df['VUSERS']))
-                    print(" ".join(l))
-            return 0
-        except Exception as e:
-            return 1
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
@@ -1335,23 +1298,8 @@ class tsbs(default):
             )
         #self.monitoring_active = True
         self.maintaining_active = True
-    def OLD_end_loading(self, jobname):
-        """
-        Ends a loading job.
-        This is for storing or cleaning measures.
 
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('tsbs.end_loading({})'.format(jobname))
-        filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
-        cmd = {}
-        # get connection name
-        cmd['extract_results'] = 'grep -R loaded {filename_logs}'.format(filename_logs=filename_logs)
-        print(cmd['extract_results'])
-        stdout = os.popen(cmd['extract_results']).read()
-        #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-        print(stdout)
-        return super().end_loading(jobname)
+
 
 """
 ############################################################################
@@ -1412,37 +1360,6 @@ class ycsb(default):
         except Exception as e:
             print(e)
             return pd.DataFrame()
-    def OLD_end_loading(self, jobname):
-        """
-        Ends a loading job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('ycsb.end_loading({})'.format(jobname))
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-") and filename.endswith(".sensor.log"):
-                print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-        return super().end_loading(jobname)
-    def OLD_end_benchmarking(self, jobname):
-        """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('ycsb.end_benchmarking({})'.format(jobname))
-        self.evaluator.end_benchmarking(jobname)
-        return super().end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
@@ -1457,27 +1374,6 @@ class ycsb(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def OLD_test_results(self):
-        """
-        Run test script locally.
-        Extract exit code.
-
-        :return: exit code of test script
-        """
-        self.cluster.logger.debug('ycsb.test_results()')
-        try:
-            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-            #path = '../benchmarks/1669163583'
-            directory = os.fsencode(path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"): 
-                    df = pd.read_pickle(path+"/"+filename)
-                    print(filename)
-                    print(df)
-            return 0
-        except Exception as e:
-            return 1
     def get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
@@ -1767,96 +1663,6 @@ class benchbase(default):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
-    def OLD_end_loading(self, jobname):
-        """
-        Ends a loading job.
-        This is for storing or cleaning measures.
-        Currently does nothing, since loading does not generate measures.
-
-        :param jobname: Name of the job to clean
-        """
-        return super().end_loading(jobname)
-        # legacy code
-        self.cluster.logger.debug('benchbase.end_loading({})'.format(jobname))
-        #df_collected = None
-        path = self.path
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-") and filename.endswith(".sensor.log"):
-                print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-                """
-                if not df.empty:
-                    if self.name_format is not None:
-                        name_parts = self.get_parts_of_name(df.index.name)
-                        print(name_parts)
-                        for col, value in name_parts.items():
-                            df[col] = value
-                    df['connection'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-                """
-        """
-        if not df_collected is None and not df_collected.empty:
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/"+jobname+".all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-        """
-        return super().end_loading(jobname)
-    def OLD_end_benchmarking(self, jobname):
-        """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('benchbase.end_benchmarking({})'.format(jobname))
-        #df_collected = None
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        path = self.path
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            #if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
-            if filename.startswith(jobname) and filename.endswith(".log"):
-                #print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-                """
-                if not df.empty:
-                    if self.name_format is not None:
-                        name_parts = self.get_parts_of_name(df.index.name)
-                        print(name_parts)
-                        for col, value in name_parts.items():
-                            df[col] = value
-                    df['connection'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-                """
-        """
-        if not df_collected is None and not df_collected.empty:
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/"+jobname+".all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-        """
-        return super().end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
@@ -1871,28 +1677,6 @@ class benchbase(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def OLD_test_results(self):
-        """
-        Run test script locally.
-        Extract exit code.
-
-        :return: exit code of test script
-        """
-        self.cluster.logger.debug('benchbase.test_results()')
-        try:
-            #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-            path = self.path
-            #path = '../benchmarks/1669163583'
-            directory = os.fsencode(path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"): 
-                    df = pd.read_pickle(path+"/"+filename)
-                    print(filename)
-                    print(df)
-            return 0
-        except Exception as e:
-            return 1
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
