@@ -2900,14 +2900,14 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading)
+    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
     #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading)
+        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
         #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
