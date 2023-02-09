@@ -462,7 +462,7 @@ class default():
             self.initscript = self.cluster.volumes[self.volume]['initscripts'][self.script]
         if indexing is not None:
             self.indexing = indexing
-            self.indexscript = self.cluster.volumes[self.experiment.volume]['initscripts'][self.indexing]
+            self.indexscript = self.cluster.volumes[self.volume]['initscripts'][self.indexing]
     def evaluate_results(self, pod_dashboard=''):
         """
         Let the dashboard pod build the evaluations.
