@@ -97,7 +97,11 @@ class default():
         else:
             self.script = self.experiment.script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
-        self.indexscript = []
+        self.indexing = self.experiment.indexing
+        if self.indexing:
+            self.indexscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.indexing]
+        else:
+            self.indexscript = []
         self.alias = alias
         if num_experiment_to_apply is not None:
             self.num_experiment_to_apply = num_experiment_to_apply
