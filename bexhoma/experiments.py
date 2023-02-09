@@ -128,6 +128,10 @@ class default():
         self.num_maintaining = 0
         self.num_maintaining_pods = 0
         self.name_format = None
+        self.script = ""
+        self.initscript = []
+        self.indexing = ""
+        self.indexscript = []
         # k8s:
         self.namespace = self.cluster.namespace
         self.configurations = []
