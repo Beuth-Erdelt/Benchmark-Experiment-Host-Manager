@@ -2208,22 +2208,22 @@ scrape_configs:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
         # only if inside cluster is done
-        if not loading_pods_active:
-            pod_labels = self.experiment.cluster.get_pods_labels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
-            #print(pod_labels)
-            if len(pod_labels) > 0:
-                pod = next(iter(pod_labels.keys()))
-                if len(self.indexscript):
-                    # we have to check indexing, too
-                    if 'indexed' in pod_labels[pod]:
-                        self.loading_started = True
-                        if pod_labels[pod]['indexed'] == 'True':
-                            self.loading_finished = True
-                        else:
-                            self.loading_finished = False
+        pod_labels = self.experiment.cluster.get_pods_labels(app=self.appname, component='sut', experiment=self.experiment.code, configuration=self.configuration)
+        #print(pod_labels)
+        if len(pod_labels) > 0:
+            pod = next(iter(pod_labels.keys()))
+            if len(self.indexscript):
+                # we have to check indexing, too
+                if 'indexed' in pod_labels[pod]:
+                    self.loading_started = True
+                    if pod_labels[pod]['indexed'] == 'True':
+                        self.loading_finished = True
                     else:
                         self.loading_finished = False
                 else:
+                    self.loading_finished = False
+            else:
+                if not loading_pods_active:
                     if 'loaded' in pod_labels[pod]:
                         self.loading_started = True
                         if pod_labels[pod]['loaded'] == 'True':
@@ -2238,9 +2238,9 @@ scrape_configs:
                     self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
                 if 'timeLoading' in pod_labels[pod]:
                     self.timeLoading = float(pod_labels[pod]['timeLoading'])
-            else:
-                self.loading_started = False
-                self.loading_finished = False
+        else:
+            self.loading_started = False
+            self.loading_finished = False
     def load_data(self, scripts, time_offset=0, time_start_int=0, script_type='loaded'):
         """
         Start loading data into the sut.
