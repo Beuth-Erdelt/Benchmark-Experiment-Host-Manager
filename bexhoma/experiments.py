@@ -439,7 +439,7 @@ class default():
             finally:
                 return 1
         return 1
-    def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+    def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
         """
         Read experiment details from cluster config
 
@@ -460,6 +460,9 @@ class default():
         if script is not None:
             self.script = script
             self.initscript = self.cluster.volumes[self.volume]['initscripts'][self.script]
+        if indexing is not None:
+            self.indexing = indexing
+            self.indexscript = self.cluster.volumes[self.experiment.volume]['initscripts'][self.indexing]
     def evaluate_results(self, pod_dashboard=''):
         """
         Let the dashboard pod build the evaluations.
