@@ -97,6 +97,7 @@ class default():
         else:
             self.script = self.experiment.script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
+        self.indexscript = []
         self.alias = alias
         if num_experiment_to_apply is not None:
             self.num_experiment_to_apply = num_experiment_to_apply
@@ -313,7 +314,7 @@ class default():
             self.num_loading_pods = self.num_loading
     def set_nodes(self, **kwargs):
         self.nodes = kwargs
-    def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+    def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
         """ Read experiment details from cluster config"""
         #self.bChangeInstance = True
         #if instance is not None:
@@ -327,6 +328,9 @@ class default():
         if script is not None:
             self.script = script
             self.initscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.script]
+        if indexing is not None:
+            self.indexing = indexing
+            self.indexscript = self.experiment.cluster.volumes[self.experiment.volume]['initscripts'][self.indexing]
     def __OLD_prepare(self, instance=None, volume=None, docker=None, script=None, delay=0):
         """ Per config: Startup SUT and Monitoring """
         #self.setExperiment(instance, volume, docker, script)
@@ -559,7 +563,7 @@ class default():
             self.check_load_data()
             if not self.loading_started:
                 #print("load_data")
-                self.load_data()
+                self.load_data(scrips=self.initscript)
             # we do not test at localhost (forwarded), because there might be conflicts
             #self.experiment.cluster.stopPortforwarding()
             # store experiment needs new format
@@ -1945,7 +1949,7 @@ scrape_configs:
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=cmd['prepare_log'])
             cmd['save_log'] = 'cp '+self.dockertemplate['logfile']+' /data/'+str(self.code)+'/'+self.configuration+'.log'
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=cmd['save_log'])
-    def prepare_init_dbms(self):
+    def prepare_init_dbms(self, scripts):
         """
         Prepares to load data into the dbms.
         This copies the DDL scripts to /tmp on the host of the sut.
@@ -1957,7 +1961,8 @@ scrape_configs:
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
         if len(self.ddl_parameters):
-            for script in self.initscript:
+            #for script in self.initscript:
+            for script in scripts:
                 filename_template = self.docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
                     with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
@@ -1968,7 +1973,8 @@ scrape_configs:
                             initscript_filled.write(data)
                         self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
         else:
-            for script in self.initscript:
+            #for script in self.initscript:
+            for script in scripts:
                 filename = self.docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename):
                     self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
@@ -2191,6 +2197,9 @@ scrape_configs:
                             fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
                             #print(fullcommand)
                             self.experiment.cluster.kubectl(fullcommand)
+                    if len(self.indexscript):
+                        # loading has not finished (there is indexing)
+                        self.load_data(scripts=self.indexscript, time_offset=self.timeLoading, time_start_int=self.timeLoadingStart, script_type='indexed')
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
@@ -2200,14 +2209,25 @@ scrape_configs:
             #print(pod_labels)
             if len(pod_labels) > 0:
                 pod = next(iter(pod_labels.keys()))
-                if 'loaded' in pod_labels[pod]:
-                    self.loading_started = True
-                    if pod_labels[pod]['loaded'] == 'True':
-                        self.loading_finished = True
+                if len(self.indexscript):
+                    # we have to check indexing, too
+                    if 'indexed' in pod_labels[pod]:
+                        self.loading_started = True
+                        if pod_labels[pod]['indexed'] == 'True':
+                            self.loading_finished = True
+                        else:
+                            self.loading_finished = False
                     else:
                         self.loading_finished = False
                 else:
-                    self.loading_started = False
+                    if 'loaded' in pod_labels[pod]:
+                        self.loading_started = True
+                        if pod_labels[pod]['loaded'] == 'True':
+                            self.loading_finished = True
+                        else:
+                            self.loading_finished = False
+                    else:
+                        self.loading_started = False
                 if 'timeLoadingStart' in pod_labels[pod]:
                     self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
                 if 'timeLoadingEnd' in pod_labels[pod]:
@@ -2217,7 +2237,7 @@ scrape_configs:
             else:
                 self.loading_started = False
                 self.loading_finished = False
-    def load_data(self):
+    def load_data(self, scripts, time_offset=0, time_start_int=0, script_type='loaded'):
         """
         Start loading data into the sut.
         This runs `load_data_asynch()` as an asynchronous thread.
@@ -2225,12 +2245,13 @@ scrape_configs:
         """
         self.logger.debug('configuration.load_data()')
         self.loading_started = True
-        self.prepare_init_dbms()
+        self.prepare_init_dbms(scripts)
         service_name = self.generate_component_name(component='sut', configuration=self.configuration, experiment=self.code)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
-        commands = self.initscript.copy()
+        commands = scripts.copy()
+        #commands = self.initscript.copy()
         use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
@@ -2239,9 +2260,9 @@ scrape_configs:
         else:
             volume = ''
         print("start loading asynch {}".format(self.pod_sut))
-        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+")")
+        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+time_offset+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context, 'service_name':service_name}
+        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context, 'service_name':service_name, 'time_offset':time_offset}
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         return
@@ -2779,7 +2800,7 @@ class benchbase(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded'):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
@@ -2809,20 +2830,24 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=experiment)
     #pod_sut = pods[0]
     #print("load_data")
-    timeLoadingStart = default_timer()
-    now = datetime.utcnow()
-    now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-    time_now = str(datetime.now())
-    time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+    if time_start_int == 0:
+        timeLoadingStart = default_timer() # for more precise float time spans
+        now = datetime.utcnow() # for UTC time as int
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        time_now = str(datetime.now())
+        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+    else:
+        # loading has been started previously
+        time_now_int = time_start_int
     # mark pod
-    fullcommand = 'label pods '+pod_sut+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
+    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timing}"'.format(script_type=script_type, timing=time_now_int)
     #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
-        fullcommand = 'label pvc '+volume+' --overwrite loaded=False timeLoadingStart="{}"'.format(time_now_int)
+        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timing}"'.format(script_type=script_type, timing=time_now_int)
         #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -2860,19 +2885,19 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                     file.write(stderr)
     # mark pod
     timeLoadingEnd = default_timer()
-    timeLoading = timeLoadingEnd - timeLoadingStart
+    timeLoading = timeLoadingEnd - timeLoadingStart + time_offset
     now = datetime.utcnow()
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading)
     #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, timeLoading)
+        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading)
         #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
