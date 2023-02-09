@@ -2050,9 +2050,9 @@ scrape_configs:
                     if len(pod_labels) > 0:
                         pod = next(iter(pod_labels.keys()))
                         if 'timeLoadingStart' in pod_labels[pod]:
-                            self.timeLoadingStart = float(pod_labels[pod]['timeLoadingStart'])
+                            self.timeLoadingStart = int(pod_labels[pod]['timeLoadingStart'])
                         if 'timeLoadingEnd' in pod_labels[pod]:
-                            self.timeLoadingEnd = float(pod_labels[pod]['timeLoadingEnd'])
+                            self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
                         if 'timeLoading' in pod_labels[pod]:
                             self.timeLoading = float(pod_labels[pod]['timeLoading'])
                     # delete job and all its pods
@@ -2233,9 +2233,9 @@ scrape_configs:
                     else:
                         self.loading_started = False
                 if 'timeLoadingStart' in pod_labels[pod]:
-                    self.timeLoadingStart = pod_labels[pod]['timeLoadingStart']
+                    self.timeLoadingStart = int(pod_labels[pod]['timeLoadingStart'])
                 if 'timeLoadingEnd' in pod_labels[pod]:
-                    self.timeLoadingEnd = pod_labels[pod]['timeLoadingEnd']
+                    self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
                 if 'timeLoading' in pod_labels[pod]:
                     self.timeLoading = float(pod_labels[pod]['timeLoading'])
         else:
