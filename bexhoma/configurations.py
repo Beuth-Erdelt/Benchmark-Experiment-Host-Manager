@@ -2184,7 +2184,7 @@ scrape_configs:
                         self.experiment.cluster.logger.debug(self.timeLoadingStart)
                         self.experiment.cluster.logger.debug(self.timeLoadingEnd)
                         self.experiment.cluster.logger.debug(self.timeLoading)
-                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={} timeGenerator={}'.format(time_now_int, self.timeLoading, generator_time)
+                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" time_ingested={} timeLoading={} timeGenerator={}'.format(time_now_int, (int(self.timeLoadingEnd) - int(self.timeLoadingStart)), self.timeLoading, generator_time)
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
                         # TODO: Also mark volume
@@ -2198,7 +2198,7 @@ scrape_configs:
                         else:
                             volume = ''
                         if volume:
-                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
+                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True time_ingested={} timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format((int(self.timeLoadingEnd) - int(self.timeLoadingStart)), int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
                             #print(fullcommand)
                             self.experiment.cluster.kubectl(fullcommand)
                     if len(self.indexscript):
