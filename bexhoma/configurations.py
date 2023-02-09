@@ -2184,7 +2184,7 @@ scrape_configs:
                         self.experiment.cluster.logger.debug(self.timeLoadingStart)
                         self.experiment.cluster.logger.debug(self.timeLoadingEnd)
                         self.experiment.cluster.logger.debug(self.timeLoading)
-                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" time_ingested={} timeLoading={} timeGenerator={}'.format(time_now_int, (int(self.timeLoadingEnd) - int(self.timeLoadingStart)), self.timeLoading, generator_time)
+                        fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" time_ingested={} timeLoading={} time_generated={}'.format(time_now_int, (int(self.timeLoadingEnd) - int(self.timeLoadingStart)), self.timeLoading, generator_time)
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
                         # TODO: Also mark volume
