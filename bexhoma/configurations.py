@@ -563,7 +563,7 @@ class default():
             self.check_load_data()
             if not self.loading_started:
                 #print("load_data")
-                self.load_data(scrips=self.initscript)
+                self.load_data(scripts=self.initscript)
             # we do not test at localhost (forwarded), because there might be conflicts
             #self.experiment.cluster.stopPortforwarding()
             # store experiment needs new format
