@@ -2842,7 +2842,8 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     else:
         # loading has been started previously
-        time_now_int = time_start_int
+        timeLoadingStart = int(time_start_int)
+        time_now_int = int(time_start_int)
     # mark pod
     fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timing}"'.format(script_type=script_type, timing=time_now_int)
     #print(fullcommand)
@@ -2888,7 +2889,12 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 with open(filename_log,'w') as file:
                     file.write(stderr)
     # mark pod
-    timeLoadingEnd = default_timer()
+    if time_start_int == 0:
+        timeLoadingEnd = default_timer()
+    else:
+        time_now = str(datetime.now())
+        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        timeLoadingEnd = time_now_int
     timeLoading = timeLoadingEnd - timeLoadingStart + time_offset
     now = datetime.utcnow()
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
