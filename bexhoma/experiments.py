@@ -858,7 +858,7 @@ class default():
             app = self.cluster.appname
             component = 'benchmarker'
             configuration = ''
-            success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
+            #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
             jobs = self.cluster.get_jobs(app, component, self.code, configuration)
             # status per job
             for job in jobs:
@@ -866,7 +866,7 @@ class default():
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
-                    self.end_benchmarking(job)
+                    self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
             if len(pods) == 0 and len(jobs) == 0:
                 do = False
@@ -937,17 +937,68 @@ class default():
                         self.cluster.delete_job(job)
                 if len(pods) == 0 and len(jobs) == 0:
                     break
-    def end_benchmarking(self, jobname):
+    def get_job_timing_benchmarking(self, jobname):
+        timing_benchmarker = self.extract_job_timing(jobname, container="dbmsbenchmarker")
+        return timing_benchmarker
+    def get_job_timing_loading(self, jobname):
+        timing_datagenerator = self.extract_job_timing(jobname, container="datagenerator")
+        timing_sensor = self.extract_job_timing(jobname, container="sensor")
+        timing_total = timing_datagenerator + timing_sensor
+        return timing_datagenerator, timing_sensor, timing_total
+        #return total_time, generator_time, loader_time
+    def extract_job_timing(self, jobname, container):
+        def get_job_timing(filename):
+            """
+            Transforms a log file in text format into list of pairs of timing information.
+            This reads BEXHOMA_START and BEXHOMA_END
+
+            :param filename: Name of the log file 
+            :return: List of pairs (start,end) per pod
+            """
+            try:
+                with open(filename) as f:
+                    lines = f.readlines()
+                stdout = "".join(lines)
+                pod_name = filename[filename.rindex("-")+1:-len(".log")]
+                timing_start = re.findall('BEXHOMA_START:(.+?)\n', stdout)[0]
+                timing_end = re.findall('BEXHOMA_END:(.+?)\n', stdout)[0]
+                return (int(timing_start), int(timing_end))
+            except Exception as e:
+                print(e)
+                return (0,0)
+        directory = os.fsencode(self.path)
+        #print(jobname)
+        timing = []
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
+            if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
+                #print(filename)
+                (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                #print(df)
+                if (timing_start, timing_end) == (0,0):
+                    print("Error in "+filename)
+                else:
+                    timing.append((timing_start, timing_end))
+        print(timing)
+        return timing
+    def end_benchmarking(self, jobname, config=None):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
 
         :param jobname: Name of the job to clean
+        :param config: Configuration object
         """
         self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
         # mark pod with new end time and duration
         job_labels = self.cluster.get_jobs_labels(app=self.cluster.appname, component='benchmarker', experiment=self.code)
         if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
+            # get pairs (start,end) of benchmarking pods
+            timing_benchmarker = self.get_job_timing_benchmarking(jobname)
+            if config is not None:
+                config.benchmarking_timespans = {}
+                config.benchmarking_timespans['benchmarker'] = timing_benchmarker
             start_time = int(job_labels[jobname]['start_time'])
             connection = job_labels[jobname]['connection']
             #self.timeLoadingEnd = default_timer()

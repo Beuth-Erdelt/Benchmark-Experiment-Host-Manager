@@ -152,7 +152,9 @@ class default():
         self.loading_finished = False #: Time as an integer when initial loading has finished
         self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are  
         self.timeLoadingStart = 0
-        self.timeLoadingEnd = 0     
+        self.timeLoadingEnd = 0
+        self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
+        self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
         self.reset_sut()
     def reset_sut(self):
         """
@@ -1789,6 +1791,8 @@ scrape_configs:
         c['parameter']['numExperiment'] = experimentRun
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
+        c['hostsystem']['loading_timespans'] = self.loading_timespans
+        c['hostsystem']['benchmarking_timespans'] = self.benchmarking_timespans
         #print(c)
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
@@ -2096,70 +2100,6 @@ scrape_configs:
                     pods_sut = self.experiment.cluster.get_pods(app=app, component='sut', experiment=experiment, configuration=configuration)
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
-                        def get_timing(path, jobname):
-                            def extract_timing(jobname, container):
-                                def get_job_timing(filename):
-                                    """
-                                    Transforms a log file in text format into list of pairs of timing information.
-                                    This reads BEXHOMA_START and BEXHOMA_END
-
-                                    :param filename: Name of the log file 
-                                    :return: List of pairs (start,end) per pod
-                                    """
-                                    try:
-                                        with open(filename) as f:
-                                            lines = f.readlines()
-                                        stdout = "".join(lines)
-                                        pod_name = filename[filename.rindex("-")+1:-len(".log")]
-                                        timing_start = re.findall('BEXHOMA_START:(.+?)\n', stdout)[0]
-                                        timing_end = re.findall('BEXHOMA_END:(.+?)\n', stdout)[0]
-                                        return (int(timing_start), int(timing_end))
-                                    except Exception as e:
-                                        print(e)
-                                        return (0,0)
-                                directory = os.fsencode(path)
-                                #print(jobname)
-                                timing = []
-                                for file in os.listdir(directory):
-                                    filename = os.fsdecode(file)
-                                    #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
-                                    if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
-                                        #print(filename)
-                                        (timing_start, timing_end) = get_job_timing(path+"/"+filename)
-                                        #print(df)
-                                        if (timing_start, timing_end) == (0,0):
-                                            print("Error in "+filename)
-                                        else:
-                                            timing.append((timing_start, timing_end))
-                                print(timing)
-                                return timing
-                            timing_datagenerator = extract_timing(jobname, container="datagenerator")
-                            generator_time = 0
-                            loader_time = 0
-                            total_time = 0
-                            if len(timing_datagenerator) > 0:
-                                print([end-start for (start,end) in timing_datagenerator])
-                                timing_start = min([start for (start,end) in timing_datagenerator])
-                                timing_end = max([end for (start,end) in timing_datagenerator])
-                                total_time = timing_end - timing_start
-                                generator_time = total_time
-                                print("Generator", total_time)
-                            timing_sensor = extract_timing(jobname, container="sensor")
-                            if len(timing_sensor) > 0:
-                                print([end-start for (start,end) in timing_sensor])
-                                timing_start = min([start for (start,end) in timing_sensor])
-                                timing_end = max([end for (start,end) in timing_sensor])
-                                total_time = timing_end - timing_start
-                                loader_time = total_time
-                                print("Loader", total_time)
-                            if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
-                                timing_total = timing_datagenerator + timing_sensor
-                                print(timing_total)
-                                timing_start = min([start for (start,end) in timing_total])
-                                timing_end = max([end for (start,end) in timing_total])
-                                total_time = timing_end - timing_start
-                                print("Total", total_time)
-                            return total_time, generator_time, loader_time
                         #self.timeLoadingEnd = default_timer()
                         #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
                         #self.experiment.cluster.logger.debug("LOADING LABELS")
@@ -2167,7 +2107,36 @@ scrape_configs:
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
                         #self.timeLoading = float(self.timeLoading) + float(timeLoading)
-                        total_time, generator_time, loader_time = get_timing(self.experiment.path, job)
+                        timing_datagenerator, timing_sensor, timing_total = self.experiment.get_job_timing_loading(job)
+                        generator_time = 0
+                        loader_time = 0
+                        total_time = 0
+                        self.loading_timespans = {}
+                        self.loading_timespans['datagenerator'] = generator_time
+                        self.loading_timespans['sensor'] = loader_time
+                        self.loading_timespans['total'] = total_time
+                        if len(timing_datagenerator) > 0:
+                            print([end-start for (start,end) in timing_datagenerator])
+                            timing_start = min([start for (start,end) in timing_datagenerator])
+                            timing_end = max([end for (start,end) in timing_datagenerator])
+                            total_time = timing_end - timing_start
+                            generator_time = total_time
+                            print("Generator", total_time)
+                        timing_sensor = extract_timing(jobname, container="sensor")
+                        if len(timing_sensor) > 0:
+                            print([end-start for (start,end) in timing_sensor])
+                            timing_start = min([start for (start,end) in timing_sensor])
+                            timing_end = max([end for (start,end) in timing_sensor])
+                            total_time = timing_end - timing_start
+                            loader_time = total_time
+                            print("Loader", total_time)
+                        if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
+                            timing_total = timing_datagenerator + timing_sensor
+                            print(timing_total)
+                            timing_start = min([start for (start,end) in timing_total])
+                            timing_end = max([end for (start,end) in timing_total])
+                            total_time = timing_end - timing_start
+                            print("Total", total_time)
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
