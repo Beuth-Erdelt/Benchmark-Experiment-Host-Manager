@@ -2128,7 +2128,7 @@ scrape_configs:
                             total_time = timing_end - timing_start
                             generator_time = total_time
                             print("Generator", total_time)
-                        timing_sensor = extract_timing(jobname, container="sensor")
+                        #timing_sensor = extract_timing(jobname, container="sensor")
                         if len(timing_sensor) > 0:
                             print([end-start for (start,end) in timing_sensor])
                             timing_start = min([start for (start,end) in timing_sensor])
