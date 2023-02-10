@@ -1752,6 +1752,7 @@ scrape_configs:
         self.logger.debug('configuration.run_benchmarker_pod()')
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
         experiments_configfolder = self.experiment.cluster.experiments_configfolder
+        app = self.appname
         if connection is None:
             connection = self.configuration#self.getConnectionName()
         if len(configuration) == 0:
@@ -1858,6 +1859,11 @@ scrape_configs:
         experiment['connection'] = connection
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.experiment.cluster.log_experiment(experiment)
+        # put list of clients to message queue
+        redisQueue = '{}-{}-{}-{}'.format(app, component, connection, self.code)
+        for i in range(1, parallelism+1):
+            #redisClient.rpush(redisQueue, i)
+            self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
         # create pod
         yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
         # start pod
