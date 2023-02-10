@@ -2118,9 +2118,9 @@ scrape_configs:
                         loader_time = 0
                         total_time = 0
                         self.loading_timespans = {}
-                        self.loading_timespans['datagenerator'] = generator_time
-                        self.loading_timespans['sensor'] = loader_time
-                        self.loading_timespans['total'] = total_time
+                        self.loading_timespans['datagenerator'] = timing_datagenerator
+                        self.loading_timespans['sensor'] = timing_sensor
+                        self.loading_timespans['total'] = timing_total
                         if len(timing_datagenerator) > 0:
                             print([end-start for (start,end) in timing_datagenerator])
                             timing_start = min([start for (start,end) in timing_datagenerator])
