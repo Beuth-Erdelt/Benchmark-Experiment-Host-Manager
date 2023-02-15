@@ -147,6 +147,7 @@ class default():
         self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
         self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
         self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
+        self.timeIndex = 0 #: Time in seconds the system has taken for indexing the database
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
         self.loading_finished = False #: Time as an integer when initial loading has finished
@@ -1611,6 +1612,7 @@ scrape_configs:
         c['info'] = info
         c['timeLoad'] = self.timeLoading
         c['timeGenerate'] = self.timeGenerating
+        c['timeIndex'] = self.timeIndex
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
         # get hosts information
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -2065,6 +2067,8 @@ scrape_configs:
                             self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
                         if 'timeLoading' in pod_labels[pod]:
                             self.timeLoading = float(pod_labels[pod]['timeLoading'])
+                        if 'timeIndex' in pod_labels[pod]:
+                            self.timeIndex = float(pod_labels[pod]['timeIndex'])
                     # delete job and all its pods
                     self.experiment.cluster.delete_job(job)
                     pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2420,6 +2424,7 @@ scrape_configs:
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias}
         env = {**env, **e}
+        env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{experimentRun}-{client}.yml'.format(configuration=configuration, client=client)
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-dbmsbenchmarker.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)
     def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection=''):
