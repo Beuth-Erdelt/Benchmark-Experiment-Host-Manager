@@ -2413,7 +2413,7 @@ scrape_configs:
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=180)
+        start = now + timedelta(seconds=240)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         e = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': start_string,
