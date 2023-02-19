@@ -1861,12 +1861,30 @@ scrape_configs:
         experiment['connection'] = connection
         experiment['connectionmanagement'] = self.connectionmanagement.copy()
         self.experiment.cluster.log_experiment(experiment)
+        # copy config to pod - dashboard
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            cmd = {}
+            cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
+            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
+            self.logger.debug('copy config queries.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            # copy twice to be more sure it worked
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
+            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+            self.logger.debug('copy config connections.config: {}'.format(stdout))
+            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
+            self.logger.debug('copy config protocol.json: {}'.format(stdout))
         # put list of clients to message queue
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, self.code)
         for i in range(1, parallelism+1):
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        # create pod
+        # create pods
         yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
         # start pod
         self.experiment.cluster.kubectl('create -f '+yamlfile)
@@ -1910,6 +1928,7 @@ scrape_configs:
         if len(pods) > 0:
             pod_dashboard = pods[0]
             cmd = {}
+            """
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
             stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
@@ -1923,6 +1942,7 @@ scrape_configs:
             self.logger.debug('copy config connections.config: {}'.format(stdout))
             stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
+            """
             # get monitoring for loading
             if self.monitoring_active:
                 cmd = {}
