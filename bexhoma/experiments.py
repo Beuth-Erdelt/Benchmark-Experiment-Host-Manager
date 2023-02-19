@@ -845,14 +845,14 @@ class default():
             configuration = ''
             #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
             jobs = self.cluster.get_jobs(app, component, self.code, configuration)
+            # all pods to these jobs
+            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
             # status per job
             for job in jobs:
                 success = self.cluster.get_job_status(job)
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
-                    # all pods to these jobs
-                    pods = self.cluster.get_job_pods(app, component, self.code, configuration)
                     # status per pod
                     for p in pods:
                         status = self.cluster.get_pod_status(p)
