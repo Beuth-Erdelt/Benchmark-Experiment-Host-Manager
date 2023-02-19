@@ -835,25 +835,10 @@ class default():
                 else:
                     print("{} is loading".format(config.configuration))
             # all jobs of configuration - benchmarker
-            app = self.cluster.appname
-            component = 'benchmarker'
-            configuration = ''
-            jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-            # all pods to these jobs
-            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
-            # status per pod
-            for p in pods:
-                status = self.cluster.get_pod_status(p)
-                self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                #print(p,status)
-                if status == 'Succeeded':
-                    #if status != 'Running':
-                    self.cluster.store_pod_log(p)
-                    self.cluster.delete_pod(p)
-                if status == 'Failed':
-                    #if status != 'Running':
-                    self.cluster.store_pod_log(p)
-                    self.cluster.delete_pod(p)
+            #app = self.cluster.appname
+            #component = 'benchmarker'
+            #configuration = ''
+            #jobs = self.cluster.get_jobs(app, component, self.code, configuration)
             # success of job
             app = self.cluster.appname
             component = 'benchmarker'
@@ -866,6 +851,21 @@ class default():
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
+                    # all pods to these jobs
+                    pods = self.cluster.get_job_pods(app, component, self.code, configuration)
+                    # status per pod
+                    for p in pods:
+                        status = self.cluster.get_pod_status(p)
+                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                        #print(p,status)
+                        if status == 'Succeeded':
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            self.cluster.delete_pod(p)
+                        if status == 'Failed':
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
             if len(pods) == 0 and len(jobs) == 0:
