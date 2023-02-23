@@ -2299,7 +2299,7 @@ scrape_configs:
             with open(file) as f:
                  unpatched = yaml.safe_load(f)
                  return unpatched
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch=''):#, jobname=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -2374,7 +2374,7 @@ scrape_configs:
         #    except yaml.YAMLError as exc:
         #        print(exc)
         try:
-            patched = self.get_patched_yaml(self.experiment.cluster.yamlfolder+template, patch)
+            patched = self.get_patched_yaml(self.experiment.cluster.yamlfolder+template, patch_yaml)
             stream = StringIO(patched) # convert string to stream
             result = yaml.safe_load_all(stream)
             result = [data for data in result]
@@ -2571,7 +2571,7 @@ scrape_configs:
             template = self.experiment.jobtemplate_loading
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch=self.patch_loading)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch=self.loading_patch)
 
 
 
