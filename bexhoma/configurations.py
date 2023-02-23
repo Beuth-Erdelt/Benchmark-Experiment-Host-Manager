@@ -2571,7 +2571,7 @@ scrape_configs:
             template = self.experiment.jobtemplate_loading
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch=self.loading_patch)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
 
 
 
