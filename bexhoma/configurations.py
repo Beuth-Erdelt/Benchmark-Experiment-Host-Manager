@@ -1621,8 +1621,9 @@ scrape_configs:
         c['docker'] = self.docker
         c['script'] = self.script
         c['info'] = info
-        c['timeLoad'] = self.timeLoading
+        c['timeLoad'] = self.timeLoading # max span (generate + ingest) + schema + index
         c['timeGenerate'] = self.timeGenerating
+        c['timeIngesting'] = self.timeIngesting
         c['timeIndex'] = self.timeIndex
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
         # get hosts information
@@ -2190,6 +2191,7 @@ scrape_configs:
                             # this sets the loading time to the span until "now" (including waiting and starting overhead)
                             self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
                         self.timeGenerating = generator_time
+                        self.timeIngesting = loader_time
                         self.experiment.cluster.logger.debug("LOADING LABELS")
                         self.experiment.cluster.logger.debug(self.timeLoadingStart)
                         self.experiment.cluster.logger.debug(self.timeLoadingEnd)
