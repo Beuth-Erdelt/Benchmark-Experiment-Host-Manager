@@ -113,6 +113,7 @@ class default():
         self.nodes = {}
         self.maintaining_parameters = {}
         self.loading_parameters = {}
+        self.loading_patch = ""
         self.benchmarking_parameters = {}
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
@@ -273,6 +274,14 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
+    def patch_loading(self, patch):
+        """
+        Patches YAML of loading components.
+        Can be overwritten by configuration.
+
+        :param patch: String in YAML format, overwrites basic YAML file content
+        """
+        self.loading_patch = patch
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.

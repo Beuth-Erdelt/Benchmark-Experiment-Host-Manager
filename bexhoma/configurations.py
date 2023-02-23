@@ -42,6 +42,8 @@ import ast
 import copy
 from datetime import datetime, timedelta
 import threading
+from io import StringIO
+import hiyapyco
 
 from dbmsbenchmarker import *
 
@@ -122,6 +124,7 @@ class default():
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.set_loading_parameters(**self.experiment.loading_parameters)
+        self.patch_loading(self.experiment.loading_patch)
         self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
         self.experiment.add_configuration(self)
         self.dialect = dialect
@@ -294,6 +297,14 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
+    def patch_loading(self, patch):
+        """
+        Patches YAML of loading components.
+        Can be set by experiment before creation of configuration.
+
+        :param patch: String in YAML format, overwrites basic YAML file content
+        """
+        self.loading_patch = patch
     def set_benchmarking_parameters(self, **kwargs):
         """
         Sets ENV for benchmarking components.
@@ -2269,7 +2280,24 @@ scrape_configs:
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         return
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection=''):#, jobname=''):
+    def get_patched_yaml(self, file, patch=""):
+        """
+        Applies a YAML formatted patch to a YAML file and returns merged result as a YAML object.
+
+        :param file: Name of YAML file to load
+        :param patch: Optional patch to be applied
+        :return: YAML object of (patched) file content
+        """
+        if len(patch) > 0:
+            merged = hiyapyco.load([file, patch], method=hiyapyco.METHOD_MERGE)
+            #print(hiyapyco.dump(merged, default_flow_style=False))
+            patched = yaml.safe_load(hiyapyco.dump(merged))
+            return patched
+        else:
+            with open(file) as f:
+                 unpatched = yaml.safe_load(f)
+                 return unpatched
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch=''):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -2335,13 +2363,21 @@ scrape_configs:
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
         job_experiment = self.experiment.path+'/{app}-{component}-{configuration}-{experimentRun}-{client}.yml'.format(app=app, component=component, configuration=configuration, experimentRun=experimentRun, client=client)
         #with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
-        with open(self.experiment.cluster.yamlfolder+template) as stream:
-            try:
-                result=yaml.safe_load_all(stream)
-                result = [data for data in result]
-                #print(result)
-            except yaml.YAMLError as exc:
-                print(exc)
+        # old unpatched loader:
+        #with open(self.experiment.cluster.yamlfolder+template) as stream:
+        #    try:
+        #        result = yaml.safe_load_all(stream)
+        #        result = [data for data in result]
+        #        #print(result)
+        #    except yaml.YAMLError as exc:
+        #        print(exc)
+        try:
+            patched = self.get_patched_yaml(self.experiment.cluster.yamlfolder+template, patch)
+            stream = StringIO(patched) # convert string to stream
+            result = yaml.safe_load_all(stream)
+            result = [data for data in result]
+        except yaml.YAMLError as exc:
+            print(exc)
         for dep in result:
             if dep['kind'] == 'Job':
                 dep['metadata']['name'] = jobname
@@ -2533,7 +2569,7 @@ scrape_configs:
             template = self.experiment.jobtemplate_loading
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch=self.patch_loading)
 
 
 
