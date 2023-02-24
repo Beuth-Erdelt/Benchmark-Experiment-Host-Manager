@@ -150,6 +150,7 @@ class default():
         self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
         self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
         self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
+        self.timeIngesting = 0 #: Time in seconds the system has taken for ingesting existing
         self.timeIndex = 0 #: Time in seconds the system has taken for indexing the database
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
@@ -165,6 +166,9 @@ class default():
         Forget that the SUT has been loaded and benchmarked.
         """
         self.timeLoading = 0 #: Time the system has taken for the initial loading of data
+        self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
+        self.timeIngesting = 0 #: Time in seconds the system has taken for ingesting existing
+        self.timeIndex = 0 #: Time in seconds the system has taken for indexing the database
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
         self.loading_finished = False #: Time as an integer when initial loading has finished
@@ -2234,6 +2238,8 @@ scrape_configs:
                         self.loading_finished = False
                 else:
                     self.loading_finished = False
+                if 'time_indexed' in pod_labels[pod]:
+                    self.timeIndex = float(pod_labels[pod]['time_indexed'])
             else:
                 if not loading_pods_active:
                     if 'loaded' in pod_labels[pod]:
