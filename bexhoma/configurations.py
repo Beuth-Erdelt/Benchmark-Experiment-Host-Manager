@@ -2381,10 +2381,10 @@ scrape_configs:
         #    except yaml.YAMLError as exc:
         #        print(exc)
         try:
-            patched = self.get_patched_yaml(self.experiment.cluster.yamlfolder+template, patch_yaml)
-            stream = StringIO(patched) # convert string to stream
-            result = yaml.safe_load_all(stream)
-            result = [data for data in result]
+            result = self.get_patched_yaml(self.experiment.cluster.yamlfolder+template, patch_yaml)
+            #stream = StringIO(patched) # convert string to stream
+            #result = yaml.safe_load_all(stream)
+            #result = [data for data in result]
         except yaml.YAMLError as exc:
             print(exc)
         for dep in result:
