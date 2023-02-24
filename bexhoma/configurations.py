@@ -2292,13 +2292,20 @@ scrape_configs:
         """
         if len(patch) > 0:
             merged = hiyapyco.load([file, patch], method=hiyapyco.METHOD_MERGE)
+            print(hiyapyco.dump(merged, default_flow_style=False))
+            stream = StringIO(hiyapyco.dump(merged)) # convert string to stream
+            result = yaml.safe_load_all(stream)
+            result = [data for data in result]
             #print(hiyapyco.dump(merged, default_flow_style=False))
-            patched = yaml.safe_load(hiyapyco.dump(merged))
-            return patched
+            #patched = yaml.safe_load(hiyapyco.dump(merged))
+            return result
         else:
             with open(file) as f:
-                 unpatched = yaml.safe_load(f)
-                 return unpatched
+                result = yaml.safe_load_all(f)
+                result = [data for data in result]
+                return result
+                #unpatched = yaml.safe_load(f)
+                #return unpatched
     def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
