@@ -1457,6 +1457,21 @@ class testbed():
         self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
         redisCommand = 'redis-cli rpush {redisQueue} {data} '.format(redisQueue=queue, data=data)
         self.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
+    def set_pod_counter(self, queue, value=0):
+        """
+        Add data to (Redis) message queue.
+
+        :param queue: Name of the queue
+        :param data: Data to be added to queue
+        """
+        pods_messagequeue = self.get_pods(component='messagequeue')
+        if len(pods_messagequeue) > 0:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
+        redisCommand = 'redis-cli set {redisQueue} {value} '.format(redisQueue=queue, value=value)
+        self.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
 
 
 
