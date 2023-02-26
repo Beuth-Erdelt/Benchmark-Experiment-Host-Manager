@@ -151,6 +151,7 @@ class default():
         self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
         self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
         self.timeIngesting = 0 #: Time in seconds the system has taken for ingesting existing
+        self.timeSchema = 0 #: Time in seconds the system has taken for creating the db schema
         self.timeIndex = 0 #: Time in seconds the system has taken for indexing the database
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
@@ -168,6 +169,7 @@ class default():
         self.timeLoading = 0 #: Time the system has taken for the initial loading of data
         self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
         self.timeIngesting = 0 #: Time in seconds the system has taken for ingesting existing
+        self.timeSchema = 0 #: Time in seconds the system has taken for creating the db schema
         self.timeIndex = 0 #: Time in seconds the system has taken for indexing the database
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
@@ -1631,6 +1633,7 @@ scrape_configs:
         c['timeLoad'] = self.timeLoading # max span (generate + ingest) + schema + index
         c['timeGenerate'] = self.timeGenerating
         c['timeIngesting'] = self.timeIngesting
+        c['timeSchema'] = self.timeSchema
         c['timeIndex'] = self.timeIndex
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
         # get hosts information
@@ -2191,6 +2194,8 @@ scrape_configs:
                         time_now = str(datetime.now())
                         time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
                         self.timeLoadingEnd = int(time_now_int)
+                        # store preloading time (should be for schema creation)
+                        self.timeSchema = self.timeLoading
                         if total_time > 0:
                             # this sets the loading time to the max span of pods
                             self.timeLoading = total_time + self.timeLoading
