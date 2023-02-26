@@ -2253,12 +2253,12 @@ scrape_configs:
                             self.loading_finished = False
                     else:
                         self.loading_started = False
-                if 'timeLoadingStart' in pod_labels[pod]:
-                    self.timeLoadingStart = int(pod_labels[pod]['timeLoadingStart'])
-                if 'timeLoadingEnd' in pod_labels[pod]:
-                    self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
-                if 'timeLoading' in pod_labels[pod]:
-                    self.timeLoading = float(pod_labels[pod]['timeLoading'])
+            if 'timeLoadingStart' in pod_labels[pod]:
+                self.timeLoadingStart = int(pod_labels[pod]['timeLoadingStart'])
+            if 'timeLoadingEnd' in pod_labels[pod]:
+                self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
+            if 'timeLoading' in pod_labels[pod]:
+                self.timeLoading = float(pod_labels[pod]['timeLoading'])
         else:
             self.loading_started = False
             self.loading_finished = False
