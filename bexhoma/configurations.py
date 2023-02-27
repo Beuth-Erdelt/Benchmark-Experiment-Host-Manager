@@ -2972,7 +2972,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         if sep > 0:
             subscript_type = filename[:sep].lower()
             times_script[subscript_type] = time_scrip_end - time_scrip_start
-            print("#### script:", subscript_type, "time", times_script[subscript_type])
+            logger.debug("#### script="+str(subscript_type)+" time="+str(times_script[subscript_type]))
     # mark pod
     time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())
