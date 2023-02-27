@@ -153,6 +153,7 @@ class default():
         self.timeIngesting = 0 #: Time in seconds the system has taken for ingesting existing
         self.timeSchema = 0 #: Time in seconds the system has taken for creating the db schema
         self.timeIndex = 0 #: Time in seconds the system has taken for indexing the database
+        self.times_scripts = dict() # contains times for each single script that is run on db (create schema, index etc)
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
         self.loading_finished = False #: Time as an integer when initial loading has finished
@@ -1635,6 +1636,7 @@ scrape_configs:
         c['timeIngesting'] = self.timeIngesting
         c['timeSchema'] = self.timeSchema
         c['timeIndex'] = self.timeIndex
+        c['script_times'] = self.times_scripts
         c['priceperhourdollar'] = 0.0  + self.dockertemplate['priceperhourdollar']
         # get hosts information
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -2111,6 +2113,10 @@ scrape_configs:
                             self.timeLoading = float(pod_labels[pod]['timeLoading'])
                         if 'timeIndex' in pod_labels[pod]:
                             self.timeIndex = float(pod_labels[pod]['timeIndex'])
+                        for key, value in pod_labels.items():
+                            if key.startswith("time_"):
+                                time_type = key[len("time_"):]
+                            self.times_scripts[time_type] = int(value)
                     # delete job and all its pods
                     self.experiment.cluster.delete_job(job)
                     pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2264,6 +2270,10 @@ scrape_configs:
                 self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
             if 'timeLoading' in pod_labels[pod]:
                 self.timeLoading = float(pod_labels[pod]['timeLoading'])
+            for key, value in pod_labels.items():
+                if key.startswith("time_"):
+                    time_type = key[len("time_"):]
+                self.times_scripts[time_type] = int(value)
         else:
             self.loading_started = False
             self.loading_finished = False
@@ -2919,9 +2929,11 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # scripts
     #scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiment.cluster.experiments_configfolder, docker=self.docker)
     #shellcommand = '[ -f {scriptname} ] && sh {scriptname}'
+    times_script = dict()
     shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     #commands = self.initscript
     for c in commands:
+        time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
             stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
@@ -2947,6 +2959,11 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stderr)
+        time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        sep = filename.find("-")
+        if sep > 0:
+            subscript_type = filename[:sep].lower()
+            times_script[subscript_type] = time_scrip_end - time_scrip_start
     # mark pod
     if time_start_int == 0:
         timeLoadingEnd = default_timer()
@@ -2959,14 +2976,26 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     now_string = now.strftime('%Y-%m-%d %H:%M:%S')
     time_now = str(datetime.now())
     time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
+    # store infos in labels of sut pod and it's pvc
+    labels = dict()
+    labels[script_type] = 'True'
+    labels['time_{script_type}'.format(script_type)] = (timeLoadingEnd - timeLoadingStart)
+    #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
+    labels['timeLoading'] = timeLoading
+    for subscript_type, time_subscript_type in times_script.items():
+        labels['time_{script_type}'] = time_subscript_type
+    fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=time_now_int)
+    fullcommand = fullcommand + " ".join(labels)
+    #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
     #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
+        fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=time_now_int)
+        fullcommand = fullcommand + " ".join(labels)
+        #fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
         #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
