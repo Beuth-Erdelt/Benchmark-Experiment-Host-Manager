@@ -2116,7 +2116,7 @@ scrape_configs:
                         for key, value in pod_labels[pod].items():
                             if key.startswith("time_"):
                                 time_type = key[len("time_"):]
-                                self.times_scripts[time_type] = int(value)
+                                self.times_scripts[time_type] = float(value)
                     # delete job and all its pods
                     self.experiment.cluster.delete_job(job)
                     pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2273,7 +2273,7 @@ scrape_configs:
             for key, value in pod_labels[pod].items():
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]
-                    self.times_scripts[time_type] = int(value)
+                    self.times_scripts[time_type] = float(value)
         else:
             self.loading_started = False
             self.loading_finished = False
