@@ -2985,7 +2985,8 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     for subscript_type, time_subscript_type in times_script.items():
         labels['time_{script_type}'.format(script_type=subscript_type)] = time_subscript_type
     fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=time_now_int)
-    fullcommand = fullcommand + " ".join(labels)
+    for key, value in labels.items():
+        fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
     #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
     #print(fullcommand)
     kubectl(fullcommand, context)
@@ -2994,7 +2995,8 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     if len(volume) > 0:
         # mark volume
         fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=time_now_int)
-        fullcommand = fullcommand + " ".join(labels)
+        for key, value in labels.items():
+            fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
         #fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
         #print(fullcommand)
         kubectl(fullcommand, context)
