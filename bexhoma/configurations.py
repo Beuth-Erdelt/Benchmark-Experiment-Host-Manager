@@ -2113,7 +2113,7 @@ scrape_configs:
                             self.timeLoading = float(pod_labels[pod]['timeLoading'])
                         if 'timeIndex' in pod_labels[pod]:
                             self.timeIndex = float(pod_labels[pod]['timeIndex'])
-                        for key, value in pod_labels.items():
+                        for key, value in pod_labels[pod].items():
                             if key.startswith("time_"):
                                 time_type = key[len("time_"):]
                             self.times_scripts[time_type] = int(value)
@@ -2270,7 +2270,7 @@ scrape_configs:
                 self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
             if 'timeLoading' in pod_labels[pod]:
                 self.timeLoading = float(pod_labels[pod]['timeLoading'])
-            for key, value in pod_labels.items():
+            for key, value in pod_labels[pod].items():
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]
                 self.times_scripts[time_type] = int(value)
