@@ -2903,25 +2903,29 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=experiment)
     #pod_sut = pods[0]
     #print("load_data")
+    time_scriptgroup_start = default_timer() # for more precise float time spans
+    # do we have started previously?
     if time_start_int == 0:
-        timeLoadingStart = default_timer() # for more precise float time spans
         now = datetime.utcnow() # for UTC time as int
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         time_now = str(datetime.now())
-        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        timeLoadingStart = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     else:
         # loading has been started previously
         timeLoadingStart = int(time_start_int)
-        time_now_int = int(time_start_int)
+        #time_now_int = int(time_start_int)
+    print("#### time_scriptgroup_start:", time_scriptgroup_start, "as float")
+    print("#### timeLoadingStart:", timeLoadingStart, "as int")
+    print("#### timeLoading before scrips:", time_offset)
     # mark pod
-    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timing}"'.format(script_type=script_type, timing=time_now_int)
+    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart)
     #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
-        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timing}"'.format(script_type=script_type, timing=time_now_int)
+        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart)
         #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -2968,27 +2972,28 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         if sep > 0:
             subscript_type = filename[:sep].lower()
             times_script[subscript_type] = time_scrip_end - time_scrip_start
+            print("#### script:", subscript_type, "time", times_script[subscript_type])
     # mark pod
-    if time_start_int == 0:
-        timeLoadingEnd = default_timer()
-    else:
-        time_now = str(datetime.now())
-        time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-        timeLoadingEnd = time_now_int
-    timeLoading = timeLoadingEnd - timeLoadingStart + time_offset
-    now = datetime.utcnow()
-    now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+    time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())
-    time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+    timeLoadingEnd = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+    timeLoading = time_scriptgroup_end - time_scriptgroup_start + time_offset
+    print("#### time_scriptgroup_end:", time_scriptgroup_end, "as float")
+    print("#### timeLoadingEnd:", timeLoadingEnd, "as int")
+    print("#### timeLoading after scrips:", timeLoading)
+    #now = datetime.utcnow()
+    #now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+    #time_now = str(datetime.now())
+    #time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     # store infos in labels of sut pod and it's pvc
     labels = dict()
     labels[script_type] = 'True'
-    labels['time_{script_type}'.format(script_type=script_type)] = (timeLoadingEnd - timeLoadingStart)
+    labels['time_{script_type}'.format(script_type=script_type)] = (time_scriptgroup_end - time_scriptgroup_start)
     #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
     labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
         labels['time_{script_type}'.format(script_type=subscript_type)] = time_subscript_type
-    fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=time_now_int)
+    fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=timeLoadingEnd)
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
     #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
@@ -2998,7 +3003,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=time_now_int)
+        fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=timeLoadingEnd)
         for key, value in labels.items():
             fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
         #fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
