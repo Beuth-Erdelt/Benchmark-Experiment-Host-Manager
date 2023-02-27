@@ -2933,8 +2933,9 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     #commands = self.initscript
     for c in commands:
-        time_now = str(datetime.now())
-        time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        time_scrip_start = default_timer() # for more precise float time spans
+        #time_now = str(datetime.now())
+        #time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
             stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
@@ -2960,8 +2961,9 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stderr)
-        time_now = str(datetime.now())
-        time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        #time_now = str(datetime.now())
+        #time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+        time_scrip_end = default_timer()
         sep = filename.find("-")
         if sep > 0:
             subscript_type = filename[:sep].lower()
