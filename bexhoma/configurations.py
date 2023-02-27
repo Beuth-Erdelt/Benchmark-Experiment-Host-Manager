@@ -2979,11 +2979,11 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # store infos in labels of sut pod and it's pvc
     labels = dict()
     labels[script_type] = 'True'
-    labels['time_{script_type}'.format(script_type)] = (timeLoadingEnd - timeLoadingStart)
+    labels['time_{script_type}'.format(script_type=script_type)] = (timeLoadingEnd - timeLoadingStart)
     #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
     labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
-        labels['time_{script_type}'] = time_subscript_type
+        labels['time_{script_type}'.format(script_type=subscript_type)] = time_subscript_type
     fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=time_now_int)
     fullcommand = fullcommand + " ".join(labels)
     #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
