@@ -2914,9 +2914,9 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         # loading has been started previously
         timeLoadingStart = int(time_start_int)
         #time_now_int = int(time_start_int)
-    print("#### time_scriptgroup_start:", time_scriptgroup_start, "as float")
-    print("#### timeLoadingStart:", timeLoadingStart, "as int")
-    print("#### timeLoading before scrips:", time_offset)
+    logger.debug("#### time_scriptgroup_start: "+str(time_scriptgroup_start))
+    logger.debug("#### timeLoadingStart: "+str(timeLoadingStart))
+    logger.debug("#### timeLoading before scrips: "+str(time_offset))
     # mark pod
     fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart)
     #print(fullcommand)
@@ -2978,9 +2978,9 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_now = str(datetime.now())
     timeLoadingEnd = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     timeLoading = time_scriptgroup_end - time_scriptgroup_start + time_offset
-    print("#### time_scriptgroup_end:", time_scriptgroup_end, "as float")
-    print("#### timeLoadingEnd:", timeLoadingEnd, "as int")
-    print("#### timeLoading after scrips:", timeLoading)
+    logger.debug("#### time_scriptgroup_end: "+str(time_scriptgroup_end))
+    logger.debug("#### timeLoadingEnd: "+str(timeLoadingEnd))
+    logger.debug("#### timeLoading after scrips: "+str(timeLoading))
     #now = datetime.utcnow()
     #now_string = now.strftime('%Y-%m-%d %H:%M:%S')
     #time_now = str(datetime.now())
