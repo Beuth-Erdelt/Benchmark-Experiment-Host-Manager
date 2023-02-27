@@ -2933,6 +2933,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     #commands = self.initscript
     for c in commands:
+        time_now = str(datetime.now())
         time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
@@ -2959,6 +2960,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stderr)
+        time_now = str(datetime.now())
         time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         sep = filename.find("-")
         if sep > 0:
