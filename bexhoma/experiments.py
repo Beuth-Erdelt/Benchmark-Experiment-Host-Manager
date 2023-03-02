@@ -118,6 +118,7 @@ class default():
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         self.querymanagement = {}
+        self.additional_labels = dict()
         self.workload = {}
         self.monitoring_active = True
         self.prometheus_interval = "3s"
@@ -173,6 +174,15 @@ class default():
         :param experiments_configfolder: Relative path to an experiment folder
         """
         self.experiments_configfolder = experiments_configfolder
+    def set_additional_labels(self, **kwargs):
+        """
+        Sets additional labels, that will be put to K8s objects (and ignored otherwise).
+        This is for the SUT component.
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of labels, example 'SF' => 100
+        """
+        self.additional_labels = kwargs
     def set_workload(self, **kwargs):
         """
         Sets mata data about the experiment, for example name and description.

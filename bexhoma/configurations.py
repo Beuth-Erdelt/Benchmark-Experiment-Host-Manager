@@ -254,11 +254,20 @@ class default():
         :param kwargs: Dict of meta data, example 'storageSize' => '100Gi'
         """
         self.storage = kwargs
+    def set_additional_labels(self, **kwargs):
+        """
+        Sets additional labels, that will be put to K8s objects (and ignored otherwise).
+        This is for the SUT component.
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of labels, example 'SF' => 100
+        """
+        self.additional_labels = kwargs
     def set_ddl_parameters(self, **kwargs):
         """
         Sets DDL parameters for the experiments.
         This substitutes placeholders in DDL script.
-        Can be overwritten by configuration.
+        Can be set by experiment before creation of configuration.
 
         :param kwargs: Dict of meta data, example 'index' => 'btree'
         """
@@ -987,6 +996,8 @@ scrape_configs:
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['volume'] = self.volume
                     dep['metadata']['labels']['loaded'] = "False"
+                    for label_key, label_value in self.additional_labels.items():
+                        dep['metadata']['labels'][label_key] = str(label_value)
                     if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
                         dep['spec']['storageClassName'] = self.storage['storageClassName']
                         #print(dep['spec']['storageClassName'])
@@ -1029,6 +1040,8 @@ scrape_configs:
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
+                for label_key, label_value in self.additional_labels.items():
+                    dep['metadata']['labels'][label_key] = str(label_value)
                 dep['spec']['replicas'] = self.num_worker
                 dep['spec']['serviceName'] = name_worker
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
@@ -1085,6 +1098,8 @@ scrape_configs:
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
+                for label_key, label_value in self.additional_labels.items():
+                    dep['metadata']['labels'][label_key] = str(label_value)
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     self.logger.debug('configuration.add_env({})'.format(env))
@@ -1103,6 +1118,8 @@ scrape_configs:
                     dep['metadata']['labels']['experiment'] = experiment
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['volume'] = self.volume
+                    for label_key, label_value in self.additional_labels.items():
+                        dep['metadata']['labels'][label_key] = str(label_value)
                     #dep['spec']['selector'] = dep['metadata']['labels'].copy()
                     dep['spec']['selector']['configuration'] = configuration
                     dep['spec']['selector']['experiment'] = experiment
@@ -1120,6 +1137,8 @@ scrape_configs:
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
+                for label_key, label_value in self.additional_labels.items():
+                    dep['metadata']['labels'][label_key] = str(label_value)
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 dep['spec']['selector']['configuration'] = configuration
                 dep['spec']['selector']['experiment'] = experiment
@@ -1142,6 +1161,8 @@ scrape_configs:
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
+                for label_key, label_value in self.additional_labels.items():
+                    dep['metadata']['labels'][label_key] = str(label_value)
                 dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
@@ -2427,6 +2448,8 @@ scrape_configs:
                 dep['metadata']['labels']['client'] = str(client)
                 dep['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['metadata']['labels']['volume'] = self.volume
+                for label_key, label_value in self.additional_labels.items():
+                    dep['metadata']['labels'][label_key] = str(label_value)
                 dep['metadata']['labels']['start_time'] = str(time_now_int)
                 dep['spec']['template']['metadata']['labels']['app'] = app
                 dep['spec']['template']['metadata']['labels']['component'] = component
@@ -2437,6 +2460,8 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
                 dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
                 dep['spec']['template']['metadata']['labels']['volume'] = self.volume
+                for label_key, label_value in self.additional_labels.items():
+                    dep['spec']['template']['metadata']['labels'][label_key] = str(label_value)
                 dep['spec']['template']['metadata']['labels']['start_time'] = str(time_now_int)
                 for i_container, c in enumerate(dep['spec']['template']['spec']['containers']):
                     #print(i_container)
