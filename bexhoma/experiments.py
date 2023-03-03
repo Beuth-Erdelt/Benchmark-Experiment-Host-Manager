@@ -182,7 +182,7 @@ class default():
 
         :param kwargs: Dict of labels, example 'SF' => 100
         """
-        self.additional_labels = kwargs
+        self.additional_labels = {**self.additional_labels, **kwargs}
     def set_workload(self, **kwargs):
         """
         Sets mata data about the experiment, for example name and description.
@@ -1150,6 +1150,7 @@ class tpch(default):
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/tpch')
         parameter.defaultParameters = {'SF': str(SF)}
+        self.set_additional_labels(SF=SF)
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'TPC-H Queries SF='+str(SF),

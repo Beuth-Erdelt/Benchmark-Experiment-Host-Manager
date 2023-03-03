@@ -126,6 +126,8 @@ class default():
         self.set_loading_parameters(**self.experiment.loading_parameters)
         self.patch_loading(self.experiment.loading_patch)
         self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
+        self.additional_labels = dict()
+        self.set_additional_labels(**self.experiment.additional_labels)
         self.experiment.add_configuration(self)
         self.dialect = dialect
         self.use_distributed_datasource = False #: True, iff the SUT should mount 'benchmark-data-volume' as source of (non-generated) data
@@ -262,7 +264,7 @@ class default():
 
         :param kwargs: Dict of labels, example 'SF' => 100
         """
-        self.additional_labels = kwargs
+        self.additional_labels = {**self.additional_labels, **kwargs}
     def set_ddl_parameters(self, **kwargs):
         """
         Sets DDL parameters for the experiments.
