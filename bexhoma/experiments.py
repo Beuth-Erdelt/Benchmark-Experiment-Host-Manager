@@ -1143,11 +1143,14 @@ class tpch(default):
             SF = '100',
             num_experiment_to_apply = 1,
             timeout = 7200,
+            script=None
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        if script is None:
+            script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpch')
-        self.set_experiment(script='SF'+str(SF)+'-index')
+        self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/tpch')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_additional_labels(SF=SF)
