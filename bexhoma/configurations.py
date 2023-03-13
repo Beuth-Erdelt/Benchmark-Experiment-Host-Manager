@@ -1737,7 +1737,7 @@ scrape_configs:
         code = self.code
         # get connection config (sut)
         monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
-        service_name = self.get_service_sut()#self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
+        service_name = self.get_service_sut(configuration=configuration)#self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
         service_namespace = self.experiment.cluster.contextdata['namespace']
         service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
@@ -1827,7 +1827,7 @@ scrape_configs:
         self.current_benchmark_start = int(time_now_int)
         # get connection config (sut)
         monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
-        service_name = self.get_service_sut()#self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
+        service_name = self.get_service_sut(configuration=configuration)#self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
         service_namespace = self.experiment.cluster.contextdata['namespace']
         service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
@@ -2310,7 +2310,7 @@ scrape_configs:
         self.logger.debug('configuration.load_data()')
         self.loading_started = True
         self.prepare_init_dbms(scripts)
-        service_name = self.get_service_sut()#self.generate_component_name(component='sut', configuration=self.configuration, experiment=self.code)
+        service_name = self.get_service_sut(configuration=self.configuration)#self.generate_component_name(component='sut', configuration=self.configuration, experiment=self.code)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
@@ -2354,14 +2354,9 @@ scrape_configs:
                 return result
                 #unpatched = yaml.safe_load(f)
                 #return unpatched
-    def get_service_sut(self):
-        if len(app) == 0:
-            app = self.appname
-        code = str(int(experiment))
-        if not experimentRun:
-            experimentRun = str(self.num_experiment_to_apply_done+1)
-        #connection = configuration
-        #if not len(jobname):
+    def get_service_sut(self, configuration):
+        app = self.appname
+        experiment = str(int(self.code))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         return servicename
     def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
@@ -2388,7 +2383,7 @@ scrape_configs:
         #connection = configuration
         #if not len(jobname):
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client))
-        servicename = self.get_service_sut()#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         # start (create) time of the job
         now = datetime.utcnow()
@@ -2573,7 +2568,7 @@ scrape_configs:
         connection = self.configuration#self.getConnectionName()
         #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         #self.maintaining_jobname = jobname
-        servicename = self.get_service_sut()#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('configuration.create_manifest_maintaining()')
         # determine start time
@@ -2703,7 +2698,7 @@ class hammerdb(default):
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
         #self.benchmarker_jobname = jobname
-        servicename = self.get_service_sut()#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('hammerdb.create_manifest_benchmarking({})'.format(jobname))
         # determine start time
@@ -2781,7 +2776,7 @@ class ycsb(default):
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
         #self.benchmarker_jobname = jobname
-        servicename = self.get_service_sut()#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('ycsb.create_manifest_benchmarking({})'.format(jobname))
         # determine start time
@@ -2858,7 +2853,7 @@ class benchbase(default):
         #connection = configuration
         jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
         #self.benchmarker_jobname = jobname
-        servicename = self.get_service_sut()#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         #print(jobname)
         self.logger.debug('benchbase.create_manifest_benchmarking({})'.format(jobname))
         # determine start time
@@ -2916,7 +2911,7 @@ class yugabytedb(default):
         You should have received a copy of the GNU Affero General Public License
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
     """
-    def get_service_sut(self):
+    def get_service_sut(self, configuration):
         return "yb-tserver-service"
 
 
