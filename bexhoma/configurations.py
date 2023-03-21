@@ -2917,6 +2917,45 @@ class yugabytedb(default):
 
 
 
+class kinetica(default):
+    """
+    :Date: 2022-10-01
+    :Version: 0.6.0
+    :Authors: Patrick K. Erdelt
+
+        Class for managing an DBMS configuation.
+        This is plugged into an experiment object.
+        This class contains specific settings for a Kinetica installation.
+        This is handled outside of bexhoma with the official KAgent.
+        The service name is fixed to be "bexhoma-service-kinetica"
+
+        :param experiment: Unique identifier of the experiment
+        :param docker: Name of the Docker image
+        :param configuration: Name of the configuration
+        :param script: Unique identifier of the experiment
+        :param alias: Unique identifier of the experiment
+
+        Copyright (C) 2020  Patrick K. Erdelt
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Affero General Public License as
+        published by the Free Software Foundation, either version 3 of the
+        License, or (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Affero General Public License for more details.
+
+        You should have received a copy of the GNU Affero General Public License
+        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    """
+    def get_service_sut(self, configuration):
+        return "bexhoma-service-kinetica"
+
+
+
+
 
 
 
