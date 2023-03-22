@@ -2355,6 +2355,14 @@ scrape_configs:
                 #unpatched = yaml.safe_load(f)
                 #return unpatched
     def get_service_sut(self, configuration):
+        """
+        Returns the same of the service where to connect to the SUT.
+        This in general is the name of the service of the deployed component.
+        For SUT, that require a component that is not controlled by bexhoma, this may be overwritten.
+
+        :param configuration: name of the configuration
+        :return: name of the configuration's sut's service
+        """
         app = self.appname
         experiment = str(int(self.code))
         servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
@@ -2912,6 +2920,15 @@ class yugabytedb(default):
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
     """
     def get_service_sut(self, configuration):
+        """
+        Returns the same of the service where to connect to the SUT.
+        This in general is the name of the service of the deployed component.
+        For SUT, that require a component that is not controlled by bexhoma, this may be overwritten.
+        Here, always "yb-tserver-service" is returned.
+
+        :param configuration: name of the configuration
+        :return: name of the configuration's sut's service
+        """
         return "yb-tserver-service"
 
 
@@ -2951,7 +2968,33 @@ class kinetica(default):
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
     """
     def get_service_sut(self, configuration):
+        """
+        Returns the same of the service where to connect to the SUT.
+        This in general is the name of the service of the deployed component.
+        For SUT, that require a component that is not controlled by bexhoma, this may be overwritten.
+        Here, always "bexhoma-service-kinetica" is returned.
+
+        :param configuration: name of the configuration
+        :return: name of the configuration's sut's service
+        """
         return "bexhoma-service-kinetica"
+    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+        """
+        Generate a name for the monitoring component.
+        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
+        For Kinetica, the service to be monitored is named 'bexhoma-service-kinetica'.
+
+        :param app: app the component belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        """
+        if component == 'sut':
+            name = 'bexhoma-service-kinetica'
+        else:
+            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.logger.debug("kinetica.create_monitoring({})".format(name))
+        return name
 
 
 
