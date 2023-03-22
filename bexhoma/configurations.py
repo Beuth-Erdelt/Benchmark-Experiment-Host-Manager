@@ -1736,7 +1736,6 @@ scrape_configs:
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
                     c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
-                    c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
