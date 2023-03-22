@@ -1630,6 +1630,19 @@ scrape_configs:
         server['datadisk'] = self.get_host_diskspace_used_data()
         server['cuda'] = self.get_host_cuda()
         return server
+    def set_metric_of_config(self, metric, host, gpuid):
+        """
+        Returns a promql query.
+        Parameters in this query are substituted, so that prometheus finds the correct metric.
+        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
+        configuration and experiment are placeholders and will be replaced by concrete values.
+
+        :param metric: Parametrized promql query
+        :param host: Name of the host the metrics should be collected from
+        :param gpuid: GPU that the metrics should watch
+        :return: promql query without parameters
+        """
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.
@@ -1721,7 +1734,9 @@ scrape_configs:
                 node = c['hostsystem']['node']
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
-                    c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+                    #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
+                    c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
@@ -2995,6 +3010,20 @@ class kinetica(default):
             name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         self.logger.debug("kinetica.create_monitoring({})".format(name))
         return name
+    def set_metric_of_config(self, metric, host, gpuid):
+        """
+        Returns a promql query.
+        Parameters in this query are substituted, so that prometheus finds the correct metric.
+        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
+        configuration and experiment are placeholders and will be replaced by concrete values.
+        Here: We do not have a SUT that is specific to the experiment or configuration.
+
+        :param metric: Parametrized promql query
+        :param host: Name of the host the metrics should be collected from
+        :param gpuid: GPU that the metrics should watch
+        :return: promql query without parameters
+        """
+        return metric.format(host=host, gpuid=gpuid, configuration='default', experiment='default')
 
 
 
