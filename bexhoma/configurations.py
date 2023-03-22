@@ -3023,7 +3023,7 @@ class kinetica(default):
         :param gpuid: GPU that the metrics should watch
         :return: promql query without parameters
         """
-        return metric.format(host=host, gpuid=gpuid, configuration='default', experiment='default')
+        return metric.format(host=host, gpuid=gpuid, configuration='kinetica', experiment='default')
 
 
 
