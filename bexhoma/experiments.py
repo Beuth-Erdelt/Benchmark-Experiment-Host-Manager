@@ -1614,6 +1614,8 @@ class ycsb(default):
         cmd = {}
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        self.cluster.kubectl(cmd['upload_results'])
     def get_result(self, component='loading'):
         #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         path = self.path
@@ -1787,5 +1789,7 @@ class benchbase(default):
         cmd = {}
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        self.cluster.kubectl(cmd['upload_results'])
 
 
