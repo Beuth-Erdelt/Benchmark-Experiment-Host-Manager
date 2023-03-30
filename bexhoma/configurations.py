@@ -2643,7 +2643,7 @@ scrape_configs:
         start = now + timedelta(seconds=60)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             }
         # store parameters in connection for evaluation
         if len(self.loading_parameters):
@@ -2729,7 +2729,7 @@ class hammerdb(default):
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
@@ -2807,7 +2807,7 @@ class ycsb(default):
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
@@ -2884,7 +2884,7 @@ class benchbase(default):
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': start_string,
+            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
