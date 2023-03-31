@@ -2662,10 +2662,10 @@ scrape_configs:
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
-    def get_worker_pods():
+    def get_worker_pods(self):
         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         return pods_worker
-    def get_worker_endpoints():
+    def get_worker_endpoints(self):
         endpoints = []
         name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
         pods_worker = self.get_worker_pods()
