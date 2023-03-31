@@ -2673,7 +2673,7 @@ scrape_configs:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
             endpoints.append(endpoint)
             print('Worker: {endpoint}'.format(endpoint = endpoint))
-        return endpoint
+        return endpoints
 
 
 
