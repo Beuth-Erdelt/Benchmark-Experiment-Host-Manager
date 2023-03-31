@@ -1070,6 +1070,8 @@ scrape_configs:
                     #env_merged = {**env_manifest, **env}
                     #print(env_merged)
                     self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
+                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                        dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     for i_env,e in env.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
