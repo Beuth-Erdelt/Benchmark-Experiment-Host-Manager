@@ -1472,6 +1472,31 @@ class testbed():
         self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
         redisCommand = 'redis-cli set {redisQueue} {value} '.format(redisQueue=queue, value=value)
         self.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
+    def get_service_endpoints(self, service_name="bexhoma-service-monitoring-default"):
+        """
+        Returns a list of all endpoints of a service as a list.
+        This is in particular interesting for headless services.
+
+        :param service_name: Name of the service
+        :return: List of IPs of endpoints
+        """
+        #kubectl get endpoints -o jsonpath="{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}"
+        #service_name = "bexhoma-service-monitoring-default"
+        self.logger.debug("get_service_endpoints({})".format(service_name))
+        endpoints = self.kubectl("get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}\"")
+        try:
+            endpoints_of_service = endpoints.split("\n")
+            for service in endpoints_of_service:
+                if service.startswith(service_name):
+                    #print(service)
+                    endpoints_string = service[service.find(",")+1:]
+                    #print(endpoints_string)
+                    endpoints_list = endpoints_string.split(" ")
+                    self.logger.debug("endpoints: {}".format(endpoints_list))
+                    return endpoints_list
+        except Exception as e:
+            print("Exception when calling get_service_endpoints: %s\n" % e)
+        return []
 
 
 
@@ -1565,6 +1590,7 @@ class kubernetes(testbed):
         f = open(filename_log, "w")
         f.write(stdout)
         f.close()
+
 
 
 
