@@ -742,17 +742,19 @@ scrape_configs:
     static_configs:
       - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # services of workers
-                        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
-                        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                        endpoints_worker = self.get_worker_endpoints()
+                        #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+                        #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                         i = 0
-                        for pod in pods_worker:
-                            print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                        #for pod in pods_worker:
+                        for endpoint in endpoints_worker:
+                            #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
-  - job_name: '{worker}'
+  - job_name: '{endpoint}'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{worker}.{service_sut}:9300']""".format(worker=pod, service_sut=name_worker, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+      - targets: ['{endpoint}:9300']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
@@ -2658,8 +2660,18 @@ scrape_configs:
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
-
-
+    def get_worker_pods():
+        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        return pods_worker
+    def get_worker_endpoints():
+        endpoints = []
+        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+        pods_worker = self.get_worker_pods()
+        for pod in pods_worker:
+            endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
+            endpoints.append(endpoint)
+            print('Worker: {endpoint}'.format(endpoint = endpoint))
+        return endpoint
 
 
 
