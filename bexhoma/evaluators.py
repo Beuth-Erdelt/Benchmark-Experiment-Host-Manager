@@ -474,34 +474,53 @@ class ycsb(logger):
             '[TOTAL_GCs].Count':'int',
             '[TOTAL_GC_TIME].Time(ms)':'float',
             '[TOTAL_GC_TIME_%].Time(%)':'float',
-            '[READ].Operations':'int',
-            '[READ].AverageLatency(us)':'float',
-            '[READ].MinLatency(us)':'float',
-            '[READ].MaxLatency(us)':'float',
-            '[READ].95thPercentileLatency(us)':'float',
-            '[READ].99thPercentileLatency(us)':'float',
-            '[READ].Return=OK':'int',
             '[CLEANUP].Operations':'int',
             '[CLEANUP].AverageLatency(us)':'float',
             '[CLEANUP].MinLatency(us)':'float',
             '[CLEANUP].MaxLatency(us)':'float',
             '[CLEANUP].95thPercentileLatency(us)':'float',
             '[CLEANUP].99thPercentileLatency(us)':'float',
-            '[UPDATE].Operations':'int',
-            '[UPDATE].AverageLatency(us)':'float',
-            '[UPDATE].MinLatency(us)':'float',
-            '[UPDATE].MaxLatency(us)':'float',
-            '[UPDATE].95thPercentileLatency(us)':'float',
-            '[UPDATE].99thPercentileLatency(us)':'float',
-            '[UPDATE].Return=OK': 'int',
-            '[INSERT].Operations':'int',
-            '[INSERT].AverageLatency(us)':'float',
-            '[INSERT].MinLatency(us)':'float',
-            '[INSERT].MaxLatency(us)':'float',
-            '[INSERT].95thPercentileLatency(us)':'float',
-            '[INSERT].99thPercentileLatency(us)':'float',
-            '[INSERT].Return=OK':'int',
         })
+        if '[READ].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[READ].Operations':'int',
+                '[READ].AverageLatency(us)':'float',
+                '[READ].MinLatency(us)':'float',
+                '[READ].MaxLatency(us)':'float',
+                '[READ].95thPercentileLatency(us)':'float',
+                '[READ].99thPercentileLatency(us)':'float',
+                '[READ].Return=OK':'int',
+        })
+        if '[UPDATE].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[UPDATE].Operations':'int',
+                '[UPDATE].AverageLatency(us)':'float',
+                '[UPDATE].MinLatency(us)':'float',
+                '[UPDATE].MaxLatency(us)':'float',
+                '[UPDATE].95thPercentileLatency(us)':'float',
+                '[UPDATE].99thPercentileLatency(us)':'float',
+                '[UPDATE].Return=OK': 'int',
+        })
+        if '[INSERT].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[INSERT].Operations':'int',
+                '[INSERT].AverageLatency(us)':'float',
+                '[INSERT].MinLatency(us)':'float',
+                '[INSERT].MaxLatency(us)':'float',
+                '[INSERT].95thPercentileLatency(us)':'float',
+                '[INSERT].99thPercentileLatency(us)':'float',
+                '[INSERT].Return=OK': 'int',
+        })
+        if '[SCAN].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[SCAN].Operations':'int',
+                '[SCAN].AverageLatency(us)':'float',
+                '[SCAN].MinLatency(us)':'float',
+                '[SCAN].MaxLatency(us)':'float',
+                '[SCAN].95thPercentileLatency(us)':'float',
+                '[SCAN].99thPercentileLatency(us)':'float',
+                '[SCAN].Return=OK':'int',
+            })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df):
         """
@@ -548,21 +567,47 @@ class ycsb(logger):
                 '[CLEANUP].MaxLatency(us)':'max',
                 '[CLEANUP].95thPercentileLatency(us)':'max',
                 '[CLEANUP].99thPercentileLatency(us)':'max',
-                '[UPDATE].Operations':'sum',
-                '[UPDATE].AverageLatency(us)':'mean',
-                '[UPDATE].MinLatency(us)':'min',
-                '[UPDATE].MaxLatency(us)':'max',
-                '[UPDATE].95thPercentileLatency(us)':'max',
-                '[UPDATE].99thPercentileLatency(us)':'max',
-                '[UPDATE].Return=OK': 'sum',
-                '[INSERT].Operations':'sum',
-                '[INSERT].AverageLatency(us)':'mean',
-                '[INSERT].MinLatency(us)':'min',
-                '[INSERT].MaxLatency(us)':'max',
-                '[INSERT].95thPercentileLatency(us)':'max',
-                '[INSERT].99thPercentileLatency(us)':'max',
-                '[INSERT].Return=OK':'sum',
             }
+            if '[READ].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[READ].Operations':'sum',
+                    '[READ].AverageLatency(us)':'mean',
+                    '[READ].MinLatency(us)':'min',
+                    '[READ].MaxLatency(us)':'max',
+                    '[READ].95thPercentileLatency(us)':'max',
+                    '[READ].99thPercentileLatency(us)':'max',
+                    '[READ].Return=OK': 'sum',
+                }}
+            if '[INSERT].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[INSERT].Operations':'sum',
+                    '[INSERT].AverageLatency(us)':'mean',
+                    '[INSERT].MinLatency(us)':'min',
+                    '[INSERT].MaxLatency(us)':'max',
+                    '[INSERT].95thPercentileLatency(us)':'max',
+                    '[INSERT].99thPercentileLatency(us)':'max',
+                    '[INSERT].Return=OK': 'sum',
+                }}
+            if '[UPDATE].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[UPDATE].Operations':'sum',
+                    '[UPDATE].AverageLatency(us)':'mean',
+                    '[UPDATE].MinLatency(us)':'min',
+                    '[UPDATE].MaxLatency(us)':'max',
+                    '[UPDATE].95thPercentileLatency(us)':'max',
+                    '[UPDATE].99thPercentileLatency(us)':'max',
+                    '[UPDATE].Return=OK': 'sum',
+                }}
+            if '[SCAN].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[SCAN].Operations':'sum',
+                    '[SCAN].AverageLatency(us)':'mean',
+                    '[SCAN].MinLatency(us)':'min',
+                    '[SCAN].MaxLatency(us)':'max',
+                    '[SCAN].95thPercentileLatency(us)':'max',
+                    '[SCAN].99thPercentileLatency(us)':'max',
+                    '[SCAN].Return=OK':'sum',
+                }}
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key

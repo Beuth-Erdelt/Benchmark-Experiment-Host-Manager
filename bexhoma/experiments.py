@@ -1419,7 +1419,7 @@ class ycsb(default):
         self.storage_label = 'tpch-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-    def log_to_df(self, filename):
+    def OLD_log_to_df(self, filename):
         try:
             with open(filename) as f:
                 lines = f.readlines()
@@ -1455,7 +1455,7 @@ class ycsb(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+    def OLD_get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
             s=df2[df2['category'] == category]
@@ -1465,7 +1465,7 @@ class ycsb(default):
             print(e)
             print(df)
             return 0.0
-    def get_result_max(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+    def OLD_get_result_max(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
             s=df2[df2['category'] == category]
@@ -1475,7 +1475,7 @@ class ycsb(default):
             print(e)
             print(df)
             return 0.0
-    def get_result_avg(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+    def OLD_get_result_avg(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
             s=df2[df2['category'] == category]
@@ -1485,11 +1485,11 @@ class ycsb(default):
             print(e)
             print(df)
             return 0.0
-    def get_parts_of_name(self, name):
+    def OLD_get_parts_of_name(self, name):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
-    def get_overview_loading(self, dfs={}):
+    def OLD_get_overview_loading(self, dfs={}):
         tps = []
         if len(dfs) == 0:
             dfs = self.get_result(component="loading")
@@ -1554,7 +1554,7 @@ class ycsb(default):
         df_totals = df_totals.astype({'target':'float','pods':'int'})
         df_totals = df_totals.sort_values(['target','pods'])
         return df_totals
-    def get_overview_benchmarking(self, dfs={}):
+    def OLD_get_overview_benchmarking(self, dfs={}):
         tps = []
         if len(dfs) == 0:
             dfs = self.get_result(component="benchmarking")
@@ -1698,11 +1698,15 @@ class ycsb(default):
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
         cmd = {}
+        #stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+        #self.logger.debug('copy config connections.config: {}'.format(stdout))
+        #cmd['upload_config'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/connections.config', from_file=self.path+"/connections.config")
+        #self.cluster.kubectl(cmd['upload_config'])
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
-    def get_result(self, component='loading'):
+    def OLD_get_result(self, component='loading'):
         #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         path = self.path
         df_prev = pd.DataFrame()
