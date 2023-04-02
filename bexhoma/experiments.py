@@ -1518,7 +1518,7 @@ class ycsb(default):
             list_values_df = [
                 connection, 
                 num_pods, 
-                overall_Throughput/int(parts['pods'])
+                overall_Throughput/int(parts['pods']),
                 overall_Throughput, 
                 overall_RunTime, 
                 insert_Operations, 
@@ -1546,7 +1546,7 @@ class ycsb(default):
             'insert_OK', 
             'insert_AverageLatency', 
             'insert_95thPercentileLatency', 
-            'insert_99thPercentileLatency'
+            'insert_99thPercentileLatency',
             ])
         #print(columns)
         df_totals.columns = columns
@@ -1607,7 +1607,7 @@ class ycsb(default):
                 num_pods, 
                 overall_Throughput, 
                 overall_RunTime, 
-                overall_Throughput/int(parts['pods'])
+                overall_Throughput/int(parts['pods']),
                 read_Operations, 
                 read_OK, 
                 read_AverageLatency, 
@@ -1644,7 +1644,7 @@ class ycsb(default):
             'num_pods', 
             'overall_Throughput', 
             'overall_RunTime', 
-            'total_tps_per_pod'
+            'total_tps_per_pod',
             'read_Operations', 
             'read_OK', 
             'read_AverageLatency', 
@@ -1664,7 +1664,7 @@ class ycsb(default):
             'scan_OK', 
             'scan_AverageLatency', 
             'scan_95thPercentileLatency', 
-            'scan_99thPercentileLatency'
+            'scan_99thPercentileLatency',
             ])
         #print(columns)
         df_totals.columns = columns
