@@ -494,6 +494,13 @@ class ycsb(logger):
             '[UPDATE].95thPercentileLatency(us)':'float',
             '[UPDATE].99thPercentileLatency(us)':'float',
             '[UPDATE].Return=OK': 'int',
+            '[INSERT].Operations':'int',
+            '[INSERT].AverageLatency(us)':'float',
+            '[INSERT].MinLatency(us)':'float',
+            '[INSERT].MaxLatency(us)':'float',
+            '[INSERT].95thPercentileLatency(us)':'float',
+            '[INSERT].99thPercentileLatency(us)':'float',
+            '[INSERT].Return=OK':'int',
         })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df):
@@ -548,6 +555,13 @@ class ycsb(logger):
                 '[UPDATE].95thPercentileLatency(us)':'max',
                 '[UPDATE].99thPercentileLatency(us)':'max',
                 '[UPDATE].Return=OK': 'sum',
+                '[INSERT].Operations':'sum',
+                '[INSERT].AverageLatency(us)':'mean',
+                '[INSERT].MinLatency(us)':'min',
+                '[INSERT].MaxLatency(us)':'max',
+                '[INSERT].95thPercentileLatency(us)':'max',
+                '[INSERT].99thPercentileLatency(us)':'max',
+                '[INSERT].Return=OK':'sum',
             }
             #print(grp.agg(aggregate))
             dict_grp = dict()

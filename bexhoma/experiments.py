@@ -1515,7 +1515,18 @@ class ycsb(default):
             list_values_name = list(parts.values())
             num_pods = len(df.columns)-2
             #print(list_values_name)
-            list_values_df = [connection, num_pods, overall_Throughput, insert_Operations, insert_OK, overall_RunTime, insert_AverageLatency, insert_95thPercentileLatency, insert_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            list_values_df = [
+                connection, 
+                num_pods, 
+                overall_Throughput/int(parts['pods'])
+                overall_Throughput, 
+                overall_RunTime, 
+                insert_Operations, 
+                insert_OK, 
+                insert_AverageLatency, 
+                insert_95thPercentileLatency, 
+                insert_99thPercentileLatency, 
+                ]
             #print(list_values_df)
             list_values_name.extend(list_values_df)
             #print('combined', list_values_name)
@@ -1525,7 +1536,18 @@ class ycsb(default):
         df_totals = pd.DataFrame(tps)
         #print(list(parts.keys()))
         columns = list(parts.keys())
-        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
+        columns.extend([
+            'connection', 
+            'num_pods', 
+            'total_tps_per_pod', 
+            'overall_Throughput', 
+            'overall_RunTime', 
+            'insert_Operations', 
+            'insert_OK', 
+            'insert_AverageLatency', 
+            'insert_95thPercentileLatency', 
+            'insert_99thPercentileLatency'
+            ])
         #print(columns)
         df_totals.columns = columns
         #list(parts.keys()).extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
@@ -1549,23 +1571,64 @@ class ycsb(default):
             #worker = int(parts[2])
             #target = int(parts[3])
             #print(df)
+            # read
             read_Operations = float(self.get_result_sum(df, category='[READ]', type='Operations'))
             read_OK = float(self.get_result_sum(df, category='[READ]', type='Return=OK'))
             read_AverageLatency = float(self.get_result_avg(df, category='[READ]', type='AverageLatency(us)'))
             read_95thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='95thPercentileLatency(us)'))
             read_99thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='99thPercentileLatency(us)'))
+            # update
             update_Operations = float(self.get_result_sum(df, category='[UPDATE]', type='Operations'))
             update_OK = float(self.get_result_sum(df, category='[UPDATE]', type='Return=OK'))
             update_AverageLatency = float(self.get_result_avg(df, category='[UPDATE]', type='AverageLatency(us)'))
             update_95thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='95thPercentileLatency(us)'))
             update_99thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='99thPercentileLatency(us)'))
+            # overall
             overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
             overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
+            # inserts
+            insert_Operations = float(self.get_result_sum(df, category='[INSERT]', type='Operations'))
+            insert_OK = float(self.get_result_sum(df, category='[INSERT]', type='Return=OK'))
+            insert_AverageLatency = float(self.get_result_avg(df, category='[INSERT]', type='AverageLatency(us)'))
+            insert_95thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='95thPercentileLatency(us)'))
+            insert_99thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='99thPercentileLatency(us)'))
+            # scan
+            scan_Operations = float(self.get_result_sum(df, category='[SCAN]', type='Operations'))
+            scan_OK = float(self.get_result_sum(df, category='[SCAN]', type='Return=OK'))
+            scan_AverageLatency = float(self.get_result_avg(df, category='[SCAN]', type='AverageLatency(us)'))
+            scan_95thPercentileLatency = float(self.get_result_avg(df, category='[SCAN]', type='95thPercentileLatency(us)'))
+            scan_99thPercentileLatency = float(self.get_result_avg(df, category='[SCAN]', type='99thPercentileLatency(us)'))
+            # extract from naming (DEPRCATED?)
             list_values_name = list(parts.values())
             num_pods = len(df.columns)-2
             #print(list_values_name)
-            list_values_df = [connection, num_pods, overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
-                        update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            list_values_df = [
+                connection, 
+                num_pods, 
+                overall_Throughput, 
+                overall_RunTime, 
+                overall_Throughput/int(parts['pods'])
+                read_Operations, 
+                read_OK, 
+                read_AverageLatency, 
+                read_95thPercentileLatency, 
+                read_99thPercentileLatency, 
+                update_Operations, 
+                update_OK, 
+                update_AverageLatency, 
+                update_95thPercentileLatency, 
+                update_99thPercentileLatency, 
+                insert_Operations, 
+                insert_OK, 
+                insert_AverageLatency, 
+                insert_95thPercentileLatency, 
+                insert_99thPercentileLatency, 
+                scan_Operations, 
+                scan_OK, 
+                scan_AverageLatency, 
+                scan_95thPercentileLatency, 
+                scan_99thPercentileLatency, 
+                ]
             #print(list_values_df)
             list_values_name.extend(list_values_df)
             #print('combined', list_values_name)
@@ -1576,10 +1639,33 @@ class ycsb(default):
         #print(tps)
         df_totals = pd.DataFrame(tps)
         columns = list(parts.keys())
-        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'overall_RunTime', 
-                             'read_Operations', 'read_OK', 'read_AverageLatency', 'read_95thPercentileLatency', 'read_99thPercentileLatency',
-                             'update_Operations', 'update_OK', 'update_AverageLatency', 'update_95thPercentileLatency', 'update_99thPercentileLatency',
-                             'total_tps_per_pod'])
+        columns.extend([
+            'connection', 
+            'num_pods', 
+            'overall_Throughput', 
+            'overall_RunTime', 
+            'total_tps_per_pod'
+            'read_Operations', 
+            'read_OK', 
+            'read_AverageLatency', 
+            'read_95thPercentileLatency', 
+            'read_99thPercentileLatency', 
+            'update_Operations', 
+            'update_OK', 
+            'update_AverageLatency', 
+            'update_95thPercentileLatency', 
+            'update_99thPercentileLatency', 
+            'insert_Operations', 
+            'insert_OK', 
+            'insert_AverageLatency', 
+            'insert_95thPercentileLatency', 
+            'insert_99thPercentileLatency'
+            'scan_Operations', 
+            'scan_OK', 
+            'scan_AverageLatency', 
+            'scan_95thPercentileLatency', 
+            'scan_99thPercentileLatency'
+            ])
         #print(columns)
         df_totals.columns = columns
         df_totals = df_totals.astype({'target':'float','pods':'int'})
