@@ -411,8 +411,8 @@ class ycsb(logger):
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
-            #workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
-            workload = "A"
+            workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
+            #workload = "A"
             pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
             result = []
             #for line in s.split("\n"):
