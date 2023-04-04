@@ -1885,8 +1885,11 @@ scrape_configs:
         # read config for benchmarker
         # empty template:
         #connectionfile = experiments_configfolder+'/connections.config'
-        # collecting all configs of experiment
+        # collecting all configs of experiment in result folder
         connectionfile = self.benchmark.path+'/connections.config'
+        if not os.path.isfile(connectionfile):
+            # empty template:
+            connectionfile = experiments_configfolder+'/connections.config'
         if self.experiment.queryfile is not None:
             queryfile = experiments_configfolder+'/'+self.experiment.queryfile
         else:
