@@ -1883,7 +1883,10 @@ scrape_configs:
         #print("Code", self.code)
         self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
-        connectionfile = experiments_configfolder+'/connections.config'
+        # empty template:
+        #connectionfile = experiments_configfolder+'/connections.config'
+        # collecting all configs of experiment
+        connectionfile = self.benchmark.path+'/connections.config'
         if self.experiment.queryfile is not None:
             queryfile = experiments_configfolder+'/'+self.experiment.queryfile
         else:
