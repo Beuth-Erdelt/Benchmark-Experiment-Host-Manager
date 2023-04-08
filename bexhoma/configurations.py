@@ -2673,6 +2673,14 @@ scrape_configs:
         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         return pods_worker
     def get_worker_endpoints(self):
+        """
+        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
+        These are IPs of cAdvisor instances.
+        The endpoint list is to be filled in a config of an instance of Prometheus.
+        By default, the workers can be found by the name of their component (worker-0 etc).
+
+        :return: list of endpoints
+        """
         endpoints = []
         name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
         pods_worker = self.get_worker_pods()
@@ -3043,8 +3051,19 @@ class kinetica(default):
         :param gpuid: GPU that the metrics should watch
         :return: promql query without parameters
         """
-        return metric.format(host=host, gpuid=gpuid, configuration='kinetica', experiment='default')
+        return metric.format(host=host, gpuid=gpuid, configuration='kinetica', experiment='worker')
+    def get_worker_endpoints(self):
+        """
+        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
+        These are IPs of cAdvisor instances.
+        The endpoint list is to be filled in a config of an instance of Prometheus.
+        For Kinetica the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
 
+        :return: list of endpoints
+        """
+        endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+        self.logger.debug("kinetica.get_worker_endpoints({})".format(endpoints))
+        return endpoints
 
 
 
