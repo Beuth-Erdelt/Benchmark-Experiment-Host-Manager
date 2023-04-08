@@ -1483,7 +1483,7 @@ class testbed():
         #kubectl get endpoints -o jsonpath="{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}"
         #service_name = "bexhoma-service-monitoring-default"
         self.logger.debug("get_service_endpoints({})".format(service_name))
-        endpoints = self.kubectl("get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}\"")
+        endpoints = self.kubectl("get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\\n'}{end}\"")
         try:
             endpoints_of_service = endpoints.split("\n")
             for service in endpoints_of_service:
