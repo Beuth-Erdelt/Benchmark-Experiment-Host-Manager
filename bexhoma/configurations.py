@@ -2304,10 +2304,11 @@ scrape_configs:
                         if len(pods) > 0:
                             pod_dashboard = pods[0]
                             cmd = {}
+                            connection = self.configuration#self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
                             #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                             cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                                 connection,
-                                c['name']+'.config',
+                                'connection.config',
                                 '/results/'+self.code,
                                 self.code,
                                 timing_start,
