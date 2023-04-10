@@ -1255,6 +1255,7 @@ class testbed():
             self.logger.debug('testbed.start_monitoring_cluster()=exists')
             return
         else:
+            self.logger.debug('testbed.start_monitoring_cluster()=deploy')
             deployment = 'deamonsettemplate-monitoring.yml'
             #name = self.create_dashboard_name(app, component)
             #self.logger.debug('testbed.start_monitoring_general({})'.format(deployment))
