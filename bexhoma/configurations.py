@@ -741,6 +741,18 @@ scrape_configs:
     scrape_timeout: {prometheus_timeout}
     static_configs:
       - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                        # service of cluster
+                        endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+                        i = 0
+                        for endpoint in endpoints_cluster:
+                            #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                            prometheus_config += """
+  - job_name: '{endpoint}'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    static_configs:
+      - targets: ['{endpoint}:9300']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                            i = i + 1
                         # services of workers
                         endpoints_worker = self.get_worker_endpoints()
                         #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
@@ -748,6 +760,9 @@ scrape_configs:
                         i = 0
                         #for pod in pods_worker:
                         for endpoint in endpoints_worker:
+                            if endpoint in endpoints_cluster:
+                                # we already monitor this endpoint
+                                continue
                             #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
   - job_name: '{endpoint}'

@@ -1241,6 +1241,26 @@ class testbed():
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+    def start_monitoring_cluster(self, app='', component='monitoring'):
+        """
+        Starts the monitoring component and its service.
+        Manifest for node exporters is expected in 'deamonsettemplate-monitoring.yml'.
+
+        :param app: app monitoring belongs to
+        :param component: Component name, should be 'monitoring' typically
+        """
+        endpoints = self.get_service_endpoints()
+        if len(endpoints) > 0:
+            # dashboard exists
+            self.logger.debug('testbed.start_monitoring_cluster()=exists')
+            return
+        else:
+            deployment = 'deamonsettemplate-monitoring.yml'
+            #name = self.create_dashboard_name(app, component)
+            #self.logger.debug('testbed.start_monitoring_general({})'.format(deployment))
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            #deployment = 'deploymenttemplate-bexhoma-prometheus.yml'
+            #self.kubectl('create -f '+self.yamlfolder+deployment)
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
@@ -1476,6 +1496,7 @@ class testbed():
         """
         Returns a list of all endpoints of a service as a list.
         This is in particular interesting for headless services.
+        It is used to find all nodes in a cluster, if monitoring of cluster is active.
 
         :param service_name: Name of the service
         :return: List of IPs of endpoints
