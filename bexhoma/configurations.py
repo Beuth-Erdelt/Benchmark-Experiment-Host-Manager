@@ -2295,6 +2295,35 @@ scrape_configs:
                             #fullcommand = 'label pvc '+volume+' --overwrite loaded=True time_ingested={} timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(loader_time, int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
                             #print(fullcommand)
                             self.experiment.cluster.kubectl(fullcommand)
+                    # get metrics of loader components
+                    endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+                    # get monitoring for loading
+                    if self.monitoring_active and len(endpoints_cluster)>0:
+                        # copy config to pod - dashboard
+                        pods = self.experiment.cluster.get_pods(component='dashboard')
+                        if len(pods) > 0:
+                            pod_dashboard = pods[0]
+                            cmd = {}
+                            #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                            cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                                connection,
+                                c['name']+'.config',
+                                '/results/'+self.code,
+                                self.code,
+                                timing_start,
+                                timing_end)
+                            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(
+                                command=cmd['fetch_loader_metrics'], 
+                                pod=pod_dashboard, 
+                                container="dashboard")
+                            self.logger.debug(stdout)
+                            self.logger.debug(stderr)
+                            # upload connections infos again, metrics has overwritten it
+                            filename = 'connections.config'
+                            cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                            stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                            self.logger.debug(stdout)
+                    # check if there is a post-loading phase
                     if len(self.indexscript):
                         # loading has not finished (there is indexing)
                         self.load_data(scripts=self.indexscript, time_offset=self.timeLoading, time_start_int=self.timeLoadingStart, script_type='indexed')

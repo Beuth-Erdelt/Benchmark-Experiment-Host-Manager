@@ -1249,7 +1249,7 @@ class testbed():
         :param app: app monitoring belongs to
         :param component: Component name, should be 'monitoring' typically
         """
-        endpoints = self.get_service_endpoints()
+        endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
             # dashboard exists
             self.logger.debug('testbed.start_monitoring_cluster()=exists')
