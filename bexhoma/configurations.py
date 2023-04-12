@@ -2050,22 +2050,24 @@ scrape_configs:
                 stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                 self.logger.debug(stdout)
                 # get metrics of loader components
+                # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
-                    connection, 
-                    c['name']+'.config', 
-                    '/results/'+self.code, 
-                    self.code, 
-                    self.timeLoadingStart, 
-                    self.timeLoadingEnd)
-                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loader_metrics'], pod=pod_dashboard, container="dashboard")
-                self.logger.debug(stdout)
-                self.logger.debug(stderr)
-                # upload connections infos again, metrics has overwritten it
-                filename = 'connections.config'
-                cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
-                self.logger.debug(stdout)
+                if len(endpoints_cluster)>0:
+                    cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                        connection, 
+                        c['name']+'.config', 
+                        '/results/'+self.code, 
+                        self.code, 
+                        self.timeLoadingStart, 
+                        self.timeLoadingEnd)
+                    stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loader_metrics'], pod=pod_dashboard, container="dashboard")
+                    self.logger.debug(stdout)
+                    self.logger.debug(stderr)
+                    # upload connections infos again, metrics has overwritten it
+                    filename = 'connections.config'
+                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    self.logger.debug(stdout)
     def execute_command_in_pod_sut(self, command, pod='', container='dbms', params=''):
         """
         Runs an shell command remotely inside a container of a pod.

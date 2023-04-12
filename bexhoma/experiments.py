@@ -1056,6 +1056,20 @@ class default():
                     cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                     self.cluster.logger.debug(stdout)
+                    # get metrics of benchmarker components
+                    # only if general monitoring is on
+                    endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+                    if len(endpoints_cluster)>0:
+                        cmd['fetch_benchmarker_metrics'] = 'python metrics.py -r /results/ -db -ct benchmarker -cn dbmsbenchmarker -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
+                        #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarker_metrics'], pod=pod_dashboard, container="dashboard")
+                        self.cluster.logger.debug(stdout)
+                        self.cluster.logger.debug(stderr)
+                        # upload connections infos again, metrics has overwritten it
+                        filename = 'connections.config'
+                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                        self.cluster.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """
