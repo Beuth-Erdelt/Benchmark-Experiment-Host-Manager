@@ -1654,7 +1654,7 @@ class aws(kubernetes):
         """
         self.code = code
         kubernetes.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
-        self.cluster = self.contextdata['cluster']
+        self.cluster = self.context#data['cluster']
     def eksctl(self, command):
         """
         Runs an eksctl command.
