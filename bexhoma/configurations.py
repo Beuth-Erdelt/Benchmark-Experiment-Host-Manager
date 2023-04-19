@@ -2213,7 +2213,7 @@ scrape_configs:
                         #if status == "Running":
                         # TODO: Find names of containers dynamically
                         container = 'datagenerator'
-                        self.cluster.store_pod_log(pod_name=pod, container=container)
+                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         #stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
                         ##stdin, stdout, stderr = self.pod_log(client_pod_name)
                         #filename_log = self.path+'/'+pod+'.'+container+'.log'
@@ -2222,7 +2222,7 @@ scrape_configs:
                         #f.close()
                         #
                         container = 'sensor'
-                        self.cluster.store_pod_log(pod_name=pod, container=container)
+                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         #stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
                         ##stdin, stdout, stderr = self.pod_log(client_pod_name)
                         #filename_log = self.path+'/'+pod+'.'+container+'.log'
