@@ -757,11 +757,12 @@ class default():
                 if not config.loading_started:
                     if config.sut_is_running():
                         print("{} is not loaded yet".format(config.configuration))
-                    if config.monitoring_active and not config.monitoring_is_running():
-                        print("{} waits for monitoring".format(config.configuration))
-                        if not config.monitoring_is_pending():
-                            config.start_monitoring()
-                        continue
+                    if len(config.benchmark_list) > 0:
+                        if config.monitoring_active and not config.monitoring_is_running():
+                            print("{} waits for monitoring".format(config.configuration))
+                            if not config.monitoring_is_pending():
+                                config.start_monitoring()
+                            continue
                     now = datetime.utcnow()
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:
@@ -782,7 +783,7 @@ class default():
                         print("{} will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
                         continue
                 # check if maintaining
-                if config.loading_finished:
+                if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
                         print("{} waits for monitoring".format(config.configuration))
                         if not config.monitoring_is_pending():
@@ -797,14 +798,16 @@ class default():
                                 print("{} has pending maintaining".format(config.configuration))
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
-                    if config.monitoring_active and not config.monitoring_is_running():
-                        print("{} waits for monitoring".format(config.configuration))
-                        if not config.monitoring_is_pending():
-                            config.start_monitoring()
-                        continue
-                    if config.maintaining_active and not config.maintaining_is_running():
-                        print("{} waits for maintaining".format(config.configuration))
-                        continue
+                    # still benchmarks: check loading and maintaining
+                    if len(config.benchmark_list) > 0:
+                        if config.monitoring_active and not config.monitoring_is_running():
+                            print("{} waits for monitoring".format(config.configuration))
+                            if not config.monitoring_is_pending():
+                                config.start_monitoring()
+                            continue
+                        if config.maintaining_active and not config.maintaining_is_running():
+                            print("{} waits for maintaining".format(config.configuration))
+                            continue
                     app = self.cluster.appname
                     component = 'benchmarker'
                     configuration = ''
