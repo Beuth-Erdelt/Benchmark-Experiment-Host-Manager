@@ -1608,7 +1608,12 @@ class kubernetes(testbed):
         """
         # write pod log
         stdout = self.pod_log(pod_name, container)
-        filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
+        if len(container) > 0:
+            #filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
+            filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+        else:
+            #filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
+            filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
         f = open(filename_log, "w")
         f.write(stdout)
         f.close()

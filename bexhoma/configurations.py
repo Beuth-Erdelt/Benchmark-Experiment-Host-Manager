@@ -2206,7 +2206,6 @@ scrape_configs:
                                 time_type = key[len("time_"):]
                                 self.times_scripts[time_type] = float(value)
                     # delete job and all its pods
-                    self.experiment.cluster.delete_job(job)
                     pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:
                         status = self.experiment.cluster.get_pod_status(pod)
@@ -2214,22 +2213,25 @@ scrape_configs:
                         #if status == "Running":
                         # TODO: Find names of containers dynamically
                         container = 'datagenerator'
-                        stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
-                        #stdin, stdout, stderr = self.pod_log(client_pod_name)
-                        filename_log = self.path+'/'+pod+'.'+container+'.log'
-                        f = open(filename_log, "w")
-                        f.write(stdout)
-                        f.close()
+                        self.cluster.store_pod_log(pod_name=pod, container=container)
+                        #stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
+                        ##stdin, stdout, stderr = self.pod_log(client_pod_name)
+                        #filename_log = self.path+'/'+pod+'.'+container+'.log'
+                        #f = open(filename_log, "w")
+                        #f.write(stdout)
+                        #f.close()
                         #
                         container = 'sensor'
-                        stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
-                        #stdin, stdout, stderr = self.pod_log(client_pod_name)
-                        filename_log = self.path+'/'+pod+'.'+container+'.log'
-                        f = open(filename_log, "w")
-                        f.write(stdout)
-                        f.close()
+                        self.cluster.store_pod_log(pod_name=pod, container=container)
+                        #stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
+                        ##stdin, stdout, stderr = self.pod_log(client_pod_name)
+                        #filename_log = self.path+'/'+pod+'.'+container+'.log'
+                        #f = open(filename_log, "w")
+                        #f.write(stdout)
+                        #f.close()
                         self.experiment.cluster.delete_pod(pod)
                     self.experiment.end_loading(job)
+                    self.experiment.cluster.delete_job(job)
                     loading_pods_active = False
                     if self.monitoring_active:
                         #cmd = {}
