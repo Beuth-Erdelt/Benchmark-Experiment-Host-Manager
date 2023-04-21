@@ -560,8 +560,8 @@ class ycsb(logger):
                 '[CLEANUP].AverageLatency(us)':'mean',
                 '[CLEANUP].MinLatency(us)':'min',
                 '[CLEANUP].MaxLatency(us)':'max',
-                '[CLEANUP].95thPercentileLatency(us)':'max',
-                '[CLEANUP].99thPercentileLatency(us)':'max',
+                '[CLEANUP].95thPercentileLatency(us)':'mean',
+                '[CLEANUP].99thPercentileLatency(us)':'mean',
             }
             if '[READ].Operations' in grp.columns:
                 aggregate = {**aggregate, **{
@@ -569,8 +569,8 @@ class ycsb(logger):
                     '[READ].AverageLatency(us)':'mean',
                     '[READ].MinLatency(us)':'min',
                     '[READ].MaxLatency(us)':'max',
-                    '[READ].95thPercentileLatency(us)':'max',
-                    '[READ].99thPercentileLatency(us)':'max',
+                    '[READ].95thPercentileLatency(us)':'mean',
+                    '[READ].99thPercentileLatency(us)':'mean',
                     '[READ].Return=OK': 'sum',
                 }}
             if '[INSERT].Operations' in grp.columns:
@@ -579,8 +579,8 @@ class ycsb(logger):
                     '[INSERT].AverageLatency(us)':'mean',
                     '[INSERT].MinLatency(us)':'min',
                     '[INSERT].MaxLatency(us)':'max',
-                    '[INSERT].95thPercentileLatency(us)':'max',
-                    '[INSERT].99thPercentileLatency(us)':'max',
+                    '[INSERT].95thPercentileLatency(us)':'mean',
+                    '[INSERT].99thPercentileLatency(us)':'mean',
                     '[INSERT].Return=OK': 'sum',
                 }}
             if '[UPDATE].Operations' in grp.columns:
@@ -589,8 +589,8 @@ class ycsb(logger):
                     '[UPDATE].AverageLatency(us)':'mean',
                     '[UPDATE].MinLatency(us)':'min',
                     '[UPDATE].MaxLatency(us)':'max',
-                    '[UPDATE].95thPercentileLatency(us)':'max',
-                    '[UPDATE].99thPercentileLatency(us)':'max',
+                    '[UPDATE].95thPercentileLatency(us)':'mean',
+                    '[UPDATE].99thPercentileLatency(us)':'mean',
                     '[UPDATE].Return=OK': 'sum',
                 }}
             if '[SCAN].Operations' in grp.columns:
@@ -599,8 +599,8 @@ class ycsb(logger):
                     '[SCAN].AverageLatency(us)':'mean',
                     '[SCAN].MinLatency(us)':'min',
                     '[SCAN].MaxLatency(us)':'max',
-                    '[SCAN].95thPercentileLatency(us)':'max',
-                    '[SCAN].99thPercentileLatency(us)':'max',
+                    '[SCAN].95thPercentileLatency(us)':'mean',
+                    '[SCAN].99thPercentileLatency(us)':'mean',
                     '[SCAN].Return=OK':'sum',
                 }}
             #print(grp.agg(aggregate))
@@ -700,14 +700,14 @@ class ycsb(logger):
                 '[CLEANUP].AverageLatency(us)':'mean',
                 '[CLEANUP].MinLatency(us)':'min',
                 '[CLEANUP].MaxLatency(us)':'max',
-                '[CLEANUP].95thPercentileLatency(us)':'max',
-                '[CLEANUP].99thPercentileLatency(us)':'max',
+                '[CLEANUP].95thPercentileLatency(us)':'mean',
+                '[CLEANUP].99thPercentileLatency(us)':'mean',
                 '[INSERT].Operations':'sum',
                 '[INSERT].AverageLatency(us)':'mean',
                 '[INSERT].MinLatency(us)':'min',
                 '[INSERT].MaxLatency(us)':'max',
-                '[INSERT].95thPercentileLatency(us)':'max',
-                '[INSERT].99thPercentileLatency(us)':'max',
+                '[INSERT].95thPercentileLatency(us)':'mean',
+                '[INSERT].99thPercentileLatency(us)':'mean',
                 '[INSERT].Return=OK':'sum',
             }
             #print(grp.agg(aggregate))
