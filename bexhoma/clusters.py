@@ -106,6 +106,7 @@ class testbed():
         self.host = 'localhost'
         self.port = self.contextdata['port']
         self.monitoring_active = True
+        self.monitor_cluster_active = False
         # k8s:
         self.namespace = self.contextdata['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
@@ -1249,6 +1250,7 @@ class testbed():
         :param app: app monitoring belongs to
         :param component: Component name, should be 'monitoring' typically
         """
+        self.monitor_cluster_active = True
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
             # dashboard exists

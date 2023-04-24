@@ -1208,7 +1208,7 @@ scrape_configs:
                             result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                         else:
                             self.dockerimage = result[key]['spec']['template']['spec']['containers'][i]['image']
-                    elif not self.monitoring_active:
+                    elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i]
