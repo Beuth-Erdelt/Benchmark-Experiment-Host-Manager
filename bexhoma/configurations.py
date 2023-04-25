@@ -2053,6 +2053,7 @@ scrape_configs:
                 # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0:
+                    # data generator container
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
@@ -2068,6 +2069,7 @@ scrape_configs:
                     cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
+                    # data injector container "sensor"
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
