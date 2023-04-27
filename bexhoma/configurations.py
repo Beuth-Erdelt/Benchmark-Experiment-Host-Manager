@@ -1623,10 +1623,13 @@ scrape_configs:
             command = "df / | awk 'NR == 2{print $3}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             #disk = os.popen(fullcommand).read()
-            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-            disk = stdout#os.popen(fullcommand).read()
-            if len(disk) > 0:
-                return int(disk.replace('\n',''))
+            try:
+                stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+                disk = stdout#os.popen(fullcommand).read()
+                if len(disk) > 0:
+                    return int(disk.replace('\n',''))
+            except Exception as e:
+                return 0
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
         return 0
