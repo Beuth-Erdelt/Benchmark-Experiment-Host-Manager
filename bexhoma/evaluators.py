@@ -271,15 +271,16 @@ class logger(base):
         df = pd.read_pickle(self.path+"/"+filename)
         #df#.sort_values(["configuration", "pod"])
         return df
-    def plot(self, df, column, x, y, plot_by=None):
+    def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
         if plot_by is None:
             fig, ax = plt.subplots()
             for key, grp in df.groupby(column):
                 labels = "{} {}".format(key, column)
-                ax = grp.plot(ax=ax, kind='line', x=x, y=y, label=labels)
+                ax = grp.plot(ax=ax, kind=kind, x=x, y=y, title=y, label=labels, figsize=figsize)
                 ax.set_ylim(0,df[y].max())
             plt.legend(loc='best')
-            plt.show()
+            #plt.show()
+            return ax
         else:
             row=0
             col=0
@@ -287,7 +288,7 @@ class logger(base):
             #print(len(groups))
             rows = (len(groups)+1)//2
             #print(rows, "rows")
-            fig, axes = plt.subplots(nrows=rows, ncols=2, sharex=True, squeeze=False)
+            fig, axes = plt.subplots(nrows=rows, ncols=2, sharex=True, squeeze=False, figsize=(figsize[0],figsize[1]*rows))
             #print(axes)
             for key1, grp in groups:#df3.groupby(col1):
                 #print(len(axs))
@@ -295,7 +296,10 @@ class logger(base):
                     #print(grp2)
                     labels = "{} {}, {} {}".format(key1, plot_by, key2, column)
                     #print(row,col)
-                    ax = grp2.plot(ax=axes[row,col], kind='line', x=x, y=y, label=labels, title=y, figsize=(12,8), layout=(rows,2))
+                    if not dict_colors is None and len(dict_colors):
+                        ax = grp2.plot(ax=axes[row,col], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(rows,2), color=dict_colors)
+                    else:
+                        ax = grp2.plot(ax=axes[row,col], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(rows,2))
                     ax.set_ylim(0, df[y].max())
                 col = col + 1
                 if col > 1:
@@ -1051,8 +1055,11 @@ class tpcc(logger):
                 'errors':'max',
                 'vusers_loading':'max',
                 'vusers':'sum',
-                'NOPM':'sum',
-                'TPM':'sum',
+                #'vusers':'max',
+                #'NOPM':'sum',
+                'NOPM':'mean',
+                #'TPM':'sum',
+                'TPM':'mean',
                 'dbms':'max',
             }
             #print(grp.agg(aggregate))
