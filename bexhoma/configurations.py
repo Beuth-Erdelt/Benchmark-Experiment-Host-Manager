@@ -543,6 +543,7 @@ class default():
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
+        self.logger.debug("start_loading_pod({})".format(configuration))
         # put list of clients to message queue
         redisQueue = '{}-{}-{}-{}'.format(app, component, self.configuration, self.code)
         for i in range(1, self.num_loading+1):
@@ -564,6 +565,7 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
+        self.logger.debug("start_loading({})".format(configuration))
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
@@ -2419,8 +2421,11 @@ scrape_configs:
                     time_type = key[len("time_"):]
                     self.times_scripts[time_type] = float(value)
         else:
-            self.loading_started = False
-            self.loading_finished = False
+            # if there are no labels at this pod, loading has not been started or finished
+            # maybe sut has been restarted? then loading may have been stared though
+            # TODO: check if sensible 
+            #self.loading_started = False
+            #self.loading_finished = False
     def load_data(self, scripts, time_offset=0, time_start_int=0, script_type='loaded'):
         """
         Start loading data into the sut.
