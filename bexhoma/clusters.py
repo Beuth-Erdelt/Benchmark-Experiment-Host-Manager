@@ -1084,7 +1084,7 @@ class testbed():
             # we want status of job (!)
             #self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
             #self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
-            if api_response.spec.completions == api_response.status.succeeded:
+            if api_response.spec.completions <= api_response.status.succeeded:
                 print("Number of completions reached")
                 return True
             if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
