@@ -2426,6 +2426,7 @@ scrape_configs:
             # TODO: check if sensible 
             #self.loading_started = False
             #self.loading_finished = False
+            pass
     def load_data(self, scripts, time_offset=0, time_start_int=0, script_type='loaded'):
         """
         Start loading data into the sut.
