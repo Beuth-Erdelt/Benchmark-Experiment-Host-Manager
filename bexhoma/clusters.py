@@ -1076,7 +1076,7 @@ class testbed():
                     return "no job"
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
-            pprint(api_response)
+            #pprint(api_response)
             print("api_response.spec.completions", api_response.spec.completions)
             print("api_response.status.succeeded", api_response.status.succeeded)
             # returns number of completed pods (!)
