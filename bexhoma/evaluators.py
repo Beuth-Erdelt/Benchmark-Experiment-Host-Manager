@@ -751,12 +751,14 @@ class benchbase(logger):
         :return: DataFrame of results
         """
         stdout = ""
+        df_header = pd.DataFrame()
         try:
             with open(filename) as f:
                 lines = f.readlines()
             stdout = "".join(lines)
             pod_name = filename[filename.rindex("-")+1:-len(".log")]
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
+            duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
@@ -789,6 +791,7 @@ class benchbase(logger):
                 'batchsize': batchsize,
                 'sf': sf,
                 'num_errors': num_errors,
+                'duration': duration,
             }
             df_header = pd.DataFrame(header, index=[0])
             if num_errors == 0:
@@ -803,14 +806,14 @@ class benchbase(logger):
                     return df
                 else:
                     print("no results found in log file {}".format(filename))
-                    return pd.DataFrame()
+                    return df_header
             else:
-                return pd.DataFrame()
+                return df_header#pd.DataFrame()
         except Exception as e:
             print(e)
             print(traceback.format_exc())
             print(stdout)
-            return pd.DataFrame()
+            return df_header
     def benchmarking_set_datatypes(self, df):
         """
         Transforms a pandas DataFrame collection of benchmarking results to suitable data types.
@@ -822,6 +825,7 @@ class benchbase(logger):
             'connection':'str',
             'configuration':'str',
             'experiment_run':'int',
+            'duration':'int',
             'client':'int',
             'pod':'str',
             'pod_count':'int',
@@ -870,6 +874,7 @@ class benchbase(logger):
                 'client':'max',
                 'pod':'sum',
                 'pod_count':'count',
+                'duration':'max',
                 'bench':'max',
                 'profile':'max',
                 'target':'sum',
