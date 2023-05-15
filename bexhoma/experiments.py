@@ -823,6 +823,10 @@ class default():
                             client = str(config.client)
                             config.client = config.client+1
                             print("Done {} of {} benchmarks. This will be client {}".format(config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                            if len(config.benchmarking_parameters_list) > 0:
+                                benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
+                                print("We will change parameters of benchmark", benchmarking_parameters)
+                                config.set_benchmarking_parameters(benchmarking_parameters)
                             if config.num_experiment_to_apply > 1:
                                 connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                             else:

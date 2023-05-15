@@ -123,9 +123,10 @@ class default():
         self.set_storage(**self.experiment.storage)
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
-        self.set_loading_parameters(**self.experiment.loading_parameters)
+        self.set_loalfng_parameters(**self.experiment.loading_parameters)
         self.patch_loading(self.experiment.loading_patch)
         self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
+        self.benchmarking_parameters_list = []
         self.additional_labels = dict()
         self.set_additional_labels(**self.experiment.additional_labels)
         self.experiment.add_configuration(self)
@@ -331,6 +332,15 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.benchmarking_parameters = kwargs
+    def add_benchmarking_parameters(self, **kwargs):
+        """
+        Sets ENV for benchmarking components.
+        Can be set by experiment before creation of configuration.
+        This generates a list, where each entry corresponds to a set of clients in a sequence of benchmarkers.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.benchmarking_parameters_list.append(kwargs)
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
