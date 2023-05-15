@@ -123,7 +123,7 @@ class default():
         self.set_storage(**self.experiment.storage)
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
-        self.set_loalfng_parameters(**self.experiment.loading_parameters)
+        self.set_loading_parameters(**self.experiment.loading_parameters)
         self.patch_loading(self.experiment.loading_patch)
         self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
         self.benchmarking_parameters_list = []
