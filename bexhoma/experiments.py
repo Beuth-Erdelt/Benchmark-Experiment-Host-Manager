@@ -881,10 +881,12 @@ class default():
                     self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
                     #print(p,status)
                     if status == 'Succeeded':
+                        print("Store logs of job {} pod {}".format(job, p))
                         #if status != 'Running':
                         self.cluster.store_pod_log(p)
                         #self.cluster.delete_pod(p)
                     if status == 'Failed':
+                        print("Store logs of job {} pod {}".format(job, p))
                         #if status != 'Running':
                         self.cluster.store_pod_log(p)
                         #self.cluster.delete_pod(p)
@@ -899,10 +901,12 @@ class default():
                         #print(p,status)
                         if status == 'Succeeded':
                             #if status != 'Running':
+                            print("Store logs of job {} pod {}".format(p))
                             self.cluster.store_pod_log(p)
                             self.cluster.delete_pod(p)
                         if status == 'Failed':
                             #if status != 'Running':
+                            print("Store logs of job {} pod {}".format(p))
                             self.cluster.store_pod_log(p)
                             self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
