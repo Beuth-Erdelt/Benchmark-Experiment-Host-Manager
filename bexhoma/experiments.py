@@ -875,6 +875,19 @@ class default():
             pods = self.cluster.get_job_pods(app, component, self.code, configuration)
             # status per job
             for job in jobs:
+                # status per pod
+                for p in pods:
+                    status = self.cluster.get_pod_status(p)
+                    self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                    #print(p,status)
+                    if status == 'Succeeded':
+                        #if status != 'Running':
+                        self.cluster.store_pod_log(p)
+                        #self.cluster.delete_pod(p)
+                    if status == 'Failed':
+                        #if status != 'Running':
+                        self.cluster.store_pod_log(p)
+                        #self.cluster.delete_pod(p)
                 success = self.cluster.get_job_status(job)
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)

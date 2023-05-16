@@ -2219,6 +2219,16 @@ scrape_configs:
                 success = self.experiment.cluster.get_job_status(job)
                 self.experiment.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
+                # store logs of successful pods
+                pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                for pod in pods:
+                    status = self.experiment.cluster.get_pod_status(pod)
+                    print(pod, status)
+                    if status == "Succeeded":
+                        container = 'datagenerator'
+                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        container = 'sensor'
+                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # get labels (start) of sut
@@ -2239,7 +2249,7 @@ scrape_configs:
                                 time_type = key[len("time_"):]
                                 self.times_scripts[time_type] = float(value)
                     # delete job and all its pods
-                    pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                    #pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:
                         status = self.experiment.cluster.get_pod_status(pod)
                         print(pod, status)

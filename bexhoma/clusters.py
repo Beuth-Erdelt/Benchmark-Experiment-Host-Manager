@@ -1611,21 +1611,23 @@ class kubernetes(testbed):
         """
         Store the log of a pod in a local file in the experiment result folder.
         Optionally the name of a container can be given (mandatory, if pod has multiple containers).
+        If file containing pod log is already present, we do nothing (no update).
 
         :param pod_name: Name of the pod
         :param container: Name of the container
         """
         # write pod log
-        stdout = self.pod_log(pod_name, container)
         if len(container) > 0:
             #filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
             filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
         else:
             #filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
             filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
-        f = open(filename_log, "w")
-        f.write(stdout)
-        f.close()
+        if not os.path.isfile(filename_log):
+            stdout = self.pod_log(pod_name, container)
+            f = open(filename_log, "w")
+            f.write(stdout)
+            f.close()
 
 
 
