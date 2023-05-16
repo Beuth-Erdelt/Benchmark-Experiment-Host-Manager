@@ -901,12 +901,12 @@ class default():
                         #print(p,status)
                         if status == 'Succeeded':
                             #if status != 'Running':
-                            print("Store logs of job {} pod {}".format(p))
+                            print("Store logs of job {} pod {}".format(job, p))
                             self.cluster.store_pod_log(p)
                             self.cluster.delete_pod(p)
                         if status == 'Failed':
                             #if status != 'Running':
-                            print("Store logs of job {} pod {}".format(p))
+                            print("Store logs of job {} pod {}".format(job, p))
                             self.cluster.store_pod_log(p)
                             self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
