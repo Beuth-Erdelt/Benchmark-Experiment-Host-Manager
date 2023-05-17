@@ -1618,16 +1618,21 @@ class kubernetes(testbed):
         """
         # write pod log
         if len(container) > 0:
-            #filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
             filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
         else:
-            #filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
             filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+        # do not overwrite
         if not os.path.isfile(filename_log):
-            stdout = self.pod_log(pod_name, container)
-            f = open(filename_log, "w")
-            f.write(stdout)
-            f.close()
+            # max 10 tries to receive the log (timeout might occure)
+            tries = 1
+            while tries<10:
+                stdout = self.pod_log(pod_name, container)
+                if len(stdout) > 0:
+                    f = open(filename_log, "w")
+                    f.write(stdout)
+                    f.close()
+                else:
+                    tries = tries + 1
 
 
 
