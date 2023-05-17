@@ -1631,6 +1631,7 @@ class kubernetes(testbed):
                     f = open(filename_log, "w")
                     f.write(stdout)
                     f.close()
+                    return
                 else:
                     tries = tries + 1
 
