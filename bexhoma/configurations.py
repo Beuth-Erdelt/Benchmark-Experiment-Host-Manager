@@ -1587,7 +1587,7 @@ scrape_configs:
         Returns information about the sut's host disk space used for the data (the database) in kilobyte.
         Basically this calls `du` on the host directory that is mentioned in cluster.config as to store the database.
 
-        :return: Size of disk used for database in Bytes
+        :return: Size of disk used for database in Kilobytes
         """
         self.logger.debug('configuration.get_host_diskspace_used_data()')
         cmd = {}
@@ -1618,7 +1618,7 @@ scrape_configs:
         Returns information about the sut's host disk space.
         Basically this calls `df /` on the host.
 
-        :return: Size of disk in Bytes
+        :return: Size of disk in Kilobytes
         """
         self.logger.debug('configuration.get_host_diskspace_used()')
         disk = ''
