@@ -1265,7 +1265,7 @@ class testbed():
             return
         else:
             self.logger.debug('testbed.start_monitoring_cluster()=deploy')
-            deployment = 'deamonsettemplate-monitoring.yml'
+            deployment = 'daemonsettemplate-monitoring.yml'
             #name = self.create_dashboard_name(app, component)
             #self.logger.debug('testbed.start_monitoring_general({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
