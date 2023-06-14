@@ -852,11 +852,21 @@ class testbed():
             #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
             str_stdout = stdout.decode('utf-8')
             str_stderr = stderr.decode('utf-8')
-            return "", str_stdout, str_stderr
+            if 'Error from server: error dialing backend' in stderr or 'Error from server: error dialing backend' in stdout:
+                print("Connection error found")
+                self.wait(5)
+                return execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+            else:
+                return "", str_stdout, str_stderr
         except Exception as e:
             print(e)
             print(stdout, stderr)
-            return "", stdout, stderr
+            if 'Error from server: error dialing backend' in stderr or 'Error from server: error dialing backend' in stdout:
+                print("Connection error found")
+                self.wait(5)
+                return execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+            else:
+                return "", stdout, stderr
         return "", "", ""
     def check_DBMS_connection(self, ip, port):
         """
