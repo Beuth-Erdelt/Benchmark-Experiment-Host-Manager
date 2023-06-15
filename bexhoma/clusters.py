@@ -855,7 +855,7 @@ class testbed():
             if 'Error from server: error dialing backend' in str_stdout or 'Error from server: error dialing backend' in str_stderr:
                 print("Connection error found")
                 self.wait(5)
-                return execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+                return self.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
             else:
                 return "", str_stdout, str_stderr
         except Exception as e:
@@ -866,7 +866,7 @@ class testbed():
             if 'Error from server: error dialing backend' in str_stdout or 'Error from server: error dialing backend' in str_stderr:
                 print("Connection error found")
                 self.wait(5)
-                return execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+                return self.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
             else:
                 return "", stdout, stderr
         return "", "", ""
