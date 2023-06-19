@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
 # Some nice output
-from IPython.display import display, Markdown
+#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
