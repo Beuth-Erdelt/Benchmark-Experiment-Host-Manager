@@ -27,10 +27,15 @@ import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
 # Some nice output
-from IPython.display import display, Markdown
+#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
+
+def natural_sort(l): 
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
 
 class base:
     """
@@ -271,15 +276,16 @@ class logger(base):
         df = pd.read_pickle(self.path+"/"+filename)
         #df#.sort_values(["configuration", "pod"])
         return df
-    def plot(self, df, column, x, y, plot_by=None):
+    def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
         if plot_by is None:
             fig, ax = plt.subplots()
             for key, grp in df.groupby(column):
                 labels = "{} {}".format(key, column)
-                ax = grp.plot(ax=ax, kind='line', x=x, y=y, label=labels)
+                ax = grp.plot(ax=ax, kind=kind, x=x, y=y, title=y, label=labels, figsize=figsize)
                 ax.set_ylim(0,df[y].max())
             plt.legend(loc='best')
-            plt.show()
+            #plt.show()
+            return ax
         else:
             row=0
             col=0
@@ -287,7 +293,7 @@ class logger(base):
             #print(len(groups))
             rows = (len(groups)+1)//2
             #print(rows, "rows")
-            fig, axes = plt.subplots(nrows=rows, ncols=2, sharex=True, squeeze=False)
+            fig, axes = plt.subplots(nrows=rows, ncols=2, sharex=True, squeeze=False, figsize=(figsize[0],figsize[1]*rows))
             #print(axes)
             for key1, grp in groups:#df3.groupby(col1):
                 #print(len(axs))
@@ -295,7 +301,10 @@ class logger(base):
                     #print(grp2)
                     labels = "{} {}, {} {}".format(key1, plot_by, key2, column)
                     #print(row,col)
-                    ax = grp2.plot(ax=axes[row,col], kind='line', x=x, y=y, label=labels, title=y, figsize=(12,8), layout=(rows,2))
+                    if not dict_colors is None and len(dict_colors):
+                        ax = grp2.plot(ax=axes[row,col], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(rows,2), color=dict_colors)
+                    else:
+                        ax = grp2.plot(ax=axes[row,col], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(rows,2))
                     ax.set_ylim(0, df[y].max())
                 col = col + 1
                 if col > 1:
@@ -411,8 +420,8 @@ class ycsb(logger):
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
-            #workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
-            workload = "A"
+            workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
+            #workload = "A"
             pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
             result = []
             #for line in s.split("\n"):
@@ -463,38 +472,65 @@ class ycsb(logger):
             'target':'int',
             'sf':'int',
             'workload':'str',
+            'operations':'int',
             '[OVERALL].RunTime(ms)':'float',
             '[OVERALL].Throughput(ops/sec)':'float',
-            '[TOTAL_GCS_PS_Scavenge].Count':'int',
-            '[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
-            '[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
-            '[TOTAL_GCS_PS_MarkSweep].Count':'int',
-            '[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
-            '[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
-            '[TOTAL_GCs].Count':'int',
-            '[TOTAL_GC_TIME].Time(ms)':'float',
-            '[TOTAL_GC_TIME_%].Time(%)':'float',
-            '[READ].Operations':'int',
-            '[READ].AverageLatency(us)':'float',
-            '[READ].MinLatency(us)':'float',
-            '[READ].MaxLatency(us)':'float',
-            '[READ].95thPercentileLatency(us)':'float',
-            '[READ].99thPercentileLatency(us)':'float',
-            '[READ].Return=OK':'int',
+            #'[TOTAL_GCS_PS_Scavenge].Count':'int',
+            #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
+            #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
+            #'[TOTAL_GCS_PS_MarkSweep].Count':'int',
+            #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
+            #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
+            #'[TOTAL_GCs].Count':'int',
+            #'[TOTAL_GC_TIME].Time(ms)':'float',
+            #'[TOTAL_GC_TIME_%].Time(%)':'float',
             '[CLEANUP].Operations':'int',
             '[CLEANUP].AverageLatency(us)':'float',
             '[CLEANUP].MinLatency(us)':'float',
             '[CLEANUP].MaxLatency(us)':'float',
             '[CLEANUP].95thPercentileLatency(us)':'float',
             '[CLEANUP].99thPercentileLatency(us)':'float',
-            '[UPDATE].Operations':'int',
-            '[UPDATE].AverageLatency(us)':'float',
-            '[UPDATE].MinLatency(us)':'float',
-            '[UPDATE].MaxLatency(us)':'float',
-            '[UPDATE].95thPercentileLatency(us)':'float',
-            '[UPDATE].99thPercentileLatency(us)':'float',
-            '[UPDATE].Return=OK': 'int',
         })
+        if '[READ].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[READ].Operations':'int',
+                '[READ].AverageLatency(us)':'float',
+                '[READ].MinLatency(us)':'float',
+                '[READ].MaxLatency(us)':'float',
+                '[READ].95thPercentileLatency(us)':'float',
+                '[READ].99thPercentileLatency(us)':'float',
+                '[READ].Return=OK':'int',
+        })
+        if '[UPDATE].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[UPDATE].Operations':'int',
+                '[UPDATE].AverageLatency(us)':'float',
+                '[UPDATE].MinLatency(us)':'float',
+                '[UPDATE].MaxLatency(us)':'float',
+                '[UPDATE].95thPercentileLatency(us)':'float',
+                '[UPDATE].99thPercentileLatency(us)':'float',
+                '[UPDATE].Return=OK': 'int',
+        })
+        if '[INSERT].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[INSERT].Operations':'int',
+                '[INSERT].AverageLatency(us)':'float',
+                '[INSERT].MinLatency(us)':'float',
+                '[INSERT].MaxLatency(us)':'float',
+                '[INSERT].95thPercentileLatency(us)':'float',
+                '[INSERT].99thPercentileLatency(us)':'float',
+                '[INSERT].Return=OK': 'int',
+        })
+        if '[SCAN].Operations'in df_typed.columns:
+            df_typed = df_typed.astype({
+                '[SCAN].Operations':'int',
+                '[SCAN].AverageLatency(us)':'float',
+                '[SCAN].MinLatency(us)':'float',
+                '[SCAN].MaxLatency(us)':'float',
+                '[SCAN].95thPercentileLatency(us)':'float',
+                '[SCAN].99thPercentileLatency(us)':'float',
+                '[SCAN].Return=OK':'int',
+            })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df):
         """
@@ -517,38 +553,65 @@ class ycsb(logger):
                 'target':'sum',
                 'sf':'max',
                 'workload':'max',
+                'operations':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
-                '[TOTAL_GCS_PS_Scavenge].Count':'sum',
-                '[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'max',
-                '[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'max',
-                '[TOTAL_GCS_PS_MarkSweep].Count':'sum',
-                '[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'max',
-                '[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'max',
-                '[TOTAL_GCs].Count':'sum',
-                '[TOTAL_GC_TIME].Time(ms)':'max',
-                '[TOTAL_GC_TIME_%].Time(%)':'max',
-                '[READ].Operations':'sum',
-                '[READ].AverageLatency(us)':'mean',
-                '[READ].MinLatency(us)':'min',
-                '[READ].MaxLatency(us)':'max',
-                '[READ].95thPercentileLatency(us)':'max',
-                '[READ].99thPercentileLatency(us)':'max',
-                '[READ].Return=OK':'sum',
+                #'[TOTAL_GCS_PS_Scavenge].Count':'sum',
+                #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'max',
+                #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'max',
+                #'[TOTAL_GCS_PS_MarkSweep].Count':'sum',
+                #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'max',
+                #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'max',
+                #'[TOTAL_GCs].Count':'sum',
+                #'[TOTAL_GC_TIME].Time(ms)':'max',
+                #'[TOTAL_GC_TIME_%].Time(%)':'max',
                 '[CLEANUP].Operations':'sum',
                 '[CLEANUP].AverageLatency(us)':'mean',
                 '[CLEANUP].MinLatency(us)':'min',
                 '[CLEANUP].MaxLatency(us)':'max',
-                '[CLEANUP].95thPercentileLatency(us)':'max',
-                '[CLEANUP].99thPercentileLatency(us)':'max',
-                '[UPDATE].Operations':'sum',
-                '[UPDATE].AverageLatency(us)':'mean',
-                '[UPDATE].MinLatency(us)':'min',
-                '[UPDATE].MaxLatency(us)':'max',
-                '[UPDATE].95thPercentileLatency(us)':'max',
-                '[UPDATE].99thPercentileLatency(us)':'max',
-                '[UPDATE].Return=OK': 'sum',
+                '[CLEANUP].95thPercentileLatency(us)':'mean',
+                '[CLEANUP].99thPercentileLatency(us)':'mean',
             }
+            if '[READ].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[READ].Operations':'sum',
+                    '[READ].AverageLatency(us)':'mean',
+                    '[READ].MinLatency(us)':'min',
+                    '[READ].MaxLatency(us)':'max',
+                    '[READ].95thPercentileLatency(us)':'mean',
+                    '[READ].99thPercentileLatency(us)':'mean',
+                    '[READ].Return=OK': 'sum',
+                }}
+            if '[INSERT].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[INSERT].Operations':'sum',
+                    '[INSERT].AverageLatency(us)':'mean',
+                    '[INSERT].MinLatency(us)':'min',
+                    '[INSERT].MaxLatency(us)':'max',
+                    '[INSERT].95thPercentileLatency(us)':'mean',
+                    '[INSERT].99thPercentileLatency(us)':'mean',
+                    '[INSERT].Return=OK': 'sum',
+                }}
+            if '[UPDATE].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[UPDATE].Operations':'sum',
+                    '[UPDATE].AverageLatency(us)':'mean',
+                    '[UPDATE].MinLatency(us)':'min',
+                    '[UPDATE].MaxLatency(us)':'max',
+                    '[UPDATE].95thPercentileLatency(us)':'mean',
+                    '[UPDATE].99thPercentileLatency(us)':'mean',
+                    '[UPDATE].Return=OK': 'sum',
+                }}
+            if '[SCAN].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[SCAN].Operations':'sum',
+                    '[SCAN].AverageLatency(us)':'mean',
+                    '[SCAN].MinLatency(us)':'min',
+                    '[SCAN].MaxLatency(us)':'max',
+                    '[SCAN].95thPercentileLatency(us)':'mean',
+                    '[SCAN].99thPercentileLatency(us)':'mean',
+                    '[SCAN].Return=OK':'sum',
+                }}
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key
@@ -582,17 +645,18 @@ class ycsb(logger):
             'target':'int',
             'sf':'int',
             'workload':'str',
+            'operations':'int',
             '[OVERALL].RunTime(ms)':'float',
             '[OVERALL].Throughput(ops/sec)':'float',
-            '[TOTAL_GCS_PS_Scavenge].Count':'int',
-            '[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
-            '[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
-            '[TOTAL_GCS_PS_MarkSweep].Count':'float',
-            '[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
-            '[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
-            '[TOTAL_GCs].Count':'int',
-            '[TOTAL_GC_TIME].Time(ms)':'float',
-            '[TOTAL_GC_TIME_%].Time(%)':'float',
+            #'[TOTAL_GCS_PS_Scavenge].Count':'int',
+            #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
+            #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
+            #'[TOTAL_GCS_PS_MarkSweep].Count':'float',
+            #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
+            #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
+            #'[TOTAL_GCs].Count':'int',
+            #'[TOTAL_GC_TIME].Time(ms)':'float',
+            #'[TOTAL_GC_TIME_%].Time(%)':'float',
             '[CLEANUP].Operations':'int',
             '[CLEANUP].AverageLatency(us)':'float',
             '[CLEANUP].MinLatency(us)':'float',
@@ -629,29 +693,30 @@ class ycsb(logger):
                 'target':'sum',
                 'sf':'max',
                 'workload':'max',
+                'operations':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
-                '[TOTAL_GCS_PS_Scavenge].Count':'sum',
-                '[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'max',
-                '[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'max',
-                '[TOTAL_GCS_PS_MarkSweep].Count':'sum',
-                '[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'max',
-                '[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'max',
-                '[TOTAL_GCs].Count':'sum',
-                '[TOTAL_GC_TIME].Time(ms)':'max',
-                '[TOTAL_GC_TIME_%].Time(%)':'max',
+                #'[TOTAL_GCS_PS_Scavenge].Count':'sum',
+                #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'max',
+                #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'max',
+                #'[TOTAL_GCS_PS_MarkSweep].Count':'sum',
+                #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'max',
+                #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'max',
+                #'[TOTAL_GCs].Count':'sum',
+                #'[TOTAL_GC_TIME].Time(ms)':'max',
+                #'[TOTAL_GC_TIME_%].Time(%)':'max',
                 '[CLEANUP].Operations':'sum',
                 '[CLEANUP].AverageLatency(us)':'mean',
                 '[CLEANUP].MinLatency(us)':'min',
                 '[CLEANUP].MaxLatency(us)':'max',
-                '[CLEANUP].95thPercentileLatency(us)':'max',
-                '[CLEANUP].99thPercentileLatency(us)':'max',
+                '[CLEANUP].95thPercentileLatency(us)':'mean',
+                '[CLEANUP].99thPercentileLatency(us)':'mean',
                 '[INSERT].Operations':'sum',
                 '[INSERT].AverageLatency(us)':'mean',
                 '[INSERT].MinLatency(us)':'min',
                 '[INSERT].MaxLatency(us)':'max',
-                '[INSERT].95thPercentileLatency(us)':'max',
-                '[INSERT].99thPercentileLatency(us)':'max',
+                '[INSERT].95thPercentileLatency(us)':'mean',
+                '[INSERT].99thPercentileLatency(us)':'mean',
                 '[INSERT].Return=OK':'sum',
             }
             #print(grp.agg(aggregate))
@@ -691,12 +756,14 @@ class benchbase(logger):
         :return: DataFrame of results
         """
         stdout = ""
+        df_header = pd.DataFrame()
         try:
             with open(filename) as f:
                 lines = f.readlines()
             stdout = "".join(lines)
             pod_name = filename[filename.rindex("-")+1:-len(".log")]
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
+            duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
@@ -729,6 +796,7 @@ class benchbase(logger):
                 'batchsize': batchsize,
                 'sf': sf,
                 'num_errors': num_errors,
+                'duration': duration,
             }
             df_header = pd.DataFrame(header, index=[0])
             if num_errors == 0:
@@ -743,14 +811,14 @@ class benchbase(logger):
                     return df
                 else:
                     print("no results found in log file {}".format(filename))
-                    return pd.DataFrame()
+                    return df_header
             else:
-                return pd.DataFrame()
+                return df_header#pd.DataFrame()
         except Exception as e:
             print(e)
             print(traceback.format_exc())
             print(stdout)
-            return pd.DataFrame()
+            return df_header
     def benchmarking_set_datatypes(self, df):
         """
         Transforms a pandas DataFrame collection of benchmarking results to suitable data types.
@@ -762,6 +830,7 @@ class benchbase(logger):
             'connection':'str',
             'configuration':'str',
             'experiment_run':'int',
+            'duration':'int',
             'client':'int',
             'pod':'str',
             'pod_count':'int',
@@ -810,6 +879,7 @@ class benchbase(logger):
                 'client':'max',
                 'pod':'sum',
                 'pod_count':'count',
+                'duration':'max',
                 'bench':'max',
                 'profile':'max',
                 'target':'sum',
@@ -995,8 +1065,11 @@ class tpcc(logger):
                 'errors':'max',
                 'vusers_loading':'max',
                 'vusers':'sum',
-                'NOPM':'sum',
-                'TPM':'sum',
+                #'vusers':'max',
+                #'NOPM':'sum',
+                'NOPM':'mean',
+                #'TPM':'sum',
+                'TPM':'mean',
                 'dbms':'max',
             }
             #print(grp.agg(aggregate))
