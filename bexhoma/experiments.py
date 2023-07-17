@@ -114,6 +114,7 @@ class default():
         self.maintaining_parameters = {}
         self.loading_parameters = {}
         self.loading_patch = ""
+        self.benchmarking_patch = ""
         self.benchmarking_parameters = {}
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
@@ -292,6 +293,14 @@ class default():
         :param patch: String in YAML format, overwrites basic YAML file content
         """
         self.loading_patch = patch
+    def patch_benchmarking(self, patch):
+        """
+        Patches YAML of loading components.
+        Can be set by experiment before creation of configuration.
+
+        :param patch: String in YAML format, overwrites basic YAML file content
+        """
+        self.benchmarking_patch = patch
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
