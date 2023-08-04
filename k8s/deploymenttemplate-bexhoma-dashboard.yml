@@ -25,14 +25,16 @@ spec:
     spec:
       automountServiceAccountToken: false
       imagePullSecrets:
-      - name: private-registry-auth
-      #nodeSelector: {cpu: epyc-7542}
-      tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      - name: dockerhub
+      #- name: private-registry-auth
+      #nodeSelector: {type: auxiliary}
+      #tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: dashboard
-        image: perdelt/bexhoma:dashboard
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.2
+        #image: registry.datexis.com/perdelt/bexhoma:dashboard
         imagePullPolicy: Always
         ports:
         - containerPort: 8050 # Web
@@ -46,7 +48,8 @@ spec:
         - name: bexhoma-results
           mountPath: /results
       - name: jupyter
-        image: perdelt/bexhoma:dashboard
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.2
+        #image: registry.datexis.com/perdelt/bexhoma:dashboard
         imagePullPolicy: Always
         #command: ["jupyter","notebook","--no-browser", "--NotebookApp.password=\"$(echo 'admin' | python -c 'from notebook.auth import passwd;print(passwd(input()))')\"", "--allow-root"]
         command: ["jupyter","notebook","--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]

@@ -44,24 +44,21 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbms
-        #image: perdelt/dbms:monetdb
-        image: monetdb/monetdb:Jul2021
-        #image: monetdb/monetdb:Oct2020-SP3
-        #image: monetdb/monetdb:Oct2020-SP4
-        #image: monetdb/monetdb:Oct2020-SP2
-        #image: monetdb/monetdb-r-docker:11.31.7
+        image: monetdb/monetdb:Sep2022-SP2
+        env:
+          - {name: MDB_DB_ADMIN_PASS, value: 'monetdb'}
+          - {name: MDB_CREATE_DBS, value: 'demo'}
         ports:
         - {containerPort: 50000}
-        #command: ["printf "user=monetdb\npassword=monetdb\nlanguage=sql" > .monetdb"]
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 16000m, memory: 128Gi}
+          #, ephemeral-storage: "1536Gi"}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /var/monetdb5, name: benchmark-storage-volume}
       - name: cadvisor
-        #image: k8s.gcr.io/cadvisor:v0.30.2
-        image: gcr.io/cadvisor/cadvisor:v0.36.0
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
         securityContext:
           privileged: true
@@ -71,9 +68,10 @@ spec:
           name: http
           protocol: TCP
         resources:
-          requests:
-            cpu: 150m
-            memory: 200Mi
+          #requests:
+          #  cpu: 150m
+          #  memory: 200Mi
+          requests: {cpu: 150m, memory: 200Mi, ephemeral-storage: "1Gi"}
         volumeMounts:
         - name: rootfs
           mountPath: /rootfs

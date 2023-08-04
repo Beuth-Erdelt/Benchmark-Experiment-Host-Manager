@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
+  name: bexhoma-sensor
+spec:
+  backoffLimit: 4
+  completions: 4
+  parallelism: 4
+  template:
+    metadata:
+      labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: dockerhub
+      #- name: private-registry-auth
+      nodeSelector:
+        #kubernetes.io/hostname: cl-worker29
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      containers:
+      - name: datagenerator
+        image: bexhoma/generator_tpch:latest
+        imagePullPolicy: Always
+        env:
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-nil-aws-1658676533'}
+        - {name: BEXHOMA_PORT, value: '9091'}
+        - {name: BEXHOMA_CONNECTION, value: 'nil'}
+        - {name: BEXHOMA_EXPERIMENT, value: '1234'}
+        - {name: PARALLEL, value: '24'}
+        - {name: CHILD, value: '1'}
+        - {name: SF, value: '500'}
+        - {name: RNGSEED, value: '123'}
+        resources:
+          #limits: {cpu: 100m}
+          #, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
+          #limits: {memory: 70Gi}
+          #requests: {memory: 70Gi}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: datadir
+          mountPath: "/tmp/tpch/"
+      restartPolicy: Never
+      volumes:
+      - name: datadir
+        emptyDir:
+          medium: Memory
+          sizeLimit: 70Gi
