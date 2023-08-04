@@ -9,3 +9,4 @@ dbmsbenchmarker>=0.13.1
 m2r2
 myst_parser
 HiYaPyCo==0.5.1
+redis
