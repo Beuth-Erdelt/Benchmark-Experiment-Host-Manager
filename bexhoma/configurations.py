@@ -166,6 +166,7 @@ class default():
         self.timeLoadingEnd = 0
         self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
+        self.servicename_sut = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
         self.reset_sut()
     def reset_sut(self):
         """
@@ -2522,7 +2523,10 @@ scrape_configs:
         """
         app = self.appname
         experiment = str(int(self.code))
-        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        if len(self.servicename_sut) > 0:
+            servicename = self.servicename_sut
+        else:
+            servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         return servicename
     def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
         """
