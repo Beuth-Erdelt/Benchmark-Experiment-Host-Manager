@@ -230,7 +230,7 @@ if __name__ == '__main__':
                     name_format = 'Dummy-{cluster}-{pods}-{threads}'
                     config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='PostgreSQL', alias='DBMS A1')
                     #config.jobtemplate_loading = "jobtemplate-loading-tpch-YugabyteDB.yml"
-                    config.servicename_sut = "dummy"
+                    #config.servicename_sut = "dummy"
                     #config.servicename_sut = "yb-tserver-service"
                     config.loading_finished = True
                     """
