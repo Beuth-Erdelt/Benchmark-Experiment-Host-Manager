@@ -186,10 +186,9 @@ if __name__ == '__main__':
     # add configs
     if args.dbms == "Dummy":
         # Dummy DBMS
-        for threads in list_loading_threads:
-            name_format = 'Dummy-{cluster}'
-            config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
-            config.loading_finished = True
+        name_format = 'Dummy-{cluster}'
+        config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
+        config.loading_finished = True
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
