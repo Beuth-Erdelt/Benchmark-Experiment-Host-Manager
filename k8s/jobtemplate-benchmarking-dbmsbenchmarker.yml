@@ -17,7 +17,7 @@ spec:
       nodeSelector: 
       containers:
       - name: dbmsbenchmarker
-        image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.2
+        image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.3
         #imagePullPolicy: Always
         imagePullPolicy: IfNotPresent
         env:
