@@ -26,9 +26,9 @@ if __name__ == '__main__':
     description = """Performs experiment by running custom SQL queries."""
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty'])
+    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['run'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['Dummy', 'PostgreSQL', 'MonetDB', 'SingleStore', 'CockroachDB', 'MySQL', 'MariaDB', 'YugabyteDB', 'Kinetica'])
+    parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['Dummy'])
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -78,17 +78,14 @@ if __name__ == '__main__':
     timeout = int(args.timeout)
     numRun = int(args.num_run)
     num_experiment_to_apply = int(args.num_config)
-    #num_loading = int(args.num_loading)
     num_loading_split = args.num_loading_split
     if len(num_loading_split) > 0:
         num_loading = num_loading_split.split(",")
         list_loading_split = [int(x) for x in num_loading]
-    #num_loading_pods = int(args.num_loading_pods)
     num_loading_pods = args.num_loading_pods
     if len(num_loading_pods) > 0:
         num_loading_pods = num_loading_pods.split(",")
         list_loading_pods = [int(x) for x in num_loading_pods]
-    #num_loading_threads = int(args.num_loading_threads)
     num_loading_threads = args.num_loading_threads
     if len(num_loading_threads) > 0:
         num_loading_threads = num_loading_threads.split(",")
@@ -185,118 +182,42 @@ if __name__ == '__main__':
             monitoring = 'auxiliary',
             benchmarking = 'auxiliary',
             )
-    # new loading in cluster
-    #experiment.loading_active = True
-    #experiment.use_distributed_datasource = True
-    """
-    experiment.set_experiment(script='Schema')
-    # optionally set some indexes and constraints after import
-    if init_indexes or init_constraints or init_statistics:
-        experiment.set_experiment(indexing='Index')
-        if init_constraints:
-            experiment.set_experiment(indexing='Index_and_Constraints')
-        if init_statistics:
-            experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
-    #experiment.set_experiment(script='Schema', indexing='Index')
-    # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+" TPC-H data is loaded from a filesystem using several processes."
-    if len(limit_import_table):
-        # import is limited to single table
-        experiment.workload['info'] = experiment.workload['info']+" Import is limited to table {}.".format(limit_import_table)
-    if len(args.dbms):
-        # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Import is limited to DBMS {}.".format(args.dbms)
-    if len(list_loading_split):
-        # import uses several processes in pods
-        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes.".format(num_loading_split)
-    # add labels about the use case
-    experiment.set_additional_labels(
-        usecase="benchmarking-tpx",
-        experiment_design="2-4"
-        )
-    """
+    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     # add configs
-    for loading_pods_split in list_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
-        for loading_pods_total in list_loading_pods: # number of loading pods in total
-            # split number of loading pods into parallel potions
-            if loading_pods_total < loading_pods_split:
-                # thats not possible
-                continue
-            # how many in parallel?
-            split_portion = int(loading_pods_total/loading_pods_split)
-            if args.dbms == "Dummy":
-                # YugabyteDB
-                for threads in list_loading_threads:
-                    name_format = 'Dummy-{cluster}-{pods}-{threads}'
-                    config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='PostgreSQL', alias='DBMS A1')
-                    #config.jobtemplate_loading = "jobtemplate-loading-tpch-YugabyteDB.yml"
-                    #config.servicename_sut = "dummy"
-                    #config.servicename_sut = "yb-tserver-service"
-                    config.loading_finished = True
-                    """
-                    config.set_loading_parameters(
-                        SF = SF,
-                        PODS_TOTAL = str(loading_pods_total),
-                        PODS_PARALLEL = str(split_portion),
-                        STORE_RAW_DATA = 1,
-                        STORE_RAW_DATA_RECREATE = 0,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        TRANSFORM_RAW_DATA = 1,
-                        YUGABYTE_LOADING_THREADS = int(threads),#16,#int(num_loading_threads),#int(loading_pods_total),
-                        YUGABYTE_LOADING_PARALLEL = 0, # per table (=1) or per file (=0)
-                        TPCH_TABLE = limit_import_table,
-                        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                        )
-                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-                    """
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+    if args.dbms == "Dummy":
+        # Dummy DBMS
+        for threads in list_loading_threads:
+            name_format = 'Dummy-{cluster}'
+            config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
+            config.loading_finished = True
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
         pass
-    # branch for workflows
-    if args.mode == 'start':
-        experiment.start_sut()
-    elif args.mode == 'load':
-        # start all DBMS
-        experiment.start_sut()
-        # configure number of clients per config = 0
-        list_clients = []
-        # total time of experiment
-        experiment.add_benchmark_list(list_clients)
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-    else:
-        # configure number of clients per config
-        list_clients = args.num_query_executors.split(",")
-        if len(list_clients) > 0:
-            list_clients = [int(x) for x in list_clients]
-        experiment.add_benchmark_list(list_clients)
-        # total time of experiment
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        print("Experiment starts at {} ({})".format(start_datetime, start))
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-        print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
-        ##################
-        experiment.evaluate_results()
-        experiment.stop_benchmarker()
-        experiment.stop_sut()
-        #experiment.zip() # OOM? exit code 137
-        if test_result:
-            test_result_code = experiment.test_results()
-            if test_result_code == 0:
-                print("Test successful!")
-        cluster.restart_dashboard()
+    # configure number of clients per config
+    list_clients = args.num_query_executors.split(",")
+    if len(list_clients) > 0:
+        list_clients = [int(x) for x in list_clients]
+    experiment.add_benchmark_list(list_clients)
+    # total time of experiment
+    start = default_timer()
+    start_datetime = str(datetime.datetime.now())
+    print("Experiment starts at {} ({})".format(start_datetime, start))
+    # run workflow
+    experiment.work_benchmark_list()
+    # total time of experiment
+    end = default_timer()
+    end_datetime = str(datetime.datetime.now())
+    duration_experiment = end - start
+    print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+    ##################
+    experiment.evaluate_results()
+    experiment.stop_benchmarker()
+    experiment.stop_sut()
+    #experiment.zip() # OOM? exit code 137
+    if test_result:
+        test_result_code = experiment.test_results()
+        if test_result_code == 0:
+            print("Test successful!")
+    cluster.restart_dashboard()
 exit()
