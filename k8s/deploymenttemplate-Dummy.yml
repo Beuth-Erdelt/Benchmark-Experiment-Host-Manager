@@ -34,7 +34,7 @@ spec:
         image: busybox
         command:
           - sleep
-          - "3600"
+          - "infinity"
         ports:
         - {containerPort: 5432}
         resources:
