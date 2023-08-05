@@ -2239,11 +2239,12 @@ scrape_configs:
                     status = self.experiment.cluster.get_pod_status(pod)
                     print(pod, status)
                     if status == "Succeeded":
-                        print("Store logs of job {} pod {}".format(job, pod))
-                        container = 'datagenerator'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        container = 'sensor'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if not cluster.pod_log_exists(pod_name=pod, container=container):
+                            print("Store logs of job {} pod {}".format(job, pod))
+                            container = 'datagenerator'
+                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                            container = 'sensor'
+                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # get labels (start) of sut
@@ -2273,21 +2274,8 @@ scrape_configs:
                         # TODO: Find names of containers dynamically
                         container = 'datagenerator'
                         self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        #stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
-                        ##stdin, stdout, stderr = self.pod_log(client_pod_name)
-                        #filename_log = self.path+'/'+pod+'.'+container+'.log'
-                        #f = open(filename_log, "w")
-                        #f.write(stdout)
-                        #f.close()
-                        #
                         container = 'sensor'
                         self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        #stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
-                        ##stdin, stdout, stderr = self.pod_log(client_pod_name)
-                        #filename_log = self.path+'/'+pod+'.'+container+'.log'
-                        #f = open(filename_log, "w")
-                        #f.write(stdout)
-                        #f.close()
                         self.experiment.cluster.delete_pod(pod)
                     self.experiment.end_loading(job)
                     self.experiment.cluster.delete_job(job)

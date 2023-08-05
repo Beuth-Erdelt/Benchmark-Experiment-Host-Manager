@@ -1646,7 +1646,21 @@ class kubernetes(testbed):
                     return
                 else:
                     tries = tries + 1
+    def pod_log_exists(self, pod_name, container=''):
+        """
+        Returns, if log of pod already exists on local disk.
 
+        :param pod_name: Name of the pod
+        :param container: Name of the container
+        :return: stdout of the eksctl command
+        :return: does log of pod exist?
+        """
+        # look for pod log
+        if len(container) > 0:
+            filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
+        else:
+            filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+        return os.path.isfile(filename_log)
 
 
 

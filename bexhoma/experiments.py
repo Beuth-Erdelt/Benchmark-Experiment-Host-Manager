@@ -886,19 +886,20 @@ class default():
             for job in jobs:
                 # status per pod
                 for p in pods:
-                    status = self.cluster.get_pod_status(p)
-                    self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                    #print(p,status)
-                    if status == 'Succeeded':
-                        print("Store logs of job {} pod {}".format(job, p))
-                        #if status != 'Running':
-                        self.cluster.store_pod_log(p)
-                        #self.cluster.delete_pod(p)
-                    if status == 'Failed':
-                        print("Store logs of job {} pod {}".format(job, p))
-                        #if status != 'Running':
-                        self.cluster.store_pod_log(p)
-                        #self.cluster.delete_pod(p)
+                    if not cluster.pod_log_exists(p):
+                        status = self.cluster.get_pod_status(p)
+                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                        #print(p,status)
+                        if status == 'Succeeded':
+                            print("Store logs of job {} pod {}".format(job, p))
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            #self.cluster.delete_pod(p)
+                        if status == 'Failed':
+                            print("Store logs of job {} pod {}".format(job, p))
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            #self.cluster.delete_pod(p)
                 success = self.cluster.get_job_status(job)
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
