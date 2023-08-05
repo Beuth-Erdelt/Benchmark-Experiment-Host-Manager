@@ -886,7 +886,7 @@ class default():
             for job in jobs:
                 # status per pod
                 for p in pods:
-                    if not cluster.pod_log_exists(p):
+                    if not self.cluster.pod_log_exists(p):
                         status = self.cluster.get_pod_status(p)
                         self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
                         #print(p,status)

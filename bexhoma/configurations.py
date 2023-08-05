@@ -2239,7 +2239,7 @@ scrape_configs:
                     status = self.experiment.cluster.get_pod_status(pod)
                     print(pod, status)
                     if status == "Succeeded":
-                        if not cluster.pod_log_exists(pod_name=pod, container=container):
+                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
                             print("Store logs of job {} pod {}".format(job, pod))
                             container = 'datagenerator'
                             self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
