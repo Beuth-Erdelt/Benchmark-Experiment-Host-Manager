@@ -1481,11 +1481,15 @@ scrape_configs:
         command = 'grep -c ^processor /proc/cpuinfo'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cores = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-        cores = stdout#os.popen(fullcommand).read()
-        if len(cores)>0:
-            return int(cores)
-        else:
+        try:
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            cores = stdout#os.popen(fullcommand).read()
+            if len(cores)>0:
+                return int(cores)
+            else:
+                return 0
+        except Exception as e:
+            logging.error(e)
             return 0
     def get_host_system(self):
         """
