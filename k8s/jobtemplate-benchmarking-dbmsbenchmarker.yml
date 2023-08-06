@@ -26,6 +26,7 @@ spec:
         - {name: DBMSBENCHMARKER_SLEEP, value: '60'}
         - {name: DBMSBENCHMARKER_CONNECTION, value: 'MySQL-1'}
         - {name: DBMSBENCHMARKER_ALIAS, value: 'DBMS-A'}
+        - {name: DBMSBENCHMARKER_DEV, value: '0'}
         resources:
           #limits: {cpu: 4000m}
           #, memory: 16Gi}
