@@ -2239,11 +2239,12 @@ scrape_configs:
                     status = self.experiment.cluster.get_pod_status(pod)
                     print(pod, status)
                     if status == "Succeeded":
+                        container = 'datagenerator'
                         if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
                             print("Store logs of job {} pod {}".format(job, pod))
-                            container = 'datagenerator'
                             self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                            container = 'sensor'
+                        container = 'sensor'
+                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
                             self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
