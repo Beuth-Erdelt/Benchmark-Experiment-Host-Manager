@@ -1946,18 +1946,16 @@ Example
 
 class example(default):
     """
-    Class for defining an TPC-H experiment.
+    Class for defining a custom example experiment.
     This sets
 
     * the folder to the experiment - including query file and schema informations per dbms
     * name and information about the experiment
-    * additional parameters - here SF (the scaling factor)
     """
     def __init__(self,
             cluster,
             code=None,
             queryfile = 'queries.config',
-            SF = '100',
             num_experiment_to_apply = 1,
             timeout = 7200,
             script=None
@@ -1969,8 +1967,8 @@ class example(default):
         self.set_experiment(volume='example')
         self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/example')
-        parameter.defaultParameters = {'SF': str(SF)}
-        self.set_additional_labels(SF=SF)
+        #parameter.defaultParameters = {'SF': str(SF)}
+        #self.set_additional_labels(SF=SF)
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'Custom Example Queries',

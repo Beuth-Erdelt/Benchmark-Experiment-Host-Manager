@@ -29,11 +29,9 @@ if __name__ == '__main__':
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['run'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
     parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['Dummy'])
-    parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
-    parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
     parser.add_argument('-m', '--monitoring', help='activates monitoring', action='store_true')
     parser.add_argument('-mc', '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
     parser.add_argument('-ms', '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
@@ -42,10 +40,6 @@ if __name__ == '__main__':
     parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
     parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
-    parser.add_argument('-nls', '--num-loading-split', help='portion of loaders that should run in parallel', default="1")
-    parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
-    parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
-    parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF)', default=1)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
     parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
@@ -56,9 +50,6 @@ if __name__ == '__main__':
     parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
     parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
     parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
-    parser.add_argument('-ii', '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-ic', '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-is', '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
     parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', default=None)
     # evaluate args
     args = parser.parse_args()
@@ -74,22 +65,9 @@ if __name__ == '__main__':
     monitoring = args.monitoring
     monitoring_cluster = args.monitoring_cluster
     mode = str(args.mode)
-    SF = str(args.scaling_factor)
     timeout = int(args.timeout)
     numRun = int(args.num_run)
     num_experiment_to_apply = int(args.num_config)
-    num_loading_split = args.num_loading_split
-    if len(num_loading_split) > 0:
-        num_loading = num_loading_split.split(",")
-        list_loading_split = [int(x) for x in num_loading]
-    num_loading_pods = args.num_loading_pods
-    if len(num_loading_pods) > 0:
-        num_loading_pods = num_loading_pods.split(",")
-        list_loading_pods = [int(x) for x in num_loading_pods]
-    num_loading_threads = args.num_loading_threads
-    if len(num_loading_threads) > 0:
-        num_loading_threads = num_loading_threads.split(",")
-        list_loading_threads = [int(x) for x in num_loading_threads]
     cpu = str(args.request_cpu)
     memory = str(args.request_ram)
     cpu_type = str(args.request_cpu_type)
@@ -101,12 +79,6 @@ if __name__ == '__main__':
     datatransfer = args.datatransfer
     test_result = args.test_result
     recreate_parameter = args.recreate_parameter
-    # indexes
-    init_indexes = args.init_indexes
-    init_constraints = args.init_constraints
-    init_statistics = args.init_statistics
-    # limit to one table
-    limit_import_table = args.limit_import_table
     # start with old experiment?
     code = args.experiment
     # set cluster
@@ -128,7 +100,8 @@ if __name__ == '__main__':
     # set experiment
     if code is None:
         code = cluster.code
-    experiment = experiments.example(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = experiments.example(cluster=cluster, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply, queryfile='queries.config')
+    #cluster.set_experiments_configfolder('experiments/example')
     experiment.prometheus_interval = "10s"
     experiment.prometheus_timeout = "10s"
     # remove running dbms
