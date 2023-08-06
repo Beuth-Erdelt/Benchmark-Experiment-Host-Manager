@@ -1,14 +1,22 @@
-FROM python:3
+FROM python:3.9.6
 
 WORKDIR /usr/src/app
 
 RUN apt update
 RUN apt install default-jre -y
-
 RUN apt install zip -y
+RUN apt install nano -y
 
-RUN pip uninstall dbmsbenchmarker -y
-RUN pip install dbmsbenchmarker
+RUN mkdir /results
+
+SHELL ["/bin/bash", "-c"]
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m pip install --user virtualenv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@{version}
 
 RUN pip install jupyter
 RUN pip install jupyter_contrib_nbextensions
@@ -16,14 +24,10 @@ RUN jupyter contrib nbextension install --user
 RUN jupyter nbextensions_configurator enable --user
 RUN jupyter nbextension enable toc2/main
 
-RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch {version}
 
 WORKDIR /usr/src/app/DBMS-Benchmarker
 
 RUN git pull
 
-RUN apt install nano -y
-
-RUN mkdir /results
-
-CMD [ "python", "./dashboard.py", "-r", "/results"]
+CMD git pull; python ./dashboard.py -r /results
