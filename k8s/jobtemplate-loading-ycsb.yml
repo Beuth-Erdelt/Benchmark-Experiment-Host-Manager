@@ -28,6 +28,7 @@ spec:
       - name: sensor
         image: bexhoma/generator_ycsb:0.17.0
         imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-timescaledb-aws-1658676533'}
         - {name: BEXHOMA_PORT, value: '9091'}

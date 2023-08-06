@@ -28,6 +28,7 @@ spec:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_ycsb:0.17.0
         imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
         env:
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
         - {name: DBMSBENCHMARKER_CODE, value: '1611607321'}
