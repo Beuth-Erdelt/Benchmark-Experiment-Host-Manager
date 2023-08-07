@@ -1,4 +1,3 @@
-#FROM tpcorg/hammerdb-v4.5
 FROM tpcorg/hammerdb:v4.7
 
 COPY ./generator.sh ./generator.sh

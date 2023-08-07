@@ -1,11 +1,9 @@
 FROM benchbase.azurecr.io/benchbase
 
-#USER containeruser
 USER root
 WORKDIR /benchbase
 VOLUME /benchbase/results
 
-#COPY ./config /benchbase/profiles/postgres/config/
 COPY ./config /tmp/config/
 RUN chown -R containeruser:containergroup /tmp/config/
 
@@ -38,11 +36,4 @@ ENV BENCHBASE_ISOLATION "TRANSACTION_SERIALIZABLE"
 COPY ./benchmarker.sh /benchbase/benchmarker.sh
 RUN ["chmod", "+x", "/benchbase/benchmarker.sh"]
 RUN chown -R containeruser:containergroup /benchbase/benchmarker.sh
-#CMD ["/bin/bash", "-c", "/benchbase/benchmarker.sh"]
 ENTRYPOINT ["/benchbase/benchmarker.sh"]
-
-#ENTRYPOINT [""]
-#CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
-
-#ENTRYPOINT ["/entrypoint.sh"]
-#CMD ["--help"]
