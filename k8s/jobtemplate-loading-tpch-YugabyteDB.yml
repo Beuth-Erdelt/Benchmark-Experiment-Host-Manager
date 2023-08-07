@@ -4,9 +4,9 @@ metadata:
   labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
   name: bexhoma-sensor
 spec:
-  backoffLimit: 4
-  completions: 4
-  parallelism: 4
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
   template:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
@@ -14,12 +14,8 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
       nodeSelector:
-        #kubernetes.io/hostname: cl-worker29
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
       initContainers:
       - name: datagenerator
         image: bexhoma/generator_tpch:latest
@@ -35,10 +31,8 @@ spec:
         - {name: SF, value: '500'}
         - {name: RNGSEED, value: '123'}
         resources:
-          #limits: {cpu: 100m}
-          #, memory: 16Gi}
-          #requests: {cpu: 4000m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:
@@ -47,7 +41,6 @@ spec:
         - {mountPath: /data, name: benchmark-data-volume}
       containers:
       - name: sensor
-        #image: bexhoma/loader_tpch_postgresql:latest
         image: bexhoma/loader_tpch_yugabytedb:latest
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
@@ -61,10 +54,8 @@ spec:
         - {name: SF, value: '500'}
         - {name: RNGSEED, value: '123'}
         resources:
-          #limits: {cpu: 100m}
-          #, memory: 16Gi}
-          #requests: {cpu: 900m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:

@@ -4,9 +4,9 @@ metadata:
   labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
   name: bexhoma-sensor
 spec:
-  backoffLimit: 4
-  completions: 4
-  parallelism: 4
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
   template:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
@@ -14,11 +14,8 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
-      nodeSelector: 
+      nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
       containers:
       - name: sensor
         image: bexhoma/generator_hammerdb:4.5
@@ -35,10 +32,8 @@ spec:
         - {name: RNGSEED, value: '123'}
         - {name: HAMMERDB_TYPE, value: 'mysql'}
         resources:
-          #limits: {cpu: 100m}
-          #, memory: 16Gi}
-          #requests: {cpu: 4000m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:

@@ -7,7 +7,6 @@ spec:
   backoffLimit: 1
   completions: 1
   parallelism: 1
-  #completionMode: "Indexed"
   template:
     metadata:
       labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
@@ -15,11 +14,8 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
       nodeSelector: 
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_benchbase:latest
@@ -44,17 +40,10 @@ spec:
         - {name: CHILD, value: '1'}
         - {name: SF, value: '1'}
         resources:
-          #limits: {cpu: 8000m}
-          #, memory: 16Gi}
-          #requests: {cpu: 8000m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:
-        #- name: bexhoma-results
-        #  mountPath: /results
       restartPolicy: Never
       volumes:
-      #- name: bexhoma-results
-      #  persistentVolumeClaim:
-      #    claimName: bexhoma-results

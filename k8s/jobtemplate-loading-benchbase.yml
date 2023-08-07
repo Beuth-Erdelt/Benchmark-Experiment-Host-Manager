@@ -5,9 +5,8 @@ metadata:
   name: bexhoma-sensor
 spec:
   backoffLimit: 1
-  completions: 4
-  parallelism: 4
-  #completionMode: "Indexed"
+  completions: 1
+  parallelism: 1
   template:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
@@ -15,12 +14,8 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
       nodeSelector:
-        #kubernetes.io/hostname: 'cl-worker29'
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
       containers:
       - name: sensor
         image: bexhoma/generator_benchbase:latest
@@ -42,10 +37,8 @@ spec:
         - {name: RNGSEED, value: '123'}
         - {name: YCSB_THREADCOUNT, value: '1'}
         resources:
-          #limits: {cpu: 100m}
-          #, memory: 16Gi}
-          #requests: {cpu: 1900m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:

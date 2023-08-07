@@ -7,7 +7,6 @@ spec:
   backoffLimit: 1
   completions: 1
   parallelism: 1
-  #completionMode: "Indexed"
   template:
     metadata:
       labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
@@ -15,15 +14,8 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
-      nodeSelector:
-        #kubernetes.io/hostname: cl-worker29
+      nodeSelector: 
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
-      dnsConfig:
-        searches:
-          - kinetica-workers.perdelt.svc.cluster.local
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_ycsb:0.17.0
@@ -50,17 +42,10 @@ spec:
         - {name: RNGSEED, value: '123'}
         - {name: YCSB_THREADCOUNT, value: '1'}
         resources:
-          #limits: {cpu: 8000m}
-          #, memory: 16Gi}
-          #requests: {cpu: 8000m}
-          #, memory: 16Gi}
+          #limits: {cpu: 8000m, memory: 16Gi}
+          #requests: {cpu: 8000m, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:
-        #- name: bexhoma-results
-        #  mountPath: /results
       restartPolicy: Never
       volumes:
-      #- name: bexhoma-results
-      #  persistentVolumeClaim:
-      #    claimName: bexhoma-results

@@ -4,7 +4,7 @@ metadata:
   labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
   name: bexhoma-benchmarker
 spec:
-  backoffLimit: 4
+  backoffLimit: 1
   completions: 1
   parallelism: 1
   template:
@@ -15,6 +15,7 @@ spec:
       imagePullSecrets:
       - name: dockerhub
       nodeSelector: 
+      tolerations:
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.3
@@ -28,10 +29,8 @@ spec:
         - {name: DBMSBENCHMARKER_ALIAS, value: 'DBMS-A'}
         - {name: DBMSBENCHMARKER_DEV, value: '0'}
         resources:
-          #limits: {cpu: 4000m}
-          #, memory: 16Gi}
-          #requests: {cpu: 2000m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         securityContext:
           privileged: true
         volumeMounts:
