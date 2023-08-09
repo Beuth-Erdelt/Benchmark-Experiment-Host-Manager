@@ -158,6 +158,9 @@ echo "Duration $DURATION seconds"
 
 
 ######################## Find duration output of DBMSBenchmarker ###################
+# default end time is now
+# better: read pure benchmarking time from log of dbmsbenchmarker and compute end of benchmarking
+bexhoma_end_epoch_computed=$(date -u +%s)
 DBMSBenchmarker_duration=$(sed -n 's/DBMSBenchmarker duration: //p' /tmp/dbmsbenchmarker.log)
 bexhoma_end_epoch_computed=$((bexhoma_start_epoch+DBMSBenchmarker_duration))
 echo "Computed end at $bexhoma_end_epoch_computed epoch seconds"
