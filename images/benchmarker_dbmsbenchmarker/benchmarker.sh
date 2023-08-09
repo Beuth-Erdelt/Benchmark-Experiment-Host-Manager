@@ -85,6 +85,7 @@ echo "SF $SF"
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
+echo "Start at $bexhoma_start_epoch epoch seconds"
 
 ######################## Dev mode ###################
 if test $DBMSBENCHMARKER_DEV -gt 0
@@ -161,10 +162,11 @@ echo "$DATEANDTIME"
 
 SECONDS_END_SCRIPT=$SECONDS
 DURATION_SCRIPT=$((SECONDS_END_SCRIPT-SECONDS_START_SCRIPT))
-echo "Duration $DURATION_SCRIPT seconds"
+echo "Duration script $DURATION_SCRIPT seconds"
 echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
 
 bexhoma_end_epoch=$(date -u +%s)
+echo "End at $bexhoma_start_epoch epoch seconds"
 echo "BEXHOMA_START:$bexhoma_start_epoch"
 echo "BEXHOMA_END:$bexhoma_end_epoch"
 #echo "BEXHOMA_START:$SECONDS_START"
