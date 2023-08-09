@@ -115,6 +115,7 @@ then
 		-vs \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \
 else
@@ -130,6 +131,7 @@ else
 		-rcp $DBMSBENCHMARKER_RECREATE_PARAMETER \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \
 fi
@@ -154,6 +156,13 @@ echo "End $SECONDS_END seconds"
 DURATION=$((SECONDS_END-SECONDS_START))
 echo "Duration $DURATION seconds"
 
+
+######################## Find duration output of DBMSBenchmarker ###################
+DBMSBenchmarker_duration=$(sed -n 's/DBMSBenchmarker duration: //p' /tmp/dbmsbenchmarker.log)
+bexhoma_end_epoch_computed=$((bexhoma_start_epoch+DBMSBenchmarker_duration))
+echo "Computed end at $bexhoma_end_epoch_computed epoch seconds"
+echo "because of DBMSBenchmarker_duration:$DBMSBenchmarker_duration"
+
 ######################## Show timing information ###################
 echo "Benchmarking done"
 
@@ -168,7 +177,7 @@ echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
 bexhoma_end_epoch=$(date -u +%s)
 echo "End at $bexhoma_start_epoch epoch seconds"
 echo "BEXHOMA_START:$bexhoma_start_epoch"
-echo "BEXHOMA_END:$bexhoma_end_epoch"
+echo "BEXHOMA_END:$bexhoma_end_epoch_computed"
 #echo "BEXHOMA_START:$SECONDS_START"
 #echo "BEXHOMA_END:$SECONDS_END"
 
