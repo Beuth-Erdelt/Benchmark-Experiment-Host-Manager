@@ -1087,6 +1087,7 @@ class default():
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
                 pod_dashboard = pods[0]
+                cmd = {}
                 # store benchmarker times in config and upload it to cluster again
                 if config is not None:
                     #connectionfile = config.benchmark.path+'/connections.config'
@@ -1109,7 +1110,6 @@ class default():
                         with open(connectionfile, 'w') as f:
                             f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
-                        cmd = {}
                         cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
