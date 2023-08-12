@@ -1079,6 +1079,16 @@ class default():
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
                 pod_dashboard = pods[0]
+                # collecting all configs of experiment in result folder
+                #experiments_configfolder = self.cluster.experiments_configfolder
+                #connectionfile = experiments_configfolder+'/connections.config'
+                print("Add benchmarker times to", connectionfile)
+                print("Times", timing_benchmarker)
+                print("Find connection =",connection)
+                config.benchmark.getConnectionsFromFile(filename=connectionfile)
+                print("Connection file:")
+                print(config.benchmark.connections)
+                #f.write(str(config.benchmark.connections))
                 # get monitoring for loading
                 if self.monitoring_active:
                     cmd = {}
