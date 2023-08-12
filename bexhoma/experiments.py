@@ -1080,8 +1080,9 @@ class default():
             if len(pods) > 0:
                 pod_dashboard = pods[0]
                 # collecting all configs of experiment in result folder
-                experiments_configfolder = self.cluster.experiments_configfolder
-                connectionfile = experiments_configfolder+'/connections.config'
+                #experiments_configfolder = self.cluster.experiments_configfolder
+                #connectionfile = experiments_configfolder+'/connections.config'
+                connectionfile = config.benchmark.path+'/connections.config'
                 print("Add benchmarker times to", connectionfile)
                 print("Times", timing_benchmarker)
                 print("Find connection =",connection)
