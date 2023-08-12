@@ -1035,6 +1035,14 @@ class default():
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
+            elif filename.startswith(jobname) and filename.endswith(".log"):
+                #print(filename)
+                (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                #print(df)
+                if (timing_start, timing_end) == (0,0):
+                    print("Error in "+filename)
+                else:
+                    timing.append((timing_start, timing_end))
         print(timing)
         return timing
     def end_benchmarking(self, jobname, config=None):
@@ -1085,7 +1093,7 @@ class default():
                 connectionfile = config.benchmark.path+'/connections.config'
                 print("Add benchmarker times to", connectionfile)
                 print("Times", timing_benchmarker)
-                print("Find connection =",connection)
+                print("Find connection =", config.connection)
                 config.benchmark.getConnectionsFromFile(filename=connectionfile)
                 print("Connection file:")
                 print(config.benchmark.connections)
