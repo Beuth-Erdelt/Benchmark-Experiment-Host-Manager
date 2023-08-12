@@ -1100,7 +1100,7 @@ class default():
                 for k,c in config.benchmark.connections.items():
                     print(c['name'])
                     if c['name'] == config.connection:
-                        config.benchmark.connections[k].['hostsystem']['benchmarking_timespans'] = timing_benchmarker
+                        config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = timing_benchmarker
                 print(config.benchmark.connections)
                 with open(connectionfile, 'w') as f:
                     f.write(str(config.benchmark.connections))
