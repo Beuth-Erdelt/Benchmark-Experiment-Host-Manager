@@ -1095,23 +1095,24 @@ class default():
                     #print("Add benchmarker times to", connectionfile)
                     #print("Times", config.benchmarking_timespans)
                     #print("Find connection =", config.connection)
-                    config.benchmark.getConnectionsFromFile(filename=connectionfile)
-                    #print("Connection file:")
-                    print(config.benchmark.connections)
-                    for k,c in enumerate(config.benchmark.connections):
-                        #print(c['name'])
-                        if c['name'] == config.connection:
-                            config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
-                            print(c['name'], "found and updated times:", config.benchmarking_timespans)
-                            break
-                    print(config.benchmark.connections)
-                    with open(connectionfile, 'w') as f:
-                        f.write(str(config.benchmark.connections))
-                    # upload connections infos with benchmarking times
-                    cmd = {}
-                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                    stdout = self.cluster.kubectl(cmd['upload_connection_file'])
-                    self.cluster.logger.debug(stdout)
+                    if config.benchmark is not None:
+                        config.benchmark.getConnectionsFromFile(filename=connectionfile)
+                        #print("Connection file:")
+                        print(config.benchmark.connections)
+                        for k,c in enumerate(config.benchmark.connections):
+                            #print(c['name'])
+                            if c['name'] == config.connection:
+                                config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
+                                print(c['name'], "found and updated times:", config.benchmarking_timespans)
+                                break
+                        print(config.benchmark.connections)
+                        with open(connectionfile, 'w') as f:
+                            f.write(str(config.benchmark.connections))
+                        # upload connections infos with benchmarking times
+                        cmd = {}
+                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                        self.cluster.logger.debug(stdout)
                 # get monitoring for loading
                 if self.monitoring_active:
                     cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)

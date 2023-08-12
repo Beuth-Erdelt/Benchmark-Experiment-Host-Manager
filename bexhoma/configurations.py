@@ -168,6 +168,7 @@ class default():
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
         self.servicename_sut = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
         self.reset_sut()
+        self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
