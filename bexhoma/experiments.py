@@ -1097,7 +1097,7 @@ class default():
                 config.benchmark.getConnectionsFromFile(filename=connectionfile)
                 print("Connection file:")
                 print(config.benchmark.connections)
-                for k,c in config.benchmark.connections.items():
+                for k,c in enumerate(config.benchmark.connections):
                     print(c['name'])
                     if c['name'] == config.connection:
                         config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = timing_benchmarker
