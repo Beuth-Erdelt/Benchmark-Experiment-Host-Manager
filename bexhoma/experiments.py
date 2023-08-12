@@ -1097,7 +1097,18 @@ class default():
                 config.benchmark.getConnectionsFromFile(filename=connectionfile)
                 print("Connection file:")
                 print(config.benchmark.connections)
-                #f.write(str(config.benchmark.connections))
+                for k,c in config.benchmark.connections.items():
+                    print(c['name'])
+                    if c['name'] == config.connection:
+                        config.benchmark.connections[k].['hostsystem']['benchmarking_timespans'] = timing_benchmarker
+                print(config.benchmark.connections)
+                with open(connectionfile, 'w') as f:
+                    f.write(str(config.benchmark.connections))
+                # upload connections infos with benchmarking times
+                filename = 'connections.config'
+                cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                self.cluster.logger.debug(stdout)
                 # get monitoring for loading
                 if self.monitoring_active:
                     cmd = {}
