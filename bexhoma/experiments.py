@@ -1106,12 +1106,12 @@ class default():
                     f.write(str(config.benchmark.connections))
                 # upload connections infos with benchmarking times
                 filename = 'connections.config'
+                cmd = {}
                 cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                 stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                 self.cluster.logger.debug(stdout)
                 # get monitoring for loading
                 if self.monitoring_active:
-                    cmd = {}
                     cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
