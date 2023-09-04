@@ -1,0 +1,68 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: bexhoma-cluster-1
+  region: eu-central-1
+
+nodeGroups:
+  - name: sut
+    instanceType: c5d.9xlarge # c5d.9xlarge 1,998 USD 36  72 GiB  1 x 900 NVMe-SSD  10 Gigabit
+    desiredCapacity: 0
+    volumeSize: 2000
+    minSize: 0
+    maxSize: 1
+    labels: {app: bexhoma, type: sut, size: normal}
+    iam:
+      withAddonPolicies:
+        ebs: true
+        fsx: true
+        efs: true
+  - name: sut-memory
+    instanceType: x1e.16xlarge # x1e.16xlarge 13,344 USD  64  1952 GiB  1 x 1920 SSD  10 Gigabit
+    desiredCapacity: 0
+    volumeSize: 2000
+    minSize: 0
+    maxSize: 1
+    labels: {app: bexhoma, type: sut, size: memory}
+    iam:
+      withAddonPolicies:
+        ebs: true
+        fsx: true
+        efs: true
+  - name: auxiliary
+    instanceType: r5dn.xlarge # 0,398 USD 4 32 GiB  1 x 150 NVMe-SSD  Bis zu 25 Gigabit
+    desiredCapacity: 0
+    volumeSize: 200
+    minSize: 0
+    maxSize: 20
+    labels: {app: bexhoma, type: auxiliary}
+    iam:
+      withAddonPolicies:
+        ebs: true
+        fsx: true
+        efs: true
+  - name: driver
+    instanceType: r5dn.xlarge # 0,398 USD 4 32 GiB  1 x 150 NVMe-SSD  Bis zu 25 Gigabit
+    desiredCapacity: 0
+    volumeSize: 200
+    minSize: 0
+    maxSize: 20
+    labels: {app: bexhoma, type: loading, size: small}
+    iam:
+      withAddonPolicies:
+        ebs: true
+        fsx: true
+        efs: true
+  - name: driver-big
+    instanceType: c5d.9xlarge # c5d.9xlarge 1,998 USD 36  72 GiB  1 x 900 NVMe-SSD  10 Gigabit
+    desiredCapacity: 0
+    volumeSize: 100
+    minSize: 0
+    maxSize: 1
+    labels: {app: bexhoma, type: loading, size: big}
+    iam:
+      withAddonPolicies:
+        ebs: true
+        fsx: true
+        efs: true
