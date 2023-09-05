@@ -267,7 +267,8 @@ nohup python experiment-2-1-tpch-generating-filesystem.py \
 
 This runs a sequence of 6 runs, each with a clean copy.
 Each run generates the TPC-H data.
-The runs also have an increasing number of threads given by `nvu`.
+The runs have an increasing number of pods given by `nlp`.
+Each pod only generates a portion of the data.
 
 The parameters are
 * `aws`: we have nodegroups and components should be assigned accordingly
@@ -315,6 +316,11 @@ nohup python experiment-2-3-tpch-loading-filesystem.py \
 	-syl 1 \
 	empty &>logs/experiment.4.2.log &
 ```
+
+This runs a sequence of 6 runs, each with a clean copy.
+Each run loads the TPC-H data.
+The runs have an increasing number of pods given by `nlp`.
+Each pod only loads a portion of the data.
 
 The parameters are
 * `aws`: we have nodegroups and components should be assigned accordingly
@@ -366,6 +372,10 @@ nohup python experiment-2-4-tpch-benchmarking.py \
 	-is \
 	run &>logs/experiment.4.3.log &
 ```
+
+This runs a sequence of 10 runs, each with a clean copy.
+Each run loads the TPC-H data.
+The runs have an increasing number of pods given by `ne` for the execution phase (throughput test).
 
 The parameters are
 * `aws`: we have nodegroups and components should be assigned accordingly
