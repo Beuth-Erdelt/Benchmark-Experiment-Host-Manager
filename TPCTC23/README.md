@@ -37,8 +37,6 @@ nohup python experiment-1-ycsb.py \
 
 This runs a sequence of 8 benchmark runs, each with a clean copy.
 The runs have increasing targets, starting with 1 * tb (=16384) up to 8 * tb (=131072).
-Node names are set for loading and benchmarking components and for the SUT.
-This must be adjusted to names of nodes in the cluster.
 The script `experiment-1-ycsb.py` automatically makes two runs of the complete experiment, one with a single process and one with the threads `su` split into 8 processes (=pods).
 
 The parameters are
@@ -116,6 +114,10 @@ nohup python experiment-2-hammerdb.py \
 	run &>logs/experiment.2.1.log &
 ```
 
+This runs a sequence of 12 runs, each with a clean copy.
+The runs have increasing vusers (i.e., driver threads), from 1 to 320 (the number of warehouses), for the loading phase.
+Each run also runs the benchmark phase with 1 thread for 2 minutes.
+
 The parameters are
 * `aws`: we have nodegroups and components should be assigned accordingly
 * `mc`: run a cAdvisor daemonset on all nodes of the cluster
@@ -158,6 +160,9 @@ nohup python experiment-2-hammerdb.py \
 	-rr 64Gi \
 	run &>logs/experiment.2.2.log &
 ```
+This runs a sequence of 8 benchmark runs, each with a clean copy, and with 8 threads for the loading phase.
+The runs have increasing vusers (i.e., driver threads), from 2 to 20, for the execution phase for 15 minutes.
+The script `experiment-1-hammerdb.py` automatically makes two runs of the complete experiment, splitting the threads into `nbp` processes (=pods).
 
 The parameters are
 * `aws`: we have nodegroups and components should be assigned accordingly
@@ -203,7 +208,6 @@ nohup python experiment-3-benchbase.py \
 	-rr 64Gi \
 	run &>logs/experiment.3.log &
 ```
-
 
 This runs a sequence of 4 benchmark runs, each with a clean copy.
 The runs have target `ltf` * `tb` (=16384).
@@ -260,6 +264,10 @@ nohup python experiment-2-1-tpch-generating-filesystem.py \
 	-syl 1 \
 	run &>logs/experiment.4.1.log &
 ```
+
+This runs a sequence of 6 runs, each with a clean copy.
+Each run generates the TPC-H data.
+The runs also have an increasing number of threads given by `nvu`.
 
 The parameters are
 * `aws`: we have nodegroups and components should be assigned accordingly
