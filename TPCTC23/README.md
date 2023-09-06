@@ -244,7 +244,7 @@ The parameters are
 [Results](Series-4-1-TPC-H-Datageneration.ipynb)
 
 ```
-nohup python experiment-2-1-tpch-generating-filesystem.py \
+nohup python experiment-4-1-tpch-generating-filesystem.py \
 	-aws \
 	-mc \
 	-tr \
@@ -294,7 +294,7 @@ The parameters are
 [Results](Series-4-2-TPC-H-Loading.ipynb)
 
 ```
-nohup python experiment-2-3-tpch-loading-filesystem.py \
+nohup python experiment-4-2-tpch-loading-filesystem.py \
 	-aws \
 	-mc \
 	-tr \
@@ -349,7 +349,7 @@ The parameters are
 [Results](Series-4-3-TPC-H-Throughput.ipynb)
 
 ```
-nohup python experiment-2-4-tpch-benchmarking.py \
+nohup python experiment-4-3-tpch-benchmarking.py \
 	-aws \
 	-mc \
 	-tr \
