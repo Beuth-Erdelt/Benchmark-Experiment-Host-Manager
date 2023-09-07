@@ -32,15 +32,10 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 1. Install the package `pip install bexhoma`
 1. Make sure you have a working `kubectl` installed  
   (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
+  (Also make sure, you can create PV via PVC and dynamic provisioning)
 1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
-1. Install data [tbd in detail]  
-  Example for TPC-H SF=1:  
-    * Run `kubectl create -f k8s/job-data-tpch-1.yml`  
-    * When job is done, clean up with  
-    `kubectl delete job -l app=bexhoma -l component=data-source` and  
-    `kubectl delete deployment -l app=bexhoma -l component=data-source`.
 1. Install result folder  
   Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
 
