@@ -1,0 +1,73 @@
+#!/bin/bash
+
+cd images
+
+###########
+cd dashboard
+
+cd evaluator_dbmsbenchmarker
+#docker build -f Dockerfile_v0.13.1 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.1 --no-cache .
+python create_images.py
+#docker build -f Dockerfile_v0.13.2 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.2 .
+#docker push bexhoma/evaluator_dbmsbenchmarker:v0.13.2 &
+docker push bexhoma/evaluator_dbmsbenchmarker:v0.13.3 &
+cd ../..
+
+cd benchmarker_dbmsbenchmarker
+#docker build -f Dockerfile_v0.13.1 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.1 --no-cache .
+python create_Dockerfiles.py
+#docker build -f Dockerfile_v0.13.2 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.2 .
+#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.2 &
+docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.3 &
+cd ..
+cd ..
+
+###########
+cd tpch
+cd generator
+docker build -f Dockerfile -t bexhoma/generator_tpch:latest .
+docker push bexhoma/generator_tpch:latest &
+cd ..
+
+cd loader_postgresql
+docker build -f Dockerfile -t bexhoma/loader_tpch_postgresql:latest .
+docker push bexhoma/loader_tpch_postgresql:latest &
+cd ..
+
+###########
+cd monitoring
+docker build -f Dockerfile -t bexhoma/monitoring:latest .
+docker push bexhoma/monitoring:latest &
+cd ..
+
+###########
+cd hammerdb
+cd benchmarker
+docker build -f Dockerfile -t bexhoma/benchmarker_hammerdb:4.5 .
+docker push bexhoma/benchmarker_hammerdb:4.5 &
+cd ..
+cd generator
+docker build -f Dockerfile -t bexhoma/generator_hammerdb:4.5 .
+docker push bexhoma/generator_hammerdb:4.5 &
+cd ..
+cd ..
+
+###########
+cd ycsb
+cd benchmarker
+docker build -f Dockerfile -t bexhoma/benchmarker_ycsb:0.17.0 .
+docker push bexhoma/benchmarker_ycsb:0.17.0 &
+cd ..
+cd generator
+docker build -f Dockerfile -t bexhoma/generator_ycsb:0.17.0 .
+docker push bexhoma/generator_ycsb:0.17.0 &
+cd ..
+cd ..
+
+###########
+cd benchbase
+docker build -t bexhoma/generator_benchbase:latest -f Dockerfile_generator .
+docker push bexhoma/generator_benchbase:latest
+docker build -t bexhoma/benchmarker_benchbase:latest -f Dockerfile_benchmarker .
+docker push bexhoma/benchmarker_benchbase:latest
+cd ..
