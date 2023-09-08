@@ -3,7 +3,6 @@
 cd images
 
 ###########
-cd dashboard
 
 cd evaluator_dbmsbenchmarker
 #docker build -f Dockerfile_v0.13.1 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.1 --no-cache .
@@ -19,7 +18,6 @@ python create_Dockerfiles.py
 #docker build -f Dockerfile_v0.13.2 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.2 .
 #docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.2 &
 docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.3 &
-cd ..
 cd ..
 
 ###########
