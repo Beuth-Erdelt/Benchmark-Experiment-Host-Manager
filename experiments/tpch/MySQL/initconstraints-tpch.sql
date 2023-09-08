@@ -6,8 +6,8 @@ alter table tpch.nation
 add foreign key (n_regionkey) references tpch.region(r_regionkey);
 
 -- for table supplier
-alter table tpch.supplier
-add foreign key (s_nationkey) references tpch.nation(n_nationkey);
+-- alter table tpch.supplier
+-- add foreign key (s_nationkey) references tpch.nation(n_nationkey);
 
 -- for table customer
 alter table tpch.customer
@@ -27,6 +27,14 @@ add foreign key (o_custkey) references tpch.customer(c_custkey);
 -- for table lineitem
 alter table tpch.lineitem
 add foreign key (l_orderkey)  references tpch.orders(o_orderkey);
+
+alter table tpch.lineitem
+add foreign key (l_partkey) references 
+        tpch.part(p_partkey);
+
+alter table tpch.lineitem
+add foreign key (l_suppkey) references 
+        tpch.supplier(s_suppkey);
 
 alter table tpch.lineitem
 add foreign key (l_partkey,l_suppkey) references 

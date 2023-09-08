@@ -10,7 +10,8 @@ It enables users to configure hardware / software setups for easily repeating te
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
 running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
-.
+
+Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
@@ -18,6 +19,8 @@ running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, 
 
 The basic workflow is [1,2]: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
+
+It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4]. See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
@@ -29,15 +32,10 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 1. Install the package `pip install bexhoma`
 1. Make sure you have a working `kubectl` installed  
   (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
+  (Also make sure, you can create PV via PVC and dynamic provisioning)
 1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
-1. Install data [tbd in detail]  
-  Example for TPC-H SF=1:  
-    * Run `kubectl create -f k8s/job-data-tpch-1.yml`  
-    * When job is done, clean up with  
-    `kubectl delete job -l app=bexhoma -l component=data-source` and  
-    `kubectl delete deployment -l app=bexhoma -l component=data-source`.
 1. Install result folder  
   Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
 
@@ -94,3 +92,7 @@ If you use Bexhoma in work contributing to a scientific publication, we kindly a
 > DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python.
 > Journal of Open Source Software, 7(79), 4628
 > https://doi.org/10.21105/joss.04628
+
+[4] [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880)
+> Erdelt P.K. (2023)
+> http://dx.doi.org/10.13140/RG.2.2.29866.18880

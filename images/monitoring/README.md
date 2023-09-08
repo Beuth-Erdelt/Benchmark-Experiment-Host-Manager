@@ -2,11 +2,5 @@
 
 This image contains an instance of [Prometheus](https://prometheus.io/).
 
-It expects the config file (normally `/etc/prometheus/prometheus.yml`) as a string in `$BEXHOMA_WORKERS`.
+It expects the content of the config file (normally `/etc/prometheus/prometheus.yml`) as a string in `$BEXHOMA_WORKERS`.
 
-## Build Commands
-
-```
-docker build -t perdelt/bexhoma:monitoring --no-cache .
-docker push perdelt/bexhoma:monitoring
-```

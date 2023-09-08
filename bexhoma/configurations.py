@@ -125,6 +125,7 @@ class default():
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.set_loading_parameters(**self.experiment.loading_parameters)
         self.patch_loading(self.experiment.loading_patch)
+        self.patch_benchmarking(self.experiment.benchmarking_patch)
         self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
         self.benchmarking_parameters_list = []
         self.additional_labels = dict()
@@ -165,7 +166,9 @@ class default():
         self.timeLoadingEnd = 0
         self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
+        self.servicename_sut = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
         self.reset_sut()
+        self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
@@ -324,6 +327,14 @@ class default():
         :param patch: String in YAML format, overwrites basic YAML file content
         """
         self.loading_patch = patch
+    def patch_benchmarking(self, patch):
+        """
+        Patches YAML of loading components.
+        Can be set by experiment before creation of configuration.
+
+        :param patch: String in YAML format, overwrites basic YAML file content
+        """
+        self.benchmarking_patch = patch
     def set_benchmarking_parameters(self, **kwargs):
         """
         Sets ENV for benchmarking components.
@@ -1471,11 +1482,15 @@ scrape_configs:
         command = 'grep -c ^processor /proc/cpuinfo'
         #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
         #cores = os.popen(fullcommand).read()
-        stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-        cores = stdout#os.popen(fullcommand).read()
-        if len(cores)>0:
-            return int(cores)
-        else:
+        try:
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            cores = stdout#os.popen(fullcommand).read()
+            if len(cores)>0:
+                return int(cores)
+            else:
+                return 0
+        except Exception as e:
+            logging.error(e)
             return 0
     def get_host_system(self):
         """
@@ -2225,11 +2240,13 @@ scrape_configs:
                     status = self.experiment.cluster.get_pod_status(pod)
                     print(pod, status)
                     if status == "Succeeded":
-                        print("Store logs of job {} pod {}".format(job, pod))
                         container = 'datagenerator'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                            print("Store logs of job {} pod {}".format(job, pod))
+                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         container = 'sensor'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # get labels (start) of sut
@@ -2259,21 +2276,8 @@ scrape_configs:
                         # TODO: Find names of containers dynamically
                         container = 'datagenerator'
                         self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        #stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
-                        ##stdin, stdout, stderr = self.pod_log(client_pod_name)
-                        #filename_log = self.path+'/'+pod+'.'+container+'.log'
-                        #f = open(filename_log, "w")
-                        #f.write(stdout)
-                        #f.close()
-                        #
                         container = 'sensor'
                         self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        #stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
-                        ##stdin, stdout, stderr = self.pod_log(client_pod_name)
-                        #filename_log = self.path+'/'+pod+'.'+container+'.log'
-                        #f = open(filename_log, "w")
-                        #f.write(stdout)
-                        #f.close()
                         self.experiment.cluster.delete_pod(pod)
                     self.experiment.end_loading(job)
                     self.experiment.cluster.delete_job(job)
@@ -2513,7 +2517,10 @@ scrape_configs:
         """
         app = self.appname
         experiment = str(int(self.code))
-        servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+        if len(self.servicename_sut) > 0:
+            servicename = self.servicename_sut
+        else:
+            servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         return servicename
     def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
         """
@@ -2704,7 +2711,7 @@ scrape_configs:
         env = {**env, **e}
         env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{experimentRun}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-dbmsbenchmarker.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-dbmsbenchmarker.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)
     def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection=''):
         """
         Creates a job template for maintaining.
@@ -2892,7 +2899,7 @@ class hammerdb(default):
         env = {**env, **self.loading_parameters}
         env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-hammerdb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-hammerdb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)#, jobname=jobname)
 
 
 
@@ -2970,7 +2977,7 @@ class ycsb(default):
         env = {**env, **self.loading_parameters}
         env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)#, jobname=jobname)
 
 
 
@@ -3047,7 +3054,7 @@ class benchbase(default):
         env = {**env, **self.loading_parameters}
         env = {**env, **self.benchmarking_parameters}
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-benchbase.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection)#, jobname=jobname)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-benchbase.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)#, jobname=jobname)
 
 
 

@@ -29,12 +29,13 @@ spec:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
       containers:
-      - name: bexhoma-monitoring
-        image: perdelt/bexhoma:monitoring
+      - name: bexhoma-prometheus
+        image: bexhoma/monitoring:latest
         imagePullPolicy: Always
         env:
         - {name: DBMSBENCHMARKER_CONFIGURATION, value: 'MySQL'}
         - {name: BEXHOMA_SERVICE, value: 'bexhoma-monitoring'}
+        - {name: BEXHOMA_WORKERS, value: 'bexhoma-monitoring-worker'}
         resources:
           limits: {cpu: 2000m, memory: 16Gi}
           requests: {cpu: 2000m, memory: 16Gi}

@@ -1,0 +1,250 @@
+#!/bin/bash
+
+######################## Start timing ########################
+bexhoma_start_epoch=$(date -u +%s)
+DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
+echo "$DATEANDTIME"
+SECONDS_START_SCRIPT=$SECONDS
+
+######################## Show general parameters ########################
+echo "HAMMERDB_TYPE=$HAMMERDB_TYPE"
+echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
+echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
+echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "CHILD $CHILD"
+echo "NUM_PODS $NUM_PODS"
+echo "SF $SF"
+echo "PARALLEL $PARALLEL"
+echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
+echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
+echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
+
+######################## Wait for synched starting time ########################
+echo "benchmark started at $DBMSBENCHMARKER_NOW"
+echo "benchmark should wait until $DBMSBENCHMARKER_START"
+if test "$DBMSBENCHMARKER_START" != "0"
+then
+    benchmark_start_epoch=$(date -u -d "$DBMSBENCHMARKER_NOW" +%s)
+    echo "that is $benchmark_start_epoch"
+
+    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
+    echo "now is $current_epoch"
+    current_epoch=$(date -u +%s)
+    echo "that is $current_epoch"
+    target_epoch=$(date -u -d "$DBMSBENCHMARKER_START" +%s)
+    echo "wait until $DBMSBENCHMARKER_START"
+    echo "that is $target_epoch"
+    sleep_seconds=$(( $target_epoch - $current_epoch ))
+    echo "that is wait $sleep_seconds seconds"
+
+    if test $sleep_seconds -lt 0
+    then
+        echo "start time has already passed"
+        exit 0
+    fi
+
+    sleep $sleep_seconds
+    bexhoma_start_epoch=$(date -u +%s)
+else
+    echo "ignore that start time"
+fi
+
+######################## Make sure result folder exists ########################
+mkdir -p /results/$BEXHOMA_EXPERIMENT
+
+######################## Generate workflow file ########################
+# https://www.hammerdb.com/docs3.3/ch08s08.html
+# duration: in minutes
+# https://www.hammerdb.com/docs/ch09s03.html
+# runtimer deprecated starting with v4.6
+######################## Workflow: MySQL ###################
+
+if [ "$HAMMERDB_TYPE" = "mysql" ]; then
+    USER=root
+    PASSWORD=root
+    echo "#!/bin/tclsh
+proc runtimer { seconds } {
+set x 0
+set timerstop 0
+while {!\$timerstop} {
+incr x
+after 1000
+  if { ![ expr {\$x % 60} ] } {
+          set y [ expr \$x / 60 ]
+          puts \"Timer: \$y minutes elapsed\"
+  }
+update
+if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
+    }
+return
+}
+puts \"SETTING CONFIGURATION\"
+dbset db mysql
+diset connection mysql_host $BEXHOMA_HOST
+diset connection mysql_port $BEXHOMA_PORT
+diset tpcc mysql_count_ware $SF
+diset tpcc mysql_num_vu $PARALLEL
+diset tpcc mysql_user $USER
+diset tpcc mysql_pass $PASSWORD
+diset tpcc mysql_driver timed
+diset tpcc mysql_rampup $HAMMERDB_RAMPUP
+diset tpcc mysql_duration $HAMMERDB_DURATION
+diset tpcc mysql_total_iterations $HAMMERDB_ITERATIONS
+vuset logtotemp 1
+loadscript
+puts \"SEQUENCE STARTED\"
+foreach z { $HAMMERDB_VUSERS } {
+puts \"\$z VU TEST\"
+vuset vu \$z
+vucreate
+vurun
+runtimer 600
+vudestroy
+after 5000
+        }
+puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
+fi
+
+######################## Generate workflow file ########################
+######################## Workflow: MariaDB ###################
+
+if [ "$HAMMERDB_TYPE" = "mariadb" ]; then
+    USER=root
+    PASSWORD=root
+    echo "#!/bin/tclsh
+proc runtimer { seconds } {
+set x 0
+set timerstop 0
+while {!\$timerstop} {
+incr x
+after 1000
+  if { ![ expr {\$x % 60} ] } {
+          set y [ expr \$x / 60 ]
+          puts \"Timer: \$y minutes elapsed\"
+  }
+update
+if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
+    }
+return
+}
+puts \"SETTING CONFIGURATION\"
+dbset db maria
+diset connection maria_host $BEXHOMA_HOST
+diset connection maria_port $BEXHOMA_PORT
+diset tpcc maria_count_ware $SF
+diset tpcc maria_num_vu $PARALLEL
+diset tpcc maria_user $USER
+diset tpcc maria_pass $PASSWORD
+diset tpcc maria_driver timed
+diset tpcc maria_rampup $HAMMERDB_RAMPUP
+diset tpcc maria_duration $HAMMERDB_DURATION
+diset tpcc maria_total_iterations $HAMMERDB_ITERATIONS
+vuset logtotemp 1
+loadscript
+puts \"SEQUENCE STARTED\"
+foreach z { $HAMMERDB_VUSERS } {
+puts \"\$z VU TEST\"
+vuset vu \$z
+vucreate
+vurun
+runtimer 600
+vudestroy
+after 5000
+        }
+puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
+fi
+
+######################## Generate workflow file ########################
+######################## Workflow: PostgreSQL ###################
+
+if [ "$HAMMERDB_TYPE" = "postgresql" ]; then
+    echo "#!/bin/tclsh
+proc runtimer { seconds } {
+set x 0
+set timerstop 0
+while {!\$timerstop} {
+incr x
+after 1000
+  if { ![ expr {\$x % 60} ] } {
+          set y [ expr \$x / 60 ]
+          puts \"Timer: \$y minutes elapsed\"
+  }
+update
+if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
+    }
+return
+}
+puts \"SETTING CONFIGURATION\"
+dbset db pg
+diset connection pg_host $BEXHOMA_HOST
+diset connection pg_port $BEXHOMA_PORT
+diset tpcc pg_count_ware $SF
+diset tpcc pg_num_vu $PARALLEL
+diset tpcc pg_superuser postgres
+diset tpcc pg_superuserpass postgres
+diset tpcc pg_defaultdbase postgres
+diset tpcc pg_user $USER
+diset tpcc pg_pass $PASSWORD
+diset tpcc pg_dbase tpcc
+diset tpcc pg_driver timed
+diset tpcc pg_rampup $HAMMERDB_RAMPUP
+diset tpcc pg_duration $HAMMERDB_DURATION
+diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
+vuset logtotemp 1
+loadscript
+puts \"SEQUENCE STARTED\"
+foreach z { $HAMMERDB_VUSERS } {
+puts \"\$z VU TEST\"
+vuset vu \$z
+vucreate
+vurun
+runtimer 600
+vudestroy
+after 5000
+        }
+puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
+fi
+
+######################## Show workflow file ########################
+cat benchmark.tcl
+
+######################## Start measurement of time ########################
+SECONDS_START=$SECONDS
+echo "Start $SECONDS_START seconds"
+bexhoma_start_epoch=$(date -u +%s)
+
+######################## Execute workload ###################
+./hammerdbcli auto benchmark.tcl
+
+######################## End time measurement ###################
+SECONDS_END=$SECONDS
+echo "End $SECONDS_END seconds"
+
+DURATION=$((SECONDS_END-SECONDS_START))
+echo "Duration $DURATION seconds"
+
+######################## Store results ###################
+UUID=$(cat /proc/sys/kernel/random/uuid)
+cp /tmp/hammerdb.log /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
+echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log"
+# cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
+
+######################## Show timing information ###################
+echo "Benchmarking done"
+
+DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
+echo "$DATEANDTIME"
+
+SECONDS_END_SCRIPT=$SECONDS
+DURATION_SCRIPT=$((SECONDS_END_SCRIPT-SECONDS_START_SCRIPT))
+echo "Duration $DURATION_SCRIPT seconds"
+echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
+
+bexhoma_end_epoch=$(date -u +%s)
+echo "BEXHOMA_START:$bexhoma_start_epoch"
+echo "BEXHOMA_END:$bexhoma_end_epoch"
+
+######################## Exit successfully ###################
+exit 0
+

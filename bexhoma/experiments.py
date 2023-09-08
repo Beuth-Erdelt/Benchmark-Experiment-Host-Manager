@@ -114,6 +114,7 @@ class default():
         self.maintaining_parameters = {}
         self.loading_parameters = {}
         self.loading_patch = ""
+        self.benchmarking_patch = ""
         self.benchmarking_parameters = {}
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
@@ -292,6 +293,14 @@ class default():
         :param patch: String in YAML format, overwrites basic YAML file content
         """
         self.loading_patch = patch
+    def patch_benchmarking(self, patch):
+        """
+        Patches YAML of loading components.
+        Can be set by experiment before creation of configuration.
+
+        :param patch: String in YAML format, overwrites basic YAML file content
+        """
+        self.benchmarking_patch = patch
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
@@ -877,19 +886,20 @@ class default():
             for job in jobs:
                 # status per pod
                 for p in pods:
-                    status = self.cluster.get_pod_status(p)
-                    self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                    #print(p,status)
-                    if status == 'Succeeded':
-                        print("Store logs of job {} pod {}".format(job, p))
-                        #if status != 'Running':
-                        self.cluster.store_pod_log(p)
-                        #self.cluster.delete_pod(p)
-                    if status == 'Failed':
-                        print("Store logs of job {} pod {}".format(job, p))
-                        #if status != 'Running':
-                        self.cluster.store_pod_log(p)
-                        #self.cluster.delete_pod(p)
+                    if not self.cluster.pod_log_exists(p):
+                        status = self.cluster.get_pod_status(p)
+                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                        #print(p,status)
+                        if status == 'Succeeded':
+                            print("Store logs of job {} pod {}".format(job, p))
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            #self.cluster.delete_pod(p)
+                        if status == 'Failed':
+                            print("Store logs of job {} pod {}".format(job, p))
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            #self.cluster.delete_pod(p)
                 success = self.cluster.get_job_status(job)
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
@@ -901,13 +911,15 @@ class default():
                         #print(p,status)
                         if status == 'Succeeded':
                             #if status != 'Running':
-                            print("Store logs of job {} pod {}".format(job, p))
-                            self.cluster.store_pod_log(p)
+                            if not self.cluster.pod_log_exists(p):
+                                print("Store logs of job {} pod {}".format(job, p))
+                                self.cluster.store_pod_log(p)
                             self.cluster.delete_pod(p)
                         if status == 'Failed':
                             #if status != 'Running':
-                            print("Store logs of job {} pod {}".format(job, p))
-                            self.cluster.store_pod_log(p)
+                            if not self.cluster.pod_log_exists(p):
+                                print("Store logs of job {} pod {}".format(job, p))
+                                self.cluster.store_pod_log(p)
                             self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
@@ -1023,6 +1035,14 @@ class default():
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
+            elif filename.startswith(jobname) and filename.endswith(".log"):
+                #print(filename)
+                (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                #print(df)
+                if (timing_start, timing_end) == (0,0):
+                    print("Error in "+filename)
+                else:
+                    timing.append((timing_start, timing_end))
         print(timing)
         return timing
     def end_benchmarking(self, jobname, config=None):
@@ -1067,9 +1087,34 @@ class default():
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
                 pod_dashboard = pods[0]
+                cmd = {}
+                # store benchmarker times in config and upload it to cluster again
+                if config is not None:
+                    #connectionfile = config.benchmark.path+'/connections.config'
+                    filename = 'connections.config'
+                    connectionfile = self.path+"/"+filename
+                    #print("Add benchmarker times to", connectionfile)
+                    #print("Times", config.benchmarking_timespans)
+                    #print("Find connection =", config.connection)
+                    if config.benchmark is not None:
+                        config.benchmark.getConnectionsFromFile(filename=connectionfile)
+                        #print("Connection file:")
+                        print(config.benchmark.connections)
+                        for k,c in enumerate(config.benchmark.connections):
+                            #print(c['name'])
+                            if c['name'] == config.connection:
+                                config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
+                                print(c['name'], "found and updated times:", config.benchmarking_timespans)
+                                break
+                        print(config.benchmark.connections)
+                        with open(connectionfile, 'w') as f:
+                            f.write(str(config.benchmark.connections))
+                        # upload connections infos with benchmarking times
+                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                        self.cluster.logger.debug(stdout)
                 # get monitoring for loading
                 if self.monitoring_active:
-                    cmd = {}
                     cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
@@ -1924,4 +1969,43 @@ class benchbase(default):
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
 
+
+
+"""
+############################################################################
+Example
+############################################################################
+"""
+
+class example(default):
+    """
+    Class for defining a custom example experiment.
+    This sets
+
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            queryfile = 'queries.config',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            script=None
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        if script is None:
+            script = 'empty'
+        self.set_experiment(volume='example')
+        self.set_experiment(script=script)
+        self.cluster.set_experiments_configfolder('experiments/example')
+        #parameter.defaultParameters = {'SF': str(SF)}
+        #self.set_additional_labels(SF=SF)
+        self.set_queryfile(queryfile)
+        self.set_workload(
+            name = 'Custom Example Queries',
+            info = 'This experiment performs some custom queries.'
+            )
+        self.storage_label = 'example'
 

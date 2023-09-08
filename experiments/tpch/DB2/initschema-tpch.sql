@@ -1,8 +1,9 @@
 connect to testdb user db2inst1 using root1234ROOT;
 
-update db cfg using LOGFILSIZ 100000;
+
+update db cfg using LOGFILSIZ 10000;
 update db cfg using LOGPRIMARY 100;
-update db cfg using LOGSECOND 100;
+update db cfg using LOGSECOND 28;
 connect reset;
 
 connect to testdb user db2inst1 using root1234ROOT;
