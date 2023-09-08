@@ -61,7 +61,6 @@ spec:
         image: gcr.io/cadvisor/cadvisor:v0.47.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
         securityContext:
-          privileged: true
         ports:
         - containerPort: 9300
           #hostPort: 9300

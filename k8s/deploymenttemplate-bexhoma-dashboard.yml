@@ -43,7 +43,6 @@ spec:
           #limits: {cpu: 4000m, memory: 32Gi}
           #requests: {cpu: 4000m, memory: 32Gi}
         securityContext:
-          privileged: true
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
@@ -60,7 +59,6 @@ spec:
           #limits: {cpu: 4000m, memory: 32Gi}
           #requests: {cpu: 4000m, memory: 32Gi}
         securityContext:
-          privileged: true
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
