@@ -20,7 +20,7 @@ RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --fo
 
 RUN pip install jupyter
 RUN pip install jupyter_contrib_nbextensions
-RUN jupyter contrib nbextension install --user
+#RUN jupyter contrib nbextension install --user
 RUN jupyter nbextensions_configurator enable --user
 RUN jupyter nbextension enable toc2/main
 
