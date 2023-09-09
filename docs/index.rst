@@ -13,6 +13,7 @@
 
     ../README.md
     ./Example-TPC-H.md
+    ./Example-custom.md
     ./Concept.md
     ./Config.md
     ./DBMS.md
