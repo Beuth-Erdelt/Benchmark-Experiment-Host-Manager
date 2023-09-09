@@ -50,16 +50,9 @@ Example: Run `python example.py run -dbms Dummy -ne 5` to run experiment with 5 
 
 ## Background Information
 
-1. The script installs a `dashboard` container (if not already installed).
-This connects to a PV `bexhoma-results`.
-Measurements are stored, merged and aggregated there.
-1. The script installs a `messagequeue` container (if not already installed).
-Components are synched to start at the same second using a Redis queue inside that container.
-1. The script installs a Dummy DBMS according to `k8s/deploymenttemplate-Dummy.yml`.
-This is just a lightweight busybox container running an endless sleep.
-Bexhoma writes status information about the components to the benchmarked DBMS container.
-If the DBMS is not managed by bexhoma, we need such a Dummy container otherwise.
-The container will be removed automatically after experiment has finished.
+1. The script installs a `dashboard` container (if not already installed). This connects to a PV `bexhoma-results`. Measurements are stored, merged and aggregated there.
+1. The script installs a `messagequeue` container (if not already installed). Components are synched to start at the same second using a Redis queue inside that container.
+1. The script installs a Dummy DBMS according to `k8s/deploymenttemplate-Dummy.yml`. This is just a lightweight busybox container running an endless sleep. Bexhoma writes status information about the components to the benchmarked DBMS container. If the DBMS is not managed by bexhoma, we need such a Dummy container otherwise. The container will be removed automatically after experiment has finished.
 
 
 The DBMSBenchmarker Docker container needs to have the required JDBC driver included.
