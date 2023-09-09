@@ -1043,7 +1043,7 @@ class default():
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
-        print(timing)
+        #print(timing)
         return timing
     def end_benchmarking(self, jobname, config=None):
         """

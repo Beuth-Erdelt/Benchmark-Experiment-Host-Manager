@@ -1956,7 +1956,7 @@ scrape_configs:
         filename = self.benchmark.path+'/connections.config'
         with open(filename, 'w') as f:
             f.write(str(self.benchmark.connections))
-        print(str(self.benchmark.connections))
+        #print(str(self.benchmark.connections))
         filename = self.benchmark.path+'/'+c['name']+'.config'
         with open(filename, 'w') as f:
             f.write(str([c]))
