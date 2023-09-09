@@ -1099,14 +1099,14 @@ class default():
                     if config.benchmark is not None:
                         config.benchmark.getConnectionsFromFile(filename=connectionfile)
                         #print("Connection file:")
-                        print(config.benchmark.connections)
+                        #print(config.benchmark.connections)
                         for k,c in enumerate(config.benchmark.connections):
                             #print(c['name'])
                             if c['name'] == config.connection:
                                 config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
                                 print(c['name'], "found and updated times:", config.benchmarking_timespans)
                                 break
-                        print(config.benchmark.connections)
+                        #print(config.benchmark.connections)
                         with open(connectionfile, 'w') as f:
                             f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
