@@ -22,6 +22,10 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 
 It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4]. See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
 
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
+</p>
+
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
 If you encounter any issues, please report them to our [Github issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues).
