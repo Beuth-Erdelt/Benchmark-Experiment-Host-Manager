@@ -17,10 +17,11 @@ Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
 </p>
 
-The basic workflow is [1,2]: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
+The basic workflow is [1,2]: start a containerized version of the DBMS, install monitoring software, import data, run benchmarks and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
-It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4]. See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
+It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4].
+See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
