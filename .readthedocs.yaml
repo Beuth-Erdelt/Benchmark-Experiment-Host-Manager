@@ -21,7 +21,6 @@ sphinx:
 #   install:
 #   - requirements: docs/requirements.txt
 python:
-  version: 3.11
   install:
     - requirements: requirements.txt
     - requirements: docs/requirements.txt
