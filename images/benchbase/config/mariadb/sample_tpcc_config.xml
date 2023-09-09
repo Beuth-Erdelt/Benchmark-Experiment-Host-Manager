@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<parameters>
+
+    <!-- Connection details -->
+    <type>MARIADB</type>
+    <driver>org.mariadb.jdbc.Driver</driver>
+    <url>jdbc:mariadb://BEXHOMA_HOST:BEXHOMA_PORT/BEXHOMA_DATABASE?useServerPrepStmts</url>
+    <username>BEXHOMA_USER</username>
+    <password>BEXHOMA_PASSWORD</password>
+    <isolation>BENCHBASE_ISOLATION</isolation>
+    <batchsize>BENCHBASE_BATCHSIZE</batchsize>
+
+    <!-- Scale factor is the number of warehouses in TPCC -->
+    <scalefactor>BEXHOMA_SF</scalefactor>
+
+    <!-- The workload -->
+    <terminals>BENCHBASE_TERMINALS</terminals>
+    <works>
+        <work>
+            <time>BENCHBASE_TIME</time>
+            <rate>BENCHBASE_TARGET</rate>
+            <weights>45,43,4,4,4</weights>
+        </work>
+    </works>
+
+    <!-- TPCC specific -->
+    <transactiontypes>
+        <transactiontype>
+            <name>NewOrder</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Payment</name>
+        </transactiontype>
+        <transactiontype>
+            <name>OrderStatus</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Delivery</name>
+        </transactiontype>
+        <transactiontype>
+            <name>StockLevel</name>
+        </transactiontype>
+    </transactiontypes>
+</parameters>

@@ -1,0 +1,39 @@
+FROM benchbase.azurecr.io/benchbase
+
+USER root
+WORKDIR /benchbase
+VOLUME /benchbase/results
+
+COPY ./config /tmp/config/
+RUN chown -R containeruser:containergroup /tmp/config/
+
+ENV SF=1
+ENV NUM_PODS=4
+ENV CHILD=1
+ENV RNGSEED=123
+ENV CONNECTION=mysql
+ENV EXPERIMENT=12345
+ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
+ENV BEXHOMA_HOST="www.example.com"
+ENV BEXHOMA_PORT 3306
+ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_CONNECTION="mysql"
+ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_USER root
+ENV BEXHOMA_PASSWORD root
+ENV BEXHOMA_DATABASE demo
+ENV DBMSBENCHMARKER_START 0
+ENV DBMSBENCHMARKER_NOW 0
+ENV BENCHBASE_BENCH tpcc
+ENV BENCHBASE_PROFILE postgres
+ENV BENCHBASE_TARGET 100
+ENV BENCHBASE_TIME 60
+ENV BENCHBASE_TERMINALS 1
+ENV BENCHBASE_BATCHSIZE 128
+ENV BENCHBASE_ISOLATION "TRANSACTION_SERIALIZABLE"
+
+COPY ./benchmarker.sh /benchbase/benchmarker.sh
+RUN ["chmod", "+x", "/benchbase/benchmarker.sh"]
+RUN chown -R containeruser:containergroup /benchbase/benchmarker.sh
+ENTRYPOINT ["/benchbase/benchmarker.sh"]

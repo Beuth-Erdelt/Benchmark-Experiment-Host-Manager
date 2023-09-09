@@ -2,6 +2,8 @@ FROM prom/prometheus:v2.24.1
 
 COPY prometheus.yml /etc/prometheus/prometheus.yml
 
+ENV BEXHOMA_SERVICE=bexhoma-sut.perdelt.svc.cluster.local
+
 USER       nobody
 EXPOSE     9090
 VOLUME     [ "/prometheus" ]

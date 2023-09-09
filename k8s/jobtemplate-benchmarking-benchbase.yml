@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
+  name: bexhoma-benchmarker
+spec:
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: dockerhub
+      nodeSelector: 
+      tolerations:
+      containers:
+      - name: dbmsbenchmarker
+        image: bexhoma/benchmarker_benchbase:latest
+        imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
+        env:
+        - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
+        - {name: DBMSBENCHMARKER_CODE, value: '1611607321'}
+        - {name: DBMSBENCHMARKER_SLEEP, value: '60'}
+        - {name: DBMSBENCHMARKER_CONNECTION, value: 'MySQL-1'}
+        - {name: DBMSBENCHMARKER_ALIAS, value: 'DBMS-A'}
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-timescaledb-aws-1658676533'}
+        - {name: BEXHOMA_PORT, value: '9091'}
+        - {name: BEXHOMA_CONNECTION, value: 'monetdb'}
+        - {name: BEXHOMA_EXPERIMENT, value: '1234'}
+        - {name: BEXHOMA_JAR, value: 'mysql-connector-j-8.0.31.jar'}
+        - {name: BEXHOMA_DRIVER, value: 'com.mysql.cj.jdbc.Driver'}
+        - {name: BEXHOMA_USER, value: 'root'}
+        - {name: BEXHOMA_PASSWORD, value: 'root'}
+        - {name: BEXHOMA_URL, value: 'jdbc:mysql://localhost:3306/ycsb'}
+        - {name: PARALLEL, value: '1'}
+        - {name: CHILD, value: '1'}
+        - {name: SF, value: '1'}
+        resources:
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
+        securityContext:
+        volumeMounts:
+      restartPolicy: Never
+      volumes:

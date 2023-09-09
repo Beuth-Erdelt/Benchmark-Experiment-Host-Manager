@@ -43,6 +43,7 @@ import pandas as pd
 import pickle
 import json
 
+from bexhoma import evaluators
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -112,12 +113,17 @@ class default():
         self.nodes = {}
         self.maintaining_parameters = {}
         self.loading_parameters = {}
+        self.loading_patch = ""
+        self.benchmarking_patch = ""
         self.benchmarking_parameters = {}
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         self.querymanagement = {}
+        self.additional_labels = dict()
         self.workload = {}
         self.monitoring_active = True
+        self.prometheus_interval = "10s"
+        self.prometheus_timeout = "10s"
         self.loading_active = False
         self.num_loading = 0
         self.num_loading_pods = 0
@@ -125,10 +131,15 @@ class default():
         self.num_maintaining = 0
         self.num_maintaining_pods = 0
         self.name_format = None
+        self.script = ""
+        self.initscript = []
+        self.indexing = ""
+        self.indexscript = []
         # k8s:
         self.namespace = self.cluster.namespace
         self.configurations = []
         self.storage_label = ''
+        self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def wait(self, sec):
         """
         Function for waiting some time and inform via output about this
@@ -164,6 +175,15 @@ class default():
         :param experiments_configfolder: Relative path to an experiment folder
         """
         self.experiments_configfolder = experiments_configfolder
+    def set_additional_labels(self, **kwargs):
+        """
+        Sets additional labels, that will be put to K8s objects (and ignored otherwise).
+        This is for the SUT component.
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of labels, example 'SF' => 100
+        """
+        self.additional_labels = {**self.additional_labels, **kwargs}
     def set_workload(self, **kwargs):
         """
         Sets mata data about the experiment, for example name and description.
@@ -265,6 +285,22 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
+    def patch_loading(self, patch):
+        """
+        Patches YAML of loading components.
+        Can be overwritten by configuration.
+
+        :param patch: String in YAML format, overwrites basic YAML file content
+        """
+        self.loading_patch = patch
+    def patch_benchmarking(self, patch):
+        """
+        Patches YAML of loading components.
+        Can be set by experiment before creation of configuration.
+
+        :param patch: String in YAML format, overwrites basic YAML file content
+        """
+        self.benchmarking_patch = patch
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
@@ -435,7 +471,7 @@ class default():
             finally:
                 return 1
         return 1
-    def set_experiment(self, instance=None, volume=None, docker=None, script=None):
+    def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
         """
         Read experiment details from cluster config
 
@@ -456,6 +492,9 @@ class default():
         if script is not None:
             self.script = script
             self.initscript = self.cluster.volumes[self.volume]['initscripts'][self.script]
+        if indexing is not None:
+            self.indexing = indexing
+            self.indexscript = self.cluster.volumes[self.volume]['initscripts'][self.indexing]
     def evaluate_results(self, pod_dashboard=''):
         """
         Let the dashboard pod build the evaluations.
@@ -649,6 +688,23 @@ class default():
         """
         for config in self.configurations:
             config.add_benchmark_list(list_clients)
+    def get_workflow_list(self):
+        """
+        Returns benchmarking workflow as dict of lists of lists.
+        Keys are connection names.
+        Values are lists of lists.
+        Each inner list is for example added by add_benchmark_list(), c.f.
+        Inner lists are repeated according to self.num_experiment_to_apply.
+        Example: {'PostgreSQL-24-1-16384': [[1, 2]], 'MySQL-24-1-16384': [[1, 2]], 'PostgreSQL-24-1-32768': [[1, 2]], 'MySQL-24-1-32768': [[1, 2]]}
+
+        :return: Dict of benchmarking workflow
+        """
+        workflow = {}
+        for configuration in self.configurations:
+            workflow[configuration.configuration] = [configuration.benchmark_list_template for i in range(configuration.num_experiment_to_apply)]
+        self.cluster.logger.debug('default.get_workflow_list({})'.format(workflow))
+        #print(workflow)
+        return workflow
     def work_benchmark_list(self, intervals=30, stop=True):
         """
         Run typical workflow:
@@ -710,11 +766,12 @@ class default():
                 if not config.loading_started:
                     if config.sut_is_running():
                         print("{} is not loaded yet".format(config.configuration))
-                    if config.monitoring_active and not config.monitoring_is_running():
-                        print("{} waits for monitoring".format(config.configuration))
-                        if not config.monitoring_is_pending():
-                            config.start_monitoring()
-                        continue
+                    if len(config.benchmark_list) > 0:
+                        if config.monitoring_active and not config.monitoring_is_running():
+                            print("{} waits for monitoring".format(config.configuration))
+                            if not config.monitoring_is_pending():
+                                config.start_monitoring()
+                            continue
                     now = datetime.utcnow()
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:
@@ -735,7 +792,7 @@ class default():
                         print("{} will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
                         continue
                 # check if maintaining
-                if config.loading_finished:
+                if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
                         print("{} waits for monitoring".format(config.configuration))
                         if not config.monitoring_is_pending():
@@ -750,14 +807,16 @@ class default():
                                 print("{} has pending maintaining".format(config.configuration))
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
-                    if config.monitoring_active and not config.monitoring_is_running():
-                        print("{} waits for monitoring".format(config.configuration))
-                        if not config.monitoring_is_pending():
-                            config.start_monitoring()
-                        continue
-                    if config.maintaining_active and not config.maintaining_is_running():
-                        print("{} waits for maintaining".format(config.configuration))
-                        continue
+                    # still benchmarks: check loading and maintaining
+                    if len(config.benchmark_list) > 0:
+                        if config.monitoring_active and not config.monitoring_is_running():
+                            print("{} waits for monitoring".format(config.configuration))
+                            if not config.monitoring_is_pending():
+                                config.start_monitoring()
+                            continue
+                        if config.maintaining_active and not config.maintaining_is_running():
+                            print("{} waits for maintaining".format(config.configuration))
+                            continue
                     app = self.cluster.appname
                     component = 'benchmarker'
                     configuration = ''
@@ -773,6 +832,10 @@ class default():
                             client = str(config.client)
                             config.client = config.client+1
                             print("Done {} of {} benchmarks. This will be client {}".format(config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                            if len(config.benchmarking_parameters_list) > 0:
+                                benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
+                                print("We will change parameters of benchmark", benchmarking_parameters)
+                                config.set_benchmarking_parameters(**benchmarking_parameters)
                             if config.num_experiment_to_apply > 1:
                                 connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                             else:
@@ -807,38 +870,58 @@ class default():
                 else:
                     print("{} is loading".format(config.configuration))
             # all jobs of configuration - benchmarker
-            app = self.cluster.appname
-            component = 'benchmarker'
-            configuration = ''
-            jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-            # all pods to these jobs
-            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
-            # status per pod
-            for p in pods:
-                status = self.cluster.get_pod_status(p)
-                self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                #print(p,status)
-                if status == 'Succeeded':
-                    #if status != 'Running':
-                    self.cluster.store_pod_log(p)
-                    self.cluster.delete_pod(p)
-                if status == 'Failed':
-                    #if status != 'Running':
-                    self.cluster.store_pod_log(p)
-                    self.cluster.delete_pod(p)
+            #app = self.cluster.appname
+            #component = 'benchmarker'
+            #configuration = ''
+            #jobs = self.cluster.get_jobs(app, component, self.code, configuration)
             # success of job
             app = self.cluster.appname
             component = 'benchmarker'
             configuration = ''
-            success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
+            #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
             jobs = self.cluster.get_jobs(app, component, self.code, configuration)
+            # all pods to these jobs
+            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
             # status per job
             for job in jobs:
+                # status per pod
+                for p in pods:
+                    if not self.cluster.pod_log_exists(p):
+                        status = self.cluster.get_pod_status(p)
+                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                        #print(p,status)
+                        if status == 'Succeeded':
+                            print("Store logs of job {} pod {}".format(job, p))
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            #self.cluster.delete_pod(p)
+                        if status == 'Failed':
+                            print("Store logs of job {} pod {}".format(job, p))
+                            #if status != 'Running':
+                            self.cluster.store_pod_log(p)
+                            #self.cluster.delete_pod(p)
                 success = self.cluster.get_job_status(job)
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
                 if success:
-                    self.end_benchmarking(job)
+                    # status per pod
+                    for p in pods:
+                        status = self.cluster.get_pod_status(p)
+                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                        #print(p,status)
+                        if status == 'Succeeded':
+                            #if status != 'Running':
+                            if not self.cluster.pod_log_exists(p):
+                                print("Store logs of job {} pod {}".format(job, p))
+                                self.cluster.store_pod_log(p)
+                            self.cluster.delete_pod(p)
+                        if status == 'Failed':
+                            #if status != 'Running':
+                            if not self.cluster.pod_log_exists(p):
+                                print("Store logs of job {} pod {}".format(job, p))
+                                self.cluster.store_pod_log(p)
+                            self.cluster.delete_pod(p)
+                    self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
             if len(pods) == 0 and len(jobs) == 0:
                 do = False
@@ -909,14 +992,154 @@ class default():
                         self.cluster.delete_job(job)
                 if len(pods) == 0 and len(jobs) == 0:
                     break
-    def end_benchmarking(self, jobname):
+    def get_job_timing_benchmarking(self, jobname):
+        timing_benchmarker = self.extract_job_timing(jobname, container="dbmsbenchmarker")
+        return timing_benchmarker
+    def get_job_timing_loading(self, jobname):
+        timing_datagenerator = self.extract_job_timing(jobname, container="datagenerator")
+        timing_sensor = self.extract_job_timing(jobname, container="sensor")
+        timing_total = timing_datagenerator + timing_sensor
+        return timing_datagenerator, timing_sensor, timing_total
+        #return total_time, generator_time, loader_time
+    def extract_job_timing(self, jobname, container):
+        def get_job_timing(filename):
+            """
+            Transforms a log file in text format into list of pairs of timing information.
+            This reads BEXHOMA_START and BEXHOMA_END
+
+            :param filename: Name of the log file 
+            :return: List of pairs (start,end) per pod
+            """
+            try:
+                with open(filename) as f:
+                    lines = f.readlines()
+                stdout = "".join(lines)
+                pod_name = filename[filename.rindex("-")+1:-len(".log")]
+                timing_start = re.findall('BEXHOMA_START:(.+?)\n', stdout)[0]
+                timing_end = re.findall('BEXHOMA_END:(.+?)\n', stdout)[0]
+                return (int(timing_start), int(timing_end))
+            except Exception as e:
+                print(e)
+                return (0,0)
+        directory = os.fsencode(self.path)
+        #print(jobname)
+        timing = []
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
+            if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
+                #print(filename)
+                (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                #print(df)
+                if (timing_start, timing_end) == (0,0):
+                    print("Error in "+filename)
+                else:
+                    timing.append((timing_start, timing_end))
+            elif filename.startswith(jobname) and filename.endswith(".log"):
+                #print(filename)
+                (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                #print(df)
+                if (timing_start, timing_end) == (0,0):
+                    print("Error in "+filename)
+                else:
+                    timing.append((timing_start, timing_end))
+        #print(timing)
+        return timing
+    def end_benchmarking(self, jobname, config=None):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
 
         :param jobname: Name of the job to clean
+        :param config: Configuration object
         """
         self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
+        # mark pod with new end time and duration
+        job_labels = self.cluster.get_jobs_labels(app=self.cluster.appname, component='benchmarker', experiment=self.code)
+        if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
+            # get pairs (start,end) of benchmarking pods
+            timing_benchmarker = self.get_job_timing_benchmarking(jobname)
+            if config is not None:
+                config.benchmarking_timespans = {}
+                config.benchmarking_timespans['benchmarker'] = timing_benchmarker
+            start_time = int(job_labels[jobname]['start_time'])
+            connection = job_labels[jobname]['connection']
+            #self.timeLoadingEnd = default_timer()
+            #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
+            #self.experiment.cluster.logger.debug("LOADING LABELS")
+            #self.experiment.cluster.logger.debug(self.timeLoading)
+            #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
+            #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
+            #self.timeLoading = float(self.timeLoading) + float(timeLoading)
+            now = datetime.utcnow()
+            now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+            time_now = str(datetime.now())
+            end_time = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            self.cluster.logger.debug("BENCHMARKING LABELS")
+            self.cluster.logger.debug("connection: "+str(connection))
+            self.cluster.logger.debug("start_time: "+str(start_time))
+            self.cluster.logger.debug("end_time: "+str(end_time))
+            self.cluster.logger.debug("duration: "+str(end_time-start_time))
+            #fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
+            #print(fullcommand)
+            #self.experiment.cluster.kubectl(fullcommand)
+            # copy config to pod - dashboard
+            pods = self.cluster.get_pods(component='dashboard')
+            if len(pods) > 0:
+                pod_dashboard = pods[0]
+                cmd = {}
+                # store benchmarker times in config and upload it to cluster again
+                if config is not None:
+                    #connectionfile = config.benchmark.path+'/connections.config'
+                    filename = 'connections.config'
+                    connectionfile = self.path+"/"+filename
+                    #print("Add benchmarker times to", connectionfile)
+                    #print("Times", config.benchmarking_timespans)
+                    #print("Find connection =", config.connection)
+                    if config.benchmark is not None:
+                        config.benchmark.getConnectionsFromFile(filename=connectionfile)
+                        #print("Connection file:")
+                        #print(config.benchmark.connections)
+                        for k,c in enumerate(config.benchmark.connections):
+                            #print(c['name'])
+                            if c['name'] == config.connection:
+                                config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
+                                print(c['name'], "found and updated times:", config.benchmarking_timespans)
+                                break
+                        #print(config.benchmark.connections)
+                        with open(connectionfile, 'w') as f:
+                            f.write(str(config.benchmark.connections))
+                        # upload connections infos with benchmarking times
+                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                        self.cluster.logger.debug(stdout)
+                # get monitoring for loading
+                if self.monitoring_active:
+                    cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
+                    #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                    stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                    self.cluster.logger.debug(stdout)
+                    self.cluster.logger.debug(stderr)
+                    # upload connections infos again, metrics has overwritten it
+                    filename = 'connections.config'
+                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                    self.cluster.logger.debug(stdout)
+                    # get metrics of benchmarker components
+                    # only if general monitoring is on
+                    endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+                    if len(endpoints_cluster)>0:
+                        cmd['fetch_benchmarker_metrics'] = 'python metrics.py -r /results/ -db -ct benchmarker -cn dbmsbenchmarker -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
+                        #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarker_metrics'], pod=pod_dashboard, container="dashboard")
+                        self.cluster.logger.debug(stdout)
+                        self.cluster.logger.debug(stderr)
+                        # upload connections infos again, metrics has overwritten it
+                        filename = 'connections.config'
+                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                        self.cluster.logger.debug(stdout)
+        self.evaluator.end_benchmarking(jobname)
     def end_loading(self, jobname):
         """
         Ends a loading job.
@@ -925,6 +1148,7 @@ class default():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
+        self.evaluator.end_loading(jobname)
 
 
 
@@ -1002,13 +1226,17 @@ class tpch(default):
             SF = '100',
             num_experiment_to_apply = 1,
             timeout = 7200,
+            script=None
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        if script is None:
+            script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpch')
-        self.set_experiment(script='SF'+str(SF)+'-index')
+        self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/tpch')
         parameter.defaultParameters = {'SF': str(SF)}
+        self.set_additional_labels(SF=SF)
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'TPC-H Queries SF='+str(SF),
@@ -1056,73 +1284,8 @@ class tpcc(default):
             info = 'This experiment performs some TPC-C inspired workloads.'
             )
         self.storage_label = 'tpch-'+str(SF)
-    def end_benchmarking(self,jobname):
-        """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        #app = self.appname
-        #code = self.code
-        #experiment = code
-        #jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, client=str(client))
-        #jobname = self.benchmarker_jobname
-        self.cluster.logger.debug('tpcc.end_benchmarking({})'.format(jobname))
-        pods = self.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-            status = self.cluster.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
-            while status != "Running":
-                self.wait(10)
-                status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
-            filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
-            #filename_logs = '/results/{}/{}*'.format(self.code, jobname)
-            filename_df = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+jobname+'.df.pickle'
-            cmd = {}
-            # get connection name
-            cmd['extract_results'] = 'grep -R BEXHOMA_CONNECTION {filename_logs}'.format(filename_logs=filename_logs)
-            print(cmd['extract_results'])
-            stdout = os.popen(cmd['extract_results']).read()
-            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            print(stdout)
-            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
-            # get NOPM and TPM
-            cmd['extract_results'] = 'grep -R RESULT {filename_logs}'.format(filename_logs=filename_logs)
-            print(cmd['extract_results'])
-            stdout = os.popen(cmd['extract_results']).read()
-            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            print(stdout)
-            list_nopm = re.findall('achieved (.+?) NOPM', stdout)
-            list_tpm = re.findall('from (.+?) ', stdout)
-            # get vuser
-            cmd['extract_results'] = 'grep -H -R \'Active Virtual Users\' {filename_logs}'.format(filename_logs=filename_logs)
-            print(cmd['extract_results'])
-            stdout = os.popen(cmd['extract_results']).read()
-            #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            print(stdout)
-            #list_vuser = re.findall('Vuser 1:(.+?) Active', stdout)
-            list_vuser_pod = re.findall(str(self.code)+'-(.+?).log:Vuser 1:(.+?) Active', stdout)
-            list_pods = [x for (x,y) in list_vuser_pod]
-            list_vuser = [y for (x,y) in list_vuser_pod]
-            # what we have found
-            print(list_nopm)
-            print(list_tpm)
-            print(list_vuser)
-            print(list_pods)
-            # build DataFrame
-            if len(list_nopm) and len(list_tpm) and len(list_vuser):
-                df = pd.DataFrame(list(zip(list_nopm, list_tpm, list_vuser, list_pods)))
-                df.columns = ['NOPM','TPM', 'VUSERS', 'pods']
-                if len(connection_name) > 0:
-                    df.index.name = str(connection_name[0])
-                print(df)
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-                #self.loading_parameters['HAMMERDB_VUSERS']
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
+        self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def test_results(self):
         """
         Run test script locally.
@@ -1130,57 +1293,65 @@ class tpcc(default):
 
         :return: exit code of test script
         """
-        try:
-            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-            #path = '../benchmarks/1669163583'
-            directory = os.fsencode(path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"): 
-                    df = pd.read_pickle(path+"/"+filename)
-                    print(df)
-                    print(df.index.name)
-                    print(list(df['VUSERS']))
-                    print(" ".join(l))
-            return 0
-        except Exception as e:
-            return 1
+        self.cluster.logger.debug('tpcc.test_results()')
+        self.evaluator.test_results()
+        workflow = self.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
         This is specific to HammerDB.
         """
         self.cluster.logger.debug('tpcc.evaluate_results()')
-        df_collected = None
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".df.pickle"):
-                #print(filename)
-                df = pd.read_pickle(path+"/"+filename)
-                #df = self.log_to_df(path+"/"+filename)
-                #filename_df = path+"/"+filename+".df.pickle"
-                #f = open(filename_df, "wb")
-                #pickle.dump(df, f)
-                #f.close()
-                if not df.empty:
-                    df['configuration'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-        if not df_collected is None and not df_collected.empty:
-            df_collected['index'] = df_collected.index.map(str)
-            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
-            df_collected.drop('index', axis=1, inplace=True)
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-            self.cluster.logger.debug(df_collected)
+        self.evaluator.evaluate_results(pod_dashboard)
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    print(pod_dashboard, status)
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+        # copy logs and yamls to result folder
+        #print("Copy configuration and logs", end="", flush=True)
+        #directory = os.fsencode(self.path)
+        #for file in os.listdir(directory):
+        #    filename = os.fsdecode(file)
+        #    if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error") or filename.endswith(".pickle"): 
+        #        self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
+        #        print(".", end="", flush=True)
+        #print("done!")
+        cmd = {}
+        #cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
+        #self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
+        #print("Join results ", end="", flush=True)
+        #cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
+        #self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
+        #print("done!")
+        #print("Build evaluation cube ", end="", flush=True)
+        #cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
+        #self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
+        #print("done!")
+        # download all results from cluster
+        #filename = 'evaluation.json'
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        self.cluster.kubectl(cmd['upload_results'])
 
 
 
@@ -1294,23 +1465,8 @@ class tsbs(default):
             )
         #self.monitoring_active = True
         self.maintaining_active = True
-    def end_loading(self, jobname):
-        """
-        Ends a loading job.
-        This is for storing or cleaning measures.
 
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('tsbs.end_loading({})'.format(jobname))
-        filename_logs = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}/{}*'.format(self.code, jobname)
-        cmd = {}
-        # get connection name
-        cmd['extract_results'] = 'grep -R loaded {filename_logs}'.format(filename_logs=filename_logs)
-        print(cmd['extract_results'])
-        stdout = os.popen(cmd['extract_results']).read()
-        #stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['extract_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-        print(stdout)
-        return super().end_loading(jobname)
+
 
 """
 ############################################################################
@@ -1347,7 +1503,9 @@ class ycsb(default):
             info = 'This experiment performs some YCSB inspired workloads.'
             )
         self.storage_label = 'tpch-'+str(SF)
-    def log_to_df(self, filename):
+        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
+        self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def OLD_log_to_df(self, filename):
         try:
             with open(filename) as f:
                 lines = f.readlines()
@@ -1369,48 +1527,6 @@ class ycsb(default):
         except Exception as e:
             print(e)
             return pd.DataFrame()
-    def end_loading(self, jobname):
-        """
-        Ends a loading job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('ycsb.end_loading({})'.format(jobname))
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-") and filename.endswith(".sensor.log"):
-                print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-        return super().end_loading(jobname)
-    def end_benchmarking(self, jobname):
-        """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('ycsb.end_benchmarking({})'.format(jobname))
-        path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
-                print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-        return super().end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
@@ -1419,20 +1535,13 @@ class ycsb(default):
         :return: exit code of test script
         """
         self.cluster.logger.debug('ycsb.test_results()')
-        try:
-            path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-            #path = '../benchmarks/1669163583'
-            directory = os.fsencode(path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"): 
-                    df = pd.read_pickle(path+"/"+filename)
-                    print(filename)
-                    print(df)
-            return 0
-        except Exception as e:
-            return 1
-    def get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+        self.evaluator.test_results()
+        workflow = self.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
+    def OLD_get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
             s=df2[df2['category'] == category]
@@ -1442,7 +1551,7 @@ class ycsb(default):
             print(e)
             print(df)
             return 0.0
-    def get_result_max(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+    def OLD_get_result_max(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
             s=df2[df2['category'] == category]
@@ -1452,7 +1561,7 @@ class ycsb(default):
             print(e)
             print(df)
             return 0.0
-    def get_result_avg(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
+    def OLD_get_result_avg(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
         try:
             df2=df[df['type'] == type]
             s=df2[df2['category'] == category]
@@ -1462,11 +1571,11 @@ class ycsb(default):
             print(e)
             print(df)
             return 0.0
-    def get_parts_of_name(self, name):
+    def OLD_get_parts_of_name(self, name):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
-    def get_overview_loading(self, dfs={}):
+    def OLD_get_overview_loading(self, dfs={}):
         tps = []
         if len(dfs) == 0:
             dfs = self.get_result(component="loading")
@@ -1492,7 +1601,18 @@ class ycsb(default):
             list_values_name = list(parts.values())
             num_pods = len(df.columns)-2
             #print(list_values_name)
-            list_values_df = [connection, num_pods, overall_Throughput, insert_Operations, insert_OK, overall_RunTime, insert_AverageLatency, insert_95thPercentileLatency, insert_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            list_values_df = [
+                connection, 
+                num_pods, 
+                overall_Throughput/int(parts['pods']),
+                overall_Throughput, 
+                overall_RunTime, 
+                insert_Operations, 
+                insert_OK, 
+                insert_AverageLatency, 
+                insert_95thPercentileLatency, 
+                insert_99thPercentileLatency, 
+                ]
             #print(list_values_df)
             list_values_name.extend(list_values_df)
             #print('combined', list_values_name)
@@ -1502,14 +1622,25 @@ class ycsb(default):
         df_totals = pd.DataFrame(tps)
         #print(list(parts.keys()))
         columns = list(parts.keys())
-        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
+        columns.extend([
+            'connection', 
+            'num_pods', 
+            'total_tps_per_pod', 
+            'overall_Throughput', 
+            'overall_RunTime', 
+            'insert_Operations', 
+            'insert_OK', 
+            'insert_AverageLatency', 
+            'insert_95thPercentileLatency', 
+            'insert_99thPercentileLatency',
+            ])
         #print(columns)
         df_totals.columns = columns
         #list(parts.keys()).extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
         df_totals = df_totals.astype({'target':'float','pods':'int'})
         df_totals = df_totals.sort_values(['target','pods'])
         return df_totals
-    def get_overview_benchmarking(self, dfs={}):
+    def OLD_get_overview_benchmarking(self, dfs={}):
         tps = []
         if len(dfs) == 0:
             dfs = self.get_result(component="benchmarking")
@@ -1526,23 +1657,64 @@ class ycsb(default):
             #worker = int(parts[2])
             #target = int(parts[3])
             #print(df)
+            # read
             read_Operations = float(self.get_result_sum(df, category='[READ]', type='Operations'))
             read_OK = float(self.get_result_sum(df, category='[READ]', type='Return=OK'))
             read_AverageLatency = float(self.get_result_avg(df, category='[READ]', type='AverageLatency(us)'))
             read_95thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='95thPercentileLatency(us)'))
             read_99thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='99thPercentileLatency(us)'))
+            # update
             update_Operations = float(self.get_result_sum(df, category='[UPDATE]', type='Operations'))
             update_OK = float(self.get_result_sum(df, category='[UPDATE]', type='Return=OK'))
             update_AverageLatency = float(self.get_result_avg(df, category='[UPDATE]', type='AverageLatency(us)'))
             update_95thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='95thPercentileLatency(us)'))
             update_99thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='99thPercentileLatency(us)'))
+            # overall
             overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
             overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
+            # inserts
+            insert_Operations = float(self.get_result_sum(df, category='[INSERT]', type='Operations'))
+            insert_OK = float(self.get_result_sum(df, category='[INSERT]', type='Return=OK'))
+            insert_AverageLatency = float(self.get_result_avg(df, category='[INSERT]', type='AverageLatency(us)'))
+            insert_95thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='95thPercentileLatency(us)'))
+            insert_99thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='99thPercentileLatency(us)'))
+            # scan
+            scan_Operations = float(self.get_result_sum(df, category='[SCAN]', type='Operations'))
+            scan_OK = float(self.get_result_sum(df, category='[SCAN]', type='Return=OK'))
+            scan_AverageLatency = float(self.get_result_avg(df, category='[SCAN]', type='AverageLatency(us)'))
+            scan_95thPercentileLatency = float(self.get_result_avg(df, category='[SCAN]', type='95thPercentileLatency(us)'))
+            scan_99thPercentileLatency = float(self.get_result_avg(df, category='[SCAN]', type='99thPercentileLatency(us)'))
+            # extract from naming (DEPRCATED?)
             list_values_name = list(parts.values())
             num_pods = len(df.columns)-2
             #print(list_values_name)
-            list_values_df = [connection, num_pods, overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
-                        update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/int(parts['pods'])]
+            list_values_df = [
+                connection, 
+                num_pods, 
+                overall_Throughput, 
+                overall_RunTime, 
+                overall_Throughput/int(parts['pods']),
+                read_Operations, 
+                read_OK, 
+                read_AverageLatency, 
+                read_95thPercentileLatency, 
+                read_99thPercentileLatency, 
+                update_Operations, 
+                update_OK, 
+                update_AverageLatency, 
+                update_95thPercentileLatency, 
+                update_99thPercentileLatency, 
+                insert_Operations, 
+                insert_OK, 
+                insert_AverageLatency, 
+                insert_95thPercentileLatency, 
+                insert_99thPercentileLatency, 
+                scan_Operations, 
+                scan_OK, 
+                scan_AverageLatency, 
+                scan_95thPercentileLatency, 
+                scan_99thPercentileLatency, 
+                ]
             #print(list_values_df)
             list_values_name.extend(list_values_df)
             #print('combined', list_values_name)
@@ -1553,10 +1725,33 @@ class ycsb(default):
         #print(tps)
         df_totals = pd.DataFrame(tps)
         columns = list(parts.keys())
-        columns.extend(['connection', 'num_pods', 'overall_Throughput', 'overall_RunTime', 
-                             'read_Operations', 'read_OK', 'read_AverageLatency', 'read_95thPercentileLatency', 'read_99thPercentileLatency',
-                             'update_Operations', 'update_OK', 'update_AverageLatency', 'update_95thPercentileLatency', 'update_99thPercentileLatency',
-                             'total_tps_per_pod'])
+        columns.extend([
+            'connection', 
+            'num_pods', 
+            'overall_Throughput', 
+            'overall_RunTime', 
+            'total_tps_per_pod',
+            'read_Operations', 
+            'read_OK', 
+            'read_AverageLatency', 
+            'read_95thPercentileLatency', 
+            'read_99thPercentileLatency', 
+            'update_Operations', 
+            'update_OK', 
+            'update_AverageLatency', 
+            'update_95thPercentileLatency', 
+            'update_99thPercentileLatency', 
+            'insert_Operations', 
+            'insert_OK', 
+            'insert_AverageLatency', 
+            'insert_95thPercentileLatency', 
+            'insert_99thPercentileLatency'
+            'scan_Operations', 
+            'scan_OK', 
+            'scan_AverageLatency', 
+            'scan_95thPercentileLatency', 
+            'scan_99thPercentileLatency',
+            ])
         #print(columns)
         df_totals.columns = columns
         df_totals = df_totals.astype({'target':'float','pods':'int'})
@@ -1565,22 +1760,40 @@ class ycsb(default):
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
-        This is specific to ycsb.
+        This is specific to YCSB.
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        path = self.path
-        df = self.get_overview_loading()
-        filename_df = path+"/bexhoma-loading.all.df.pickle"
-        f = open(filename_df, "wb")
-        pickle.dump(df, f)
-        f.close()
-        df = self.get_overview_benchmarking()
-        filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
-        f = open(filename_df, "wb")
-        pickle.dump(df, f)
-        f.close()
-    def get_result(self, component='loading'):
+        self.evaluator.evaluate_results(pod_dashboard)
+        # download results
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    print(pod_dashboard, status)
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+        cmd = {}
+        #stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
+        #self.logger.debug('copy config connections.config: {}'.format(stdout))
+        #cmd['upload_config'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/connections.config', from_file=self.path+"/connections.config")
+        #self.cluster.kubectl(cmd['upload_config'])
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        self.cluster.kubectl(cmd['upload_results'])
+    def OLD_get_result(self, component='loading'):
         #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
         path = self.path
         df_prev = pd.DataFrame()
@@ -1683,6 +1896,8 @@ class benchbase(default):
             info = 'This experiment performs some Benchbase workloads.'
             )
         self.storage_label = 'tpch-'+str(SF)
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
+        self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
@@ -1708,96 +1923,6 @@ class benchbase(default):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
-    def end_loading(self, jobname):
-        """
-        Ends a loading job.
-        This is for storing or cleaning measures.
-        Currently does nothing, since loading does not generate measures.
-
-        :param jobname: Name of the job to clean
-        """
-        return super().end_loading(jobname)
-        # legacy code
-        self.cluster.logger.debug('benchbase.end_loading({})'.format(jobname))
-        #df_collected = None
-        path = self.path
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-") and filename.endswith(".sensor.log"):
-                print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-                """
-                if not df.empty:
-                    if self.name_format is not None:
-                        name_parts = self.get_parts_of_name(df.index.name)
-                        print(name_parts)
-                        for col, value in name_parts.items():
-                            df[col] = value
-                    df['connection'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-                """
-        """
-        if not df_collected is None and not df_collected.empty:
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/"+jobname+".all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-        """
-        return super().end_loading(jobname)
-    def end_benchmarking(self, jobname):
-        """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-
-        :param jobname: Name of the job to clean
-        """
-        self.cluster.logger.debug('benchbase.end_benchmarking({})'.format(jobname))
-        #df_collected = None
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        path = self.path
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            #if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
-            if filename.startswith(jobname) and filename.endswith(".log"):
-                #print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                filename_df = path+"/"+filename+".df.pickle"
-                f = open(filename_df, "wb")
-                pickle.dump(df, f)
-                f.close()
-                """
-                if not df.empty:
-                    if self.name_format is not None:
-                        name_parts = self.get_parts_of_name(df.index.name)
-                        print(name_parts)
-                        for col, value in name_parts.items():
-                            df[col] = value
-                    df['connection'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-                """
-        """
-        if not df_collected is None and not df_collected.empty:
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/"+jobname+".all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-        """
-        return super().end_benchmarking(jobname)
     def test_results(self):
         """
         Run test script locally.
@@ -1806,64 +1931,81 @@ class benchbase(default):
         :return: exit code of test script
         """
         self.cluster.logger.debug('benchbase.test_results()')
-        try:
-            #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-            path = self.path
-            #path = '../benchmarks/1669163583'
-            directory = os.fsencode(path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"): 
-                    df = pd.read_pickle(path+"/"+filename)
-                    print(filename)
-                    print(df)
-            return 0
-        except Exception as e:
-            return 1
+        self.evaluator.test_results()
+        workflow = self.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
-        This is specific to benchbase.
+        This is specific to Benchbase.
         """
-        #self.cluster.logger.debug('benchbase.evaluate_results()')
-        df_collected = None
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        path = self.path
-        #path = '../benchmarks/1669640632'
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log.df.pickle"):
-                #print(filename)
-                #df = self.log_to_df(path+"/"+filename)
-                df = pd.read_pickle(path+"/"+filename)
-                #filename_df = path+"/"+filename+".df.pickle"
-                #f = open(filename_df, "wb")
-                #pickle.dump(df, f)
-                #f.close()
-                if not df.empty:
-                    if self.name_format is not None:
-                        name_parts = self.get_parts_of_name(df.index.name)
-                        #print(name_parts)
-                        for col, value in name_parts.items():
-                            df[col] = value
-                    df['configuration'] = df.index.name
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-        if not df_collected is None and not df_collected.empty:
-            df_collected['index'] = (df_collected.groupby('configuration').cumcount() + 1).map(str)#df_collected.index.map(str)
-            df_collected['connection'] = df_collected['configuration']+"-"+df_collected['index']
-            df_collected.drop('index', axis=1, inplace=True)
-            df_collected.set_index('connection', inplace=True)
-            filename_df = path+"/bexhoma-benchmarker.all.df.pickle"
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
-            #print(df_collected)
-            return df_collected
-            #self.cluster.logger.debug(df_collected)
+        self.cluster.logger.debug('benchbase.evaluate_results()')
+        self.evaluator.evaluate_results(pod_dashboard)
+        # download results
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    print(pod_dashboard, status)
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+        cmd = {}
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        self.cluster.kubectl(cmd['upload_results'])
 
 
+
+"""
+############################################################################
+Example
+############################################################################
+"""
+
+class example(default):
+    """
+    Class for defining a custom example experiment.
+    This sets
+
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            queryfile = 'queries.config',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            script=None
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        if script is None:
+            script = 'empty'
+        self.set_experiment(volume='example')
+        self.set_experiment(script=script)
+        self.cluster.set_experiments_configfolder('experiments/example')
+        #parameter.defaultParameters = {'SF': str(SF)}
+        #self.set_additional_labels(SF=SF)
+        self.set_queryfile(queryfile)
+        self.set_workload(
+            name = 'Custom Example Queries',
+            info = 'This experiment performs some custom queries.'
+            )
+        self.storage_label = 'example'
 

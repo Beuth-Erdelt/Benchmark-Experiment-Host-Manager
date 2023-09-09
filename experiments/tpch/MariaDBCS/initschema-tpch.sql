@@ -1,6 +1,7 @@
 CREATE DATABASE tpch;
-CREATE USER 'benchmark'@'%';
-GRANT ALL PRIVILEGES ON *.* TO 'benchmark'@'%' WITH GRANT OPTION;
+
+CREATE USER 'benchmark'@'%' IDENTIFIED BY 'My_s3cure-Passw0rd';
+GRANT ALL PRIVILEGES ON *.* TO 'benchmark'@'%' IDENTIFIED BY 'My_s3cure-Passw0rd' WITH GRANT OPTION;
 
 -- sccsid:     @(#)dss.ddl  2.1.8.1
 create table tpch.nation  ( n_nationkey  integer not null,

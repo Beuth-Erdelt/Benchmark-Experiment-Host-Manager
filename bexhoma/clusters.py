@@ -89,7 +89,7 @@ class testbed():
             configfile=f.read()
             self.config = eval(configfile)
         self.experiments_configfolder = experiments_configfolder
-        self.resultfolder = self.config['benchmarker']['resultfolder']
+        self.resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         self.queryfile = queryfile
         self.clusterconfig = clusterconfig
         self.timeLoading = 0
@@ -106,6 +106,7 @@ class testbed():
         self.host = 'localhost'
         self.port = self.contextdata['port']
         self.monitoring_active = True
+        self.monitor_cluster_active = False
         # k8s:
         self.namespace = self.contextdata['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
@@ -851,11 +852,23 @@ class testbed():
             #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
             str_stdout = stdout.decode('utf-8')
             str_stderr = stderr.decode('utf-8')
-            return "", str_stdout, str_stderr
+            if 'Error from server: error dialing backend' in str_stdout or 'Error from server: error dialing backend' in str_stderr:
+                print("Connection error found")
+                self.wait(5)
+                return self.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+            else:
+                return "", str_stdout, str_stderr
         except Exception as e:
             print(e)
             print(stdout, stderr)
-            return "", stdout, stderr
+            str_stdout = stdout.decode('utf-8')
+            str_stderr = stderr.decode('utf-8')
+            if 'Error from server: error dialing backend' in str_stdout or 'Error from server: error dialing backend' in str_stderr:
+                print("Connection error found")
+                self.wait(5)
+                return self.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+            else:
+                return "", stdout, stderr
         return "", "", ""
     def check_DBMS_connection(self, ip, port):
         """
@@ -1001,6 +1014,48 @@ class testbed():
             # try again, if not failed due to "not found"
             if not e.status == 404:
                 return self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+    def get_jobs_labels(self, app='', component='', experiment='', configuration='', client=''):
+        """
+        Return all jobs matching a set of labels (component/ experiment/ configuration)
+
+        :param app: app the job belongs to
+        :param component: Component, for example sut or monitoring
+        :param experiment: Unique identifier of the experiment
+        :param configuration: Name of the dbms configuration
+        :param client: DEPRECATED?
+        """
+        #print("getJobs")
+        label = ''
+        if len(app)==0:
+            app = self.appname
+        label += 'app='+app
+        if len(component)>0:
+            label += ',component='+component
+        if len(experiment)>0:
+            label += ',experiment='+experiment
+        if len(configuration)>0:
+            label += ',configuration='+configuration
+        if len(client)>0:
+            label += ',client='+client
+        self.logger.debug('get_jobs_labels '+label)
+        job_labels = {}
+        try:
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
+            #pprint(api_response)
+            if len(api_response.items) > 0:
+                for item in api_response.items:
+                    job_labels[item.metadata.name] = item.metadata.labels
+                return job_labels
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            # try again, if not failed due to "not found"
+            if not e.status == 404:
+                return self.get_jobs_labels(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
     def get_job_status(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         """
         Return status of a jobs given by name or matching a set of labels (component/ experiment/ configuration)
@@ -1034,11 +1089,16 @@ class testbed():
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
+            print("api_response.spec.completions", api_response.spec.completions)
+            print("api_response.status.succeeded", api_response.status.succeeded)
             # returns number of completed pods (!)
             #return api_response.status.succeeded
             # we want status of job (!)
             #self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
             #self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
+            if api_response.status.succeeded is not None and api_response.spec.completions <= api_response.status.succeeded:
+                print("Number of completions reached")
+                return True
             if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
                 self.logger.debug(api_response.status.conditions[0].type)
                 return api_response.status.conditions[0].type == 'Complete'
@@ -1052,6 +1112,8 @@ class testbed():
             # try again, if not failed due to "not found"
             if not e.status == 404:
                 return self.get_job_status(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+            else:
+                return 0
     def delete_job(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         """
         Delete a job given by name or matching a set of labels (component/ experiment/ configuration)
@@ -1199,6 +1261,28 @@ class testbed():
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+    def start_monitoring_cluster(self, app='', component='monitoring'):
+        """
+        Starts the monitoring component and its service.
+        Manifest for node exporters is expected in 'deamonsettemplate-monitoring.yml'.
+
+        :param app: app monitoring belongs to
+        :param component: Component name, should be 'monitoring' typically
+        """
+        self.monitor_cluster_active = True
+        endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+        if len(endpoints) > 0:
+            # dashboard exists
+            self.logger.debug('testbed.start_monitoring_cluster()=exists')
+            return
+        else:
+            self.logger.debug('testbed.start_monitoring_cluster()=deploy')
+            deployment = 'daemonsettemplate-monitoring.yml'
+            #name = self.create_dashboard_name(app, component)
+            #self.logger.debug('testbed.start_monitoring_general({})'.format(deployment))
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            #deployment = 'deploymenttemplate-bexhoma-prometheus.yml'
+            #self.kubectl('create -f '+self.yamlfolder+deployment)
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
@@ -1415,6 +1499,47 @@ class testbed():
         self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
         redisCommand = 'redis-cli rpush {redisQueue} {data} '.format(redisQueue=queue, data=data)
         self.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
+    def set_pod_counter(self, queue, value=0):
+        """
+        Add data to (Redis) message queue.
+
+        :param queue: Name of the queue
+        :param data: Data to be added to queue
+        """
+        pods_messagequeue = self.get_pods(component='messagequeue')
+        if len(pods_messagequeue) > 0:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
+        redisCommand = 'redis-cli set {redisQueue} {value} '.format(redisQueue=queue, value=value)
+        self.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
+    def get_service_endpoints(self, service_name="bexhoma-service-monitoring-default"):
+        """
+        Returns a list of all endpoints of a service as a list.
+        This is in particular interesting for headless services.
+        It is used to find all nodes in a cluster, if monitoring of cluster is active.
+
+        :param service_name: Name of the service
+        :return: List of IPs of endpoints
+        """
+        #kubectl get endpoints -o jsonpath="{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}"
+        #service_name = "bexhoma-service-monitoring-default"
+        self.logger.debug("get_service_endpoints({})".format(service_name))
+        endpoints = self.kubectl("get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\\n'}{end}\"")
+        try:
+            endpoints_of_service = endpoints.split("\n")
+            for service in endpoints_of_service:
+                if service.startswith(service_name):
+                    #print(service)
+                    endpoints_string = service[service.find(",")+1:]
+                    #print(endpoints_string)
+                    endpoints_list = endpoints_string.split(" ")
+                    self.logger.debug("endpoints: {}".format(endpoints_list))
+                    return endpoints_list
+        except Exception as e:
+            print("Exception when calling get_service_endpoints: %s\n" % e)
+        return []
 
 
 
@@ -1498,16 +1623,44 @@ class kubernetes(testbed):
         """
         Store the log of a pod in a local file in the experiment result folder.
         Optionally the name of a container can be given (mandatory, if pod has multiple containers).
+        If file containing pod log is already present, we do nothing (no update).
 
         :param pod_name: Name of the pod
         :param container: Name of the container
         """
         # write pod log
-        stdout = self.pod_log(pod_name, container)
-        filename_log = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code)+'/'+pod_name+'.log'
-        f = open(filename_log, "w")
-        f.write(stdout)
-        f.close()
+        if len(container) > 0:
+            filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
+        else:
+            filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+        # do not overwrite
+        if not os.path.isfile(filename_log):
+            # max 10 tries to receive the log (timeout might occure)
+            tries = 1
+            while tries<10:
+                stdout = self.pod_log(pod_name, container)
+                if len(stdout) > 0:
+                    f = open(filename_log, "w")
+                    f.write(stdout)
+                    f.close()
+                    return
+                else:
+                    tries = tries + 1
+    def pod_log_exists(self, pod_name, container=''):
+        """
+        Returns, if log of pod already exists on local disk.
+
+        :param pod_name: Name of the pod
+        :param container: Name of the container
+        :return: stdout of the eksctl command
+        :return: does log of pod exist?
+        """
+        # look for pod log
+        if len(container) > 0:
+            filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
+        else:
+            filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+        return os.path.isfile(filename_log)
 
 
 
@@ -1549,7 +1702,7 @@ class aws(kubernetes):
         """
         self.code = code
         kubernetes.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
-        self.cluster = self.contextdata['cluster']
+        self.cluster = self.context#data['cluster']
     def eksctl(self, command):
         """
         Runs an eksctl command.
