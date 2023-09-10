@@ -15,10 +15,6 @@ running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, 
 
 Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
-</p>
-
 The basic workflow is [1,2]: start a containerized version of the DBMS, install monitoring software, import existing data, run benchmarks and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
@@ -65,6 +61,10 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
 For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload.
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
+</p>
 
 ## Contributing, Bug Reports
 
