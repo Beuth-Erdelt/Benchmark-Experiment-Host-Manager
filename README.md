@@ -9,6 +9,10 @@
 This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment**.
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
 
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
+</p>
+
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
 running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
@@ -20,10 +24,6 @@ A more advanced workflow is: Plan a sequence of such experiments, run plan as a 
 
 It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4].
 See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
-
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
-</p>
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
