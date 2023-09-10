@@ -22,7 +22,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     license="GNU Affero General Public License v3",
-    python_requires='>=3.6',
+    python_requires='>=3.11.5',
     include_package_data=True,
     install_requires=requirements,
     package_dir={'bexhoma': 'bexhoma'},

@@ -1,4 +1,4 @@
-FROM python:3.12.0rc1
+FROM python:3.11.5
 
 WORKDIR /usr/src/app
 
@@ -94,7 +94,7 @@ CMD ["/bin/bash", "-c", "./benchmarker.sh"]
 
 # -f   config folder
 # -r   result folder
-# -mps monitor per stream
+# -mps monitor per stream (not per query)
 # -cs -sf subfolder per dbms (connection)
 # -ms  max number of subfolders
 # -sl  sleep seconds before start benchmarking

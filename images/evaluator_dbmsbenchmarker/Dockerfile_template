@@ -1,4 +1,4 @@
-FROM python:3.12.0rc1
+FROM python:3.11.5
 
 WORKDIR /usr/src/app
 
@@ -20,9 +20,9 @@ RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --fo
 
 RUN pip install jupyter
 RUN pip install jupyter_contrib_nbextensions
-RUN jupyter contrib nbextension install --user
-RUN jupyter nbextensions_configurator enable --user
-RUN jupyter nbextension enable toc2/main
+#RUN jupyter contrib nbextension install --user
+#RUN jupyter nbextensions_configurator enable --user
+#RUN jupyter nbextension enable toc2/main
 
 RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch {version}
 

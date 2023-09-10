@@ -17,10 +17,15 @@ Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
 </p>
 
-The basic workflow is [1,2]: start a virtual machine, install monitoring software and a database management system, import data, run benchmarks (external tool) and shut down everything with a single command.
+The basic workflow is [1,2]: start a containerized version of the DBMS, install monitoring software, import existing data, run benchmarks and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
-It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4]. See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
+It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4].
+See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
+</p>
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
@@ -42,9 +47,11 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 ## Quickstart
 
-The repository contains a [tool](experiments/tpch/) for running TPC-H (reading) queries at MonetDB and PostgreSQL.
 
-1. Run `tpch run -sf 1 -t 30`.
+1. Run `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`.  
+  This installs PostgreSQL and runs YCSB workload A with varying target.
+  The driver is monolithic with 64 threads.
+  The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running.  
   This is equivalent to `python cluster.py status`.
 1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`.  
@@ -53,7 +60,8 @@ The repository contains a [tool](experiments/tpch/) for running TPC-H (reading) 
 
 ## More Informations
 
-For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). It also uses the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], as query executor and evaluator as in [1,2].
+For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
+For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload.
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
 
 ## Contributing, Bug Reports
