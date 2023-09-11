@@ -2,10 +2,16 @@
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/Benchmark-Experiment-Host-Manager.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases/)
 [![PyPI version](https://badge.fury.io/py/bexhoma.svg)](https://badge.fury.io/py/bexhoma)
 [![.github/workflows/draft-pdf.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/draft-pdf.yml/badge.svg)](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/draft-pdf.yml)
+[![bexhoma](https://snyk.io/advisor/python/bexhoma/badge.svg)](https://snyk.io/advisor/python/bexhoma)
+[![Documentation Status](https://readthedocs.org/projects/bexhoma/badge/?version=latest)](https://bexhoma.readthedocs.io/en/latest/?badge=latest)
 
 # Benchmark Experiment Host Manager (Bexhoma)
 This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment**.
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
+</p>
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
@@ -13,19 +19,11 @@ running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, 
 
 Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
-</p>
-
 The basic workflow is [1,2]: start a containerized version of the DBMS, install monitoring software, import existing data, run benchmarks and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
 It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4].
 See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
-
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
-</p>
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
@@ -61,8 +59,12 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 ## More Informations
 
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
-For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload.
+For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [4].
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/experiment-with-orchestrator.png" width="800">
+</p>
 
 ## Contributing, Bug Reports
 

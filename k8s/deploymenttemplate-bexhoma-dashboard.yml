@@ -33,7 +33,7 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dashboard
-        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.3
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.4
         imagePullPolicy: IfNotPresent
         #imagePullPolicy: Always
         ports:
@@ -47,7 +47,7 @@ spec:
         - name: bexhoma-results
           mountPath: /results
       - name: jupyter
-        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.3
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.4
         imagePullPolicy: IfNotPresent
         #imagePullPolicy: Always
         #command: ["jupyter","notebook","--no-browser", "--NotebookApp.password=\"$(echo 'admin' | python -c 'from notebook.auth import passwd;print(passwd(input()))')\"", "--allow-root"]
