@@ -42,7 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
     parser.add_argument('-nl', '--num-loading', help='number of parallel loaders per configuration', default=1)
-    parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default=1)
+    parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default=[1,8])
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
     parser.add_argument('-su', '--scaling-users', help='scaling factor = number of total threads', default=64)
     parser.add_argument('-sbs', '--scaling-batchsize', help='batch size', default="")
@@ -86,7 +86,11 @@ if __name__ == '__main__':
     numRun = int(args.num_run)
     num_experiment_to_apply = int(args.num_config)
     num_loading = int(args.num_loading)
-    num_loading_pods = int(args.num_loading_pods)
+    #num_loading_pods = int(args.num_loading_pods)
+    num_loading_pods = args.num_loading_pods
+    if len(num_loading_pods) > 0:
+        num_loading_pods = num_loading_pods.split(",")
+        num_loading_pods = [int(x) for x in num_loading_pods]
     #num_virtual_users = args.num_virtual_users
     cpu = str(args.request_cpu)
     memory = str(args.request_ram)
@@ -250,7 +254,7 @@ if __name__ == '__main__':
         list_clients = [int(x) for x in list_clients]
     experiment.add_benchmark_list(list_clients)
     for threads in [SU]:#[8]:#[64]:
-        for pods in [1,8]:#[1,2]:#[1,8]:#range(2,5):
+        for pods in num_loading_pods:#[1,2]:#[1,8]:#range(2,5):
             #pods = 2**p
             #for t in range(1, 15):#range(1, 2):#range(1, 15):
             for t in list_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
