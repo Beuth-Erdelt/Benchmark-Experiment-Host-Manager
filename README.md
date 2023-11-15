@@ -23,7 +23,7 @@ The basic workflow is [1,2]: start a containerized version of the DBMS, install 
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
 It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4].
-See [example](TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
+See [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
@@ -33,33 +33,28 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Install the package `pip install bexhoma`
-1. Make sure you have a working `kubectl` installed  
-  (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
-  (Also make sure, you can create PV via PVC and dynamic provisioning)
+1. Make sure you have a working `kubectl` installed.
+    * (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
+    * (Also make sure, you can create PV via PVC and dynamic provisioning)
 1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
     1. Rename `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
-1. Install result folder  
-  Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
+1. Install result folder: Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
 
 
 ## Quickstart
 
 
-1. Run `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`.  
-  This installs PostgreSQL and runs YCSB workload A with varying target.
-  The driver is monolithic with 64 threads.
-  The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
-1. You can watch status using `bexperiments status` while running.  
-  This is equivalent to `python cluster.py status`.
-1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`.  
-  This is equivalent to `python cluster.py dashboard`  
-  Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+1. Run `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`. This installs PostgreSQL and runs YCSB workload A with varying target. The driver is monolithic with 64 threads. The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
+1. You can watch status using `bexperiments status` while running. This is equivalent to `python cluster.py status`.
+1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. This is equivalent to `python cluster.py dashboard`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+
 
 ## More Informations
 
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
 For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [4].
+
 See the [images](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/) folder for more details.
 
 <p align="center">
