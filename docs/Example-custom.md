@@ -2,7 +2,7 @@
 
 ## Preparation
 
-* clone repository, branch v0.6.5
+* clone repository
 * pip install requirements
 * rename `k8s-cluster.config` to `cluster.config`
 * replace inside that file where to store the results locally  

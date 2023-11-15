@@ -44,6 +44,7 @@ if __name__ == '__main__':
     parser.add_argument('-nl', '--num-loading', help='number of parallel loaders per configuration', default=1)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default=[1,8])
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
+    parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor (SF) = number of operations in millions (=SF if not set)', default=None)
     parser.add_argument('-su', '--scaling-users', help='scaling factor = number of total threads', default=64)
     parser.add_argument('-sbs', '--scaling-batchsize', help='batch size', default="")
     parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
@@ -75,6 +76,9 @@ if __name__ == '__main__':
     monitoring_cluster = args.monitoring_cluster
     mode = str(args.mode)
     SF = str(args.scaling_factor)
+    SFO = str(args.scaling_factor_operations)
+    if SFO is None:
+        SFO = SF
     SU = int(args.scaling_users)
     target_base = int(args.target_base)
     list_target_factors = args.list_target_factors
@@ -214,7 +218,7 @@ if __name__ == '__main__':
     #experiment.name_format = '{dbms}-{threads}-{pods}-{target}'
     experiment.set_experiment(script='Schema')
     ycsb_rows = int(SF)*1000000 # 1kb each, that is SF is size in GB
-    ycsb_operations = int(SF)*1000000
+    ycsb_operations = int(SFO)*1000000
     # note more infos about experiment in workload description
     experiment.workload['info'] = experiment.workload['info']+" YCSB data is loaded using several processes."
     if len(args.dbms):

@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="bexhoma",
-    version="0.6.6",
+    version="0.6.7",
     author="Patrick Erdelt",
     author_email="perdelt@beuth-hochschule.de",
     description="This python tools helps managing DBMS benchmarking experiments in a Kubernetes-based HPC cluster environment. It enables users to configure hardware / software setups for easily repeating tests over varying configurations.",
@@ -22,7 +22,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     license="GNU Affero General Public License v3",
-    python_requires='>=3.11.5',
+    python_requires='>=3.10.2',
     include_package_data=True,
     install_requires=requirements,
     package_dir={'bexhoma': 'bexhoma'},
