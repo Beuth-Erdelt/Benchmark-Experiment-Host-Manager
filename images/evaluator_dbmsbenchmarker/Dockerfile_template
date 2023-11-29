@@ -6,6 +6,7 @@ RUN apt update
 RUN apt install default-jre -y
 RUN apt install zip -y
 RUN apt install nano -y
+RUN apt install git -y
 
 RUN mkdir /results
 
