@@ -35,6 +35,6 @@ RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch {version
 
 WORKDIR /usr/src/app/DBMS-Benchmarker
 
-RUN git pull
+# RUN git pull
 
 CMD git pull; python ./dashboard.py -r /results
