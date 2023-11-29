@@ -1,4 +1,7 @@
-FROM python:3.13-rc-slim
+FROM python:3.11.5
+
+# does not compile numpy correctly
+# FROM python:3.13-rc-slim
 
 WORKDIR /usr/src/app
 
@@ -6,8 +9,10 @@ RUN apt update
 RUN apt install default-jre -y
 RUN apt install zip -y
 RUN apt install nano -y
-RUN apt install git -y
-RUN apt install build-essential -y
+
+# only needed in slim releases
+# RUN apt install git -y
+# RUN apt install build-essential -y
 
 RUN mkdir /results
 
