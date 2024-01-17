@@ -18,7 +18,7 @@ spec:
       tolerations:
       containers:
       - name: dbmsbenchmarker
-        image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.5
+        image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.6
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
         env:
