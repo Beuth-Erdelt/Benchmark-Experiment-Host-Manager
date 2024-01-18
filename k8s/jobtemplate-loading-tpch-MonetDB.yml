@@ -55,15 +55,15 @@ spec:
       - name: sensor
         image: bexhoma/loader_tpch_monetdb:latest
         imagePullPolicy: Always
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
+        #securityContext:
+        #  allowPrivilegeEscalation: false
+        #  runAsNonRoot: true
+        #  runAsUser: 1000
+        #  runAsGroup: 1000
+        #  capabilities:
+        #    drop:
+        #      - ALL
+        #  readOnlyRootFilesystem: true
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-monetdb-aws-1658676533'}
         - {name: BEXHOMA_PORT, value: '9091'}
