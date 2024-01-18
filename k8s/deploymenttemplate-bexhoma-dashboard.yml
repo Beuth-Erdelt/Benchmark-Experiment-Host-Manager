@@ -40,9 +40,15 @@ spec:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
         resources:
-          #limits: {cpu: 4000m, memory: 32Gi}
-          #requests: {cpu: 4000m, memory: 32Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
@@ -56,9 +62,15 @@ spec:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
         resources:
-          #limits: {cpu: 4000m, memory: 32Gi}
-          #requests: {cpu: 4000m, memory: 32Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results

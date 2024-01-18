@@ -29,9 +29,15 @@ spec:
         - {name: DBMSBENCHMARKER_ALIAS, value: 'DBMS-A'}
         - {name: DBMSBENCHMARKER_DEV, value: '0'}
         resources:
-          #limits: {cpu: 1000m, memory: 16Gi}
-          #requests: {cpu: 1000m, memory: 16Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
