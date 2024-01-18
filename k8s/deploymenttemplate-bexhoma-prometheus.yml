@@ -41,3 +41,12 @@ spec:
           requests: {cpu: 2000m, memory: 16Gi}
         ports:
         - containerPort: 9090
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true

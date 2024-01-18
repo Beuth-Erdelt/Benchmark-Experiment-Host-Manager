@@ -29,3 +29,12 @@ spec:
               value: "true"
           ports:
             - containerPort: 6379
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
