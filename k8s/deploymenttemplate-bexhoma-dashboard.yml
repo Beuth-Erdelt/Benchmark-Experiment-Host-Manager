@@ -45,7 +45,7 @@ spec:
           requests: {cpu: 1000m, memory: 1Gi}
           limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
-          allowPrivilegeEscalation: false
+          #allowPrivilegeEscalation: false #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
           #runAsNonRoot: true # Permission denied: '/.local'
           #runAsUser: 1000
           #runAsGroup: 1000
@@ -71,7 +71,7 @@ spec:
           requests: {cpu: 1000m, memory: 1Gi}
           limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
-          allowPrivilegeEscalation: false
+          #allowPrivilegeEscalation: false #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
           #runAsNonRoot: true # Permission denied: '/.local'
           #runAsUser: 1000
           #runAsGroup: 1000
