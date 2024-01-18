@@ -49,9 +49,9 @@ spec:
           #runAsNonRoot: true # Permission denied: '/.local'
           #runAsUser: 1000
           #runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
+          #capabilities: #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
+          #  drop:
+          #    - ALL
           #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
@@ -75,9 +75,9 @@ spec:
           #runAsNonRoot: true # Permission denied: '/.local'
           #runAsUser: 1000
           #runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
+          #capabilities: #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
+          #  drop:
+          #    - ALL
           #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
