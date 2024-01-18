@@ -32,6 +32,17 @@ docker build -f Dockerfile -t bexhoma/loader_tpch_postgresql:latest .
 docker push bexhoma/loader_tpch_postgresql:latest &
 cd ..
 
+cd loader_mysql
+docker build -f Dockerfile -t bexhoma/loader_tpch_mysql:latest .
+docker push bexhoma/loader_tpch_mysql:latest &
+cd ..
+
+cd loader_monetdb
+docker build -f Dockerfile -t bexhoma/loader_tpch_monetdb:latest .
+docker push bexhoma/loader_tpch_monetdb:latest &
+cd ..
+cd ..
+
 ###########
 cd monitoring
 docker build -f Dockerfile -t bexhoma/monitoring:latest .
