@@ -44,8 +44,15 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 ## Quickstart
 
+### YCSB
 
 1. Run `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`. This installs PostgreSQL and runs YCSB workload A with varying target. The driver is monolithic with 64 threads. The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
+1. You can watch status using `bexperiments status` while running. This is equivalent to `python cluster.py status`.
+1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. This is equivalent to `python cluster.py dashboard`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+
+### TPC-H
+
+1. Run `python tpch.py -ms 1 -dbms PostgreSQL run`. This installs PostgreSQL and runs TPC-H at scale factor 1. The driver is monolithic.
 1. You can watch status using `bexperiments status` while running. This is equivalent to `python cluster.py status`.
 1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. This is equivalent to `python cluster.py dashboard`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
 

@@ -34,12 +34,12 @@ spec:
           limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
           allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
           #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
