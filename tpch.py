@@ -260,7 +260,7 @@ if __name__ == '__main__':
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="tpc-h",
-        experiment_design="parallel loading"
+        experiment_design="parallel-loading"
         )
     # add configs
     for loading_pods_split in list_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
