@@ -11,6 +11,15 @@ spec:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
     spec:
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
@@ -38,8 +47,6 @@ spec:
           #, memory: 16Gi}
           #requests: {cpu: 4000m}
           #, memory: 16Gi}
-        securityContext:
-          privileged: true
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpch/"
@@ -62,8 +69,6 @@ spec:
           #, memory: 16Gi}
           requests: {cpu: 900m}
           #, memory: 16Gi}
-        securityContext:
-          privileged: true
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpch/"
