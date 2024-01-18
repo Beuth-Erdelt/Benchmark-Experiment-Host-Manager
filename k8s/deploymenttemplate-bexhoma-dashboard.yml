@@ -36,6 +36,8 @@ spec:
         image: bexhoma/evaluator_dbmsbenchmarker:v0.13.6
         imagePullPolicy: IfNotPresent
         #imagePullPolicy: Always
+        env:
+        - {name: MPLCONFIGDIR, value: '/tmp/'}
         ports:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
@@ -57,6 +59,8 @@ spec:
       - name: jupyter
         image: bexhoma/evaluator_dbmsbenchmarker:v0.13.6
         imagePullPolicy: IfNotPresent
+        env:
+        - {name: MPLCONFIGDIR, value: '/tmp/'}
         #imagePullPolicy: Always
         #command: ["jupyter","notebook","--no-browser", "--NotebookApp.password=\"$(echo 'admin' | python -c 'from notebook.auth import passwd;print(passwd(input()))')\"", "--allow-root"]
         command: ["jupyter","notebook","--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]
