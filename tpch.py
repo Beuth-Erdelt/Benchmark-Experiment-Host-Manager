@@ -186,8 +186,7 @@ if __name__ == '__main__':
 		experiment.evaluate_results()
 		experiment.stop_benchmarker()
 		experiment.stop_sut()
-		cluster.stop_dashboard()
-		cluster.start_dashboard()
+        cluster.restart_dashboard()
 		# OOM? exit code 137
 		#experiment.zip()
 	exit()
