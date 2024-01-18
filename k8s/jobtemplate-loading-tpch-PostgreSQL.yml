@@ -11,15 +11,6 @@ spec:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
     spec:
-      securityContext:
-        allowPrivilegeEscalation: false
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        capabilities:
-          drop:
-            - ALL
-        readOnlyRootFilesystem: true
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
@@ -30,6 +21,15 @@ spec:
         image: bexhoma/generator_tpch:latest
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-postgresql-aws-1234567890'}
         - {name: BEXHOMA_PORT, value: '9091'}
@@ -51,6 +51,15 @@ spec:
         image: bexhoma/loader_tpch_postgresql:latest
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-postgresql-aws-1658676533'}
         - {name: BEXHOMA_PORT, value: '9091'}

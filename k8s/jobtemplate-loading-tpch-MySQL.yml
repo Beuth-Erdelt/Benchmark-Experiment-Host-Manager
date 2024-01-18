@@ -11,15 +11,6 @@ spec:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
     spec:
-      securityContext:
-        allowPrivilegeEscalation: false
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        capabilities:
-          drop:
-            - ALL
-        readOnlyRootFilesystem: true
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
@@ -33,6 +24,15 @@ spec:
       - name: datagenerator
         image: bexhoma/generator_tpch:latest
         imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-mysql-aws-1234567890'}
         - {name: BEXHOMA_PORT, value: '9091'}
@@ -55,6 +55,15 @@ spec:
       - name: sensor
         image: bexhoma/loader_tpch_mysql:latest
         imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-mysql-aws-1658676533'}
         - {name: BEXHOMA_PORT, value: '9091'}
