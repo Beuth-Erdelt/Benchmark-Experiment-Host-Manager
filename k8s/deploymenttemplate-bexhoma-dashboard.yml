@@ -50,7 +50,7 @@ spec:
           capabilities:
             drop:
               - ALL
-          readOnlyRootFilesystem: true
+          #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
@@ -74,7 +74,7 @@ spec:
           capabilities:
             drop:
               - ALL
-          readOnlyRootFilesystem: true
+          #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
