@@ -8,7 +8,7 @@ RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.t
 
 #&& apt-get install -y mysql-apt-config && apt-get install -y mysql-shell
 
-RUN apt-get install -y libcurl4
+RUN apt-get install --fix-missing -y libcurl4
 RUN apt-get install -y libssh-4
 RUN wget https://downloads.mysql.com/archives/get/p/43/file/mysql-shell_8.0.31-1debian11_amd64.deb
 RUN dpkg -i mysql-shell_8.0.31-1debian11_amd64.deb
