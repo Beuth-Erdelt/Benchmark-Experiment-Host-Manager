@@ -37,7 +37,7 @@ spec:
         imagePullPolicy: IfNotPresent
         #imagePullPolicy: Always
         env:
-        - {name: MPLCONFIGDIR, value: '/tmp/'}
+        - {name: MPLCONFIGDIR, value: '/tmp/'} # matplotlib
         ports:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
