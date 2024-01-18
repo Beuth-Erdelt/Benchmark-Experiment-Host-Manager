@@ -288,7 +288,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            elif args.dbms == "MonetDB" or len(args.dbms) == 0:
+            if args.dbms == "MonetDB" or len(args.dbms) == 0:
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
@@ -305,7 +305,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            elif args.dbms == "MySQL" or len(args.dbms) == 0:
+            if args.dbms == "MySQL" or len(args.dbms) == 0:
                 # MySQL
                 for threads in list_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'
