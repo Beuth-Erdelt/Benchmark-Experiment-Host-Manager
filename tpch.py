@@ -54,7 +54,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'SingleStore', 'CockroachDB', 'MySQL', 'MariaDB', 'YugabyteDB', 'Kinetica'])
+    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'SingleStore', 'CockroachDB', 'MySQL', 'MariaDB', 'YugabyteDB', 'Kinetica'], default=[])
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -259,8 +259,8 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes.".format(num_loading_split)
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="benchmarking-tpx",
-        experiment_design="2-4"
+        usecase="tpc-h",
+        experiment_design="parallel loading"
         )
     # add configs
     for loading_pods_split in list_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
@@ -271,7 +271,7 @@ if __name__ == '__main__':
                 continue
             # how many in parallel?
             split_portion = int(loading_pods_total/loading_pods_split)
-            if args.dbms == "PostgreSQL":
+            if args.dbms == "PostgreSQL" or len(args.dbms) == 0:
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
@@ -288,7 +288,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            elif args.dbms == "MonetDB":
+            elif args.dbms == "MonetDB" or len(args.dbms) == 0:
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
@@ -305,7 +305,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            elif args.dbms == "MySQL":
+            elif args.dbms == "MySQL" or len(args.dbms) == 0:
                 # MySQL
                 for threads in list_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'
