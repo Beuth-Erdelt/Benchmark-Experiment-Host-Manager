@@ -4,6 +4,7 @@
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
 echo "NOW: $DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
+bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
