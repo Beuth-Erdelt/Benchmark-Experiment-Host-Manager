@@ -46,9 +46,9 @@ spec:
           limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
           allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
+          #runAsNonRoot: true # Permission denied: '/.local'
+          #runAsUser: 1000
+          #runAsGroup: 1000
           capabilities:
             drop:
               - ALL
@@ -72,9 +72,9 @@ spec:
           limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
           allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
+          #runAsNonRoot: true # Permission denied: '/.local'
+          #runAsUser: 1000
+          #runAsGroup: 1000
           capabilities:
             drop:
               - ALL
