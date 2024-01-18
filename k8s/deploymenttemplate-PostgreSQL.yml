@@ -60,7 +60,7 @@ spec:
           #capabilities:
           #  drop:
           #    - ALL
-          readOnlyRootFilesystem: true #could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": Read-only file system
+          #readOnlyRootFilesystem: true #could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": Read-only file system
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 1000m, memory: 1Gi}
