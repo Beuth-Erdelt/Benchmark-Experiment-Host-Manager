@@ -2329,11 +2329,11 @@ scrape_configs:
                             print("Loader timespan:", total_time)
                         if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
                             timing_total = timing_datagenerator + timing_sensor
-                            print("Total timespan (sum)", timing_total)
+                            print("Total times:", timing_total)
                             timing_start = min([start for (start,end) in timing_total])
                             timing_end = max([end for (start,end) in timing_total])
                             total_time = timing_end - timing_start
-                            print("Total timespan (first to last)", total_time)
+                            print("Total timespan (first to last):", total_time)
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
