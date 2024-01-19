@@ -2313,27 +2313,27 @@ scrape_configs:
                         self.loading_timespans['sensor'] = timing_sensor
                         self.loading_timespans['total'] = timing_total
                         if len(timing_datagenerator) > 0:
-                            print([end-start for (start,end) in timing_datagenerator])
+                            print("Generator times:", [end-start for (start,end) in timing_datagenerator])
                             timing_start = min([start for (start,end) in timing_datagenerator])
                             timing_end = max([end for (start,end) in timing_datagenerator])
                             total_time = timing_end - timing_start
                             generator_time = total_time
-                            print("Generator", total_time)
+                            print("Generator timespan:", total_time)
                         #timing_sensor = extract_timing(jobname, container="sensor")
                         if len(timing_sensor) > 0:
-                            print([end-start for (start,end) in timing_sensor])
+                            print("Loader times:", [end-start for (start,end) in timing_sensor])
                             timing_start = min([start for (start,end) in timing_sensor])
                             timing_end = max([end for (start,end) in timing_sensor])
                             total_time = timing_end - timing_start
                             loader_time = total_time
-                            print("Loader", total_time)
+                            print("Loader timespan:", total_time)
                         if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
                             timing_total = timing_datagenerator + timing_sensor
-                            print(timing_total)
+                            print("Total timespan (sum)", timing_total)
                             timing_start = min([start for (start,end) in timing_total])
                             timing_end = max([end for (start,end) in timing_total])
                             total_time = timing_end - timing_start
-                            print("Total", total_time)
+                            print("Total timespan (first to last)", total_time)
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
