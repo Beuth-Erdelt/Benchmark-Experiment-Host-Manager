@@ -72,7 +72,7 @@ if __name__ == '__main__':
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF)', default=1)
-    parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
+    parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=600)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
     parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
     parser.add_argument('-rct', '--request-cpu-type', help='request node having node label cpu=', default='')
