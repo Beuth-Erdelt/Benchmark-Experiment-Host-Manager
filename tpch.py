@@ -226,6 +226,7 @@ if __name__ == '__main__':
         keep = True
         )
     cluster.start_dashboard()
+    cluster.start_messagequeue()
     if aws:
         # set node labes for components
         experiment.set_nodes(
