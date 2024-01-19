@@ -1089,15 +1089,15 @@ class testbed():
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
-            print("api_response.spec.completions", api_response.spec.completions)
-            print("api_response.status.succeeded", api_response.status.succeeded)
+            self.logger.debug("api_response.spec.completions", api_response.spec.completions)
+            self.logger.debug("api_response.status.succeeded", api_response.status.succeeded)
             # returns number of completed pods (!)
             #return api_response.status.succeeded
             # we want status of job (!)
             #self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
             #self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
             if api_response.status.succeeded is not None and api_response.spec.completions <= api_response.status.succeeded:
-                print("Number of completions reached")
+                self.logger.debug("Number of completions reached")
                 return True
             if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
                 self.logger.debug(api_response.status.conditions[0].type)
@@ -1357,7 +1357,7 @@ class testbed():
         # status per job
         for job in jobs:
             success = self.get_job_status(job)
-            print(job, success)
+            self.logger.debug("Job and status", job, success)
             self.delete_job(job)
         # all pods to these jobs - automatically stopped?
         #self.get_job_pods(app, component, experiment, configuration)

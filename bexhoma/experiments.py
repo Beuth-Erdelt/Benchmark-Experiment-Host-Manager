@@ -1024,21 +1024,20 @@ class default():
         directory = os.fsencode(self.path)
         #print(jobname)
         timing = []
+        print("Looking for files {jobname}*.{container}.log".format(jobname=jobname, container=container))
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
             if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
-                #print(filename)
+                self.cluster.logger.debug("Found {filename}".format(filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
-                #print(df)
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
             elif filename.startswith(jobname) and filename.endswith(".log"):
-                #print(filename)
+                self.cluster.logger.debug("Found {filename}".format(filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
-                #print(df)
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
