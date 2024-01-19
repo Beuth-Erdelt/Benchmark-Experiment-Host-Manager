@@ -1024,13 +1024,14 @@ class default():
         directory = os.fsencode(self.path)
         #print(jobname)
         timing = []
-        print("Looking for files {jobname}*.{container}.log".format(jobname=jobname, container=container))
+        self.cluster.logger.debug("Looking for files {jobname}*.{container}.log".format(jobname=jobname, container=container))
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
             if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
                 self.cluster.logger.debug("Found file {filename}".format(filename=filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
@@ -1038,6 +1039,7 @@ class default():
             elif filename.startswith(jobname) and filename.endswith(".log"):
                 self.cluster.logger.debug("Found file {filename}".format(filename=filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
