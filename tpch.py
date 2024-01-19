@@ -41,7 +41,7 @@ import time
 from timeit import default_timer
 import datetime
 # queue
-import redis
+#import redis
 import subprocess
 import psutil
 
