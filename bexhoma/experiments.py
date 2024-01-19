@@ -1029,21 +1029,24 @@ class default():
             filename = os.fsdecode(file)
             #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
             if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
-                self.cluster.logger.debug("Found file {filename}".format(filename=filename))
+                self.cluster.logger.debug("Found jobcontainer file {filename}".format(filename=filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
                 self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
+            # when log does not contain container name (when is it true?)
+            """
             elif filename.startswith(jobname) and filename.endswith(".log"):
-                self.cluster.logger.debug("Found file {filename}".format(filename=filename))
+                self.cluster.logger.debug("Found job file {filename}".format(filename=filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
                 self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
+            """
         #print(timing)
         return timing
     def end_benchmarking(self, jobname, config=None):
