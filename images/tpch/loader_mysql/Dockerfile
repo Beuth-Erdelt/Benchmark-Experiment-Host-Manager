@@ -1,6 +1,6 @@
 FROM debian:stable-20221004-slim
 
-RUN apt-get -y update && apt-get clean all
+RUN apt-get -y update && apt-get dist-upgrade && apt-get clean all
 
 RUN apt-get install -y build-essential
 RUN apt-get install -y wget
