@@ -38,5 +38,5 @@ COPY ./loader.sh /tmp/loader.sh
 RUN ["chmod", "+x", "/tmp/loader.sh"]
 
 
-#CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
-CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
+CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
+#CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
