@@ -2792,7 +2792,7 @@ scrape_configs:
         #print("self.loading_parameters", self.loading_parameters)
         #env = self.loading_parameters
         env = {**env, **self.loading_parameters}
-        self.logger.debug("create_manifest_loading:env=", env)
+        self.logger.debug("create_manifest_loading:env={}".format(env))
         template = "jobtemplate-loading.yml"
         if len(self.experiment.jobtemplate_loading) > 0:
             template = self.experiment.jobtemplate_loading

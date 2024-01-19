@@ -1089,8 +1089,8 @@ class testbed():
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
-            self.logger.debug("api_response.spec.completions", api_response.spec.completions)
-            self.logger.debug("api_response.status.succeeded", api_response.status.succeeded)
+            self.logger.debug("api_response.spec.completions {}".format(api_response.spec.completions))
+            self.logger.debug("api_response.status.succeeded {}".format(api_response.status.succeeded))
             # returns number of completed pods (!)
             #return api_response.status.succeeded
             # we want status of job (!)
@@ -1357,7 +1357,7 @@ class testbed():
         # status per job
         for job in jobs:
             success = self.get_job_status(job)
-            self.logger.debug("Job and status", job, success)
+            self.logger.debug("Job and status {} {}".format(job, success))
             self.delete_job(job)
         # all pods to these jobs - automatically stopped?
         #self.get_job_pods(app, component, experiment, configuration)
