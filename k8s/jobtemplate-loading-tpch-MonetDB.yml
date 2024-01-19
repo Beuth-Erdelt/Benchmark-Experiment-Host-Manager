@@ -14,16 +14,13 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
       nodeSelector:
-        #kubernetes.io/hostname: cl-worker29
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
       initContainers:
       - name: datagenerator
         image: bexhoma/generator_tpch:latest
         imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
         #securityContext:
         #  allowPrivilegeEscalation: false
         #  runAsNonRoot: true
@@ -43,10 +40,8 @@ spec:
         - {name: SF, value: '500'}
         - {name: RNGSEED, value: '123'}
         resources:
-          #limits: {cpu: 100m}
-          #, memory: 16Gi}
-          #requests: {cpu: 4000m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpch/"
@@ -55,6 +50,7 @@ spec:
       - name: sensor
         image: bexhoma/loader_tpch_monetdb:latest
         imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
         #securityContext:
         #  allowPrivilegeEscalation: false
         #  runAsNonRoot: true
@@ -74,10 +70,8 @@ spec:
         - {name: SF, value: '500'}
         - {name: RNGSEED, value: '123'}
         resources:
-          #limits: {cpu: 100m}
-          #, memory: 16Gi}
-          requests: {cpu: 900m}
-          #, memory: 16Gi}
+          #limits: {cpu: 1000m, memory: 16Gi}
+          #requests: {cpu: 1000m, memory: 16Gi}
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpch/"
