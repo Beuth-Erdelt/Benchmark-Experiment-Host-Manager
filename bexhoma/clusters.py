@@ -998,7 +998,7 @@ class testbed():
         output = self.kubectl(fullcommand)
         #print("get_pod_containers", output)
         initContainers = output.split(" ")
-        print("Pod {} has container {}".format(pod, containers + initContainers))
+        self.logger.debug("Pod {} has container {}".format(pod, containers + initContainers))
         return containers + initContainers
     def downloadLog(self):
         print("downloadLog")
