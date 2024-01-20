@@ -722,7 +722,7 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
-        print("start_monitoring of {}".format(name_sut))
+        print("{:30s}: start monitoring with prometheus pod".format(configuration))
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:
             try:

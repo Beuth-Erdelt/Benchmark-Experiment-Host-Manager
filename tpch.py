@@ -13,23 +13,6 @@ It can verified that all databases contain the same data, using short profiling 
 Monitoring is activated.
 Optionally we set some indexes and constraints after import.
 Nodes can be fixed.
-
-nohup python experiment-2-3-tpch-loading-filesystem.py profiling \
-    -dbms PostgreSQL \
-    -t 600 \
-    -sf 100 \
-    -dt \
-    -nlp 4,8,16,32 \
-    -ms 1 \
-    -m \
-    -nr 1 \
-    -nc 1 \
-    -ne 1 \
-    -db \
-    -cx perdelt \
-    -rnn cl-worker21 \
-    -tr \
-    &>logs/experiment.2.2.SF100.PostgreSQL.1.log &
 """
 from bexhoma import *
 from dbmsbenchmarker import *
