@@ -554,6 +554,10 @@ class default():
         filename = 'protocol.json'
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
+        # download complete result folder of experiment from pod
+        # this includes all measures like times and monitoring data
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
         ############ HammerDB
         #self.path = "/home/perdelt/benchmarks/1668286639/"
         directory = os.fsencode(self.path)
