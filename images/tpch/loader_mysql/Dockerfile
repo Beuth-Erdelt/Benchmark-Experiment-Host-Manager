@@ -16,6 +16,10 @@ RUN dpkg -i mysql-shell_8.0.36-1debian12_amd64.deb
 RUN apt-get install mysql-shell -y
 RUN apt-get update
 
+RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
+
 ENV NUM_PODS=4
 ENV CHILD=1
 ENV BEXHOMA_HOST="www.example.com"
