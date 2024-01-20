@@ -2322,7 +2322,7 @@ scrape_configs:
                             print("Generator timespan (first to last [s]):", total_time)
                         #timing_sensor = extract_timing(jobname, container="sensor")
                         if len(timing_sensor) > 0:
-                            print("Loader times (duration per pod [s]:", [end-start for (start,end) in timing_sensor])
+                            print("Loader times (duration per pod [s]):", [end-start for (start,end) in timing_sensor])
                             timing_start = min([start for (start,end) in timing_sensor])
                             timing_end = max([end for (start,end) in timing_sensor])
                             total_time = timing_end - timing_start
