@@ -1262,7 +1262,8 @@ class tpch(default):
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
     def show_summary(self):
-        resultfolder self.cluster.config['benchmarker']['resultfolder']
+        self.cluster.logger.debug('tpch.show_summary({})'.format(jobname))
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=False)
