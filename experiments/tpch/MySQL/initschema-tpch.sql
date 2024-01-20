@@ -21,6 +21,9 @@ SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
 SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
 SET GLOBAL innodb_flush_log_at_trx_commit =0;
 
+-- the server performs a DNS lookup every time a client connects
+-- SET GLOBAL host_cache_size=0
+
 CREATE DATABASE tpch;
 
 -- sccsid:     @(#)dss.ddl  2.1.8.1

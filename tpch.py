@@ -3,7 +3,7 @@
 :Version: 1.0
 :Authors: Patrick K. Erdelt
 
-Performs a TPC-H loading experiment.
+Performs a TPC-H experiment.
 Data is generated and stored in a distributed filesystem (Ceph).
 Last character in each line of generated data is removed.
 Data is then loaded from filesystem.
@@ -49,12 +49,12 @@ urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
-    description = """Performs a TPC-H loading experiment. Data is generated and imported into a DBMS from a distributed filesystem."""
+    description = """Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk)."""
     # argparse
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'SingleStore', 'CockroachDB', 'MySQL', 'MariaDB', 'YugabyteDB', 'Kinetica'], default=[])
+    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[])
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)

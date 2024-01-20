@@ -2304,7 +2304,7 @@ scrape_configs:
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
                         #self.timeLoading = float(self.timeLoading) + float(timeLoading)
-                        print("Loader times for configuration {}:".format(self.configuration))
+                        print("{30s}: showing loader times".format(self.configuration))
                         timing_datagenerator, timing_sensor, timing_total = self.experiment.get_job_timing_loading(job)
                         generator_time = 0
                         loader_time = 0
@@ -2314,27 +2314,27 @@ scrape_configs:
                         self.loading_timespans['sensor'] = timing_sensor
                         self.loading_timespans['total'] = timing_total
                         if len(timing_datagenerator) > 0:
-                            print("Generator times (duration per pod [s]):", [end-start for (start,end) in timing_datagenerator])
+                            self.experiment.cluster.logger.debug("Generator times (duration per pod [s]): {}".format([end-start for (start,end) in timing_datagenerator]))
                             timing_start = min([start for (start,end) in timing_datagenerator])
                             timing_end = max([end for (start,end) in timing_datagenerator])
                             total_time = timing_end - timing_start
                             generator_time = total_time
-                            print("Generator timespan (first to last [s]):", total_time)
+                            print("{30s}: generator timespan (first to last [s]) = {}".format(self.configuration, total_time))
                         #timing_sensor = extract_timing(jobname, container="sensor")
                         if len(timing_sensor) > 0:
-                            print("Loader times (duration per pod [s]):", [end-start for (start,end) in timing_sensor])
+                            self.experiment.cluster.logger.debug("Loader times (duration per pod [s]): {}".format([end-start for (start,end) in timing_sensor]))
                             timing_start = min([start for (start,end) in timing_sensor])
                             timing_end = max([end for (start,end) in timing_sensor])
                             total_time = timing_end - timing_start
                             loader_time = total_time
-                            print("Loader timespan (first to last [s]):", total_time)
+                            print("{30s}: loader timespan (first to last [s]) = {}".format(self.configuration, total_time))
                         if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
                             timing_total = timing_datagenerator + timing_sensor
-                            print("Total times (start/end per pod and container):", timing_total)
+                            self.experiment.cluster.logger.debug("Total times (start/end per pod and container): {}".format(timing_total))
                             timing_start = min([start for (start,end) in timing_total])
                             timing_end = max([end for (start,end) in timing_total])
                             total_time = timing_end - timing_start
-                            print("Total timespan (first to last [s]):", total_time)
+                            print("{30s}: total timespan (first to last [s]) = {}".format(self.configuration, total_time))
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
@@ -2476,7 +2476,7 @@ scrape_configs:
             volume = name_pvc
         else:
             volume = ''
-        print("Start asynch loading scripts of type {}  into {}".format(script_type, self.configuration))
+        print("{30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
         self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
         thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context, 'service_name':service_name, 'time_offset':time_offset, 'script_type':script_type, 'time_start_int':time_start_int}
