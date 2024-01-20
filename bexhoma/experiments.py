@@ -736,42 +736,42 @@ class default():
                     #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
                         if not config.sut_is_pending():
-                            print("{30s}: is not running yet - ".format(config.configuration))#, end="", flush=True)
+                            print("{:30s}: is not running yet - ".format(config.configuration))#, end="", flush=True)
                             if self.cluster.max_sut is not None or self.max_sut is not None:
                                 we_can_start_new_sut = True
                                 if self.max_sut is not None:
                                     print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
                                     if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
-                                        print("{30s}: has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if self.cluster.max_sut is not None:
                                     print("In cluster: {} running and {} pending pods: max is {} pods".format(num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
                                     if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
-                                        print("{30s}: has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if we_can_start_new_sut:
-                                    print("{30s}: will start now".format(config.configuration))
+                                    print("{:30s}: will start now".format(config.configuration))
                                     config.start_sut()
                                     num_pods_pending_experiment = num_pods_pending_experiment + 1
                                     num_pods_pending_cluster = num_pods_pending_cluster + 1
                             else:
-                                print("{30s}: will start now".format(config.configuration))
+                                print("{:30s}: will start now".format(config.configuration))
                                 config.start_sut()
                                 num_pods_pending_experiment = num_pods_pending_experiment + 1
                                 num_pods_pending_cluster = num_pods_pending_cluster + 1
                                 #self.wait(10)
                         else:
-                            print("{30s}: is pending".format(config.configuration))
+                            print("{:30s}: is pending".format(config.configuration))
                     continue
                 # check if loading is done
                 config.check_load_data()
                 # start loading
                 if not config.loading_started:
                     if config.sut_is_running():
-                        print("{30s}: is not loaded yet".format(config.configuration))
+                        print("{:30s}: is not loaded yet".format(config.configuration))
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():
-                            print("{30s}: waits for monitoring".format(config.configuration))
+                            print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
                                 config.start_monitoring()
                             continue
@@ -784,7 +784,7 @@ class default():
                             else:
                                 config.start_loading()
                         else:
-                            print("{30s}: will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+                            print("{:30s}: will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                             continue
                     else:
                         delay = 60
@@ -792,33 +792,33 @@ class default():
                             # config demands other delay
                             delay = config.dockertemplate['delay_prepare']
                         config.loading_after_time = now + timedelta(seconds=delay)
-                        print("{30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                        print("{:30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
                         continue
                 # check if maintaining
                 if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
-                        print("{30s}: waits for monitoring".format(config.configuration))
+                        print("{:30s}: waits for monitoring".format(config.configuration))
                         if not config.monitoring_is_pending():
                             config.start_monitoring()
                         continue
                     if config.maintaining_active:
                         if not config.maintaining_is_running():
-                            print("{30s}: is not maintained yet".format(config.configuration))
+                            print("{:30s}: is not maintained yet".format(config.configuration))
                             if not config.maintaining_is_pending():
                                 config.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
                             else:
-                                print("{30s}: has pending maintaining".format(config.configuration))
+                                print("{:30s}: has pending maintaining".format(config.configuration))
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     # still benchmarks: check loading and maintaining
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():
-                            print("{30s}: waits for monitoring".format(config.configuration))
+                            print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
                                 config.start_monitoring()
                             continue
                         if config.maintaining_active and not config.maintaining_is_running():
-                            print("{30s}: waits for maintaining".format(config.configuration))
+                            print("{:30s}: waits for maintaining".format(config.configuration))
                             continue
                     app = self.cluster.appname
                     component = 'benchmarker'
@@ -826,7 +826,7 @@ class default():
                     pods = self.cluster.get_job_pods(app, component, self.code, configuration=config.configuration)
                     if len(pods) > 0:
                         # still pods there
-                        print("{30s}: has running benchmarks".format(config.configuration))
+                        print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
                     else:
                         if len(config.benchmark_list) > 0:
@@ -834,7 +834,7 @@ class default():
                             parallelism = config.benchmark_list.pop(0)
                             client = str(config.client)
                             config.client = config.client+1
-                            print("{30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                            print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                             if len(config.benchmarking_parameters_list) > 0:
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                                 print("We will change parameters of benchmark", benchmarking_parameters)
@@ -843,13 +843,13 @@ class default():
                                 connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                             else:
                                 connection=config.configuration+'-'+client
-                            print("{30s}: start benchmarking".format(connection))
+                            print("{:30s}: start benchmarking".format(connection))
                             config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                             #config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                         else:
                             # no list element left
                             if stop:
-                                print("{30s}: can be stopped".format(config.configuration))
+                                print("{:30s}: can be stopped".format(config.configuration))
                                 app = self.cluster.appname
                                 component = 'sut'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
@@ -859,7 +859,7 @@ class default():
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
-                                    print("{30s}: starts again".format(config.configuration))
+                                    print("{:30s}: starts again".format(config.configuration))
                                     config.benchmark_list = config.benchmark_list_template.copy()
                                     # wait for PV to be gone completely
                                     self.wait(60)
@@ -871,7 +871,7 @@ class default():
                             else:
                                 print("{} can be stopped, be we leave it running".format(config.configuration))
                 else:
-                    print("{30s}: is loading".format(config.configuration))
+                    print("{:30s}: is loading".format(config.configuration))
             # all jobs of configuration - benchmarker
             #app = self.cluster.appname
             #component = 'benchmarker'
