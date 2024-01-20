@@ -284,6 +284,7 @@ if __name__ == '__main__':
                     STORE_RAW_DATA = 1,
                     STORE_RAW_DATA_RECREATE = 0,
                     BEXHOMA_SYNCH_LOAD = 1,
+                    BEXHOMA_SYNCH_GENERATE = 1,
                     TRANSFORM_RAW_DATA = 1,
                     TPCH_TABLE = limit_import_table,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
@@ -301,6 +302,7 @@ if __name__ == '__main__':
                     STORE_RAW_DATA = 1,
                     STORE_RAW_DATA_RECREATE = 0,
                     BEXHOMA_SYNCH_LOAD = 1,
+                    BEXHOMA_SYNCH_GENERATE = 1,
                     TRANSFORM_RAW_DATA = 1,
                     TPCH_TABLE = limit_import_table,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
@@ -319,6 +321,7 @@ if __name__ == '__main__':
                         STORE_RAW_DATA = 1,
                         STORE_RAW_DATA_RECREATE = 0,
                         BEXHOMA_SYNCH_LOAD = 1,
+                        BEXHOMA_SYNCH_GENERATE = 1,
                         TRANSFORM_RAW_DATA = 1,
                         MYSQL_LOADING_THREADS = int(threads),#int(num_loading_threads),#int(loading_pods_total),
                         MYSQL_LOADING_PARALLEL = 1, # not possible from RAM disk, only filesystem
