@@ -982,16 +982,23 @@ class testbed():
         #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
         return output
     def get_pod_containers(self, pod):
+        """
+        Return all containers and initcontainers of a pod
+
+        :param pod: name of the pod
+        :return: list of names of (init)containers
+        """
         fullcommand = "get pods "+pod+" -o jsonpath='{.spec.containers[*].name}'"
         print(fullcommand)
         output = self.kubectl(fullcommand)
-        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        #stdout, stderr = proc.communicate()
-        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
         print("get_pod_containers", output)
         containers = output.split(" ")
-        return containers
+        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initcontainers[*].name}'"
+        print(fullcommand)
+        output = self.kubectl(fullcommand)
+        print("get_pod_containers", output)
+        initcontainers = output.split(" ")
+        return containers + initcontainers
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
