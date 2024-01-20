@@ -2014,7 +2014,7 @@ scrape_configs:
         client_pod_name = pods[0]
         status = self.experiment.cluster.get_pod_status(client_pod_name)
         self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
-        print("Benchmarking of {} is waiting for job {}: ".format(configuration, client_pod_name), end="", flush=True)
+        print("{:30s}: benchmarking is waiting for job {}: ".format(configuration, client_pod_name), end="", flush=True)
         while status != "Running" and status != "Succeeded":
             self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
             print(".", end="", flush=True)

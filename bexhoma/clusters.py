@@ -284,7 +284,7 @@ class testbed():
         intervals = int(sec)
         for x in [1]:
             if not silent:
-                print("{:30s}: ".format("waiting {}s".format(sec)), end="", flush=True)
+                print("{:30s}: ".format("- waiting {}s -".format(sec)), end="", flush=True)
                 #print('wait {}s'.format(intervals), end='\r')
             time.sleep(intervals)
         if not silent:
