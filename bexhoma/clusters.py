@@ -284,8 +284,11 @@ class testbed():
         intervals = int(sec)
         for x in [1]:
             if not silent:
-                print('wait {}s'.format(intervals), end='\r')
+                print("{:30s}: ".format("waiting {}s".format(sec)), end="", flush=True)
+                #print('wait {}s'.format(intervals), end='\r')
             time.sleep(intervals)
+        if not silent:
+            print("done")
         #if not silent:
         #    print("")
     def delay(self, sec, silent=False):
