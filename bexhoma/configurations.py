@@ -871,6 +871,7 @@ scrape_configs:
             print(pod, status)
             #if status == "Running":
             # TODO: Find names of containers dynamically
+            containers = self.experiment.cluster.get_pod_containers()
             container = 'datagenerator'
             stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
             #stdin, stdout, stderr = self.pod_log(client_pod_name)
