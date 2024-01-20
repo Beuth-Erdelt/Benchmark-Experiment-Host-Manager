@@ -989,14 +989,14 @@ class testbed():
         :return: list of names of (init)containers
         """
         fullcommand = "get pods "+pod+" -o jsonpath='{.spec.containers[*].name}'"
-        print(fullcommand)
+        #print(fullcommand)
         output = self.kubectl(fullcommand)
-        print("get_pod_containers", output)
+        #print("get_pod_containers", output)
         containers = output.split(" ")
         fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initContainers[*].name}'"
-        print(fullcommand)
+        #print(fullcommand)
         output = self.kubectl(fullcommand)
-        print("get_pod_containers", output)
+        #print("get_pod_containers", output)
         initContainers = output.split(" ")
         print("Pod {} has container {}".format(pod, containers + initContainers))
         return containers + initContainers
