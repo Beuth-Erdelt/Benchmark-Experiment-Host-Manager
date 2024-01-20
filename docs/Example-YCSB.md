@@ -12,18 +12,20 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 Example: `python ycsb.py -ms 4 -dbms PostgreSQL -workload a run`
 
 This
-* starts a clean instance of PostgreSQL
-  * data directory inside a Docker container
-* creates YCSB schema in each database
-* starts `n` loader pods per DBMS
-  * with a loading container each
-    * generates YCSB data = 1.000.000 rows
-    * imports it into the DBMS
-* runs 1 stream of YCSB queries per DBMS
-  * 1.000.000 operations
-  * workload A = 50% read / 50% write
-  * target throughput is `t` * 16384
 * loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
+  * starts a clean instance of PostgreSQL
+    * data directory inside a Docker container
+  * creates YCSB schema in each database
+  * starts `n` loader pods per DBMS
+    * with a loading container each
+      * threads = 64/`n`
+      * target throughput is `t` * 16384
+      * generates YCSB data = 1.000.000 rows
+      * imports it into the DBMS
+  * runs 1 stream of YCSB queries per DBMS
+    * 1.000.000 operations
+    * workload A = 50% read / 50% write
+    * target throughput is `t` * 16384
 * shows a summary
 
 ### Status
