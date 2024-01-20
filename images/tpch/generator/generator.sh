@@ -27,6 +27,32 @@ echo "NUM_PODS $NUM_PODS"
 echo "SF $SF"
 echo "$CHILD" > /tmp/tpch/CHILD
 
+######################## Wait until all pods of job are ready ########################
+if test $BEXHOMA_SYNCH_GENERATE -gt 0
+then
+	echo "Querying counter bexhoma-generator-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+	# add this pod to counter
+	redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-generator-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+	# wait for number of pods to be as expected
+	while : ; do
+		PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-generator-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+		echo "Found $PODS_RUNNING / $NUM_PODS running pods"
+		if  test "$PODS_RUNNING" == $NUM_PODS
+		then
+			echo "OK"
+			break
+		else
+			echo "We have to wait"
+			sleep 1
+		fi
+	done
+fi
+
+######################## Start measurement of time ########################
+bexhoma_start_epoch=$(date -u +%s)
+SECONDS_START=$SECONDS
+echo "Start $SECONDS_START seconds"
+
 ######################## Destination of raw data ########################
 if test $STORE_RAW_DATA -gt 0
 then
@@ -73,32 +99,6 @@ echo "destination_raw $destination_raw"
 cd $destination_raw
 cp /tmp/dists.dss ./dists.dss
 cp /tmp/dbgen ./dbgen
-
-######################## Wait until all pods of job are ready ########################
-if test $BEXHOMA_SYNCH_GENERATE -gt 0
-then
-	echo "Querying counter bexhoma-generator-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-	# add this pod to counter
-	redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-generator-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-	# wait for number of pods to be as expected
-	while : ; do
-		PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-generator-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-		echo "Found $PODS_RUNNING / $NUM_PODS running pods"
-		if  test "$PODS_RUNNING" == $NUM_PODS
-		then
-			echo "OK"
-			break
-		else
-			echo "We have to wait"
-			sleep 1
-		fi
-	done
-fi
-
-######################## Start measurement of time ########################
-bexhoma_start_epoch=$(date -u +%s)
-SECONDS_START=$SECONDS
-echo "Start $SECONDS_START seconds"
 
 ######################## Execute workload ###################
 ############ Differ between single-pod and multi-pod setting ############
