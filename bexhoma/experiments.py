@@ -1267,7 +1267,9 @@ class tpch(default):
         code = self.code
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=False)
+        print("### Errors")
         print(evaluate.get_total_errors().T)
+        print("### Warnings")
         print(evaluate.get_total_warnings().T)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index()
@@ -1292,6 +1294,7 @@ class tpch(default):
                 times[c]['timeIndex'] = connection.connectiondata['timeIndex']
             if 'timeLoad' in connection.connectiondata:
                 times[c]['timeLoad'] = connection.connectiondata['timeLoad']
+        print("### Loading [s]")
         df = pd.DataFrame(times)
         print(df.round(2))
         df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index().T
