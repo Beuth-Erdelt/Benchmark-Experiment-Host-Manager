@@ -1161,7 +1161,7 @@ class default():
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
         self.evaluator.end_loading(jobname)
     def show_summary(self):
-        self.cluster.logger.debug('default.show_summary({})'.format(jobname))
+        self.cluster.logger.debug('default.show_summary()')
         pass
 
 
@@ -1262,7 +1262,7 @@ class tpch(default):
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
     def show_summary(self):
-        self.cluster.logger.debug('tpch.show_summary({})'.format(jobname))
+        self.cluster.logger.debug('tpch.show_summary()')
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         evaluate = inspector.inspector(resultfolder)

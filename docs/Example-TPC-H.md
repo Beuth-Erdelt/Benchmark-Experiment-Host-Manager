@@ -24,12 +24,14 @@ This
   * with a loading container each
     * importing TPC-H data from the distributed filesystem
     * MySQL: only one pod active and it loads with 16 threads
-* after ingestion: create contraints and indexes and updates table statistics in each DBMS
+* creates contraints and indexes and updates table statistics in each DBMS after ingestion
 * runs 1 stream of TPC-H queries per DBMS
-  * 
-
+  * all DBMS use the same parameters
+* shows a summary
 
 ### Status
+
+You can watch the status while benchmark is running via `bexperiments status`
 
 ```
 | 1705608513       | sut          |   loaded [s] | worker   | maintaining   | loading                  | monitoring   | benchmarker   |
@@ -38,6 +40,19 @@ This
 | MySQL-BHT-8-16   | (1. Running) |         5.31 |          |               | (8 Running)              |              |               |
 | PostgreSQL-BHT-8 | (1. Running) |         0.46 |          |               | (5 Succeeded)(3 Running) |              |               |
 ```
+
+
+### Evaluate Results in Dashboard
+
+Detailed evaluations can be done using DBMSBenchmarker
+* [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
+* [Jupyter Notebooks](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
+
+You can connect to an evaluation server by `bexperiments dashboard`.
+This forwards ports, so you have
+* a dashboard in browser at http://localhost:8050
+* a Jupyter notebook server at http://localhost:8888
+
 
 ## Adjust Parameter
 
@@ -117,8 +132,3 @@ options:
   -rcp RECREATE_PARAMETER, --recreate-parameter RECREATE_PARAMETER
                         recreate parameter for randomized queries
 ```
-
-## Evaluate Results in Dashboard
-
-Evaluation is done using DBMSBenchmarker: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.html
-

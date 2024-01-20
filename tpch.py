@@ -291,7 +291,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if args.dbms == "MySQL" or len(args.dbms) == 0:
+            if False and (args.dbms == "MySQL" or len(args.dbms) == 0):
                 # MySQL
                 for threads in list_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'
