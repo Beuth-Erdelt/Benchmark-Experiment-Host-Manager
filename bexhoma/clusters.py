@@ -982,8 +982,8 @@ class testbed():
         #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
         return output
     def get_pod_containers(self, pod):
-        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.containers[*].name}"
-        #print(fullcommand)
+        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.containers[*].name}'"
+        print(fullcommand)
         output = self.kubectl(fullcommand)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
