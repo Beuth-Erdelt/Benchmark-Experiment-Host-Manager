@@ -1,32 +1,29 @@
-# Example: TPC-H
+# Example: YCSB
 
-This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MonetDB and PostgreSQL.
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-> The query file is derived from the TPC-H and as such is not comparable to published TPC-H results, as the query file results do not comply with the TPC-H Specification.
-
-Official TPC-H benchmark - http://www.tpc.org/tpch
+References:
+1. https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 
 ## Perform Benchmark
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python tpch.py -dt -nlp 8 -nlt 16 -sf 1 -ii -ic -is run`
+Example: `python ycsb.py -ms 4 -dbms PostgreSQL -workload a run`
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL each
+* starts a clean instance of PostgreSQL
   * data directory inside a Docker container
-* creates TPC-H schema in each database
-* starts 8 loader pods per DBMS
-  * with a data generator (init) container each
-    * each generating a portion of TPC-H data of scaling factor 1
-    * storing the data in a distributed filesystem (shared disk)
-    * if data is already present: do nothing
+* creates YCSB schema in each database
+* starts `n` loader pods per DBMS
   * with a loading container each
-    * importing TPC-H data from the distributed filesystem
-    * MySQL: only one pod active and it loads with 16 threads
-* creates contraints and indexes and updates table statistics in each DBMS after ingestion
-* runs 1 stream of TPC-H queries per DBMS
-  * all DBMS use the same parameters
+    * generates YCSB data = 1.000.000 rows
+    * imports it into the DBMS
+* runs 1 stream of YCSB queries per DBMS
+  * 1.000.000 operations
+  * workload A = 50% read / 50% write
+  * target throughput is `t` * 16384
+* loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
 * shows a summary
 
 ### Status
@@ -34,12 +31,11 @@ This
 You can watch the status while benchmark is running via `bexperiments status`
 
 ```
-| 1705608513       | sut          |   loaded [s] | worker   | maintaining   | loading                  | monitoring   | benchmarker   |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
-| MonetDB-BHT-8    | (1. Running) |       129.92 |          |               |                          |              | (1. Running)  |
-| MySQL-BHT-8-16   | (1. Running) |         5.31 |          |               | (8 Running)              |              |               |
-| PostgreSQL-BHT-8 | (1. Running) |         0.46 |          |               | (5 Succeeded)(3 Running) |              |               |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
+|-----------------------|--------------|--------------|----------|---------------|-----------|--------------|---------------|
+| 1705792604            | sut          |   loaded [s] | worker   | maintaining   | loading   | monitoring   | benchmarker   |
+|=======================|==============|==============|==========|===============|===========|==============|===============|
+| PostgreSQL-64-8-98304 | (1. Running) |         2.02 |          |               |           | (Running)    |               |
+|-----------------------|--------------|--------------|----------|---------------|-----------|--------------|---------------|
 ```
 
 
