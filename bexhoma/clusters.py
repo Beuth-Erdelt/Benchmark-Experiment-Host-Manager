@@ -268,29 +268,38 @@ class testbed():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def wait(self, sec):
+    def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        print("Waiting {} s...".format(sec), end="", flush=True)
-        intervals = int(sec)
-        time.sleep(intervals)
-        print("Done waiting {} s".format(sec))
-        #print("Waiting "+str(sec)+"s")
+        #if not silent:
+        #    print("Waiting "+str(sec)+"s...", end="", flush=True)
         #intervals = int(sec)
-        #intervalLength = 1
-        #for i in tqdm(range(intervals)):
-        #    time.sleep(intervalLength)
-    def delay(self, sec):
+        #time.sleep(intervals)
+        #if not silent:
+        #    print("done")
+        intervals = int(sec)
+        for x in [1]:
+            if not silent:
+                print("{:30s}: ".format("- waiting {}s -".format(sec)), end="", flush=True)
+                #print('wait {}s'.format(intervals), end='\r')
+            time.sleep(intervals)
+        if not silent:
+            print("done")
+        #if not silent:
+        #    print("")
+    def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        self.wait(sec)
+        self.wait(sec, silent)
     def delete_deployment(self, deployment):
         """
         Delete a deployment given by name.
@@ -1089,15 +1098,15 @@ class testbed():
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
-            print("api_response.spec.completions", api_response.spec.completions)
-            print("api_response.status.succeeded", api_response.status.succeeded)
+            self.logger.debug("api_response.spec.completions {}".format(api_response.spec.completions))
+            self.logger.debug("api_response.status.succeeded {}".format(api_response.status.succeeded))
             # returns number of completed pods (!)
             #return api_response.status.succeeded
             # we want status of job (!)
             #self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
             #self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
             if api_response.status.succeeded is not None and api_response.spec.completions <= api_response.status.succeeded:
-                print("Number of completions reached")
+                self.logger.debug("Number of completions reached")
                 return True
             if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
                 self.logger.debug(api_response.status.conditions[0].type)
@@ -1240,7 +1249,7 @@ class testbed():
             self.logger.debug('testbed.dashboard_is_running()=exists')
             #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
+            print("{:30s}: {} in pod {}".format("Dashboard", status, pod_dashboard))
             if status == "Running":
                 self.logger.debug('testbed.dashboard_is_running() is running')
                 return True
@@ -1357,7 +1366,7 @@ class testbed():
         # status per job
         for job in jobs:
             success = self.get_job_status(job)
-            print(job, success)
+            self.logger.debug("Job and status {} {}".format(job, success))
             self.delete_job(job)
         # all pods to these jobs - automatically stopped?
         #self.get_job_pods(app, component, experiment, configuration)

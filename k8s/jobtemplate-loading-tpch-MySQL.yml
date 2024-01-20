@@ -4,9 +4,9 @@ metadata:
   labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
   name: bexhoma-sensor
 spec:
-  backoffLimit: 1
-  completions: 1
-  parallelism: 1
+  backoffLimit: 4
+  completions: 4
+  parallelism: 4
   template:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
@@ -31,9 +31,9 @@ spec:
         #      - ALL
         #  readOnlyRootFilesystem: true
         env:
-        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-yugabytedb-aws-1234567890'}
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-mysql-aws-1234567890'}
         - {name: BEXHOMA_PORT, value: '9091'}
-        - {name: BEXHOMA_CONNECTION, value: 'yugabytedb'}
+        - {name: BEXHOMA_CONNECTION, value: 'mysql'}
         - {name: BEXHOMA_EXPERIMENT, value: '1234567890'}
         - {name: PARALLEL, value: '24'}
         - {name: CHILD, value: '1'}
@@ -42,14 +42,13 @@ spec:
         resources:
           #limits: {cpu: 1000m, memory: 16Gi}
           #requests: {cpu: 1000m, memory: 16Gi}
-        securityContext:
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpch/"
         - {mountPath: /data, name: benchmark-data-volume}
       containers:
       - name: sensor
-        image: bexhoma/loader_tpch_yugabytedb:latest
+        image: bexhoma/loader_tpch_mysql:latest
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
         #securityContext:
@@ -62,9 +61,9 @@ spec:
         #      - ALL
         #  readOnlyRootFilesystem: true
         env:
-        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-yugabytedb-aws-1658676533'}
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-mysql-aws-1658676533'}
         - {name: BEXHOMA_PORT, value: '9091'}
-        - {name: BEXHOMA_CONNECTION, value: 'yugabytedb'}
+        - {name: BEXHOMA_CONNECTION, value: 'mysql'}
         - {name: BEXHOMA_EXPERIMENT, value: '1234'}
         - {name: PARALLEL, value: '24'}
         - {name: CHILD, value: '1'}
@@ -73,15 +72,6 @@ spec:
         resources:
           #limits: {cpu: 1000m, memory: 16Gi}
           #requests: {cpu: 1000m, memory: 16Gi}
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpch/"

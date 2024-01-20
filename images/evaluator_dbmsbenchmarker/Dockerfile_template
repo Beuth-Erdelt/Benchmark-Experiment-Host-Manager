@@ -1,4 +1,7 @@
-FROM python:3.11.5
+FROM python:3.11.7
+
+# does not compile numpy correctly
+# FROM python:3.13-rc-slim
 
 WORKDIR /usr/src/app
 
@@ -6,6 +9,10 @@ RUN apt update
 RUN apt install default-jre -y
 RUN apt install zip -y
 RUN apt install nano -y
+
+# only needed in slim releases
+# RUN apt install git -y
+# RUN apt install build-essential -y
 
 RUN mkdir /results
 
@@ -28,6 +35,6 @@ RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch {version
 
 WORKDIR /usr/src/app/DBMS-Benchmarker
 
-RUN git pull
+# RUN git pull
 
 CMD git pull; python ./dashboard.py -r /results
