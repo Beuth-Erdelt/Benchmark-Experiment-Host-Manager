@@ -24,7 +24,10 @@ This
   * with a loading container each
     * importing TPC-H data from the distributed filesystem
     * MySQL: only one pod active and it loads with 16 threads
-* after ingestion: create contraints, indexes and updates table statistics in each DBMS
+* after ingestion: create contraints and indexes and updates table statistics in each DBMS
+* runs 1 stream of TPC-H queries per DBMS
+  * 
+
 
 ### Status
 

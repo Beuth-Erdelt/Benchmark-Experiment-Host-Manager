@@ -361,4 +361,5 @@ if __name__ == '__main__':
             if test_result_code == 0:
                 print("Test successful!")
         cluster.restart_dashboard()
+        experiment.show_summary()
 exit()
