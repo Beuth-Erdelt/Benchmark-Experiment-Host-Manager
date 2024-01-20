@@ -2230,7 +2230,7 @@ scrape_configs:
             jobs = self.experiment.cluster.get_jobs(app, component, self.code, configuration)
             # status per job
             for job in jobs:
-                print("Found running job", job)
+                self.experiment.cluster.logger.debug("Found running job {}".format(job))
                 success = self.experiment.cluster.get_job_status(job)
                 self.experiment.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
@@ -2238,7 +2238,7 @@ scrape_configs:
                 pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                 for pod in pods:
                     status = self.experiment.cluster.get_pod_status(pod)
-                    print(pod, status)
+                    self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
                     if status == "Succeeded":
                         container = 'datagenerator'
                         if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
@@ -2270,8 +2270,8 @@ scrape_configs:
                     #pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:
                         status = self.experiment.cluster.get_pod_status(pod)
-                        print(pod, status)
-                        print("Store logs of job {} pod {}".format(job, pod))
+                        self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
+                        self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
                         #if status == "Running":
                         # TODO: Find names of containers dynamically
                         container = 'datagenerator'
