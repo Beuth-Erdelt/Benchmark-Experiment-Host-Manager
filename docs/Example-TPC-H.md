@@ -10,6 +10,10 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
+Example: `python tpch.py -dt -nlp 8 -sf 1 -ii -ic -is run`
+
+### Status
+
 ```
 | 1705608513       | sut          |   loaded [s] | worker   | maintaining   | loading                  | monitoring   | benchmarker   |
 |------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
@@ -23,7 +27,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```
-usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,SingleStore,CockroachDB,MySQL,MariaDB,YugabyteDB,Kinetica}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS]
+usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS]
                [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME]
                [-tr] [-ii] [-ic] [-is] [-rcp RECREATE_PARAMETER]
                {profiling,run,start,load,empty}

@@ -140,24 +140,27 @@ class default():
         self.configurations = []
         self.storage_label = ''
         self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
-    def wait(self, sec):
+    def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        print("Waiting "+str(sec)+"s...", end="", flush=True)
-        intervals = int(sec)
-        time.sleep(intervals)
-        print("done")
-    def delay(self, sec):
+        #+print("Waiting "+str(sec)+"s...", end="", flush=True)
+        #intervals = int(sec)
+        #time.sleep(intervals)
+        #print("done")
+        return self.cluster.wait(sec, silent)
+    def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        self.wait(sec)
+        self.wait(sec, silent)
     def set_queryfile(self, queryfile):
         """
         Sets the name of a query file of the experiment.

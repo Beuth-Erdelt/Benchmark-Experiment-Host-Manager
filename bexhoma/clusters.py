@@ -268,29 +268,35 @@ class testbed():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def wait(self, sec):
+    def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        print("Waiting {} s...".format(sec), end="", flush=True)
-        intervals = int(sec)
-        time.sleep(intervals)
-        print("Done waiting {} s".format(sec))
-        #print("Waiting "+str(sec)+"s")
+        #if not silent:
+        #    print("Waiting "+str(sec)+"s...", end="", flush=True)
         #intervals = int(sec)
-        #intervalLength = 1
-        #for i in tqdm(range(intervals)):
-        #    time.sleep(intervalLength)
-    def delay(self, sec):
+        #time.sleep(intervals)
+        #if not silent:
+        #    print("done")
+        intervals = int(sec)
+        for x in [1]:
+            if not silent:
+                print('wait {}s'.format(intervals), end='\r')
+            time.sleep(intervals)
+        if not silent:
+            print("")
+    def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        self.wait(sec)
+        self.wait(sec, silent)
     def delete_deployment(self, deployment):
         """
         Delete a deployment given by name.

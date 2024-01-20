@@ -24,6 +24,10 @@ SET GLOBAL innodb_flush_log_at_trx_commit =0;
 -- the server performs a DNS lookup every time a client connects
 -- SET GLOBAL host_cache_size=0
 
+-- Defines the amount of disk space occupied by redo log files.
+-- SET GLOBAL innodb_redo_log_capacity=1073741824
+
+
 CREATE DATABASE tpch;
 
 -- sccsid:     @(#)dss.ddl  2.1.8.1

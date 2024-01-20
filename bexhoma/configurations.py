@@ -200,20 +200,22 @@ class default():
         :param sec: Number of seconds to wait
         :param silent: True means we do not output anything about this waiting
         """
-        if not silent:
-            print("Waiting "+str(sec)+"s...", end="", flush=True)
-        intervals = int(sec)
-        time.sleep(intervals)
-        if not silent:
-            print("done")
-    def delay(self, sec):
+        #if not silent:
+        #    print("Waiting "+str(sec)+"s...", end="", flush=True)
+        #intervals = int(sec)
+        #time.sleep(intervals)
+        #if not silent:
+        #    print("done")
+        return self.experiment.cluster(sec, silent)
+    def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        self.wait(sec)
+        self.wait(sec, silent)
     def OLD_get_items(self, app='', component='', experiment='', configuration=''):
         if len(app) == 0:
             app = self.experiment.cluster.appname
