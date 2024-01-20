@@ -19,6 +19,7 @@ RUN apt-get update
 RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
+RUN dpkg-reconfigure locales
 
 ENV NUM_PODS=4
 ENV CHILD=1
