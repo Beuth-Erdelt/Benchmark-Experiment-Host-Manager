@@ -101,14 +101,6 @@ options:
                         recreate parameter for randomized queries
 ```
 
-The hardware requirements are set via
-```
-# pick hardware
-cpu = str(args.request_cpu)
-memory = str(args.request_ram)
-cpu_type = str(args.request_cpu_type)
-```
-
 ## Evaluate Results in Dashboard
 
 Evaluation is done using DBMSBenchmarker: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.html
