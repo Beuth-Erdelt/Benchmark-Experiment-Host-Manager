@@ -10,7 +10,21 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
-Example: `python tpch.py -dt -nlp 8 -sf 1 -ii -ic -is run`
+Example: `python tpch.py -dt -nlp 8 -nlt 16 -sf 1 -ii -ic -is run`
+
+This
+* starts a clean instance of PostgreSQL, MonetDB, MySQL each
+  * data directory inside a Docker container
+* creates TPC-H schema in each database
+* starts 8 loader pods per DBMS
+  * with a data generator (init) container each
+    * each generating a portion of TPC-H data of scaling factor 1
+    * storing the data in a distributed filesystem (shared disk)
+    * if data is already present: do nothing
+  * with a loading container each
+    * importing TPC-H data from the distributed filesystem
+    * MySQL: only one pod active and it loads with 16 threads
+* after ingestion: create contraints, indexes and updates table statistics in each DBMS
 
 ### Status
 
@@ -18,7 +32,7 @@ Example: `python tpch.py -dt -nlp 8 -sf 1 -ii -ic -is run`
 | 1705608513       | sut          |   loaded [s] | worker   | maintaining   | loading                  | monitoring   | benchmarker   |
 |------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
 | MonetDB-BHT-8    | (1. Running) |       129.92 |          |               |                          |              | (1. Running)  |
-| MySQL-BHT-8-1    | (1. Running) |         5.31 |          |               | (8 Running)              |              |               |
+| MySQL-BHT-8-16   | (1. Running) |         5.31 |          |               | (8 Running)              |              |               |
 | PostgreSQL-BHT-8 | (1. Running) |         0.46 |          |               | (5 Succeeded)(3 Running) |              |               |
 ```
 
