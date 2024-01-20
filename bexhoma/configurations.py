@@ -871,7 +871,7 @@ scrape_configs:
             print(pod, status)
             #if status == "Running":
             # TODO: Find names of containers dynamically
-            containers = self.experiment.cluster.get_pod_containers()
+            containers = self.experiment.cluster.get_pod_containers(pod)
             container = 'datagenerator'
             stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
             #stdin, stdout, stderr = self.pod_log(client_pod_name)
@@ -2243,7 +2243,7 @@ scrape_configs:
                     status = self.experiment.cluster.get_pod_status(pod)
                     self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
                     if status == "Succeeded":
-                        containers = self.experiment.cluster.get_pod_containers()
+                        containers = self.experiment.cluster.get_pod_containers(pod)
                         container = 'datagenerator'
                         if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
                             self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
@@ -2278,7 +2278,7 @@ scrape_configs:
                         self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
                         #if status == "Running":
                         # TODO: Find names of containers dynamically
-                        containers = self.experiment.cluster.get_pod_containers()
+                        containers = self.experiment.cluster.get_pod_containers(pod)
                         container = 'datagenerator'
                         self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         container = 'sensor'
