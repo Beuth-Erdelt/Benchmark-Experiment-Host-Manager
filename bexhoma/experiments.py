@@ -736,7 +736,7 @@ class default():
                     #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
                         if not config.sut_is_pending():
-                            print("{:30s}: is not running yet - ".format(config.configuration))#, end="", flush=True)
+                            print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
                             if self.cluster.max_sut is not None or self.max_sut is not None:
                                 we_can_start_new_sut = True
                                 if self.max_sut is not None:

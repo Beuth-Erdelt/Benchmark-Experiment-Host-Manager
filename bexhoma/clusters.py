@@ -286,8 +286,8 @@ class testbed():
             if not silent:
                 print('wait {}s'.format(intervals), end='\r')
             time.sleep(intervals)
-        if not silent:
-            print("")
+        #if not silent:
+        #    print("")
     def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
