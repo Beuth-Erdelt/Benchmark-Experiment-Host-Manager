@@ -206,7 +206,7 @@ class default():
         #time.sleep(intervals)
         #if not silent:
         #    print("done")
-        return self.experiment.cluster(sec, silent)
+        return self.experiment.cluster.wait(sec, silent)
     def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
