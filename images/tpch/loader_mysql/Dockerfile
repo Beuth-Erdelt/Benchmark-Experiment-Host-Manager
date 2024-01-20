@@ -16,10 +16,10 @@ RUN dpkg -i mysql-shell_8.0.36-1debian12_amd64.deb
 RUN apt-get install mysql-shell -y
 RUN apt-get update
 
-RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
-RUN apt-get install -y debconf
+#RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+#RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+#RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
+RUN apt-get install -y locales
 RUN dpkg-reconfigure locales
 
 ENV NUM_PODS=4
@@ -46,3 +46,5 @@ RUN ["chmod", "+x", "/tmp/loader.sh"]
 
 CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
 #CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
+
+
