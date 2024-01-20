@@ -993,12 +993,13 @@ class testbed():
         output = self.kubectl(fullcommand)
         print("get_pod_containers", output)
         containers = output.split(" ")
-        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initcontainers[*].name}'"
+        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initContainers[*].name}'"
         print(fullcommand)
         output = self.kubectl(fullcommand)
         print("get_pod_containers", output)
-        initcontainers = output.split(" ")
-        return containers + initcontainers
+        initContainers = output.split(" ")
+        print("Pod {} has container {}".format(pod, containers + initContainers))
+        return containers + initContainers
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
