@@ -1111,7 +1111,7 @@ class default():
                             #print(c['name'])
                             if c['name'] == config.connection:
                                 config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
-                                print(c['name'], "found and updated times:", config.benchmarking_timespans)
+                                print("{:30s}: found and updated times {}".format(c['name'], config.benchmarking_timespans))
                                 break
                         #print(config.benchmark.connections)
                         with open(connectionfile, 'w') as f:

@@ -1249,7 +1249,7 @@ class testbed():
             self.logger.debug('testbed.dashboard_is_running()=exists')
             #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
+            print("{:30s}: {} in pod {}".format("Dashboard", status, pod_dashboard))
             if status == "Running":
                 self.logger.debug('testbed.dashboard_is_running() is running')
                 return True
