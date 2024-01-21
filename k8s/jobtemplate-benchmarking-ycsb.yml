@@ -44,15 +44,15 @@ spec:
         resources:
           #limits: {cpu: 8000m, memory: 16Gi}
           #requests: {cpu: 8000m, memory: 16Gi}
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
+        #securityContext:                       # workload_test: Read-only file system
+        #  allowPrivilegeEscalation: false
+        #  runAsNonRoot: true
+        #  runAsUser: 1000
+        #  runAsGroup: 1000
+        #  capabilities:
+        #    drop:
+        #      - ALL
+        #  readOnlyRootFilesystem: true
         volumeMounts:
       restartPolicy: Never
       volumes:

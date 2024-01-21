@@ -981,6 +981,25 @@ class testbed():
         #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
         return output
+    def get_pod_containers(self, pod):
+        """
+        Return all containers and initcontainers of a pod
+
+        :param pod: name of the pod
+        :return: list of names of (init)containers
+        """
+        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.containers[*].name}'"
+        #print(fullcommand)
+        output = self.kubectl(fullcommand)
+        #print("get_pod_containers", output)
+        containers = output.split(" ")
+        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initContainers[*].name}'"
+        #print(fullcommand)
+        output = self.kubectl(fullcommand)
+        #print("get_pod_containers", output)
+        initContainers = output.split(" ")
+        self.logger.debug("Pod {} has container {}".format(pod, containers + initContainers))
+        return containers + initContainers
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))

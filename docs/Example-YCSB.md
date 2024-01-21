@@ -1,32 +1,32 @@
-# Example: TPC-H
+# Example: YCSB
 
-This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MonetDB and PostgreSQL.
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-> The query file is derived from the TPC-H and as such is not comparable to published TPC-H results, as the query file results do not comply with the TPC-H Specification.
-
-Official TPC-H benchmark - http://www.tpc.org/tpch
+References:
+1. https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 
 ## Perform Benchmark
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python tpch.py -dt -nlp 8 -nlt 16 -sf 1 -ii -ic -is run`
+Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL each
-  * data directory inside a Docker container
-* creates TPC-H schema in each database
-* starts 8 loader pods per DBMS
-  * with a data generator (init) container each
-    * each generating a portion of TPC-H data of scaling factor 1
-    * storing the data in a distributed filesystem (shared disk)
-    * if data is already present: do nothing
-  * with a loading container each
-    * importing TPC-H data from the distributed filesystem
-    * MySQL: only one pod active and it loads with 16 threads
-* creates contraints and indexes and updates table statistics in each DBMS after ingestion
-* runs 1 stream of TPC-H queries per DBMS
-  * all DBMS use the same parameters
+* loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
+  * starts a clean instance of PostgreSQL
+    * data directory inside a Docker container
+  * creates YCSB schema in each database
+  * starts `n` loader pods per DBMS
+    * with a loading container each
+      * threads = 64/`n`
+      * target throughput is `t` * 16384
+      * generates YCSB data = 1.000.000 rows
+      * imports it into the DBMS
+  * runs 1 stream of YCSB queries per DBMS
+    * 1.000.000 operations
+    * workload A = 50% read / 50% write
+    * target throughput is `t` * 16384
+  * with a maximum of 1 DBMS per time
 * shows a summary
 
 ### Status
@@ -34,12 +34,11 @@ This
 You can watch the status while benchmark is running via `bexperiments status`
 
 ```
-| 1705608513       | sut          |   loaded [s] | worker   | maintaining   | loading                  | monitoring   | benchmarker   |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
-| MonetDB-BHT-8    | (1. Running) |       129.92 |          |               |                          |              | (1. Running)  |
-| MySQL-BHT-8-16   | (1. Running) |         5.31 |          |               | (8 Running)              |              |               |
-| PostgreSQL-BHT-8 | (1. Running) |         0.46 |          |               | (5 Succeeded)(3 Running) |              |               |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
+|-----------------------|--------------|--------------|----------|---------------|-----------|--------------|---------------|
+| 1705792604            | sut          |   loaded [s] | worker   | maintaining   | loading   | monitoring   | benchmarker   |
+|=======================|==============|==============|==========|===============|===========|==============|===============|
+| PostgreSQL-64-8-98304 | (1. Running) |         2.02 |          |               |           | (Running)    |               |
+|-----------------------|--------------|--------------|----------|---------------|-----------|--------------|---------------|
 ```
 
 
@@ -162,14 +161,6 @@ Q20           81.822519          304.060695            345.359304
 Q21          872.301944         6716.680256            564.431586
 Q22           52.956324          233.065151            150.500087
 ```
-Detailed evaluations can be done using DBMSBenchmarker
-* [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
-* [Jupyter Notebooks](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
-
-You can connect to an evaluation server by `bexperiments dashboard`.
-This forwards ports, so you have
-* a dashboard in browser at http://localhost:8050
-* a Jupyter notebook server at http://localhost:8888
 
 
 ## Adjust Parameter
@@ -180,42 +171,41 @@ The YAML manifests for the components can be found in https://github.com/Beuth-E
 
 ### SQL Scrips
 
-The SQL scripts for pre and post ingestion can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch
+The SQL scripts for pre and post ingestion can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb
 
 ### Dockerfiles
 
-The Dockerfiles for the components can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/tpch
+The Dockerfiles for the components can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/ycsb
 
 ### Command line
 
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```
-usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS]
-               [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME]
-               [-tr] [-ii] [-ic] [-is] [-rcp RECREATE_PARAMETER]
-               {profiling,run,start,load,empty}
+usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING]
+               [-nlp NUM_LOADING_PODS] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS] [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE]
+               [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
+               {run,start,load}
 
-Performs a TPC-H loading experiment. Data is generated and imported into a DBMS from a distributed filesystem.
+Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*100,000. Optionally monitoring is activated.
 
 positional arguments:
-  {profiling,run,start,load,empty}
-                        profile the import or run the TPC-H queries
+  {run,start,load}      import YCSB data or run YCSB queries
 
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
   -dbms {PostgreSQL,MonetDB,SingleStore,CockroachDB,MySQL,MariaDB,YugabyteDB,Kinetica}
                         DBMS to load the data
-  -lit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
-                        limit import to one table, name of this table
+  -workload {a,b,c,d,e,f}
+                        YCSB default workload
   -db, --debug          dump debug informations
   -cx CONTEXT, --context CONTEXT
                         context of Kubernetes (for a multi cluster environment), default is current context
   -e EXPERIMENT, --experiment EXPERIMENT
                         sets experiment code for continuing started experiment
   -d, --detached        puts most of the experiment workflow inside the cluster
-  -m, --monitoring      activates monitoring
+  -m, --monitoring      activates monitoring for sut
   -mc, --monitoring-cluster
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
@@ -229,14 +219,22 @@ options:
                         number of runs per configuration
   -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
                         comma separated list of number of parallel clients
-  -nls NUM_LOADING_SPLIT, --num-loading-split NUM_LOADING_SPLIT
-                        portion of loaders that should run in parallel
+  -nl NUM_LOADING, --num-loading NUM_LOADING
+                        number of parallel loaders per configuration
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
-  -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
-                        total number of threads per loading process
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
-                        scaling factor (SF)
+                        scaling factor (SF) = number of rows in millions
+  -sfo SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
+                        scaling factor (SF) = number of operations in millions (=SF if not set)
+  -su SCALING_USERS, --scaling-users SCALING_USERS
+                        scaling factor = number of total threads
+  -sbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
+                        batch size
+  -ltf LIST_TARGET_FACTORS, --list-target-factors LIST_TARGET_FACTORS
+                        comma separated list of factors of 16384 ops as target - default range(1,9)
+  -tb TARGET_BASE, --target-base TARGET_BASE
+                        ops as target, base for factors - default 16384 = 2**14
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
   -rr REQUEST_RAM, --request-ram REQUEST_RAM
@@ -255,14 +253,12 @@ options:
                         request persistent storage of certain size
   -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
                         request a specific node
+  -rnl REQUEST_NODE_LOADING, --request-node-loading REQUEST_NODE_LOADING
+                        request a specific node
+  -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
+                        request a specific node
   -tr, --test-result    test if result fulfills some basic requirements
-  -ii, --init-indexes   adds indexes to tables after ingestion
-  -ic, --init-constraints
-                        adds constraints to tables after ingestion
-  -is, --init-statistics
-                        recomputes statistics of tables after ingestion
-  -rcp RECREATE_PARAMETER, --recreate-parameter RECREATE_PARAMETER
-                        recreate parameter for randomized queries
+
 ```
 
 ## Monitoring

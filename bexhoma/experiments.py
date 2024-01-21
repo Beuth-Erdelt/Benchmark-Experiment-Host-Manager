@@ -554,6 +554,10 @@ class default():
         filename = 'protocol.json'
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
+        # download complete result folder of experiment from pod
+        # this includes all measures like times and monitoring data
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
         ############ HammerDB
         #self.path = "/home/perdelt/benchmarks/1668286639/"
         directory = os.fsencode(self.path)
@@ -740,12 +744,13 @@ class default():
                             if self.cluster.max_sut is not None or self.max_sut is not None:
                                 we_can_start_new_sut = True
                                 if self.max_sut is not None:
-                                    print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                    #print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                    print("{:30s}: {} running and {} pending pods: max is {} pods".format("Experiment", num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
                                     if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
                                         print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if self.cluster.max_sut is not None:
-                                    print("In cluster: {} running and {} pending pods: max is {} pods".format(num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+                                    print("{:30s}: {} running and {} pending pods: max is {} pods".format("Cluster", num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
                                     if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
                                         print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
@@ -1156,6 +1161,9 @@ class default():
         """
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
         self.evaluator.end_loading(jobname)
+    def show_summary(self):
+        self.cluster.logger.debug('default.show_summary()')
+        pass
 
 
 
@@ -1254,6 +1262,46 @@ class tpch(default):
         self.set_queryfile('queries-tpch.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
+    def show_summary(self):
+        self.cluster.logger.debug('tpch.show_summary()')
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluate = inspector.inspector(resultfolder)
+        evaluate.load_experiment(code=code, silent=False)
+        print("### Errors")
+        print(evaluate.get_total_errors().T)
+        print("### Warnings")
+        print(evaluate.get_total_warnings().T)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
+        print("### Geometric Mean of Medians of Timer Run [s]")
+        print(df.round(2).T)
+        times = {}
+        for c, connection in evaluate.benchmarks.dbms.items():
+            print(c)
+            times[c]={}
+            #evaluator.pretty(connection.connectiondata)
+            #connection.connectiondata['hostsystem']
+            #connection.connectiondata
+            #connection.connectiondata['hostsystem']['loading_timespans']['sensor']
+            #print(connection.connectiondata['timeLoad'])
+            if 'timeGenerate' in connection.connectiondata:
+                times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
+            if 'timeIngesting' in connection.connectiondata:
+                times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
+            if 'timeSchema' in connection.connectiondata:
+                times[c]['timeSchema'] = connection.connectiondata['timeSchema']
+            if 'timeIndex' in connection.connectiondata:
+                times[c]['timeIndex'] = connection.connectiondata['timeIndex']
+            if 'timeLoad' in connection.connectiondata:
+                times[c]['timeLoad'] = connection.connectiondata['timeLoad']
+        print("### Loading [s]")
+        df = pd.DataFrame(times)
+        print(df.round(2))
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index().T
+        print("### Latency of Timer Execution [ms]")
+        print(df)
+        #timespan_load = max([end for (start,end) in c['hostsystem']['loading_timespans']['sensor']]) - min([start for (start,end) in c['hostsystem']['loading_timespans']['sensor']])
 
 
 """

@@ -871,21 +871,24 @@ scrape_configs:
             print(pod, status)
             #if status == "Running":
             # TODO: Find names of containers dynamically
+            containers = self.experiment.cluster.get_pod_containers(pod)
             container = 'datagenerator'
-            stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
-            #stdin, stdout, stderr = self.pod_log(client_pod_name)
-            filename_log = self.path+'/'+pod+'.'+container+'.log'
-            f = open(filename_log, "w")
-            f.write(stdout)
-            f.close()
+            if container in containers:
+                stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
+                #stdin, stdout, stderr = self.pod_log(client_pod_name)
+                filename_log = self.path+'/'+pod+'.'+container+'.log'
+                f = open(filename_log, "w")
+                f.write(stdout)
+                f.close()
             #
             container = 'sensor'
-            stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
-            #stdin, stdout, stderr = self.pod_log(client_pod_name)
-            filename_log = self.path+'/'+pod+'.'+container+'.log'
-            f = open(filename_log, "w")
-            f.write(stdout)
-            f.close()
+            if container in containers:
+                stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
+                #stdin, stdout, stderr = self.pod_log(client_pod_name)
+                filename_log = self.path+'/'+pod+'.'+container+'.log'
+                f = open(filename_log, "w")
+                f.write(stdout)
+                f.close()
             self.experiment.cluster.delete_pod(pod)
     def stop_loading(self, app='', component='loading', experiment='', configuration=''):
         """
@@ -2242,13 +2245,16 @@ scrape_configs:
                     status = self.experiment.cluster.get_pod_status(pod)
                     self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
                     if status == "Succeeded":
+                        containers = self.experiment.cluster.get_pod_containers(pod)
                         container = 'datagenerator'
-                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
-                            self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
-                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if container in containers:
+                            if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                                self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
+                                self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         container = 'sensor'
-                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
-                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if container in containers:
+                            if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                                self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # get labels (start) of sut
@@ -2276,11 +2282,14 @@ scrape_configs:
                         self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
                         #if status == "Running":
                         # TODO: Find names of containers dynamically
+                        containers = self.experiment.cluster.get_pod_containers(pod)
                         container = 'datagenerator'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if container in containers:
+                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         container = 'sensor'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        self.experiment.cluster.delete_pod(pod)
+                        if container in containers:
+                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                            self.experiment.cluster.delete_pod(pod)
                     self.experiment.end_loading(job)
                     self.experiment.cluster.delete_job(job)
                     loading_pods_active = False
