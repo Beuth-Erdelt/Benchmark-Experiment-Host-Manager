@@ -736,6 +736,16 @@ class ycsb(logger):
             #print(df_grp)
             df_aggregated = pd.concat([df_aggregated, df_grp])
         return df_aggregated
+    def get_df_loading(self):
+        """
+        Returns the DataFrame that containts all information about the loading phase.
+
+        :return: DataFrame of loading results
+        """
+        filename = "bexhoma-loading.all.df.pickle"
+        df = pd.read_pickle(self.path+"/"+filename)
+        #df#.sort_values(["configuration", "pod"])
+        return df
 
 
 

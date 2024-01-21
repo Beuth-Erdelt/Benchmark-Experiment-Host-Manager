@@ -1913,6 +1913,15 @@ class ycsb(default):
         #print("### All DataFrames ###")
         #print(dfs)
         return dfs
+    def show_summary(self):
+        print('ycsb.show_summary()')
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        df = evaluation.get_df_loading()
+        df = df.sort_values(['configuration','experiment_run','client'])
+        df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+        print(df.T)
 
 
 
