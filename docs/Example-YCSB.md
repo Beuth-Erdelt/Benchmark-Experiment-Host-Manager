@@ -42,7 +42,7 @@ You can watch the status while benchmark is running via `bexperiments status`
 ```
 
 
-### Evaluate Results in Dashboard
+### Evaluate Results
 
 At the end of a benchmark you will see a summary like that
 
@@ -263,4 +263,4 @@ options:
 
 ## Monitoring
 
-[monitoring](Monitoring.html)
+[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
