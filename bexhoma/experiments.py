@@ -1618,7 +1618,7 @@ class ycsb(default):
         df = evaluation.get_df_loading()
         df = df.sort_values(['configuration','experiment_run','client'])
         df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
-        print(df.T)
+        print(df)
 
 
 
