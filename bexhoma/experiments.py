@@ -964,6 +964,8 @@ class default():
 
         :param list_clients: List of (number of) benchmarker instances
         """
+        print("benchmark_list() DEPRECATED")
+        exit()
         for i, parallelism in enumerate(list_clients):
             client = str(i+1)
             for config in self.configurations:
@@ -1632,6 +1634,9 @@ class ycsb(default):
         print('ycsb.show_summary()')
         pd.set_option("display.max_rows", None)
         pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         evaluation = evaluators.ycsb(code=code, path=resultfolder)

@@ -144,7 +144,7 @@ class logger(base):
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
                 #print(filename)
                 df = self.log_to_df(path+"/"+filename)
                 #print(df)
@@ -223,11 +223,11 @@ class logger(base):
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
                 #print("filename:", filename)
                 pod_name = filename[filename.rindex("-")+1:-len(".log")]
                 #print("pod_name:", pod_name)
-                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".log")]
+                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
                 #print("jobname:", jobname)
                 self.end_benchmarking(jobname)
     def transform_all_logs_loading(self):
