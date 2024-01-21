@@ -149,6 +149,12 @@ if __name__ == '__main__':
             info = 'This imports YCSB data sets.',
             defaultParameters = {'SF': SF}
         )
+    if monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
+    else:
+        # we want to just run the queries
+        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
@@ -247,8 +253,8 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="threads-split",
-        experiment_design="1-2",
+        usecase="ycsb",
+        experiment_design="compare-scaleout",
         ROWS=ycsb_rows,
         OPERATIONS=ycsb_operations,
         workload=args.workload,
