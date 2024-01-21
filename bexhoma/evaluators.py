@@ -615,8 +615,8 @@ class ycsb(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
@@ -722,8 +722,8 @@ class ycsb(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             #dict_grp['pod_count'] = grp['pod_count'][0]
@@ -736,6 +736,16 @@ class ycsb(logger):
             #print(df_grp)
             df_aggregated = pd.concat([df_aggregated, df_grp])
         return df_aggregated
+    def get_df_loading(self):
+        """
+        Returns the DataFrame that containts all information about the loading phase.
+
+        :return: DataFrame of loading results
+        """
+        filename = "bexhoma-loading.all.df.pickle"
+        df = pd.read_pickle(self.path+"/"+filename)
+        #df#.sort_values(["configuration", "pod"])
+        return df
 
 
 

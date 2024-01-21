@@ -1,5 +1,7 @@
 # Example: TPC-H
 
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
+
 This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MonetDB and PostgreSQL.
 
 > The query file is derived from the TPC-H and as such is not comparable to published TPC-H results, as the query file results do not comply with the TPC-H Specification.
@@ -43,7 +45,7 @@ You can watch the status while benchmark is running via `bexperiments status`
 ```
 
 
-### Evaluate Results in Dashboard
+### Evaluate Results
 
 At the end of a benchmark you will see a summary like that
 
@@ -267,4 +269,4 @@ options:
 
 ## Monitoring
 
-[monitoring](Monitoring.html)
+[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).

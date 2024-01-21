@@ -13,7 +13,7 @@ import argparse
 import time
 from timeit import default_timer
 import datetime
-
+import pandas as pd
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor (SF) = number of operations in millions (=SF if not set)', default=None)
     parser.add_argument('-su', '--scaling-users', help='scaling factor = number of total threads', default=64)
     parser.add_argument('-sbs', '--scaling-batchsize', help='batch size', default="")
-    parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
+    parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="4,6,8")
     parser.add_argument('-tb', '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
@@ -565,6 +565,7 @@ if __name__ == '__main__':
             if test_result_code == 0:
                 print("Test successful!")
         cluster.restart_dashboard()
-        #cluster.stop_dashboard()
-        #cluster.start_dashboard()
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        experiment.show_summary()
 exit()

@@ -9,7 +9,7 @@ References:
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`
+Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`
 
 This
 * loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
@@ -27,6 +27,7 @@ This
     * workload A = 50% read / 50% write
     * target throughput is `t` * 16384
   * with a maximum of 1 DBMS per time
+* tests if results match workflow
 * shows a summary
 
 ### Status
@@ -42,7 +43,7 @@ You can watch the status while benchmark is running via `bexperiments status`
 ```
 
 
-### Evaluate Results in Dashboard
+### Evaluate Results
 
 At the end of a benchmark you will see a summary like that
 
@@ -263,4 +264,4 @@ options:
 
 ## Monitoring
 
-[monitoring](Monitoring.html)
+[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
