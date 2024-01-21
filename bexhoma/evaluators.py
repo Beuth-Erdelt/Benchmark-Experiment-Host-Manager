@@ -421,6 +421,13 @@ class ycsb(logger):
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
+            operations = re.findall('OPERATIONS (.+?)\n', stdout)[0]
+            batchsize = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
+            if len(batchsize)>0:
+                # information found
+                batchsize = int(batchsize[0])
+            else:
+                batchsize = -1
             #workload = "A"
             pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
             result = []
@@ -445,7 +452,7 @@ class ycsb(logger):
             #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
-            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload']
+            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize']
             columns.extend(list_columns)
             #print(columns)
             df.columns = columns
