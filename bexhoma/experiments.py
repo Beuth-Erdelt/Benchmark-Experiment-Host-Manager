@@ -539,6 +539,8 @@ class default():
         self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
         print("done!")
         # download evaluation cubes
+        #print("{:30s}: downloading partial results".format("Experiment"))
+        #print("{:30s}: uploading full results".format("Experiment"))
         filename = 'evaluation.json'
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
@@ -1605,8 +1607,10 @@ class ycsb(default):
         #self.logger.debug('copy config connections.config: {}'.format(stdout))
         #cmd['upload_config'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/connections.config', from_file=self.path+"/connections.config")
         #self.cluster.kubectl(cmd['upload_config'])
+        print("{:30s}: downloading partial results".format("Experiment"))
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
@@ -1615,11 +1619,27 @@ class ycsb(default):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        print("### Loading")
         df = evaluation.get_df_loading()
         df = df.sort_values(['configuration','experiment_run','client'])
         df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
-        print(df)
-
+        df_plot = evaluation.loading_set_datatypes(df)
+        df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+        df_aggregated.sort_values(['target','pod_count'], inplace=True)
+        df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+        print(df_aggregated)
+        print("### Execution")
+        df = evaluation.get_df_benchmarking()
+        df.fillna(0, inplace=True)
+        df_plot = evaluation.benchmarking_set_datatypes(df)
+        df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+        df_aggregated.sort_values(['target','pod_count'], inplace=True)
+        df_aggregated_reduced = df_aggregated[["threads","target","pod_count"]].copy()
+        columns = ["[OVERALL].Throughput(ops/sec)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+        for col in columns:
+            if col in df_aggregated.columns:
+                df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+        print(df_aggregated_reduced)
 
 
 """
