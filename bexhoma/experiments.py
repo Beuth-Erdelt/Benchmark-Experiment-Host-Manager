@@ -1626,7 +1626,7 @@ class ycsb(default):
         df_plot = evaluation.loading_set_datatypes(df)
         df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
         df_aggregated.sort_values(['target','pod_count'], inplace=True)
-        df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+        df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
         print(df_aggregated)
         print("### Execution")
         df = evaluation.get_df_benchmarking()
@@ -1635,7 +1635,7 @@ class ycsb(default):
         df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
         df_aggregated.sort_values(['target','pod_count'], inplace=True)
         df_aggregated_reduced = df_aggregated[["threads","target","pod_count"]].copy()
-        columns = ["[OVERALL].Throughput(ops/sec)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+        columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
         for col in columns:
             if col in df_aggregated.columns:
                 df_aggregated_reduced[col] = df_aggregated.loc[:,col]
