@@ -66,8 +66,21 @@ PostgreSQL-64-1-131072-1       64  131072          1                  111234.705
 PostgreSQL-64-8-131072-1       64  131072          8                  119665.556799                 8648.0            500301                          1625.000              499699                            3476.500
 ```
 
+Detailed evaluations can be done using
+* [Jupyter Notebooks](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
 
-## Adjust Parameter
+You can connect to an evaluation server by `bexperiments dashboard`.
+This forwards ports, so you have
+* a Jupyter notebook server at http://localhost:8888
+
+## Adjust Parameters
+
+The script supports
+* exact repetitions for statistical confidence
+* variations to scan a large parameters space
+* combine results for easy evaluation
+
+There are various ways to change parameters.
 
 ### Manifests
 

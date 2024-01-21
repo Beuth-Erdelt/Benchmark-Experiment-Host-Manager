@@ -164,6 +164,7 @@ Q20           81.822519          304.060695            345.359304
 Q21          872.301944         6716.680256            564.431586
 Q22           52.956324          233.065151            150.500087
 ```
+
 Detailed evaluations can be done using DBMSBenchmarker
 * [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
 * [Jupyter Notebooks](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
@@ -174,7 +175,14 @@ This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 
 
-## Adjust Parameter
+## Adjust Parameters
+
+The script supports
+* exact repetitions for statistical confidence
+* variations to scan a large parameters space
+* combine results for easy evaluation
+
+There are various ways to change parameters.
 
 ### Manifests
 
