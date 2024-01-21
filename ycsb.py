@@ -547,14 +547,16 @@ if __name__ == '__main__':
         # total time of experiment
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
-        print("Experiment starts at {} ({})".format(start_datetime, start))
+        #print("Experiment starts at {} ({})".format(start_datetime, start))
+        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment
         end = default_timer()
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
-        print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+        #print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
         ##################
         experiment.evaluate_results()
         experiment.stop_benchmarker()

@@ -180,7 +180,7 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 
 ### Command line
 
-You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
+You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
 ```
 usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING]

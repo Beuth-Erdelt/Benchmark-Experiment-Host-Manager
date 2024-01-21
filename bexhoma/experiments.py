@@ -1623,6 +1623,7 @@ class ycsb(default):
         df = evaluation.get_df_loading()
         df = df.sort_values(['configuration','experiment_run','client'])
         df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+        print(df)
         df_plot = evaluation.loading_set_datatypes(df)
         df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
         df_aggregated.sort_values(['target','pod_count'], inplace=True)
@@ -1631,6 +1632,7 @@ class ycsb(default):
         print("### Execution")
         df = evaluation.get_df_benchmarking()
         df.fillna(0, inplace=True)
+        print(df)
         df_plot = evaluation.benchmarking_set_datatypes(df)
         df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
         df_aggregated.sort_values(['target','pod_count'], inplace=True)
