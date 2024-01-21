@@ -742,19 +742,21 @@ class default():
                     #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
                         if not config.sut_is_pending():
-                            print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
+                            #print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
                             if self.cluster.max_sut is not None or self.max_sut is not None:
                                 we_can_start_new_sut = True
                                 if self.max_sut is not None:
                                     #print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                    print("{:30s}: {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
                                     if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
-                                        print("{:30s}: has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                        #print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if self.cluster.max_sut is not None:
-                                    print("{:30s}: {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
                                     if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
-                                        print("{:30s}: has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+                                        #print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if we_can_start_new_sut:
                                     print("{:30s}: will start now".format(config.configuration))
