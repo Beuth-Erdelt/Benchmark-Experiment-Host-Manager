@@ -441,7 +441,7 @@ class ycsb(logger):
             #print(result)
             #return
             list_columns = [value[0]+"."+value[1] for value in result]
-            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload]
+            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize]
             list_measures = [value[2] for value in result]
             #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
             #print(list_columns)
