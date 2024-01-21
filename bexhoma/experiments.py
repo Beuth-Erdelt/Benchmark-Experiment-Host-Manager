@@ -1631,7 +1631,7 @@ class ycsb(default):
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
-        print('ycsb.show_summary()')
+        #print('ycsb.show_summary()')
         pd.set_option("display.max_rows", None)
         pd.set_option('display.max_colwidth', None)
         pd.set_option('display.max_rows', 500)
