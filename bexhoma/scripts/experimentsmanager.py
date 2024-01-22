@@ -36,7 +36,7 @@ def manage():
     print(description)
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard', 'master'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','jupyter','master'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
@@ -83,6 +83,10 @@ def manage():
         sys.argv.remove('localdashboard')
         from dbmsbenchmarker.scripts import dashboardcli
         dashboardcli.startup()
+    elif args.mode == 'jupyter':
+        import subprocess
+        cmd = ["jupyter","notebook","--notebook-dir","notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
+        subprocess.Popen(cmd)
     elif args.mode == 'master':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_master(experiment=args.experiment, configuration=connection)
@@ -307,11 +311,12 @@ def manage():
             df.index.name = experiment
             #print(df)
             h = [df.index.name] + list(df.columns)
-            # this shows all columns even if empty
-            #print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
-            df_empty = df.eq('')
-            df_short = df.drop(df_empty.columns[df_empty.all()].tolist(), axis=1)
-            h_short = [df_short.index.name] + list(df_short.columns)
-            # this shows only columns with not all empty
-            print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
-
+            if args.verbose:
+                # this shows all columns even if empty
+                print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
+            else:
+                df_empty = df.eq('')
+                df_short = df.drop(df_empty.columns[df_empty.all()].tolist(), axis=1)
+                h_short = [df_short.index.name] + list(df_short.columns)
+                # this shows only columns with not all empty
+                print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
