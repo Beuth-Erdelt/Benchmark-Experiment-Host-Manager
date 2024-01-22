@@ -1284,6 +1284,11 @@ class tpch(default):
         self.set_queryfile('queries-tpch-profiling.config')
     def show_summary(self):
         self.cluster.logger.debug('tpch.show_summary()')
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         evaluate = inspector.inspector(resultfolder)
@@ -1298,7 +1303,7 @@ class tpch(default):
         print(df.round(2).T)
         times = {}
         for c, connection in evaluate.benchmarks.dbms.items():
-            print(c)
+            #print(c)
             times[c]={}
             #evaluator.pretty(connection.connectiondata)
             #connection.connectiondata['hostsystem']
