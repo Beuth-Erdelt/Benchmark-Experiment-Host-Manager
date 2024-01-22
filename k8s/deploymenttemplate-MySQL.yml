@@ -44,8 +44,8 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dbms
-        image: mysql/mysql-server:8.3.0
-        args: ["--innodb-write-io-threads", "64", "--innodb-read-io-threads", "64"]
+        image: mysql:8.3.0
+        #args: ["--innodb-write-io-threads", "64", "--innodb-read-io-threads", "64"]
         #args: ["--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         #args: ["--secure-file-priv", "/data/", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         env:
