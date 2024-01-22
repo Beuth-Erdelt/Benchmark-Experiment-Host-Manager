@@ -37,7 +37,7 @@ WORKDIR /usr/src/app/DBMS-Benchmarker
 
 RUN mkdir /usr/src/app/DBMS-Benchmarker/notebooks
 
-COPY ../../notebooks /usr/src/app/DBMS-Benchmarker/notebooks
+COPY ./notebooks /usr/src/app/DBMS-Benchmarker/notebooks
 
 # RUN git pull
 
