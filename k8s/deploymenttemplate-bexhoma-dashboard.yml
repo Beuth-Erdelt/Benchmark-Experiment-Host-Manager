@@ -63,7 +63,7 @@ spec:
         - {name: MPLCONFIGDIR, value: '/tmp/'}
         #imagePullPolicy: Always
         #command: ["jupyter","notebook","--no-browser", "--NotebookApp.password=\"$(echo 'admin' | python -c 'from notebook.auth import passwd;print(passwd(input()))')\"", "--allow-root"]
-        command: ["jupyter","notebook","--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]
+        command: ["jupyter","notebook","--notebook-dir", "/usr/src/app/DBMS-Benchmarker/notebooks", "--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]
         ports:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter

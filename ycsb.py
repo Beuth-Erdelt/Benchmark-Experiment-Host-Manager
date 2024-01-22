@@ -21,13 +21,14 @@ logging.basicConfig(level=logging.ERROR)
 if __name__ == '__main__':
     description = """Perform YCSB benchmarks in a Kubernetes cluster.
     Number of rows and operations is SF*100,000.
+    This installs a clean copy for each target and split.
     Optionally monitoring is activated.
     """
     # argparse
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'SingleStore', 'CockroachDB', 'MySQL', 'MariaDB', 'YugabyteDB', 'Kinetica'], default='PostgreSQL')
+    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL'], default='PostgreSQL')
     parser.add_argument('-workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='a')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor (SF) = number of operations in millions (=SF if not set)', default=None)
     parser.add_argument('-su', '--scaling-users', help='scaling factor = number of total threads', default=64)
     parser.add_argument('-sbs', '--scaling-batchsize', help='batch size', default="")
-    parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="4,6,8")
+    parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb', '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
@@ -149,6 +150,12 @@ if __name__ == '__main__':
             info = 'This imports YCSB data sets.',
             defaultParameters = {'SF': SF}
         )
+    if monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
+    else:
+        # we want to just run the queries
+        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
@@ -247,8 +254,8 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="threads-split",
-        experiment_design="1-2",
+        usecase="ycsb",
+        experiment_design="compare-scaleout",
         ROWS=ycsb_rows,
         OPERATIONS=ycsb_operations,
         workload=args.workload,
@@ -329,198 +336,6 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                elif args.dbms == "MariaDB":
-                    # MariaDB
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
-                    name_format = 'MariaDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
-                    config.set_loading_parameters(
-                        PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                elif args.dbms == "MonetDB":
-                    # MonetDB
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
-                    name_format = 'MonetDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MonetDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
-                    config.set_loading_parameters(
-                        PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                elif args.dbms == "SingleStore":
-                    # SingleStore
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
-                    name_format = 'SingleStore-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='SingleStore', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
-                    config.set_loading_parameters(
-                        PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                elif args.dbms == "Kinetica":
-                    # Kinetica
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
-                    name_format = 'Kinetica-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='Kinetica', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
-                    config.set_loading_parameters(
-                        PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        #BEXHOMA_HOST = 'bexhoma-worker-0.kinetica-workers', # fixed for worker nodes
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        #BEXHOMA_HOST = 'bexhoma-worker-0.kinetica-workers', # fixed for worker nodes
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                elif args.dbms == "YugabyteDB":
-                    # YugabyteDB
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
-                    name_format = 'YugabyteDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
-                    config.set_loading_parameters(
-                        PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
-                elif args.dbms == "CockroachDB":
-                    # CockroachDB
-                    num_worker = 3
-                    num_worker_replicas = 1
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
-                    name_format = 'CockroachDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D', worker=num_worker)
-                    config.set_loading_parameters(
-                        PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_ddl_parameters(num_replicas=str(num_worker_replicas))
                 config.add_benchmark_list([pods])
     # wait for necessary nodegroups to have planned size
     if aws:
@@ -547,14 +362,16 @@ if __name__ == '__main__':
         # total time of experiment
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
-        print("Experiment starts at {} ({})".format(start_datetime, start))
+        #print("Experiment starts at {} ({})".format(start_datetime, start))
+        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment
         end = default_timer()
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
-        print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+        #print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
         ##################
         experiment.evaluate_results()
         experiment.stop_benchmarker()
@@ -564,8 +381,6 @@ if __name__ == '__main__':
             test_result_code = experiment.test_results()
             if test_result_code == 0:
                 print("Test successful!")
-        cluster.restart_dashboard()
-        pd.set_option("display.max_rows", None)
-        pd.set_option('display.max_colwidth', None)
+        #cluster.restart_dashboard()        # only for dbmsbenchmarker because of dashboard. Jupyter server does not need to restart
         experiment.show_summary()
 exit()

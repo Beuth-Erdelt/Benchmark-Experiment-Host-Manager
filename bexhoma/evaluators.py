@@ -144,7 +144,7 @@ class logger(base):
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
                 #print(filename)
                 df = self.log_to_df(path+"/"+filename)
                 #print(df)
@@ -223,11 +223,11 @@ class logger(base):
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
                 #print("filename:", filename)
                 pod_name = filename[filename.rindex("-")+1:-len(".log")]
                 #print("pod_name:", pod_name)
-                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".log")]
+                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
                 #print("jobname:", jobname)
                 self.end_benchmarking(jobname)
     def transform_all_logs_loading(self):
@@ -421,6 +421,13 @@ class ycsb(logger):
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
+            operations = re.findall('OPERATIONS (.+?)\n', stdout)[0]
+            batchsize = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
+            if len(batchsize)>0:
+                # information found
+                batchsize = int(batchsize[0])
+            else:
+                batchsize = -1
             #workload = "A"
             pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
             result = []
@@ -434,7 +441,7 @@ class ycsb(logger):
             #print(result)
             #return
             list_columns = [value[0]+"."+value[1] for value in result]
-            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload]
+            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize]
             list_measures = [value[2] for value in result]
             #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
             #print(list_columns)
@@ -445,7 +452,7 @@ class ycsb(logger):
             #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
-            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload']
+            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize']
             columns.extend(list_columns)
             #print(columns)
             df.columns = columns

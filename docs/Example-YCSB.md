@@ -45,126 +45,62 @@ You can watch the status while benchmark is running via `bexperiments status`
 
 ### Evaluate Results
 
-At the end of a benchmark you will see a summary like that
+At the end of a benchmark you will see a summary like
 
 ```
-Connections:
-MonetDB-BHT-8-1-1
-MySQL-BHT-8-16-1-1
-PostgreSQL-BHT-8-1-1
-Queries:
-0: Q1 = Pricing Summary Report (TPC-H Q1)
-1: Q2 = Minimum Cost Supplier Query (TPC-H Q2)
-2: Q3 = Shipping Priority (TPC-H Q3)
-3: Q4 = Order Priority Checking Query (TPC-H Q4)
-4: Q5 = Local Supplier Volume (TPC-H Q5)
-5: Q6 = Forecasting Revenue Change (TPC-H Q6)
-6: Q7 = Forecasting Revenue Change (TPC-H Q7)
-7: Q8 = National Market Share (TPC-H Q8)
-8: Q9 = Product Type Profit Measure (TPC-H Q9)
-9: Q10 = Forecasting Revenue Change (TPC-H Q10)
-10: Q11 = Important Stock Identification (TPC-H Q11)
-11: Q12 = Shipping Modes and Order Priority (TPC-H Q12)
-12: Q13 = Customer Distribution (TPC-H Q13)
-13: Q14 = Forecasting Revenue Change (TPC-H Q14)
-14: Q15 = Top Supplier Query (TPC-H Q15)
-15: Q16 = Parts/Supplier Relationship (TPC-H Q16)
-16: Q17 = Small-Quantity-Order Revenue (TPC-H Q17)
-17: Q18 = Large Volume Customer (TPC-H Q18)
-18: Q19 = Discounted Revenue (TPC-H Q19)
-19: Q20 = Potential Part Promotion (TPC-H Q20)
-20: Q21 = Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
-21: Q22 = Global Sales Opportunity Query (TPC-H Q22)
-Load Evaluation
-### Errors
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1               False               False                 False
-Q2               False               False                 False
-Q3               False               False                 False
-Q4               False               False                 False
-Q5               False               False                 False
-Q6               False               False                 False
-Q7               False               False                 False
-Q8               False               False                 False
-Q9               False               False                 False
-Q10              False               False                 False
-Q11              False               False                 False
-Q12              False               False                 False
-Q13              False               False                 False
-Q14              False               False                 False
-Q15              False               False                 False
-Q16              False               False                 False
-Q17              False               False                 False
-Q18              False               False                 False
-Q19              False               False                 False
-Q20              False               False                 False
-Q21              False               False                 False
-Q22              False               False                 False
-### Warnings
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1               False               False                 False
-Q2               False               False                 False
-Q3               False               False                 False
-Q4               False               False                 False
-Q5               False               False                 False
-Q6               False               False                 False
-Q7               False               False                 False
-Q8               False               False                 False
-Q9               False               False                 False
-Q10              False               False                 False
-Q11              False               False                 False
-Q12              False               False                 False
-Q13              False               False                 False
-Q14              False               False                 False
-Q15              False               False                 False
-Q16              False               False                 False
-Q17              False               False                 False
-Q18              False               False                 False
-Q19              False               False                 False
-Q20              False               False                 False
-Q21              False               False                 False
-Q22              False               False                 False
-### Geometric Mean of Medians of Timer Run [s]
-DBMS             MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-total_timer_run                0.1                1.48                  0.56
-MonetDB-BHT-8-1-1
-MySQL-BHT-8-16-1-1
-PostgreSQL-BHT-8-1-1
-### Loading [s]
-               MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-timeGenerate                1.00                1.00                  1.00
-timeIngesting              10.00              108.00                 23.00
-timeSchema                  0.95                5.10                  0.51
-timeIndex                  17.07              496.56                 43.85
-timeLoad                   46.02              627.65                 85.36
-### Latency of Timer Execution [ms]
-DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1           540.266769        13403.575217           1394.948800
-Q2            32.445064          140.819682            235.456771
-Q3           107.648707         1871.247458            472.850334
-Q4            43.393589          771.850379            804.222555
-Q5            53.208980         1433.090793            417.965981
-Q6            23.235807         2102.604461            310.579344
-Q7            67.450407         3430.779209            477.439999
-Q8           187.965117         2688.095795            406.967678
-Q9            81.846076         2499.057111            712.869145
-Q10           97.086058         2082.182153            793.103422
-Q11           18.448853          279.750079            155.313325
-Q12           50.426757         3109.570189            622.492888
-Q13          245.087787         3461.542013           1098.003893
-Q14           35.918594         2320.781684            341.247769
-Q15           29.761279        11305.257101            335.477490
-Q16           66.997990          555.879030            343.637448
-Q17           71.115009          321.034775           1165.672948
-Q18          149.304385         2785.999462           3708.772301
-Q19           69.044638          177.866275            435.700887
-Q20           81.822519          304.060695            345.359304
-Q21          872.301944         6716.680256            564.431586
-Q22           52.956324          233.065151            150.500087
+### Loading
+                        threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-1-16384        64   16384          1                   16189.612744                61768.0             1000000                            2681.000
+PostgreSQL-64-8-16384        64   16384          8                   16290.460785                61423.0             1000000                            1914.875
+PostgreSQL-64-1-32768        64   32768          1                   31790.437436                31456.0             1000000                            4291.000
+PostgreSQL-64-8-32768        64   32768          8                   32382.512889                30905.0             1000000                            3568.375
+PostgreSQL-64-1-49152        64   49152          1                   46988.065031                21282.0             1000000                            5839.000
+PostgreSQL-64-8-49152        64   49152          8                   48297.297444                20734.0             1000000                            4505.250
+PostgreSQL-64-1-65536        64   65536          1                   61195.765253                16341.0             1000000                           13919.000
+PostgreSQL-64-8-65536        64   65536          8                   63976.271400                15698.0             1000000                            6979.500
+PostgreSQL-64-1-81920        64   81920          1                   67686.476242                14774.0             1000000                           17999.000
+PostgreSQL-64-8-81920        64   81920          8                   70846.906870                14443.0             1000000                           17417.000
+PostgreSQL-64-1-98304        64   98304          1                   69463.739928                14396.0             1000000                           17583.000
+PostgreSQL-64-8-98304        64   98304          8                   71737.729166                14223.0             1000000                           17561.000
+PostgreSQL-64-1-114688       64  114688          1                   64964.594296                15393.0             1000000                           17439.000
+PostgreSQL-64-8-114688       64  114688          8                   73400.511966                13901.0             1000000                           17617.000
+PostgreSQL-64-1-131072       64  131072          1                   66755.674232                14980.0             1000000                           17311.000
+PostgreSQL-64-8-131072       64  131072          8                   72717.753600                14027.0             1000000                           17657.000
+### Execution
+                          threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-1-16384-1        64   16384          1                   16213.499360                61677.0            499683                           337.000              500317                             515.000
+PostgreSQL-64-8-16384-1        64   16384          8                   16290.459069                61395.0            499459                           405.750              500541                             654.625
+PostgreSQL-64-1-32768-1        64   32768          1                   32121.289991                31132.0            499075                           428.000              500925                             734.000
+PostgreSQL-64-8-32768-1        64   32768          8                   32389.983393                30894.0            499684                           376.375              500316                             623.375
+PostgreSQL-64-1-49152-1        64   49152          1                   47481.126252                21061.0            500296                           432.000              499704                             839.000
+PostgreSQL-64-8-49152-1        64   49152          8                   48290.849290                20735.0            499596                           480.625              500404                             847.125
+PostgreSQL-64-1-65536-1        64   65536          1                   62814.070352                15920.0            500532                           494.000              499468                            1056.000
+PostgreSQL-64-8-65536-1        64   65536          8                   63964.278070                15667.0            500037                           460.375              499963                             798.500
+PostgreSQL-64-1-81920-1        64   81920          1                   77984.870935                12823.0            500074                           564.000              499926                            1296.000
+PostgreSQL-64-8-81920-1        64   81920          8                   79493.727010                12606.0            499672                           544.375              500328                             964.750
+PostgreSQL-64-1-98304-1        64   98304          1                   92310.532632                10833.0            500250                           661.000              499750                            1484.000
+PostgreSQL-64-8-98304-1        64   98304          8                   94688.479434                10592.0            500164                           773.125              499836                            1429.125
+PostgreSQL-64-1-114688-1       64  114688          1                  101626.016260                 9840.0            500292                           897.000              499708                            2525.000
+PostgreSQL-64-8-114688-1       64  114688          8                  109414.770086                 9302.0            499729                          1016.000              500271                            1957.125
+PostgreSQL-64-1-131072-1       64  131072          1                  112271.247334                 8907.0            499597                          1145.000              500403                            3639.000
+PostgreSQL-64-8-131072-1       64  131072          8                  124446.118042                 8156.0            499575                          1300.250              500425                            3351.750
 ```
 
+Detailed evaluations can be done using
+* [Jupyter Notebooks](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
 
-## Adjust Parameter
+You can connect to an evaluation server by `bexperiments dashboard`.
+This forwards ports, so you have
+* a Jupyter notebook server at http://localhost:8888
+
+## Adjust Parameters
+
+The script supports
+* exact repetitions for statistical confidence
+* variations to scan a large parameters space
+* combine results for easy evaluation
+
+There are various ways to change parameters.
 
 ### Manifests
 
@@ -180,7 +116,7 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 
 ### Command line
 
-You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
+You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
 ```
 usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING]

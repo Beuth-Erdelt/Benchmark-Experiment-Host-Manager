@@ -36,7 +36,7 @@ if __name__ == '__main__':
     """
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['stop','status','dashboard', 'master'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard', 'master'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
@@ -75,6 +75,14 @@ if __name__ == '__main__':
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_dashboard()
+    elif args.mode == 'localdashboard':
+        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        import sys
+        resultfolder = cluster.config['benchmarker']['resultfolder']
+        sys.argv += ['-r',resultfolder]
+        sys.argv.remove('localdashboard')
+        from dbmsbenchmarker.scripts import dashboardcli
+        dashboardcli.startup()
     elif args.mode == 'master':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_master(experiment=args.experiment, configuration=connection)

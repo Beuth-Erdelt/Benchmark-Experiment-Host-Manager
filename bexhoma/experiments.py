@@ -742,19 +742,21 @@ class default():
                     #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
                         if not config.sut_is_pending():
-                            print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
+                            #print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
                             if self.cluster.max_sut is not None or self.max_sut is not None:
                                 we_can_start_new_sut = True
                                 if self.max_sut is not None:
                                     #print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                    print("{:30s}: {} running and {} pending pods: max is {} pods".format("Experiment", num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
                                     if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
-                                        print("{:30s}: has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                        #print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if self.cluster.max_sut is not None:
-                                    print("{:30s}: {} running and {} pending pods: max is {} pods".format("Cluster", num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
                                     if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
-                                        print("{:30s}: has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+                                        #print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if we_can_start_new_sut:
                                     print("{:30s}: will start now".format(config.configuration))
@@ -900,16 +902,21 @@ class default():
                         status = self.cluster.get_pod_status(p)
                         self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
                         #print(p,status)
-                        if status == 'Succeeded':
-                            self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                            #if status != 'Running':
-                            self.cluster.store_pod_log(p)
-                            #self.cluster.delete_pod(p)
-                        if status == 'Failed':
-                            self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                            #if status != 'Running':
-                            self.cluster.store_pod_log(p)
-                            #self.cluster.delete_pod(p)
+                        if status == 'Succeeded' or status == 'Failed':
+                            containers = self.cluster.get_pod_containers(p)
+                            for container in containers:
+                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                self.cluster.store_pod_log(p, container)
+                        #if status == 'Succeeded':
+                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #    #if status != 'Running':
+                        #    self.cluster.store_pod_log(p)
+                        #    #self.cluster.delete_pod(p)
+                        #if status == 'Failed':
+                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #    #if status != 'Running':
+                        #    self.cluster.store_pod_log(p)
+                        #    #self.cluster.delete_pod(p)
                 success = self.cluster.get_job_status(job)
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
@@ -918,19 +925,25 @@ class default():
                     for p in pods:
                         status = self.cluster.get_pod_status(p)
                         self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                        if status == 'Succeeded' or status == 'Failed':
+                            containers = self.cluster.get_pod_containers(p)
+                            for container in containers:
+                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                self.cluster.store_pod_log(p, container)
+                            self.cluster.delete_pod(p)
                         #print(p,status)
-                        if status == 'Succeeded':
-                            #if status != 'Running':
-                            if not self.cluster.pod_log_exists(p):
-                                self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                                self.cluster.store_pod_log(p)
-                            self.cluster.delete_pod(p)
-                        if status == 'Failed':
-                            #if status != 'Running':
-                            if not self.cluster.pod_log_exists(p):
-                                self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                                self.cluster.store_pod_log(p)
-                            self.cluster.delete_pod(p)
+                        #if status == 'Succeeded':
+                        #    #if status != 'Running':
+                        #    if not self.cluster.pod_log_exists(p):
+                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #        self.cluster.store_pod_log(p)
+                        #    self.cluster.delete_pod(p)
+                        #if status == 'Failed':
+                        #    #if status != 'Running':
+                        #    if not self.cluster.pod_log_exists(p):
+                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #        self.cluster.store_pod_log(p)
+                        #    self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
             if len(pods) == 0 and len(jobs) == 0:
@@ -953,6 +966,8 @@ class default():
 
         :param list_clients: List of (number of) benchmarker instances
         """
+        print("benchmark_list() DEPRECATED")
+        exit()
         for i, parallelism in enumerate(list_clients):
             client = str(i+1)
             for config in self.configurations:
@@ -1089,6 +1104,9 @@ class default():
             now_string = now.strftime('%Y-%m-%d %H:%M:%S')
             time_now = str(datetime.now())
             end_time = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            print("{:30s}: showing benchmarker times".format(connection))
+            print("{:30s}: benchmarker timespan (start to end single container [s]) = {}".format(connection, end_time-start_time))
+            print("{:30s}: benchmarker times (start/end per pod and container) = {}".format(connection, timing_benchmarker))
             self.cluster.logger.debug("BENCHMARKING LABELS")
             self.cluster.logger.debug("connection: "+str(connection))
             self.cluster.logger.debug("start_time: "+str(start_time))
@@ -1615,7 +1633,12 @@ class ycsb(default):
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
-        print('ycsb.show_summary()')
+        #print('ycsb.show_summary()')
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
@@ -1623,6 +1646,8 @@ class ycsb(default):
         df = evaluation.get_df_loading()
         df = df.sort_values(['configuration','experiment_run','client'])
         df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+        #print(df)
+        #print(df.columns)
         df_plot = evaluation.loading_set_datatypes(df)
         df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
         df_aggregated.sort_values(['target','pod_count'], inplace=True)
@@ -1631,6 +1656,8 @@ class ycsb(default):
         print("### Execution")
         df = evaluation.get_df_benchmarking()
         df.fillna(0, inplace=True)
+        #print(df)
+        #print(df.columns)
         df_plot = evaluation.benchmarking_set_datatypes(df)
         df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
         df_aggregated.sort_values(['target','pod_count'], inplace=True)
