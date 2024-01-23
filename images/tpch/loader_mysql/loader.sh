@@ -173,7 +173,7 @@ for i in *tbl*; do
                 continue
             fi
         fi
-        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
+        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
     fi
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''"
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''"

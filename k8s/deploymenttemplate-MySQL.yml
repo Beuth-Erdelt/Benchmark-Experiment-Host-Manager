@@ -55,7 +55,10 @@ spec:
           "--innodb-buffer-pool-size=32G",
           "--innodb-io-capacity=1000",
           "--innodb-log-buffer-size=16G",
-          "--innodb-redo-log-capacity=8G"
+          "--innodb-redo-log-capacity=8G",
+          # https://dev.mysql.com/doc/refman/8.0/en/online-ddl-parallel-thread-configuration.html
+          "--innodb-parallel-read-threads=64",      # https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_parallel_read_threads
+          "--innodb-ddl-threads=64"                 # https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_ddl_threads
         ]
         #args: ["--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         #args: ["--secure-file-priv", "/data/", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
