@@ -2,6 +2,8 @@
 
 # Reference for tool
 # https://dev.mysql.com/doc/mysql-shell/8.3/en/mysql-shell-utilities-parallel-table.html
+# , 'bytesPerChunk': '50M' #  Util.import_table: The 'bytesPerChunk' option cannot be used when loading from multiple files.
+
 
 ######################## Start timing ########################
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
@@ -138,14 +140,14 @@ for i in *tbl*; do
         # first pod: table nation or region will be imported olny one, others: we will import all parts at once
         if [[ $basename == "nation" ]]
         then
-            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
+            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
             #if test $CHILD -gt 1
             #then
             #    continue
             #fi
         elif [[ $basename == "region" ]]
         then
-            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
+            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
             #if test $CHILD -gt 1
             #then
             #    continue
@@ -158,7 +160,7 @@ for i in *tbl*; do
                file="'$destination_raw/../$j/$basename.tbl.$j',"
                COMMAND=$COMMAND$file
             done
-            COMMAND_END="], {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
+            COMMAND_END="], {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
             COMMAND=${COMMAND::-1}$COMMAND_END
         fi
     else
@@ -177,7 +179,7 @@ for i in *tbl*; do
                 continue
             fi
         fi
-        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
+        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
     fi
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''"
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''"
