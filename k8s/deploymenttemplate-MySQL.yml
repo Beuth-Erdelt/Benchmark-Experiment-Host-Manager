@@ -52,18 +52,18 @@ spec:
           "--innodb-read-io-threads=64",
           "--innodb-use-native-aio=0",
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_page_size
-          "--innodb-page-size=4K",                  # Small for OLTP or like filesystem
+          #"--innodb-page-size=4K",                  # Small for OLTP or like filesystem
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_buffer_pool_chunk_size
           # To avoid potential performance issues, the number of chunks (innodb_buffer_pool_size / innodb_buffer_pool_chunk_size) should not exceed 1000.
           # Small when size changes often
-          "--innodb-buffer-pool-chunk-size=500M",   # 
+          #"--innodb-buffer-pool-chunk-size=500M",   #
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_buffer_pool_instances
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-configuring-io-capacity.html
           # https://releem.com/docs/mysql-performance-tuning/innodb_buffer_pool_size
-          "--innodb-buffer-pool-instances=64",      # Read parallelizes, but write locks (?)
-          "--innodb-buffer-pool-size=32G",          # Buffer pool size must always be equal to or a multiple of innodb_buffer_pool_chunk_size * innodb_buffer_pool_instances.
-          "--innodb-io-capacity=1000",              # Faster SSD assumed
-          "--innodb-log-buffer-size=16G",
+          #"--innodb-buffer-pool-instances=64",      # Read parallelizes, but write locks (?)
+          #"--innodb-buffer-pool-size=32G",          # Buffer pool size must always be equal to or a multiple of innodb_buffer_pool_chunk_size * innodb_buffer_pool_instances.
+          #"--innodb-io-capacity=1000",              # Faster SSD assumed
+          #"--innodb-log-buffer-size=16G",
           #"--innodb-redo-log-capacity=8G",
           # https://dev.mysql.com/doc/refman/8.3/en/online-ddl-parallel-thread-configuration.html
           #"--innodb-parallel-read-threads=64",      # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_parallel_read_threads
@@ -71,6 +71,7 @@ spec:
         ]
         #args: ["--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         #args: ["--secure-file-priv", "/data/", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
+
         env:
           - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
           - {name: MYSQL_ROOT_HOST, value: '%'}
