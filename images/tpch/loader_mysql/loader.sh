@@ -69,8 +69,8 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
 ######################## Fix missing locale ########################
-# export LC_ALL="en_US.UTF-8"
-export LANG=en_US.utf8
+export LC_ALL="en_US.UTF-8"
+export LANG="en_US.utf8"
 
 ######################## Parallel loading (several scripts at once) only makes sense for more than 1 pod ########################
 if test $NUM_PODS -gt 1
@@ -135,14 +135,14 @@ for i in *tbl*; do
         # first pod: table nation or region will be imported olny one, others: we will import all parts at once
         if [[ $basename == "nation" ]]
         then
-            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
+            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
             #if test $CHILD -gt 1
             #then
             #    continue
             #fi
         elif [[ $basename == "region" ]]
         then
-            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
+            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
             #if test $CHILD -gt 1
             #then
             #    continue
@@ -155,7 +155,7 @@ for i in *tbl*; do
                file="'$destination_raw/../$j/$basename.tbl.$j',"
                COMMAND=$COMMAND$file
             done
-            COMMAND_END="], {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
+            COMMAND_END="], {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS, 'bytesPerChunk': '50M'})"
             COMMAND=${COMMAND::-1}$COMMAND_END
         fi
     else
