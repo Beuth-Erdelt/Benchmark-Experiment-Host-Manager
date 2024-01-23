@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Reference for tool
+# https://dev.mysql.com/doc/mysql-shell/8.3/en/mysql-shell-utilities-parallel-table.html
+
 ######################## Start timing ########################
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
 echo "NOW: $DATEANDTIME"
