@@ -68,9 +68,9 @@ bexhoma_start_epoch=$(date -u +%s)
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
-######################## Fix missing locale ########################
-export LC_ALL="en_US.UTF-8"
-export LANG="en_US.utf8"
+######################## Fix missing locale - in Dockerfile ########################
+#export LC_ALL="en_US.UTF-8"
+#export LANG="en_US.utf8"
 
 ######################## Parallel loading (several scripts at once) only makes sense for more than 1 pod ########################
 if test $NUM_PODS -gt 1
