@@ -49,11 +49,13 @@ spec:
           "--innodb-write-io-threads=64",
           "--innodb-read-io-threads=64",
           "--innodb-use-native-aio=0",
-          "--innodb-page-size=4096",
+          "--innodb-page-size=4K",
           "--innodb-buffer-pool-chunk-size=500M",
           "--innodb-buffer-pool-instances=16",
           "--innodb-buffer-pool-size=16G",
-          "--innodb-io-capacity=1000"
+          "--innodb-io-capacity=1000",
+          "--innodb-log-buffer-size=1G",
+          "--innodb-redo-log-capacity=1G"
         ]
         #args: ["--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         #args: ["--secure-file-priv", "/data/", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
