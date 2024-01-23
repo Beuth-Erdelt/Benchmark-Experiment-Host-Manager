@@ -1322,6 +1322,7 @@ class tpch(default):
                 times[c]['timeLoad'] = connection.connectiondata['timeLoad']
         print("### Loading [s]")
         df = pd.DataFrame(times)
+        df = df.reindex(sorted(df.columns), axis=1)
         print(df.round(2))
         df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index().T
         print("### Latency of Timer Execution [ms]")
