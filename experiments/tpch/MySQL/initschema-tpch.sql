@@ -25,7 +25,7 @@ SET GLOBAL innodb_flush_log_at_trx_commit =0;
 -- SET GLOBAL host_cache_size=0
 
 -- Defines the amount of disk space occupied by redo log files.
-SET GLOBAL innodb_redo_log_capacity=1073741824;
+SET GLOBAL innodb_redo_log_capacity=1024*1024*1024;
 
 
 CREATE DATABASE tpch;
