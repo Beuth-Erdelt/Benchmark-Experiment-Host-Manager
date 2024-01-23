@@ -17,15 +17,15 @@ SET sql_mode='';
 SET GLOBAL sql_mode='';
 
 -- speed up import
-SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
-SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
-SET GLOBAL innodb_flush_log_at_trx_commit =0;
+-- SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
+-- SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
+-- SET GLOBAL innodb_flush_log_at_trx_commit =0;
 
--- the server performs a DNS lookup every time a client connects
+-- the server performs a DNS lookup every time a client connects, not tested
 -- SET GLOBAL host_cache_size=0
 
 -- Defines the amount of disk space occupied by redo log files.
-SET GLOBAL innodb_redo_log_capacity=1024*1024*1024;
+-- SET GLOBAL innodb_redo_log_capacity=1024*1024*1024;
 
 
 CREATE DATABASE tpch;
