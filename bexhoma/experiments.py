@@ -1324,9 +1324,10 @@ class tpch(default):
         df = pd.DataFrame(times)
         df = df.reindex(sorted(df.columns), axis=1)
         print(df.round(2))
-        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').sort_index().T
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
         print("### Latency of Timer Execution [ms]")
-        print(df)
+        if not df is None:
+            print(df.sort_index().T)
         #timespan_load = max([end for (start,end) in c['hostsystem']['loading_timespans']['sensor']]) - min([start for (start,end) in c['hostsystem']['loading_timespans']['sensor']])
 
 
