@@ -1285,10 +1285,15 @@ class testbed():
             # there already is a dashboard pod
             return
         else:
+            print("{:30s}: starting...".format("Evaluation pod"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_dashboard_pod_name())):
+               self.wait(10)
+            print("done")
+            return
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
         Starts the monitoring component and its service.
@@ -1325,10 +1330,15 @@ class testbed():
             self.logger.debug('testbed.start_messagequeue()=exists')
             return
         else:
+            print("{:30s}: starting...".format("Message queue pod"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_pods(component=component))):
+               self.wait(10)
+            print("done")
+            return
     def get_dashboard_pod_name(self, app='', component='dashboard'):
         """
         Returns the name of the dashboard pod.

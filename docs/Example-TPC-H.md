@@ -165,14 +165,20 @@ Q21          872.301944         6716.680256            564.431586
 Q22           52.956324          233.065151            150.500087
 ```
 
+Results are transformed into pandas DataFrames and can be inspected in detail.
 Detailed evaluations can be done using DBMSBenchmarker
 * [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
-* [Jupyter Notebooks](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
+* [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
 
-You can connect to an evaluation server by `bexperiments dashboard`.
+You can connect to an evaluation server in the cluster by `bexperiments dashboard`.
 This forwards ports, so you have
-* a dashboard in browser at http://localhost:8050
-* a Jupyter notebook server at http://localhost:8888
+* a DBMSBenchmarker dashboard in browser at http://localhost:8050
+* a Jupyter notebook server at http://localhost:8888 containing the example notebooks
+
+You can connect to an evaluation server in the cluster by `bexperiments localdashboard`.
+This forwards ports, so you have
+* a DBMSBenchmarker dashboard in browser at http://localhost:8050
+* a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
 
 ## Adjust Parameters
