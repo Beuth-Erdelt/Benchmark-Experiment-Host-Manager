@@ -86,10 +86,15 @@ PostgreSQL-64-1-131072-1       64  131072          1                  112271.247
 PostgreSQL-64-8-131072-1       64  131072          8                  124446.118042                 8156.0            499575                          1300.250              500425                            3351.750
 ```
 
-Detailed evaluations can be done using
-* [Jupyter Notebooks](https://beuth-erdelt.github.io/DBMS-Benchmarker/Evaluation-Demo.html)
+Results are transformed into pandas DataFrames and can be inspected in detail.
+See for example
+* [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
 
-You can connect to an evaluation server by `bexperiments dashboard`.
+You can connect to an evaluation server in the cluster by `bexperiments dashboard`.
+This forwards ports, so you have
+* a Jupyter notebook server at http://localhost:8888
+
+You can connect to an evaluation server locally by `bexperiments jupyter`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 

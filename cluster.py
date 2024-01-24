@@ -85,7 +85,7 @@ if __name__ == '__main__':
         dashboardcli.startup()
     elif args.mode == 'jupyter':
         import subprocess
-        cmd = ["jupyter","notebook","--notebook-dir","notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
+        cmd = ["jupyter","notebook","--notebook-dir","images/evaluator_dbmsbenchmarker/notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
         subprocess.Popen(cmd)
     elif args.mode == 'master':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
