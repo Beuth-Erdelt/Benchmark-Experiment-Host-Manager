@@ -1329,6 +1329,23 @@ class tpch(default):
         if not df is None:
             print(df.sort_index().T)
         #timespan_load = max([end for (start,end) in c['hostsystem']['loading_timespans']['sensor']]) - min([start for (start,end) in c['hostsystem']['loading_timespans']['sensor']])
+        if (self.monitoring_active or self.monitor_cluster_active):
+            df = evaluate.get_loading_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            print("### CPU of Ingestion (via counter)")
+            print(pd.DataFrame(df))
+            df = evaluate.get_loading_metrics('total_cpu_memory')
+            df = df.T.max().sort_index()
+            print("### Max RAM of Ingestion")
+            print(pd.DataFrame(df))
+            df = evaluate.get_streaming_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            print("### CPU of Execution (via counter)")
+            print(pd.DataFrame(df))
+            df = evaluate.get_streaming_metrics('total_cpu_memory')
+            df = df.T.max().sort_index()
+            print("### Max RAM of Execution")
+            print(pd.DataFrame(df))
 
 
 """
