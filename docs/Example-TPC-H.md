@@ -15,7 +15,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 Example: `python tpch.py -dt -nlp 8 -nlt 16 -sf 1 -ii -ic -is run`
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL each
+* starts a clean instance of PostgreSQL, MonetDB, MySQL
   * data directory inside a Docker container
 * creates TPC-H schema in each database
 * starts 8 loader pods per DBMS

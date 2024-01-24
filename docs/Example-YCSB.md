@@ -129,7 +129,7 @@ usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] 
                [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
                {run,start,load}
 
-Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*100,000. Optionally monitoring is activated.
+Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*1,000,000. Optionally monitoring is activated.
 
 positional arguments:
   {run,start,load}      import YCSB data or run YCSB queries
