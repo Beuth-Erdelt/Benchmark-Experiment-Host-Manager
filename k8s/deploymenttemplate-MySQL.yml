@@ -68,7 +68,9 @@ spec:
           # https://dev.mysql.com/doc/refman/8.3/en/online-ddl-parallel-thread-configuration.html
           #"--innodb-parallel-read-threads=64",       # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_parallel_read_threads
           #"--innodb-ddl-threads=64",                 # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_threads
-          #"--innodb-ddl-buffer-size=128M"            # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
+          #"--innodb-ddl-buffer-size=128M",           # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
+          # https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit
+          #"--innodb-flush-log-at-trx-commit=0"       # The default setting of 1 is required for full ACID compliance
         ]
         #args: ["--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         #args: ["--secure-file-priv", "/data/", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
