@@ -63,17 +63,13 @@ spec:
           #"--innodb-buffer-pool-instances=64",       # Read parallelizes, but write locks (?)
           #"--innodb-buffer-pool-size=32G",           # Buffer pool size must always be equal to or a multiple of innodb_buffer_pool_chunk_size * innodb_buffer_pool_instances.
           #"--innodb-io-capacity=1000",               # Faster SSD assumed
-          #"--innodb-log-buffer-size=32G",            # The size in bytes of the buffer that InnoDB uses to write to the log files on disk
-          #"--innodb-redo-log-capacity=8G",           # Defines the amount of disk space occupied by redo log files
+          "--innodb-log-buffer-size=32G",             # The size in bytes of the buffer that InnoDB uses to write to the log files on disk
+          "--innodb-redo-log-capacity=8G",            # Defines the amount of disk space occupied by redo log files
           # https://dev.mysql.com/doc/refman/8.3/en/online-ddl-parallel-thread-configuration.html
           #"--innodb-parallel-read-threads=64",       # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_parallel_read_threads
           #"--innodb-ddl-threads=64",                 # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_threads
-          #"--innodb-ddl-buffer-size=128M",           # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
-          # https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit
-          #"--innodb-flush-log-at-trx-commit=0"       # The default setting of 1 is required for full ACID compliance
+          "--innodb-ddl-buffer-size=128M"             # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
         ]
-        #args: ["--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
-        #args: ["--secure-file-priv", "/data/", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
 
         env:
           - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
