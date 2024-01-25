@@ -44,7 +44,8 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dbms
-        image: mysql:8.3.0
+        #image: mysql:8.3.0
+        image: mysql:8.2.0
         args: [
           # Some of these need restart
           # https://dev.mysql.com/doc/refman/8.3/en/optimizing-innodb-logging.html
