@@ -58,7 +58,7 @@ spec:
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-linux-native-aio.html
           "--innodb-use-native-aio=0",                # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_use_native_aio
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_page_size
-          "--innodb-page-size=4K",                    # Small for OLTP or similar to filesystem
+          # "--innodb-page-size=4K",                  # Small for OLTP or similar to filesystem page size
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_buffer_pool_chunk_size
           # To avoid potential performance issues, the number of chunks (innodb_buffer_pool_size / innodb_buffer_pool_chunk_size) should not exceed 1000.
           "--innodb-buffer-pool-chunk-size=500M",     # Small when size of pool changes often
