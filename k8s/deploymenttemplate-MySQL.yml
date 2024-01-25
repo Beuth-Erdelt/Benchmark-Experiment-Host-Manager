@@ -44,10 +44,13 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dbms
-        #image: mysql:8.3.0
-        image: mysql:8.2.0
+        image: mysql:8.0.36                           # latest bug fixes
+        #image: mysql:8.1.0                           # no docs
+        #image: mysql:8.2.0                           # no docs
+        #image: mysql:8.3.0                           # current, but slow import (?)
         args: [
           # Some of these need restart
+          # The comments come from 8.3 docs
           # https://dev.mysql.com/doc/refman/8.3/en/optimizing-innodb-logging.html
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-performance-multiple_io_threads.html
           "--innodb-write-io-threads=64",             # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_write_io_threads
@@ -76,7 +79,7 @@ spec:
           # https://dev.mysql.com/doc/refman/8.3/en/server-system-variables.html#sysvar_tmp_table_size
           "--tmp-table-size=1GB",                     # Defines the maximum size of internal in-memory temporary tables
           "--max-heap-table-size=1GB",                # Maximum size to which user-created MEMORY tables are permitted to grow
-          # https://dev.mysql.com/doc/refman/8.0/en/innodb-doublewrite-buffer.html
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-doublewrite-buffer.html
           "--innodb-doublewrite=0",
           "--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
         ]
