@@ -1329,7 +1329,7 @@ class tpch(default):
         if not df is None:
             print(df.sort_index().T)
         #timespan_load = max([end for (start,end) in c['hostsystem']['loading_timespans']['sensor']]) - min([start for (start,end) in c['hostsystem']['loading_timespans']['sensor']])
-        if (self.monitoring_active or self.monitor_cluster_active):
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
             df = evaluate.get_loading_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             print("### CPU of Ingestion (via counter)")
@@ -1692,7 +1692,7 @@ class ycsb(default):
                 df_aggregated_reduced[col] = df_aggregated.loc[:,col]
         print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
-        if (self.monitoring_active or self.monitor_cluster_active):
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #df = evaluation.get_loading_metrics('total_cpu_util_s')
             #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
