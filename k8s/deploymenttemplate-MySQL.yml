@@ -71,7 +71,13 @@ spec:
           # https://dev.mysql.com/doc/refman/8.3/en/online-ddl-parallel-thread-configuration.html
           "--innodb-parallel-read-threads=64",        # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_parallel_read_threads
           "--innodb-ddl-threads=64",                  # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_threads
-          "--innodb-ddl-buffer-size=128M"             # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
+          "--innodb-ddl-buffer-size=128M",            # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
+          # https://dev.mysql.com/doc/refman/8.3/en/server-system-variables.html#sysvar_tmp_table_size
+          "--tmp-table-size=1GB",                     # Defines the maximum size of internal in-memory temporary tables
+          "--max-heap-table-size=1GB",                # Maximum size to which user-created MEMORY tables are permitted to grow
+          # https://dev.mysql.com/doc/refman/8.0/en/innodb-doublewrite-buffer.html
+          "--innodb-doublewrite=0",
+          "--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
         ]
 
         env:
