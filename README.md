@@ -37,7 +37,7 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
     * (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
     * (Also make sure, you can create PV via PVC and dynamic provisioning)
 1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
-    1. Rename `k8s-cluster.config` to `cluster.config`
+    1. Copy `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
 1. Install result folder: Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
 

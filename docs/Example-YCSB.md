@@ -22,7 +22,7 @@ This
       * target throughput is `t` * 16384
       * generates YCSB data = 1.000.000 rows
       * imports it into the DBMS
-  * runs 1 stream of YCSB queries per DBMS
+  * runs `n` parallel streams of YCSB queries per DBMS
     * 1.000.000 operations
     * workload A = 50% read / 50% write
     * target throughput is `t` * 16384
@@ -85,6 +85,9 @@ PostgreSQL-64-8-114688-1       64  114688          8                  109414.770
 PostgreSQL-64-1-131072-1       64  131072          1                  112271.247334                 8907.0            499597                          1145.000              500403                            3639.000
 PostgreSQL-64-8-131072-1       64  131072          8                  124446.118042                 8156.0            499575                          1300.250              500425                            3351.750
 ```
+
+We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
+The runtime is between 8 seconds and 1 minute.
 
 Results are transformed into pandas DataFrames and can be inspected in detail.
 See for example
@@ -206,3 +209,86 @@ options:
 ## Monitoring
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+
+If monitoring is activated, the summary also contains a section like
+
+```
+### CPU of Ingestion (via counter) [CPUs]
+                                   0
+PostgreSQL-64-1-16384-1   198.953166
+PostgreSQL-64-1-32768-1   196.617379
+PostgreSQL-64-1-49152-1   201.277563
+PostgreSQL-64-1-65536-1     0.000000
+PostgreSQL-64-1-81920-1     0.000000
+PostgreSQL-64-1-98304-1     0.000000
+PostgreSQL-64-1-114688-1    0.000000
+PostgreSQL-64-1-131072-1    0.000000
+PostgreSQL-64-8-16384-1   201.773063
+PostgreSQL-64-8-32768-1   177.170719
+PostgreSQL-64-8-49152-1   177.884943
+PostgreSQL-64-8-65536-1   187.712069
+PostgreSQL-64-8-81920-1   204.023213
+PostgreSQL-64-8-98304-1   209.848421
+PostgreSQL-64-8-114688-1    0.000000
+PostgreSQL-64-8-131072-1  210.686992
+### Max RAM of Ingestion [Mb]
+                                    0
+PostgreSQL-64-1-16384-1   3599.261719
+PostgreSQL-64-1-32768-1   3592.183594
+PostgreSQL-64-1-49152-1   3584.570312
+PostgreSQL-64-1-65536-1   2383.132812
+PostgreSQL-64-1-81920-1   2381.601562
+PostgreSQL-64-1-98304-1      0.000000
+PostgreSQL-64-1-114688-1  2382.621094
+PostgreSQL-64-1-131072-1  2381.957031
+PostgreSQL-64-8-16384-1   3599.562500
+PostgreSQL-64-8-32768-1   3586.253906
+PostgreSQL-64-8-49152-1   3579.109375
+PostgreSQL-64-8-65536-1   3579.238281
+PostgreSQL-64-8-81920-1   3580.359375
+PostgreSQL-64-8-98304-1   3578.089844
+PostgreSQL-64-8-114688-1  2382.906250
+PostgreSQL-64-8-131072-1  3580.121094
+### CPU of Execution (via counter) [CPUs]
+                                   0
+PostgreSQL-64-1-16384-1   144.786855
+PostgreSQL-64-1-32768-1   117.029337
+PostgreSQL-64-1-49152-1   108.832290
+PostgreSQL-64-1-65536-1   359.971068
+PostgreSQL-64-1-81920-1   382.274019
+PostgreSQL-64-1-98304-1     0.000000
+PostgreSQL-64-1-114688-1  393.812552
+PostgreSQL-64-1-131072-1    0.000000
+PostgreSQL-64-8-16384-1   178.196819
+PostgreSQL-64-8-32768-1     0.060124
+PostgreSQL-64-8-49152-1   163.673750
+PostgreSQL-64-8-65536-1   164.559542
+PostgreSQL-64-8-81920-1   169.903605
+PostgreSQL-64-8-98304-1   169.639897
+PostgreSQL-64-8-114688-1  181.418701
+PostgreSQL-64-8-131072-1    0.159354
+### Max RAM of Execution [Mb]
+                                    0
+PostgreSQL-64-1-16384-1   4105.000000
+PostgreSQL-64-1-32768-1   4084.101562
+PostgreSQL-64-1-49152-1   4068.890625
+PostgreSQL-64-1-65536-1   3765.898438
+PostgreSQL-64-1-81920-1   3757.230469
+PostgreSQL-64-1-98304-1      0.000000
+PostgreSQL-64-1-114688-1  3775.199219
+PostgreSQL-64-1-131072-1  2381.957031
+PostgreSQL-64-8-16384-1   4113.964844
+PostgreSQL-64-8-32768-1   3588.902344
+PostgreSQL-64-8-49152-1   3753.753906
+PostgreSQL-64-8-65536-1   3765.273438
+PostgreSQL-64-8-81920-1   3769.878906
+PostgreSQL-64-8-98304-1   3758.039062
+PostgreSQL-64-8-114688-1  3777.027344
+PostgreSQL-64-8-131072-1  3582.023438
+```
+
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
+
+In this example, metrics are very instable. Metrics are fetched every 10 seconds.
+This is too coarse for such a quick example.
+
