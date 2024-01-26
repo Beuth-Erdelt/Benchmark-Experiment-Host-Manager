@@ -52,7 +52,7 @@ At the end of a benchmark you will see a summary like
 ```
 Connections:
 MonetDB-BHT-8-1-1
-MySQL-BHT-8-16-1-1
+MySQL-BHT-8-8-1-1
 PostgreSQL-BHT-8-1-1
 Queries:
 0: Q1 = Pricing Summary Report (TPC-H Q1)
@@ -79,93 +79,91 @@ Queries:
 21: Q22 = Global Sales Opportunity Query (TPC-H Q22)
 Load Evaluation
 ### Errors
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1               False               False                 False
-Q2               False               False                 False
-Q3               False               False                 False
-Q4               False               False                 False
-Q5               False               False                 False
-Q6               False               False                 False
-Q7               False               False                 False
-Q8               False               False                 False
-Q9               False               False                 False
-Q10              False               False                 False
-Q11              False               False                 False
-Q12              False               False                 False
-Q13              False               False                 False
-Q14              False               False                 False
-Q15              False               False                 False
-Q16              False               False                 False
-Q17              False               False                 False
-Q18              False               False                 False
-Q19              False               False                 False
-Q20              False               False                 False
-Q21              False               False                 False
-Q22              False               False                 False
+     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1               False              False                 False
+Q2               False              False                 False
+Q3               False              False                 False
+Q4               False              False                 False
+Q5               False              False                 False
+Q6               False              False                 False
+Q7               False              False                 False
+Q8               False              False                 False
+Q9               False              False                 False
+Q10              False              False                 False
+Q11              False              False                 False
+Q12              False              False                 False
+Q13              False              False                 False
+Q14              False              False                 False
+Q15              False              False                 False
+Q16              False              False                 False
+Q17              False              False                 False
+Q18              False              False                 False
+Q19              False              False                 False
+Q20              False              False                 False
+Q21              False              False                 False
+Q22              False              False                 False
 ### Warnings
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1               False               False                 False
-Q2               False               False                 False
-Q3               False               False                 False
-Q4               False               False                 False
-Q5               False               False                 False
-Q6               False               False                 False
-Q7               False               False                 False
-Q8               False               False                 False
-Q9               False               False                 False
-Q10              False               False                 False
-Q11              False               False                 False
-Q12              False               False                 False
-Q13              False               False                 False
-Q14              False               False                 False
-Q15              False               False                 False
-Q16              False               False                 False
-Q17              False               False                 False
-Q18              False               False                 False
-Q19              False               False                 False
-Q20              False               False                 False
-Q21              False               False                 False
-Q22              False               False                 False
+     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1               False              False                 False
+Q2               False              False                 False
+Q3               False              False                 False
+Q4               False              False                 False
+Q5               False              False                 False
+Q6               False              False                 False
+Q7               False              False                 False
+Q8               False              False                 False
+Q9               False              False                 False
+Q10              False              False                 False
+Q11              False              False                 False
+Q12              False              False                 False
+Q13              False              False                 False
+Q14              False              False                 False
+Q15              False              False                 False
+Q16              False              False                 False
+Q17              False              False                 False
+Q18              False              False                 False
+Q19              False              False                 False
+Q20              False              False                 False
+Q21              False              False                 False
+Q22              False              False                 False
 ### Geometric Mean of Medians of Timer Run [s]
-DBMS             MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-total_timer_run                0.1                1.48                  0.56
-MonetDB-BHT-8-1-1
-MySQL-BHT-8-16-1-1
-PostgreSQL-BHT-8-1-1
+DBMS             MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+total_timer_run               0.16               3.31                  0.96
 ### Loading [s]
-               MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-timeGenerate                1.00                1.00                  1.00
-timeIngesting              10.00              108.00                 23.00
-timeSchema                  0.95                5.10                  0.51
-timeIndex                  17.07              496.56                 43.85
-timeLoad                   46.02              627.65                 85.36
+               MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+timeGenerate                1.00               1.00                  1.00
+timeIngesting              16.00             458.00                 33.00
+timeSchema                 11.13               4.28                  0.71
+timeIndex                  26.77            1830.61                 88.90
+timeLoad                   64.90            2304.88                133.61
 ### Latency of Timer Execution [ms]
-DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1           540.266769        13403.575217           1394.948800
-Q2            32.445064          140.819682            235.456771
-Q3           107.648707         1871.247458            472.850334
-Q4            43.393589          771.850379            804.222555
-Q5            53.208980         1433.090793            417.965981
-Q6            23.235807         2102.604461            310.579344
-Q7            67.450407         3430.779209            477.439999
-Q8           187.965117         2688.095795            406.967678
-Q9            81.846076         2499.057111            712.869145
-Q10           97.086058         2082.182153            793.103422
-Q11           18.448853          279.750079            155.313325
-Q12           50.426757         3109.570189            622.492888
-Q13          245.087787         3461.542013           1098.003893
-Q14           35.918594         2320.781684            341.247769
-Q15           29.761279        11305.257101            335.477490
-Q16           66.997990          555.879030            343.637448
-Q17           71.115009          321.034775           1165.672948
-Q18          149.304385         2785.999462           3708.772301
-Q19           69.044638          177.866275            435.700887
-Q20           81.822519          304.060695            345.359304
-Q21          872.301944         6716.680256            564.431586
-Q22           52.956324          233.065151            150.500087
+DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1          1413.969409       32331.794913           2716.694587
+Q2            30.892844         370.537392            448.305403
+Q3           145.473032        4223.297398            811.306463
+Q4            66.988822        1834.799010           1402.561117
+Q5            65.921992        3830.323648            729.089127
+Q6            30.146675        4681.568123            548.187994
+Q7            94.690127        7479.308118            826.688616
+Q8           403.390767        6948.633130            650.453530
+Q9           115.265707        6310.306552           1146.405882
+Q10          182.652981        3181.243028           1326.023553
+Q11           28.979071         366.192797            259.237642
+Q12           64.908238        7325.474787           1111.519323
+Q13          636.077214        9758.173447           2191.581585
+Q14          322.785197        5384.841883            600.372235
+Q15          113.011265       24819.928947            601.613062
+Q16          112.305753        1242.980396            582.770191
+Q17           52.767210         928.072803           2156.815792
+Q18          208.405718        6267.285223           6916.815835
+Q19           74.062916         464.049083            734.711302
+Q20           90.469837         604.664529            673.447353
+Q21         2065.736660       17594.972028            971.738854
+Q22           49.831625         543.698184            253.073467
 ```
+This gives a survey about the errors and warnings (result set mismatch), the geometric mean (in seconds) and the loading times (schema creation, ingestion and indexing) and the latencies of execution per query.
 
-Results are transformed into pandas DataFrames and can be inspected in detail.
+Results are transformed into pandas DataFrames and can be inspected in more detail.
 Detailed evaluations can be done using DBMSBenchmarker
 * [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
@@ -175,9 +173,12 @@ This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
-You can connect to an evaluation server in the cluster by `bexperiments localdashboard`.
+You can connect to a local evaluation server by `bexperiments localdashboard`.
 This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
+
+You can connect to a local jupyter server by `bexperiments jupyter`.
+This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
 
@@ -284,3 +285,33 @@ options:
 ## Monitoring
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+
+If monitoring is activated, the summary also contains a section like
+```
+### CPU of Ingestion (via counter) [CPUs]
+                              0
+DBMS
+MonetDB-BHT-8-1      136.638103
+MySQL-BHT-8-8-1     3223.236893
+PostgreSQL-BHT-8-1   153.782876
+### Max RAM of Ingestion [Mb]
+                               0
+DBMS
+MonetDB-BHT-8-1      1244.855469
+MySQL-BHT-8-8-1     48206.949219
+PostgreSQL-BHT-8-1   3862.175781
+### CPU of Execution (via counter) [CPUs]
+                             0
+DBMS
+MonetDB-BHT-8-1      29.866166
+MySQL-BHT-8-8-1     142.083743
+PostgreSQL-BHT-8-1  115.545106
+### Max RAM of Execution [Mb]
+                               0
+DBMS
+MonetDB-BHT-8-1      1787.203125
+MySQL-BHT-8-8-1     48321.277344
+PostgreSQL-BHT-8-1   3939.746094
+```
+
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
