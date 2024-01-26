@@ -388,6 +388,79 @@ class logger(base):
         except Exception as e:
             print(e)
             return 1
+    def transform_monitoring_results(self, component="loading"):
+        """
+        Creates combined metrics.csv.
+        For example
+            query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-1.csv
+            query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-2.csv
+        are combined to
+            query_datagenerator_metric_total_cpu_util.csv
+        """
+        connections_sorted = self.get_connection_config()
+        list_metrics = self.get_monitoring_metrics()
+        #print(c['name'], list_metrics)
+        for m in list_metrics:
+            df_all = None
+            for connection in connections_sorted:
+                if 'orig_name' in connection:
+                    connectionname = connection['orig_name']
+                else:
+                    connectionname = connection['name']
+                filename = "query_{component}_metric_{metric}_{connection}.csv".format(component=component, metric=m, connection=connectionname)
+                #print(self.path++"/"+filename)
+                df = monitor.metrics.loadMetricsDataframe(self.path+"/"+filename)
+                if df is None:
+                    continue
+                #print(df)
+                df.columns=[connectionname]
+                if df_all is None:
+                    df_all = df
+                else:
+                    df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
+            #print(df_all)
+            filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=m)
+            #print(self.path+filename)
+            monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
+    def get_monitoring_metric(self, metric, component="loading"):
+        """
+        Returns list of names of metrics using during monitoring.
+
+        :return: List of monitoring metrics
+        """
+        filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        if os.path.isfile(self.path+"/"+filename):
+            df = pd.read_csv(self.path+"/"+filename).T
+            #print(df)
+            df = df.reindex(index=natural_sort(df.index))
+            return df.T
+        else:
+            return pd.DataFrame()
+    def get_monitoring_metrics(self):
+        """
+        Returns list of names of metrics using during monitoring.
+
+        :return: List of monitoring metrics
+        """
+        connections_sorted = self.get_connection_config()
+        for c in connections_sorted:
+            if 'monitoring' in c and 'metrics' in c['monitoring']:
+                list_metrics = list(c['monitoring']['metrics'].keys())
+            else:
+                list_metrics = []
+            break
+        return list_metrics
+    def get_connection_config(self):
+        """
+        Returns connection.config as Python dict.
+        Items are sorted by connection name.
+
+        :return: Python dict of all connection informations
+        """
+        with open(self.path+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        connections_sorted = sorted(connections, key=lambda c: c['name']) 
+        return connections_sorted
 
 
 

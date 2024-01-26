@@ -8,7 +8,7 @@ This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H
 
 Official TPC-H benchmark - http://www.tpc.org/tpch
 
-## Perform Benchmark
+## Perform Benchmark - Power Test
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
@@ -36,16 +36,19 @@ This
 You can watch the status while benchmark is running via `bexperiments status`
 
 ```
-| 1705608513       | sut          |   loaded [s] | worker   | maintaining   | loading                  | monitoring   | benchmarker   |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
-| MonetDB-BHT-8    | (1. Running) |       129.92 |          |               |                          |              | (1. Running)  |
-| MySQL-BHT-8-16   | (1. Running) |         5.31 |          |               | (8 Running)              |              |               |
-| PostgreSQL-BHT-8 | (1. Running) |         0.46 |          |               | (5 Succeeded)(3 Running) |              |               |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
++------------------+--------------+--------------+---------------+
+| 1706255897       | sut          |   loaded [s] | loading       |
++==================+==============+==============+===============+
+| MonetDB-BHT-8    | (1. Running) |       253.23 |               |
++------------------+--------------+--------------+---------------+
+| MySQL-BHT-8-8    | (1. Running) |         0.61 | (8 Succeeded) |
++------------------+--------------+--------------+---------------+
+| PostgreSQL-BHT-8 | (1. Running) |       219.08 |               |
++------------------+--------------+--------------+---------------+
 ```
 
 
-### Evaluate Results
+## Evaluate Results
 
 At the end of a benchmark you will see a summary like
 
@@ -315,3 +318,6 @@ PostgreSQL-BHT-8-1   3939.746094
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
+
+## Perform Benchmark - Throughput Test
+

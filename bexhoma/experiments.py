@@ -1693,6 +1693,7 @@ class ycsb(default):
         print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            evaluation.transform_monitoring_results(component="loading")
             #df = evaluation.get_loading_metrics('total_cpu_util_s')
             #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
@@ -1703,6 +1704,7 @@ class ycsb(default):
             df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()
             print("### Max RAM of Ingestion [Mb]")
             print(pd.DataFrame(df))
+            evaluation.transform_monitoring_results(component="stream")
             #df = evaluation.get_streaming_metrics('total_cpu_util_s')
             #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
