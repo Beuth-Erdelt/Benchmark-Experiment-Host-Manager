@@ -1299,13 +1299,15 @@ class tpch(default):
         print(evaluate.get_total_warnings().T)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index()
+        df.column = ['Geo Times [s]']
         print("### Geometric Mean of Medians of Timer Run [s]")
-        print(df.round(2).T)
+        print(df.round(2))
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index().astype('float')
         df = float(parameter.defaultParameters['SF'])*3600./df
+        df.column = ['TPC-H Power@Size']
         print("### TPC-H Power@Size")
-        print(df.round(2).T)
+        print(df.round(2))
         times = {}
         for c, connection in evaluate.benchmarks.dbms.items():
             #print(c)
