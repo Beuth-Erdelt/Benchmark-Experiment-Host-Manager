@@ -81,6 +81,7 @@ Queries:
 20: Q21 = Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
 21: Q22 = Global Sales Opportunity Query (TPC-H Q22)
 Load Evaluation
+
 ### Errors
      MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
 Q1               False              False                 False
@@ -105,6 +106,7 @@ Q19              False              False                 False
 Q20              False              False                 False
 Q21              False              False                 False
 Q22              False              False                 False
+
 ### Warnings
      MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
 Q1               False              False                 False
@@ -129,55 +131,58 @@ Q19              False              False                 False
 Q20              False              False                 False
 Q21              False              False                 False
 Q22              False              False                 False
-### Geometric Mean of Medians of Timer Run [s]
-                      total_timer_run
-DBMS
-MonetDB-BHT-8-1-1                0.16
-MySQL-BHT-8-8-1-1                3.21
-PostgreSQL-BHT-8-1-1             0.92
-### TPC-H Power@Size
-                      total_timer_execution
-DBMS
-MonetDB-BHT-8-1-1                  28019.77
-MySQL-BHT-8-8-1-1                   1177.74
-PostgreSQL-BHT-8-1-1                4163.46
-### Loading [s]
-               MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-timeGenerate                0.00               1.00                  1.00
-timeIngesting               0.00               0.00                 64.00
-timeSchema                 20.49               7.10                  1.45
-timeIndex                  31.58            1926.00                 90.79
-timeLoad                  208.07            1941.09                167.24
+
 ### Latency of Timer Execution [ms]
 DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1          1191.461765       32976.866550           2575.229822
-Q2            40.244856         353.426684            444.317446
-Q3           140.317772        3830.837058            874.849701
-Q4            63.605567        1866.263772           1221.350864
-Q5            78.202283        3707.208448            667.834253
-Q6            38.245861        4381.451823            498.109412
-Q7            98.910379        7168.309541            776.546990
-Q8           429.877168        6842.353404            626.526102
-Q9           116.911106        5655.370234           1095.030941
-Q10          227.369602        3144.641478           1253.072737
-Q11           22.400078         378.353762            247.928103
-Q12           67.895412        7249.680495           1004.328220
-Q13          518.619515        8922.169393           1992.031885
-Q14           42.705345        5192.748062            540.495036
-Q15          253.798468       23545.270628            564.754779
-Q16          105.975546        1129.060470            571.773504
-Q17           58.720277         832.029265           2012.000808
-Q18          237.553277        6487.738463           7627.947489
-Q19           80.556198         388.327086            707.037814
-Q20          101.671524         626.914726            695.007182
-Q21         2760.631296       17143.306573            915.245131
-Q22           59.990853         527.317099            251.470952
-### Throughput
+Q1          1211.782388       31807.303464           2675.996928
+Q2            35.893178         358.334104            447.700922
+Q3           174.592189        3895.447229            806.408708
+Q4            62.597776        1787.761431           1252.746169
+Q5            87.776884        3739.886512            666.916152
+Q6            43.472409        4533.293634            507.126641
+Q7           114.052296        7219.211593            790.378132
+Q8           399.349472        6798.985649            645.004945
+Q9           109.618211        5726.490593           1142.606908
+Q10          166.791091        2982.236653           1243.232247
+Q11           30.462775         405.326795            258.781043
+Q12           71.804242        7231.231688           1045.094211
+Q13          590.355327        9123.990830           2085.330020
+Q14           55.593800        5301.650958            546.639167
+Q15           48.723737       23388.034988            564.402304
+Q16          106.590131        1165.048996            599.572676
+Q17           58.799952         766.303430           2028.445455
+Q18          187.483694        6361.544722           7217.086419
+Q19           77.561373         387.893790            720.981397
+Q20           86.775934         587.192490            687.701489
+Q21         2719.139783       17148.666537            961.873665
+Q22           54.809695         538.200532            251.882582
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1              1.0           27.0       28.01      31.11    115.12
+MySQL-BHT-8-8-1-1              1.0            1.0       10.31    1914.97   1936.27
+PostgreSQL-BHT-8-1-1           0.0            0.0        0.67      91.03    340.70
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS
+MonetDB-BHT-8-1-1              0.13
+MySQL-BHT-8-8-1-1              3.17
+PostgreSQL-BHT-8-1-1           0.93
+
+### TPC-H Power@Size
+                      TPC-H Power@Size
+DBMS
+MonetDB-BHT-8-1-1             29836.14
+MySQL-BHT-8-8-1-1              1180.91
+PostgreSQL-BHT-8-1-1           4109.42
+
+### TPC-H Throughput@Size
                                                  time [s]  count  SF   tpx [GB/h]
 orig_name          SF num_experiment num_client
-MonetDB-BHT-8-1    1  1              1                 16      1   1  4950.000000
-MySQL-BHT-8-8-1    1  1              1                157      1   1   504.458599
-PostgreSQL-BHT-8-1 1  1              1                 37      1   1  2140.540541
+MonetDB-BHT-8-1    1  1              1                 11      1   1  7200.000000
+MySQL-BHT-8-8-1    1  1              1                151      1   1   524.503311
+PostgreSQL-BHT-8-1 1  1              1                 38      1   1  2084.210526
 ```
 This gives a survey about the errors and warnings (result set mismatch), the geometric mean (in seconds) and the loading times (schema creation, ingestion and indexing) and the latencies of execution per query.
 
@@ -338,14 +343,15 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during load
 
 ```
 ### TPC-H Power@Size
-                      total_timer_execution
+                      TPC-H Power@Size
 DBMS
-PostgreSQL-BHT-8-1-1                3998.22
-PostgreSQL-BHT-8-2-1                3994.18
-PostgreSQL-BHT-8-2-2                4044.93
-### Throughput
+PostgreSQL-BHT-8-1-1           4087.24
+PostgreSQL-BHT-8-2-1           4075.83
+PostgreSQL-BHT-8-2-2           4087.22
+
+### TPC-H Throughput@Size
                                                  time [s]  count  SF   tpx [GB/h]
 orig_name          SF num_experiment num_client
-PostgreSQL-BHT-8-1 1  1              1                 37      1   1  2140.540541
-PostgreSQL-BHT-8-2 1  1              2                 40      2   1  3960.000000
+PostgreSQL-BHT-8-1 1  1              1                 32      1   1  2475.000000
+PostgreSQL-BHT-8-2 1  1              2                 39      2   1  4061.538462
 ```

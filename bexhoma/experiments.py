@@ -1304,7 +1304,7 @@ class tpch(default):
         print("\n### Latency of Timer Execution [ms]")
         df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
         if not df is None:
-            print(df.sort_index().T)
+            print(df.sort_index().T.round(2))
         #####################
         print("\n### Loading [s]")
         times = {}
@@ -1334,7 +1334,7 @@ class tpch(default):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index().astype('float')
         df = float(parameter.defaultParameters['SF'])*3600./df
-        df.columns = ['TPC-H Power@Size']
+        df.columns = ['TPC-H Power@Size [~Q/h]']
         print(df.round(2))
         #####################
         # aggregate time and throughput for parallel pods
@@ -1366,7 +1366,7 @@ class tpch(default):
         benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
         df_benchmark['count'] = benchmark_count['benchmark_end']
         df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-        df_benchmark['tpx [GB/h]'] = 22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']
+        df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
         print(df_benchmark)
         #####################
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
