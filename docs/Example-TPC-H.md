@@ -130,39 +130,54 @@ Q20              False              False                 False
 Q21              False              False                 False
 Q22              False              False                 False
 ### Geometric Mean of Medians of Timer Run [s]
-DBMS             MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-total_timer_run               0.16               3.31                  0.96
+                      total_timer_run
+DBMS
+MonetDB-BHT-8-1-1                0.16
+MySQL-BHT-8-8-1-1                3.21
+PostgreSQL-BHT-8-1-1             0.92
+### TPC-H Power@Size
+                      total_timer_execution
+DBMS
+MonetDB-BHT-8-1-1                  28019.77
+MySQL-BHT-8-8-1-1                   1177.74
+PostgreSQL-BHT-8-1-1                4163.46
 ### Loading [s]
                MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-timeGenerate                1.00               1.00                  1.00
-timeIngesting              16.00             458.00                 33.00
-timeSchema                 11.13               4.28                  0.71
-timeIndex                  26.77            1830.61                 88.90
-timeLoad                   64.90            2304.88                133.61
+timeGenerate                0.00               1.00                  1.00
+timeIngesting               0.00               0.00                 64.00
+timeSchema                 20.49               7.10                  1.45
+timeIndex                  31.58            1926.00                 90.79
+timeLoad                  208.07            1941.09                167.24
 ### Latency of Timer Execution [ms]
 DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1          1413.969409       32331.794913           2716.694587
-Q2            30.892844         370.537392            448.305403
-Q3           145.473032        4223.297398            811.306463
-Q4            66.988822        1834.799010           1402.561117
-Q5            65.921992        3830.323648            729.089127
-Q6            30.146675        4681.568123            548.187994
-Q7            94.690127        7479.308118            826.688616
-Q8           403.390767        6948.633130            650.453530
-Q9           115.265707        6310.306552           1146.405882
-Q10          182.652981        3181.243028           1326.023553
-Q11           28.979071         366.192797            259.237642
-Q12           64.908238        7325.474787           1111.519323
-Q13          636.077214        9758.173447           2191.581585
-Q14          322.785197        5384.841883            600.372235
-Q15          113.011265       24819.928947            601.613062
-Q16          112.305753        1242.980396            582.770191
-Q17           52.767210         928.072803           2156.815792
-Q18          208.405718        6267.285223           6916.815835
-Q19           74.062916         464.049083            734.711302
-Q20           90.469837         604.664529            673.447353
-Q21         2065.736660       17594.972028            971.738854
-Q22           49.831625         543.698184            253.073467
+Q1          1191.461765       32976.866550           2575.229822
+Q2            40.244856         353.426684            444.317446
+Q3           140.317772        3830.837058            874.849701
+Q4            63.605567        1866.263772           1221.350864
+Q5            78.202283        3707.208448            667.834253
+Q6            38.245861        4381.451823            498.109412
+Q7            98.910379        7168.309541            776.546990
+Q8           429.877168        6842.353404            626.526102
+Q9           116.911106        5655.370234           1095.030941
+Q10          227.369602        3144.641478           1253.072737
+Q11           22.400078         378.353762            247.928103
+Q12           67.895412        7249.680495           1004.328220
+Q13          518.619515        8922.169393           1992.031885
+Q14           42.705345        5192.748062            540.495036
+Q15          253.798468       23545.270628            564.754779
+Q16          105.975546        1129.060470            571.773504
+Q17           58.720277         832.029265           2012.000808
+Q18          237.553277        6487.738463           7627.947489
+Q19           80.556198         388.327086            707.037814
+Q20          101.671524         626.914726            695.007182
+Q21         2760.631296       17143.306573            915.245131
+Q22           59.990853         527.317099            251.470952
+### Throughput
+                                                 time [s]  count  SF   tpx [GB/h]
+orig_name          SF num_experiment num_client
+MonetDB-BHT-8-1    1  1              1                 16      1   1  4950.000000
+MySQL-BHT-8-8-1    1  1              1                157      1   1   504.458599
+PostgreSQL-BHT-8-1 1  1              1                 37      1   1  2140.540541
 ```
 This gives a survey about the errors and warnings (result set mismatch), the geometric mean (in seconds) and the loading times (schema creation, ingestion and indexing) and the latencies of execution per query.
 
@@ -321,3 +336,16 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during load
 
 ## Perform Benchmark - Throughput Test
 
+```
+### TPC-H Power@Size
+                      total_timer_execution
+DBMS
+PostgreSQL-BHT-8-1-1                3998.22
+PostgreSQL-BHT-8-2-1                3994.18
+PostgreSQL-BHT-8-2-2                4044.93
+### Throughput
+                                                 time [s]  count  SF   tpx [GB/h]
+orig_name          SF num_experiment num_client
+PostgreSQL-BHT-8-1 1  1              1                 37      1   1  2140.540541
+PostgreSQL-BHT-8-2 1  1              2                 40      2   1  3960.000000
+```
