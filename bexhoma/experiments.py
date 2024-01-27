@@ -1302,8 +1302,8 @@ class tpch(default):
         print("### Geometric Mean of Medians of Timer Run [s]")
         print(df.round(2).T)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index()
-        df = parameter.defaultParameters['SF']*3600/df
+        df = (df/1000.0).sort_index().astype('float')
+        df = float(parameter.defaultParameters['SF'])*3600./df
         print("### TPC-H Power@Size")
         print(df.round(2).T)
         times = {}
