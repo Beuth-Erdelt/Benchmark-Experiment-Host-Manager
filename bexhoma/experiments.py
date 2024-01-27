@@ -1301,6 +1301,11 @@ class tpch(default):
         df = (df/1000.0).sort_index()
         print("### Geometric Mean of Medians of Timer Run [s]")
         print(df.round(2).T)
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
+        df = parameter.defaultParameters['SF']*3600/df
+        print("### TPC-H Power@Size")
+        print(df.round(2).T)
         times = {}
         for c, connection in evaluate.benchmarks.dbms.items():
             #print(c)
@@ -1357,7 +1362,7 @@ class tpch(default):
         benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
         df_benchmark['count'] = benchmark_count['benchmark_end']
         df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-        df_benchmark['tpx [h]'] = 22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']
+        df_benchmark['tpx [GB/h]'] = 22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']
         print("### Throughput")
         print(df_benchmark)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
