@@ -1329,6 +1329,37 @@ class tpch(default):
         if not df is None:
             print(df.sort_index().T)
         #timespan_load = max([end for (start,end) in c['hostsystem']['loading_timespans']['sensor']]) - min([start for (start,end) in c['hostsystem']['loading_timespans']['sensor']])
+        # aggregate time and throughput for parallel pods
+        df_merged_time = pd.DataFrame()
+        for connection_nr, connection in evaluate.benchmarks.dbms.items():
+            df_time = pd.DataFrame()
+            c = connection.connectiondata
+            connection_name = c['name']
+            orig_name = c['orig_name']
+            eva = evaluate.get_experiment_connection_properties(c['name'])
+            df_time.index = [connection_name]
+            #df_time['SF'] = int(SF)
+            #print(c)
+            df_time['orig_name'] = orig_name
+            df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
+            df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
+            #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
+            df_time['num_experiment'] = int(c['parameter']['numExperiment'])
+            df_time['num_client'] = int(c['parameter']['client'])
+            df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
+            df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
+            df_merged_time = pd.concat([df_merged_time, df_time])
+        df_time = df_merged_time.sort_index()
+        benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
+        benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
+        df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
+        df_benchmark.columns = ['time [s]']
+        benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
+        df_benchmark['count'] = benchmark_count['benchmark_end']
+        df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
+        df_benchmark['tpx [h]'] = 22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']
+        print("### Throughput")
+        print(df_benchmark)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             df = evaluate.get_loading_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
