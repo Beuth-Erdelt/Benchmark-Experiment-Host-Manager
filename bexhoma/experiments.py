@@ -1334,7 +1334,7 @@ class tpch(default):
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index().astype('float')
         df = float(parameter.defaultParameters['SF'])*3600./df
-        df.columns = ['TPC-H Power@Size [~Q/h]']
+        df.columns = ['Power@Size [~Q/h]']
         print(df.round(2))
         #####################
         # aggregate time and throughput for parallel pods
