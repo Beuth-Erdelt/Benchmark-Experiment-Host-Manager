@@ -43,7 +43,7 @@ You can watch the status while benchmark is running via `bexperiments status`
 ```
 
 
-### Evaluate Results
+## Evaluate Results
 
 At the end of a benchmark you will see a summary like
 

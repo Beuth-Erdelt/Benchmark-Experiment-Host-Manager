@@ -184,7 +184,10 @@ MonetDB-BHT-8-1    1  1              1                 18      1   1            
 MySQL-BHT-8-8-1    1  1              1                156      1   1                   507.69
 PostgreSQL-BHT-8-1 1  1              1                 46      1   1                  1721.74
 ```
-This gives a survey about the errors and warnings (result set mismatch), the geometric mean (in seconds) and the loading times (schema creation, ingestion and indexing) and the latencies of execution per query.
+This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
+Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
+Please note that the results are not suitable for being published as official TPC-H results.
+In particular the refresh streams are missing.
 
 Results are transformed into pandas DataFrames and can be inspected in more detail.
 Detailed evaluations can be done using DBMSBenchmarker
