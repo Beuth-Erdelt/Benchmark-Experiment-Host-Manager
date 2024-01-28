@@ -1284,6 +1284,7 @@ class tpch(default):
         self.set_queryfile('queries-tpch-profiling.config')
     def show_summary(self):
         self.cluster.logger.debug('tpch.show_summary()')
+        print("\n## Show Summary")
         pd.set_option("display.max_rows", None)
         pd.set_option('display.max_colwidth', None)
         pd.set_option('display.max_rows', 500)
@@ -1293,23 +1294,22 @@ class tpch(default):
         code = self.code
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=False)
-        print("### Errors")
+        #####################
+        print("\n### Errors")
         print(evaluate.get_total_errors().T)
-        print("### Warnings")
+        #####################
+        print("\n### Warnings")
         print(evaluate.get_total_warnings().T)
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index()
-        print("### Geometric Mean of Medians of Timer Run [s]")
-        print(df.round(2).T)
+        #####################
+        print("\n### Latency of Timer Execution [ms]")
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        if not df is None:
+            print(df.sort_index().T.round(2))
+        #####################
+        print("\n### Loading [s]")
         times = {}
         for c, connection in evaluate.benchmarks.dbms.items():
-            #print(c)
             times[c]={}
-            #evaluator.pretty(connection.connectiondata)
-            #connection.connectiondata['hostsystem']
-            #connection.connectiondata
-            #connection.connectiondata['hostsystem']['loading_timespans']['sensor']
-            #print(connection.connectiondata['timeLoad'])
             if 'timeGenerate' in connection.connectiondata:
                 times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
             if 'timeIngesting' in connection.connectiondata:
@@ -1320,15 +1320,76 @@ class tpch(default):
                 times[c]['timeIndex'] = connection.connectiondata['timeIndex']
             if 'timeLoad' in connection.connectiondata:
                 times[c]['timeLoad'] = connection.connectiondata['timeLoad']
-        print("### Loading [s]")
         df = pd.DataFrame(times)
         df = df.reindex(sorted(df.columns), axis=1)
+        print(df.round(2).T)
+        #####################
+        print("\n### Geometric Mean of Medians of Timer Run [s]")
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
+        df.columns = ['Geo Times [s]']
         print(df.round(2))
-        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
-        print("### Latency of Timer Execution [ms]")
-        if not df is None:
-            print(df.sort_index().T)
-        #timespan_load = max([end for (start,end) in c['hostsystem']['loading_timespans']['sensor']]) - min([start for (start,end) in c['hostsystem']['loading_timespans']['sensor']])
+        #####################
+        print("\n### TPC-H Power@Size")
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index().astype('float')
+        df = float(parameter.defaultParameters['SF'])*3600./df
+        df.columns = ['Power@Size [~Q/h]']
+        print(df.round(2))
+        #####################
+        # aggregate time and throughput for parallel pods
+        print("\n### TPC-H Throughput@Size")
+        df_merged_time = pd.DataFrame()
+        for connection_nr, connection in evaluate.benchmarks.dbms.items():
+            df_time = pd.DataFrame()
+            c = connection.connectiondata
+            connection_name = c['name']
+            orig_name = c['orig_name']
+            eva = evaluate.get_experiment_connection_properties(c['name'])
+            df_time.index = [connection_name]
+            #df_time['SF'] = int(SF)
+            #print(c)
+            df_time['orig_name'] = orig_name
+            df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
+            df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
+            #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
+            df_time['num_experiment'] = int(c['parameter']['numExperiment'])
+            df_time['num_client'] = int(c['parameter']['client'])
+            df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
+            df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
+            df_merged_time = pd.concat([df_merged_time, df_time])
+        df_time = df_merged_time.sort_index()
+        benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
+        benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
+        df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
+        df_benchmark.columns = ['time [s]']
+        benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
+        df_benchmark['count'] = benchmark_count['benchmark_end']
+        df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
+        df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        print(df_benchmark)
+        #####################
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            print("\n### CPU of Ingestion (via counter) [CPUs]")
+            df = evaluate.get_loading_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            print(pd.DataFrame(df))
+            #####################
+            print("\n### Max RAM of Ingestion [Gb]")
+            df = evaluate.get_loading_metrics('total_cpu_memory')/1024
+            df = df.T.max().sort_index()
+            print(pd.DataFrame(df))
+            #####################
+            print("\n### CPU of Execution (via counter) [CPUs]")
+            df = evaluate.get_streaming_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            print(pd.DataFrame(df))
+            #####################
+            print("\n### Max RAM of Execution [Gb]")
+            df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
+            df = df.T.max().sort_index()
+            print(pd.DataFrame(df))
 
 
 """
@@ -1674,6 +1735,30 @@ class ycsb(default):
             if col in df_aggregated.columns:
                 df_aggregated_reduced[col] = df_aggregated.loc[:,col]
         print(df_aggregated_reduced)
+        #evaluation = evaluators.ycsb(code=code, path=path)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            evaluation.transform_monitoring_results(component="loading")
+            #df = evaluation.get_loading_metrics('total_cpu_util_s')
+            #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
+            print("### CPU of Ingestion (via counter) [CPUs]")
+            print(pd.DataFrame(df))
+            #df = evaluation.get_loading_metrics('total_cpu_memory')
+            #df = df.T.max().sort_index()
+            df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()
+            print("### Max RAM of Ingestion [Mb]")
+            print(pd.DataFrame(df))
+            evaluation.transform_monitoring_results(component="stream")
+            #df = evaluation.get_streaming_metrics('total_cpu_util_s')
+            #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
+            print("### CPU of Execution (via counter) [CPUs]")
+            print(pd.DataFrame(df))
+            #df = evaluation.get_streaming_metrics('total_cpu_memory')
+            #df = df.T.max().sort_index()
+            df = evaluation.get_monitoring_metric('total_cpu_memory', component='stream').max()
+            print("### Max RAM of Execution [Mb]")
+            print(pd.DataFrame(df))
 
 
 """

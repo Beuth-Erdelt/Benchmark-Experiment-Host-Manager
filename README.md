@@ -15,7 +15,7 @@ It enables users to configure hardware / software setups for easily repeating te
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
-running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, YugabyteDB and Vertica.
+running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, Vertica and YugabyteDB.
 
 Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
 
@@ -37,7 +37,7 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
     * (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
     * (Also make sure, you can create PV via PVC and dynamic provisioning)
 1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
-    1. Rename `k8s-cluster.config` to `cluster.config`
+    1. Copy `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
 1. Install result folder: Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
 

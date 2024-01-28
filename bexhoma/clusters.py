@@ -1291,7 +1291,7 @@ class testbed():
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not len(self.get_dashboard_pod_name())):
-               self.wait(10)
+               self.wait(10, silent=True)
             print("done")
             return
     def start_monitoring_cluster(self, app='', component='monitoring'):
@@ -1336,7 +1336,7 @@ class testbed():
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not len(self.get_pods(component=component))):
-               self.wait(10)
+               self.wait(10, silent=True)
             print("done")
             return
     def get_dashboard_pod_name(self, app='', component='dashboard'):

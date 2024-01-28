@@ -20,8 +20,8 @@ logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
     description = """Perform YCSB benchmarks in a Kubernetes cluster.
-    Number of rows and operations is SF*100,000.
-    This installs a clean copy for each target and split.
+    Number of rows and operations is SF*1,000,000.
+    This installs a clean copy for each target and split of the driver.
     Optionally monitoring is activated.
     """
     # argparse

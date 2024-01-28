@@ -8,14 +8,14 @@ This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H
 
 Official TPC-H benchmark - http://www.tpc.org/tpch
 
-## Perform Benchmark
+## Perform Benchmark - Power Test
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example: `python tpch.py -dt -nlp 8 -nlt 16 -sf 1 -ii -ic -is run`
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL each
+* starts a clean instance of PostgreSQL, MonetDB, MySQL
   * data directory inside a Docker container
 * creates TPC-H schema in each database
 * starts 8 loader pods per DBMS
@@ -36,23 +36,26 @@ This
 You can watch the status while benchmark is running via `bexperiments status`
 
 ```
-| 1705608513       | sut          |   loaded [s] | worker   | maintaining   | loading                  | monitoring   | benchmarker   |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
-| MonetDB-BHT-8    | (1. Running) |       129.92 |          |               |                          |              | (1. Running)  |
-| MySQL-BHT-8-16   | (1. Running) |         5.31 |          |               | (8 Running)              |              |               |
-| PostgreSQL-BHT-8 | (1. Running) |         0.46 |          |               | (5 Succeeded)(3 Running) |              |               |
-|------------------|--------------|--------------|----------|---------------|--------------------------|--------------|---------------|
++------------------+--------------+--------------+---------------+
+| 1706255897       | sut          |   loaded [s] | loading       |
++==================+==============+==============+===============+
+| MonetDB-BHT-8    | (1. Running) |       253.23 |               |
++------------------+--------------+--------------+---------------+
+| MySQL-BHT-8-8    | (1. Running) |         0.61 | (8 Succeeded) |
++------------------+--------------+--------------+---------------+
+| PostgreSQL-BHT-8 | (1. Running) |       219.08 |               |
++------------------+--------------+--------------+---------------+
 ```
 
 
-### Evaluate Results
+## Evaluate Results
 
 At the end of a benchmark you will see a summary like
 
 ```
 Connections:
 MonetDB-BHT-8-1-1
-MySQL-BHT-8-16-1-1
+MySQL-BHT-8-8-1-1
 PostgreSQL-BHT-8-1-1
 Queries:
 0: Q1 = Pricing Summary Report (TPC-H Q1)
@@ -78,94 +81,115 @@ Queries:
 20: Q21 = Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
 21: Q22 = Global Sales Opportunity Query (TPC-H Q22)
 Load Evaluation
-### Errors
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1               False               False                 False
-Q2               False               False                 False
-Q3               False               False                 False
-Q4               False               False                 False
-Q5               False               False                 False
-Q6               False               False                 False
-Q7               False               False                 False
-Q8               False               False                 False
-Q9               False               False                 False
-Q10              False               False                 False
-Q11              False               False                 False
-Q12              False               False                 False
-Q13              False               False                 False
-Q14              False               False                 False
-Q15              False               False                 False
-Q16              False               False                 False
-Q17              False               False                 False
-Q18              False               False                 False
-Q19              False               False                 False
-Q20              False               False                 False
-Q21              False               False                 False
-Q22              False               False                 False
-### Warnings
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1               False               False                 False
-Q2               False               False                 False
-Q3               False               False                 False
-Q4               False               False                 False
-Q5               False               False                 False
-Q6               False               False                 False
-Q7               False               False                 False
-Q8               False               False                 False
-Q9               False               False                 False
-Q10              False               False                 False
-Q11              False               False                 False
-Q12              False               False                 False
-Q13              False               False                 False
-Q14              False               False                 False
-Q15              False               False                 False
-Q16              False               False                 False
-Q17              False               False                 False
-Q18              False               False                 False
-Q19              False               False                 False
-Q20              False               False                 False
-Q21              False               False                 False
-Q22              False               False                 False
-### Geometric Mean of Medians of Timer Run [s]
-DBMS             MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-total_timer_run                0.1                1.48                  0.56
-MonetDB-BHT-8-1-1
-MySQL-BHT-8-16-1-1
-PostgreSQL-BHT-8-1-1
-### Loading [s]
-               MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-timeGenerate                1.00                1.00                  1.00
-timeIngesting              10.00              108.00                 23.00
-timeSchema                  0.95                5.10                  0.51
-timeIndex                  17.07              496.56                 43.85
-timeLoad                   46.02              627.65                 85.36
-### Latency of Timer Execution [ms]
-DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-16-1-1  PostgreSQL-BHT-8-1-1
-Q1           540.266769        13403.575217           1394.948800
-Q2            32.445064          140.819682            235.456771
-Q3           107.648707         1871.247458            472.850334
-Q4            43.393589          771.850379            804.222555
-Q5            53.208980         1433.090793            417.965981
-Q6            23.235807         2102.604461            310.579344
-Q7            67.450407         3430.779209            477.439999
-Q8           187.965117         2688.095795            406.967678
-Q9            81.846076         2499.057111            712.869145
-Q10           97.086058         2082.182153            793.103422
-Q11           18.448853          279.750079            155.313325
-Q12           50.426757         3109.570189            622.492888
-Q13          245.087787         3461.542013           1098.003893
-Q14           35.918594         2320.781684            341.247769
-Q15           29.761279        11305.257101            335.477490
-Q16           66.997990          555.879030            343.637448
-Q17           71.115009          321.034775           1165.672948
-Q18          149.304385         2785.999462           3708.772301
-Q19           69.044638          177.866275            435.700887
-Q20           81.822519          304.060695            345.359304
-Q21          872.301944         6716.680256            564.431586
-Q22           52.956324          233.065151            150.500087
-```
 
-Results are transformed into pandas DataFrames and can be inspected in detail.
+### Errors
+     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1               False              False                 False
+Q2               False              False                 False
+Q3               False              False                 False
+Q4               False              False                 False
+Q5               False              False                 False
+Q6               False              False                 False
+Q7               False              False                 False
+Q8               False              False                 False
+Q9               False              False                 False
+Q10              False              False                 False
+Q11              False              False                 False
+Q12              False              False                 False
+Q13              False              False                 False
+Q14              False              False                 False
+Q15              False              False                 False
+Q16              False              False                 False
+Q17              False              False                 False
+Q18              False              False                 False
+Q19              False              False                 False
+Q20              False              False                 False
+Q21              False              False                 False
+Q22              False              False                 False
+
+### Warnings
+     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1               False              False                 False
+Q2               False              False                 False
+Q3               False              False                 False
+Q4               False              False                 False
+Q5               False              False                 False
+Q6               False              False                 False
+Q7               False              False                 False
+Q8               False              False                 False
+Q9               False              False                 False
+Q10              False              False                 False
+Q11              False              False                 False
+Q12              False              False                 False
+Q13              False              False                 False
+Q14              False              False                 False
+Q15              False              False                 False
+Q16              False              False                 False
+Q17              False              False                 False
+Q18              False              False                 False
+Q19              False              False                 False
+Q20              False              False                 False
+Q21              False              False                 False
+Q22              False              False                 False
+
+### Latency of Timer Execution [ms]
+DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1              1214.78           31836.03               2818.04
+Q2                32.96             354.24                448.22
+Q3               152.26            3773.37                772.58
+Q4                56.77            1925.58               1320.62
+Q5                96.40            2700.64                694.82
+Q6                43.42            4317.21                522.64
+Q7                95.72            7200.93                807.61
+Q8               453.65            6742.41                646.12
+Q9               138.02            5596.61               1567.34
+Q10              186.51            3093.87               1327.04
+Q11               28.54             338.07                253.88
+Q12               71.91            7169.19               1030.47
+Q13              611.46            9030.91               2092.40
+Q14               50.75            5017.37                560.41
+Q15               51.14           22967.24                560.97
+Q16              112.46            1106.00                596.19
+Q17              135.30             787.69               2087.18
+Q18              235.09            6354.27               8261.32
+Q19               82.74             384.85                716.25
+Q20              106.50             578.54                727.58
+Q21             1970.25           17064.63                908.25
+Q22               60.29             529.73                249.55
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1              0.0           20.0       30.47      30.42    120.89
+MySQL-BHT-8-8-1-1              3.0            1.0        7.04    1743.71   1761.74
+PostgreSQL-BHT-8-1-1           1.0           73.0        1.53      93.26    179.79
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS
+MonetDB-BHT-8-1-1              0.15
+MySQL-BHT-8-8-1-1              3.09
+PostgreSQL-BHT-8-1-1           0.96
+
+### TPC-H Power@Size
+                      TPC-H Power@Size [~Q/h]
+DBMS
+MonetDB-BHT-8-1-1                    28311.40
+MySQL-BHT-8-8-1-1                     1218.11
+PostgreSQL-BHT-8-1-1                  3986.41
+
+### TPC-H Throughput@Size
+                                                 time [s]  count  SF  Throughput@Size [~GB/h]
+orig_name          SF num_experiment num_client
+MonetDB-BHT-8-1    1  1              1                 18      1   1                  4400.00
+MySQL-BHT-8-8-1    1  1              1                156      1   1                   507.69
+PostgreSQL-BHT-8-1 1  1              1                 46      1   1                  1721.74
+```
+This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
+Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
+Please note that the results are not suitable for being published as official TPC-H results.
+In particular the refresh streams are missing.
+
+Results are transformed into pandas DataFrames and can be inspected in more detail.
 Detailed evaluations can be done using DBMSBenchmarker
 * [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
@@ -175,9 +199,12 @@ This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
-You can connect to an evaluation server in the cluster by `bexperiments localdashboard`.
+You can connect to a local evaluation server by `bexperiments localdashboard`.
 This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
+
+You can connect to a local jupyter server by `bexperiments jupyter`.
+This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
 
@@ -284,3 +311,57 @@ options:
 ## Monitoring
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+
+If monitoring is activated, the summary also contains a section like
+```
+### CPU of Ingestion (via counter) [CPUs]
+                              0
+DBMS
+MonetDB-BHT-8-1      136.638103
+MySQL-BHT-8-8-1     3223.236893
+PostgreSQL-BHT-8-1   153.782876
+### Max RAM of Ingestion [Mb]
+                               0
+DBMS
+MonetDB-BHT-8-1      1244.855469
+MySQL-BHT-8-8-1     48206.949219
+PostgreSQL-BHT-8-1   3862.175781
+### CPU of Execution (via counter) [CPUs]
+                             0
+DBMS
+MonetDB-BHT-8-1      29.866166
+MySQL-BHT-8-8-1     142.083743
+PostgreSQL-BHT-8-1  115.545106
+### Max RAM of Execution [Mb]
+                               0
+DBMS
+MonetDB-BHT-8-1      1787.203125
+MySQL-BHT-8-8-1     48321.277344
+PostgreSQL-BHT-8-1   3939.746094
+```
+
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
+
+## Perform Benchmark - Throughput Test
+
+For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+
+Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200 run`
+
+This runs 3 streams, the first one as a single stream and the following 2 in parallel.
+
+```
+### TPC-H Power@Size
+                            Power@Size [~Q/h]
+DBMS
+PostgreSQL-BHT-8-1-1                  4150.78
+PostgreSQL-BHT-8-2-1                  3756.33
+PostgreSQL-BHT-8-2-2                  4190.57
+
+### TPC-H Throughput@Size
+                                                 time [s]  count  SF  Throughput@Size [~GB/h]
+orig_name          SF num_experiment num_client
+PostgreSQL-BHT-8-1 1  1              1                 45      1   1                  1760.00
+PostgreSQL-BHT-8-2 1  1              2                 49      2   1                  3232.65
+
+```
