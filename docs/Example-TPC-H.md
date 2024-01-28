@@ -341,6 +341,12 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during load
 
 ## Perform Benchmark - Throughput Test
 
+For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+
+Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200 run`
+
+This runs 3 streams, the first one as a single stream and the following 2 in parallel.
+
 ```
 ### TPC-H Power@Size
                             Power@Size [~Q/h]

@@ -1376,8 +1376,8 @@ class tpch(default):
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             print(pd.DataFrame(df))
             #####################
-            print("\n### Max RAM of Ingestion [Mb]")
-            df = evaluate.get_loading_metrics('total_cpu_memory')
+            print("\n### Max RAM of Ingestion [Gb]")
+            df = evaluate.get_loading_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
             print(pd.DataFrame(df))
             #####################
@@ -1386,8 +1386,8 @@ class tpch(default):
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             print(pd.DataFrame(df))
             #####################
-            print("\n### Max RAM of Execution [Mb]")
-            df = evaluate.get_streaming_metrics('total_cpu_memory')
+            print("\n### Max RAM of Execution [Gb]")
+            df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
             print(pd.DataFrame(df))
 
