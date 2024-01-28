@@ -1375,28 +1375,28 @@ class tpch(default):
             df = evaluate.get_loading_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df = pd.DataFrame(df)
-            df.columns = "SUT - CPU of Ingestion (via counter) [CPUs]"
+            df.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
             print(df)
             #####################
             print("\n### Max RAM of Ingestion [Gb]")
             df = evaluate.get_loading_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
             df = pd.DataFrame(df)
-            df.columns = "SUT - Max RAM of Ingestion [Gb]"
+            df.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             print(df)
             #####################
             print("\n### CPU of Execution (via counter) [CPUs]")
             df = evaluate.get_streaming_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df = pd.DataFrame(df)
-            df.columns = "SUT - CPU of Execution (via counter) [CPUs]"
+            df.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
             print(df)
             #####################
             print("\n### Max RAM of Execution [Gb]")
             df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
             df = pd.DataFrame(df)
-            df.columns = "SUT - Max RAM of Execution [Gb]"
+            df.columns = ["SUT - Max RAM of Execution [Gb]"]
             print(df)
 
 
@@ -1755,7 +1755,7 @@ class ycsb(default):
             #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
             df = pd.DataFrame(df)
-            df.columns = "SUT - CPU of Ingestion (via counter) [CPUs]"
+            df.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
             print(df)
             #####################
             print("### Max RAM of Ingestion [Gb]")
@@ -1763,7 +1763,7 @@ class ycsb(default):
             #df = df.T.max().sort_index()
             df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()/1024
             df = pd.DataFrame(df)
-            df.columns = "SUT - Max RAM of Ingestion [Gb]"
+            df.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             print(df)
             #####################
             evaluation.transform_monitoring_results(component="stream")
@@ -1773,7 +1773,7 @@ class ycsb(default):
             print("### CPU of Execution (via counter) [CPUs]")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
             df = pd.DataFrame(df)
-            df.columns = "SUT - CPU of Execution (via counter) [CPUs]"
+            df.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
             print(df)
             #####################
             #df = evaluation.get_streaming_metrics('total_cpu_memory')
@@ -1781,7 +1781,7 @@ class ycsb(default):
             print("### Max RAM of Execution [Gb]")
             df = evaluation.get_monitoring_metric('total_cpu_memory', component='stream').max()/1024
             df = pd.DataFrame(df)
-            df.columns = "SUT - Max RAM of Execution [Gb]"
+            df.columns = ["SUT - Max RAM of Execution [Gb]"]
             print(df)
 
 
