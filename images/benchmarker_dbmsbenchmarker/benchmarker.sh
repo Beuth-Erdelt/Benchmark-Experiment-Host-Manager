@@ -110,6 +110,9 @@ else
 	DBMSBENCHMARKER_RECREATE_PARAMETER=0
 fi
 
+######################## Show more parameters ########################
+echo "DBMSBENCHMARKER_SHUFFLE_QUERIES $DBMSBENCHMARKER_SHUFFLE_QUERIES"
+echo "DBMSBENCHMARKER_RECREATE_PARAMETER $DBMSBENCHMARKER_RECREATE_PARAMETER"
 
 ######################## Execute workload ###################
 # run dbmsbenchmarker
