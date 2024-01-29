@@ -94,6 +94,20 @@ then
 	git pull
 fi
 
+######################## Convert parameters ###################
+if [ "$DBMSBENCHMARKER_SHUFFLE_QUERIES" = "True" ]; then
+	$DBMSBENCHMARKER_SHUFFLE_QUERIES=1
+else
+	$DBMSBENCHMARKER_SHUFFLE_QUERIES=0
+fi
+
+if [ "$DBMSBENCHMARKER_RECREATE_PARAMETER" = "True" ]; then
+	$DBMSBENCHMARKER_RECREATE_PARAMETER=1
+else
+	$DBMSBENCHMARKER_RECREATE_PARAMETER=0
+fi
+
+
 ######################## Execute workload ###################
 # run dbmsbenchmarker
 if test $DBMSBENCHMARKER_VERBOSE -gt 0

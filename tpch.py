@@ -68,7 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('-ii', '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
     parser.add_argument('-ic', '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
     parser.add_argument('-is', '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=None)
+    parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=False)
     parser.add_argument('-shq', '--shuffle-queries', help='have different orderings per stream', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
