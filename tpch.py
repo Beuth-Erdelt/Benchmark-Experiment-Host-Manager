@@ -69,6 +69,7 @@ if __name__ == '__main__':
     parser.add_argument('-ic', '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
     parser.add_argument('-is', '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
     parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', default=None)
+    parser.add_argument('-shq', '--shuffle-queries', help='have different orderings per stream', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -113,6 +114,7 @@ if __name__ == '__main__':
     datatransfer = args.datatransfer
     test_result = args.test_result
     recreate_parameter = args.recreate_parameter
+    shuffle_queries = args.shuffle_queries
     # indexes
     init_indexes = args.init_indexes
     init_constraints = args.init_constraints
@@ -273,6 +275,7 @@ if __name__ == '__main__':
                     )
                 config.set_benchmarking_parameters(
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if (args.dbms == "MonetDB" or len(args.dbms) == 0):
@@ -293,6 +296,7 @@ if __name__ == '__main__':
                     )
                 config.set_benchmarking_parameters(
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if (args.dbms == "MySQL" or len(args.dbms) == 0):
@@ -316,6 +320,7 @@ if __name__ == '__main__':
                         )
                     config.set_benchmarking_parameters(
                         DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                         )
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
     # wait for necessary nodegroups to have planned size
