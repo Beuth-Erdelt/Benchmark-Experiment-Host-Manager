@@ -275,7 +275,7 @@ if __name__ == '__main__':
                     )
                 config.set_benchmarking_parameters(
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = int(shuffle_queries),
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if (args.dbms == "MonetDB" or len(args.dbms) == 0):
@@ -296,7 +296,7 @@ if __name__ == '__main__':
                     )
                 config.set_benchmarking_parameters(
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = int(shuffle_queries),
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if (args.dbms == "MySQL" or len(args.dbms) == 0):
@@ -320,7 +320,7 @@ if __name__ == '__main__':
                         )
                     config.set_benchmarking_parameters(
                         DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                        DBMSBENCHMARKER_SHUFFLE_QUERIES = int(shuffle_queries),
+                        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                         )
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
     # wait for necessary nodegroups to have planned size
