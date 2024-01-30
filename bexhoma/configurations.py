@@ -1915,6 +1915,11 @@ scrape_configs:
         #service_port = config_K8s['port']
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
         #c['parameter'] = {}
+        # add parameters to connection
+        if len(self.loading_parameters):
+            self.connection_parameter['loading_parameters'] = self.loading_parameters
+        if len(self.benchmarking_parameters):
+            self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
@@ -2732,10 +2737,6 @@ scrape_configs:
         start = now + timedelta(seconds=240)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         # store parameters in connection for evaluation
-        if len(self.loading_parameters):
-            self.connection_parameter['loading_parameters'] = self.loading_parameters
-        if len(self.benchmarking_parameters):
-            self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
         e = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
@@ -2823,8 +2824,8 @@ scrape_configs:
             'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             }
         # store parameters in connection for evaluation
-        #if len(self.loading_parameters):
-        #    self.connection_parameter['loading_parameters'] = self.loading_parameters
+        if len(self.loading_parameters):
+            self.connection_parameter['loading_parameters'] = self.loading_parameters
         #print("self.loading_parameters", self.loading_parameters)
         #env = self.loading_parameters
         env = {**env, **self.loading_parameters}
