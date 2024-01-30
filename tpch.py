@@ -75,6 +75,7 @@ if __name__ == '__main__':
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     #logging.basicConfig(level=logging.DEBUG)
+    debugging = int(args.debug)
     if args.debug:
         logger_bexhoma = logging.getLogger('bexhoma')
         logger_bexhoma.setLevel(logging.DEBUG)
@@ -276,6 +277,7 @@ if __name__ == '__main__':
                 config.set_benchmarking_parameters(
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                    DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if (args.dbms == "MonetDB" or len(args.dbms) == 0):
@@ -297,6 +299,7 @@ if __name__ == '__main__':
                 config.set_benchmarking_parameters(
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                    DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if (args.dbms == "MySQL" or len(args.dbms) == 0):
@@ -321,6 +324,7 @@ if __name__ == '__main__':
                     config.set_benchmarking_parameters(
                         DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                         DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                        DBMSBENCHMARKER_DEV = debugging,
                         )
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
     # wait for necessary nodegroups to have planned size
