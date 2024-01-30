@@ -234,12 +234,11 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```
-usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS]
-               [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME]
-               [-tr] [-ii] [-ic] [-is] [-rcp RECREATE_PARAMETER]
+usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
+               [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
                {profiling,run,start,load,empty}
 
-Performs a TPC-H loading experiment. Data is generated and imported into a DBMS from a distributed filesystem.
+Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk).
 
 positional arguments:
   {profiling,run,start,load,empty}
@@ -248,7 +247,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MonetDB,SingleStore,CockroachDB,MySQL,MariaDB,YugabyteDB,Kinetica}
+  -dbms {PostgreSQL,MonetDB,MySQL}
                         DBMS to load the data
   -lit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
                         limit import to one table, name of this table
@@ -304,8 +303,10 @@ options:
                         adds constraints to tables after ingestion
   -is, --init-statistics
                         recomputes statistics of tables after ingestion
-  -rcp RECREATE_PARAMETER, --recreate-parameter RECREATE_PARAMETER
+  -rcp, --recreate-parameter
                         recreate parameter for randomized queries
+  -shq, --shuffle-queries
+                        have different orderings per stream
 ```
 
 ## Monitoring
@@ -365,3 +366,8 @@ PostgreSQL-BHT-8-1 1  1              1                 45      1   1            
 PostgreSQL-BHT-8-2 1  1              2                 49      2   1                  3232.65
 
 ```
+
+Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
+You can change this via
+* `-rcp`: Each stream has it's own random parameters
+* `shq`: Use the ordering per stream as required by the TPC-H specification
