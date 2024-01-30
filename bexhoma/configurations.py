@@ -2478,8 +2478,8 @@ scrape_configs:
                 self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
             if 'timeLoading' in pod_labels[pod]:
                 self.timeLoading = float(pod_labels[pod]['timeLoading'])
-            if 'time_initschema' in pod_labels[pod]:
-                self.timeSchema = float(pod_labels[pod]['time_initschema'])
+            if 'time_loaded' in pod_labels[pod]:
+                self.timeSchema = float(pod_labels[pod]['time_loaded']) # stays at pre-ingestion total, even after ingestion and post-ingestion?
             if 'time_generated' in pod_labels[pod]:
                 self.timeGenerating = float(pod_labels[pod]['time_generated'])
             if 'time_ingested' in pod_labels[pod]:
