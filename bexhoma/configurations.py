@@ -1070,14 +1070,21 @@ scrape_configs:
                         self.logger.debug(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
-                            if 'loaded' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
-                            if 'timeLoading' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
-                            if 'timeLoadingStart' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
-                            if 'timeLoadingEnd' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
+                            copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
+                            for label in copy_labels:
+                                if label in pvc_labels:
+                                    yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
+                            if pvc_labels['loaded'] == 'True':
+                                self.loading_active = False
+                                print("Loading is set to finished")
+                            #if 'loaded' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
+                            #if 'timeLoading' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
+                            #if 'timeLoadingStart' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
+                            #if 'timeLoadingEnd' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
                         # we do not need loading pods
                         self.loading_active = False
