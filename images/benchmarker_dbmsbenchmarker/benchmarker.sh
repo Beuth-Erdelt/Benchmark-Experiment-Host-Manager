@@ -135,6 +135,7 @@ then
 		-vs \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		$( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
 		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \
@@ -151,6 +152,7 @@ else
 		-rcp $DBMSBENCHMARKER_RECREATE_PARAMETER \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		$( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
 		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \
