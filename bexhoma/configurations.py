@@ -145,6 +145,7 @@ class default():
         self.prometheus_timeout = experiment.prometheus_timeout
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
+        self.monitor_loading = True #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         #self.parallelism = 1
@@ -1086,6 +1087,7 @@ scrape_configs:
                         # we do not need loading pods
                         print("Loading is set to finished")
                         self.loading_active = False
+                        self.monitor_loading = False
             if dep['kind'] == 'StatefulSet':
                 if self.num_worker == 0:
                     del result[key]
@@ -2083,7 +2085,7 @@ scrape_configs:
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
             """
             # get monitoring for loading
-            if self.monitoring_active:
+            if self.monitoring_active and self.monitor_loading:
                 cmd = {}
                 #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
