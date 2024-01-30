@@ -1074,9 +1074,6 @@ scrape_configs:
                             for label in copy_labels:
                                 if label in pvc_labels:
                                     yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
-                            if pvc_labels['loaded'] == 'True':
-                                self.loading_active = False
-                                print("Loading is set to finished")
                             #if 'loaded' in pvc_labels:
                             #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
                             #if 'timeLoading' in pvc_labels:
@@ -1087,6 +1084,7 @@ scrape_configs:
                             #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
                         # we do not need loading pods
+                        print("Loading is set to finished")
                         self.loading_active = False
             if dep['kind'] == 'StatefulSet':
                 if self.num_worker == 0:
@@ -2733,6 +2731,11 @@ scrape_configs:
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=240)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        # store parameters in connection for evaluation
+        if len(self.loading_parameters):
+            self.connection_parameter['loading_parameters'] = self.loading_parameters
+        if len(self.benchmarking_parameters):
+            self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
         e = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
@@ -2820,8 +2823,8 @@ scrape_configs:
             'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             }
         # store parameters in connection for evaluation
-        if len(self.loading_parameters):
-            self.connection_parameter['loading_parameters'] = self.loading_parameters
+        #if len(self.loading_parameters):
+        #    self.connection_parameter['loading_parameters'] = self.loading_parameters
         #print("self.loading_parameters", self.loading_parameters)
         #env = self.loading_parameters
         env = {**env, **self.loading_parameters}
