@@ -94,6 +94,26 @@ then
 	git pull
 fi
 
+######################## Convert parameters ###################
+# values come from Python, will be set as string ENV and must be converted
+if test "$DBMSBENCHMARKER_SHUFFLE_QUERIES" == "True"
+then
+	DBMSBENCHMARKER_SHUFFLE_QUERIES=1
+else
+	DBMSBENCHMARKER_SHUFFLE_QUERIES=0
+fi
+
+if test "$DBMSBENCHMARKER_RECREATE_PARAMETER" == "True"
+then
+	DBMSBENCHMARKER_RECREATE_PARAMETER=1
+else
+	DBMSBENCHMARKER_RECREATE_PARAMETER=0
+fi
+
+######################## Show more parameters ########################
+echo "DBMSBENCHMARKER_SHUFFLE_QUERIES $DBMSBENCHMARKER_SHUFFLE_QUERIES"
+echo "DBMSBENCHMARKER_RECREATE_PARAMETER $DBMSBENCHMARKER_RECREATE_PARAMETER"
+
 ######################## Execute workload ###################
 # run dbmsbenchmarker
 if test $DBMSBENCHMARKER_VERBOSE -gt 0
