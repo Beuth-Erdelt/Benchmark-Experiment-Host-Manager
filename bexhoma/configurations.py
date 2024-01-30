@@ -2478,15 +2478,18 @@ scrape_configs:
                 self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
             if 'timeLoading' in pod_labels[pod]:
                 self.timeLoading = float(pod_labels[pod]['timeLoading'])
+            if 'time_initschema' in pod_labels[pod]:
+                self.timeSchema = float(pod_labels[pod]['time_initschema'])
+            if 'time_generated' in pod_labels[pod]:
+                self.timeGenerating = float(pod_labels[pod]['time_generated'])
+            if 'time_ingested' in pod_labels[pod]:
+                self.timeIngesting = float(pod_labels[pod]['time_ingested'])
             for key, value in pod_labels[pod].items():
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]
                     self.times_scripts[time_type] = float(value)
             # timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
-            self.timeSchema = float(pod_labels[pod]['time_initschema'])
             #self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
-            self.timeGenerating = float(pod_labels[pod]['time_generated'])
-            self.timeIngesting = float(pod_labels[pod]['time_ingested'])
         else:
             # if there are no labels at this pod, loading has not been started or finished
             # maybe sut has been restarted? then loading may have been stared though
