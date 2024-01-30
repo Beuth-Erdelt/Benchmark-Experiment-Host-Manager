@@ -1070,16 +1070,21 @@ scrape_configs:
                         self.logger.debug(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
-                            if 'loaded' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
-                            if 'timeLoading' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
-                            if 'timeLoadingStart' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
-                            if 'timeLoadingEnd' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
+                            copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
+                            for label in copy_labels:
+                                if label in pvc_labels:
+                                    yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
+                            #if 'loaded' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
+                            #if 'timeLoading' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
+                            #if 'timeLoadingStart' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
+                            #if 'timeLoadingEnd' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
                         # we do not need loading pods
+                        print("Loading is set to finished")
                         self.loading_active = False
             if dep['kind'] == 'StatefulSet':
                 if self.num_worker == 0:
@@ -1910,6 +1915,11 @@ scrape_configs:
         #service_port = config_K8s['port']
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
         #c['parameter'] = {}
+        # add parameters to connection
+        if len(self.loading_parameters):
+            self.connection_parameter['loading_parameters'] = self.loading_parameters
+        if len(self.benchmarking_parameters):
+            self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
@@ -2468,10 +2478,18 @@ scrape_configs:
                 self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
             if 'timeLoading' in pod_labels[pod]:
                 self.timeLoading = float(pod_labels[pod]['timeLoading'])
+            if 'time_loaded' in pod_labels[pod]:
+                self.timeSchema = float(pod_labels[pod]['time_loaded']) # stays at pre-ingestion total, even after ingestion and post-ingestion?
+            if 'time_generated' in pod_labels[pod]:
+                self.timeGenerating = float(pod_labels[pod]['time_generated'])
+            if 'time_ingested' in pod_labels[pod]:
+                self.timeIngesting = float(pod_labels[pod]['time_ingested'])
             for key, value in pod_labels[pod].items():
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]
                     self.times_scripts[time_type] = float(value)
+            # timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
+            #self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
         else:
             # if there are no labels at this pod, loading has not been started or finished
             # maybe sut has been restarted? then loading may have been stared though
@@ -2726,6 +2744,7 @@ scrape_configs:
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=240)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        # store parameters in connection for evaluation
         e = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
