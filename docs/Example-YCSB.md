@@ -35,6 +35,10 @@ This
 You can watch the status while benchmark is running via `bexperiments status`
 
 ```
+Dashboard: Running
+Message Queue: Running
+Data directory: Running
+Result directory: Running
 +------------------------+--------------+--------------+-------------+--------------+
 | 1706264335             | sut          |   loaded [s] | loading     | monitoring   |
 +========================+==============+==============+=============+==============+
