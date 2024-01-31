@@ -103,6 +103,18 @@ if __name__ == '__main__':
         if len(messagequeue_name) > 0:
             status = cluster.get_pod_status(messagequeue_name[0])
             print("Message Queue: {}".format(status))
+        # get data directory
+        pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("Data directory: {}".format("Running"))
+        else:
+            print("Data directory: {}".format("Missing"))
+        # get result directory
+        pvcs = cluster.get_pvc(app=app, component='results', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("Result directory: {}".format("Running"))
+        else:
+            print("Result directory: {}".format("Missing"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)
