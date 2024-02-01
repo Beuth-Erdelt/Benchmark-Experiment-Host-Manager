@@ -1339,6 +1339,45 @@ class testbed():
                self.wait(10, silent=True)
             print("done")
             return
+    def start_datadir(self):
+        """
+        Starts the data directory in a shared filesystem.
+        This is where data generator pods can store generated data and where loading pods can read the data from. 
+        Manifest is expected in 'pvc-bexhoma-data.yml'
+        """
+        # get data directory
+        pvcs = self.get_pvc(app=app, component='data-source', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("{:30s}: is running".format("Data directory"))
+            return
+        else:
+            print("{:30s}: is starting...".format("Data directory"), end="", flush=True)
+            deployment = 'pvc-bexhoma-data.yml'
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_pvc(app=app, component='data-source', experiment='', configuration=''))):
+               self.wait(10, silent=True)
+            print("done")
+            return
+    def start_resultdir(self):
+        """
+        Starts the result directory in a shared filesystem.
+        This is where benchmark execution pods can store result data and where the evaluation pods can read results from.
+        Also collected metrics will be stored there.
+        Manifest is expected in 'pvc-bexhoma-results.yml'
+        """
+        # get result directory
+        pvcs = self.get_pvc(app=app, component='results', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("{:30s}: is running".format("Result directory"))
+            return
+        else:
+            print("{:30s}: is starting...".format("Result directory"), end="", flush=True)
+            deployment = 'pvc-bexhoma-results.yml'
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_pvc(app=app, component='results', experiment='', configuration=''))):
+               self.wait(10, silent=True)
+            print("done")
+            return
     def get_dashboard_pod_name(self, app='', component='dashboard'):
         """
         Returns the name of the dashboard pod.
