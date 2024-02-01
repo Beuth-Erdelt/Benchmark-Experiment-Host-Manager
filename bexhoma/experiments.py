@@ -1147,7 +1147,7 @@ class default():
                         self.cluster.logger.debug(stdout)
                 # get monitoring for loading
                 if self.monitoring_active:
-                    print("{:30s}: collecting stream metrics of SUT".format(connection))
+                    print("{:30s}: collecting execution metrics of SUT".format(connection))
                     cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")

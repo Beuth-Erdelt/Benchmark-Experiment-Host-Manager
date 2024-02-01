@@ -130,8 +130,8 @@ if __name__ == '__main__':
     if code is None:
         code = cluster.code
     experiment = experiments.ycsb(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
-    experiment.prometheus_interval = "10s"
-    experiment.prometheus_timeout = "10s"
+    experiment.prometheus_interval = "30s"
+    experiment.prometheus_timeout = "30s"
     # remove running dbms
     #experiment.clean()
     if mode == 'run':
