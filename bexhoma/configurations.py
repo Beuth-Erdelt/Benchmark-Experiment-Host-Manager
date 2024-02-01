@@ -1067,7 +1067,8 @@ scrape_configs:
                     pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                     #print(pvcs)
                     if len(pvcs) > 0:
-                        print("Storage {} exists".format(name_pvc))
+                        print("{:30s}: storage exists {}".format(configuration, name_pvc))
+                        #print("Storage {} exists".format(name_pvc))
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                         pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
                         self.logger.debug(pvcs_labels)
@@ -1087,7 +1088,8 @@ scrape_configs:
                             #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
                         # we do not need loading pods
-                        print("Loading is set to finished")
+                        #print("Loading is set to finished")
+                        print("{:30s}: loading is set to finished".format(configuration))
                         self.loading_active = False
                         self.monitor_loading = False
             if dep['kind'] == 'StatefulSet':
@@ -1906,6 +1908,7 @@ scrape_configs:
         #self.benchmark.code = '1611607321'
         self.code = self.benchmark.code
         #print("Code", self.code)
+        print("{:30s}: benchmarking results in folder {}: ".format(configuration, self.benchmark.path))
         self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
         # empty template:

@@ -1731,32 +1731,32 @@ class ycsb(default):
         evaluate.load_experiment(code=code, silent=False)
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
         #####################
-        print("\n### Loading")
         df = evaluation.get_df_loading()
-        df = df.sort_values(['configuration','experiment_run','client'])
-        df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
-        #print(df)
-        #print(df.columns)
-        df_plot = evaluation.loading_set_datatypes(df)
-        df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
-        df_aggregated.sort_values(['target','pod_count'], inplace=True)
-        df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-        print(df_aggregated)
+        if not df.empty:
+            print("\n### Loading")
+            df = df.sort_values(['configuration','experiment_run','client'])
+            df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+            #print(df)
+            #print(df.columns)
+            df_plot = evaluation.loading_set_datatypes(df)
+            df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+            df_aggregated.sort_values(['target','pod_count'], inplace=True)
+            df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            print(df_aggregated)
         #####################
-        print("\n### Execution")
         df = evaluation.get_df_benchmarking()
-        df.fillna(0, inplace=True)
-        #print(df)
-        #print(df.columns)
-        df_plot = evaluation.benchmarking_set_datatypes(df)
-        df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
-        df_aggregated = df_aggregated.sort_values(['target','pod_count']).round(2)
-        df_aggregated_reduced = df_aggregated[["threads","target","pod_count"]].copy()
-        columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
-        for col in columns:
-            if col in df_aggregated.columns:
-                df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-        print(df_aggregated_reduced)
+        if not df.empty:
+            print("\n### Execution")
+            df.fillna(0, inplace=True)
+            df_plot = evaluation.benchmarking_set_datatypes(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = df_aggregated.sort_values(['target','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[["threads","target","pod_count"]].copy()
+            columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
