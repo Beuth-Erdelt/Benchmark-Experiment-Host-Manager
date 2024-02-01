@@ -1807,52 +1807,6 @@ scrape_configs:
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
-    def OLD_fetch_metrics_loading(self, connection=None, configuration=''):
-        self.logger.debug('configuration.fetch_metrics()')
-        # set general parameter
-        resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
-        experiments_configfolder = self.experiment.cluster.experiments_configfolder
-        if connection is None:
-            connection = self.configuration
-        if len(configuration) == 0:
-            configuration = connection
-        code = self.code
-        # get connection config (sut)
-        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
-        service_name = self.get_service_sut(configuration=configuration)#self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
-        service_namespace = self.experiment.cluster.contextdata['namespace']
-        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
-        pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
-        self.pod_sut = pods[0]
-        c = self.get_connection_config(connection, serverip=service_host, monitoring_host=monitoring_host)
-        print(c)
-        connection_data = c
-        connection_name = connection
-        time_start = int(self.timeLoadingStart)
-        time_end = int(self.timeLoadingEnd)
-        query = "loading"
-        # store configuration
-        basepath_local = self.path+'/'
-        basepath_remote = '/results/'+str(self.code)+'/'
-        file = c['name']+'.config'
-        file_local = basepath_local+file
-        file_remote = basepath_remote+file
-        with open(file_local, 'w') as f:
-            f.write(str([c]))
-        # find dashboard pod
-        pods = self.experiment.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-        # copy to dashboard
-        stdout = self.experiment.cluster.kubectl('cp '+file_local+" "+pod_dashboard+':'+file_remote)
-        self.logger.debug('copy configuration.config: {}'.format(stdout))
-        cmd = {}
-        cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -cf {} -c {} -e {} -ts {} -te {}'.format(file, connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-        stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-        print(stdin, stdout, stderr)
-        #for m, metric in connection_data['monitoring']['metrics'].items():
-        #    print("Metric", m)
-        #    monitor.metrics.fetchMetric(query, m, connection_name, connection_data, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
     def run_benchmarker_pod(self,
         connection=None,
         alias='',
@@ -2087,6 +2041,7 @@ scrape_configs:
             # get monitoring for loading
             if self.monitoring_active and self.monitor_loading:
                 cmd = {}
+                print("{:30s}: collecting loading metrics of SUT".format(connection))
                 #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                     connection, 
@@ -2108,6 +2063,7 @@ scrape_configs:
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0:
                     # data generator container
+                    print("{:30s}: collecting metrics of data generator".format(connection))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
@@ -2124,6 +2080,7 @@ scrape_configs:
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # data injector container "sensor"
+                    print("{:30s}: collecting metrics of data injector".format(connection))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
