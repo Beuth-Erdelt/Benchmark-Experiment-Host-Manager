@@ -39,7 +39,15 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
     1. Copy `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
-1. Install result folder: Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
+    2. Make sure the `resultfolder` is set to a folder that exists on your local filesystem
+1. Other components like the shared data and result directories, the message queue and the evaluator are installed automatically when you start an experiment.
+  Before that, you might want to adjust  
+    * Result directory: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/pvc-bexhoma-results.yml
+      * `storageClassName`: must be an available storage class of type `ReadWriteMany` in your cluster
+      * `storage`: size of the directory
+    * Data directory: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/pvc-bexhoma-data.yml
+      * `storageClassName`: must be an available storage class of type `ReadWriteMany` in your cluster
+      * `storage`: size of the directory
 
 
 ## Quickstart

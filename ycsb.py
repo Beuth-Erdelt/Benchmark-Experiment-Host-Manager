@@ -191,7 +191,7 @@ if __name__ == '__main__':
         storageClassName = request_storage_type,
         storageSize = request_storage_size,#'100Gi',
         keep = True,
-        storageConfiguration = 'mysql-bht'
+        #storageConfiguration = 'mysql-bht'
         )
     # set node labes for components
     """
@@ -281,6 +281,9 @@ if __name__ == '__main__':
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config.set_storage(
+                        storageConfiguration = 'postgresql'
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
@@ -312,6 +315,9 @@ if __name__ == '__main__':
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'MySQL-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config.set_storage(
+                        storageConfiguration = 'mysql'
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,

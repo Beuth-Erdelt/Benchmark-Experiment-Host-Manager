@@ -262,7 +262,8 @@ class default():
 
         :param kwargs: Dict of meta data, example 'storageSize' => '100Gi'
         """
-        self.storage = kwargs
+        self.storage = {**self.storage, **kwargs}
+        #self.storage = kwargs
     def set_additional_labels(self, **kwargs):
         """
         Sets additional labels, that will be put to K8s objects (and ignored otherwise).
