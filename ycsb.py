@@ -310,6 +310,7 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
+                    config.add_benchmark_list([pods])
                 if (args.dbms == "MySQL" or len(args.dbms) == 0):
                     # MySQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
@@ -344,7 +345,7 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                config.add_benchmark_list([pods])
+                    config.add_benchmark_list([pods])
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
