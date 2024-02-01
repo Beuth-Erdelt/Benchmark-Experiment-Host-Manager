@@ -1283,6 +1283,7 @@ class testbed():
         """
         if len(self.get_dashboard_pod_name()):
             # there already is a dashboard pod
+            print("{:30s}: is running".format("Evaluation pod"))
             return
         else:
             print("{:30s}: starting...".format("Evaluation pod"), end="", flush=True)
@@ -1305,17 +1306,19 @@ class testbed():
         self.monitor_cluster_active = True
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
-            # dashboard exists
+            # monitoring exists
             self.logger.debug('testbed.start_monitoring_cluster()=exists')
+            print("{:30s}: is running".format("Cluster monitoring"))
             return
         else:
             self.logger.debug('testbed.start_monitoring_cluster()=deploy')
             deployment = 'daemonsettemplate-monitoring.yml'
-            #name = self.create_dashboard_name(app, component)
-            #self.logger.debug('testbed.start_monitoring_general({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
-            #deployment = 'deploymenttemplate-bexhoma-prometheus.yml'
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
+            print("{:30s}: starting...".format("Cluster monitoring"))
+            while (not len(self.get_service_endpoints(service_name="bexhoma-service-monitoring-default"))):
+               self.wait(10, silent=True)
+            print("done")
+            return
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
@@ -1328,6 +1331,7 @@ class testbed():
         if len(pods_messagequeue) > 0:
             # dashboard exists
             self.logger.debug('testbed.start_messagequeue()=exists')
+            print("{:30s}: is running".format("Message queue pod"))
             return
         else:
             print("{:30s}: starting...".format("Message queue pod"), end="", flush=True)
