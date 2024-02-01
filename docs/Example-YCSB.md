@@ -302,3 +302,11 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during load
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
 
+## Perform Execution Benchmark
+
+The default behaviour is that several different settings of the loading component are compared.
+We might only want to benchmark the workloads of YCSB in different configurations and have a fixed loading phase.
+
+For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+
+Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`

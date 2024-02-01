@@ -106,15 +106,15 @@ if __name__ == '__main__':
         # get data directory
         pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
         if len(pvcs) > 0:
-            print("Data directory: {}".format("Running"))
+            print("Data Directory: {}".format("Running"))
         else:
-            print("Data directory: {}".format("Missing"))
+            print("Data Directory: {}".format("Missing"))
         # get result directory
         pvcs = cluster.get_pvc(app=app, component='results', experiment='', configuration='')
         if len(pvcs) > 0:
-            print("Result directory: {}".format("Running"))
+            print("Result Directory: {}".format("Running"))
         else:
-            print("Result directory: {}".format("Missing"))
+            print("Result Directory: {}".format("Missing"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)

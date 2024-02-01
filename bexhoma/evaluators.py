@@ -275,7 +275,10 @@ class logger(base):
         :return: DataFrame of loading results
         """
         filename = "bexhoma-loading.all.df.pickle"
-        df = pd.read_pickle(self.path+"/"+filename)
+        if os.path.isfile(self.path+"/"+filename):
+            df = pd.read_pickle(self.path+"/"+filename)
+        else:
+            df = pd.DataFrame()
         #df#.sort_values(["configuration", "pod"])
         return df
     def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
@@ -825,7 +828,10 @@ class ycsb(logger):
         :return: DataFrame of loading results
         """
         filename = "bexhoma-loading.all.df.pickle"
-        df = pd.read_pickle(self.path+"/"+filename)
+        if os.path.isfile(self.path+"/"+filename):
+            df = pd.read_pickle(self.path+"/"+filename)
+        else:
+            df = pd.DataFrame()
         #df#.sort_values(["configuration", "pod"])
         return df
 

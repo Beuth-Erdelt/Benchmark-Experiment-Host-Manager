@@ -1283,10 +1283,10 @@ class testbed():
         """
         if len(self.get_dashboard_pod_name()):
             # there already is a dashboard pod
-            print("{:30s}: is running".format("Evaluation pod"))
+            print("{:30s}: is running".format("Dashboard"))
             return
         else:
-            print("{:30s}: starting...".format("Evaluation pod"), end="", flush=True)
+            print("{:30s}: starting...".format("Dashboard"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
@@ -1331,10 +1331,10 @@ class testbed():
         if len(pods_messagequeue) > 0:
             # dashboard exists
             self.logger.debug('testbed.start_messagequeue()=exists')
-            print("{:30s}: is running".format("Message queue pod"))
+            print("{:30s}: is running".format("Message Queue"))
             return
         else:
-            print("{:30s}: starting...".format("Message queue pod"), end="", flush=True)
+            print("{:30s}: starting...".format("Message Queue"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
@@ -1353,10 +1353,10 @@ class testbed():
         # get data directory
         pvcs = self.get_pvc(app=app, component='data-source', experiment='', configuration='')
         if len(pvcs) > 0:
-            print("{:30s}: is running".format("Data directory"))
+            print("{:30s}: is running".format("Data Directory"))
             return
         else:
-            print("{:30s}: is starting...".format("Data directory"), end="", flush=True)
+            print("{:30s}: is starting...".format("Data Directory"), end="", flush=True)
             deployment = 'pvc-bexhoma-data.yml'
             self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not len(self.get_pvc(app=app, component='data-source', experiment='', configuration=''))):
@@ -1374,10 +1374,10 @@ class testbed():
         # get result directory
         pvcs = self.get_pvc(app=app, component='results', experiment='', configuration='')
         if len(pvcs) > 0:
-            print("{:30s}: is running".format("Result directory"))
+            print("{:30s}: is running".format("Result Directory"))
             return
         else:
-            print("{:30s}: is starting...".format("Result directory"), end="", flush=True)
+            print("{:30s}: is starting...".format("Result Directory"), end="", flush=True)
             deployment = 'pvc-bexhoma-results.yml'
             self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not len(self.get_pvc(app=app, component='results', experiment='', configuration=''))):

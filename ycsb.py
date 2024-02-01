@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL'], default='PostgreSQL')
+    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL'], default=[])
     parser.add_argument('-workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='a')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
