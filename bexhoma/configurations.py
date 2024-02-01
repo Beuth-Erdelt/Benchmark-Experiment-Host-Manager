@@ -1908,7 +1908,7 @@ scrape_configs:
         #self.benchmark.code = '1611607321'
         self.code = self.benchmark.code
         #print("Code", self.code)
-        print("{:30s}: benchmarking results in folder {}: ".format(configuration, self.benchmark.path))
+        print("{:30s}: benchmarking results in folder {}".format(configuration, self.benchmark.path))
         self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
         # empty template:
