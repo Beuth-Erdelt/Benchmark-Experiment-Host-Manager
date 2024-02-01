@@ -1721,7 +1721,7 @@ class ycsb(default):
         code = self.code
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
         #####################
-        print("### Loading")
+        print("\n### Loading")
         df = evaluation.get_df_loading()
         df = df.sort_values(['configuration','experiment_run','client'])
         df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
@@ -1733,7 +1733,7 @@ class ycsb(default):
         df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
         print(df_aggregated)
         #####################
-        print("### Execution")
+        print("\n### Execution")
         df = evaluation.get_df_benchmarking()
         df.fillna(0, inplace=True)
         #print(df)
@@ -1752,27 +1752,25 @@ class ycsb(default):
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             evaluation.transform_monitoring_results(component="loading")
             #####################
-            print("### CPU of Ingestion (via counter) [CPUs]")
-            #df = evaluation.get_loading_metrics('total_cpu_util_s')
-            #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            print("### Ingestion")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
-            df = pd.DataFrame(df)
-            df.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
-            print(df)
-            #####################
-            print("### Max RAM of Ingestion [Gb]")
-            #df = evaluation.get_loading_metrics('total_cpu_memory')
-            #df = df.T.max().sort_index()
+            df1 = pd.DataFrame(df)
+            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
             df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()/1024
-            df = pd.DataFrame(df)
-            df.columns = ["SUT - Max RAM of Ingestion [Gb]"]
-            print(df)
+            df2 = pd.DataFrame(df)
+            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
+            if not df1.empty and not df2.empty:
+                print(pd.concat([df1, df2], axis=1))
+            elif not df1.empty:
+                print(df1)
+            elif not df2.empty:
+                print(df2)
             #####################
             evaluation.transform_monitoring_results(component="stream")
             #df = evaluation.get_streaming_metrics('total_cpu_util_s')
             #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             #####################
-            print("### CPU of Execution (via counter) [CPUs]")
+            print("### Execution")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
             df = pd.DataFrame(df)
             df.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
