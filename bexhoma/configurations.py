@@ -115,6 +115,7 @@ class default():
         self.code = self.experiment.cluster.code
         self.path = self.experiment.path
         self.resources = {}
+        self.storage = {}
         self.pod_sut = '' #: Name of the sut's master pod
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
