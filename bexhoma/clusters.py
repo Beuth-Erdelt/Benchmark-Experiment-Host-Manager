@@ -1345,6 +1345,7 @@ class testbed():
         This is where data generator pods can store generated data and where loading pods can read the data from. 
         Manifest is expected in 'pvc-bexhoma-data.yml'
         """
+        app = self.appname
         # get data directory
         pvcs = self.get_pvc(app=app, component='data-source', experiment='', configuration='')
         if len(pvcs) > 0:
@@ -1365,6 +1366,7 @@ class testbed():
         Also collected metrics will be stored there.
         Manifest is expected in 'pvc-bexhoma-results.yml'
         """
+        app = self.appname
         # get result directory
         pvcs = self.get_pvc(app=app, component='results', experiment='', configuration='')
         if len(pvcs) > 0:
