@@ -1381,15 +1381,15 @@ class tpch(default):
             ##########
             df = evaluate.get_loading_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
-            df2 = pd.DataFrame(df)
+            df2 = pd.DataFrame(df).round(2)
             df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             ##########
             if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1))
+                print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
-                print(df1)
+                print(df1.round(2))
             elif not df2.empty:
-                print(df2)
+                print(df2.round(2))
             #####################
             print("\n### Execution")
             df = evaluate.get_streaming_metrics('total_cpu_util_s')
@@ -1403,11 +1403,11 @@ class tpch(default):
             df2.columns = ["SUT - Max RAM of Execution [Gb]"]
             ##########
             if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1))
+                print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
-                print(df1)
+                print(df1.round(2))
             elif not df2.empty:
-                print(df2)
+                print(df2.round(2))
 
 
 """
@@ -1748,7 +1748,7 @@ class ycsb(default):
         #print(df.columns)
         df_plot = evaluation.benchmarking_set_datatypes(df)
         df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
-        df_aggregated.sort_values(['target','pod_count'], inplace=True)
+        df_aggregated = df_aggregated.sort_values(['target','pod_count']).round(2)
         df_aggregated_reduced = df_aggregated[["threads","target","pod_count"]].copy()
         columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
         for col in columns:
@@ -1761,7 +1761,7 @@ class ycsb(default):
             #####################
             evaluation.transform_monitoring_results(component="loading")
             #####################
-            print("### Ingestion")
+            print("\n### Ingestion")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
             df1 = pd.DataFrame(df)
             df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
@@ -1771,15 +1771,15 @@ class ycsb(default):
             df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             ##########
             if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1))
+                print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
-                print(df1)
+                print(df1.round(2))
             elif not df2.empty:
-                print(df2)
+                print(df2.round(2))
             #####################
             evaluation.transform_monitoring_results(component="stream")
             #####################
-            print("### Execution")
+            print("\n### Execution")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
             df1 = pd.DataFrame(df)
             df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
@@ -1789,11 +1789,11 @@ class ycsb(default):
             df2.columns = ["SUT - Max RAM of Execution [Gb]"]
             ##########
             if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1))
+                print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
-                print(df1)
+                print(df1.round(2))
             elif not df2.empty:
-                print(df2)
+                print(df2.round(2))
 
 
 """
