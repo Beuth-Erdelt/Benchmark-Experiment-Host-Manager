@@ -276,7 +276,7 @@ if __name__ == '__main__':
                 threads_per_pod = int(threads/pods)
                 ycsb_operations_per_pod = int(ycsb_operations/pods)
                 target_per_pod = int(target/pods)
-                if args.dbms == "PostgreSQL":
+                if (args.dbms == "PostgreSQL" or len(args.dbms) == 0):
                     # PostgreSQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
@@ -310,7 +310,7 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                elif args.dbms == "MySQL":
+                if (args.dbms == "MySQL" or len(args.dbms) == 0):
                     # MySQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'MySQL-{threads}-{pods}-{target}'
