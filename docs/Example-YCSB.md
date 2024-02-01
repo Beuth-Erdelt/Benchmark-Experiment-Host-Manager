@@ -46,6 +46,13 @@ Result directory: Running
 +------------------------+--------------+--------------+-------------+--------------+
 ```
 
+The code `1706264335` is the unique identifier of the experiment.
+You can find the number also in the output of `ycsb.py`.
+
+### Cleanup
+
+The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
+If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1706264335` (removes everything that is related to experiment `1706264335`).
 
 ## Evaluate Results
 
@@ -217,82 +224,81 @@ options:
 If monitoring is activated, the summary also contains a section like
 
 ```
-### CPU of Ingestion (via counter) [CPUs]
-                                   0
-PostgreSQL-64-1-16384-1   198.953166
-PostgreSQL-64-1-32768-1   196.617379
-PostgreSQL-64-1-49152-1   201.277563
-PostgreSQL-64-1-65536-1     0.000000
-PostgreSQL-64-1-81920-1     0.000000
-PostgreSQL-64-1-98304-1     0.000000
-PostgreSQL-64-1-114688-1    0.000000
-PostgreSQL-64-1-131072-1    0.000000
-PostgreSQL-64-8-16384-1   201.773063
-PostgreSQL-64-8-32768-1   177.170719
-PostgreSQL-64-8-49152-1   177.884943
-PostgreSQL-64-8-65536-1   187.712069
-PostgreSQL-64-8-81920-1   204.023213
-PostgreSQL-64-8-98304-1   209.848421
-PostgreSQL-64-8-114688-1    0.000000
-PostgreSQL-64-8-131072-1  210.686992
-### Max RAM of Ingestion [Mb]
-                                    0
-PostgreSQL-64-1-16384-1   3599.261719
-PostgreSQL-64-1-32768-1   3592.183594
-PostgreSQL-64-1-49152-1   3584.570312
-PostgreSQL-64-1-65536-1   2383.132812
-PostgreSQL-64-1-81920-1   2381.601562
-PostgreSQL-64-1-98304-1      0.000000
-PostgreSQL-64-1-114688-1  2382.621094
-PostgreSQL-64-1-131072-1  2381.957031
-PostgreSQL-64-8-16384-1   3599.562500
-PostgreSQL-64-8-32768-1   3586.253906
-PostgreSQL-64-8-49152-1   3579.109375
-PostgreSQL-64-8-65536-1   3579.238281
-PostgreSQL-64-8-81920-1   3580.359375
-PostgreSQL-64-8-98304-1   3578.089844
-PostgreSQL-64-8-114688-1  2382.906250
-PostgreSQL-64-8-131072-1  3580.121094
+                          SUT - CPU of Ingestion (via counter) [CPUs]
+PostgreSQL-64-1-16384-1                                    186.688157
+PostgreSQL-64-1-32768-1                                    163.268157
+PostgreSQL-64-1-49152-1                                    195.398877
+PostgreSQL-64-1-65536-1                                    219.221274
+PostgreSQL-64-1-81920-1                                     98.917444
+PostgreSQL-64-1-98304-1                                     86.984254
+PostgreSQL-64-1-114688-1                                   213.891884
+PostgreSQL-64-1-131072-1                                     0.828034
+PostgreSQL-64-8-16384-1                                    195.334361
+PostgreSQL-64-8-32768-1                                    177.218674
+PostgreSQL-64-8-49152-1                                    180.856577
+PostgreSQL-64-8-65536-1                                    187.096431
+PostgreSQL-64-8-81920-1                                    204.272846
+PostgreSQL-64-8-98304-1                                    204.806577
+PostgreSQL-64-8-114688-1                                   208.140227
+PostgreSQL-64-8-131072-1                                   203.625824
+### Max RAM of Ingestion [Gb]
+                          SUT - Max RAM of Ingestion [Gb]
+PostgreSQL-64-1-16384-1                          3.851307
+PostgreSQL-64-1-32768-1                          3.834877
+PostgreSQL-64-1-49152-1                          3.498852
+PostgreSQL-64-1-65536-1                          3.858364
+PostgreSQL-64-1-81920-1                          3.125290
+PostgreSQL-64-1-98304-1                          3.046753
+PostgreSQL-64-1-114688-1                         3.494278
+PostgreSQL-64-1-131072-1                         2.332794
+PostgreSQL-64-8-16384-1                          3.515659
+PostgreSQL-64-8-32768-1                          3.505802
+PostgreSQL-64-8-49152-1                          3.496334
+PostgreSQL-64-8-65536-1                          3.578018
+PostgreSQL-64-8-81920-1                          3.495365
+PostgreSQL-64-8-98304-1                          3.495655
+PostgreSQL-64-8-114688-1                         3.597622
+PostgreSQL-64-8-131072-1                         3.497456
 ### CPU of Execution (via counter) [CPUs]
-                                   0
-PostgreSQL-64-1-16384-1   144.786855
-PostgreSQL-64-1-32768-1   117.029337
-PostgreSQL-64-1-49152-1   108.832290
-PostgreSQL-64-1-65536-1   359.971068
-PostgreSQL-64-1-81920-1   382.274019
-PostgreSQL-64-1-98304-1     0.000000
-PostgreSQL-64-1-114688-1  393.812552
-PostgreSQL-64-1-131072-1    0.000000
-PostgreSQL-64-8-16384-1   178.196819
-PostgreSQL-64-8-32768-1     0.060124
-PostgreSQL-64-8-49152-1   163.673750
-PostgreSQL-64-8-65536-1   164.559542
-PostgreSQL-64-8-81920-1   169.903605
-PostgreSQL-64-8-98304-1   169.639897
-PostgreSQL-64-8-114688-1  181.418701
-PostgreSQL-64-8-131072-1    0.159354
-### Max RAM of Execution [Mb]
-                                    0
-PostgreSQL-64-1-16384-1   4105.000000
-PostgreSQL-64-1-32768-1   4084.101562
-PostgreSQL-64-1-49152-1   4068.890625
-PostgreSQL-64-1-65536-1   3765.898438
-PostgreSQL-64-1-81920-1   3757.230469
-PostgreSQL-64-1-98304-1      0.000000
-PostgreSQL-64-1-114688-1  3775.199219
-PostgreSQL-64-1-131072-1  2381.957031
-PostgreSQL-64-8-16384-1   4113.964844
-PostgreSQL-64-8-32768-1   3588.902344
-PostgreSQL-64-8-49152-1   3753.753906
-PostgreSQL-64-8-65536-1   3765.273438
-PostgreSQL-64-8-81920-1   3769.878906
-PostgreSQL-64-8-98304-1   3758.039062
-PostgreSQL-64-8-114688-1  3777.027344
-PostgreSQL-64-8-131072-1  3582.023438
+                          SUT - CPU of Execution (via counter) [CPUs]
+PostgreSQL-64-1-16384-1                                    127.907369
+PostgreSQL-64-1-32768-1                                     66.052495
+PostgreSQL-64-1-49152-1                                    145.618061
+PostgreSQL-64-1-65536-1                                    161.579244
+PostgreSQL-64-1-81920-1                                    295.586446
+PostgreSQL-64-1-98304-1                                    125.202475
+PostgreSQL-64-1-114688-1                                   186.851366
+PostgreSQL-64-1-131072-1                                     0.000000
+PostgreSQL-64-8-16384-1                                    158.970840
+PostgreSQL-64-8-32768-1                                    146.952336
+PostgreSQL-64-8-49152-1                                    169.586313
+PostgreSQL-64-8-65536-1                                    172.017484
+PostgreSQL-64-8-81920-1                                    173.288794
+PostgreSQL-64-8-98304-1                                     36.796051
+PostgreSQL-64-8-114688-1                                   177.980385
+PostgreSQL-64-8-131072-1                                    16.815860
+### Max RAM of Execution [Gb]
+                          SUT - Max RAM of Execution [Gb]
+PostgreSQL-64-1-16384-1                          3.999352
+PostgreSQL-64-1-32768-1                          3.933914
+PostgreSQL-64-1-49152-1                          4.013451
+PostgreSQL-64-1-65536-1                          3.673527
+PostgreSQL-64-1-81920-1                          3.688755
+PostgreSQL-64-1-98304-1                          3.498306
+PostgreSQL-64-1-114688-1                         3.698284
+PostgreSQL-64-1-131072-1                         3.497204
+PostgreSQL-64-8-16384-1                          4.009472
+PostgreSQL-64-8-32768-1                          4.010254
+PostgreSQL-64-8-49152-1                          3.666779
+PostgreSQL-64-8-65536-1                          3.879471
+PostgreSQL-64-8-81920-1                          3.674496
+PostgreSQL-64-8-98304-1                          3.864803
+PostgreSQL-64-8-114688-1                         3.680634
+PostgreSQL-64-8-131072-1                         3.786102
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
 
-In this example, metrics are very instable. Metrics are fetched every 10 seconds.
+In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
 

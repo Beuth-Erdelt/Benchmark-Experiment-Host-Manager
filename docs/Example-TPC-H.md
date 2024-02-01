@@ -51,6 +51,13 @@ Result directory: Running
 +------------------+--------------+--------------+---------------+
 ```
 
+The code `1706255897` is the unique identifier of the experiment.
+You can find the number also in the output of `tpch.py`.
+
+### Cleanup
+
+The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
+If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1706255897` (removes everything that is related to experiment `1706255897`).
 
 ## Evaluate Results
 
