@@ -2500,7 +2500,7 @@ scrape_configs:
         """
         if len(patch) > 0:
             merged = hiyapyco.load([file, patch], method=hiyapyco.METHOD_MERGE)
-            print(hiyapyco.dump(merged, default_flow_style=False))
+            self.logger.debug(hiyapyco.dump(merged, default_flow_style=False))
             stream = StringIO(hiyapyco.dump(merged)) # convert string to stream
             result = yaml.safe_load_all(stream)
             result = [data for data in result]
