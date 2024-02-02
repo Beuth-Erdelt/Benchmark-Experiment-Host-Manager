@@ -58,7 +58,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-```
+```bash
 ### Loading
                         threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
 PostgreSQL-64-1-16384        64   16384          1                   16189.612744                61768.0             1000000                            2681.000
@@ -137,7 +137,7 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 
 You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
-```
+```bash
 usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING]
                [-nlp NUM_LOADING_PODS] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS] [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE]
                [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
@@ -223,7 +223,7 @@ options:
 
 If monitoring is activated, the summary also contains a section like
 
-```
+```bash
                           SUT - CPU of Ingestion (via counter) [CPUs]
 PostgreSQL-64-1-16384-1                                    186.688157
 PostgreSQL-64-1-32768-1                                    163.268157
