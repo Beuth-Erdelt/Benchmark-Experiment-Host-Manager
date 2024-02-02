@@ -63,7 +63,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-```
+```bash
 Connections:
 MonetDB-BHT-8-1-1
 MySQL-BHT-8-8-1-1
@@ -244,7 +244,7 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
-```
+```bash
 usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
                [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
                {profiling,run,start,load,empty}
@@ -325,7 +325,7 @@ options:
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
 If monitoring is activated, the summary also contains a section like
-```
+```bash
 ### CPU of Ingestion (via counter) [CPUs]
                     SUT - CPU of Ingestion (via counter) [CPUs]
 DBMS
@@ -365,7 +365,7 @@ Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200
 
 This runs 3 streams, the first one as a single stream and the following 2 in parallel.
 
-```
+```bash
 ### TPC-H Power@Size
                             Power@Size [~Q/h]
 DBMS
