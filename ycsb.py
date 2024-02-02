@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL'], default='PostgreSQL')
+    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL'], default=[])
     parser.add_argument('-workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='a')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -130,8 +130,8 @@ if __name__ == '__main__':
     if code is None:
         code = cluster.code
     experiment = experiments.ycsb(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
-    experiment.prometheus_interval = "10s"
-    experiment.prometheus_timeout = "10s"
+    experiment.prometheus_interval = "30s"
+    experiment.prometheus_timeout = "30s"
     # remove running dbms
     #experiment.clean()
     if mode == 'run':
@@ -191,7 +191,7 @@ if __name__ == '__main__':
         storageClassName = request_storage_type,
         storageSize = request_storage_size,#'100Gi',
         keep = True,
-        storageConfiguration = 'mysql-bht'
+        #storageConfiguration = 'mysql-bht'
         )
     # set node labes for components
     """
@@ -204,6 +204,8 @@ if __name__ == '__main__':
     """
     cluster.start_dashboard()
     cluster.start_messagequeue()
+    cluster.start_datadir()
+    cluster.start_resultdir()
     if aws:
         # set node labes for components
         experiment.set_nodes(
@@ -274,11 +276,14 @@ if __name__ == '__main__':
                 threads_per_pod = int(threads/pods)
                 ycsb_operations_per_pod = int(ycsb_operations/pods)
                 target_per_pod = int(target/pods)
-                if args.dbms == "PostgreSQL":
+                if (args.dbms == "PostgreSQL" or len(args.dbms) == 0):
                     # PostgreSQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config.set_storage(
+                        storageConfiguration = 'postgresql'
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
@@ -305,11 +310,15 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                elif args.dbms == "MySQL":
+                    config.add_benchmark_list([pods])
+                if (args.dbms == "MySQL" or len(args.dbms) == 0):
                     # MySQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'MySQL-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config.set_storage(
+                        storageConfiguration = 'mysql'
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
@@ -336,7 +345,7 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                config.add_benchmark_list([pods])
+                    config.add_benchmark_list([pods])
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)

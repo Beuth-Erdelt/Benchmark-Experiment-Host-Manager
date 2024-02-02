@@ -36,6 +36,10 @@ This
 You can watch the status while benchmark is running via `bexperiments status`
 
 ```
+Dashboard: Running
+Message Queue: Running
+Data directory: Running
+Result directory: Running
 +------------------+--------------+--------------+---------------+
 | 1706255897       | sut          |   loaded [s] | loading       |
 +==================+==============+==============+===============+
@@ -47,6 +51,13 @@ You can watch the status while benchmark is running via `bexperiments status`
 +------------------+--------------+--------------+---------------+
 ```
 
+The code `1706255897` is the unique identifier of the experiment.
+You can find the number also in the output of `tpch.py`.
+
+### Cleanup
+
+The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
+If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1706255897` (removes everything that is related to experiment `1706255897`).
 
 ## Evaluate Results
 
@@ -316,29 +327,32 @@ options:
 If monitoring is activated, the summary also contains a section like
 ```
 ### CPU of Ingestion (via counter) [CPUs]
-                              0
+                    SUT - CPU of Ingestion (via counter) [CPUs]
 DBMS
-MonetDB-BHT-8-1      136.638103
-MySQL-BHT-8-8-1     3223.236893
-PostgreSQL-BHT-8-1   153.782876
-### Max RAM of Ingestion [Mb]
-                               0
+MonetDB-BHT-8-1                                      137.344502
+MySQL-BHT-8-8-1                                     3044.898897
+PostgreSQL-BHT-8-1                                   137.290273
+
+### Max RAM of Ingestion [Gb]
+                    SUT - Max RAM of Ingestion [Gb]
 DBMS
-MonetDB-BHT-8-1      1244.855469
-MySQL-BHT-8-8-1     48206.949219
-PostgreSQL-BHT-8-1   3862.175781
+MonetDB-BHT-8-1                            1.152214
+MySQL-BHT-8-8-1                           47.054993
+PostgreSQL-BHT-8-1                         3.736855
+
 ### CPU of Execution (via counter) [CPUs]
-                             0
+                    SUT - CPU of Execution (via counter) [CPUs]
 DBMS
-MonetDB-BHT-8-1      29.866166
-MySQL-BHT-8-8-1     142.083743
-PostgreSQL-BHT-8-1  115.545106
-### Max RAM of Execution [Mb]
-                               0
+MonetDB-BHT-8-1                                       33.074309
+MySQL-BHT-8-8-1                                      133.390875
+PostgreSQL-BHT-8-1                                    20.495651
+
+### Max RAM of Execution [Gb]
+                    SUT - Max RAM of Execution [Gb]
 DBMS
-MonetDB-BHT-8-1      1787.203125
-MySQL-BHT-8-8-1     48321.277344
-PostgreSQL-BHT-8-1   3939.746094
+MonetDB-BHT-8-1                            1.707027
+MySQL-BHT-8-8-1                           47.265121
+PostgreSQL-BHT-8-1                         3.682274
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.

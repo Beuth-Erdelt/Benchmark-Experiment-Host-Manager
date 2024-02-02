@@ -121,7 +121,6 @@ then
 	python ./benchmark.py run -b -w connection \
 		-f /results/$DBMSBENCHMARKER_CODE \
 		-r /results/$DBMSBENCHMARKER_CODE \
-		-mps \
 		-cs -sf $DBMSBENCHMARKER_CONNECTION \
 		-ms $DBMSBENCHMARKER_CLIENT \
 		-c "$DBMSBENCHMARKER_CONNECTION" \
@@ -135,6 +134,8 @@ then
 		-vs \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		$( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
+		-mps \
 		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \
@@ -142,7 +143,6 @@ else
 	python ./benchmark.py run -b -w connection \
 		-f /results/$DBMSBENCHMARKER_CODE \
 		-r /results/$DBMSBENCHMARKER_CODE \
-		-mps \
 		-cs -sf $DBMSBENCHMARKER_CONNECTION \
 		-ms $DBMSBENCHMARKER_CLIENT \
 		-c "$DBMSBENCHMARKER_CONNECTION" \
@@ -151,6 +151,8 @@ else
 		-rcp $DBMSBENCHMARKER_RECREATE_PARAMETER \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		$( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
+		-mps \
 		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \

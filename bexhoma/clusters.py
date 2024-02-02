@@ -1283,9 +1283,10 @@ class testbed():
         """
         if len(self.get_dashboard_pod_name()):
             # there already is a dashboard pod
+            print("{:30s}: is running".format("Dashboard"))
             return
         else:
-            print("{:30s}: starting...".format("Evaluation pod"), end="", flush=True)
+            print("{:30s}: starting...".format("Dashboard"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
@@ -1305,17 +1306,19 @@ class testbed():
         self.monitor_cluster_active = True
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
-            # dashboard exists
+            # monitoring exists
             self.logger.debug('testbed.start_monitoring_cluster()=exists')
+            print("{:30s}: is running".format("Cluster monitoring"))
             return
         else:
             self.logger.debug('testbed.start_monitoring_cluster()=deploy')
             deployment = 'daemonsettemplate-monitoring.yml'
-            #name = self.create_dashboard_name(app, component)
-            #self.logger.debug('testbed.start_monitoring_general({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
-            #deployment = 'deploymenttemplate-bexhoma-prometheus.yml'
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
+            print("{:30s}: starting...".format("Cluster monitoring"))
+            while (not len(self.get_service_endpoints(service_name="bexhoma-service-monitoring-default"))):
+               self.wait(10, silent=True)
+            print("done")
+            return
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
@@ -1328,14 +1331,56 @@ class testbed():
         if len(pods_messagequeue) > 0:
             # dashboard exists
             self.logger.debug('testbed.start_messagequeue()=exists')
+            print("{:30s}: is running".format("Message Queue"))
             return
         else:
-            print("{:30s}: starting...".format("Message queue pod"), end="", flush=True)
+            print("{:30s}: starting...".format("Message Queue"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not len(self.get_pods(component=component))):
+               self.wait(10, silent=True)
+            print("done")
+            return
+    def start_datadir(self):
+        """
+        Starts the data directory in a shared filesystem.
+        This is where data generator pods can store generated data and where loading pods can read the data from. 
+        Manifest is expected in 'pvc-bexhoma-data.yml'
+        """
+        app = self.appname
+        # get data directory
+        pvcs = self.get_pvc(app=app, component='data-source', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("{:30s}: is running".format("Data Directory"))
+            return
+        else:
+            print("{:30s}: is starting...".format("Data Directory"), end="", flush=True)
+            deployment = 'pvc-bexhoma-data.yml'
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_pvc(app=app, component='data-source', experiment='', configuration=''))):
+               self.wait(10, silent=True)
+            print("done")
+            return
+    def start_resultdir(self):
+        """
+        Starts the result directory in a shared filesystem.
+        This is where benchmark execution pods can store result data and where the evaluation pods can read results from.
+        Also collected metrics will be stored there.
+        Manifest is expected in 'pvc-bexhoma-results.yml'
+        """
+        app = self.appname
+        # get result directory
+        pvcs = self.get_pvc(app=app, component='results', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("{:30s}: is running".format("Result Directory"))
+            return
+        else:
+            print("{:30s}: is starting...".format("Result Directory"), end="", flush=True)
+            deployment = 'pvc-bexhoma-results.yml'
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_pvc(app=app, component='results', experiment='', configuration=''))):
                self.wait(10, silent=True)
             print("done")
             return

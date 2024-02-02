@@ -93,6 +93,28 @@ if __name__ == '__main__':
     elif args.mode == 'status':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         app = cluster.appname
+        # check dashboard
+        dashboard_name = cluster.get_dashboard_pod_name()
+        if len(dashboard_name) > 0:
+            status = cluster.get_pod_status(dashboard_name)
+            print("Dashboard: {}".format(status))
+        # check message queue
+        messagequeue_name = cluster.get_pods(component='messagequeue')
+        if len(messagequeue_name) > 0:
+            status = cluster.get_pod_status(messagequeue_name[0])
+            print("Message Queue: {}".format(status))
+        # get data directory
+        pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("Data Directory: {}".format("Running"))
+        else:
+            print("Data Directory: {}".format("Missing"))
+        # get result directory
+        pvcs = cluster.get_pvc(app=app, component='results', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("Result Directory: {}".format("Running"))
+        else:
+            print("Result Directory: {}".format("Missing"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)
