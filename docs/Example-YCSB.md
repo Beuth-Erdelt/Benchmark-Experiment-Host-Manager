@@ -20,7 +20,7 @@ This
     * with a loading container each
       * threads = 64/`n`
       * target throughput is `t` * 16384
-      * generates YCSB data = 1.000.000 rows
+      * generates YCSB data = 1.000.000 rows (i.e., SF=1)
       * imports it into the DBMS
   * runs `n` parallel streams of YCSB queries per DBMS
     * 1.000.000 operations
@@ -270,9 +270,41 @@ This is too coarse for such a quick example.
 
 ## Perform Execution Benchmark
 
-The default behaviour is that several different settings of the loading component are compared.
+The default behaviour of bexhoma is that several different settings of the loading component are compared.
 We might only want to benchmark the workloads of YCSB in different configurations and have a fixed loading phase.
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`
+
+
+## Use Persistent Storage
+
+The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
+If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
+
+Example: `python ycsb.py -ms 1 -m -dbms MySQL -workload a -tr -nc 2 -rst local-hdd -rss 50 run`
+
+The following status shows we have two volumes of type `local-hdd`. Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
+In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
+The first instance of MySQL mounts the volume and generates the data.
+All other instances just use the database without generating and loading data.
+
+```
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
+| Volumes                           | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   |   storage | status   |
++===================================+=================+==============+==============+===================+============+======================+===========+==========+
+| bexhoma-storage-mysql-ycsb-1      | mysql           | ycsb-1       | True         |           2398.11 | MySQL      | local-hdd            |        50 | Bound    |
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
+| bexhoma-storage-postgresql-ycsb-1 | postgresql      | ycsb-1       | True         |             61.82 | PostgreSQL | local-hdd            |        50 | Bound    |
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
++------------------+--------------+--------------+--------------+---------------+
+| 1706957093       | sut          |   loaded [s] | monitoring   | benchmarker   |
++==================+==============+==============+==============+===============+
+| MySQL-64-1-16384 | (2. Running) |      2398.11 | (Running)    | (1. Running)  |
++------------------+--------------+--------------+--------------+---------------+
+```
+
+
+
+
