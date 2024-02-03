@@ -1405,9 +1405,13 @@ scrape_configs:
             use_storage = self.use_storage()
             if use_storage:
                 # remove the storage
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                if self.storage['storageConfiguration']:
+                    storageConfiguration = self.storage['storageConfiguration']
+                else:
+                    storageConfiguration = configuration
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                 self.experiment.cluster.delete_pvc(name_pvc)
-                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=configuration)
+                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=storageConfiguration)
                 for name_pvc in worker_pvcs:
                     self.experiment.cluster.delete_pvc(name_pvc)
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2482,7 +2486,11 @@ scrape_configs:
         use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
-            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            if self.storage['storageConfiguration']:
+                storageConfiguration = self.storage['storageConfiguration']
+            else:
+                storageConfiguration = self.configuration
+            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
             volume = name_pvc
         else:
             volume = ''
