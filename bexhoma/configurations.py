@@ -1051,7 +1051,7 @@ scrape_configs:
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'storage'
-                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['configuration'] = storageConfiguration
                     dep['metadata']['labels']['experiment'] = self.storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['volume'] = self.volume

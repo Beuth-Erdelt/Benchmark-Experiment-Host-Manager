@@ -368,7 +368,7 @@ class testbed():
             field_selector = 'status.phase='+status
         else:
             field_selector = ''
-        self.logger.debug('get_pods label='+label)
+        self.logger.debug('get_pods label({})'.format(label))
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label, field_selector=field_selector)
             #pprint(api_response)
@@ -527,7 +527,7 @@ class testbed():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('get_services'+label)
+        self.logger.debug('get_services({})'.format(label))
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -593,7 +593,7 @@ class testbed():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('get_pvc'+label)
+        self.logger.debug('get_pvc({})'.format(label))
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -1026,7 +1026,7 @@ class testbed():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        self.logger.debug('getJobs '+label)
+        self.logger.debug('getJobs({})'.format(label))
         try: 
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
