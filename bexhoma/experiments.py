@@ -819,6 +819,21 @@ class default():
                                 print("{:30s}: has pending maintaining".format(config.configuration))
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
+                    now = datetime.utcnow()
+                    # when loaded from PVC, system may not be ready yet
+                    if config.loading_after_time is None:
+                        # we have started from PVC
+                        delay = 60
+                        if 'delay_prepare' in config.dockertemplate:
+                            # config demands other delay
+                            delay = config.dockertemplate['delay_prepare']
+                        config.loading_after_time = now + timedelta(seconds=delay)
+                        print("{:30s}: will start benchmarking but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                        continue
+                    elif not now >= config.loading_after_time:
+                        # system might not be ready yet
+                        print("{:30s}: will start benchmarking but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+                        continue
                     # still benchmarks: check loading and maintaining
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():
