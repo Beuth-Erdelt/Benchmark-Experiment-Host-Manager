@@ -283,7 +283,7 @@ Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
 
-Example: `python ycsb.py -ms 1 -m -dbms MySQL -workload a -tr -nc 2 -rst local-hdd -rss 50 run`
+Example: `python ycsb.py -ms 1 -m -dbms MySQL -workload a -tr -nc 2 -rst local-hdd -rss 50Gi run`
 
 The following status shows we have two volumes of type `local-hdd`. Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
@@ -294,9 +294,9 @@ All other instances just use the database without generating and loading data.
 +-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
 | Volumes                           | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   |   storage | status   |
 +===================================+=================+==============+==============+===================+============+======================+===========+==========+
-| bexhoma-storage-mysql-ycsb-1      | mysql           | ycsb-1       | True         |           2398.11 | MySQL      | local-hdd            |        50 | Bound    |
+| bexhoma-storage-mysql-ycsb-1      | mysql           | ycsb-1       | True         |           2398.11 | MySQL      | local-hdd            |      50Gi | Bound    |
 +-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
-| bexhoma-storage-postgresql-ycsb-1 | postgresql      | ycsb-1       | True         |             61.82 | PostgreSQL | local-hdd            |        50 | Bound    |
+| bexhoma-storage-postgresql-ycsb-1 | postgresql      | ycsb-1       | True         |             61.82 | PostgreSQL | local-hdd            |      50Gi | Bound    |
 +-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
 +------------------+--------------+--------------+--------------+---------------+
 | 1706957093       | sut          |   loaded [s] | monitoring   | benchmarker   |
