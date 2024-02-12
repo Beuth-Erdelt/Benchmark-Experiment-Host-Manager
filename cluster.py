@@ -26,6 +26,7 @@ import time
 import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
+import multiprocessing as mp
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -342,4 +343,5 @@ if __name__ == '__main__':
                 h_short = [df_short.index.name] + list(df_short.columns)
                 # this shows only columns with not all empty
                 print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
+    benchmarker.logger.setLevel(logging.ERROR)
 

@@ -18,17 +18,18 @@ This
 * starts a clean instance of PostgreSQL, MonetDB, MySQL
   * data directory inside a Docker container
 * creates TPC-H schema in each database
-* starts 8 loader pods per DBMS
+* starts 8 loader pods per DBMS (`-nlp`)
   * with a data generator (init) container each
-    * each generating a portion of TPC-H data of scaling factor 1
+    * each generating a portion of TPC-H data of scaling factor 1 (`-sf`)
     * storing the data in a distributed filesystem (shared disk)
     * if data is already present: do nothing
   * with a loading container each
     * importing TPC-H data from the distributed filesystem
-    * MySQL: only one pod active and it loads with 8 threads
-* creates contraints and indexes and updates table statistics in each DBMS after ingestion
+    * MySQL: only one pod active and it loads with 8 threads (`-nlt`)
+* creates contraints (`-ic`) and indexes (`-ii`) and updates table statistics (`-is`) in each DBMS after ingestion
 * runs 1 stream of TPC-H queries per DBMS
   * all DBMS use the same parameters
+  * data transfer is also measured (`-dt`)
 * shows a summary
 
 ### Status
@@ -351,7 +352,7 @@ PostgreSQL-BHT-8-2 1  1              2                 38      2   1            
 Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
 You can change this via
 * `-rcp`: Each stream has it's own random parameters
-* `shq`: Use the ordering per stream as required by the TPC-H specification
+* `-shq`: Use the ordering per stream as required by the TPC-H specification
 
 ## Use Persistent Storage
 
