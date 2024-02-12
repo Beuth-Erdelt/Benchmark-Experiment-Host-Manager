@@ -1388,7 +1388,6 @@ class tpch(default):
         #####################
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            print("\n### Ingestion")
             df = evaluate.get_loading_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df1 = pd.DataFrame(df)
@@ -1399,6 +1398,8 @@ class tpch(default):
             df2 = pd.DataFrame(df).round(2)
             df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Ingestion")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
@@ -1406,7 +1407,6 @@ class tpch(default):
             elif not df2.empty:
                 print(df2.round(2))
             #####################
-            print("\n### Execution")
             df = evaluate.get_streaming_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df1 = pd.DataFrame(df)
@@ -1417,6 +1417,8 @@ class tpch(default):
             df2 = pd.DataFrame(df)
             df2.columns = ["SUT - Max RAM of Execution [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Execution")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
@@ -1779,7 +1781,6 @@ class ycsb(default):
             #####################
             evaluation.transform_monitoring_results(component="loading")
             #####################
-            print("\n### Ingestion")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
             df1 = pd.DataFrame(df)
             df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
@@ -1788,6 +1789,8 @@ class ycsb(default):
             df2 = pd.DataFrame(df)
             df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Ingestion")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
@@ -1797,7 +1800,6 @@ class ycsb(default):
             #####################
             evaluation.transform_monitoring_results(component="stream")
             #####################
-            print("\n### Execution")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
             df1 = pd.DataFrame(df)
             df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
@@ -1806,6 +1808,8 @@ class ycsb(default):
             df2 = pd.DataFrame(df)
             df2.columns = ["SUT - Max RAM of Execution [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Execution")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
