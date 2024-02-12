@@ -5,18 +5,16 @@ cd images
 ###########
 
 cd evaluator_dbmsbenchmarker
-#docker build -f Dockerfile_v0.13.1 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.1 --no-cache .
 python create_Dockerfiles.py
-#docker build -f Dockerfile_v0.13.2 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.2 .
-#docker push bexhoma/evaluator_dbmsbenchmarker:v0.13.2 &
+#docker build -f Dockerfile_v0.13.6 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.6 --no-cache .
+#docker build -f Dockerfile_v0.13.6 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.6 .
 docker push bexhoma/evaluator_dbmsbenchmarker:v0.13.6 &
 cd ..
 
 cd benchmarker_dbmsbenchmarker
-#docker build -f Dockerfile_v0.13.1 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.1 --no-cache .
 python create_Dockerfiles.py
-#docker build -f Dockerfile_v0.13.2 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.2 .
-#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.2 &
+#docker build -f Dockerfile_v0.13.6 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.6 --no-cache .
+#docker build -f Dockerfile_v0.13.6 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.6 .
 docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.6 &
 cd ..
 
@@ -30,6 +28,17 @@ cd ..
 cd loader_postgresql
 docker build -f Dockerfile -t bexhoma/loader_tpch_postgresql:latest .
 docker push bexhoma/loader_tpch_postgresql:latest &
+cd ..
+
+cd loader_mysql
+docker build -f Dockerfile -t bexhoma/loader_tpch_mysql:latest .
+docker push bexhoma/loader_tpch_mysql:latest &
+cd ..
+
+cd loader_monetdb
+docker build -f Dockerfile -t bexhoma/loader_tpch_monetdb:latest .
+docker push bexhoma/loader_tpch_monetdb:latest &
+cd ..
 cd ..
 
 ###########

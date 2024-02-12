@@ -571,7 +571,7 @@ class ycsb(evaluator):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        column = "connection"
+        column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby(column):
             #print(key, len(grp.index))
@@ -646,9 +646,12 @@ class ycsb(evaluator):
                 }}
             #print(grp.agg(aggregate))
             dict_grp = dict()
-            dict_grp['connection'] = key
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['connection'] = key[0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
+            #dict_grp['connection'] = key
+            #dict_grp['configuration'] = grp['configuration'][0]
+            #dict_grp['experiment_run'] = grp['experiment_run'][0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
@@ -756,8 +759,8 @@ class ycsb(evaluator):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             #dict_grp['pod_count'] = grp['pod_count'][0]

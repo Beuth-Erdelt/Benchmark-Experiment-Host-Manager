@@ -51,7 +51,10 @@ echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EX
 CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$CHILD" ]
 then
+	echo "No entry found in message queue. I assume this is the first child."
 	CHILD=1
+else
+	echo "Found entry number $CHILD in message queue."
 fi
 
 ######################## Wait until all pods of job are ready ########################
@@ -64,7 +67,7 @@ while : ; do
 	echo "Found $PODS_RUNNING / $NUM_PODS running pods"
     if  test "$PODS_RUNNING" == $NUM_PODS
     then
-        echo "OK"
+        echo "OK, found $NUM_PODS ready pods."
         break
     elif test "$PODS_RUNNING" -gt $NUM_PODS
     then
@@ -94,6 +97,26 @@ then
 	git pull
 fi
 
+######################## Convert parameters ###################
+# values come from Python, will be set as string ENV and must be converted
+if test "$DBMSBENCHMARKER_SHUFFLE_QUERIES" == "True"
+then
+	DBMSBENCHMARKER_SHUFFLE_QUERIES=1
+else
+	DBMSBENCHMARKER_SHUFFLE_QUERIES=0
+fi
+
+if test "$DBMSBENCHMARKER_RECREATE_PARAMETER" == "True"
+then
+	DBMSBENCHMARKER_RECREATE_PARAMETER=1
+else
+	DBMSBENCHMARKER_RECREATE_PARAMETER=0
+fi
+
+######################## Show more parameters ########################
+echo "DBMSBENCHMARKER_SHUFFLE_QUERIES $DBMSBENCHMARKER_SHUFFLE_QUERIES"
+echo "DBMSBENCHMARKER_RECREATE_PARAMETER $DBMSBENCHMARKER_RECREATE_PARAMETER"
+
 ######################## Execute workload ###################
 # run dbmsbenchmarker
 if test $DBMSBENCHMARKER_VERBOSE -gt 0
@@ -101,7 +124,6 @@ then
 	python ./benchmark.py run -b -w connection \
 		-f /results/$DBMSBENCHMARKER_CODE \
 		-r /results/$DBMSBENCHMARKER_CODE \
-		-mps \
 		-cs -sf $DBMSBENCHMARKER_CONNECTION \
 		-ms $DBMSBENCHMARKER_CLIENT \
 		-c "$DBMSBENCHMARKER_CONNECTION" \
@@ -115,6 +137,8 @@ then
 		-vs \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		$( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
+		-mps \
 		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \
@@ -122,7 +146,6 @@ else
 	python ./benchmark.py run -b -w connection \
 		-f /results/$DBMSBENCHMARKER_CODE \
 		-r /results/$DBMSBENCHMARKER_CODE \
-		-mps \
 		-cs -sf $DBMSBENCHMARKER_CONNECTION \
 		-ms $DBMSBENCHMARKER_CLIENT \
 		-c "$DBMSBENCHMARKER_CONNECTION" \
@@ -131,6 +154,8 @@ else
 		-rcp $DBMSBENCHMARKER_RECREATE_PARAMETER \
 		-sid $CHILD \
 		-ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
+		$( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
+		-mps \
 		| tee /tmp/dbmsbenchmarker.log
 		#-sl $DBMSBENCHMARKER_SLEEP \
 		#-st "$DBMSBENCHMARKER_START" \

@@ -36,7 +36,7 @@ def manage():
     print(description)
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard', 'master'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','jupyter','master'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
@@ -75,12 +75,46 @@ def manage():
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_dashboard()
+    elif args.mode == 'localdashboard':
+        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        import sys
+        resultfolder = cluster.config['benchmarker']['resultfolder']
+        sys.argv += ['-r',resultfolder]
+        sys.argv.remove('localdashboard')
+        from dbmsbenchmarker.scripts import dashboardcli
+        dashboardcli.startup()
+    elif args.mode == 'jupyter':
+        import subprocess
+        cmd = ["jupyter","notebook","--notebook-dir","images/evaluator_dbmsbenchmarker/notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
+        subprocess.Popen(cmd)
     elif args.mode == 'master':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_master(experiment=args.experiment, configuration=connection)
     elif args.mode == 'status':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         app = cluster.appname
+        # check dashboard
+        dashboard_name = cluster.get_dashboard_pod_name()
+        if len(dashboard_name) > 0:
+            status = cluster.get_pod_status(dashboard_name)
+            print("Dashboard: {}".format(status))
+        # check message queue
+        messagequeue_name = cluster.get_pods(component='messagequeue')
+        if len(messagequeue_name) > 0:
+            status = cluster.get_pod_status(messagequeue_name[0])
+            print("Message Queue: {}".format(status))
+        # get data directory
+        pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("Data directory: {}".format("Running"))
+        else:
+            print("Data directory: {}".format("Missing"))
+        # get result directory
+        pvcs = cluster.get_pvc(app=app, component='results', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("Result directory: {}".format("Running"))
+        else:
+            print("Result directory: {}".format("Missing"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)
@@ -299,4 +333,13 @@ def manage():
             df.index.name = experiment
             #print(df)
             h = [df.index.name] + list(df.columns)
-            print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
+            if args.verbose:
+                # this shows all columns even if empty
+                print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
+            else:
+                df_empty = df.eq('')
+                df_short = df.drop(df_empty.columns[df_empty.all()].tolist(), axis=1)
+                h_short = [df_short.index.name] + list(df_short.columns)
+                # this shows only columns with not all empty
+                print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
+    benchmarker.logger.setLevel(logging.ERROR)

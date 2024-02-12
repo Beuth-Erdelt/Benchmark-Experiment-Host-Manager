@@ -27,7 +27,7 @@
 # key, and then request a number of records; this works fine even for hashed insertion.
 
 recordcount=ROWS_AFTER_BENCHMARK
-operationcount=OPERATIONS
+operationcount=YCSB_OPERATIONS
 workload=site.ycsb.workloads.CoreWorkload
 
 readallfields=true

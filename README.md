@@ -15,11 +15,11 @@ It enables users to configure hardware / software setups for easily repeating te
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
-running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
+running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, Vertica and YugabyteDB.
 
 Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
 
-The basic workflow is [1,2]: start a containerized version of the DBMS, install monitoring software, import existing data, run benchmarks and shut down everything with a single command.
+The basic workflow is [1,2]: start a containerized version of the DBMS, install monitoring software, import data, run benchmarks and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
 It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4].
@@ -37,17 +37,41 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
     * (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
     * (Also make sure, you can create PV via PVC and dynamic provisioning)
 1. Adjust [configuration](https://bexhoma.readthedocs.io/en/latest/Config.html)
-    1. Rename `k8s-cluster.config` to `cluster.config`
+    1. Copy `k8s-cluster.config` to `cluster.config`
     1. Set name of context, namespace and name of cluster in that file
-1. Install result folder: Run `kubectl create -f k8s/pvc-bexhoma-results.yml`
+    2. Make sure the `resultfolder` is set to a folder that exists on your local filesystem
+1. Other components like the shared data and result directories, the message queue and the evaluator are installed automatically when you start an experiment. Before that, you might want to adjust  
+    * Result directory: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/pvc-bexhoma-results.yml  
+      * `storageClassName`: must be an available storage class of type `ReadWriteMany` in your cluster
+      * `storage`: size of the directory
+    * Data directory: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/pvc-bexhoma-data.yml  
+      * `storageClassName`: must be an available storage class of type `ReadWriteMany` in your cluster
+      * `storage`: size of the directory
 
 
 ## Quickstart
 
+### YCSB
 
-1. Run `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`. This installs PostgreSQL and runs YCSB workload A with varying target. The driver is monolithic with 64 threads. The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
+1. Run `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`.  
+  This installs PostgreSQL and runs YCSB workload A with varying target. The driver is monolithic with 64 threads. The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running. This is equivalent to `python cluster.py status`.
-1. After benchmarking has finished, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. This is equivalent to `python cluster.py dashboard`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+1. After benchmarking has finished, you will see a summary.  
+  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. This is equivalent to `python cluster.py dashboard`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+
+See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
+
+### TPC-H
+
+1. Run `python tpch.py -ms 1 -dbms PostgreSQL run`.  
+  This installs PostgreSQL and runs TPC-H at scale factor 1. The driver is monolithic.
+1. You can watch status using `bexperiments status` while running. This is equivalent to `python cluster.py status`.
+1. After benchmarking has finished, you will see a summary.  
+  For further inspections, run `bexperiments dashboard` to connect to a dashboard. This is equivalent to `python cluster.py dashboard`.  You can open a Jupyter notebook at `http://localhost:8888`.
+
+See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html
+
+
 
 
 ## More Informations

@@ -60,8 +60,5 @@ k8s: Stop Port Forwarding, Delete Deployment and Services
 This tool relies on
 * [dbms benchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) for the actual benchmarks
 * a [configuration file](#clusterconfig)
-* [boto](http://boto.cloudhackers.com/en/latest/) for AWS management
-* [paramiko](http://www.paramiko.org/) for SSH handling
-* [scp](https://pypi.org/project/scp/) for SCP handling
 * [kubernetes](https://github.com/kubernetes-client/python) for k8s management
 * and some more [python libraries](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/requirements.txt)

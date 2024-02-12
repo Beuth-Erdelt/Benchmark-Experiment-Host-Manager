@@ -31,5 +31,7 @@ The following parameter (ENV) have been added:
 * `YCSB_STATUS`: 
 * `YCSB_WORKLOAD`: 
 * `YCSB_BATCHSIZE`: 
+* `YCSB_ROWS`: 
+* `YCSB_OPERATIONS`:
 
 This folder contains the Dockerfile for a benchmarker, that runs the workload against a loaded DBMS.
