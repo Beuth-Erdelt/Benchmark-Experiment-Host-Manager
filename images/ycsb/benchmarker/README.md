@@ -2,9 +2,6 @@
 
 The image is based on https://github.com/brianfrankcooper/YCSB
 
-Currently, TPC-C is adapted for PostgreSQL, MySQL, MariaDB, SingleStore, Kinetica and YugabyteDB here.
-It requires the JDBC driver to be included.
-
 The following parameter (ENV) have been added:
 
 * `SF`: 
