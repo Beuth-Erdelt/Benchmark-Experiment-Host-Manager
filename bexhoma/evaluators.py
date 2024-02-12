@@ -499,7 +499,7 @@ class ycsb(logger):
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
-            operations = re.findall('OPERATIONS (.+?)\n', stdout)[0]
+            operations = re.findall('YCSB_OPERATIONS (.+?)\n', stdout)[0]
             batchsize = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
             if len(batchsize)>0:
                 # information found

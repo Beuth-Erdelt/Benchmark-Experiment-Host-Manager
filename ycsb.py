@@ -293,13 +293,13 @@ if __name__ == '__main__':
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
@@ -307,13 +307,13 @@ if __name__ == '__main__':
                     config.set_benchmarking_parameters(
                         #PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
@@ -328,13 +328,13 @@ if __name__ == '__main__':
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
@@ -342,13 +342,13 @@ if __name__ == '__main__':
                     config.set_benchmarking_parameters(
                         #PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
