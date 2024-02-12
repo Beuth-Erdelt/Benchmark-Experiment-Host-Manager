@@ -352,3 +352,30 @@ Per default, all 3 streams use the same random parameters (like DELTA in Q1) and
 You can change this via
 * `-rcp`: Each stream has it's own random parameters
 * `shq`: Use the ordering per stream as required by the TPC-H specification
+
+## Use Persistent Storage
+
+The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
+If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
+
+Example: `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -nc 2 -dbms PostgreSQL -rst local-hdd -rss 50Gi run`
+
+The following status shows we have a volumes of type `local-hdd`.
+Every experiment running TPC-H of SF=1 at PostgreSQL will take the database from this volume and skip loading.
+In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
+The first instance of PostgreSQL mounts the volume and generates the data.
+All other instances just use the database without generating and loading data.
+
+```
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
+| Volumes                           | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   |
++===================================+=================+==============+==============+===================+============+======================+===========+==========+
+| bexhoma-storage-postgresql-tpch-1 | postgresql      | tpch-1       | True         |            185.41 | PostgreSQL | local-hdd            | 50Gi      | Bound    |
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
++------------------+--------------+--------------+---------------+
+| 1707740320       | sut          |   loaded [s] | benchmarker   |
++==================+==============+==============+===============+
+| PostgreSQL-BHT-8 | (1. Running) |       185.41 | (1. Running)  |
++------------------+--------------+--------------+---------------+
+```
+
