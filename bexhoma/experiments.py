@@ -1826,7 +1826,7 @@ Benchbase
 
 class benchbase(default):
     """
-    Class for defining an YCSB experiment.
+    Class for defining a Benchbase experiment.
     This sets
 
     * the folder to the experiment - including query file and schema informations per dbms

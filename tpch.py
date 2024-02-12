@@ -264,6 +264,9 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                config.set_storage(
+                    storageConfiguration = 'postgresql'
+                    )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
                     SF = SF,
@@ -286,6 +289,9 @@ if __name__ == '__main__':
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
+                config.set_storage(
+                    storageConfiguration = 'monetdb'
+                    )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-MonetDB.yml"
                 config.set_loading_parameters(
                     SF = SF,
@@ -309,6 +315,9 @@ if __name__ == '__main__':
                 for threads in list_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'
                     config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='MySQL', alias='DBMS A1')
+                    config.set_storage(
+                        storageConfiguration = 'mysql'
+                        )
                     config.jobtemplate_loading = "jobtemplate-loading-tpch-MySQL.yml"
                     config.set_loading_parameters(
                         SF = SF,
