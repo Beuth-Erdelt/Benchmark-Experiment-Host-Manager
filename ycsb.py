@@ -278,7 +278,7 @@ if __name__ == '__main__':
                 threads_per_pod = int(threads/pods)
                 ycsb_operations_per_pod = int(ycsb_operations/pods)
                 target_per_pod = int(target/pods)
-                benchmarking_pods = pods
+                benchmarking_pods = [pods]
                 if len(list_clients) > 0:
                     # we want several benchmarking instances per installation
                     benchmarking_pods = list_clients
@@ -316,7 +316,7 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                    config.add_benchmark_list([benchmarking_pods])
+                    config.add_benchmark_list(benchmarking_pods)
                 if (args.dbms == "MySQL" or len(args.dbms) == 0):
                     # MySQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
@@ -351,7 +351,7 @@ if __name__ == '__main__':
                         OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                    config.add_benchmark_list([benchmarking_pods])
+                    config.add_benchmark_list(benchmarking_pods)
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
