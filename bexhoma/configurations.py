@@ -997,9 +997,12 @@ scrape_configs:
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
         if self.storage['storageConfiguration']:
-            name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            storageConfiguration = self.storage['storageConfiguration']
+            #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
         else:
-            name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+            storageConfiguration = configuration
+            #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+        name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
@@ -1048,7 +1051,7 @@ scrape_configs:
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'storage'
-                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['configuration'] = storageConfiguration
                     dep['metadata']['labels']['experiment'] = self.storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['volume'] = self.volume
@@ -1064,13 +1067,13 @@ scrape_configs:
                         dep['spec']['resources']['requests']['storage'] = self.storage['storageSize']
                     #print(dep['spec']['accessModes']) # list
                     #print(dep['spec']['resources']['requests']['storage'])
-                    pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                    pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                     #print(pvcs)
                     if len(pvcs) > 0:
                         print("{:30s}: storage exists {}".format(configuration, name_pvc))
                         #print("Storage {} exists".format(name_pvc))
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
-                        pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                        pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                         self.logger.debug(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
@@ -1402,9 +1405,13 @@ scrape_configs:
             use_storage = self.use_storage()
             if use_storage:
                 # remove the storage
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                if self.storage['storageConfiguration']:
+                    storageConfiguration = self.storage['storageConfiguration']
+                else:
+                    storageConfiguration = configuration
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                 self.experiment.cluster.delete_pvc(name_pvc)
-                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=configuration)
+                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=storageConfiguration)
                 for name_pvc in worker_pvcs:
                     self.experiment.cluster.delete_pvc(name_pvc)
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2479,7 +2486,11 @@ scrape_configs:
         use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
-            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            if self.storage['storageConfiguration']:
+                storageConfiguration = self.storage['storageConfiguration']
+            else:
+                storageConfiguration = self.configuration
+            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
             volume = name_pvc
         else:
             volume = ''
@@ -2500,7 +2511,7 @@ scrape_configs:
         """
         if len(patch) > 0:
             merged = hiyapyco.load([file, patch], method=hiyapyco.METHOD_MERGE)
-            print(hiyapyco.dump(merged, default_flow_style=False))
+            self.logger.debug(hiyapyco.dump(merged, default_flow_style=False))
             stream = StringIO(hiyapyco.dump(merged)) # convert string to stream
             result = yaml.safe_load_all(stream)
             result = [data for data in result]

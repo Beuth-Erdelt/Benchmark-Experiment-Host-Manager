@@ -16,6 +16,8 @@ spec:
       - name: dockerhub
       nodeSelector: 
       tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_ycsb:0.17.0

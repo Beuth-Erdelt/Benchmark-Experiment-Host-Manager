@@ -118,82 +118,57 @@ Q20              False              False                 False
 Q21              False              False                 False
 Q22              False              False                 False
 
-### Warnings
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1               False              False                 False
-Q2               False              False                 False
-Q3               False              False                 False
-Q4               False              False                 False
-Q5               False              False                 False
-Q6               False              False                 False
-Q7               False              False                 False
-Q8               False              False                 False
-Q9               False              False                 False
-Q10              False              False                 False
-Q11              False              False                 False
-Q12              False              False                 False
-Q13              False              False                 False
-Q14              False              False                 False
-Q15              False              False                 False
-Q16              False              False                 False
-Q17              False              False                 False
-Q18              False              False                 False
-Q19              False              False                 False
-Q20              False              False                 False
-Q21              False              False                 False
-Q22              False              False                 False
-
 ### Latency of Timer Execution [ms]
 DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1              1214.78           31836.03               2818.04
-Q2                32.96             354.24                448.22
-Q3               152.26            3773.37                772.58
-Q4                56.77            1925.58               1320.62
-Q5                96.40            2700.64                694.82
-Q6                43.42            4317.21                522.64
-Q7                95.72            7200.93                807.61
-Q8               453.65            6742.41                646.12
-Q9               138.02            5596.61               1567.34
-Q10              186.51            3093.87               1327.04
-Q11               28.54             338.07                253.88
-Q12               71.91            7169.19               1030.47
-Q13              611.46            9030.91               2092.40
-Q14               50.75            5017.37                560.41
-Q15               51.14           22967.24                560.97
-Q16              112.46            1106.00                596.19
-Q17              135.30             787.69               2087.18
-Q18              235.09            6354.27               8261.32
-Q19               82.74             384.85                716.25
-Q20              106.50             578.54                727.58
-Q21             1970.25           17064.63                908.25
-Q22               60.29             529.73                249.55
+Q1              1240.66           32638.77               2703.10
+Q2                56.86             374.84                448.50
+Q3               151.57            3879.77                784.00
+Q4                59.87            1878.61               1698.36
+Q5               109.46            3696.65                683.52
+Q6                38.26            4613.30                527.45
+Q7               107.76            7450.78                800.50
+Q8               520.33            6908.57                635.10
+Q9               119.83            5742.28               1277.49
+Q10              209.94            3225.24               1324.35
+Q11               33.37             388.46                270.89
+Q12              835.47            7248.02               1065.41
+Q13              616.53            9070.17               2040.81
+Q14               53.19            5341.72                577.85
+Q15               49.42           23642.97                563.57
+Q16              118.77            1133.53                580.05
+Q17               60.57             943.22               2061.87
+Q18              216.39            6316.22               6977.95
+Q19               78.92             404.44                723.67
+Q20               88.35             614.85                666.61
+Q21             1859.63           17058.87                918.52
+Q22               58.64             526.36                255.01
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1              0.0           20.0       30.47      30.42    120.89
-MySQL-BHT-8-8-1-1              3.0            1.0        7.04    1743.71   1761.74
-PostgreSQL-BHT-8-1-1           1.0           73.0        1.53      93.26    179.79
+MonetDB-BHT-8-1-1              1.0           18.0        8.43      28.36     67.79
+MySQL-BHT-8-8-1-1              0.0            1.0        6.23    1857.85   1875.08
+PostgreSQL-BHT-8-1-1           1.0           35.0        2.52      94.87    150.39
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS
-MonetDB-BHT-8-1-1              0.15
-MySQL-BHT-8-8-1-1              3.09
+MonetDB-BHT-8-1-1              0.17
+MySQL-BHT-8-8-1-1              3.25
 PostgreSQL-BHT-8-1-1           0.96
 
 ### TPC-H Power@Size
-                      TPC-H Power@Size [~Q/h]
+                      Power@Size [~Q/h]
 DBMS
-MonetDB-BHT-8-1-1                    28311.40
-MySQL-BHT-8-8-1-1                     1218.11
-PostgreSQL-BHT-8-1-1                  3986.41
+MonetDB-BHT-8-1-1              25470.62
+MySQL-BHT-8-8-1-1               1156.65
+PostgreSQL-BHT-8-1-1            4015.31
 
 ### TPC-H Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 orig_name          SF num_experiment num_client
-MonetDB-BHT-8-1    1  1              1                 18      1   1                  4400.00
-MySQL-BHT-8-8-1    1  1              1                156      1   1                   507.69
-PostgreSQL-BHT-8-1 1  1              1                 46      1   1                  1721.74
+MonetDB-BHT-8-1    1  1              1                 16      1   1                  4950.00
+MySQL-BHT-8-8-1    1  1              1                155      1   1                   510.97
+PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
 ```
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
@@ -326,33 +301,19 @@ options:
 
 If monitoring is activated, the summary also contains a section like
 ```bash
-### CPU of Ingestion (via counter) [CPUs]
-                    SUT - CPU of Ingestion (via counter) [CPUs]
+### Ingestion
+                    SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
 DBMS
-MonetDB-BHT-8-1                                      137.344502
-MySQL-BHT-8-8-1                                     3044.898897
-PostgreSQL-BHT-8-1                                   137.290273
+MonetDB-BHT-8-1                                          139.08                             1.24
+MySQL-BHT-8-8-1                                         3161.46                            47.23
+PostgreSQL-BHT-8-1                                       149.61                             3.76
 
-### Max RAM of Ingestion [Gb]
-                    SUT - Max RAM of Ingestion [Gb]
+### Execution
+                    SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
 DBMS
-MonetDB-BHT-8-1                            1.152214
-MySQL-BHT-8-8-1                           47.054993
-PostgreSQL-BHT-8-1                         3.736855
-
-### CPU of Execution (via counter) [CPUs]
-                    SUT - CPU of Execution (via counter) [CPUs]
-DBMS
-MonetDB-BHT-8-1                                       33.074309
-MySQL-BHT-8-8-1                                      133.390875
-PostgreSQL-BHT-8-1                                    20.495651
-
-### Max RAM of Execution [Gb]
-                    SUT - Max RAM of Execution [Gb]
-DBMS
-MonetDB-BHT-8-1                            1.707027
-MySQL-BHT-8-8-1                           47.265121
-PostgreSQL-BHT-8-1                         3.682274
+MonetDB-BHT-8-1                                           43.80                             1.73
+MySQL-BHT-8-8-1                                          147.83                            47.35
+PostgreSQL-BHT-8-1                                       112.11                             3.84
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
@@ -366,19 +327,25 @@ Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200
 This runs 3 streams, the first one as a single stream and the following 2 in parallel.
 
 ```bash
-### TPC-H Power@Size
-                            Power@Size [~Q/h]
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
 DBMS
-PostgreSQL-BHT-8-1-1                  4150.78
-PostgreSQL-BHT-8-2-1                  3756.33
-PostgreSQL-BHT-8-2-2                  4190.57
+PostgreSQL-BHT-8-1-1           0.96
+PostgreSQL-BHT-8-2-1           0.99
+PostgreSQL-BHT-8-2-2           0.97
+
+### TPC-H Power@Size
+                      Power@Size [~Q/h]
+DBMS
+PostgreSQL-BHT-8-1-1            3990.33
+PostgreSQL-BHT-8-2-1            3867.48
+PostgreSQL-BHT-8-2-2            3937.01
 
 ### TPC-H Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 orig_name          SF num_experiment num_client
-PostgreSQL-BHT-8-1 1  1              1                 45      1   1                  1760.00
-PostgreSQL-BHT-8-2 1  1              2                 49      2   1                  3232.65
-
+PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
+PostgreSQL-BHT-8-2 1  1              2                 38      2   1                  4168.42
 ```
 
 Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
