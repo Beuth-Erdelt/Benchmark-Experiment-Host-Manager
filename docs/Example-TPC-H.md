@@ -12,7 +12,7 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
-Example: `python tpch.py -dt -nlp 8 -nlt 16 -sf 1 -ii -ic -is run`
+Example: `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is run`
 
 This
 * starts a clean instance of PostgreSQL, MonetDB, MySQL
@@ -25,7 +25,7 @@ This
     * if data is already present: do nothing
   * with a loading container each
     * importing TPC-H data from the distributed filesystem
-    * MySQL: only one pod active and it loads with 16 threads
+    * MySQL: only one pod active and it loads with 8 threads
 * creates contraints and indexes and updates table statistics in each DBMS after ingestion
 * runs 1 stream of TPC-H queries per DBMS
   * all DBMS use the same parameters

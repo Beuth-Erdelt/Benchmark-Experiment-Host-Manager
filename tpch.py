@@ -280,6 +280,7 @@ if __name__ == '__main__':
                     TPCH_TABLE = limit_import_table,
                     )
                 config.set_benchmarking_parameters(
+                    SF = SF,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     DBMSBENCHMARKER_DEV = debugging,
@@ -305,6 +306,7 @@ if __name__ == '__main__':
                     TPCH_TABLE = limit_import_table,
                     )
                 config.set_benchmarking_parameters(
+                    SF = SF,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     DBMSBENCHMARKER_DEV = debugging,
@@ -333,6 +335,7 @@ if __name__ == '__main__':
                         TPCH_TABLE = limit_import_table,
                         )
                     config.set_benchmarking_parameters(
+                        SF = SF,
                         DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                         DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                         DBMSBENCHMARKER_DEV = debugging,

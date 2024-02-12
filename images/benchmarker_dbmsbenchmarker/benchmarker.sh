@@ -51,7 +51,10 @@ echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EX
 CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$CHILD" ]
 then
+	echo "No entry found in message queue. I assume this is the first child."
 	CHILD=1
+else
+	echo "Found entry number $CHILD in message queue."
 fi
 
 ######################## Wait until all pods of job are ready ########################
@@ -64,7 +67,7 @@ while : ; do
 	echo "Found $PODS_RUNNING / $NUM_PODS running pods"
     if  test "$PODS_RUNNING" == $NUM_PODS
     then
-        echo "OK"
+        echo "OK, found $NUM_PODS ready pods."
         break
     elif test "$PODS_RUNNING" -gt $NUM_PODS
     then
