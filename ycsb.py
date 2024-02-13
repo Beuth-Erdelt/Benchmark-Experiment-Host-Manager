@@ -265,7 +265,7 @@ if __name__ == '__main__':
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
-        list_clients = [int(x) for x in list_clients]
+        list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
     #experiment.add_benchmark_list(list_clients)
