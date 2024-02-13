@@ -1384,6 +1384,7 @@ class tpch(default):
         df_benchmark['count'] = benchmark_count['benchmark_end']
         df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
         df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        df_benchmark.index.name = "DBMS"
         print(df_benchmark)
         #####################
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
