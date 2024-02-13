@@ -275,21 +275,25 @@ We might only want to benchmark the workloads of YCSB in different configuration
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -m -workload a -tr -nlp 1 -dbms PostgreSQL -ne 1,2 -nc 2 -ltf 2,3 run`
+Example: `python ycsb.py -ms 1 -m -workload a -tr -nlp 1 -dbms PostgreSQL -ne 1,2 -nc 2 -ltf 2 run`
+
+This loads a YCSB data set with 1 pod (`-lnp`) of 64 threads.
+
 
 ```
 ## Show Summary
 
+### Loading
+                       threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-1-32768       64   32768          1                   32337.343164                30924.0             1000000                              2913.0
+PostgreSQL-64-1-32768       64   32768          1                   32355.129906                30907.0             1000000                              2705.0
+
 ### Execution
                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-1-32768-1-1               1       64   32768          1                        9657.92               103542.0            500349                           69759.0              499651                            150655.0
-PostgreSQL-64-1-49152-1-1               1       64   49152          1                        4826.67               207182.0            501094                          124607.0              498906                            322559.0
-PostgreSQL-64-1-32768-1-2               1      128   65536          2                       61968.71                32707.0            999295                            2034.0             1000705                             27391.0
-PostgreSQL-64-1-49152-1-2               1      128   98304          2                       68240.94                29718.0           1000362                            1890.0              999638                             35423.0
-PostgreSQL-64-1-32768-2-1               2       64   32768          1                       27647.99                36169.0            500019                             769.0              499981                              1502.0
-PostgreSQL-64-1-49152-2-1               2       64   49152          1                        5069.66               197252.0            500180                          119167.0              499820                            373503.0
-PostgreSQL-64-1-32768-2-2               2      128   65536          2                       62694.85                32303.0           1000658                            1324.0              999342                              3282.0
-PostgreSQL-64-1-49152-2-2               2      128   98304          2                       52619.43                38226.0           1000524                            2720.0              999476                             82175.0
+PostgreSQL-64-1-32768-1-1               1       64   32768          1                       32369.79                30893.0            499162                             888.0              500838                              1467.0
+PostgreSQL-64-1-32768-1-2               1      128   65536          2                       55616.72                36454.0            999790                            1446.0             1000210                             11679.0
+PostgreSQL-64-1-32768-2-1               2       64   32768          1                       32371.89                30891.0            499548                             542.0              500452                               829.0
+PostgreSQL-64-1-32768-2-2               2      128   65536          2                       64706.09                30926.0            999404                            1392.0             1000596                              3480.0
 ```
 
 ## Use Persistent Storage

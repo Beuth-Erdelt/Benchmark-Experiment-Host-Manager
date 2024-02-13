@@ -1760,7 +1760,7 @@ class ycsb(default):
             df_plot = evaluation.loading_set_datatypes(df)
             df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
-            df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             print(df_aggregated)
         #####################
         df = evaluation.get_df_benchmarking()
