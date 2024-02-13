@@ -1299,7 +1299,7 @@ class testbed():
             print("{:30s}: is running".format("Dashboard"))
             return
         else:
-            print("{:30s}: starting...".format("Dashboard"), end="", flush=True)
+            print("{:30s}: is starting...".format("Dashboard"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
@@ -1341,10 +1341,11 @@ class testbed():
         pods_messagequeue = self.get_pods(component=component)
         if len(pods_messagequeue) > 0:
             # message queue exists
+            pod_messagequeue = pods_messagequeue[0]
             self.logger.debug('testbed.messagequeue_is_running()=exists')
             #pod_dashboard = pods_dashboard[0]
-            status = self.get_pod_status(pod_dashboard)
-            print("{:30s}: {} in pod {}".format("Message Queue", status, pod_dashboard))
+            status = self.get_pod_status(pod_messagequeue)
+            print("{:30s}: {} in pod {}".format("Message Queue", status, pod_messagequeue))
             if status == "Running":
                 self.logger.debug('testbed.messagequeue_is_running() is running')
                 return True
@@ -1364,7 +1365,7 @@ class testbed():
             print("{:30s}: is running".format("Message Queue"))
             return
         else:
-            print("{:30s}: starting...".format("Message Queue"), end="", flush=True)
+            print("{:30s}: is starting...".format("Message Queue"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
             name = self.create_messagequeue_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
