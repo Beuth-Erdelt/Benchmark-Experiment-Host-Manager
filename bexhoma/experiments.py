@@ -1384,11 +1384,13 @@ class tpch(default):
         df_benchmark['count'] = benchmark_count['benchmark_end']
         df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
         df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        index_names = list(df_benchmark.index.names)
+        index_names[0] = "DBMS"
+        df_benchmark.rename_axis(index_names, inplace=True)
         print(df_benchmark)
         #####################
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            print("\n### Ingestion")
             df = evaluate.get_loading_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df1 = pd.DataFrame(df)
@@ -1399,6 +1401,8 @@ class tpch(default):
             df2 = pd.DataFrame(df).round(2)
             df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Ingestion")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
@@ -1406,7 +1410,6 @@ class tpch(default):
             elif not df2.empty:
                 print(df2.round(2))
             #####################
-            print("\n### Execution")
             df = evaluate.get_streaming_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df1 = pd.DataFrame(df)
@@ -1417,6 +1420,8 @@ class tpch(default):
             df2 = pd.DataFrame(df)
             df2.columns = ["SUT - Max RAM of Execution [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Execution")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
@@ -1756,8 +1761,8 @@ class ycsb(default):
             #print(df.columns)
             df_plot = evaluation.loading_set_datatypes(df)
             df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
-            df_aggregated.sort_values(['target','pod_count'], inplace=True)
-            df_aggregated = df_aggregated[["threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
+            df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             print(df_aggregated)
         #####################
         df = evaluation.get_df_benchmarking()
@@ -1766,8 +1771,8 @@ class ycsb(default):
             df.fillna(0, inplace=True)
             df_plot = evaluation.benchmarking_set_datatypes(df)
             df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
-            df_aggregated = df_aggregated.sort_values(['target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[["threads","target","pod_count"]].copy()
+            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count"]].copy()
             columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
             for col in columns:
                 if col in df_aggregated.columns:
@@ -1779,7 +1784,6 @@ class ycsb(default):
             #####################
             evaluation.transform_monitoring_results(component="loading")
             #####################
-            print("\n### Ingestion")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
             df1 = pd.DataFrame(df)
             df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
@@ -1788,6 +1792,8 @@ class ycsb(default):
             df2 = pd.DataFrame(df)
             df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Ingestion")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
@@ -1797,7 +1803,6 @@ class ycsb(default):
             #####################
             evaluation.transform_monitoring_results(component="stream")
             #####################
-            print("\n### Execution")
             df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
             df1 = pd.DataFrame(df)
             df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
@@ -1806,6 +1811,8 @@ class ycsb(default):
             df2 = pd.DataFrame(df)
             df2.columns = ["SUT - Max RAM of Execution [Gb]"]
             ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Execution")
             if not df1.empty and not df2.empty:
                 print(pd.concat([df1, df2], axis=1).round(2))
             elif not df1.empty:
@@ -1822,7 +1829,7 @@ Benchbase
 
 class benchbase(default):
     """
-    Class for defining an YCSB experiment.
+    Class for defining a Benchbase experiment.
     This sets
 
     * the folder to the experiment - including query file and schema informations per dbms

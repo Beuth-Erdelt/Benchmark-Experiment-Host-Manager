@@ -13,7 +13,7 @@ Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`
 
 This
 * loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
-  * starts a clean instance of PostgreSQL
+  * starts a clean instance of PostgreSQL (`-dbms`)
     * data directory inside a Docker container
   * creates YCSB schema in each database
   * starts `n` loader pods per DBMS
@@ -24,10 +24,10 @@ This
       * imports it into the DBMS
   * runs `n` parallel streams of YCSB queries per DBMS
     * 1.000.000 operations
-    * workload A = 50% read / 50% write
+    * workload A = 50% read / 50% write (`-workload`)
     * target throughput is `t` * 16384
-  * with a maximum of 1 DBMS per time
-* tests if results match workflow
+  * with a maximum of 1 DBMS per time (`-ms`)
+* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Status
@@ -101,6 +101,10 @@ PostgreSQL-64-8-131072-1       64  131072          8                      115356
 We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
+To see the summary of experiment `1706264335` you can simply call `python ycsb.py -e 1706264335 summary`.
+
+### Detailed Evaluation
+
 Results are transformed into pandas DataFrames and can be inspected in detail.
 See for example
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
@@ -139,12 +143,12 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
 ```bash
-usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING]
-               [-nlp NUM_LOADING_PODS] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS] [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE]
-               [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
+usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-sf SCALING_FACTOR]
+               [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS] [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
+               [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
                {run,start,load}
 
-Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*1,000,000. Optionally monitoring is activated.
+Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*1,000,000. This installs a clean copy for each target and split of the driver. Optionally monitoring is activated.
 
 positional arguments:
   {run,start,load}      import YCSB data or run YCSB queries
@@ -152,7 +156,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MonetDB,SingleStore,CockroachDB,MySQL,MariaDB,YugabyteDB,Kinetica}
+  -dbms {PostgreSQL,MySQL}
                         DBMS to load the data
   -workload {a,b,c,d,e,f}
                         YCSB default workload
@@ -275,8 +279,29 @@ We might only want to benchmark the workloads of YCSB in different configuration
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`
+Example: `python ycsb.py -ms 1 -m -workload a -tr -nlp 1 -dbms PostgreSQL -ne 1,2 -nc 2 -ltf 2 run`
 
+This loads a YCSB data set with 1 pod (`-lnp`) of 64 threads.
+There are two executions (`-ne`) run against the database, the first with 1 driver and the second with two drivers.
+Each of the drivers has 64 threads and a target of twice (`-ltf`) the base, that is 16384 per default.
+The experiment is run twice (`-nc`).
+
+
+```
+## Show Summary
+
+### Loading
+                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-1-32768               1       64   32768          1                   32337.343164                30924.0             1000000                              2913.0
+PostgreSQL-64-1-32768               2       64   32768          1                   32355.129906                30907.0             1000000                              2705.0
+
+### Execution
+                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-1-32768-1-1               1       64   32768          1                       32369.79                30893.0            499162                             888.0              500838                              1467.0
+PostgreSQL-64-1-32768-1-2               1      128   65536          2                       55616.72                36454.0            999790                            1446.0             1000210                             11679.0
+PostgreSQL-64-1-32768-2-1               2       64   32768          1                       32371.89                30891.0            499548                             542.0              500452                               829.0
+PostgreSQL-64-1-32768-2-2               2      128   65536          2                       64706.09                30926.0            999404                            1392.0             1000596                              3480.0
+```
 
 ## Use Persistent Storage
 

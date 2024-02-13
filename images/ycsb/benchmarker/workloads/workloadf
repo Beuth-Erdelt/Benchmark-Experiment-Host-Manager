@@ -22,7 +22,7 @@
 #   Request distribution: zipfian
 
 recordcount=ROWS_AFTER_BENCHMARK
-operationcount=OPERATIONS
+operationcount=YCSB_OPERATIONS
 workload=site.ycsb.workloads.CoreWorkload
 
 readallfields=true

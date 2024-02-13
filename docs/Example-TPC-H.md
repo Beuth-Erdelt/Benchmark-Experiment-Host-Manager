@@ -12,23 +12,24 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
-Example: `python tpch.py -dt -nlp 8 -nlt 16 -sf 1 -ii -ic -is run`
+Example: `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is run`
 
 This
 * starts a clean instance of PostgreSQL, MonetDB, MySQL
   * data directory inside a Docker container
 * creates TPC-H schema in each database
-* starts 8 loader pods per DBMS
+* starts 8 loader pods per DBMS (`-nlp`)
   * with a data generator (init) container each
-    * each generating a portion of TPC-H data of scaling factor 1
+    * each generating a portion of TPC-H data of scaling factor 1 (`-sf`)
     * storing the data in a distributed filesystem (shared disk)
     * if data is already present: do nothing
   * with a loading container each
     * importing TPC-H data from the distributed filesystem
-    * MySQL: only one pod active and it loads with 16 threads
-* creates contraints and indexes and updates table statistics in each DBMS after ingestion
+    * MySQL: only one pod active and it loads with 8 threads (`-nlt`)
+* creates contraints (`-ic`) and indexes (`-ii`) and updates table statistics (`-is`) in each DBMS after ingestion
 * runs 1 stream of TPC-H queries per DBMS
   * all DBMS use the same parameters
+  * data transfer is also measured (`-dt`)
 * shows a summary
 
 ### Status
@@ -64,6 +65,8 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 ```bash
+## Show Summary
+Read results
 Connections:
 MonetDB-BHT-8-1-1
 MySQL-BHT-8-8-1-1
@@ -118,62 +121,105 @@ Q20              False              False                 False
 Q21              False              False                 False
 Q22              False              False                 False
 
+### Warnings
+     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1               False              False                 False
+Q2               False              False                 False
+Q3               False              False                 False
+Q4               False              False                 False
+Q5               False              False                 False
+Q6               False              False                 False
+Q7               False              False                 False
+Q8               False              False                 False
+Q9               False              False                 False
+Q10              False              False                 False
+Q11              False              False                 False
+Q12              False              False                 False
+Q13              False              False                 False
+Q14              False              False                 False
+Q15              False              False                 False
+Q16              False              False                 False
+Q17              False              False                 False
+Q18              False              False                 False
+Q19              False              False                 False
+Q20              False              False                 False
+Q21              False              False                 False
+Q22              False              False                 False
+
 ### Latency of Timer Execution [ms]
 DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1              1240.66           32638.77               2703.10
-Q2                56.86             374.84                448.50
-Q3               151.57            3879.77                784.00
-Q4                59.87            1878.61               1698.36
-Q5               109.46            3696.65                683.52
-Q6                38.26            4613.30                527.45
-Q7               107.76            7450.78                800.50
-Q8               520.33            6908.57                635.10
-Q9               119.83            5742.28               1277.49
-Q10              209.94            3225.24               1324.35
-Q11               33.37             388.46                270.89
-Q12              835.47            7248.02               1065.41
-Q13              616.53            9070.17               2040.81
-Q14               53.19            5341.72                577.85
-Q15               49.42           23642.97                563.57
-Q16              118.77            1133.53                580.05
-Q17               60.57             943.22               2061.87
-Q18              216.39            6316.22               6977.95
-Q19               78.92             404.44                723.67
-Q20               88.35             614.85                666.61
-Q21             1859.63           17058.87                918.52
-Q22               58.64             526.36                255.01
+Q1              2404.64           33934.30               2612.67
+Q2                30.12             361.71                441.01
+Q3               151.54            3897.70                794.99
+Q4                52.34            1882.83               1311.89
+Q5                73.99            3639.32                698.28
+Q6                33.68            4465.72                539.06
+Q7                95.63            7349.12                810.43
+Q8               449.77            6828.98                656.06
+Q9               111.96            5704.00               1145.25
+Q10              175.70            3128.08               1321.12
+Q11               31.90             363.01                258.32
+Q12               67.53            7294.59               1069.99
+Q13              555.90            8787.78               2008.54
+Q14               41.45            5265.07                596.09
+Q15               60.05           22688.57                583.01
+Q16              116.17            1057.91                591.68
+Q17               72.47             799.00               2024.25
+Q18              964.94            6488.35               7099.96
+Q19               91.28             387.99               1595.01
+Q20               97.20             586.58                668.23
+Q21             3185.97           16793.11                932.27
+Q22               67.00             512.73                253.11
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1              1.0           18.0        8.43      28.36     67.79
-MySQL-BHT-8-8-1-1              0.0            1.0        6.23    1857.85   1875.08
-PostgreSQL-BHT-8-1-1           1.0           35.0        2.52      94.87    150.39
+MonetDB-BHT-8-1-1              1.0           22.0        8.80      34.36    102.16
+MySQL-BHT-8-8-1-1              1.0          435.0        3.78    1793.84   2262.63
+PostgreSQL-BHT-8-1-1           1.0           25.0        0.61      88.96    139.58
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS
-MonetDB-BHT-8-1-1              0.17
-MySQL-BHT-8-8-1-1              3.25
-PostgreSQL-BHT-8-1-1           0.96
+MonetDB-BHT-8-1-1              0.16
+MySQL-BHT-8-8-1-1              3.11
+PostgreSQL-BHT-8-1-1           0.95
 
 ### TPC-H Power@Size
                       Power@Size [~Q/h]
 DBMS
-MonetDB-BHT-8-1-1              25470.62
-MySQL-BHT-8-8-1-1               1156.65
-PostgreSQL-BHT-8-1-1            4015.31
+MonetDB-BHT-8-1-1              27011.62
+MySQL-BHT-8-8-1-1               1187.97
+PostgreSQL-BHT-8-1-1            3924.04
 
 ### TPC-H Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
-orig_name          SF num_experiment num_client
-MonetDB-BHT-8-1    1  1              1                 16      1   1                  4950.00
-MySQL-BHT-8-8-1    1  1              1                155      1   1                   510.97
-PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
+DBMS               SF num_experiment num_client
+MonetDB-BHT-8-1    1  1              1                 13      1   1                  6092.31
+MySQL-BHT-8-8-1    1  1              1                147      1   1                   538.78
+PostgreSQL-BHT-8-1 1  1              1                 33      1   1                  2400.00
+
+### Ingestion
+                    SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
+DBMS
+MonetDB-BHT-8-1                                          139.25                             1.23
+MySQL-BHT-8-8-1                                         3015.80                            47.16
+PostgreSQL-BHT-8-1                                       150.89                             3.74
+
+### Execution
+                    SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
+DBMS
+MonetDB-BHT-8-1                                           17.13                             1.57
+MySQL-BHT-8-8-1                                          130.73                            47.31
+PostgreSQL-BHT-8-1                                        63.62                             3.78
 ```
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
 Please note that the results are not suitable for being published as official TPC-H results.
 In particular the refresh streams are missing.
+
+To see the summary of experiment `1706255897` you can simply call `python tpch.py -e 1706255897 summary`.
+
+### Detailed Evaluation
 
 Results are transformed into pandas DataFrames and can be inspected in more detail.
 Detailed evaluations can be done using DBMSBenchmarker
@@ -304,16 +350,16 @@ If monitoring is activated, the summary also contains a section like
 ### Ingestion
                     SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
 DBMS
-MonetDB-BHT-8-1                                          139.08                             1.24
-MySQL-BHT-8-8-1                                         3161.46                            47.23
-PostgreSQL-BHT-8-1                                       149.61                             3.76
+MonetDB-BHT-8-1                                          142.81                             1.21
+MySQL-BHT-8-8-1                                         3046.31                            47.20
+PostgreSQL-BHT-8-1                                       137.44                             3.94
 
 ### Execution
                     SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
 DBMS
-MonetDB-BHT-8-1                                           43.80                             1.73
-MySQL-BHT-8-8-1                                          147.83                            47.35
-PostgreSQL-BHT-8-1                                       112.11                             3.84
+MonetDB-BHT-8-1                                           34.85                             1.76
+MySQL-BHT-8-8-1                                          132.57                            47.37
+PostgreSQL-BHT-8-1                                       116.69                             3.84
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
@@ -324,7 +370,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200 run`
 
-This runs 3 streams, the first one as a single stream and the following 2 in parallel.
+This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
 ```bash
 ### Geometric Mean of Medians of Timer Run [s]
@@ -343,7 +389,7 @@ PostgreSQL-BHT-8-2-2            3937.01
 
 ### TPC-H Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
-orig_name          SF num_experiment num_client
+DBMS               SF num_experiment num_client
 PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
 PostgreSQL-BHT-8-2 1  1              2                 38      2   1                  4168.42
 ```
@@ -351,4 +397,31 @@ PostgreSQL-BHT-8-2 1  1              2                 38      2   1            
 Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
 You can change this via
 * `-rcp`: Each stream has it's own random parameters
-* `shq`: Use the ordering per stream as required by the TPC-H specification
+* `-shq`: Use the ordering per stream as required by the TPC-H specification
+
+## Use Persistent Storage
+
+The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
+If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
+
+Example: `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -nc 2 -dbms PostgreSQL -rst local-hdd -rss 50Gi run`
+
+The following status shows we have a volumes of type `local-hdd`.
+Every experiment running TPC-H of SF=1 at PostgreSQL will take the database from this volume and skip loading.
+In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
+The first instance of PostgreSQL mounts the volume and generates the data.
+All other instances just use the database without generating and loading data.
+
+```
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
+| Volumes                           | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   |
++===================================+=================+==============+==============+===================+============+======================+===========+==========+
+| bexhoma-storage-postgresql-tpch-1 | postgresql      | tpch-1       | True         |            185.41 | PostgreSQL | local-hdd            | 50Gi      | Bound    |
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
++------------------+--------------+--------------+---------------+
+| 1707740320       | sut          |   loaded [s] | benchmarker   |
++==================+==============+==============+===============+
+| PostgreSQL-BHT-8 | (1. Running) |       185.41 | (1. Running)  |
++------------------+--------------+--------------+---------------+
+```
+

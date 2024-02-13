@@ -26,7 +26,7 @@ if __name__ == '__main__':
     """
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load'], default='run')
+    parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
     parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL'], default=[])
     parser.add_argument('-workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='a')
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     parser.add_argument('-md', '--monitoring-delay', help='time to wait [s] before execution of the runs of a query', default=10)
     parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
     parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
+    parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="")
     parser.add_argument('-nl', '--num-loading', help='number of parallel loaders per configuration', default=1)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1,8")
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
@@ -202,10 +202,10 @@ if __name__ == '__main__':
         #benchmarking = 'benchmarker',
         )
     """
-    cluster.start_dashboard()
-    cluster.start_messagequeue()
     cluster.start_datadir()
     cluster.start_resultdir()
+    cluster.start_dashboard()
+    cluster.start_messagequeue()
     if aws:
         # set node labes for components
         experiment.set_nodes(
@@ -265,8 +265,10 @@ if __name__ == '__main__':
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
-        list_clients = [int(x) for x in list_clients]
-    experiment.add_benchmark_list(list_clients)
+        list_clients = [int(x) for x in list_clients if len(x) > 0]
+    else:
+        list_clients = []
+    #experiment.add_benchmark_list(list_clients)
     for threads in [SU]:#[8]:#[64]:
         for pods in num_loading_pods:#[1,2]:#[1,8]:#range(2,5):
             #pods = 2**p
@@ -276,6 +278,10 @@ if __name__ == '__main__':
                 threads_per_pod = int(threads/pods)
                 ycsb_operations_per_pod = int(ycsb_operations/pods)
                 target_per_pod = int(target/pods)
+                benchmarking_pods = [pods]
+                if len(list_clients) > 0:
+                    # we want several benchmarking instances per installation
+                    benchmarking_pods = list_clients
                 if (args.dbms == "PostgreSQL" or len(args.dbms) == 0):
                     # PostgreSQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
@@ -287,13 +293,13 @@ if __name__ == '__main__':
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
@@ -301,16 +307,16 @@ if __name__ == '__main__':
                     config.set_benchmarking_parameters(
                         #PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                    config.add_benchmark_list([pods])
+                    config.add_benchmark_list(benchmarking_pods)
                 if (args.dbms == "MySQL" or len(args.dbms) == 0):
                     # MySQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
@@ -322,13 +328,13 @@ if __name__ == '__main__':
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
@@ -336,16 +342,16 @@ if __name__ == '__main__':
                     config.set_benchmarking_parameters(
                         #PARALLEL = str(pods),
                         SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
                         YCSB_TARGET = target_per_pod,
                         YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                    config.add_benchmark_list([pods])
+                    config.add_benchmark_list(benchmarking_pods)
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
@@ -367,6 +373,8 @@ if __name__ == '__main__':
         end = default_timer()
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
+    elif args.mode == 'summary':
+        experiment.show_summary()
     else:
         # total time of experiment
         start = default_timer()

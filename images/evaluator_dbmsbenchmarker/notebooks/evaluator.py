@@ -444,7 +444,7 @@ class ycsb(evaluator):
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
-            operations = re.findall('OPERATIONS (.+?)\n', stdout)[0]
+            operations = re.findall('YCSB_OPERATIONS (.+?)\n', stdout)[0]
             batchsize = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
             if len(batchsize)>0:
                 # information found
@@ -571,7 +571,7 @@ class ycsb(evaluator):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        column = "connection"
+        column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby(column):
             #print(key, len(grp.index))
@@ -646,13 +646,13 @@ class ycsb(evaluator):
                 }}
             #print(grp.agg(aggregate))
             dict_grp = dict()
-            dict_grp['connection'] = key
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['connection'] = key[0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key])#columns=list(dict_grp.keys()))
+            df_grp = pd.DataFrame(dict_grp, index=[key[0]])#columns=list(dict_grp.keys()))
             #df_grp = df_grp.T
             #df_grp.set_index('connection', inplace=True)
             #print(df_grp)

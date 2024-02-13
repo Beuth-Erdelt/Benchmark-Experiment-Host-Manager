@@ -35,7 +35,7 @@ if __name__ == '__main__':
     description = """Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk)."""
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty'])
+    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
     parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[])
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
@@ -64,6 +64,8 @@ if __name__ == '__main__':
     parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared'])
     parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
     parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
+    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node', default=None)
+    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
     parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     parser.add_argument('-ii', '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
     parser.add_argument('-ic', '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
@@ -112,6 +114,8 @@ if __name__ == '__main__':
     request_storage_type = args.request_storage_type
     request_storage_size = args.request_storage_size
     request_node_name = args.request_node_name
+    request_node_loading = args.request_node_loading
+    request_node_benchmarking = args.request_node_benchmarking
     datatransfer = args.datatransfer
     test_result = args.test_result
     recreate_parameter = args.recreate_parameter
@@ -211,10 +215,10 @@ if __name__ == '__main__':
         storageSize = request_storage_size,#'100Gi',
         keep = True
         )
-    cluster.start_dashboard()
-    cluster.start_messagequeue()
     cluster.start_datadir()
     cluster.start_resultdir()
+    cluster.start_dashboard()
+    cluster.start_messagequeue()
     if aws:
         # set node labes for components
         experiment.set_nodes(
@@ -246,6 +250,26 @@ if __name__ == '__main__':
     if len(list_loading_split):
         # import uses several processes in pods
         experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes.".format(num_loading_split)
+    # fix loading
+    if not request_node_loading is None:
+        experiment.patch_loading(patch="""
+        spec:
+          template:
+            spec:
+              nodeSelector:
+                kubernetes.io/hostname: {node}
+        """.format(node=request_node_loading))
+        experiment.workload['info'] = experiment.workload['info']+" Loading is fixed to {}.".format(request_node_loading)
+    # fix benchmarking
+    if not request_node_benchmarking is None:
+        experiment.patch_benchmarking(patch="""
+        spec:
+          template:
+            spec:
+              nodeSelector:
+                kubernetes.io/hostname: {node}
+        """.format(node=request_node_benchmarking))
+        experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="tpc-h",
@@ -264,6 +288,9 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                config.set_storage(
+                    storageConfiguration = 'postgresql'
+                    )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
                     SF = SF,
@@ -277,6 +304,7 @@ if __name__ == '__main__':
                     TPCH_TABLE = limit_import_table,
                     )
                 config.set_benchmarking_parameters(
+                    SF = SF,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     DBMSBENCHMARKER_DEV = debugging,
@@ -286,6 +314,9 @@ if __name__ == '__main__':
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
+                config.set_storage(
+                    storageConfiguration = 'monetdb'
+                    )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-MonetDB.yml"
                 config.set_loading_parameters(
                     SF = SF,
@@ -299,6 +330,7 @@ if __name__ == '__main__':
                     TPCH_TABLE = limit_import_table,
                     )
                 config.set_benchmarking_parameters(
+                    SF = SF,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     DBMSBENCHMARKER_DEV = debugging,
@@ -309,6 +341,9 @@ if __name__ == '__main__':
                 for threads in list_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'
                     config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='MySQL', alias='DBMS A1')
+                    config.set_storage(
+                        storageConfiguration = 'mysql'
+                        )
                     config.jobtemplate_loading = "jobtemplate-loading-tpch-MySQL.yml"
                     config.set_loading_parameters(
                         SF = SF,
@@ -324,6 +359,7 @@ if __name__ == '__main__':
                         TPCH_TABLE = limit_import_table,
                         )
                     config.set_benchmarking_parameters(
+                        SF = SF,
                         DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                         DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                         DBMSBENCHMARKER_DEV = debugging,
@@ -351,6 +387,8 @@ if __name__ == '__main__':
         end = default_timer()
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
+    elif args.mode == 'summary':
+        experiment.show_summary()
     else:
         # configure number of clients per config
         list_clients = args.num_query_executors.split(",")

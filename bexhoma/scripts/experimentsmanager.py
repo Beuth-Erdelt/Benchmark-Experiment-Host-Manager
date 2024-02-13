@@ -342,3 +342,4 @@ def manage():
                 h_short = [df_short.index.name] + list(df_short.columns)
                 # this shows only columns with not all empty
                 print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
+    benchmarker.logger.setLevel(logging.ERROR)
