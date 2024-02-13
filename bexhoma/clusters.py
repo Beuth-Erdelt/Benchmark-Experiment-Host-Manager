@@ -1254,6 +1254,19 @@ class testbed():
         #print(name)
         self.logger.debug('testbed.create_dashboard_name({})'.format(name))
         return name
+    def create_messagequeue_name(self, app='', component='messagequeue'):
+        """
+        Creates a suitable name for the message queue component.
+
+        :param app: app the messagequeue belongs to
+        :param component: Component name, should be 'messagequeue' typically
+        """
+        if len(app) == 0:
+            app = self.appname
+        name = "{app}_{component}".format(app=app, component=component)
+        #print(name)
+        self.logger.debug('testbed.create_messagequeue({})'.format(name))
+        return name
     def dashboard_is_running(self):
         """
         Returns True, iff dashboard is running.
@@ -1291,7 +1304,7 @@ class testbed():
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
-            while (not len(self.get_dashboard_pod_name())):
+            while (not self.dashboard_is_running()):
                self.wait(10, silent=True)
             print("done")
             return
@@ -1319,6 +1332,23 @@ class testbed():
                self.wait(10, silent=True)
             print("done")
             return
+    def messagequeue_is_running(self, component='messagequeue'):
+        """
+        Returns True, iff message queue is running.
+
+        :return: True, iff message queue is running
+        """
+        pods_messagequeue = self.get_pods(component=component)
+        if len(pods_messagequeue) > 0:
+            # message queue exists
+            self.logger.debug('testbed.messagequeue_is_running()=exists')
+            #pod_dashboard = pods_dashboard[0]
+            status = self.get_pod_status(pod_dashboard)
+            print("{:30s}: {} in pod {}".format("Message Queue", status, pod_dashboard))
+            if status == "Running":
+                self.logger.debug('testbed.messagequeue_is_running() is running')
+                return True
+        return False
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
@@ -1329,17 +1359,17 @@ class testbed():
         """
         pods_messagequeue = self.get_pods(component=component)
         if len(pods_messagequeue) > 0:
-            # dashboard exists
+            # message queue exists
             self.logger.debug('testbed.start_messagequeue()=exists')
             print("{:30s}: is running".format("Message Queue"))
             return
         else:
             print("{:30s}: starting...".format("Message Queue"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
-            name = self.create_dashboard_name(app, component)
+            name = self.create_messagequeue_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
-            while (not len(self.get_pods(component=component))):
+            while (not self.messagequeue_is_running()):
                self.wait(10, silent=True)
             print("done")
             return

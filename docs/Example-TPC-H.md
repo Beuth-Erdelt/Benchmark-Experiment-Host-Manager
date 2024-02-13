@@ -12,11 +12,12 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
-Example: `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is run`
+Example: `python tpch.py -ms 1 -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is run`
 
 This
 * starts a clean instance of PostgreSQL, MonetDB, MySQL
   * data directory inside a Docker container
+  * with a maximum of 1 DBMS per time (`-ms`)
 * creates TPC-H schema in each database
 * starts 8 loader pods per DBMS (`-nlp`)
   * with a data generator (init) container each
