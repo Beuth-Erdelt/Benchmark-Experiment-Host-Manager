@@ -383,12 +383,15 @@ class logger(base):
         try:
             if self.include_benchmarking:
                 df = self.get_df_benchmarking()
-                print(df)
+                if not df.empty:
+                    print("Benchmarking", df)
                 self.workflow = self.reconstruct_workflow(df)
-                print(self.workflow)
+                if not len(self.workflow) == 0:
+                    print("Workflow", self.workflow)
             if self.include_loading:
                 df = self.get_df_loading()
-                print(df)
+                if not df.empty:
+                    print("Loading", df)
             return 0
         except Exception as e:
             print(e)

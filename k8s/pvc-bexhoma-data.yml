@@ -8,5 +8,5 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 2000Gi
+      storage: 1000Gi
   storageClassName: shared

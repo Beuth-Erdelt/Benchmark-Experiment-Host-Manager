@@ -148,69 +148,69 @@ Q22              False              False                 False
 
 ### Latency of Timer Execution [ms]
 DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1              1201.90           32305.69               2686.98
-Q2                38.69             349.08                430.80
-Q3               196.30            3800.32                807.85
-Q4                61.38            1877.31               1325.84
-Q5                79.86            3625.71                717.68
-Q6                31.43            4681.25                546.16
-Q7                89.32            7127.85                811.18
-Q8               342.42            6693.44                653.38
-Q9               103.76            5528.73               1163.62
-Q10              180.62            3103.39               1321.48
-Q11               20.99             372.86                267.36
-Q12               63.91            7014.34               1100.37
-Q13              525.68            9165.06               2082.99
-Q14               39.50            5471.78                585.36
-Q15               38.76           22735.18                602.87
-Q16               91.97            1787.60                585.51
-Q17               74.42             822.06               2160.83
-Q18             1980.81            6473.37               9430.96
-Q19               66.49             379.04                735.06
-Q20               77.32             570.14                710.85
-Q21             3714.46           16843.27                992.08
-Q22               71.38             514.59                254.18
+Q1              2404.64           33934.30               2612.67
+Q2                30.12             361.71                441.01
+Q3               151.54            3897.70                794.99
+Q4                52.34            1882.83               1311.89
+Q5                73.99            3639.32                698.28
+Q6                33.68            4465.72                539.06
+Q7                95.63            7349.12                810.43
+Q8               449.77            6828.98                656.06
+Q9               111.96            5704.00               1145.25
+Q10              175.70            3128.08               1321.12
+Q11               31.90             363.01                258.32
+Q12               67.53            7294.59               1069.99
+Q13              555.90            8787.78               2008.54
+Q14               41.45            5265.07                596.09
+Q15               60.05           22688.57                583.01
+Q16              116.17            1057.91                591.68
+Q17               72.47             799.00               2024.25
+Q18              964.94            6488.35               7099.96
+Q19               91.28             387.99               1595.01
+Q20               97.20             586.58                668.23
+Q21             3185.97           16793.11                932.27
+Q22               67.00             512.73                253.11
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1              1.0           25.0       12.60      36.32     96.92
-MySQL-BHT-8-8-1-1              1.0            1.0        8.78    1735.82   1794.60
-PostgreSQL-BHT-8-1-1           1.0           56.0        0.59      99.24    192.84
+MonetDB-BHT-8-1-1              1.0           22.0        8.80      34.36    102.16
+MySQL-BHT-8-8-1-1              1.0          435.0        3.78    1793.84   2262.63
+PostgreSQL-BHT-8-1-1           1.0           25.0        0.61      88.96    139.58
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS
-MonetDB-BHT-8-1-1              0.15
-MySQL-BHT-8-8-1-1              3.23
-PostgreSQL-BHT-8-1-1           0.97
+MonetDB-BHT-8-1-1              0.16
+MySQL-BHT-8-8-1-1              3.11
+PostgreSQL-BHT-8-1-1           0.95
 
 ### TPC-H Power@Size
                       Power@Size [~Q/h]
 DBMS
-MonetDB-BHT-8-1-1              28577.34
-MySQL-BHT-8-8-1-1               1165.70
-PostgreSQL-BHT-8-1-1            3943.51
+MonetDB-BHT-8-1-1              27011.62
+MySQL-BHT-8-8-1-1               1187.97
+PostgreSQL-BHT-8-1-1            3924.04
 
 ### TPC-H Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
-orig_name          SF num_experiment num_client
-MonetDB-BHT-8-1    1  1              1                 18      1   1                  4400.00
-MySQL-BHT-8-8-1    1  1              1                152      1   1                   521.05
-PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
+DBMS               SF num_experiment num_client
+MonetDB-BHT-8-1    1  1              1                 13      1   1                  6092.31
+MySQL-BHT-8-8-1    1  1              1                147      1   1                   538.78
+PostgreSQL-BHT-8-1 1  1              1                 33      1   1                  2400.00
 
 ### Ingestion
                     SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
 DBMS
-MonetDB-BHT-8-1                                          142.81                             1.21
-MySQL-BHT-8-8-1                                         3046.31                            47.20
-PostgreSQL-BHT-8-1                                       137.44                             3.94
+MonetDB-BHT-8-1                                          139.25                             1.23
+MySQL-BHT-8-8-1                                         3015.80                            47.16
+PostgreSQL-BHT-8-1                                       150.89                             3.74
 
 ### Execution
                     SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
 DBMS
-MonetDB-BHT-8-1                                           34.85                             1.76
-MySQL-BHT-8-8-1                                          132.57                            47.37
-PostgreSQL-BHT-8-1                                       116.69                             3.84
+MonetDB-BHT-8-1                                           17.13                             1.57
+MySQL-BHT-8-8-1                                          130.73                            47.31
+PostgreSQL-BHT-8-1                                        63.62                             3.78
 ```
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
@@ -366,7 +366,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200 run`
 
-This runs 3 streams, the first one as a single stream and the following 2 in parallel.
+This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
 ```bash
 ### Geometric Mean of Medians of Timer Run [s]
@@ -385,7 +385,7 @@ PostgreSQL-BHT-8-2-2            3937.01
 
 ### TPC-H Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
-orig_name          SF num_experiment num_client
+DBMS               SF num_experiment num_client
 PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
 PostgreSQL-BHT-8-2 1  1              2                 38      2   1                  4168.42
 ```
