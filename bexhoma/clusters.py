@@ -1281,7 +1281,7 @@ class testbed():
             self.logger.debug('testbed.dashboard_is_running()=exists')
             #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_dashboard)
-            print("{:30s}: {} in pod {}".format("Dashboard", status, pod_dashboard))
+            #print("{:30s}: {} in pod {}".format("Dashboard", status, pod_dashboard))
             if status == "Running":
                 self.logger.debug('testbed.dashboard_is_running() is running')
                 return True
@@ -1345,7 +1345,7 @@ class testbed():
             self.logger.debug('testbed.messagequeue_is_running()=exists')
             #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_messagequeue)
-            print("{:30s}: {} in pod {}".format("Message Queue", status, pod_messagequeue))
+            #print("{:30s}: {} in pod {}".format("Message Queue", status, pod_messagequeue))
             if status == "Running":
                 self.logger.debug('testbed.messagequeue_is_running() is running')
                 return True
