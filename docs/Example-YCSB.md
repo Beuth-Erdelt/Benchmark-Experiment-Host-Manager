@@ -101,6 +101,10 @@ PostgreSQL-64-8-131072-1       64  131072          8                      115356
 We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
+To see the summary of experiment `1706264335` you can simply call `python ycsb.py -e 1706264335 summary`.
+
+### Detailed Evaluation
+
 Results are transformed into pandas DataFrames and can be inspected in detail.
 See for example
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)

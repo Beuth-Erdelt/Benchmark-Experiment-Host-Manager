@@ -35,7 +35,7 @@ if __name__ == '__main__':
     description = """Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk)."""
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty'])
+    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
     parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[])
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')

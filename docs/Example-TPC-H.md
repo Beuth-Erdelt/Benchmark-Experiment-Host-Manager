@@ -217,6 +217,10 @@ Moreover the loading times (schema creation, ingestion and indexing), the geomet
 Please note that the results are not suitable for being published as official TPC-H results.
 In particular the refresh streams are missing.
 
+To see the summary of experiment `1706255897` you can simply call `python tpch.py -e 1706255897 summary`.
+
+### Detailed Evaluation
+
 Results are transformed into pandas DataFrames and can be inspected in more detail.
 Detailed evaluations can be done using DBMSBenchmarker
 * [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
