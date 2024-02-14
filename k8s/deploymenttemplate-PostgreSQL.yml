@@ -51,6 +51,10 @@ spec:
           value: trust
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
         ports:
         - {containerPort: 5432}
         securityContext:
@@ -109,10 +113,6 @@ spec:
         ]
         # , "-c", "listen_addresses='*'", "-c", "logging_collector=on"
         # , "-c", "pg_stat_statements.save=off", "-c", "pg_stat_statements.track=all", "-c", "shared_preload_libraries='pg_stat_statements'"
-      lifecycle:
-        preStop:
-          exec:
-            command: ["/bin/sh", "-c", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:v0.47.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]

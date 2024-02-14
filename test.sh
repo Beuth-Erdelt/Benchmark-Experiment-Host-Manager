@@ -39,6 +39,8 @@ nohup python ycsb.py -ms 1 -m -workload a -tr \
 	-rst shared -rss 100Gi \
 	run &>logs/test_ycsb_2.log &
 
+# watch -n 30 tail -n 50 logs/test_ycsb_2.log
+
 
 #### Wait so that experiments receive different codes
 sleep 5
