@@ -1420,13 +1420,20 @@ class tpch(default):
             df2 = pd.DataFrame(df)
             df2.columns = ["SUT - Max RAM of Execution [Gb]"]
             ##########
-            if not df1.empty or not df2.empty:
+            df = evaluate.get_streaming_metrics('total_cpu_memory_cached')/1024
+            df = df.T.max().sort_index()
+            df3 = pd.DataFrame(df)
+            df3.columns = ["SUT - Max RAM of Execution Cached [Gb]"]
+            ##########
+            if not df1.empty or not df2.empty or not df3.empty:
                 print("\n### Execution")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
+            if not df1.empty and not df2.empty and not df3.empty:
+                print(pd.concat([df1, df2, df3], axis=1).round(2))
             elif not df1.empty:
                 print(df1.round(2))
             elif not df2.empty:
+                print(df2.round(2))
+            elif not df3.empty:
                 print(df2.round(2))
 
 
