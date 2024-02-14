@@ -115,6 +115,7 @@ class default():
         self.code = self.experiment.cluster.code
         self.path = self.experiment.path
         self.resources = {}
+        self.storage = {}
         self.pod_sut = '' #: Name of the sut's master pod
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
@@ -145,6 +146,7 @@ class default():
         self.prometheus_timeout = experiment.prometheus_timeout
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
+        self.monitor_loading = True #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         #self.parallelism = 1
@@ -200,20 +202,22 @@ class default():
         :param sec: Number of seconds to wait
         :param silent: True means we do not output anything about this waiting
         """
-        if not silent:
-            print("Waiting "+str(sec)+"s...", end="", flush=True)
-        intervals = int(sec)
-        time.sleep(intervals)
-        if not silent:
-            print("done")
-    def delay(self, sec):
+        #if not silent:
+        #    print("Waiting "+str(sec)+"s...", end="", flush=True)
+        #intervals = int(sec)
+        #time.sleep(intervals)
+        #if not silent:
+        #    print("done")
+        return self.experiment.cluster.wait(sec, silent)
+    def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        self.wait(sec)
+        self.wait(sec, silent)
     def OLD_get_items(self, app='', component='', experiment='', configuration=''):
         if len(app) == 0:
             app = self.experiment.cluster.appname
@@ -259,7 +263,8 @@ class default():
 
         :param kwargs: Dict of meta data, example 'storageSize' => '100Gi'
         """
-        self.storage = kwargs
+        self.storage = {**self.storage, **kwargs}
+        #self.storage = kwargs
     def set_additional_labels(self, **kwargs):
         """
         Sets additional labels, that will be put to K8s objects (and ignored otherwise).
@@ -599,7 +604,7 @@ class default():
             #    print(pod_sut, status)
             #    self.wait(10)
             #    status = self.experiment.cluster.get_pod_status(pod_sut)
-            print("check if {} is running".format(pod_sut))
+            self.logger.debug("check if {} is running".format(pod_sut))
             services = self.experiment.cluster.get_services(app, component, self.experiment.code, configuration)
             service = services[0]
             ports = self.experiment.cluster.get_ports_of_service(app, component, self.experiment.code, configuration)
@@ -720,7 +725,7 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
-        print("start_monitoring of {}".format(name_sut))
+        print("{:30s}: start monitoring with prometheus pod".format(configuration))
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:
             try:
@@ -869,21 +874,31 @@ scrape_configs:
             print(pod, status)
             #if status == "Running":
             # TODO: Find names of containers dynamically
-            container = 'datagenerator'
-            stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
-            #stdin, stdout, stderr = self.pod_log(client_pod_name)
-            filename_log = self.path+'/'+pod+'.'+container+'.log'
-            f = open(filename_log, "w")
-            f.write(stdout)
-            f.close()
+            containers = self.experiment.cluster.get_pod_containers(pod)
+            for container in containers:
+                stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
+                #stdin, stdout, stderr = self.pod_log(client_pod_name)
+                filename_log = self.path+'/'+pod+'.'+container+'.log'
+                f = open(filename_log, "w")
+                f.write(stdout)
+                f.close()
+            #container = 'datagenerator'
+            #if container in containers:
+            #    stdout = self.experiment.cluster.pod_log(pod=pod, container=container)
+            #    #stdin, stdout, stderr = self.pod_log(client_pod_name)
+            #    filename_log = self.path+'/'+pod+'.'+container+'.log'
+            #    f = open(filename_log, "w")
+            #    f.write(stdout)
+            #    f.close()
             #
-            container = 'sensor'
-            stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
-            #stdin, stdout, stderr = self.pod_log(client_pod_name)
-            filename_log = self.path+'/'+pod+'.'+container+'.log'
-            f = open(filename_log, "w")
-            f.write(stdout)
-            f.close()
+            #container = 'sensor'
+            #if container in containers:
+            #    stdout = self.experiment.cluster.pod_log(pod=pod, container='sensor')
+            #    #stdin, stdout, stderr = self.pod_log(client_pod_name)
+            #    filename_log = self.path+'/'+pod+'.'+container+'.log'
+            #    f = open(filename_log, "w")
+            #    f.write(stdout)
+            #    f.close()
             self.experiment.cluster.delete_pod(pod)
     def stop_loading(self, app='', component='loading', experiment='', configuration=''):
         """
@@ -982,9 +997,12 @@ scrape_configs:
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
         if self.storage['storageConfiguration']:
-            name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            storageConfiguration = self.storage['storageConfiguration']
+            #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
         else:
-            name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+            storageConfiguration = configuration
+            #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+        name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
@@ -1033,7 +1051,7 @@ scrape_configs:
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'storage'
-                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['configuration'] = storageConfiguration
                     dep['metadata']['labels']['experiment'] = self.storage_label
                     dep['metadata']['labels']['dbms'] = self.docker
                     dep['metadata']['labels']['volume'] = self.volume
@@ -1049,26 +1067,34 @@ scrape_configs:
                         dep['spec']['resources']['requests']['storage'] = self.storage['storageSize']
                     #print(dep['spec']['accessModes']) # list
                     #print(dep['spec']['resources']['requests']['storage'])
-                    pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                    pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                     #print(pvcs)
                     if len(pvcs) > 0:
-                        print("Storage {} exists".format(name_pvc))
+                        print("{:30s}: storage exists {}".format(configuration, name_pvc))
+                        #print("Storage {} exists".format(name_pvc))
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
-                        pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                        pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                         self.logger.debug(pvcs_labels)
                         if len(pvcs_labels) > 0:
                             pvc_labels = pvcs_labels[0]
-                            if 'loaded' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
-                            if 'timeLoading' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
-                            if 'timeLoadingStart' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
-                            if 'timeLoadingEnd' in pvc_labels:
-                                yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
+                            copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
+                            for label in copy_labels:
+                                if label in pvc_labels:
+                                    yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
+                            #if 'loaded' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
+                            #if 'timeLoading' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
+                            #if 'timeLoadingStart' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
+                            #if 'timeLoadingEnd' in pvc_labels:
+                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
                         del result[key]
                         # we do not need loading pods
+                        #print("Loading is set to finished")
+                        print("{:30s}: loading is set to finished".format(configuration))
                         self.loading_active = False
+                        self.monitor_loading = False
             if dep['kind'] == 'StatefulSet':
                 if self.num_worker == 0:
                     del result[key]
@@ -1351,7 +1377,7 @@ scrape_configs:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
                 print(exc)
-        print("Deploy "+deployment_experiment)
+        self.logger.debug("Deploy "+deployment_experiment)
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
@@ -1379,9 +1405,13 @@ scrape_configs:
             use_storage = self.use_storage()
             if use_storage:
                 # remove the storage
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+                if self.storage['storageConfiguration']:
+                    storageConfiguration = self.storage['storageConfiguration']
+                else:
+                    storageConfiguration = configuration
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                 self.experiment.cluster.delete_pvc(name_pvc)
-                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=configuration)
+                worker_pvcs = self.experiment.cluster.get_pvc(app=app, component='worker', experiment=experiment, configuration=storageConfiguration)
                 for name_pvc in worker_pvcs:
                     self.experiment.cluster.delete_pvc(name_pvc)
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -1788,52 +1818,6 @@ scrape_configs:
         c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
         #print(c)
         return c#.copy()
-    def OLD_fetch_metrics_loading(self, connection=None, configuration=''):
-        self.logger.debug('configuration.fetch_metrics()')
-        # set general parameter
-        resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
-        experiments_configfolder = self.experiment.cluster.experiments_configfolder
-        if connection is None:
-            connection = self.configuration
-        if len(configuration) == 0:
-            configuration = connection
-        code = self.code
-        # get connection config (sut)
-        monitoring_host = self.generate_component_name(component='monitoring', configuration=configuration, experiment=self.code)
-        service_name = self.get_service_sut(configuration=configuration)#self.generate_component_name(component='sut', configuration=configuration, experiment=self.code)
-        service_namespace = self.experiment.cluster.contextdata['namespace']
-        service_host = self.experiment.cluster.contextdata['service_sut'].format(service=service_name, namespace=service_namespace)
-        pods = self.experiment.cluster.get_pods(component='sut', configuration=configuration, experiment=self.code)
-        self.pod_sut = pods[0]
-        c = self.get_connection_config(connection, serverip=service_host, monitoring_host=monitoring_host)
-        print(c)
-        connection_data = c
-        connection_name = connection
-        time_start = int(self.timeLoadingStart)
-        time_end = int(self.timeLoadingEnd)
-        query = "loading"
-        # store configuration
-        basepath_local = self.path+'/'
-        basepath_remote = '/results/'+str(self.code)+'/'
-        file = c['name']+'.config'
-        file_local = basepath_local+file
-        file_remote = basepath_remote+file
-        with open(file_local, 'w') as f:
-            f.write(str([c]))
-        # find dashboard pod
-        pods = self.experiment.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-        # copy to dashboard
-        stdout = self.experiment.cluster.kubectl('cp '+file_local+" "+pod_dashboard+':'+file_remote)
-        self.logger.debug('copy configuration.config: {}'.format(stdout))
-        cmd = {}
-        cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -cf {} -c {} -e {} -ts {} -te {}'.format(file, connection, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-        stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-        print(stdin, stdout, stderr)
-        #for m, metric in connection_data['monitoring']['metrics'].items():
-        #    print("Metric", m)
-        #    monitor.metrics.fetchMetric(query, m, connection_name, connection_data, time_start, time_end, '{result_path}/{code}/'.format(result_path=resultfolder, code=code))
     def run_benchmarker_pod(self,
         connection=None,
         alias='',
@@ -1898,6 +1882,11 @@ scrape_configs:
         #service_port = config_K8s['port']
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
         #c['parameter'] = {}
+        # add parameters to connection
+        if len(self.loading_parameters):
+            self.connection_parameter['loading_parameters'] = self.loading_parameters
+        if len(self.benchmarking_parameters):
+            self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
@@ -1926,6 +1915,7 @@ scrape_configs:
         #self.benchmark.code = '1611607321'
         self.code = self.benchmark.code
         #print("Code", self.code)
+        print("{:30s}: benchmarking results in folder {}".format(configuration, self.benchmark.path))
         self.logger.debug('configuration.run_benchmarker_pod(Code={})'.format(self.code))
         # read config for benchmarker
         # empty template:
@@ -2012,7 +2002,7 @@ scrape_configs:
         client_pod_name = pods[0]
         status = self.experiment.cluster.get_pod_status(client_pod_name)
         self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
-        print("Waiting for job {}: ".format(client_pod_name), end="", flush=True)
+        print("{:30s}: benchmarking is waiting for job {}: ".format(configuration, client_pod_name), end="", flush=True)
         while status != "Running" and status != "Succeeded":
             self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
             print(".", end="", flush=True)
@@ -2061,8 +2051,9 @@ scrape_configs:
             self.logger.debug('copy config protocol.json: {}'.format(stdout))
             """
             # get monitoring for loading
-            if self.monitoring_active:
+            if self.monitoring_active and self.monitor_loading:
                 cmd = {}
+                print("{:30s}: collecting loading metrics of SUT".format(connection))
                 #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                     connection, 
@@ -2084,6 +2075,7 @@ scrape_configs:
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0:
                     # data generator container
+                    print("{:30s}: collecting metrics of data generator".format(connection))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
@@ -2100,6 +2092,7 @@ scrape_configs:
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # data injector container "sensor"
+                    print("{:30s}: collecting metrics of data injector".format(connection))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
@@ -2230,7 +2223,7 @@ scrape_configs:
             jobs = self.experiment.cluster.get_jobs(app, component, self.code, configuration)
             # status per job
             for job in jobs:
-                print("Found running job", job)
+                self.experiment.cluster.logger.debug("Found running job {}".format(job))
                 success = self.experiment.cluster.get_job_status(job)
                 self.experiment.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
@@ -2238,15 +2231,22 @@ scrape_configs:
                 pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                 for pod in pods:
                     status = self.experiment.cluster.get_pod_status(pod)
-                    print(pod, status)
+                    self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
                     if status == "Succeeded":
-                        container = 'datagenerator'
-                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
-                            print("Store logs of job {} pod {}".format(job, pod))
-                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        container = 'sensor'
-                        if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
-                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        containers = self.experiment.cluster.get_pod_containers(pod)
+                        for container in containers:
+                            if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                                self.experiment.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
+                                self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        #container = 'datagenerator'
+                        #if container in containers:
+                        #    if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                        #        self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
+                        #        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        #container = 'sensor'
+                        #if container in containers:
+                        #    if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                        #        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                 if success:
                     self.experiment.cluster.logger.debug('job {} will be suspended and parallel loading will be considered finished'.format(job, success))
                     # get labels (start) of sut
@@ -2270,15 +2270,21 @@ scrape_configs:
                     #pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                     for pod in pods:
                         status = self.experiment.cluster.get_pod_status(pod)
-                        print(pod, status)
-                        print("Store logs of job {} pod {}".format(job, pod))
+                        self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
+                        self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
                         #if status == "Running":
                         # TODO: Find names of containers dynamically
-                        container = 'datagenerator'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
-                        container = 'sensor'
-                        self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        containers = self.experiment.cluster.get_pod_containers(pod)
+                        for container in containers:
+                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         self.experiment.cluster.delete_pod(pod)
+                        #container = 'datagenerator'
+                        #if container in containers:
+                        #    self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        #container = 'sensor'
+                        #if container in containers:
+                        #    self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        #    self.experiment.cluster.delete_pod(pod)
                     self.experiment.end_loading(job)
                     self.experiment.cluster.delete_job(job)
                     loading_pods_active = False
@@ -2304,6 +2310,7 @@ scrape_configs:
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
                         #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
                         #self.timeLoading = float(self.timeLoading) + float(timeLoading)
+                        print("{:30s}: showing loader times".format(self.configuration))
                         timing_datagenerator, timing_sensor, timing_total = self.experiment.get_job_timing_loading(job)
                         generator_time = 0
                         loader_time = 0
@@ -2313,27 +2320,27 @@ scrape_configs:
                         self.loading_timespans['sensor'] = timing_sensor
                         self.loading_timespans['total'] = timing_total
                         if len(timing_datagenerator) > 0:
-                            print([end-start for (start,end) in timing_datagenerator])
+                            self.experiment.cluster.logger.debug("Generator times (duration per pod [s]): {}".format([end-start for (start,end) in timing_datagenerator]))
                             timing_start = min([start for (start,end) in timing_datagenerator])
                             timing_end = max([end for (start,end) in timing_datagenerator])
                             total_time = timing_end - timing_start
                             generator_time = total_time
-                            print("Generator", total_time)
+                            print("{:30s}: generator timespan (first to last [s]) = {}".format(self.configuration, total_time))
                         #timing_sensor = extract_timing(jobname, container="sensor")
                         if len(timing_sensor) > 0:
-                            print([end-start for (start,end) in timing_sensor])
+                            self.experiment.cluster.logger.debug("Loader times (duration per pod [s]): {}".format([end-start for (start,end) in timing_sensor]))
                             timing_start = min([start for (start,end) in timing_sensor])
                             timing_end = max([end for (start,end) in timing_sensor])
                             total_time = timing_end - timing_start
                             loader_time = total_time
-                            print("Loader", total_time)
+                            print("{:30s}: loader timespan (first to last [s]) = {}".format(self.configuration, total_time))
                         if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
                             timing_total = timing_datagenerator + timing_sensor
-                            print(timing_total)
+                            self.experiment.cluster.logger.debug("Total times (start/end per pod and container): {}".format(timing_total))
                             timing_start = min([start for (start,end) in timing_total])
                             timing_end = max([end for (start,end) in timing_total])
                             total_time = timing_end - timing_start
-                            print("Total", total_time)
+                            print("{:30s}: total timespan (first to last [s]) = {}".format(self.configuration, total_time))
                         now = datetime.utcnow()
                         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
                         time_now = str(datetime.now())
@@ -2442,10 +2449,18 @@ scrape_configs:
                 self.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
             if 'timeLoading' in pod_labels[pod]:
                 self.timeLoading = float(pod_labels[pod]['timeLoading'])
+            if 'time_loaded' in pod_labels[pod]:
+                self.timeSchema = float(pod_labels[pod]['time_loaded']) # stays at pre-ingestion total, even after ingestion and post-ingestion?
+            if 'time_generated' in pod_labels[pod]:
+                self.timeGenerating = float(pod_labels[pod]['time_generated'])
+            if 'time_ingested' in pod_labels[pod]:
+                self.timeIngesting = float(pod_labels[pod]['time_ingested'])
             for key, value in pod_labels[pod].items():
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]
                     self.times_scripts[time_type] = float(value)
+            # timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
+            #self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
         else:
             # if there are no labels at this pod, loading has not been started or finished
             # maybe sut has been restarted? then loading may have been stared though
@@ -2471,11 +2486,15 @@ scrape_configs:
         use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
-            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            if self.storage['storageConfiguration']:
+                storageConfiguration = self.storage['storageConfiguration']
+            else:
+                storageConfiguration = self.configuration
+            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
             volume = name_pvc
         else:
             volume = ''
-        print("start loading asynch {}".format(self.pod_sut))
+        print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
         self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
         thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context, 'service_name':service_name, 'time_offset':time_offset, 'script_type':script_type, 'time_start_int':time_start_int}
@@ -2492,7 +2511,7 @@ scrape_configs:
         """
         if len(patch) > 0:
             merged = hiyapyco.load([file, patch], method=hiyapyco.METHOD_MERGE)
-            print(hiyapyco.dump(merged, default_flow_style=False))
+            self.logger.debug(hiyapyco.dump(merged, default_flow_style=False))
             stream = StringIO(hiyapyco.dump(merged)) # convert string to stream
             result = yaml.safe_load_all(stream)
             result = [data for data in result]
@@ -2700,6 +2719,7 @@ scrape_configs:
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=240)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
+        # store parameters in connection for evaluation
         e = {'DBMSBENCHMARKER_NOW': now_string,
             'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
@@ -2792,7 +2812,7 @@ scrape_configs:
         #print("self.loading_parameters", self.loading_parameters)
         #env = self.loading_parameters
         env = {**env, **self.loading_parameters}
-        print("create_manifest_loading:env=", env)
+        self.logger.debug("create_manifest_loading:env={}".format(env))
         template = "jobtemplate-loading.yml"
         if len(self.experiment.jobtemplate_loading) > 0:
             template = self.experiment.jobtemplate_loading

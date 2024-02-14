@@ -268,29 +268,38 @@ class testbed():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
-    def wait(self, sec):
+    def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        print("Waiting {} s...".format(sec), end="", flush=True)
-        intervals = int(sec)
-        time.sleep(intervals)
-        print("Done waiting {} s".format(sec))
-        #print("Waiting "+str(sec)+"s")
+        #if not silent:
+        #    print("Waiting "+str(sec)+"s...", end="", flush=True)
         #intervals = int(sec)
-        #intervalLength = 1
-        #for i in tqdm(range(intervals)):
-        #    time.sleep(intervalLength)
-    def delay(self, sec):
+        #time.sleep(intervals)
+        #if not silent:
+        #    print("done")
+        intervals = int(sec)
+        for x in [1]:
+            if not silent:
+                print("{:30s}: ".format("- waiting {}s -".format(sec)), end="", flush=True)
+                #print('wait {}s'.format(intervals), end='\r')
+            time.sleep(intervals)
+        if not silent:
+            print("done")
+        #if not silent:
+        #    print("")
+    def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        self.wait(sec)
+        self.wait(sec, silent)
     def delete_deployment(self, deployment):
         """
         Delete a deployment given by name.
@@ -359,7 +368,7 @@ class testbed():
             field_selector = 'status.phase='+status
         else:
             field_selector = ''
-        self.logger.debug('get_pods label='+label)
+        self.logger.debug('get_pods label({})'.format(label))
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label, field_selector=field_selector)
             #pprint(api_response)
@@ -518,7 +527,7 @@ class testbed():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('get_services'+label)
+        self.logger.debug('get_services({})'.format(label))
         try: 
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -584,7 +593,7 @@ class testbed():
             label += ',experiment='+experiment
         if len(configuration)>0:
             label += ',configuration='+configuration
-        self.logger.debug('get_pvc'+label)
+        self.logger.debug('get_pvc({})'.format(label))
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
@@ -972,6 +981,25 @@ class testbed():
         #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
         #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
         return output
+    def get_pod_containers(self, pod):
+        """
+        Return all containers and initcontainers of a pod
+
+        :param pod: name of the pod
+        :return: list of names of (init)containers
+        """
+        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.containers[*].name}'"
+        #print(fullcommand)
+        output = self.kubectl(fullcommand)
+        #print("get_pod_containers", output)
+        containers = output.split(" ")
+        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initContainers[*].name}'"
+        #print(fullcommand)
+        output = self.kubectl(fullcommand)
+        #print("get_pod_containers", output)
+        initContainers = output.split(" ")
+        self.logger.debug("Pod {} has container {}".format(pod, containers + initContainers))
+        return containers + initContainers
     def downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
@@ -998,7 +1026,7 @@ class testbed():
             label += ',configuration='+configuration
         if len(client)>0:
             label += ',client='+client
-        self.logger.debug('getJobs '+label)
+        self.logger.debug('getJobs({})'.format(label))
         try: 
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
             #pprint(api_response)
@@ -1089,15 +1117,15 @@ class testbed():
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
             #pprint(api_response)
-            print("api_response.spec.completions", api_response.spec.completions)
-            print("api_response.status.succeeded", api_response.status.succeeded)
+            self.logger.debug("api_response.spec.completions {}".format(api_response.spec.completions))
+            self.logger.debug("api_response.status.succeeded {}".format(api_response.status.succeeded))
             # returns number of completed pods (!)
             #return api_response.status.succeeded
             # we want status of job (!)
             #self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
             #self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
             if api_response.status.succeeded is not None and api_response.spec.completions <= api_response.status.succeeded:
-                print("Number of completions reached")
+                self.logger.debug("Number of completions reached")
                 return True
             if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
                 self.logger.debug(api_response.status.conditions[0].type)
@@ -1226,6 +1254,19 @@ class testbed():
         #print(name)
         self.logger.debug('testbed.create_dashboard_name({})'.format(name))
         return name
+    def create_messagequeue_name(self, app='', component='messagequeue'):
+        """
+        Creates a suitable name for the message queue component.
+
+        :param app: app the messagequeue belongs to
+        :param component: Component name, should be 'messagequeue' typically
+        """
+        if len(app) == 0:
+            app = self.appname
+        name = "{app}_{component}".format(app=app, component=component)
+        #print(name)
+        self.logger.debug('testbed.create_messagequeue({})'.format(name))
+        return name
     def dashboard_is_running(self):
         """
         Returns True, iff dashboard is running.
@@ -1240,7 +1281,7 @@ class testbed():
             self.logger.debug('testbed.dashboard_is_running()=exists')
             #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
+            #print("{:30s}: {} in pod {}".format("Dashboard", status, pod_dashboard))
             if status == "Running":
                 self.logger.debug('testbed.dashboard_is_running() is running')
                 return True
@@ -1255,12 +1296,18 @@ class testbed():
         """
         if len(self.get_dashboard_pod_name()):
             # there already is a dashboard pod
+            print("{:30s}: is running".format("Dashboard"))
             return
         else:
+            print("{:30s}: is starting...".format("Dashboard"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not self.dashboard_is_running()):
+               self.wait(10, silent=True)
+            print("done")
+            return
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
         Starts the monitoring component and its service.
@@ -1272,17 +1319,37 @@ class testbed():
         self.monitor_cluster_active = True
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
-            # dashboard exists
+            # monitoring exists
             self.logger.debug('testbed.start_monitoring_cluster()=exists')
+            print("{:30s}: is running".format("Cluster monitoring"))
             return
         else:
             self.logger.debug('testbed.start_monitoring_cluster()=deploy')
             deployment = 'daemonsettemplate-monitoring.yml'
-            #name = self.create_dashboard_name(app, component)
-            #self.logger.debug('testbed.start_monitoring_general({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
-            #deployment = 'deploymenttemplate-bexhoma-prometheus.yml'
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
+            print("{:30s}: starting...".format("Cluster monitoring"))
+            while (not len(self.get_service_endpoints(service_name="bexhoma-service-monitoring-default"))):
+               self.wait(10, silent=True)
+            print("done")
+            return
+    def messagequeue_is_running(self, component='messagequeue'):
+        """
+        Returns True, iff message queue is running.
+
+        :return: True, iff message queue is running
+        """
+        pods_messagequeue = self.get_pods(component=component)
+        if len(pods_messagequeue) > 0:
+            # message queue exists
+            pod_messagequeue = pods_messagequeue[0]
+            self.logger.debug('testbed.messagequeue_is_running()=exists')
+            #pod_dashboard = pods_dashboard[0]
+            status = self.get_pod_status(pod_messagequeue)
+            #print("{:30s}: {} in pod {}".format("Message Queue", status, pod_messagequeue))
+            if status == "Running":
+                self.logger.debug('testbed.messagequeue_is_running() is running')
+                return True
+        return False
     def start_messagequeue(self, app='', component='messagequeue'):
         """
         Starts the message queue.
@@ -1293,14 +1360,61 @@ class testbed():
         """
         pods_messagequeue = self.get_pods(component=component)
         if len(pods_messagequeue) > 0:
-            # dashboard exists
+            # message queue exists
             self.logger.debug('testbed.start_messagequeue()=exists')
+            print("{:30s}: is running".format("Message Queue"))
             return
         else:
+            print("{:30s}: is starting...".format("Message Queue"), end="", flush=True)
             deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
-            name = self.create_dashboard_name(app, component)
+            name = self.create_messagequeue_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
             self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not self.messagequeue_is_running()):
+               self.wait(10, silent=True)
+            print("done")
+            return
+    def start_datadir(self):
+        """
+        Starts the data directory in a shared filesystem.
+        This is where data generator pods can store generated data and where loading pods can read the data from. 
+        Manifest is expected in 'pvc-bexhoma-data.yml'
+        """
+        app = self.appname
+        # get data directory
+        pvcs = self.get_pvc(app=app, component='data-source', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("{:30s}: is running".format("Data Directory"))
+            return
+        else:
+            print("{:30s}: is starting...".format("Data Directory"), end="", flush=True)
+            deployment = 'pvc-bexhoma-data.yml'
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_pvc(app=app, component='data-source', experiment='', configuration=''))):
+               self.wait(10, silent=True)
+            print("done")
+            return
+    def start_resultdir(self):
+        """
+        Starts the result directory in a shared filesystem.
+        This is where benchmark execution pods can store result data and where the evaluation pods can read results from.
+        Also collected metrics will be stored there.
+        Manifest is expected in 'pvc-bexhoma-results.yml'
+        """
+        app = self.appname
+        # get result directory
+        pvcs = self.get_pvc(app=app, component='results', experiment='', configuration='')
+        if len(pvcs) > 0:
+            print("{:30s}: is running".format("Result Directory"))
+            return
+        else:
+            print("{:30s}: is starting...".format("Result Directory"), end="", flush=True)
+            deployment = 'pvc-bexhoma-results.yml'
+            self.kubectl('create -f '+self.yamlfolder+deployment)
+            while (not len(self.get_pvc(app=app, component='results', experiment='', configuration=''))):
+               self.wait(10, silent=True)
+            print("done")
+            return
     def get_dashboard_pod_name(self, app='', component='dashboard'):
         """
         Returns the name of the dashboard pod.
@@ -1357,7 +1471,7 @@ class testbed():
         # status per job
         for job in jobs:
             success = self.get_job_status(job)
-            print(job, success)
+            self.logger.debug("Job and status {} {}".format(job, success))
             self.delete_job(job)
         # all pods to these jobs - automatically stopped?
         #self.get_job_pods(app, component, experiment, configuration)

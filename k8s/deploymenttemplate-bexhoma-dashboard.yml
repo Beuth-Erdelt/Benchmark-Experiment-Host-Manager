@@ -36,29 +36,49 @@ spec:
         image: bexhoma/evaluator_dbmsbenchmarker:v0.13.6
         imagePullPolicy: IfNotPresent
         #imagePullPolicy: Always
+        env:
+        - {name: MPLCONFIGDIR, value: '/tmp/'} # matplotlib
         ports:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
         resources:
-          #limits: {cpu: 4000m, memory: 32Gi}
-          #requests: {cpu: 4000m, memory: 32Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
+          #allowPrivilegeEscalation: false #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
+          #runAsNonRoot: true # Permission denied: '/.local'
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities: #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
+          #  drop:
+          #    - ALL
+          #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
       - name: jupyter
         image: bexhoma/evaluator_dbmsbenchmarker:v0.13.6
         imagePullPolicy: IfNotPresent
+        env:
+        - {name: MPLCONFIGDIR, value: '/tmp/'}
         #imagePullPolicy: Always
         #command: ["jupyter","notebook","--no-browser", "--NotebookApp.password=\"$(echo 'admin' | python -c 'from notebook.auth import passwd;print(passwd(input()))')\"", "--allow-root"]
-        command: ["jupyter","notebook","--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]
+        command: ["jupyter","notebook","--notebook-dir", "/usr/src/app/DBMS-Benchmarker/notebooks", "--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]
         ports:
         - containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
         resources:
-          #limits: {cpu: 4000m, memory: 32Gi}
-          #requests: {cpu: 4000m, memory: 32Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
+          #allowPrivilegeEscalation: false #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
+          #runAsNonRoot: true # Permission denied: '/.local'
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities: #tar - Cannot change ownership to uid 1001, gid 1001: Operation not permitted
+          #  drop:
+          #    - ALL
+          #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results

@@ -16,6 +16,8 @@ spec:
       - name: dockerhub
       nodeSelector: 
       tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_ycsb:0.17.0
@@ -44,7 +46,15 @@ spec:
         resources:
           #limits: {cpu: 8000m, memory: 16Gi}
           #requests: {cpu: 8000m, memory: 16Gi}
-        securityContext:
+        #securityContext:                       # workload_test: Read-only file system
+        #  allowPrivilegeEscalation: false
+        #  runAsNonRoot: true
+        #  runAsUser: 1000
+        #  runAsGroup: 1000
+        #  capabilities:
+        #    drop:
+        #      - ALL
+        #  readOnlyRootFilesystem: true
         volumeMounts:
       restartPolicy: Never
       volumes:

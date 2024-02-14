@@ -12,6 +12,7 @@
     :hidden:
 
     ../README.md
+    ./Example-YCSB.md
     ./Example-TPC-H.md
     ./Example-custom.md
     ./Concept.md

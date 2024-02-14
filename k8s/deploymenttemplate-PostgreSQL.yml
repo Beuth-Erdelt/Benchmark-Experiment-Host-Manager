@@ -40,21 +40,35 @@ spec:
       - {name: dockerhub}
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 60
       containers:
       - name: dbms
-        image: postgres:15.0
+        image: postgres:16.1
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
         ports:
         - {containerPort: 5432}
+        securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
+          #readOnlyRootFilesystem: true #could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": Read-only file system
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
-          requests: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
           #, ephemeral-storage: "1536Gi"}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
@@ -107,10 +121,18 @@ spec:
           #hostPort: 9300
           name: http
           protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
+          readOnlyRootFilesystem: true
         resources:
-          requests:
-            cpu: 150m
-            memory: 200Mi
+          requests: {cpu: 150m, memory: 200Mi}
+          limits: {cpu: 16000m, memory: 128Gi}
         volumeMounts:
         - name: rootfs
           mountPath: /rootfs

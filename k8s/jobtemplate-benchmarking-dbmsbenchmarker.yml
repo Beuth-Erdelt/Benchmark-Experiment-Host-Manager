@@ -16,12 +16,15 @@ spec:
       - name: dockerhub
       nodeSelector: 
       tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.6
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
         env:
+        - {name: MPLCONFIGDIR, value: '/tmp/'} # matplotlib
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
         - {name: DBMSBENCHMARKER_CODE, value: '1611607321'}
         - {name: DBMSBENCHMARKER_SLEEP, value: '60'}
@@ -29,9 +32,17 @@ spec:
         - {name: DBMSBENCHMARKER_ALIAS, value: 'DBMS-A'}
         - {name: DBMSBENCHMARKER_DEV, value: '0'}
         resources:
-          #limits: {cpu: 1000m, memory: 16Gi}
-          #requests: {cpu: 1000m, memory: 16Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
         securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
+          #readOnlyRootFilesystem: true #Matplotlib requires access to a writable cache directory, but the default path (/.config/matplotlib) is not a writable directory
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results

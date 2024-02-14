@@ -1,77 +1,298 @@
 # Example: TPC-H
 
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
+
 This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MonetDB and PostgreSQL.
 
 > The query file is derived from the TPC-H and as such is not comparable to published TPC-H results, as the query file results do not comply with the TPC-H Specification.
 
 Official TPC-H benchmark - http://www.tpc.org/tpch
 
-## Prerequisites
-
-For basic execution of benchmarking we need  
-* a Kubernetes (K8s) cluster
-  * a namespace `my_namespace` in the cluster
-  * `kubectl` usable, i.e. access token stored in a default vault like `~/.kube`
-  * a persistent volume named `vol-benchmarking` containing the raw TPC-H data in `/data/tpch/SF1/`
-* JDBC driver `./monetdb-jdbc-2.29.jar` and `./postgresql-42.2.5.jar`
-
-We need configuration files containing the following informations in a predefined format, c.f. [demo file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/k8s-cluster.config).
-The demo also includes the necessary settings for some [DBMS](DBMS.html): MariaDB, MonetDB, MySQL, OmniSci and PostgreSQL.
-
-We may adjust the configuration to match the actual environment.
-This in particular holds for `imagePullSecrets`, `tolerations` and `nodeSelector` in the [YAML files](Deployments.html).
-
-
-
-For also enabling monitoring we need
-* a monitoring instance Prometheus / Grafana that scrapes metrics from `localhost:9300`
-* an access token and URL for asking Grafana for metrics  
-  https://grafana.com/docs/grafana/latest/http_api/auth/#create-api-token
-
-
-## Perform Benchmark
+## Perform Benchmark - Power Test
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
-The actual configurations to benchmark are added by
+Example: `python tpch.py -ms 1 -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is run`
+
+This
+* starts a clean instance of PostgreSQL, MonetDB, MySQL
+  * data directory inside a Docker container
+  * with a maximum of 1 DBMS per time (`-ms`)
+* creates TPC-H schema in each database
+* starts 8 loader pods per DBMS (`-nlp`)
+  * with a data generator (init) container each
+    * each generating a portion of TPC-H data of scaling factor 1 (`-sf`)
+    * storing the data in a distributed filesystem (shared disk)
+    * if data is already present: do nothing
+  * with a loading container each
+    * importing TPC-H data from the distributed filesystem
+    * MySQL: only one pod active and it loads with 8 threads (`-nlt`)
+* creates contraints (`-ic`) and indexes (`-ii`) and updates table statistics (`-is`) in each DBMS after ingestion
+* runs 1 stream of TPC-H queries per DBMS
+  * all DBMS use the same parameters
+  * data transfer is also measured (`-dt`)
+* shows a summary
+
+### Status
+
+You can watch the status while benchmark is running via `bexperiments status`
+
 ```
-config = configurations.default(experiment=experiment, docker='MonetDB', configuration='MonetDB-{}'.format(cluster_name), alias='DBMS 1')
-config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration='PostgreSQL-{}'.format(cluster_name), alias='DBMS 2')
+Dashboard: Running
+Message Queue: Running
+Data directory: Running
+Result directory: Running
++------------------+--------------+--------------+---------------+
+| 1706255897       | sut          |   loaded [s] | loading       |
++==================+==============+==============+===============+
+| MonetDB-BHT-8    | (1. Running) |       253.23 |               |
++------------------+--------------+--------------+---------------+
+| MySQL-BHT-8-8    | (1. Running) |         0.61 | (8 Succeeded) |
++------------------+--------------+--------------+---------------+
+| PostgreSQL-BHT-8 | (1. Running) |       219.08 |               |
++------------------+--------------+--------------+---------------+
 ```
 
-### Adjust Parameter
+The code `1706255897` is the unique identifier of the experiment.
+You can find the number also in the output of `tpch.py`.
+
+### Cleanup
+
+The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
+If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1706255897` (removes everything that is related to experiment `1706255897`).
+
+## Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+```bash
+## Show Summary
+Read results
+Connections:
+MonetDB-BHT-8-1-1
+MySQL-BHT-8-8-1-1
+PostgreSQL-BHT-8-1-1
+Queries:
+0: Q1 = Pricing Summary Report (TPC-H Q1)
+1: Q2 = Minimum Cost Supplier Query (TPC-H Q2)
+2: Q3 = Shipping Priority (TPC-H Q3)
+3: Q4 = Order Priority Checking Query (TPC-H Q4)
+4: Q5 = Local Supplier Volume (TPC-H Q5)
+5: Q6 = Forecasting Revenue Change (TPC-H Q6)
+6: Q7 = Forecasting Revenue Change (TPC-H Q7)
+7: Q8 = National Market Share (TPC-H Q8)
+8: Q9 = Product Type Profit Measure (TPC-H Q9)
+9: Q10 = Forecasting Revenue Change (TPC-H Q10)
+10: Q11 = Important Stock Identification (TPC-H Q11)
+11: Q12 = Shipping Modes and Order Priority (TPC-H Q12)
+12: Q13 = Customer Distribution (TPC-H Q13)
+13: Q14 = Forecasting Revenue Change (TPC-H Q14)
+14: Q15 = Top Supplier Query (TPC-H Q15)
+15: Q16 = Parts/Supplier Relationship (TPC-H Q16)
+16: Q17 = Small-Quantity-Order Revenue (TPC-H Q17)
+17: Q18 = Large Volume Customer (TPC-H Q18)
+18: Q19 = Discounted Revenue (TPC-H Q19)
+19: Q20 = Potential Part Promotion (TPC-H Q20)
+20: Q21 = Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
+21: Q22 = Global Sales Opportunity Query (TPC-H Q22)
+Load Evaluation
+
+### Errors
+     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1               False              False                 False
+Q2               False              False                 False
+Q3               False              False                 False
+Q4               False              False                 False
+Q5               False              False                 False
+Q6               False              False                 False
+Q7               False              False                 False
+Q8               False              False                 False
+Q9               False              False                 False
+Q10              False              False                 False
+Q11              False              False                 False
+Q12              False              False                 False
+Q13              False              False                 False
+Q14              False              False                 False
+Q15              False              False                 False
+Q16              False              False                 False
+Q17              False              False                 False
+Q18              False              False                 False
+Q19              False              False                 False
+Q20              False              False                 False
+Q21              False              False                 False
+Q22              False              False                 False
+
+### Warnings
+     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1               False              False                 False
+Q2               False              False                 False
+Q3               False              False                 False
+Q4               False              False                 False
+Q5               False              False                 False
+Q6               False              False                 False
+Q7               False              False                 False
+Q8               False              False                 False
+Q9               False              False                 False
+Q10              False              False                 False
+Q11              False              False                 False
+Q12              False              False                 False
+Q13              False              False                 False
+Q14              False              False                 False
+Q15              False              False                 False
+Q16              False              False                 False
+Q17              False              False                 False
+Q18              False              False                 False
+Q19              False              False                 False
+Q20              False              False                 False
+Q21              False              False                 False
+Q22              False              False                 False
+
+### Latency of Timer Execution [ms]
+DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Q1              2404.64           33934.30               2612.67
+Q2                30.12             361.71                441.01
+Q3               151.54            3897.70                794.99
+Q4                52.34            1882.83               1311.89
+Q5                73.99            3639.32                698.28
+Q6                33.68            4465.72                539.06
+Q7                95.63            7349.12                810.43
+Q8               449.77            6828.98                656.06
+Q9               111.96            5704.00               1145.25
+Q10              175.70            3128.08               1321.12
+Q11               31.90             363.01                258.32
+Q12               67.53            7294.59               1069.99
+Q13              555.90            8787.78               2008.54
+Q14               41.45            5265.07                596.09
+Q15               60.05           22688.57                583.01
+Q16              116.17            1057.91                591.68
+Q17               72.47             799.00               2024.25
+Q18              964.94            6488.35               7099.96
+Q19               91.28             387.99               1595.01
+Q20               97.20             586.58                668.23
+Q21             3185.97           16793.11                932.27
+Q22               67.00             512.73                253.11
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1              1.0           22.0        8.80      34.36    102.16
+MySQL-BHT-8-8-1-1              1.0          435.0        3.78    1793.84   2262.63
+PostgreSQL-BHT-8-1-1           1.0           25.0        0.61      88.96    139.58
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS
+MonetDB-BHT-8-1-1              0.16
+MySQL-BHT-8-8-1-1              3.11
+PostgreSQL-BHT-8-1-1           0.95
+
+### TPC-H Power@Size
+                      Power@Size [~Q/h]
+DBMS
+MonetDB-BHT-8-1-1              27011.62
+MySQL-BHT-8-8-1-1               1187.97
+PostgreSQL-BHT-8-1-1            3924.04
+
+### TPC-H Throughput@Size
+                                                 time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS               SF num_experiment num_client
+MonetDB-BHT-8-1    1  1              1                 13      1   1                  6092.31
+MySQL-BHT-8-8-1    1  1              1                147      1   1                   538.78
+PostgreSQL-BHT-8-1 1  1              1                 33      1   1                  2400.00
+
+### Ingestion
+                    SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
+DBMS
+MonetDB-BHT-8-1                                          139.25                             1.23
+MySQL-BHT-8-8-1                                         3015.80                            47.16
+PostgreSQL-BHT-8-1                                       150.89                             3.74
+
+### Execution
+                    SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
+DBMS
+MonetDB-BHT-8-1                                           17.13                             1.57
+MySQL-BHT-8-8-1                                          130.73                            47.31
+PostgreSQL-BHT-8-1                                        63.62                             3.78
+```
+This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
+Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
+Please note that the results are not suitable for being published as official TPC-H results.
+In particular the refresh streams are missing.
+
+To see the summary of experiment `1706255897` you can simply call `python tpch.py -e 1706255897 summary`.
+
+### Detailed Evaluation
+
+Results are transformed into pandas DataFrames and can be inspected in more detail.
+Detailed evaluations can be done using DBMSBenchmarker
+* [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
+* [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
+
+You can connect to an evaluation server in the cluster by `bexperiments dashboard`.
+This forwards ports, so you have
+* a DBMSBenchmarker dashboard in browser at http://localhost:8050
+* a Jupyter notebook server at http://localhost:8888 containing the example notebooks
+
+You can connect to a local evaluation server by `bexperiments localdashboard`.
+This forwards ports, so you have
+* a DBMSBenchmarker dashboard in browser at http://localhost:8050
+
+You can connect to a local jupyter server by `bexperiments jupyter`.
+This forwards ports, so you have
+* a Jupyter notebook server at http://localhost:8888 containing the example notebooks
+
+
+## Adjust Parameters
+
+The script supports
+* exact repetitions for statistical confidence
+* variations to scan a large parameters space
+* combine results for easy evaluation
+
+There are various ways to change parameters.
+
+### Manifests
+
+The YAML manifests for the components can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/k8s
+
+### SQL Scrips
+
+The SQL scripts for pre and post ingestion can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch
+
+### Dockerfiles
+
+The Dockerfiles for the components can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/tpch
+
+### Command line
 
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
-```
-usage: tpch.py [-h] [-db] [-c CONNECTION] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-ms MAX_SUT] [-dt]
-               [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-sf SCALING_FACTOR]
-               [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
-               [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
-               [-rnn REQUEST_NODE_NAME]
-               {profiling,run,start,load}
+```bash
+usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
+               [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
+               {profiling,run,start,load,empty}
 
-Perform TPC-H inspired benchmarks in a Kubernetes cluster. This either profiles the imported data in several DBMS and
-compares some statistics, or runs the TPC-H queries. Optionally monitoring is actived. User can choose to detach the
-componenten of the benchmarking system, so that as much as possible is run inside a Kubernetes (K8s) cluster. User can
-also choose some parameters like number of runs per query and configuration and request some resources.
+Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk).
 
 positional arguments:
-  {profiling,run,start,load}
-                        profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or
-                        just start the DBMS
+  {profiling,run,start,load,empty}
+                        profile the import or run the TPC-H queries
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
+  -aws, --aws           fix components to node groups at AWS
+  -dbms {PostgreSQL,MonetDB,MySQL}
+                        DBMS to load the data
+  -lit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
+                        limit import to one table, name of this table
   -db, --debug          dump debug informations
-  -c CONNECTION, --connection CONNECTION
-                        name of DBMS
   -cx CONTEXT, --context CONTEXT
                         context of Kubernetes (for a multi cluster environment), default is current context
   -e EXPERIMENT, --experiment EXPERIMENT
                         sets experiment code for continuing started experiment
   -d, --detached        puts most of the experiment workflow inside the cluster
   -m, --monitoring      activates monitoring
+  -mc, --monitoring-cluster
+                        activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
   -dt, --datatransfer   activates datatransfer
@@ -83,6 +304,12 @@ optional arguments:
                         number of runs per configuration
   -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
                         comma separated list of number of parallel clients
+  -nls NUM_LOADING_SPLIT, --num-loading-split NUM_LOADING_SPLIT
+                        portion of loaders that should run in parallel
+  -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
+                        total number of loaders per configuration
+  -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
+                        total number of threads per loading process
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF)
   -t TIMEOUT, --timeout TIMEOUT
@@ -103,17 +330,99 @@ optional arguments:
                         request persistent storage of certain size
   -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
                         request a specific node
+  -tr, --test-result    test if result fulfills some basic requirements
+  -ii, --init-indexes   adds indexes to tables after ingestion
+  -ic, --init-constraints
+                        adds constraints to tables after ingestion
+  -is, --init-statistics
+                        recomputes statistics of tables after ingestion
+  -rcp, --recreate-parameter
+                        recreate parameter for randomized queries
+  -shq, --shuffle-queries
+                        have different orderings per stream
 ```
 
-The hardware requirements are set via
-```
-# pick hardware
-cpu = str(args.request_cpu)
-memory = str(args.request_ram)
-cpu_type = str(args.request_cpu_type)
+## Monitoring
+
+[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+
+If monitoring is activated, the summary also contains a section like
+```bash
+### Ingestion
+                    SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
+DBMS
+MonetDB-BHT-8-1                                          142.81                             1.21
+MySQL-BHT-8-8-1                                         3046.31                            47.20
+PostgreSQL-BHT-8-1                                       137.44                             3.94
+
+### Execution
+                    SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
+DBMS
+MonetDB-BHT-8-1                                           34.85                             1.76
+MySQL-BHT-8-8-1                                          132.57                            47.37
+PostgreSQL-BHT-8-1                                       116.69                             3.84
 ```
 
-## Evaluate Results in Dashboard
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
 
-Evaluation is done using DBMSBenchmarker: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.html
+## Perform Benchmark - Throughput Test
+
+For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+
+Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200 run`
+
+This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
+
+```bash
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS
+PostgreSQL-BHT-8-1-1           0.96
+PostgreSQL-BHT-8-2-1           0.99
+PostgreSQL-BHT-8-2-2           0.97
+
+### TPC-H Power@Size
+                      Power@Size [~Q/h]
+DBMS
+PostgreSQL-BHT-8-1-1            3990.33
+PostgreSQL-BHT-8-2-1            3867.48
+PostgreSQL-BHT-8-2-2            3937.01
+
+### TPC-H Throughput@Size
+                                                 time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS               SF num_experiment num_client
+PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
+PostgreSQL-BHT-8-2 1  1              2                 38      2   1                  4168.42
+```
+
+Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
+You can change this via
+* `-rcp`: Each stream has it's own random parameters
+* `-shq`: Use the ordering per stream as required by the TPC-H specification
+
+## Use Persistent Storage
+
+The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
+If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
+
+Example: `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -nc 2 -dbms PostgreSQL -rst local-hdd -rss 50Gi run`
+
+The following status shows we have a volumes of type `local-hdd`.
+Every experiment running TPC-H of SF=1 at PostgreSQL will take the database from this volume and skip loading.
+In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
+The first instance of PostgreSQL mounts the volume and generates the data.
+All other instances just use the database without generating and loading data.
+
+```
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
+| Volumes                           | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   |
++===================================+=================+==============+==============+===================+============+======================+===========+==========+
+| bexhoma-storage-postgresql-tpch-1 | postgresql      | tpch-1       | True         |            185.41 | PostgreSQL | local-hdd            | 50Gi      | Bound    |
++-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
++------------------+--------------+--------------+---------------+
+| 1707740320       | sut          |   loaded [s] | benchmarker   |
++==================+==============+==============+===============+
+| PostgreSQL-BHT-8 | (1. Running) |       185.41 | (1. Running)  |
++------------------+--------------+--------------+---------------+
+```
 

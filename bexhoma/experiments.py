@@ -140,24 +140,27 @@ class default():
         self.configurations = []
         self.storage_label = ''
         self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
-    def wait(self, sec):
+    def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        print("Waiting "+str(sec)+"s...", end="", flush=True)
-        intervals = int(sec)
-        time.sleep(intervals)
-        print("done")
-    def delay(self, sec):
+        #+print("Waiting "+str(sec)+"s...", end="", flush=True)
+        #intervals = int(sec)
+        #time.sleep(intervals)
+        #print("done")
+        return self.cluster.wait(sec, silent)
+    def delay(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
 
         :param sec: Number of seconds to wait
+        :param silent: True means we do not output anything about this waiting
         """
-        self.wait(sec)
+        self.wait(sec, silent)
     def set_queryfile(self, queryfile):
         """
         Sets the name of a query file of the experiment.
@@ -536,6 +539,8 @@ class default():
         self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
         print("done!")
         # download evaluation cubes
+        #print("{:30s}: downloading partial results".format("Experiment"))
+        #print("{:30s}: uploading full results".format("Experiment"))
         filename = 'evaluation.json'
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
@@ -550,6 +555,10 @@ class default():
         self.cluster.kubectl(cmd['download_results'])
         filename = 'protocol.json'
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
+        self.cluster.kubectl(cmd['download_results'])
+        # download complete result folder of experiment from pod
+        # this includes all measures like times and monitoring data
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
         ############ HammerDB
         #self.path = "/home/perdelt/benchmarks/1668286639/"
@@ -733,42 +742,45 @@ class default():
                     #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
                         if not config.sut_is_pending():
-                            print("{} is not running yet - ".format(config.configuration))#, end="", flush=True)
+                            #print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
                             if self.cluster.max_sut is not None or self.max_sut is not None:
                                 we_can_start_new_sut = True
                                 if self.max_sut is not None:
-                                    print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                    #print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
                                     if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
-                                        print("{} has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
+                                        #print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if self.cluster.max_sut is not None:
-                                    print("In cluster: {} running and {} pending pods: max is {} pods".format(num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
                                     if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
-                                        print("{} has to wait".format(config.configuration))
+                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
+                                        #print("{:30s}: has to wait".format(config.configuration))
                                         we_can_start_new_sut = False
                                 if we_can_start_new_sut:
-                                    print("{} will start now".format(config.configuration))
+                                    print("{:30s}: will start now".format(config.configuration))
                                     config.start_sut()
                                     num_pods_pending_experiment = num_pods_pending_experiment + 1
                                     num_pods_pending_cluster = num_pods_pending_cluster + 1
                             else:
-                                print("{} will start now".format(config.configuration))
+                                print("{:30s}: will start now".format(config.configuration))
                                 config.start_sut()
                                 num_pods_pending_experiment = num_pods_pending_experiment + 1
                                 num_pods_pending_cluster = num_pods_pending_cluster + 1
                                 #self.wait(10)
                         else:
-                            print("{} is pending".format(config.configuration))
+                            print("{:30s}: is pending".format(config.configuration))
                     continue
                 # check if loading is done
                 config.check_load_data()
                 # start loading
                 if not config.loading_started:
                     if config.sut_is_running():
-                        print("{} is not loaded yet".format(config.configuration))
+                        print("{:30s}: is not loaded yet".format(config.configuration))
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():
-                            print("{} waits for monitoring".format(config.configuration))
+                            print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
                                 config.start_monitoring()
                             continue
@@ -781,7 +793,7 @@ class default():
                             else:
                                 config.start_loading()
                         else:
-                            print("{} will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+                            print("{:30s}: will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                             continue
                     else:
                         delay = 60
@@ -789,33 +801,48 @@ class default():
                             # config demands other delay
                             delay = config.dockertemplate['delay_prepare']
                         config.loading_after_time = now + timedelta(seconds=delay)
-                        print("{} will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                        print("{:30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
                         continue
                 # check if maintaining
                 if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
-                        print("{} waits for monitoring".format(config.configuration))
+                        print("{:30s}: waits for monitoring".format(config.configuration))
                         if not config.monitoring_is_pending():
                             config.start_monitoring()
                         continue
                     if config.maintaining_active:
                         if not config.maintaining_is_running():
-                            print("{} is not maintained yet".format(config.configuration))
+                            print("{:30s}: is not maintained yet".format(config.configuration))
                             if not config.maintaining_is_pending():
                                 config.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
                             else:
-                                print("{} has pending maintaining".format(config.configuration))
+                                print("{:30s}: has pending maintaining".format(config.configuration))
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
+                    now = datetime.utcnow()
+                    # when loaded from PVC, system may not be ready yet
+                    if config.loading_after_time is None:
+                        # we have started from PVC
+                        delay = 60
+                        if 'delay_prepare' in config.dockertemplate:
+                            # config demands other delay
+                            delay = config.dockertemplate['delay_prepare']
+                        config.loading_after_time = now + timedelta(seconds=delay)
+                        print("{:30s}: will start benchmarking but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                        continue
+                    elif not now >= config.loading_after_time:
+                        # system might not be ready yet
+                        print("{:30s}: will start benchmarking but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
+                        continue
                     # still benchmarks: check loading and maintaining
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():
-                            print("{} waits for monitoring".format(config.configuration))
+                            print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
                                 config.start_monitoring()
                             continue
                         if config.maintaining_active and not config.maintaining_is_running():
-                            print("{} waits for maintaining".format(config.configuration))
+                            print("{:30s}: waits for maintaining".format(config.configuration))
                             continue
                     app = self.cluster.appname
                     component = 'benchmarker'
@@ -823,7 +850,7 @@ class default():
                     pods = self.cluster.get_job_pods(app, component, self.code, configuration=config.configuration)
                     if len(pods) > 0:
                         # still pods there
-                        print("{} has running benchmarks".format(config.configuration))
+                        print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
                     else:
                         if len(config.benchmark_list) > 0:
@@ -831,7 +858,7 @@ class default():
                             parallelism = config.benchmark_list.pop(0)
                             client = str(config.client)
                             config.client = config.client+1
-                            print("Done {} of {} benchmarks. This will be client {}".format(config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                            print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                             if len(config.benchmarking_parameters_list) > 0:
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                                 print("We will change parameters of benchmark", benchmarking_parameters)
@@ -840,13 +867,13 @@ class default():
                                 connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                             else:
                                 connection=config.configuration+'-'+client
-                            print("Running benchmark {}".format(connection))
+                            print("{:30s}: start benchmarking".format(connection))
                             config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                             #config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                         else:
                             # no list element left
                             if stop:
-                                print("{} can be stopped".format(config.configuration))
+                                print("{:30s}: can be stopped".format(config.configuration))
                                 app = self.cluster.appname
                                 component = 'sut'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
@@ -856,7 +883,7 @@ class default():
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
-                                    print("{} starts again".format(config.configuration))
+                                    print("{:30s}: starts again".format(config.configuration))
                                     config.benchmark_list = config.benchmark_list_template.copy()
                                     # wait for PV to be gone completely
                                     self.wait(60)
@@ -868,7 +895,7 @@ class default():
                             else:
                                 print("{} can be stopped, be we leave it running".format(config.configuration))
                 else:
-                    print("{} is loading".format(config.configuration))
+                    print("{:30s}: is loading".format(config.configuration))
             # all jobs of configuration - benchmarker
             #app = self.cluster.appname
             #component = 'benchmarker'
@@ -890,16 +917,21 @@ class default():
                         status = self.cluster.get_pod_status(p)
                         self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
                         #print(p,status)
-                        if status == 'Succeeded':
-                            print("Store logs of job {} pod {}".format(job, p))
-                            #if status != 'Running':
-                            self.cluster.store_pod_log(p)
-                            #self.cluster.delete_pod(p)
-                        if status == 'Failed':
-                            print("Store logs of job {} pod {}".format(job, p))
-                            #if status != 'Running':
-                            self.cluster.store_pod_log(p)
-                            #self.cluster.delete_pod(p)
+                        if status == 'Succeeded' or status == 'Failed':
+                            containers = self.cluster.get_pod_containers(p)
+                            for container in containers:
+                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                self.cluster.store_pod_log(p, container)
+                        #if status == 'Succeeded':
+                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #    #if status != 'Running':
+                        #    self.cluster.store_pod_log(p)
+                        #    #self.cluster.delete_pod(p)
+                        #if status == 'Failed':
+                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #    #if status != 'Running':
+                        #    self.cluster.store_pod_log(p)
+                        #    #self.cluster.delete_pod(p)
                 success = self.cluster.get_job_status(job)
                 self.cluster.logger.debug('job {} has success status {}'.format(job, success))
                 #print(job, success)
@@ -908,19 +940,25 @@ class default():
                     for p in pods:
                         status = self.cluster.get_pod_status(p)
                         self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                        if status == 'Succeeded' or status == 'Failed':
+                            containers = self.cluster.get_pod_containers(p)
+                            for container in containers:
+                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                self.cluster.store_pod_log(p, container)
+                            self.cluster.delete_pod(p)
                         #print(p,status)
-                        if status == 'Succeeded':
-                            #if status != 'Running':
-                            if not self.cluster.pod_log_exists(p):
-                                print("Store logs of job {} pod {}".format(job, p))
-                                self.cluster.store_pod_log(p)
-                            self.cluster.delete_pod(p)
-                        if status == 'Failed':
-                            #if status != 'Running':
-                            if not self.cluster.pod_log_exists(p):
-                                print("Store logs of job {} pod {}".format(job, p))
-                                self.cluster.store_pod_log(p)
-                            self.cluster.delete_pod(p)
+                        #if status == 'Succeeded':
+                        #    #if status != 'Running':
+                        #    if not self.cluster.pod_log_exists(p):
+                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #        self.cluster.store_pod_log(p)
+                        #    self.cluster.delete_pod(p)
+                        #if status == 'Failed':
+                        #    #if status != 'Running':
+                        #    if not self.cluster.pod_log_exists(p):
+                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                        #        self.cluster.store_pod_log(p)
+                        #    self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
             if len(pods) == 0 and len(jobs) == 0:
@@ -943,6 +981,8 @@ class default():
 
         :param list_clients: List of (number of) benchmarker instances
         """
+        print("benchmark_list() DEPRECATED")
+        exit()
         for i, parallelism in enumerate(list_clients):
             client = str(i+1)
             for config in self.configurations:
@@ -1024,25 +1064,29 @@ class default():
         directory = os.fsencode(self.path)
         #print(jobname)
         timing = []
+        self.cluster.logger.debug("Looking for files {jobname}*.{container}.log".format(jobname=jobname, container=container))
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
             if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
-                #print(filename)
+                self.cluster.logger.debug("Found jobcontainer file {filename}".format(filename=filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
-                #print(df)
+                self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
+            # when log does not contain container name (when is it true?)
+            """
             elif filename.startswith(jobname) and filename.endswith(".log"):
-                #print(filename)
+                self.cluster.logger.debug("Found job file {filename}".format(filename=filename))
                 (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
-                #print(df)
+                self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
                 else:
                     timing.append((timing_start, timing_end))
+            """
         #print(timing)
         return timing
     def end_benchmarking(self, jobname, config=None):
@@ -1075,6 +1119,9 @@ class default():
             now_string = now.strftime('%Y-%m-%d %H:%M:%S')
             time_now = str(datetime.now())
             end_time = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            print("{:30s}: showing benchmarker times".format(connection))
+            print("{:30s}: benchmarker timespan (start to end single container [s]) = {}".format(connection, end_time-start_time))
+            print("{:30s}: benchmarker times (start/end per pod and container) = {}".format(connection, timing_benchmarker))
             self.cluster.logger.debug("BENCHMARKING LABELS")
             self.cluster.logger.debug("connection: "+str(connection))
             self.cluster.logger.debug("start_time: "+str(start_time))
@@ -1104,7 +1151,7 @@ class default():
                             #print(c['name'])
                             if c['name'] == config.connection:
                                 config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
-                                print(c['name'], "found and updated times:", config.benchmarking_timespans)
+                                print("{:30s}: found and updated times {}".format(c['name'], config.benchmarking_timespans))
                                 break
                         #print(config.benchmark.connections)
                         with open(connectionfile, 'w') as f:
@@ -1115,6 +1162,7 @@ class default():
                         self.cluster.logger.debug(stdout)
                 # get monitoring for loading
                 if self.monitoring_active:
+                    print("{:30s}: collecting execution metrics of SUT".format(connection))
                     cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
@@ -1129,6 +1177,7 @@ class default():
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0:
+                        print("{:30s}: collecting metrics of benchmarker".format(connection))
                         cmd['fetch_benchmarker_metrics'] = 'python metrics.py -r /results/ -db -ct benchmarker -cn dbmsbenchmarker -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
                         #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                         stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarker_metrics'], pod=pod_dashboard, container="dashboard")
@@ -1149,6 +1198,9 @@ class default():
         """
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
         self.evaluator.end_loading(jobname)
+    def show_summary(self):
+        self.cluster.logger.debug('default.show_summary()')
+        pass
 
 
 
@@ -1247,6 +1299,135 @@ class tpch(default):
         self.set_queryfile('queries-tpch.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
+    def show_summary(self):
+        self.cluster.logger.debug('tpch.show_summary()')
+        print("\n## Show Summary")
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluate = inspector.inspector(resultfolder)
+        evaluate.load_experiment(code=code, silent=False)
+        #####################
+        print("\n### Errors")
+        print(evaluate.get_total_errors().T)
+        #####################
+        print("\n### Warnings")
+        print(evaluate.get_total_warnings().T)
+        #####################
+        print("\n### Latency of Timer Execution [ms]")
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        if not df is None:
+            print(df.sort_index().T.round(2))
+        #####################
+        print("\n### Loading [s]")
+        times = {}
+        for c, connection in evaluate.benchmarks.dbms.items():
+            times[c]={}
+            if 'timeGenerate' in connection.connectiondata:
+                times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
+            if 'timeIngesting' in connection.connectiondata:
+                times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
+            if 'timeSchema' in connection.connectiondata:
+                times[c]['timeSchema'] = connection.connectiondata['timeSchema']
+            if 'timeIndex' in connection.connectiondata:
+                times[c]['timeIndex'] = connection.connectiondata['timeIndex']
+            if 'timeLoad' in connection.connectiondata:
+                times[c]['timeLoad'] = connection.connectiondata['timeLoad']
+        df = pd.DataFrame(times)
+        df = df.reindex(sorted(df.columns), axis=1)
+        print(df.round(2).T)
+        #####################
+        print("\n### Geometric Mean of Medians of Timer Run [s]")
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
+        df.columns = ['Geo Times [s]']
+        print(df.round(2))
+        #####################
+        print("\n### TPC-H Power@Size")
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index().astype('float')
+        df = float(parameter.defaultParameters['SF'])*3600./df
+        df.columns = ['Power@Size [~Q/h]']
+        print(df.round(2))
+        #####################
+        # aggregate time and throughput for parallel pods
+        print("\n### TPC-H Throughput@Size")
+        df_merged_time = pd.DataFrame()
+        for connection_nr, connection in evaluate.benchmarks.dbms.items():
+            df_time = pd.DataFrame()
+            c = connection.connectiondata
+            connection_name = c['name']
+            orig_name = c['orig_name']
+            eva = evaluate.get_experiment_connection_properties(c['name'])
+            df_time.index = [connection_name]
+            #df_time['SF'] = int(SF)
+            #print(c)
+            df_time['orig_name'] = orig_name
+            df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
+            df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
+            #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
+            df_time['num_experiment'] = int(c['parameter']['numExperiment'])
+            df_time['num_client'] = int(c['parameter']['client'])
+            df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
+            df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
+            df_merged_time = pd.concat([df_merged_time, df_time])
+        df_time = df_merged_time.sort_index()
+        benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
+        benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
+        df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
+        df_benchmark.columns = ['time [s]']
+        benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
+        df_benchmark['count'] = benchmark_count['benchmark_end']
+        df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
+        df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        index_names = list(df_benchmark.index.names)
+        index_names[0] = "DBMS"
+        df_benchmark.rename_axis(index_names, inplace=True)
+        print(df_benchmark)
+        #####################
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            df = evaluate.get_loading_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            df1 = pd.DataFrame(df)
+            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
+            ##########
+            df = evaluate.get_loading_metrics('total_cpu_memory')/1024
+            df = df.T.max().sort_index()
+            df2 = pd.DataFrame(df).round(2)
+            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
+            ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Ingestion")
+            if not df1.empty and not df2.empty:
+                print(pd.concat([df1, df2], axis=1).round(2))
+            elif not df1.empty:
+                print(df1.round(2))
+            elif not df2.empty:
+                print(df2.round(2))
+            #####################
+            df = evaluate.get_streaming_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            df1 = pd.DataFrame(df)
+            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            ##########
+            df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
+            df = df.T.max().sort_index()
+            df2 = pd.DataFrame(df)
+            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
+            ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Execution")
+            if not df1.empty and not df2.empty:
+                print(pd.concat([df1, df2], axis=1).round(2))
+            elif not df1.empty:
+                print(df1.round(2))
+            elif not df2.empty:
+                print(df2.round(2))
 
 
 """
@@ -1502,31 +1683,9 @@ class ycsb(default):
             name = 'YCSB Queries SF='+str(SF),
             info = 'This experiment performs some YCSB inspired workloads.'
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'ycsb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-    def OLD_log_to_df(self, filename):
-        try:
-            with open(filename) as f:
-                lines = f.readlines()
-            stdout = "".join(lines)
-            connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)
-            result = []
-            #for line in s.split("\n"):
-            for line in lines:
-                line = line.strip('\n')
-                cells = line.split(", ")
-                #print(cells)
-                if len(cells[0]) and cells[0][0] == "[":
-                    result.append(line.split(", "))
-            #print(result)
-            df = pd.DataFrame(result)
-            df.columns = ['category', 'type', 'value']
-            df.index.name = connection_name[0]
-            return df
-        except Exception as e:
-            print(e)
-            return pd.DataFrame()
     def test_results(self):
         """
         Run test script locally.
@@ -1541,222 +1700,6 @@ class ycsb(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def OLD_get_result_sum(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
-        try:
-            df2=df[df['type'] == type]
-            s=df2[df2['category'] == category]
-            total = s.drop(columns=['category','type']).apply(pd.to_numeric).sum(axis=1)
-            return total.iloc[0]
-        except Exception as e:
-            print(e)
-            print(df)
-            return 0.0
-    def OLD_get_result_max(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
-        try:
-            df2=df[df['type'] == type]
-            s=df2[df2['category'] == category]
-            total = s.drop(columns=['category','type']).apply(pd.to_numeric).max(axis=1)
-            return total.iloc[0]
-        except Exception as e:
-            print(e)
-            print(df)
-            return 0.0
-    def OLD_get_result_avg(self, df, category='[OVERALL]', type='Throughput(ops/sec)'):
-        try:
-            df2=df[df['type'] == type]
-            s=df2[df2['category'] == category]
-            total = s.drop(columns=['category','type']).apply(pd.to_numeric).mean(axis=1)
-            return total.iloc[0]
-        except Exception as e:
-            print(e)
-            print(df)
-            return 0.0
-    def OLD_get_parts_of_name(self, name):
-        parts_name = re.findall('{(.+?)}', self.name_format)
-        parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
-        return dict(zip(parts_name, parts_values))
-    def OLD_get_overview_loading(self, dfs={}):
-        tps = []
-        if len(dfs) == 0:
-            dfs = self.get_result(component="loading")
-        for connection, df in dfs.items():
-            #print(connection)
-            if df.empty:
-                print(connection, "is empty")
-                continue
-            #parts = re.findall('-(.+?)-', connection.replace("-","--")+"--")
-            parts = self.get_parts_of_name(connection)
-            #print(parts)
-            #threads = int(parts[0])
-            #pods = int(parts[1])
-            #worker = int(parts[2])
-            #target = int(parts[2])
-            insert_Operations = float(self.get_result_sum(df, category='[INSERT]', type='Operations'))
-            insert_OK = float(self.get_result_sum(df, category='[INSERT]', type='Return=OK'))
-            overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
-            overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
-            insert_AverageLatency = float(self.get_result_avg(df, category='[INSERT]', type='AverageLatency(us)'))
-            insert_95thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='95thPercentileLatency(us)'))
-            insert_99thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='99thPercentileLatency(us)'))
-            list_values_name = list(parts.values())
-            num_pods = len(df.columns)-2
-            #print(list_values_name)
-            list_values_df = [
-                connection, 
-                num_pods, 
-                overall_Throughput/int(parts['pods']),
-                overall_Throughput, 
-                overall_RunTime, 
-                insert_Operations, 
-                insert_OK, 
-                insert_AverageLatency, 
-                insert_95thPercentileLatency, 
-                insert_99thPercentileLatency, 
-                ]
-            #print(list_values_df)
-            list_values_name.extend(list_values_df)
-            #print('combined', list_values_name)
-            tps.append(list_values_name)
-            #print(target, worker, pods, overall_Throughput, overall_RunTime, overall_Throughput, total_tps/pods)
-        #print(tps)
-        df_totals = pd.DataFrame(tps)
-        #print(list(parts.keys()))
-        columns = list(parts.keys())
-        columns.extend([
-            'connection', 
-            'num_pods', 
-            'total_tps_per_pod', 
-            'overall_Throughput', 
-            'overall_RunTime', 
-            'insert_Operations', 
-            'insert_OK', 
-            'insert_AverageLatency', 
-            'insert_95thPercentileLatency', 
-            'insert_99thPercentileLatency',
-            ])
-        #print(columns)
-        df_totals.columns = columns
-        #list(parts.keys()).extend(['overall_Throughput', 'insert_Operations', 'insert_OK', 'overall_RunTime', 'insert_AverageLatency', 'insert_95thPercentileLatency', 'insert_99thPercentileLatency', 'total_tps_per_pod'])
-        df_totals = df_totals.astype({'target':'float','pods':'int'})
-        df_totals = df_totals.sort_values(['target','pods'])
-        return df_totals
-    def OLD_get_overview_benchmarking(self, dfs={}):
-        tps = []
-        if len(dfs) == 0:
-            dfs = self.get_result(component="benchmarking")
-        for connection, df in dfs.items():
-            #print(connection)
-            if df.empty:
-                print(connection, "is empty")
-                continue
-            parts = self.get_parts_of_name(connection)
-            #parts = re.findall('-(.+?)-', connection.replace("-","--")+"--")
-            #print(parts)
-            #threads = int(parts[1])
-            #pods = int(parts[1])
-            #worker = int(parts[2])
-            #target = int(parts[3])
-            #print(df)
-            # read
-            read_Operations = float(self.get_result_sum(df, category='[READ]', type='Operations'))
-            read_OK = float(self.get_result_sum(df, category='[READ]', type='Return=OK'))
-            read_AverageLatency = float(self.get_result_avg(df, category='[READ]', type='AverageLatency(us)'))
-            read_95thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='95thPercentileLatency(us)'))
-            read_99thPercentileLatency = float(self.get_result_avg(df, category='[READ]', type='99thPercentileLatency(us)'))
-            # update
-            update_Operations = float(self.get_result_sum(df, category='[UPDATE]', type='Operations'))
-            update_OK = float(self.get_result_sum(df, category='[UPDATE]', type='Return=OK'))
-            update_AverageLatency = float(self.get_result_avg(df, category='[UPDATE]', type='AverageLatency(us)'))
-            update_95thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='95thPercentileLatency(us)'))
-            update_99thPercentileLatency = float(self.get_result_avg(df, category='[UPDATE]', type='99thPercentileLatency(us)'))
-            # overall
-            overall_Throughput = float(self.get_result_sum(df, category='[OVERALL]', type='Throughput(ops/sec)'))
-            overall_RunTime = float(self.get_result_max(df, category='[OVERALL]', type='RunTime(ms)'))
-            # inserts
-            insert_Operations = float(self.get_result_sum(df, category='[INSERT]', type='Operations'))
-            insert_OK = float(self.get_result_sum(df, category='[INSERT]', type='Return=OK'))
-            insert_AverageLatency = float(self.get_result_avg(df, category='[INSERT]', type='AverageLatency(us)'))
-            insert_95thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='95thPercentileLatency(us)'))
-            insert_99thPercentileLatency = float(self.get_result_avg(df, category='[INSERT]', type='99thPercentileLatency(us)'))
-            # scan
-            scan_Operations = float(self.get_result_sum(df, category='[SCAN]', type='Operations'))
-            scan_OK = float(self.get_result_sum(df, category='[SCAN]', type='Return=OK'))
-            scan_AverageLatency = float(self.get_result_avg(df, category='[SCAN]', type='AverageLatency(us)'))
-            scan_95thPercentileLatency = float(self.get_result_avg(df, category='[SCAN]', type='95thPercentileLatency(us)'))
-            scan_99thPercentileLatency = float(self.get_result_avg(df, category='[SCAN]', type='99thPercentileLatency(us)'))
-            # extract from naming (DEPRCATED?)
-            list_values_name = list(parts.values())
-            num_pods = len(df.columns)-2
-            #print(list_values_name)
-            list_values_df = [
-                connection, 
-                num_pods, 
-                overall_Throughput, 
-                overall_RunTime, 
-                overall_Throughput/int(parts['pods']),
-                read_Operations, 
-                read_OK, 
-                read_AverageLatency, 
-                read_95thPercentileLatency, 
-                read_99thPercentileLatency, 
-                update_Operations, 
-                update_OK, 
-                update_AverageLatency, 
-                update_95thPercentileLatency, 
-                update_99thPercentileLatency, 
-                insert_Operations, 
-                insert_OK, 
-                insert_AverageLatency, 
-                insert_95thPercentileLatency, 
-                insert_99thPercentileLatency, 
-                scan_Operations, 
-                scan_OK, 
-                scan_AverageLatency, 
-                scan_95thPercentileLatency, 
-                scan_99thPercentileLatency, 
-                ]
-            #print(list_values_df)
-            list_values_name.extend(list_values_df)
-            #print('combined', list_values_name)
-            tps.append(list_values_name)
-            #tps.append(list(parts.values()).extend([target, worker, pods, overall_Throughput, overall_RunTime, read_Operations, read_OK, read_AverageLatency, read_95thPercentileLatency, read_99thPercentileLatency,
-            #            update_Operations, update_OK, update_AverageLatency, update_95thPercentileLatency, update_99thPercentileLatency, overall_Throughput/pods]))
-            #print(target, worker, pods, overall_Throughput, overall_RunTime, overall_Throughput, total_tps/pods)
-        #print(tps)
-        df_totals = pd.DataFrame(tps)
-        columns = list(parts.keys())
-        columns.extend([
-            'connection', 
-            'num_pods', 
-            'overall_Throughput', 
-            'overall_RunTime', 
-            'total_tps_per_pod',
-            'read_Operations', 
-            'read_OK', 
-            'read_AverageLatency', 
-            'read_95thPercentileLatency', 
-            'read_99thPercentileLatency', 
-            'update_Operations', 
-            'update_OK', 
-            'update_AverageLatency', 
-            'update_95thPercentileLatency', 
-            'update_99thPercentileLatency', 
-            'insert_Operations', 
-            'insert_OK', 
-            'insert_AverageLatency', 
-            'insert_95thPercentileLatency', 
-            'insert_99thPercentileLatency'
-            'scan_Operations', 
-            'scan_OK', 
-            'scan_AverageLatency', 
-            'scan_95thPercentileLatency', 
-            'scan_99thPercentileLatency',
-            ])
-        #print(columns)
-        df_totals.columns = columns
-        df_totals = df_totals.astype({'target':'float','pods':'int'})
-        df_totals = df_totals.sort_values(['target','pods'])
-        return df_totals
     def evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
@@ -1788,77 +1731,94 @@ class ycsb(default):
         #self.logger.debug('copy config connections.config: {}'.format(stdout))
         #cmd['upload_config'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/connections.config', from_file=self.path+"/connections.config")
         #self.cluster.kubectl(cmd['upload_config'])
+        print("{:30s}: downloading partial results".format("Experiment"))
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
-    def OLD_get_result(self, component='loading'):
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        path = self.path
-        df_prev = pd.DataFrame()
-        #pod_numbers = {}
-        if component == "loading":
-            ending = "sensor.log"
-        else:
-            component = "benchmarker"
-            ending = ".log"
-        connections = dict()
-        #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-        directory = os.fsencode(path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-"+component) and filename.endswith(".df.pickle"):
-                #print(filename)
-                #experiment_number = re.findall('{}(.+?).{}'.format(name, ending), filename)
-                #print(experiment_number)
-                c = re.findall('bexhoma-{}-(.+?)-{}'.format(component, self.code), filename)
-                if len(c) == 0:
-                    #print("empty")
-                    continue
-                connection = c[0]
-                if connection in connections:
-                    connections[connection].append(filename)
-                else:
-                    connections[connection] = [filename]
-        #print(connections)
-        dfs = dict()
-        for connection, files in connections.items():
-            #print(connection)
-            #dfs[connection] = pd.DataFrame()
-            for filename in files:
-                #print(filename)
-                #experiment_number = re.findall('bexhoma-{}-{}-{}-(.+?).{}'.format(component, connection, self.code, ending), filename)
-                experiment_components = re.findall('bexhoma-{}-{}-{}-(.+?)-(.+?)-(.+?).{}'.format(component, connection, self.code, ending), filename)
-                if len(experiment_components) == 0:
-                    #print("empty")
-                    continue
-                #print("experiment_components", experiment_components)
-                #experiment_number = experiment_number[0]
-                # turns bexhoma-loading-postgresql-8-1-1024-1672704339-1-1-22gkq.sensor.log.df.pickle
-                # into 1-1 
-                connection_number = experiment_components[0][0]+"-"+experiment_components[0][1]#experiment_number#+"-"+client_number
-                #print("connection_number", connection_number)
-                #if connection_name in pod_numbers:
-                #    pod_numbers[connection_name] = pod_numbers[connection_name] + 1
-                #else:
-                #    pod_numbers[connection_name] = 1
-                try:
-                    df = pd.read_pickle(path+"/"+filename)
-                    if not df.empty:
-                        connection_name = df.index.name+"-"+connection_number
-                        #print("found", connection_name, df)
-                        df.columns = ['category', 'type', connection_name]#+"-"+str(pod_numbers[connection_name])]
-                        if not connection_name in dfs or dfs[connection_name].empty:
-                            dfs[connection_name] = df
-                        else:
-                            dfs[connection_name] = pd.merge(dfs[connection_name], df,  how='left', left_on=['category','type'], right_on = ['category','type'])
-                except Exception as e:
-                    print(e)
-        #print("### All DataFrames ###")
-        #print(dfs)
-        return dfs
-
+    def show_summary(self):
+        #print('ycsb.show_summary()')
+        print("\n## Show Summary")
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
+        #evaluate.load_experiment(code=code, silent=False)
+        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        #####################
+        df = evaluation.get_df_loading()
+        if not df.empty:
+            print("\n### Loading")
+            df = df.sort_values(['configuration','experiment_run','client'])
+            df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+            #print(df)
+            #print(df.columns)
+            df_plot = evaluation.loading_set_datatypes(df)
+            df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+            df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
+            df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            print(df_aggregated)
+        #####################
+        df = evaluation.get_df_benchmarking()
+        if not df.empty:
+            print("\n### Execution")
+            df.fillna(0, inplace=True)
+            df_plot = evaluation.benchmarking_set_datatypes(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count"]].copy()
+            columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            print(df_aggregated_reduced)
+        #evaluation = evaluators.ycsb(code=code, path=path)
+        #####################
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            evaluation.transform_monitoring_results(component="loading")
+            #####################
+            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
+            df1 = pd.DataFrame(df)
+            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
+            ##########
+            df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()/1024
+            df2 = pd.DataFrame(df)
+            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
+            ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Ingestion")
+            if not df1.empty and not df2.empty:
+                print(pd.concat([df1, df2], axis=1).round(2))
+            elif not df1.empty:
+                print(df1.round(2))
+            elif not df2.empty:
+                print(df2.round(2))
+            #####################
+            evaluation.transform_monitoring_results(component="stream")
+            #####################
+            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
+            df1 = pd.DataFrame(df)
+            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            ##########
+            df = evaluation.get_monitoring_metric('total_cpu_memory', component='stream').max()/1024
+            df2 = pd.DataFrame(df)
+            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
+            ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Execution")
+            if not df1.empty and not df2.empty:
+                print(pd.concat([df1, df2], axis=1).round(2))
+            elif not df1.empty:
+                print(df1.round(2))
+            elif not df2.empty:
+                print(df2.round(2))
 
 
 """
@@ -1869,7 +1829,7 @@ Benchbase
 
 class benchbase(default):
     """
-    Class for defining an YCSB experiment.
+    Class for defining a Benchbase experiment.
     This sets
 
     * the folder to the experiment - including query file and schema informations per dbms

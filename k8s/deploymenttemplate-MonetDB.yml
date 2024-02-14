@@ -40,11 +40,11 @@ spec:
       - {name: dockerhub}
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: dbms
-        image: monetdb/monetdb:Sep2022-SP2
+        image: monetdb/monetdb:Dec2023
         env:
           - {name: MDB_DB_ADMIN_PASS, value: 'monetdb'}
           - {name: MDB_CREATE_DBS, value: 'demo'}
@@ -52,7 +52,7 @@ spec:
         - {containerPort: 50000}
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
-          requests: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
           #, ephemeral-storage: "1536Gi"}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}

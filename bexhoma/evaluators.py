@@ -31,6 +31,8 @@ pd.set_option('display.max_colwidth', None)
 import pickle
 import json
 import traceback
+import ast
+from dbmsbenchmarker import monitor
 
 def natural_sort(l): 
     convert = lambda text: int(text) if text.isdigit() else text.lower()
@@ -144,7 +146,7 @@ class logger(base):
         directory = os.fsencode(path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
                 #print(filename)
                 df = self.log_to_df(path+"/"+filename)
                 #print(df)
@@ -223,11 +225,11 @@ class logger(base):
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".log"):
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
                 #print("filename:", filename)
                 pod_name = filename[filename.rindex("-")+1:-len(".log")]
                 #print("pod_name:", pod_name)
-                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".log")]
+                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
                 #print("jobname:", jobname)
                 self.end_benchmarking(jobname)
     def transform_all_logs_loading(self):
@@ -273,7 +275,10 @@ class logger(base):
         :return: DataFrame of loading results
         """
         filename = "bexhoma-loading.all.df.pickle"
-        df = pd.read_pickle(self.path+"/"+filename)
+        if os.path.isfile(self.path+"/"+filename):
+            df = pd.read_pickle(self.path+"/"+filename)
+        else:
+            df = pd.DataFrame()
         #df#.sort_values(["configuration", "pod"])
         return df
     def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
@@ -378,16 +383,92 @@ class logger(base):
         try:
             if self.include_benchmarking:
                 df = self.get_df_benchmarking()
-                print(df)
+                if not df.empty:
+                    print("Benchmarking", df)
                 self.workflow = self.reconstruct_workflow(df)
-                print(self.workflow)
+                if not len(self.workflow) == 0:
+                    print("Workflow", self.workflow)
             if self.include_loading:
                 df = self.get_df_loading()
-                print(df)
+                if not df.empty:
+                    print("Loading", df)
             return 0
         except Exception as e:
             print(e)
             return 1
+    def transform_monitoring_results(self, component="loading"):
+        """
+        Creates combined metrics.csv.
+        For example
+            query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-1.csv
+            query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-2.csv
+        are combined to
+            query_datagenerator_metric_total_cpu_util.csv
+        """
+        connections_sorted = self.get_connection_config()
+        list_metrics = self.get_monitoring_metrics()
+        #print(c['name'], list_metrics)
+        for m in list_metrics:
+            df_all = None
+            for connection in connections_sorted:
+                if 'orig_name' in connection:
+                    connectionname = connection['orig_name']
+                else:
+                    connectionname = connection['name']
+                filename = "query_{component}_metric_{metric}_{connection}.csv".format(component=component, metric=m, connection=connectionname)
+                #print(self.path++"/"+filename)
+                df = monitor.metrics.loadMetricsDataframe(self.path+"/"+filename)
+                if df is None:
+                    continue
+                #print(df)
+                df.columns=[connectionname]
+                if df_all is None:
+                    df_all = df
+                else:
+                    df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
+            #print(df_all)
+            filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=m)
+            #print(self.path+filename)
+            monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
+    def get_monitoring_metric(self, metric, component="loading"):
+        """
+        Returns list of names of metrics using during monitoring.
+
+        :return: List of monitoring metrics
+        """
+        filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        if os.path.isfile(self.path+"/"+filename):
+            df = pd.read_csv(self.path+"/"+filename).T
+            #print(df)
+            df = df.reindex(index=natural_sort(df.index))
+            return df.T
+        else:
+            return pd.DataFrame()
+    def get_monitoring_metrics(self):
+        """
+        Returns list of names of metrics using during monitoring.
+
+        :return: List of monitoring metrics
+        """
+        connections_sorted = self.get_connection_config()
+        for c in connections_sorted:
+            if 'monitoring' in c and 'metrics' in c['monitoring']:
+                list_metrics = list(c['monitoring']['metrics'].keys())
+            else:
+                list_metrics = []
+            break
+        return list_metrics
+    def get_connection_config(self):
+        """
+        Returns connection.config as Python dict.
+        Items are sorted by connection name.
+
+        :return: Python dict of all connection informations
+        """
+        with open(self.path+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        connections_sorted = sorted(connections, key=lambda c: c['name']) 
+        return connections_sorted
 
 
 
@@ -421,6 +502,13 @@ class ycsb(logger):
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
+            operations = re.findall('YCSB_OPERATIONS (.+?)\n', stdout)[0]
+            batchsize = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
+            if len(batchsize)>0:
+                # information found
+                batchsize = int(batchsize[0])
+            else:
+                batchsize = -1
             #workload = "A"
             pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
             result = []
@@ -434,7 +522,7 @@ class ycsb(logger):
             #print(result)
             #return
             list_columns = [value[0]+"."+value[1] for value in result]
-            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload]
+            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize]
             list_measures = [value[2] for value in result]
             #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
             #print(list_columns)
@@ -445,7 +533,7 @@ class ycsb(logger):
             #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
-            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload']
+            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize']
             columns.extend(list_columns)
             #print(columns)
             df.columns = columns
@@ -540,7 +628,7 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        column = "connection"
+        column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby(column):
             #print(key, len(grp.index))
@@ -614,13 +702,13 @@ class ycsb(logger):
                 }}
             #print(grp.agg(aggregate))
             dict_grp = dict()
-            dict_grp['connection'] = key
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['connection'] = key[0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key])#columns=list(dict_grp.keys()))
+            df_grp = pd.DataFrame(dict_grp, index=[key[0]])#columns=list(dict_grp.keys()))
             #df_grp = df_grp.T
             #df_grp.set_index('connection', inplace=True)
             #print(df_grp)
@@ -722,8 +810,8 @@ class ycsb(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             #dict_grp['pod_count'] = grp['pod_count'][0]
@@ -736,6 +824,19 @@ class ycsb(logger):
             #print(df_grp)
             df_aggregated = pd.concat([df_aggregated, df_grp])
         return df_aggregated
+    def get_df_loading(self):
+        """
+        Returns the DataFrame that containts all information about the loading phase.
+
+        :return: DataFrame of loading results
+        """
+        filename = "bexhoma-loading.all.df.pickle"
+        if os.path.isfile(self.path+"/"+filename):
+            df = pd.read_pickle(self.path+"/"+filename)
+        else:
+            df = pd.DataFrame()
+        #df#.sort_values(["configuration", "pod"])
+        return df
 
 
 

@@ -16,11 +16,22 @@ spec:
       - name: dockerhub
       nodeSelector:
       tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - name: datagenerator
         image: bexhoma/generator_tpch:latest
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
+        #securityContext:
+        #  allowPrivilegeEscalation: false
+        #  runAsNonRoot: true
+        #  runAsUser: 1000
+        #  runAsGroup: 1000
+        #  capabilities:
+        #    drop:
+        #      - ALL
+        #  readOnlyRootFilesystem: true
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-nil-aws-1658676533'}
         - {name: BEXHOMA_PORT, value: '9091'}
@@ -33,7 +44,6 @@ spec:
         resources:
           #limits: {cpu: 1000m, memory: 16Gi}
           #requests: {cpu: 1000m, memory: 16Gi}
-        securityContext:
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpch/"
