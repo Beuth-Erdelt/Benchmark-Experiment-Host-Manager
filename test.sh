@@ -18,6 +18,8 @@ nohup python ycsb.py -ms 1 -m -workload a -tr \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
 	run &>logs/test_ycsb_1.log &
 
+# watch -n 30 tail -n 50 logs/test_ycsb_1.log
+
 
 #### Wait so that experiments receive different codes
 sleep 5
@@ -29,6 +31,7 @@ sleep 5
 # 16384 = target
 # run twice
 # [1,2] execute
+# persistent storage of class shared
 nohup python ycsb.py -ms 1 -m -workload a -tr \
 	-nlp 8 \
 	-dbms PostgreSQL \
@@ -61,6 +64,8 @@ nohup python ycsb.py -ms 1 -m -workload a -tr \
 	-rst shared -rss 100Gi \
 	run &>logs/test_ycsb_3.log &
 
+# watch -n 30 tail -n 50 logs/test_ycsb_3.log
+
 
 #### Wait so that experiments receive different codes
 sleep 5
@@ -80,6 +85,8 @@ nohup python tpch.py -ms 1 -m -dt -sf 1 -ii -ic -is \
 	-t 1200 \
 	run &>logs/test_tpch_1.log &
 
+# watch -n 30 tail -n 50 logs/test_tpch_1.log
+
 
 #### Wait so that experiments receive different codes
 sleep 5
@@ -97,8 +104,6 @@ nohup python tpch.py -ms 1 -m -dt -sf 1 -ii -ic -is \
 	-dbms PostgreSQL -t 1200 \
 	-rst shared -rss 100Gi \
 	run &>logs/test_tpch_2.log &
-
-
 
 # watch -n 30 tail -n 50 logs/test_tpch_2.log
 
