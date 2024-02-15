@@ -527,6 +527,8 @@ class default():
 
         :return: True, if monitoring is running
         """
+        if self.experiment.cluster.monitor_cluster_exists:
+            return True
         app = self.appname
         component = 'monitoring'
         configuration = self.configuration
