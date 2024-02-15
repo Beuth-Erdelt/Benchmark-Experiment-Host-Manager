@@ -6,17 +6,23 @@ Bexhoma basically offers two variants
 * Monitor only the system-under-test (SUT) with `-m`
 * Monitor all components with `-mc`
 
+Moreover bexhoma expects the cluster to be prepared, i.e. a daemonset of cAdvisors (exporters) is running and there is a Prometheus server (collector) we can connect to.
+However bexhoma can optionally install these components if missing.
 
 ## Configuration
 
-This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for collecting metrics and .
+Monitoring can be configured.
+Probably you won't have to change much.
+If there is a Prometheus server running in your cluster, make sure to adjust `service_monitoring`.
+If there is no Prometheus server running in your cluster, make sure to leave the template in `service_monitoring` as is.
 
-Deployment
-* `cadvisor`
+* `service_monitoring`: a DNS name of the Prometheus server
+* `extend`: number of seconds each interval of observations should be extended  
+  i.g., an interval [t,t'] will be extended to [t-e, t'+e]
+* `shift`: number of seconds each interval of observations should be shifted  
+  i.g., an interval [t,t'] will be shifted to [t+s, t'+s]
+* `metrics`: a dict of informations about metrics to be collected, see below
 
-Prometheus
-* `job="monitor-node"`
-* `container_name="dbms"`
 
 Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
 
@@ -96,9 +102,18 @@ Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Ex
 },
 ```
 
-#### Fine Tuning
+This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for collecting metrics and .
 
-If the Grafana server has metrics coming from general Prometheus server, that is it scrapes more exporters than just the bexhoma related, we will need to specify further which metrics we are interested in.
+
+### Fine Tuning
 
 There is a placeholder `{gpuid}` that is substituted automatically by a list of GPUs present in the pod.
 
+## Installation
+
+Deployment
+* `cadvisor`
+
+Prometheus
+* `job="monitor-node"`
+* `container_name="dbms"`
