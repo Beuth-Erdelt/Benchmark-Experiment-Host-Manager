@@ -1390,6 +1390,7 @@ class tpch(default):
         print(df_benchmark)
         #####################
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
             df_monitoring = list()
             #####################
             df = evaluate.get_loading_metrics('total_cpu_util_s')
@@ -1418,31 +1419,33 @@ class tpch(default):
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 print(df)
             #####################
+            df_monitoring = list()
+            #####################
             df = evaluate.get_streaming_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
             ##########
             df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
-            df2 = pd.DataFrame(df)
-            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["SUT - Max RAM of Execution [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
             ##########
             df = evaluate.get_streaming_metrics('total_cpu_memory_cached')/1024
             df = df.T.max().sort_index()
-            df3 = pd.DataFrame(df)
-            df3.columns = ["SUT - Max RAM of Execution Cached [Gb]"]
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["SUT - Max RAM of Execution Cached [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
             ##########
-            if not df1.empty or not df2.empty or not df3.empty:
+            if len(df_monitoring) > 0:
                 print("\n### Execution")
-            if not df1.empty and not df2.empty and not df3.empty:
-                print(pd.concat([df1, df2, df3], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
-            elif not df3.empty:
-                print(df2.round(2))
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
 
 
 """
