@@ -713,7 +713,7 @@ class default():
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         """
-        if not self.experiment.monitoring_active:
+        if not self.experiment.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
             return
         if len(app) == 0:
             app = self.appname
@@ -1195,7 +1195,7 @@ scrape_configs:
                     dep['spec']['selector']['experiment'] = experiment
                     dep['spec']['selector']['dbms'] = self.docker
                     dep['spec']['selector']['volume'] = self.volume
-                    if not self.monitoring_active:
+                    if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
                             if 'name' in ports and ports['name'] != 'port-dbms':
@@ -1216,7 +1216,7 @@ scrape_configs:
                 dep['spec']['selector']['volume'] = self.volume
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
-                if not self.monitoring_active:
+                if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
                         if 'name' in ports and ports['name'] != 'port-dbms':
@@ -1257,7 +1257,7 @@ scrape_configs:
                             result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                         else:
                             self.dockerimage = result[key]['spec']['template']['spec']['containers'][i]['image']
-                    elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active:
+                    elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i]
