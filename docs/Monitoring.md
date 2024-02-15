@@ -114,6 +114,8 @@ There is a placeholder `{experiment}` that is substituted automatically by the n
 Moreover the is automatical substituion of
 * `container_label_io_kubernetes_container_name="dbms"`: 
 
+Summation over all matching components.
+
 ## Installation
 
 Deployment
