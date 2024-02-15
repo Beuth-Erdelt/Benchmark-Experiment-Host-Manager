@@ -107,7 +107,7 @@ class testbed():
         self.port = self.contextdata['port']
         self.monitoring_active = True
         self.monitor_cluster_active = False
-        self.monitor_cluster_exists = favorites_table       # True, if there are cAdvisors and a Prometheus server independent from bexhoma
+        self.monitor_cluster_exists = False                                                     # True, if there are cAdvisors and a Prometheus server independent from bexhoma
         # k8s:
         self.namespace = self.contextdata['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
