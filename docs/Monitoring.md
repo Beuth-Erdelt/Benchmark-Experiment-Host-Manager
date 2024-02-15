@@ -102,12 +102,17 @@ Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Ex
 },
 ```
 
-This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for collecting metrics and .
+This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for the collection of the metrics.
 
 
-### Fine Tuning
+### Explanation
 
 There is a placeholder `{gpuid}` that is substituted automatically by a list of GPUs present in the pod.
+There is a placeholder `{configuration}` that is substituted automatically by the name of the current configuration of the SUT.
+There is a placeholder `{experiment}` that is substituted automatically by the name (identifier) of the current experiment. 
+
+Moreover the is automatical substituion of
+* `container_label_io_kubernetes_container_name="dbms"`: 
 
 ## Installation
 

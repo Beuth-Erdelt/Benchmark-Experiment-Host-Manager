@@ -1392,11 +1392,18 @@ class tpch(default):
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
             df_monitoring = list()
-            #####################
+            ##########
             df = evaluate.get_loading_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df_cleaned = pd.DataFrame(df)
             df_cleaned.columns = ["CPU [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_loading_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
             if not df_cleaned.empty:
                 df_monitoring.append(df_cleaned.copy())
             ##########
@@ -1420,11 +1427,18 @@ class tpch(default):
                 print(df)
             #####################
             df_monitoring = list()
-            #####################
+            ##########
             df = evaluate.get_loader_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df_cleaned = pd.DataFrame(df)
             df_cleaned.columns = ["CPU [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_loader_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
             if not df_cleaned.empty:
                 df_monitoring.append(df_cleaned.copy())
             ##########
@@ -1456,6 +1470,13 @@ class tpch(default):
             if not df_cleaned.empty:
                 df_monitoring.append(df_cleaned.copy())
             ##########
+            df = evaluate.get_streaming_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
             df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
             df_cleaned = pd.DataFrame(df)
@@ -1481,6 +1502,13 @@ class tpch(default):
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df_cleaned = pd.DataFrame(df)
             df_cleaned.columns = ["CPU [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_benchmarker_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
             if not df_cleaned.empty:
                 df_monitoring.append(df_cleaned.copy())
             ##########
