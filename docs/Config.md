@@ -1,14 +1,5 @@
 # Configurations
 
-We need
-* a [config file](#clusterconfig) containing cluster information , say `cluster.config`
-* a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`, containing
-  * a [config file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html) `queries.config` for the workload
-  * folders for DDL scripts (per DBMS)
-* a python script managing the experimental workflow, say `tpch.py`, see [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py)
-
-To use the predefined examples you will only have to change the context and namespace of the Kubernetes cluster - see below.
-
 ## Cluster-Config
 
 The configuration of the cluster, that is the possible host and experiment settings, consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):

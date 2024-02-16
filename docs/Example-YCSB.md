@@ -9,7 +9,7 @@ References:
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`
+Example: `python ycsb.py -ms 1 -dbms PostgreSQL --workload a -tr run`
 
 This
 * loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
@@ -24,7 +24,7 @@ This
       * imports it into the DBMS
   * runs `n` parallel streams of YCSB queries per DBMS
     * 1.000.000 operations
-    * workload A = 50% read / 50% write (`-workload`)
+    * workload A = 50% read / 50% write (`--workload`)
     * target throughput is `t` * 16384
   * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
@@ -279,7 +279,7 @@ We might only want to benchmark the workloads of YCSB in different configuration
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -m -workload a -tr -nlp 1 -dbms PostgreSQL -ne 1,2 -nc 2 -ltf 2 run`
+Example: `python ycsb.py -ms 1 -m --workload a -tr -nlp 1 -dbms PostgreSQL -ne 1,2 -nc 2 -ltf 2 run`
 
 This loads a YCSB data set with 1 pod (`-lnp`) of 64 threads.
 There are two executions (`-ne`) run against the database, the first with 1 driver and the second with two drivers.
@@ -308,7 +308,7 @@ PostgreSQL-64-1-32768-2-2               2      128   65536          2           
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
 
-Example: `python ycsb.py -ms 1 -m -dbms MySQL -workload a -tr -nc 2 -rst local-hdd -rss 50Gi run`
+Example: `python ycsb.py -ms 1 -m -dbms MySQL --workload a -tr -nc 2 -rst local-hdd -rss 50Gi run`
 
 The following status shows we have two volumes of type `local-hdd`. Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
