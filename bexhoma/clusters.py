@@ -1335,12 +1335,12 @@ class testbed():
                 self.logger.debug('Command {}'.format(command))
                 #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
                 #cores = os.popen(fullcommand).read()
-                stdin, stdout, stderr = self.execute_command_in_pod(pod=pod_dashboard, command=command)
-                print("Return", stdout, stderr)
+                stdin, stdout, stderr = self.execute_command_in_pod(pod=pod_dashboard, command=command, container="dashboard")
+                #print("Return", stdout, stderr)
                 status = stdout#os.popen(fullcommand).read()
                 if len(status)>0:
                     #return int(status)
-                    print(int(status))
+                    #print(int(status))
                     if int(status) == 200:
                         return True
                     else:
