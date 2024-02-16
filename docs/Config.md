@@ -1,14 +1,5 @@
 # Configurations
 
-We need
-* a [config file](#clusterconfig) containing cluster information , say `cluster.config`
-* a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`, containing
-  * a [config file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html) `queries.config` for the workload
-  * folders for DDL scripts (per DBMS)
-* a python script managing the experimental workflow, say `tpch.py`, see [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py)
-
-To use the predefined examples you will only have to change the context and namespace of the Kubernetes cluster - see below.
-
 ## Cluster-Config
 
 The configuration of the cluster, that is the possible host and experiment settings, consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):
@@ -105,6 +96,10 @@ It is organized as follows:
   * a list of script names.  
   The scripts `.sql` are sent to the command line tool of the DBMS (`loadData` parameter in the DBMS configuration) and the files `.sh` are executed as shell scripts.
 The scripts must be present in a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`.
+
+Example: For TPC-H the script `tpch.py` may run (depending on the CLI parameters)
+* `Schema` before ingestion - this runs the script `initschema-tpch.sql`
+* `Index_and_Constraints` after ingestion - this runs the script `initindexes-tpch.sql` and `initconstraints-tpch.sql`
 
 The data itself is expected to be stored in a shared disk, that will be mounted into the DBMS container as `/data/`.
 The examples scripts above (like `initdata-tpch-SF1.sql` for example) refer to `/data/tpch/SF1/` for example.
