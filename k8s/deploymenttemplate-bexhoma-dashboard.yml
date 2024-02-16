@@ -82,7 +82,10 @@ spec:
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
+        - name: benchmark-data-volume
+          mountPath: /data
       volumes:
       - name: bexhoma-results
-        persistentVolumeClaim:
-          claimName: bexhoma-results
+        persistentVolumeClaim: {claimName: bexhoma-results}
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
