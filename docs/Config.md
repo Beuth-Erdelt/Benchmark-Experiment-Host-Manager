@@ -1,13 +1,9 @@
-# Configurations
+# Cluster-Config
 
-## Cluster-Config
-
-The configuration of the cluster, that is the possible host and experiment settings, consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):
+The configuration of the cluster, that is the possible host and experiment settings, is set in a file `cluster.config` and consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):
 
 
-### Config of the Benchmark tool
-
-You probably can leave this as is.
+## Basic settings
 
 ```
 'benchmarker': {
@@ -16,13 +12,10 @@ You probably can leave this as is.
 },
 ```
 
-* `resultfolder`: Where the benchmarker puts it's result folders
-* `jarfolder`: Where the benchmarker expects the JDBC jar files
+* `resultfolder`: Where the benchmarker puts it's result folders. Make sure this is an existing folder bexhoma can write to.
+* `jarfolder`: Where the benchmarker expects the JDBC jar files. You probably should leave this as is.
 
-Both folders are used to correspond with the Docker containers of the benchmarker and must match the settings inside of the image.
-
-
-### Credentials of the Cluster
+## Credentials of the Cluster
 
 You will have to adjust the name of the namespace `my_namespace`.
 The rest probably can stay as is.
@@ -34,13 +27,14 @@ The rest probably can stay as is.
         'context': {
             'my_context': {
                 'namespace': 'my_namespace',
-                'clustername': 'BHT',
+                'clustername': 'My Cluster',
                 'service_sut': '{service}.{namespace}.svc.cluster.local',
                 'port': 9091, # K8s: Local port for connecting via JDBC after port forwarding
             },
 ```
-* `my_context`: Context (name) of the cluster. Repeat this section for every K8s cluster you want to use. This also allows to useand compare several Clouds.
-* `my_namespace`: Namespace in the cluster.
+* `my_context`: Context (name) of the cluster. Repeat this section for every K8s cluster you want to use. This also allows to use and compare several clouds.
+* `my_namespace`: Namespace in the cluster. Make sure you have access to that namespace.
+* `clustername`: Customize the cluster name for your convenience.
 
 
 ## (Hardware) Monitoring
@@ -103,3 +97,10 @@ Example: For TPC-H the script `tpch.py` may run (depending on the CLI parameters
 
 The data itself is expected to be stored in a shared disk, that will be mounted into the DBMS container as `/data/`.
 The examples scripts above (like `initdata-tpch-SF1.sql` for example) refer to `/data/tpch/SF1/` for example.
+
+## DBMS
+
+Database systems are described in the `docker` section.
+Please see [DBMS section](https://bexhoma.readthedocs.io/en/latest/DBMS.html) for more informations.
+
+
