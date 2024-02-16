@@ -43,6 +43,8 @@ import shutil
 import json
 import ast
 import copy
+import urllib.request
+import urllib.parse
 
 from dbmsbenchmarker import *
 from bexhoma import experiments
@@ -1309,6 +1311,29 @@ class testbed():
                self.wait(10, silent=True)
             print("done")
             return
+    def test_if_monitoring_healthy(self):
+        """
+        Tests if query_range?query=node_memory_MemTotal_bytes&start=1&end=2&step=1 at service_monitoring returns status code of 200.
+        This is for testing if Prometheus is up and running.
+
+        :return: True if Prometheus returns status code 200
+        """
+        config_K8s = self.config['credentials']['k8s']
+        if 'service_monitoring' in config_K8s['monitor']:
+            url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'])
+            query = "node_memory_MemTotal_bytes"
+            safe_query = urllib.parse.quote_plus(query)
+            try:
+                code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
+                if code == 200:
+                    print("{:30s}: is running".format("Prometheus"))
+                    return True
+                else:
+                    print("{:30s}: is not running".format("Prometheus"))
+                    return False
+            except Exception as e:
+                print("{:30s}: is not running".format("Prometheus"))
+                return False
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
         Starts the monitoring component and its service.
