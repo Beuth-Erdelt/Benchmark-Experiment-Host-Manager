@@ -1318,21 +1318,23 @@ class testbed():
 
         :return: True if Prometheus returns status code 200
         """
+        self.logger.debug('testbed.test_if_monitoring_healthy()')
         config_K8s = self.config['credentials']['k8s']
         if 'service_monitoring' in config_K8s['monitor']:
             url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'])
             query = "node_memory_MemTotal_bytes"
             safe_query = urllib.parse.quote_plus(query)
             try:
+                self.logger.debug('Test URL {}'.format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1"))
                 code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
                 if code == 200:
-                    print("{:30s}: is running".format("Prometheus"))
+                    #print("{:30s}: is running".format("Prometheus"))
                     return True
                 else:
-                    print("{:30s}: is not running".format("Prometheus"))
+                    #print("{:30s}: is not running".format("Prometheus"))
                     return False
             except Exception as e:
-                print("{:30s}: is not running".format("Prometheus"))
+                #print("{:30s}: is not running".format("Prometheus"))
                 return False
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """

@@ -116,6 +116,12 @@ if __name__ == '__main__':
             print("Result Directory: {}".format("Running"))
         else:
             print("Result Directory: {}".format("Missing"))
+        # get cluster monitoring Prometheus
+        monitoring_running = cluster.test_if_monitoring_healthy()
+        if monitoring_running:
+            print("Cluster Prometheus: {}".format("Running"))
+        else:
+            print("Cluster Prometheus: {}".format("Missing"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)
