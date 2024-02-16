@@ -13,7 +13,7 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 # SF = 1
 # PostgreSQL 1 and 8 loader
 # [1,2,3,4,5,6,7,8] times 16384 = target
-nohup python ycsb.py -ms 1 -m -workload a -tr \
+nohup python ycsb.py -ms 1 -m --workload a -tr \
 	-dbms PostgreSQL \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
 	run &>logs/test_ycsb_1.log &
@@ -32,7 +32,7 @@ sleep 5
 # run twice
 # [1,2] execute
 # persistent storage of class shared
-nohup python ycsb.py -ms 1 -m -workload a -tr \
+nohup python ycsb.py -ms 1 -m --workload a -tr \
 	-nlp 8 \
 	-dbms PostgreSQL \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -54,7 +54,7 @@ sleep 5
 # PostgreSQL 1 loader
 # 2x(1,2) benchmarker
 # persistent storage of class shared
-nohup python ycsb.py -ms 1 -m -workload a -tr \
+nohup python ycsb.py -ms 1 -m --workload a -tr \
 	-nlp 1 \
 	-dbms PostgreSQL \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

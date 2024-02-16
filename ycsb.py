@@ -84,7 +84,6 @@ if __name__ == '__main__':
         list_target_factors = [int(x) for x in list_target_factors]
     batchsize = args.scaling_batchsize
     timeout = int(args.timeout)
-    numRun = int(args.num_run)
     num_experiment_to_apply = int(args.num_config)
     num_loading = int(args.num_loading)
     #num_loading_pods = int(args.num_loading_pods)
