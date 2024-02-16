@@ -143,39 +143,32 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
 ```bash
-usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-sf SCALING_FACTOR]
-               [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS] [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
-               [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
-               {run,start,load}
+usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-wl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
+               [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
+               [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
+               {run,start,load,summary}
 
 Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*1,000,000. This installs a clean copy for each target and split of the driver. Optionally monitoring is activated.
 
 positional arguments:
-  {run,start,load}      import YCSB data or run YCSB queries
+  {run,start,load,summary}
+                        import YCSB data or run YCSB queries
 
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MySQL}
+  -dbms {PostgreSQL,MySQL}, --dbms {PostgreSQL,MySQL}
                         DBMS to load the data
-  -workload {a,b,c,d,e,f}
-                        YCSB default workload
   -db, --debug          dump debug informations
   -cx CONTEXT, --context CONTEXT
                         context of Kubernetes (for a multi cluster environment), default is current context
   -e EXPERIMENT, --experiment EXPERIMENT
                         sets experiment code for continuing started experiment
-  -d, --detached        puts most of the experiment workflow inside the cluster
   -m, --monitoring      activates monitoring for sut
   -mc, --monitoring-cluster
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates datatransfer
-  -md MONITORING_DELAY, --monitoring-delay MONITORING_DELAY
-                        time to wait [s] before execution of the runs of a query
-  -nr NUM_RUN, --num-run NUM_RUN
-                        number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of runs per configuration
   -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
@@ -184,10 +177,12 @@ options:
                         number of parallel loaders per configuration
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
+  -wl {a,b,c,e,f}, --workload {a,b,c,e,f}
+                        YCSB default workload
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF) = number of rows in millions
   -sfo SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
-                        scaling factor (SF) = number of operations in millions (=SF if not set)
+                        scaling factor = number of operations in millions (=SF if not set)
   -su SCALING_USERS, --scaling-users SCALING_USERS
                         scaling factor = number of total threads
   -sbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
@@ -199,25 +194,25 @@ options:
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
   -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        request ram
+                        request ram for sut, default 16Gi
   -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        request cpus
+                        request cpus for sut, default 4
   -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
-                        request node having node label cpu=
+                        request node for sut to have node label cpu=
   -rg REQUEST_GPU, --request-gpu REQUEST_GPU
-                        request number of gpus
+                        request number of gpus for sut
   -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
-                        request node having node label gpu=
+                        request node for sut to have node label gpu=
   -rst {None,,local-hdd,shared}, --request-storage-type {None,,local-hdd,shared}
                         request persistent storage of certain type
   -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
                         request persistent storage of certain size
   -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
-                        request a specific node
+                        request a specific node for sut
   -rnl REQUEST_NODE_LOADING, --request-node-loading REQUEST_NODE_LOADING
-                        request a specific node
+                        request a specific node for loading pods
   -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
-                        request a specific node
+                        request a specific node for benchmarking pods
   -tr, --test-result    test if result fulfills some basic requirements
 ```
 

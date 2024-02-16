@@ -97,5 +97,9 @@ It is organized as follows:
   The scripts `.sql` are sent to the command line tool of the DBMS (`loadData` parameter in the DBMS configuration) and the files `.sh` are executed as shell scripts.
 The scripts must be present in a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`.
 
+Example: For TPC-H the script `tpch.py` may run (depending on the CLI parameters)
+* `Schema` before ingestion - this runs the script `initschema-tpch.sql`
+* `Index_and_Constraints` after ingestion - this runs the script `initindexes-tpch.sql` and `initconstraints-tpch.sql`
+
 The data itself is expected to be stored in a shared disk, that will be mounted into the DBMS container as `/data/`.
 The examples scripts above (like `initdata-tpch-SF1.sql` for example) refer to `/data/tpch/SF1/` for example.
