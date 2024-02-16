@@ -1326,13 +1326,33 @@ class testbed():
             safe_query = urllib.parse.quote_plus(query)
             try:
                 self.logger.debug('Test URL {}'.format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1"))
-                code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
-                if code == 200:
-                    #print("{:30s}: is running".format("Prometheus"))
-                    return True
+                #code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
+                # curl -ILs www.welt.de | head -n 1|cut -d$' ' -f2
+                cmd = {}
+                command = "curl -ILs {} | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
+                #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+                #cores = os.popen(fullcommand).read()
+                stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+                status = stdout#os.popen(fullcommand).read()
+                if len(status)>0:
+                    #return int(status)
+                    print(int(status))
+                    if int(status) == 200:
+                        return True
+                    else:
+                        return False
                 else:
-                    #print("{:30s}: is not running".format("Prometheus"))
                     return False
+                #except Exception as e:
+                #    logging.error(e)
+                #    return 0
+                # curl -I http://www.example.org
+                #if code == 200:
+                #    #print("{:30s}: is running".format("Prometheus"))
+                #    return True
+                #else:
+                #    #print("{:30s}: is not running".format("Prometheus"))
+                #    return False
             except Exception as e:
                 #print("{:30s}: is not running".format("Prometheus"))
                 return False
