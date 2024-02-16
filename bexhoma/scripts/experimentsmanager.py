@@ -115,6 +115,12 @@ def manage():
             print("Result directory: {}".format("Running"))
         else:
             print("Result directory: {}".format("Missing"))
+        # get cluster monitoring Prometheus
+        monitoring_running = cluster.test_if_monitoring_healthy()
+        if monitoring_running:
+            print("Cluster Prometheus: {}".format("Running"))
+        else:
+            print("Cluster Prometheus: {}".format("Not running"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)

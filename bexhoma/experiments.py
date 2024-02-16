@@ -727,6 +727,11 @@ class default():
         :param intervals: Seconds to wait before checking change of status
         :param stop: Tells if SUT should be removed when all benchmarking has finished. Set to False if we want to have loaded SUTs for inspection.
         """
+        # test if there is a Pometheus server running in the cluster
+        if self.cluster.test_if_monitoring_healthy():
+            self.cluster.monitor_cluster_exists = True
+        else:
+            self.cluster.monitor_cluster_exists = False
         do = True
         while do:
             #time.sleep(intervals)
