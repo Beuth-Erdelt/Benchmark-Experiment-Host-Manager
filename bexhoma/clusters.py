@@ -1336,6 +1336,7 @@ class testbed():
                 #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
                 #cores = os.popen(fullcommand).read()
                 stdin, stdout, stderr = self.execute_command_in_pod_sut(pod=pod_dashboard, command=command)
+                print("Return", stdout, stderr)
                 status = stdout#os.popen(fullcommand).read()
                 if len(status)>0:
                     #return int(status)
@@ -1358,6 +1359,7 @@ class testbed():
                 #    return False
             except Exception as e:
                 #print("{:30s}: is not running".format("Prometheus"))
+                print(e)
                 return False
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
