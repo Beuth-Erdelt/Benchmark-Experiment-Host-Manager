@@ -1,4 +1,4 @@
-# How to configure an experiment setup
+# Configurations
 
 We need
 * a [config file](#clusterconfig) containing cluster information , say `cluster.config`

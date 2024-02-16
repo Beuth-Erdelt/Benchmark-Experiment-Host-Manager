@@ -57,6 +57,49 @@ This has
 * an optional name of a `logfile` that is downloaded after the benchmark
 * name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
 
+### Deployment Manifests
+
+Every DBMS that is deployed by bexhoma needs a YAML manifest.
+See for example https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
+
+You may want to pay attention to name of the secret:
+```
+      imagePullSecrets:
+      - {name: dockerhub}
+```
+Another section that might be interesting is
+```
+      tolerations:
+```
+
+#### Parametrize Templates
+
+Some parameters can be changed per DBMS or per experiment in Python, for example
+```
+experiment.set_resources(
+    requests = {
+        'cpu': cpu,
+        'memory': memory,
+        'gpu': 0
+    },
+    limits = {
+        'cpu': 0,
+        'memory': 0
+    },
+    nodeSelector = {
+        'cpu': cpu_type,
+        'gpu': '',
+    })
+experiment.set_resources(
+    nodeSelector = {
+        'cpu': cpu_type,
+        'gpu': '',
+        'kubernetes.io/hostname': request_node_name
+    })        
+```
+
+The parameters can be set via CLI (see for example `tpch.py`).
+
 ## MariaDB
 
 **Deployment**
