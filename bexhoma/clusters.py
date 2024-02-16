@@ -1328,11 +1328,12 @@ class testbed():
                 self.logger.debug('Test URL {}'.format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1"))
                 #code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
                 # curl -ILs www.welt.de | head -n 1|cut -d$' ' -f2
+                pod_dashboard = self.get_dashboard_pod_name()
                 cmd = {}
                 command = "curl -ILs {} | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
                 #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
                 #cores = os.popen(fullcommand).read()
-                stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+                stdin, stdout, stderr = self.execute_command_in_pod_sut(pod=pod_dashboard, command=command)
                 status = stdout#os.popen(fullcommand).read()
                 if len(status)>0:
                     #return int(status)
