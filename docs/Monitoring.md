@@ -9,16 +9,28 @@ Bexhoma basically offers two variants
 Moreover bexhoma expects the cluster to be prepared, i.e. a daemonset of cAdvisors (exporters) is running and there is a Prometheus server (collector) we can connect to.
 However bexhoma can optionally install these components if missing.
 
-## Configuration
+## Configuration and Options
 
 Monitoring can be configured.
 Probably you won't have to change much.
 If there is a Prometheus server running in your cluster, make sure to adjust `service_monitoring`.
 If there is no Prometheus server running in your cluster, make sure to leave the template in `service_monitoring` as is.
 Bexhoma checks at the beginning of an experiment if the URL provided is reachable;
-it opens a socket using `urllib.request` to test if `query_range?query=node_memory_MemTotal_bytes&start=1&end=2&step=1` has a return status of 200.
+it uses cURL inside the dashboard pod to test if `query_range?query=node_memory_MemTotal_bytes&start=1&end=2&step=1` has a return status of 200.
 
-* `service_monitoring`: a DNS name of the Prometheus server
+If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
+* Monitor only the system-under-test (SUT) with `-m`
+  * install a cAdvisor per SUT
+  * install a Prometheus server per experiment
+* Monitor all components with `-mc`
+  * install a cAdvisor per node as a daemonset
+  * install a Prometheus server per experiment
+
+Bexhoma will also make sure all components know of eachother.
+
+Configuration takes place in `cluster.config`:
+* `service_monitoring`: a DNS name of the Prometheus server  
+  the placeholders `service` and `namespace` are replaced by the service of the monitoring component of the experiment and the namespace inside the cluster config resp.
 * `extend`: number of seconds each interval of observations should be extended  
   i.g., an interval [t,t'] will be extended to [t-e, t'+e]
 * `shift`: number of seconds each interval of observations should be shifted  
