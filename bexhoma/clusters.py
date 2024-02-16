@@ -1331,7 +1331,7 @@ class testbed():
                 pod_dashboard = self.get_dashboard_pod_name()
                 self.logger.debug('Inside pod {}'.format(pod_dashboard))
                 cmd = {}
-                command = "curl -ILs {} | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
+                command = "curl -is {} | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
                 self.logger.debug('Command {}'.format(command))
                 #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
                 #cores = os.popen(fullcommand).read()
