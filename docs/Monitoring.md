@@ -20,7 +20,7 @@ it uses cURL inside the dashboard pod to test if `query_range?query=node_memory_
 
 If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
 * Monitor only the system-under-test (SUT) with `-m`
-  * install a cAdvisor per SUT
+  * install a cAdvisor sidecar container per SUT
   * install a Prometheus server per experiment
 * Monitor all components with `-mc`
   * install a cAdvisor per node as a daemonset
@@ -125,16 +125,17 @@ There is a placeholder `{gpuid}` that is substituted automatically by a list of 
 There is a placeholder `{configuration}` that is substituted automatically by the name of the current configuration of the SUT.
 There is a placeholder `{experiment}` that is substituted automatically by the name (identifier) of the current experiment. 
 
-Moreover the is automatical substituion of
-* `container_label_io_kubernetes_container_name="dbms"`: 
+Moreover the is an automatical substituion of `container_label_io_kubernetes_container_name="dbms"`; the `dbms` refers to the sut. For other containers it is replaced by `datagenerator`, `sensor` and `dbmsbenchmarker`.
 
-Summation over all matching components.
+Note that the metrics make a summation over all matching components (containers, CPU cores etc).
 
-## Installation
+### Installation Templates
 
-Deployment
-* `cadvisor`
+cAdvisor
+* container `cadvisor` and a service with `port-monitoring` 9300
+* example per SUT: `k8s/deploymenttemplate-PostgreSQL.yml`
+* example per node: `k8s/daemonsettemplate-monitoring.yml`
 
 Prometheus
-* `job="monitor-node"`
-* `container_name="dbms"`
+* container with a service with `port-prometheus` 9090
+* `k8s/deploymenttemplate-bexhoma-prometheus.yml`
