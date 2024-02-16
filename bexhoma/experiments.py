@@ -727,6 +727,11 @@ class default():
         :param intervals: Seconds to wait before checking change of status
         :param stop: Tells if SUT should be removed when all benchmarking has finished. Set to False if we want to have loaded SUTs for inspection.
         """
+        # test if there is a Pometheus server running in the cluster
+        if self.cluster.test_if_monitoring_healthy():
+            self.cluster.monitor_cluster_exists = True
+        else:
+            self.cluster.monitor_cluster_exists = False
         do = True
         while do:
             #time.sleep(intervals)
@@ -1176,7 +1181,7 @@ class default():
                     # get metrics of benchmarker components
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                    if len(endpoints_cluster)>0:
+                    if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker".format(connection))
                         cmd['fetch_benchmarker_metrics'] = 'python metrics.py -r /results/ -db -ct benchmarker -cn dbmsbenchmarker -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
                         #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
@@ -1391,43 +1396,145 @@ class tpch(default):
         #####################
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
+            df_monitoring = list()
+            ##########
             df = evaluate.get_loading_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["CPU [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_loading_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
             ##########
             df = evaluate.get_loading_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
-            df2 = pd.DataFrame(df).round(2)
-            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
+            df_cleaned = pd.DataFrame(df).round(2)
+            df_cleaned.columns = ["Max RAM [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
             ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Ingestion")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
+            df = evaluate.get_loading_metrics('total_cpu_memory_cached')/1024
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max RAM Cached [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = list()
+            ##########
+            df = evaluate.get_loader_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["CPU [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_loader_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_loader_metrics('total_cpu_memory')/1024
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df).round(2)
+            df_cleaned.columns = ["Max RAM [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_loader_metrics('total_cpu_memory_cached')/1024
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max RAM Cached [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Loader")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = list()
             #####################
             df = evaluate.get_streaming_metrics('total_cpu_util_s')
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["CPU [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_streaming_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
             ##########
             df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
             df = df.T.max().sort_index()
-            df2 = pd.DataFrame(df)
-            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max RAM [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
             ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Execution")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
+            df = evaluate.get_streaming_metrics('total_cpu_memory_cached')/1024
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max RAM Cached [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = list()
+            #####################
+            df = evaluate.get_benchmarker_metrics('total_cpu_util_s')
+            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["CPU [CPUs]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_benchmarker_metrics('total_cpu_util')
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max CPU"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_benchmarker_metrics('total_cpu_memory')/1024
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max RAM [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            df = evaluate.get_benchmarker_metrics('total_cpu_memory_cached')/1024
+            df = df.T.max().sort_index()
+            df_cleaned = pd.DataFrame(df)
+            df_cleaned.columns = ["Max RAM Cached [Gb]"]
+            if not df_cleaned.empty:
+                df_monitoring.append(df_cleaned.copy())
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Benchmarker")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
 
 
 """
