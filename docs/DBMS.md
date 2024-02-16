@@ -12,47 +12,48 @@ To include a DBMS in a Kubernetes-based experiment you will need
 This document contains examples for
 * [MariaDB](#mariadb)
 * [MonetDB](#monetdb)
-* [OmniSci](#omnisci)
 * [PostgreSQL](#postgresql)
+* [MySQL](#mysql)
 
 
 ## Example Explained
 
-### Deployment
-
-See documentation of [deployments](Deployments.html).
-
 ### Configuration
 
+DBMS can be adressed using a key.
+We have to define some data per key, for example for the key `PostgreSQL` we use:
+
 ```
-'dockers': {
-    'OmniSci': {
-        'loadData': 'bin/omnisql -u admin -pHyperInteractive < {scriptname}',     # DBMS: Command to Login and Run Scripts
-        'template': {                                                             # Template for Benchmark Tool
-            'version': 'CE v5.4',
-            'alias': 'GPU',
-            'docker_alias': 'GPU',
-            'JDBC': {
-                'driver': 'com.omnisci.jdbc.OmniSciDriver',
-                'url': 'jdbc:omnisci:{serverip}:9091:omnisci',
-                'auth': {'user': 'admin', 'password': 'HyperInteractive'},
-                'jar': './omnisci-jdbc-4.7.1.jar'                                   # DBMS: Local Path to JDBC Jar
-            }
-        },
-        'logfile': '/omnisci-storage/data/mapd_log/omnisci_server.INFO',          # DBMS: Path to Log File on Server
-        'datadir': '/omnisci-storage/data/mapd_data/',                            # DBMS: Path to directory containing data storage
-        'priceperhourdollar': 0.0,                                                # DBMS: Price per hour in USD if DBMS is rented
-    }
-}
+'PostgreSQL': {
+    'loadData': 'psql -U postgres < {scriptname}',
+    'delay_prepare': 60,
+    'template': {
+        'version': 'v11.4',
+        'alias': 'General-B',
+        'docker_alias': 'GP-B',
+         'JDBC': {
+            'driver': "org.postgresql.Driver",
+            'auth': ["postgres", ""],
+            'url': 'jdbc:postgresql://{serverip}:9091/postgres?reWriteBatchedInserts=true',
+            'jar': 'postgresql-42.5.0.jar'
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+},
 ```
 This has
 * a base name for the DBMS
-* a placeholder `template` for the [benchmark tool](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.html#connection-file)
-* the JDBC driver jar locally available
-* a command `loadData` for running the init scripts with `{scriptname}` as a placeholder for the script name inside the container
-* `{serverip}` as a placeholder for the host address (localhost for k8s, an Elastic IP for AWS)
+* a `delay_prepare` in seconds to wait before system is considered ready
+* a placeholder `template` for the [benchmark tool DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file)  
+  Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.  
+* assumed to have the JDBC driver jar locally available inside the benchmarking tool
+* a command `loadData` for running the init scripts  
+  Some placeholders in the URL are: `serverip` (set automatically to match the corresponding pod), `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
+* `{serverip}` as a placeholder for the host address
 * `{dbname}` as a placeholder for the db name
-* an optional `priceperhourdollar`
+* an optional `priceperhourdollar` (currently ignored)
 * an optional name of a `logfile` that is downloaded after the benchmark
 * name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
 
@@ -119,37 +120,6 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
 
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MonetDB)
-
-## OmniSci
-
-**Deployment**
-
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OmniSci.yml
-
-**Configuration**
-```
-        'OmniSci': {
-            'loadData': 'bin/omnisql -u admin -pHyperInteractive < {scriptname}',
-            'template': {
-                'version': 'CE v4.7',
-                'alias': 'GPU A',
-                'docker_alias': 'GPU A',
-                'JDBC': {
-                    'driver': 'com.omnisci.jdbc.OmniSciDriver',
-                    'url': 'jdbc:omnisci:{serverip}:9091:omnisci',
-                    'auth': {'user': 'admin', 'password': 'HyperInteractive'},
-                    'jar': './omnisci-jdbc-4.7.1.jar'
-                }
-            },
-            'logfile': '/omnisci-storage/data/mapd_log/omnisci_server.INFO',
-            'datadir': '/omnisci-storage/',
-            'priceperhourdollar': 0.0,
-        },
-```
-
-***DDL Scripts***
-
-Example for [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/OmniSci)
 
 ## PostgreSQL
 
@@ -305,3 +275,4 @@ This is because configuring InnoDB takes a while and the server might restart du
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MySQL)
 * [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
+
