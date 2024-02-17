@@ -42,7 +42,7 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 120
       containers:
       - name: dbms
         image: postgres:16.1
