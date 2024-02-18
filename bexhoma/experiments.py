@@ -730,6 +730,7 @@ class default():
         # test if there is a Pometheus server running in the cluster
         if self.cluster.test_if_monitoring_healthy():
             self.cluster.monitor_cluster_exists = True
+            print("{:30s}: is running".format("Cluster monitoring"))
         else:
             self.cluster.monitor_cluster_exists = False
         do = True
