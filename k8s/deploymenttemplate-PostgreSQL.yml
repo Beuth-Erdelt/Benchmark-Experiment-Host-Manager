@@ -52,10 +52,10 @@ spec:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         # pg_ctl: cannot be run as root
-        #lifecycle:
-        #  preStop:
-        #    exec:
-        #      command: ["/bin/sh", "-c", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "gosu postgres", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
         ports:
         - {containerPort: 5432}
         securityContext:
