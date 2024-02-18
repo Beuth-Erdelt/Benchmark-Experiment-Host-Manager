@@ -44,6 +44,7 @@ from datetime import datetime, timedelta
 import threading
 from io import StringIO
 import hiyapyco
+from math import ceil
 
 from dbmsbenchmarker import *
 
@@ -2407,10 +2408,10 @@ scrape_configs:
                         self.timeSchema = self.timeLoading
                         if total_time > 0:
                             # this sets the loading time to the max span of pods
-                            self.timeLoading = total_time + self.timeLoading
+                            self.timeLoading = ceil(total_time + self.timeLoading)
                         else:
                             # this sets the loading time to the span until "now" (including waiting and starting overhead)
-                            self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
+                            self.timeLoading = ceil(int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading)
                         self.timeGenerating = generator_time
                         self.timeIngesting = loader_time
                         self.experiment.cluster.logger.debug("LOADING LABELS")
@@ -3400,7 +3401,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())
     timeLoadingEnd = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    timeLoading = time_scriptgroup_end - time_scriptgroup_start + time_offset
+    timeLoading = ceil(time_scriptgroup_end - time_scriptgroup_start + time_offset)
     logger.debug("#### time_scriptgroup_end: "+str(time_scriptgroup_end))
     logger.debug("#### timeLoadingEnd: "+str(timeLoadingEnd))
     logger.debug("#### timeLoading after scrips: "+str(timeLoading))
@@ -3411,11 +3412,11 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # store infos in labels of sut pod and it's pvc
     labels = dict()
     labels[script_type] = 'True'
-    labels['time_{script_type}'.format(script_type=script_type)] = (time_scriptgroup_end - time_scriptgroup_start)
+    labels['time_{script_type}'.format(script_type=script_type)] = ceil(time_scriptgroup_end - time_scriptgroup_start)
     #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
     labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
-        labels['time_{script_type}'.format(script_type=subscript_type)] = time_subscript_type
+        labels['time_{script_type}'.format(script_type=subscript_type)] = ceil(time_subscript_type)
     fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=timeLoadingEnd)
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
