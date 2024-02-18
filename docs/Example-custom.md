@@ -1,36 +1,15 @@
 # Example: Run a custom SQL workload
 
+This example assumes you have
+* a DBMS installed outside of bexhoma
+* a database loaded
+* a sequence of SQL queries you want to run against the database
 
-We need
-* a [config file](#clusterconfig) containing cluster information , say `cluster.config`
-* a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/example), say `experiments/example/`, containing
-  * a [config file](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html) `queries.config` for the workload
-  * folders for DDL scripts (per DBMS)
-* a python script managing the experimental workflow, say `example.py`, see [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/example.py)
+## Prerequisites
 
-To use the predefined examples you will only have to change the context and namespace of the Kubernetes cluster - see below.
+### Dummy DBMS
 
-## Preparation
-
-* clone repository
-* pip install requirements
-* rename `k8s-cluster.config` to `cluster.config`
-* replace inside that file where to store the results locally  
-```
-        'resultfolder': '/home/myself/benchmarks',
-```
-* replace `namespace` of your K8s context here
-```
-            'context': {
-                'dummy': {
-                    'namespace': 'dummy',
-                    'clustername': 'Dummy',
-                    'service_sut': '{service}.{namespace}.svc.cluster.local',
-                    'port': 9091, # K8s: Local port for connecting via JDBC after port forwarding
-                },
-            },
-```
-* add inside `docker` section infos how to connect to DBMS (keep key `Dummy` here, adjust all the rest)
+Inside `docker` section infos how to connect to DBMS (keep key `Dummy` here, adjust all the rest)
 ```
         'Dummy': {
             'loadData': '',
@@ -51,8 +30,11 @@ To use the predefined examples you will only have to change the context and name
             'priceperhourdollar': 0.0,
         },
 ```
-* overwrite file `queries.config` in `experiments/example` with custom file
-* cluster needs a PV `bexhoma-results` created via `k8s/pvc-bexhoma-results.yml` or similarly
+
+### Queries File
+
+Overwrite the file `queries.config` in `experiments/example` with a custom file.
+
 
 ## Run Experiment
 
@@ -60,10 +42,7 @@ Example: Run `python example.py run -dbms Dummy -ne 5` to run experiment with 5 
 
 ## Background Information
 
-1. The script installs a `dashboard` container (if not already installed). This connects to a PV `bexhoma-results`. Measurements are stored, merged and aggregated there.
-1. The script installs a `messagequeue` container (if not already installed). Components are synched to start at the same second using a Redis queue inside that container.
 1. The script installs a Dummy DBMS according to `k8s/deploymenttemplate-Dummy.yml`. This is just a lightweight busybox container running an endless sleep. Bexhoma writes status information about the components to the benchmarked DBMS container. If the DBMS is not managed by bexhoma, we need such a Dummy container otherwise. The container will be removed automatically after experiment has finished.
-
 
 The DBMSBenchmarker Docker container needs to have the required JDBC driver included.
 

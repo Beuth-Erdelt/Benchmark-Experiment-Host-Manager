@@ -1484,7 +1484,7 @@ scrape_configs:
     def get_host_volume(self):
         """
         Returns information about the sut's mounted volumes.
-        Basically this calls
+        Basically this calls something equivalent to
         size: df -h | grep volumes | awk -F ' ' '{print $2}'
         used: df -h | grep volumes | awk -F ' ' '{print $3}'
 
@@ -1492,12 +1492,15 @@ scrape_configs:
         """
         self.logger.debug('configuration.get_host_volume()')
         try:
-            command = "df -h | grep volumes | awk -F ' ' '{print $2}'"
+            #command = "df -h | grep volumes | awk -F ' ' '{print $2}'"
+            command = "df -h | grep volumes"
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-            size = stdout
-            command = "df -h | grep volumes | awk -F ' ' '{print $3}'"
-            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-            used = stdout
+            parts = stdout.split(" ")
+            parts = [x for x in parts if x != '']
+            size = parts[1]
+            #command = "df -h | grep volumes | awk -F ' ' '{print $3}'"
+            #stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            used = parts[2]
             return size, used
         except Exception as e:
             logging.error(e)
