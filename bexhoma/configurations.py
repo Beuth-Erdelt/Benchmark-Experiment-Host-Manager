@@ -1481,6 +1481,27 @@ scrape_configs:
         finally:
             s.close()
         return found
+    def get_host_volume(self):
+        """
+        Returns information about the sut's mounted volumes.
+        Basically this calls
+        size: df -h | grep volumes | awk -F ' ' '{print $2}'
+        used: df -h | grep volumes | awk -F ' ' '{print $3}'
+
+        :return: (size, used)
+        """
+        self.logger.debug('configuration.get_host_volume()')
+        try:
+            command = "df -h | grep volumes | awk -F ' ' '{print $2}'"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            size = stdout
+            command = "df -h | grep volumes | awk -F ' ' '{print $3}'"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            used = stdout
+            return size, used
+        except Exception as e:
+            logging.error(e)
+            return "", ""
     def get_host_memory(self):
         """
         Returns information about the sut's host RAM.
@@ -1722,6 +1743,9 @@ scrape_configs:
         server['node'] = self.get_host_node()
         server['disk'] = self.get_host_diskspace_used()
         server['datadisk'] = self.get_host_diskspace_used_data()
+        size, used = self.get_host_volume()
+        server['volume_size'] = size
+        server['volume_used'] = used
         server['cuda'] = self.get_host_cuda()
         return server
     def set_metric_of_config(self, metric, host, gpuid):
@@ -1773,6 +1797,20 @@ scrape_configs:
         self.pod_sut = pods[0]
         pod_sut = self.pod_sut
         c['hostsystem'] = self.get_host_all()
+        # add volume labels to PV
+        use_storage = self.use_storage()
+        if use_storage:
+            if self.storage['storageConfiguration']:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            else:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            volume = name_pvc
+        else:
+            volume = ''
+        if volume:
+            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, c['hostsystem']['volume_size'], c['hostsystem']['volume_used'])
+            #print(fullcommand)
+            self.experiment.cluster.kubectl(fullcommand)
         # get worker information
         c['worker'] = []
         pods = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
