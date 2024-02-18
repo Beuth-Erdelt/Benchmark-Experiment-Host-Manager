@@ -1912,7 +1912,49 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         self.show_summary_monitoring()
-
+    def show_summary_monitoring(self):
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            evaluation.transform_monitoring_results(component="loading")
+            #####################
+            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
+            df1 = pd.DataFrame(df)
+            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
+            ##########
+            df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()/1024
+            df2 = pd.DataFrame(df)
+            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
+            ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Ingestion")
+            if not df1.empty and not df2.empty:
+                print(pd.concat([df1, df2], axis=1).round(2))
+            elif not df1.empty:
+                print(df1.round(2))
+            elif not df2.empty:
+                print(df2.round(2))
+            #####################
+            evaluation.transform_monitoring_results(component="stream")
+            #####################
+            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
+            df1 = pd.DataFrame(df)
+            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            ##########
+            df = evaluation.get_monitoring_metric('total_cpu_memory', component='stream').max()/1024
+            df2 = pd.DataFrame(df)
+            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
+            ##########
+            if not df1.empty or not df2.empty:
+                print("\n### Execution")
+            if not df1.empty and not df2.empty:
+                print(pd.concat([df1, df2], axis=1).round(2))
+            elif not df1.empty:
+                print(df1.round(2))
+            elif not df2.empty:
+                print(df2.round(2))
 
 
 """
