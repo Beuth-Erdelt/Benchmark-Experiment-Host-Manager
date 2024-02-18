@@ -51,10 +51,11 @@ spec:
           value: trust
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
-        lifecycle:
-          preStop:
-            exec:
-              command: ["/bin/sh", "-c", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
+        # pg_ctl: cannot be run as root
+        #lifecycle:
+        #  preStop:
+        #    exec:
+        #      command: ["/bin/sh", "-c", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
         ports:
         - {containerPort: 5432}
         securityContext:
