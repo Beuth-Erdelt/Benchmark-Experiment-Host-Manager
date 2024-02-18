@@ -1797,20 +1797,6 @@ scrape_configs:
         self.pod_sut = pods[0]
         pod_sut = self.pod_sut
         c['hostsystem'] = self.get_host_all()
-        # add volume labels to PV
-        use_storage = self.use_storage()
-        if use_storage:
-            if self.storage['storageConfiguration']:
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
-            else:
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
-            volume = name_pvc
-        else:
-            volume = ''
-        if volume:
-            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, c['hostsystem']['volume_size'], c['hostsystem']['volume_used'])
-            #print(fullcommand)
-            self.experiment.cluster.kubectl(fullcommand)
         # get worker information
         c['worker'] = []
         pods = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
@@ -1949,6 +1935,21 @@ scrape_configs:
         c['hostsystem']['loading_timespans'] = self.loading_timespans
         c['hostsystem']['benchmarking_timespans'] = self.benchmarking_timespans
         #print(c)
+        # add volume labels to PV
+        use_storage = self.use_storage()
+        if use_storage:
+            if self.storage['storageConfiguration']:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            else:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            volume = name_pvc
+        else:
+            volume = ''
+        if volume:
+            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, c['hostsystem']['volume_size'], c['hostsystem']['volume_used'])
+            #print(fullcommand)
+            self.experiment.cluster.kubectl(fullcommand)
+        # add config jarfolder
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
             for i, j in enumerate(c['JDBC']['jar']):
