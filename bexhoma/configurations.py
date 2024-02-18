@@ -486,6 +486,19 @@ class default():
             if status == "Running":
                 return True
         return False
+    def sut_is_existing(self):
+        """
+        Returns True, iff system-under-test (dbms) is existing in cluster (no matter what state).
+
+        :return: True, if dbms is existing
+        """
+        app = self.appname
+        component = 'sut'
+        configuration = self.configuration
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            return True
+        return False
     def maintaining_is_running(self):
         """
         Returns True, iff maintaining is running.

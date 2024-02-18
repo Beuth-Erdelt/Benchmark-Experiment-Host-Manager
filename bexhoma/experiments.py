@@ -888,17 +888,20 @@ class default():
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                    while config.sut_is_existing():
+                                        print("{:30s}: still being removed".format(config.configuration))
+                                        self.wait(30)
                                     print("{:30s}: starts again".format(config.configuration))
                                     config.benchmark_list = config.benchmark_list_template.copy()
                                     # wait for PV to be gone completely
-                                    self.wait(60)
+                                    #self.wait(60)
                                     config.reset_sut()
                                     config.start_sut()
                                     self.wait(10)
                                 else:
                                     config.experiment_done = True
                             else:
-                                print("{} can be stopped, be we leave it running".format(config.configuration))
+                                print("{} can be stopped, but we leave it running".format(config.configuration))
                 else:
                     print("{:30s}: is loading".format(config.configuration))
             # all jobs of configuration - benchmarker
