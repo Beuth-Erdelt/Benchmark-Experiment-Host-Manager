@@ -42,6 +42,7 @@ import re
 import pandas as pd
 import pickle
 import json
+import ast
 
 from bexhoma import evaluators
 
@@ -1859,6 +1860,11 @@ class ycsb(default):
         pd.set_option('display.width', 1000)
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
+        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        pretty_connections = json.dumps(connections, indent=2)
+        print(pretty_connections)
+        #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
