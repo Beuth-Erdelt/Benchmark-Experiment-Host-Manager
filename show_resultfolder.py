@@ -25,6 +25,7 @@ if __name__ == '__main__':
 
     # dataframe of experiments
     df = evaluate.get_experiments_preview().sort_values('time')
+    df = df.reset_index()
     df['info'] = df['info'].str.replace('. ', '.\n')
 
     # Create a PrettyTable object
