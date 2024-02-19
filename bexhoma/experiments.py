@@ -1212,6 +1212,41 @@ class default():
     def show_summary(self):
         self.cluster.logger.debug('default.show_summary()')
         pass
+    def show_summary_monitoring_table(self, evaluate, component):
+        df_monitoring = list()
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
+        df = df.max() - df.min() # compute difference of counter
+        #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+        df_cleaned = pd.DataFrame(df)
+        df_cleaned.columns = ["CPU [CPUs]"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_util', component=component)
+        #df = evaluate.get_loading_metrics('total_cpu_util')
+        df = df.max()
+        df_cleaned = pd.DataFrame(df)
+        df_cleaned.columns = ["Max CPU"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_memory', component=component)/1024
+        #df = evaluate.get_loading_metrics('total_cpu_memory')/1024
+        df = df.T.max().sort_index()
+        df_cleaned = pd.DataFrame(df).round(2)
+        df_cleaned.columns = ["Max RAM [Gb]"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_memory_cached', component=component)/1024
+        #df = evaluate.get_loading_metrics('total_cpu_memory_cached')/1024
+        df = df.T.max().sort_index()
+        df_cleaned = pd.DataFrame(df)
+        df_cleaned.columns = ["Max RAM Cached [Gb]"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        return df_monitoring
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -1219,35 +1254,7 @@ class default():
         evaluate.load_experiment(code=code, silent=True)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = list()
-            ##########
-            df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component="loading")
-            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
-            df_cleaned = pd.DataFrame(df)
-            df_cleaned.columns = ["CPU [CPUs]"]
-            if not df_cleaned.empty:
-                df_monitoring.append(df_cleaned.copy())
-            ##########
-            df = evaluate.get_loading_metrics('total_cpu_util')
-            df = df.T.max().sort_index()
-            df_cleaned = pd.DataFrame(df)
-            df_cleaned.columns = ["Max CPU"]
-            if not df_cleaned.empty:
-                df_monitoring.append(df_cleaned.copy())
-            ##########
-            df = evaluate.get_loading_metrics('total_cpu_memory')/1024
-            df = df.T.max().sort_index()
-            df_cleaned = pd.DataFrame(df).round(2)
-            df_cleaned.columns = ["Max RAM [Gb]"]
-            if not df_cleaned.empty:
-                df_monitoring.append(df_cleaned.copy())
-            ##########
-            df = evaluate.get_loading_metrics('total_cpu_memory_cached')/1024
-            df = df.T.max().sort_index()
-            df_cleaned = pd.DataFrame(df)
-            df_cleaned.columns = ["Max RAM Cached [Gb]"]
-            if not df_cleaned.empty:
-                df_monitoring.append(df_cleaned.copy())
+            df_monitoring = self.show_summary_monitoring_table(evaluate, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
