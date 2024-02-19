@@ -1250,7 +1250,7 @@ class default():
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
-        evaluate = inspector.inspector(resultfolder)
+        evaluate = inspector.inspector(resultfolder, silent=True)
         evaluate.load_experiment(code=code, silent=True)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
@@ -1400,8 +1400,8 @@ class tpch(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
-        evaluate = inspector.inspector(resultfolder)
-        evaluate.load_experiment(code=code, silent=False)
+        evaluate = inspector.inspector(resultfolder, silent=True)
+        evaluate.load_experiment(code=code, silent=True)
         #####################
         print("\n### Errors")
         print(evaluate.get_total_errors().T)
