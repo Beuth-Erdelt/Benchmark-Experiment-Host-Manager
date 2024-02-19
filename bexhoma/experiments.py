@@ -1393,6 +1393,7 @@ class tpch(default):
         print("\n### Workload\n    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
+        print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
         pretty_connections = json.dumps(connections, indent=2)
@@ -1812,6 +1813,7 @@ class ycsb(default):
         print("\n### Workload\n    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
+        print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
         pretty_connections = json.dumps(connections, indent=2)
