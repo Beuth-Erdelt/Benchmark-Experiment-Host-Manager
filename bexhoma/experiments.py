@@ -1397,7 +1397,7 @@ class tpch(default):
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
-            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key]
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not len(info)==0]
             for info in infos:
                 print(info)
         evaluate = inspector.inspector(resultfolder)
