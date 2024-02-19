@@ -1811,7 +1811,7 @@ class ycsb(default):
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
-            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key]
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
         #print("found", len(connections), "connections")
