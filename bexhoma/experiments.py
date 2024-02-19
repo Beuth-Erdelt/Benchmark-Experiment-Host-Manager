@@ -1250,7 +1250,7 @@ class default():
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
-        evaluate = inspector.inspector(resultfolder, silent=True)
+        evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=True)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
