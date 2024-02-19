@@ -105,6 +105,12 @@ if __name__ == '__main__':
             pt.add_row(row)
         # Display the PrettyTable
         print(pt)
+    elif args.mode == 'data':
+        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        cmd = {}
+        cmd['get_data_dir'] = 'du -h /data/'
+        stdin, stdout, stderr = cluster.execute_command_in_pod(cmd['get_data_dir'], container='dashboard')
+        print(stdout)
     elif args.mode == 'jupyter':
         import subprocess
         cmd = ["jupyter","notebook","--notebook-dir","images/evaluator_dbmsbenchmarker/notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
