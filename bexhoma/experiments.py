@@ -1390,9 +1390,9 @@ class tpch(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print(workload_properties['name'])
-        print(workload_properties['info'])
-        print(workload_properties['intro'])
+        print("\n### Workload\n    "+workload_properties['name'])
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
         pretty_connections = json.dumps(connections, indent=2)
@@ -1807,6 +1807,11 @@ class ycsb(default):
         pd.set_option('display.width', 1000)
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
+        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+            workload_properties = ast.literal_eval(inp.read())
+        print("\n### Workload\n    "+workload_properties['name'])
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
         pretty_connections = json.dumps(connections, indent=2)
