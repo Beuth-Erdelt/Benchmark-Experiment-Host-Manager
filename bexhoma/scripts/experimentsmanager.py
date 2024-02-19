@@ -36,7 +36,7 @@ def manage():
     print(description)
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
@@ -103,6 +103,14 @@ def manage():
             pt.add_row(row)
         # Display the PrettyTable
         print(pt)
+    elif args.mode == 'data':
+        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        dashboard_name = cluster.get_dashboard_pod_name()
+        if len(dashboard_name) > 0:
+            cmd = {}
+            cmd['get_data_dir'] = 'du -h /data/'
+            stdin, stdout, stderr = cluster.execute_command_in_pod(cmd['get_data_dir'], pod=dashboard_name, container='dashboard')
+            print(stdout)
     elif args.mode == 'jupyter':
         import subprocess
         cmd = ["jupyter","notebook","--notebook-dir","images/evaluator_dbmsbenchmarker/notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
