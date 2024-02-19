@@ -1220,7 +1220,7 @@ class default():
             #####################
             df_monitoring = list()
             ##########
-            df = evaluate.get_loading_metrics('total_cpu_util_s')
+            df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component="loading")
             df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
             df_cleaned = pd.DataFrame(df)
             df_cleaned.columns = ["CPU [CPUs]"]
