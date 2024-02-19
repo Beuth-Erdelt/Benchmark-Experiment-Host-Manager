@@ -1388,6 +1388,18 @@ class tpch(default):
         pd.set_option('display.width', 1000)
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
+        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        pretty_connections = json.dumps(connections, indent=2)
+        #print(pretty_connections)
+        connections_sorted = sorted(connections, key=lambda c: c['name'])
+        for c in connections_sorted:
+            print(c['name'],
+                  "uses docker image",
+                  c['parameter']['dockerimage'])
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key]
+            for info in infos:
+                print(info)
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=False)
         #####################
