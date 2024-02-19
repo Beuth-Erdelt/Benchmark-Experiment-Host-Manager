@@ -1216,7 +1216,7 @@ class default():
         df_monitoring = list()
         ##########
         df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
-        df = df.max() - df.min() # compute difference of counter
+        df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
         #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
         df_cleaned = pd.DataFrame(df)
         df_cleaned.columns = ["CPU [CPUs]"]
@@ -1225,7 +1225,7 @@ class default():
         ##########
         df = evaluate.get_monitoring_metric(metric='total_cpu_util', component=component)
         #df = evaluate.get_loading_metrics('total_cpu_util')
-        df = df.max()
+        df = df.max().sort_index()
         df_cleaned = pd.DataFrame(df)
         df_cleaned.columns = ["Max CPU"]
         if not df_cleaned.empty:
@@ -1233,7 +1233,7 @@ class default():
         ##########
         df = evaluate.get_monitoring_metric(metric='total_cpu_memory', component=component)/1024
         #df = evaluate.get_loading_metrics('total_cpu_memory')/1024
-        df = df.T.max().sort_index()
+        df = df.max().sort_index()
         df_cleaned = pd.DataFrame(df).round(2)
         df_cleaned.columns = ["Max RAM [Gb]"]
         if not df_cleaned.empty:
@@ -1241,7 +1241,7 @@ class default():
         ##########
         df = evaluate.get_monitoring_metric(metric='total_cpu_memory_cached', component=component)/1024
         #df = evaluate.get_loading_metrics('total_cpu_memory_cached')/1024
-        df = df.T.max().sort_index()
+        df = df.max().sort_index()
         df_cleaned = pd.DataFrame(df)
         df_cleaned.columns = ["Max RAM Cached [Gb]"]
         if not df_cleaned.empty:
