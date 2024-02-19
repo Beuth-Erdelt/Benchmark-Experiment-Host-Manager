@@ -1730,6 +1730,29 @@ scrape_configs:
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
         return 0
+    def check_volumes(self):
+        """
+        Calls all `get_host_x()` methods.
+        Returns information about the sut's host as a dict.
+
+        :return: Dict of informations about the host
+        """
+        # add volume labels to PV
+        app = self.appname
+        use_storage = self.use_storage()
+        if use_storage:
+            if self.storage['storageConfiguration']:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            else:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            volume = name_pvc
+        else:
+            volume = ''
+        if volume:
+            size, used = self.get_host_volume()
+            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
+            #print(fullcommand)
+            self.experiment.cluster.kubectl(fullcommand)
     def get_host_all(self):
         """
         Calls all `get_host_x()` methods.
@@ -1939,20 +1962,7 @@ scrape_configs:
         c['hostsystem']['loading_timespans'] = self.loading_timespans
         c['hostsystem']['benchmarking_timespans'] = self.benchmarking_timespans
         #print(c)
-        # add volume labels to PV
-        use_storage = self.use_storage()
-        if use_storage:
-            if self.storage['storageConfiguration']:
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
-            else:
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
-            volume = name_pvc
-        else:
-            volume = ''
-        if volume:
-            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, c['hostsystem']['volume_size'], c['hostsystem']['volume_used'])
-            #print(fullcommand)
-            self.experiment.cluster.kubectl(fullcommand)
+        self.check_volumes()
         # add config jarfolder
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):

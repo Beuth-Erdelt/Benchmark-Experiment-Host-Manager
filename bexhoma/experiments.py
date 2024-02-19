@@ -971,6 +971,7 @@ class default():
                         #    self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
+                    config.check_volumes()
             if len(pods) == 0 and len(jobs) == 0:
                 do = False
                 for config in self.configurations:
