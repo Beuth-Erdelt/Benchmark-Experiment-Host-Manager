@@ -1842,43 +1842,34 @@ class ycsb(default):
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            evaluation.transform_monitoring_results(component="loading")
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
             #####################
-            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
             ##########
-            df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()/1024
-            df2 = pd.DataFrame(df)
-            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
-            ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Ingestion")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Loader")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
             #####################
-            evaluation.transform_monitoring_results(component="stream")
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
             #####################
-            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
             ##########
-            df = evaluation.get_monitoring_metric('total_cpu_memory', component='stream').max()/1024
-            df2 = pd.DataFrame(df)
-            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
-            ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Execution")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Benchmarker")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+
 
 
 """
