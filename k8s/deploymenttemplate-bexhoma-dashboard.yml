@@ -56,6 +56,8 @@ spec:
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
+        - name: benchmark-data-volume
+          mountPath: /data
       - name: jupyter
         image: bexhoma/evaluator_dbmsbenchmarker:v0.13.7
         imagePullPolicy: IfNotPresent
@@ -82,8 +84,6 @@ spec:
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
-        - name: benchmark-data-volume
-          mountPath: /data
       volumes:
       - name: bexhoma-results
         persistentVolumeClaim: {claimName: bexhoma-results}
