@@ -38,7 +38,7 @@ if __name__ == '__main__':
     """
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
