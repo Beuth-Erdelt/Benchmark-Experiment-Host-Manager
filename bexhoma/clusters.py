@@ -1370,6 +1370,7 @@ class testbed():
         :param component: Component name, should be 'monitoring' typically
         """
         self.monitor_cluster_active = True
+        self.monitor_cluster_exists = self.cluster.test_if_monitoring_healthy():
         if self.monitor_cluster_exists:
             return
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
