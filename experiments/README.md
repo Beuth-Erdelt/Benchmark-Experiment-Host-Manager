@@ -1,7 +1,6 @@
-# Benchmark Experiment Host Manager - Benchbase Experiments
+# Benchmark Experiment Host Manager
 
-The folder contains subfolders with DDL scripts and a query file for multiple DBMSs.
-These are used for Benchbase experiments.
+In this folder is a collection of workload and schema files for benchmarking experiments.
 
 ## Orchestration of Benchmarking Experiments
 

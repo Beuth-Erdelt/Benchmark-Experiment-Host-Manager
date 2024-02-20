@@ -1,7 +1,7 @@
-# Benchmark Experiment Host Manager - Benchbase Experiments
+# Benchmark Experiment Host Manager - YCSB Experiments
 
 The folder contains subfolders with DDL scripts and a query file for multiple DBMSs.
-These are used for Benchbase experiments.
+These are used for YCSB experiments.
 
 ## Orchestration of Benchmarking Experiments
 
