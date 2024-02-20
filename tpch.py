@@ -334,6 +334,32 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if (args.dbms == "MariaDB" or len(args.dbms) == 0):
+                # MonetDB
+                name_format = 'MariaDB-{cluster}-{pods}'
+                config = configurations.default(experiment=experiment, docker='MariaDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MySQL', alias='DBMS A1')
+                config.set_storage(
+                    storageConfiguration = 'monetdb'
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
+                config.set_loading_parameters(
+                    SF = SF,
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    STORE_RAW_DATA = 1,
+                    STORE_RAW_DATA_RECREATE = 0,
+                    BEXHOMA_SYNCH_LOAD = 1,
+                    BEXHOMA_SYNCH_GENERATE = 1,
+                    TRANSFORM_RAW_DATA = 1,
+                    TPCH_TABLE = limit_import_table,
+                    )
+                config.set_benchmarking_parameters(
+                    SF = SF,
+                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                    DBMSBENCHMARKER_DEV = debugging,
+                    )
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if (args.dbms == "MySQL" or len(args.dbms) == 0):
                 # MySQL
                 for threads in list_loading_threads:
