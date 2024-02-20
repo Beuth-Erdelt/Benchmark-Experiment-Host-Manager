@@ -102,7 +102,7 @@ The parameters can be set via CLI (see for example `tpch.py`).
 
 ## MariaDB
 
-**Deployment**
+### Deployment
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml
 
@@ -128,13 +128,13 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
         },
 ```
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDB)
 
 ## MonetDB
 
-**Deployment**
+### Deployment
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MonetDB.yml
 
@@ -159,14 +159,14 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
         },
 ```
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MonetDB)
 
 ## PostgreSQL
 
-**Deployment**
+### Deployment
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
 
@@ -212,7 +212,7 @@ As of bexhoma version `v0.7.0` this contains
 ```
 as default settings.
 
-**Configuration**
+### Configuration
 
 ```
         'PostgreSQL': {
@@ -234,7 +234,7 @@ as default settings.
         },
 ```
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/PostgreSQL)
@@ -242,7 +242,7 @@ Example for
 
 ## MySQL
 
-**Deployment**
+### Deployment
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml
 
@@ -286,7 +286,7 @@ As of bexhoma version `v0.7.0` this contains
 ```
 as default settings.
 
-**Configuration**
+### Configuration
 
 ```
         'MySQL': {
@@ -313,7 +313,7 @@ as default settings.
 This uses `delay_prepare` to make bexhoma wait 5 minutes before starting to query the dbms.
 This is because configuring InnoDB takes a while and the server might restart during that period.
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MySQL)

@@ -101,6 +101,6 @@ The examples scripts above (like `initdata-tpch-SF1.sql` for example) refer to `
 ## DBMS
 
 Database systems are described in the `docker` section.
-Please see [DBMS section](https://bexhoma.readthedocs.io/en/docs/DBMS.html) for more informations.
+Please see [DBMS section](https://bexhoma.readthedocs.io/en/latest/DBMS.html) for more informations.
 
 
