@@ -2141,7 +2141,7 @@ scrape_configs:
                 # get metrics of loader components
                 # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                if len(endpoints_cluster)>0:
+                if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                     # data generator container
                     print("{:30s}: collecting metrics of data generator".format(connection))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
