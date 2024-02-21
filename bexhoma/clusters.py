@@ -969,7 +969,7 @@ class testbed():
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiments_configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
-            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
+            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script, namespace=self.namespace)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.execute_command_in_pod(cmd['copy_init_scripts'], container='dbms')
             i = i + 1
     def pod_log(self, pod, container=''):
