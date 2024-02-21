@@ -278,7 +278,6 @@ if __name__ == '__main__':
                     benchmarking_pods = list_clients
                 if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS A')
                     config.set_storage(
@@ -297,7 +296,6 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
                     config.set_benchmarking_parameters(
                         #PARALLEL = str(pods),
                         SF = SF,
@@ -313,7 +311,6 @@ if __name__ == '__main__':
                     config.add_benchmark_list(benchmarking_pods)
                 if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'MySQL-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS B')
                     config.set_storage(
@@ -332,9 +329,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
                     config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
                         SF = SF,
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
@@ -348,7 +343,6 @@ if __name__ == '__main__':
                     config.add_benchmark_list(benchmarking_pods)
                 if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                     # MariaDB
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS C')
                     config.set_storage(
@@ -369,7 +363,6 @@ if __name__ == '__main__':
                     config.set_loading(parallel=pods, num_pods=pods)
                     #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
                     config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
                         SF = SF,
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
@@ -381,6 +374,37 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
+                if ("YugabyteDB" in args.dbms or len(args.dbms) == 0):
+                    # YugabyteDB
+                    name_format = 'YugabyteDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
+                    config.set_loading_parameters(
+                        PARALLEL = str(pods),
+                        SF = SF,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        ROWS = ycsb_rows,
+                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.set_loading(parallel=pods, num_pods=pods)
+                    config.set_benchmarking_parameters(
+                        SF = SF,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        ROWS = ycsb_rows,
+                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.add_benchmark_list(benchmarking_pods)
+                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
