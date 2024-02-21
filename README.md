@@ -7,7 +7,7 @@
 
 # Benchmark Experiment Host Manager (Bexhoma)
 
-## Orchstrating Cloud-Native Benchmarking Experiments with Kubernetes
+## Orchestrating Cloud-Native Benchmarking Experiments with Kubernetes
 
 This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment**.
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
