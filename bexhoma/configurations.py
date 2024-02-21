@@ -1881,7 +1881,14 @@ scrape_configs:
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
                     c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
+        c['JDBC']['url'] = c['JDBC']['url'].format(
+            serverip=serverip,
+            dbname=self.experiment.volume,
+            DBNAME=self.experiment.volume.upper(),
+            timout_s=c['connectionmanagement']['timeout'],
+            timeout_ms=c['connectionmanagement']['timeout']*1000,
+            namespace=self.experiment.cluster.namespace
+            )
         #print(c)
         return c#.copy()
     def run_benchmarker_pod(self,
@@ -2563,9 +2570,26 @@ scrape_configs:
         else:
             volume = ''
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
-        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+")")
+        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context, 'service_name':service_name, 'time_offset':time_offset, 'script_type':script_type, 'time_start_int':time_start_int}
+        thread_args = {
+            'app':self.appname,
+            'component':'sut',
+            'experiment':self.code,
+            'configuration':self.configuration,
+            'pod_sut':self.pod_sut,
+            'scriptfolder':scriptfolder,
+            'commands':commands,
+            'loadData':self.dockertemplate['loadData'],
+            'path':self.experiment.path,
+            'volume':volume,
+            'context':self.experiment.cluster.context,
+            'service_name':service_name,
+            'time_offset':time_offset,
+            'script_type':script_type,
+            'time_start_int':time_start_int,
+            'namespace':self.experiment.cluster.namespace
+        }
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         return
@@ -2649,7 +2673,14 @@ scrape_configs:
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
         env_default = dict()
-        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
+        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
+            serverip=servicename,
+            dbname=self.experiment.volume,
+            DBNAME=self.experiment.volume.upper(),
+            timout_s=c['connectionmanagement']['timeout'],
+            timeout_ms=c['connectionmanagement']['timeout']*1000,
+            namespace=self.experiment.cluster.namespace
+            )
         env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
         env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
         env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
@@ -3307,7 +3338,7 @@ class kinetica(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded'):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
@@ -3376,7 +3407,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         #time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
-            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
+            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
@@ -3388,7 +3419,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 with open(filename_log,'w') as file:
                     file.write(stderr)
         elif file_extension.lower() == '.sh':
-            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
+            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:

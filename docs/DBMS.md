@@ -106,7 +106,18 @@ The parameters can be set via CLI (see for example `tpch.py`).
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml
 
-**Configuration**
+As of bexhoma version `v0.7.1` this contains
+```
+        args: [
+          "--innodb_log_buffer_size", "17179869184",
+          "--innodb-write-io-threads", "16",
+          "--innodb-log-file-size", "4294967296"
+        ]
+```
+as default settings.
+
+### Configuration
+
 ```
        'MariaDB': {
             'loadData': 'mysql < {scriptname}',
@@ -138,7 +149,8 @@ Example for [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Ma
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MonetDB.yml
 
-**Configuration**
+### Configuration
+
 ```
        'MonetDB': {
             'loadData': 'cd /home/monetdb;echo "user=monetdb\npassword=monetdb" > .monetdb;mclient demo < {scriptname}',
@@ -319,3 +331,30 @@ Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MySQL)
 * [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
 
+
+## Add a new DBMS
+
+Suppose you want to add a new DBMS called `newDBMS`.
+
+You will need to
+* add a corresponding section to the dockers part in `cluster.config`.
+* add a YAML template for the DBMS component called `k8s/deploymenttemplate-NewDBMS.yml` (just copy `k8s/deploymenttemplate-Dummy.yml`)
+* add schema scripts for the DBMS in a subfolder of `experiments/`
+* add a section to the Python management script, e.g., `example.py`. Look for  
+```
+    # add configs
+    if args.dbms == "Dummy":
+        # Dummy DBMS
+        name_format = 'Dummy-{cluster}'
+        config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
+        config.loading_finished = True
+```  
+The parameter `docker='Dummy'` refers to the key in the dockers section in `cluster.config` and the name of the file in `k8s/`.
+You may add several DBMS by this way to the same experiment for comparison.
+Note that `example.py` contains a line
+```
+parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['Dummy'])
+```
+which filters command line arguments and restricts to adding only one DBMS (you may want to ignore `args.dbms` instead).
+
+If you need a JDBC driver different  from the above, please raise an issue: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues

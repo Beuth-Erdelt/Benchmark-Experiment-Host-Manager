@@ -1,6 +1,6 @@
 # Benchmark Experiment Host Manager
 
-In this folder is a collection of useful Docker images for the components of the benchmarking experiments.
+In this folder is a collection of workload and schema files for benchmarking experiments.
 
 ## Orchestration of Benchmarking Experiments
 
