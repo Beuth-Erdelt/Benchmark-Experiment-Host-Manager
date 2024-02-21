@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[])
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[], action='append')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
@@ -276,11 +276,11 @@ if __name__ == '__main__':
                 if len(list_clients) > 0:
                     # we want several benchmarking instances per installation
                     benchmarking_pods = list_clients
-                if (args.dbms == "PostgreSQL" or len(args.dbms) == 0):
+                if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'postgresql'
                         )
@@ -311,13 +311,48 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
-                if (args.dbms == "MySQL" or len(args.dbms) == 0):
+                if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
                     #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'MySQL-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS B')
                     config.set_storage(
                         storageConfiguration = 'mysql'
+                        )
+                    config.set_loading_parameters(
+                        PARALLEL = str(pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.set_loading(parallel=pods, num_pods=pods)
+                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
+                    config.set_benchmarking_parameters(
+                        #PARALLEL = str(pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.add_benchmark_list(benchmarking_pods)
+                if ("MariaDB" in args.dbms or len(args.dbms) == 0):
+                    # MariaDB
+                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
+                    name_format = 'MariaDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS C')
+                    config.set_storage(
+                        storageConfiguration = 'mariadb'
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(pods),

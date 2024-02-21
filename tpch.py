@@ -37,7 +37,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms',  help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[])
+    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[], action='append')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -282,7 +282,7 @@ if __name__ == '__main__':
                 continue
             # how many in parallel?
             split_portion = int(loading_pods_total/loading_pods_split)
-            if (args.dbms == "PostgreSQL" or len(args.dbms) == 0):
+            if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
@@ -308,7 +308,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if (args.dbms == "MonetDB" or len(args.dbms) == 0):
+            if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
@@ -334,12 +334,12 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if (args.dbms == "MariaDB" or len(args.dbms) == 0):
+            if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 name_format = 'MariaDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MariaDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MySQL', alias='DBMS A1')
                 config.set_storage(
-                    storageConfiguration = 'monetdb'
+                    storageConfiguration = 'mariadb'
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
                 config.set_loading_parameters(
@@ -352,6 +352,7 @@ if __name__ == '__main__':
                     BEXHOMA_SYNCH_GENERATE = 1,
                     TRANSFORM_RAW_DATA = 1,
                     TPCH_TABLE = limit_import_table,
+                    MYSQL_LOADING_FROM = "LOCAL",
                     )
                 config.set_benchmarking_parameters(
                     SF = SF,
@@ -360,7 +361,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if (args.dbms == "MySQL" or len(args.dbms) == 0):
+            if ("MySQL" in args.dbms or len(args.dbms) == 0):
                 # MySQL
                 for threads in list_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'
