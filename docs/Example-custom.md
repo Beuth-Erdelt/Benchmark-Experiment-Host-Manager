@@ -7,9 +7,11 @@ This example assumes you have
 
 ## Prerequisites
 
+We need a dummy to mimick the existence of a DBMS managed by bexhoma and a query file in a certain format.
+
 ### Dummy DBMS
 
-Inside `docker` section infos how to connect to DBMS (keep key `Dummy` here, adjust all the rest)
+Inside the `docker` section of the `cluster.config` we define infos how to connect to a DBMS (keep key `Dummy` here, adjust all the rest):
 ```
         'Dummy': {
             'loadData': '',
@@ -34,11 +36,12 @@ Inside `docker` section infos how to connect to DBMS (keep key `Dummy` here, adj
 ### Queries File
 
 Overwrite the file `queries.config` in `experiments/example` with a custom file.
+For more details about the format see https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#query-file
 
 
 ## Run Experiment
 
-Example: Run `python example.py run -dbms Dummy -ne 5` to run experiment with 5 parallel benchmarkers.
+Example: Run `python example.py run -dbms Dummy -ne 5 -nr 100` to run experiment with 5 parallel benchmarkers and repeat each query 100 times.
 
 ## Background Information
 
@@ -184,29 +187,3 @@ Dummy-BHT-1-1-1-18
   time_start:1691160821
   time_end:1691160823
 ```
-
-## Add new DBMS
-
-Suppose you want to add a new DBMS called `newDBMS`.
-
-You will need to
-* add a corresponding section to the dockers part in `cluster.config`.
-* add a YAML template for the DBMS component called `k8s/deploymenttemplate-NewDBMS.yml` (just copy `k8s/deploymenttemplate-Dummy.yml`)
-* add a section to `example.py`. Look for  
-```
-    # add configs
-    if args.dbms == "Dummy":
-        # Dummy DBMS
-        name_format = 'Dummy-{cluster}'
-        config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
-        config.loading_finished = True
-```  
-The parameter `docker='Dummy'` refers to the key in the dockers section in `cluster.config` and the name of the file in `k8s/`.
-You may add several DBMS by this way to the same experiment for comparison.
-Note that `example.py` contains a line
-```
-parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['Dummy'])
-```
-which filters command line arguments and restricts to adding only one DBMS (you may want to ignore `args.dbms` instead).
-
-If you need a JDBC driver different  from the above, please raise an issue: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues
