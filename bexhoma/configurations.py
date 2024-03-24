@@ -44,6 +44,7 @@ from datetime import datetime, timedelta
 import threading
 from io import StringIO
 import hiyapyco
+from math import ceil
 
 from dbmsbenchmarker import *
 
@@ -486,6 +487,19 @@ class default():
             if status == "Running":
                 return True
         return False
+    def sut_is_existing(self):
+        """
+        Returns True, iff system-under-test (dbms) is existing in cluster (no matter what state).
+
+        :return: True, if dbms is existing
+        """
+        app = self.appname
+        component = 'sut'
+        configuration = self.configuration
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            return True
+        return False
     def maintaining_is_running(self):
         """
         Returns True, iff maintaining is running.
@@ -527,6 +541,8 @@ class default():
 
         :return: True, if monitoring is running
         """
+        if self.experiment.cluster.monitor_cluster_exists:
+            return True
         app = self.appname
         component = 'monitoring'
         configuration = self.configuration
@@ -713,7 +729,7 @@ class default():
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         """
-        if not self.experiment.monitoring_active:
+        if not self.experiment.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
             return
         if len(app) == 0:
             app = self.appname
@@ -1195,7 +1211,7 @@ scrape_configs:
                     dep['spec']['selector']['experiment'] = experiment
                     dep['spec']['selector']['dbms'] = self.docker
                     dep['spec']['selector']['volume'] = self.volume
-                    if not self.monitoring_active:
+                    if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
                             if 'name' in ports and ports['name'] != 'port-dbms':
@@ -1216,7 +1232,7 @@ scrape_configs:
                 dep['spec']['selector']['volume'] = self.volume
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
-                if not self.monitoring_active:
+                if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
                         if 'name' in ports and ports['name'] != 'port-dbms':
@@ -1257,7 +1273,7 @@ scrape_configs:
                             result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
                         else:
                             self.dockerimage = result[key]['spec']['template']['spec']['containers'][i]['image']
-                    elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active:
+                    elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i]
@@ -1466,6 +1482,30 @@ scrape_configs:
         finally:
             s.close()
         return found
+    def get_host_volume(self):
+        """
+        Returns information about the sut's mounted volumes.
+        Basically this calls something equivalent to
+        size: df -h | grep volumes | awk -F ' ' '{print $2}'
+        used: df -h | grep volumes | awk -F ' ' '{print $3}'
+
+        :return: (size, used)
+        """
+        self.logger.debug('configuration.get_host_volume()')
+        try:
+            #command = "df -h | grep volumes | awk -F ' ' '{print $2}'"
+            command = "df -h | grep volumes"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            parts = stdout.split(" ")
+            parts = [x for x in parts if x != '']
+            size = parts[1]
+            #command = "df -h | grep volumes | awk -F ' ' '{print $3}'"
+            #stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            used = parts[2]
+            return size, used
+        except Exception as e:
+            logging.error(e)
+            return "", ""
     def get_host_memory(self):
         """
         Returns information about the sut's host RAM.
@@ -1690,6 +1730,29 @@ scrape_configs:
         # pipe to awk sometimes does not work
         #return int(disk.split('\t')[0])
         return 0
+    def check_volumes(self):
+        """
+        Calls all `get_host_x()` methods.
+        Returns information about the sut's host as a dict.
+
+        :return: Dict of informations about the host
+        """
+        # add volume labels to PV
+        app = self.appname
+        use_storage = self.use_storage()
+        if use_storage:
+            if self.storage['storageConfiguration']:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            else:
+                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            volume = name_pvc
+        else:
+            volume = ''
+        if volume:
+            size, used = self.get_host_volume()
+            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
+            #print(fullcommand)
+            self.experiment.cluster.kubectl(fullcommand)
     def get_host_all(self):
         """
         Calls all `get_host_x()` methods.
@@ -1707,6 +1770,9 @@ scrape_configs:
         server['node'] = self.get_host_node()
         server['disk'] = self.get_host_diskspace_used()
         server['datadisk'] = self.get_host_diskspace_used_data()
+        size, used = self.get_host_volume()
+        server['volume_size'] = size
+        server['volume_used'] = used
         server['cuda'] = self.get_host_cuda()
         return server
     def set_metric_of_config(self, metric, host, gpuid):
@@ -1815,7 +1881,14 @@ scrape_configs:
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
                     c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(serverip=serverip, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
+        c['JDBC']['url'] = c['JDBC']['url'].format(
+            serverip=serverip,
+            dbname=self.experiment.volume,
+            DBNAME=self.experiment.volume.upper(),
+            timout_s=c['connectionmanagement']['timeout'],
+            timeout_ms=c['connectionmanagement']['timeout']*1000,
+            namespace=self.experiment.cluster.namespace
+            )
         #print(c)
         return c#.copy()
     def run_benchmarker_pod(self,
@@ -1896,6 +1969,8 @@ scrape_configs:
         c['hostsystem']['loading_timespans'] = self.loading_timespans
         c['hostsystem']['benchmarking_timespans'] = self.benchmarking_timespans
         #print(c)
+        self.check_volumes()
+        # add config jarfolder
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
         if isinstance(c['JDBC']['jar'], list):
             for i, j in enumerate(c['JDBC']['jar']):
@@ -2073,7 +2148,7 @@ scrape_configs:
                 # get metrics of loader components
                 # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                if len(endpoints_cluster)>0:
+                if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                     # data generator container
                     print("{:30s}: collecting metrics of data generator".format(connection))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
@@ -2350,10 +2425,10 @@ scrape_configs:
                         self.timeSchema = self.timeLoading
                         if total_time > 0:
                             # this sets the loading time to the max span of pods
-                            self.timeLoading = total_time + self.timeLoading
+                            self.timeLoading = ceil(total_time + self.timeLoading)
                         else:
                             # this sets the loading time to the span until "now" (including waiting and starting overhead)
-                            self.timeLoading = int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading
+                            self.timeLoading = ceil(int(self.timeLoadingEnd) - int(self.timeLoadingStart) + self.timeLoading)
                         self.timeGenerating = generator_time
                         self.timeIngesting = loader_time
                         self.experiment.cluster.logger.debug("LOADING LABELS")
@@ -2495,9 +2570,26 @@ scrape_configs:
         else:
             volume = ''
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
-        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+")")
+        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
         #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {'app':self.appname, 'component':'sut', 'experiment':self.code, 'configuration':self.configuration, 'pod_sut':self.pod_sut, 'scriptfolder':scriptfolder, 'commands':commands, 'loadData':self.dockertemplate['loadData'], 'path':self.experiment.path, 'volume':volume, 'context':self.experiment.cluster.context, 'service_name':service_name, 'time_offset':time_offset, 'script_type':script_type, 'time_start_int':time_start_int}
+        thread_args = {
+            'app':self.appname,
+            'component':'sut',
+            'experiment':self.code,
+            'configuration':self.configuration,
+            'pod_sut':self.pod_sut,
+            'scriptfolder':scriptfolder,
+            'commands':commands,
+            'loadData':self.dockertemplate['loadData'],
+            'path':self.experiment.path,
+            'volume':volume,
+            'context':self.experiment.cluster.context,
+            'service_name':service_name,
+            'time_offset':time_offset,
+            'script_type':script_type,
+            'time_start_int':time_start_int,
+            'namespace':self.experiment.cluster.namespace
+        }
         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
         thread.start()
         return
@@ -2581,7 +2673,14 @@ scrape_configs:
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
         env_default = dict()
-        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(serverip=servicename, dbname=self.experiment.volume, DBNAME=self.experiment.volume.upper(), timout_s=c['connectionmanagement']['timeout'], timeout_ms=c['connectionmanagement']['timeout']*1000)
+        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
+            serverip=servicename,
+            dbname=self.experiment.volume,
+            DBNAME=self.experiment.volume.upper(),
+            timout_s=c['connectionmanagement']['timeout'],
+            timeout_ms=c['connectionmanagement']['timeout']*1000,
+            namespace=self.experiment.cluster.namespace
+            )
         env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
         env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
         env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
@@ -3239,7 +3338,7 @@ class kinetica(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded'):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
@@ -3308,7 +3407,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         #time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
-            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
+            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
@@ -3320,7 +3419,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 with open(filename_log,'w') as file:
                     file.write(stderr)
         elif file_extension.lower() == '.sh':
-            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name), pod_sut, context)
+            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
             filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
             #print(filename_log)
             if len(stdout) > 0:
@@ -3343,7 +3442,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())
     timeLoadingEnd = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    timeLoading = time_scriptgroup_end - time_scriptgroup_start + time_offset
+    timeLoading = ceil(time_scriptgroup_end - time_scriptgroup_start + time_offset)
     logger.debug("#### time_scriptgroup_end: "+str(time_scriptgroup_end))
     logger.debug("#### timeLoadingEnd: "+str(timeLoadingEnd))
     logger.debug("#### timeLoading after scrips: "+str(timeLoading))
@@ -3354,11 +3453,11 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # store infos in labels of sut pod and it's pvc
     labels = dict()
     labels[script_type] = 'True'
-    labels['time_{script_type}'.format(script_type=script_type)] = (time_scriptgroup_end - time_scriptgroup_start)
+    labels['time_{script_type}'.format(script_type=script_type)] = ceil(time_scriptgroup_end - time_scriptgroup_start)
     #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
     labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
-        labels['time_{script_type}'.format(script_type=subscript_type)] = time_subscript_type
+        labels['time_{script_type}'.format(script_type=subscript_type)] = ceil(time_subscript_type)
     fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=timeLoadingEnd)
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)

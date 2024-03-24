@@ -1,6 +1,7 @@
-# Benchmark Experiment Host Manager
+# Benchmark Experiment Host Manager - Example for Experiments
 
-In this folder is a collection of useful Docker images for the components of the benchmarking experiments.
+The folder contains a dummy query file.
+It must be adjusted for experiments running a custom SQL workload against existing databases.
 
 ## Orchestration of Benchmarking Experiments
 

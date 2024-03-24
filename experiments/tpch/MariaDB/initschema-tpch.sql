@@ -69,36 +69,3 @@ create table tpch.lineitem ( l_orderkey    integer not null,
                              l_shipinstruct char(25) not null,
                              l_shipmode     char(10) not null,
                              l_comment      varchar(44) not null);
-
--- for table region
-alter table tpch.region
-add primary key (r_regionkey);
-
--- for table nation
-alter table tpch.nation
-add primary key (n_nationkey);
-
--- for table part
-alter table tpch.part
-add primary key (p_partkey);
-
--- for table supplier
-alter table tpch.supplier
-add primary key (s_suppkey);
-
--- for table partsupp
-alter table tpch.partsupp
-add primary key (ps_partkey,ps_suppkey);
-
--- for table customer
-alter table tpch.customer
-add primary key (c_custkey);
-
--- for table lineitem
-alter table tpch.lineitem
-add primary key (l_orderkey,l_linenumber);
-
--- for table orders
-alter table tpch.orders
-add primary key (o_orderkey);
-

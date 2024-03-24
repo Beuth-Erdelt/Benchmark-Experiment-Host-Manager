@@ -1,26 +1,17 @@
 # Example: Run a custom SQL workload
 
-## Preparation
+This example assumes you have
+* a DBMS installed outside of bexhoma
+* a database loaded
+* a sequence of SQL queries you want to run against the database
 
-* clone repository
-* pip install requirements
-* rename `k8s-cluster.config` to `cluster.config`
-* replace inside that file where to store the results locally  
-```
-        'resultfolder': '/home/myself/benchmarks',
-```
-* replace `namespace` of your K8s context here
-```
-            'context': {
-                'dummy': {
-                    'namespace': 'dummy',
-                    'clustername': 'Dummy',
-                    'service_sut': '{service}.{namespace}.svc.cluster.local',
-                    'port': 9091, # K8s: Local port for connecting via JDBC after port forwarding
-                },
-            },
-```
-* add inside `docker` section infos how to connect to DBMS (keep key `Dummy` here, adjust all the rest)
+## Prerequisites
+
+We need a dummy to mimick the existence of a DBMS managed by bexhoma and a query file in a certain format.
+
+### Dummy DBMS
+
+Inside the `docker` section of the `cluster.config` we define infos how to connect to a DBMS (keep key `Dummy` here, adjust all the rest):
 ```
         'Dummy': {
             'loadData': '',
@@ -41,19 +32,20 @@
             'priceperhourdollar': 0.0,
         },
 ```
-* overwrite file `queries.config` in `experiments/example` with custom file
-* cluster needs a PV `bexhoma-results` created via `k8s/pvc-bexhoma-results.yml` or similarly
+
+### Queries File
+
+Overwrite the file `queries.config` in `experiments/example` with a custom file.
+For more details about the format see https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#query-file
+
 
 ## Run Experiment
 
-Example: Run `python example.py run -dbms Dummy -ne 5` to run experiment with 5 parallel benchmarkers.
+Example: Run `python example.py run -dbms Dummy -ne 5 -nr 100` to run experiment with 5 parallel benchmarkers and repeat each query 100 times.
 
 ## Background Information
 
-1. The script installs a `dashboard` container (if not already installed). This connects to a PV `bexhoma-results`. Measurements are stored, merged and aggregated there.
-1. The script installs a `messagequeue` container (if not already installed). Components are synched to start at the same second using a Redis queue inside that container.
 1. The script installs a Dummy DBMS according to `k8s/deploymenttemplate-Dummy.yml`. This is just a lightweight busybox container running an endless sleep. Bexhoma writes status information about the components to the benchmarked DBMS container. If the DBMS is not managed by bexhoma, we need such a Dummy container otherwise. The container will be removed automatically after experiment has finished.
-
 
 The DBMSBenchmarker Docker container needs to have the required JDBC driver included.
 
@@ -195,29 +187,3 @@ Dummy-BHT-1-1-1-18
   time_start:1691160821
   time_end:1691160823
 ```
-
-## Add new DBMS
-
-Suppose you want to add a new DBMS called `newDBMS`.
-
-You will need to
-* add a corresponding section to the dockers part in `cluster.config`.
-* add a YAML template for the DBMS component called `k8s/deploymenttemplate-NewDBMS.yml` (just copy `k8s/deploymenttemplate-Dummy.yml`)
-* add a section to `example.py`. Look for  
-```
-    # add configs
-    if args.dbms == "Dummy":
-        # Dummy DBMS
-        name_format = 'Dummy-{cluster}'
-        config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
-        config.loading_finished = True
-```  
-The parameter `docker='Dummy'` refers to the key in the dockers section in `cluster.config` and the name of the file in `k8s/`.
-You may add several DBMS by this way to the same experiment for comparison.
-Note that `example.py` contains a line
-```
-parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['Dummy'])
-```
-which filters command line arguments and restricts to adding only one DBMS (you may want to ignore `args.dbms` instead).
-
-If you need a JDBC driver different  from the above, please raise an issue: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues

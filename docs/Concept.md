@@ -39,3 +39,33 @@ In more detail this means
 1. **Stop Experiment**
 1. **Clean Experiment**  
     1. Delete deployment and services
+
+
+## References
+
+You can find much more details about the concepts in the following articles.
+If you use Bexhoma in work contributing to a scientific publication, we kindly ask that you cite our application note [2] or [1]:
+
+[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
+> Erdelt P.K. (2021)
+> A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
+> In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
+> Lecture Notes in Computer Science, vol 12752. Springer, Cham.
+> https://doi.org/10.1007/978-3-030-84924-5_6
+
+[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://doi.org/10.1007/978-3-030-94437-7_6)
+> Erdelt P.K. (2022)
+> Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
+> In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
+> Lecture Notes in Computer Science, vol 13169. Springer, Cham.
+> https://doi.org/10.1007/978-3-030-94437-7_6
+
+[3] [DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python](https://doi.org/10.21105/joss.04628)
+> Erdelt P.K., Jestel J. (2022).
+> DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python.
+> Journal of Open Source Software, 7(79), 4628
+> https://doi.org/10.21105/joss.04628
+
+[4] [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880)
+> Erdelt P.K. (2023)
+> http://dx.doi.org/10.13140/RG.2.2.29866.18880

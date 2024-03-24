@@ -42,7 +42,7 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 120
       containers:
       - name: dbms
         image: postgres:16.1
@@ -51,10 +51,12 @@ spec:
           value: trust
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        # pg_ctl: cannot be run as root
         lifecycle:
           preStop:
             exec:
-              command: ["/bin/sh", "-c", "pg_ctl stop -D /var/lib/postgresql/data -m fast"]
+              #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -D /var/lib/postgresql/data -m fast"]
+              command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -m fast"]
         ports:
         - {containerPort: 5432}
         securityContext:

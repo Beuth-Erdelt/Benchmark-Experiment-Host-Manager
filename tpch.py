@@ -37,39 +37,37 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[])
+    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[], action='append')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
-    parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
-    parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
-    parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
-    parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
-    parser.add_argument('-m', '--monitoring', help='activates monitoring', action='store_true')
-    parser.add_argument('-mc', '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
-    parser.add_argument('-ms', '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
-    parser.add_argument('-dt', '--datatransfer', help='activates datatransfer', action='store_true', default=False)
-    parser.add_argument('-md', '--monitoring-delay', help='time to wait [s] before execution of the runs of a query', default=10)
-    parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
-    parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
+    parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
+    parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
+    parser.add_argument('-m',   '--monitoring', help='activates monitoring', action='store_true')
+    parser.add_argument('-mc',  '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
+    parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
+    parser.add_argument('-dt',  '--datatransfer', help='activates transfer of data per query (not only execution)', action='store_true', default=False)
+    parser.add_argument('-nr',  '--num-run', help='number of runs per query', default=1)
+    parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
+    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
     parser.add_argument('-nls', '--num-loading-split', help='portion of loaders that should run in parallel', default="1")
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
-    parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF)', default=1)
-    parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=600)
-    parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
-    parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
-    parser.add_argument('-rct', '--request-cpu-type', help='request node having node label cpu=', default='')
-    parser.add_argument('-rg', '--request-gpu', help='request number of gpus', default=1)
-    parser.add_argument('-rgt', '--request-gpu-type', help='request node having node label gpu=', default='a100')
+    parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF)', default=1)
+    parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=600)
+    parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
+    parser.add_argument('-rc',  '--request-cpu', help='request cpus for sut, default 4', default='4')
+    parser.add_argument('-rct', '--request-cpu-type', help='request node for sut to have node label cpu=', default='')
+    parser.add_argument('-rg',  '--request-gpu', help='request number of gpus for sut', default=1)
+    parser.add_argument('-rgt', '--request-gpu-type', help='request node for sut to have node label gpu=', default='')
     parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared'])
     parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
-    parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
-    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node', default=None)
-    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
-    parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
-    parser.add_argument('-ii', '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-ic', '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-is', '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
+    parser.add_argument('-rnn', '--request-node-name', help='request a specific node for sut', default=None)
+    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node for loading pods', default=None)
+    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node for benchmarking pods', default=None)
+    parser.add_argument('-tr',  '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
+    parser.add_argument('-ii',  '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
+    parser.add_argument('-ic',  '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
+    parser.add_argument('-is',  '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
     parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=False)
     parser.add_argument('-shq', '--shuffle-queries', help='have different orderings per stream', action='store_true', default=False)
     # evaluate args
@@ -284,7 +282,7 @@ if __name__ == '__main__':
                 continue
             # how many in parallel?
             split_portion = int(loading_pods_total/loading_pods_split)
-            if (args.dbms == "PostgreSQL" or len(args.dbms) == 0):
+            if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
@@ -310,7 +308,7 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if (args.dbms == "MonetDB" or len(args.dbms) == 0):
+            if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
@@ -336,7 +334,34 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if (args.dbms == "MySQL" or len(args.dbms) == 0):
+            if ("MariaDB" in args.dbms or len(args.dbms) == 0):
+                # MonetDB
+                name_format = 'MariaDB-{cluster}-{pods}'
+                config = configurations.default(experiment=experiment, docker='MariaDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MySQL', alias='DBMS A1')
+                config.set_storage(
+                    storageConfiguration = 'mariadb'
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
+                config.set_loading_parameters(
+                    SF = SF,
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    STORE_RAW_DATA = 1,
+                    STORE_RAW_DATA_RECREATE = 0,
+                    BEXHOMA_SYNCH_LOAD = 1,
+                    BEXHOMA_SYNCH_GENERATE = 1,
+                    TRANSFORM_RAW_DATA = 1,
+                    TPCH_TABLE = limit_import_table,
+                    MYSQL_LOADING_FROM = "LOCAL",
+                    )
+                config.set_benchmarking_parameters(
+                    SF = SF,
+                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                    DBMSBENCHMARKER_DEV = debugging,
+                    )
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("MySQL" in args.dbms or len(args.dbms) == 0):
                 # MySQL
                 for threads in list_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'

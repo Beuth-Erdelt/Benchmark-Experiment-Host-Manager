@@ -1,85 +1,42 @@
-# Command Line Tool for TPC-H
+# Benchmark Experiment Host Manager - TPC-H Experiments
 
-The folder contains DDL scripts and a query file for some DBMS.
+The folder contains subfolders with DDL scripts and a query file for multiple DBMSs.
+These are used for TPC-H experiments.
 
-The tool `tpch` helps perform some tasks related to TPC-H benchmark.
-It installs MonetDB and PostgreSQL, loads the data, profiles loading or runs the reading queries.
-It also starts an evaluation dashboard.
+## Orchestration of Benchmarking Experiments
 
-Recommended settings: `tpch run -sf 1 -t 30 -dt`
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/v0.5.6/docs/experiment-with-orchestrator.png" width="800">
+</p>
 
-For more detail about options.
+For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
+For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [4].
 
-## Tutorials
 
-### Install Data
+## References
 
-### Start a DBMS
+If you use Bexhoma in work contributing to a scientific publication, we kindly ask that you cite our application note [2] or [1]:
 
-### Start a DBMS and Load Data
+[1] [A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking](https://doi.org/10.1007/978-3-030-84924-5_6)
+> Erdelt P.K. (2021)
+> A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking.
+> In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2020.
+> Lecture Notes in Computer Science, vol 12752. Springer, Cham.
+> https://doi.org/10.1007/978-3-030-84924-5_6
 
-### Start a DBMS and Load Data and Connect
+[2] [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://doi.org/10.1007/978-3-030-94437-7_6)
+> Erdelt P.K. (2022)
+> Orchestrating DBMS Benchmarking in the Cloud with Kubernetes.
+> In: Nambiar R., Poess M. (eds) Performance Evaluation and Benchmarking. TPCTC 2021.
+> Lecture Notes in Computer Science, vol 13169. Springer, Cham.
+> https://doi.org/10.1007/978-3-030-94437-7_6
 
-## Options
+[3] [DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python](https://doi.org/10.21105/joss.04628)
+> Erdelt P.K., Jestel J. (2022).
+> DBMS-Benchmarker: Benchmark and Evaluate DBMS in Python.
+> Journal of Open Source Software, 7(79), 4628
+> https://doi.org/10.21105/joss.04628
 
-```
-usage: tpch.py [-h] [-db] [-c CONNECTION] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-ms MAX_SUT] [-dt]
-               [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-sf SCALING_FACTOR]
-               [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
-               [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
-               [-rnn REQUEST_NODE_NAME]
-               {profiling,run,start,load}
-
-Perform TPC-H inspired benchmarks in a Kubernetes cluster. This either profiles the imported data in several DBMS and
-compares some statistics, or runs the TPC-H queries. Optionally monitoring is actived. User can choose to detach the
-componenten of the benchmarking system, so that as much as possible is run inside a Kubernetes (K8s) cluster. User can
-also choose some parameters like number of runs per query and configuration and request some resources.
-
-positional arguments:
-  {profiling,run,start,load}
-                        profile the import of TPC-H data, or run the TPC-H queries, or start DBMS and load data, or
-                        just start the DBMS
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -db, --debug          dump debug informations
-  -c CONNECTION, --connection CONNECTION
-                        name of DBMS
-  -cx CONTEXT, --context CONTEXT
-                        context of Kubernetes (for a multi cluster environment), default is current context
-  -e EXPERIMENT, --experiment EXPERIMENT
-                        sets experiment code for continuing started experiment
-  -d, --detached        puts most of the experiment workflow inside the cluster
-  -m, --monitoring      activates monitoring
-  -ms MAX_SUT, --max-sut MAX_SUT
-                        maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates datatransfer
-  -md MONITORING_DELAY, --monitoring-delay MONITORING_DELAY
-                        time to wait [s] before execution of the runs of a query
-  -nr NUM_RUN, --num-run NUM_RUN
-                        number of runs per query
-  -nc NUM_CONFIG, --num-config NUM_CONFIG
-                        number of runs per configuration
-  -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
-                        comma separated list of number of parallel clients
-  -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
-                        scaling factor (SF)
-  -t TIMEOUT, --timeout TIMEOUT
-                        timeout for a run of a query
-  -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        request ram
-  -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        request cpus
-  -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
-                        request node having node label cpu=
-  -rg REQUEST_GPU, --request-gpu REQUEST_GPU
-                        request number of gpus
-  -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
-                        request node having node label gpu=
-  -rst {None,,local-hdd,shared}, --request-storage-type {None,,local-hdd,shared}
-                        request persistent storage of certain type
-  -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
-                        request persistent storage of certain size
-  -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
-                        request a specific node
-```
+[4] [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880)
+> Erdelt P.K. (2023)
+> http://dx.doi.org/10.13140/RG.2.2.29866.18880
