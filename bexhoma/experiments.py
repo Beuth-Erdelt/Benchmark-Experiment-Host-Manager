@@ -2041,3 +2041,48 @@ class example(default):
             )
         self.storage_label = 'example'
 
+
+"""
+############################################################################
+TPCx-AI
+############################################################################
+"""
+
+class tpcxai(default):
+    """
+    Class for defining an TPCx-AI experiment.
+    This sets
+
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    * additional parameters - here SF (the scaling factor)
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            queryfile = 'queries-tpcxai.config',
+            SF = '100',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            script=None
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        if script is None:
+            script = 'SF'+str(SF)+'-index'
+        self.set_experiment(volume='tpcxai')
+        self.set_experiment(script=script)
+        self.cluster.set_experiments_configfolder('experiments/tpcxai')
+        parameter.defaultParameters = {'SF': str(SF)}
+        self.set_additional_labels(SF=SF)
+        self.set_queryfile(queryfile)
+        self.set_workload(
+            name = 'TPCx-AI Queries SF='+str(SF),
+            info = 'This experiment performs some TPCx-AI inspired queries.'
+            )
+        self.storage_label = 'tpcxai-'+str(SF)
+    def set_queries_full(self):
+        self.set_queryfile('queries-tpcxai.config')
+    def set_queries_profiling(self):
+        self.set_queryfile('queries-tpcxai-profiling.config')
+
