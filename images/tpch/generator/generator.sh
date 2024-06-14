@@ -41,6 +41,10 @@ then
 		then
 			echo "OK"
 			break
+        elif test "$PODS_RUNNING" -gt $NUM_PODS
+        then
+            echo "Too many pods! Restart occured?"
+            exit 0
 		else
 			echo "We have to wait"
 			sleep 1

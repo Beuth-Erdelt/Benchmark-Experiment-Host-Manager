@@ -1,7 +1,6 @@
 #paramiko>=2.4.2
 urllib3>=1.24.1
 #boto3>=1.9.104
-#requests>=2.21.0
 #scp>=0.13.2
 kubernetes==22.6.0
 psutil>=5.6.1
@@ -13,9 +12,10 @@ HiYaPyCo==0.5.1
 mistune>=2.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
 numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
-pillow>=10.2.0 # not directly required, pinned by Snyk to avoid a vulnerability
-Werkzeug>=3.0.1
+Werkzeug>=3.0.3
+pillow>=10.3.0 # not directly required, pinned by Snyk to avoid a vulnerability
 fonttools>=4.43.0 # not directly required, pinned by Snyk to avoid a vulnerability
 dash>=2.15.0 # not directly required, pinned by Snyk to avoid a vulnerability
 pyarrow>=14.0.2
 requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
+prettytable
