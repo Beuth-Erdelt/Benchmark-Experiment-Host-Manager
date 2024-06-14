@@ -33,7 +33,7 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dashboard
-        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.6
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.7
         imagePullPolicy: IfNotPresent
         #imagePullPolicy: Always
         env:
@@ -56,8 +56,10 @@ spec:
         volumeMounts:
         - name: bexhoma-results
           mountPath: /results
+        - name: benchmark-data-volume
+          mountPath: /data
       - name: jupyter
-        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.6
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.13.7
         imagePullPolicy: IfNotPresent
         env:
         - {name: MPLCONFIGDIR, value: '/tmp/'}
@@ -84,5 +86,6 @@ spec:
           mountPath: /results
       volumes:
       - name: bexhoma-results
-        persistentVolumeClaim:
-          claimName: bexhoma-results
+        persistentVolumeClaim: {claimName: bexhoma-results}
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
