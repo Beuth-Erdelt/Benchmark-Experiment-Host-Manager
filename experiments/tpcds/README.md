@@ -1,6 +1,7 @@
-# Benchmark Experiment Host Manager
+# Benchmark Experiment Host Manager - TPC-DS Experiments
 
-In this folder is a collection of useful Docker images for the components of the benchmarking experiments.
+The folder contains subfolders with DDL scripts and a query file for multiple DBMSs.
+These are used for TPC-DS experiments.
 
 ## Orchestration of Benchmarking Experiments
 

@@ -26,6 +26,8 @@ import time
 import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
+from prettytable import PrettyTable, ALL
+
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
@@ -36,7 +38,7 @@ def manage():
     print(description)
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','jupyter','master'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
@@ -83,6 +85,34 @@ def manage():
         sys.argv.remove('localdashboard')
         from dbmsbenchmarker.scripts import dashboardcli
         dashboardcli.startup()
+    elif args.mode == 'localresults':
+        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        # path of folder containing experiment results
+        resultfolder = cluster.resultfolder
+        # create evaluation object for result folder
+        evaluate = inspector.inspector(resultfolder)
+        # dataframe of experiments
+        df = evaluate.get_experiments_preview().sort_values('time')
+        df = df.reset_index()
+        df['info'] = df['info'].str.replace('. ', '.\n')
+        # Create a PrettyTable object
+        pt = PrettyTable()
+        pt.field_names = df.columns
+        pt.align['info'] = 'r'  # 'r' for right alignment
+        pt.hrules=ALL
+        # Add rows to the PrettyTable
+        for _, row in df.iterrows():
+            pt.add_row(row)
+        # Display the PrettyTable
+        print(pt)
+    elif args.mode == 'data':
+        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        dashboard_name = cluster.get_dashboard_pod_name()
+        if len(dashboard_name) > 0:
+            cmd = {}
+            cmd['get_data_dir'] = 'du -h /data/'
+            stdin, stdout, stderr = cluster.execute_command_in_pod(cmd['get_data_dir'], pod=dashboard_name, container='dashboard')
+            print(stdout)
     elif args.mode == 'jupyter':
         import subprocess
         cmd = ["jupyter","notebook","--notebook-dir","images/evaluator_dbmsbenchmarker/notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
@@ -115,6 +145,12 @@ def manage():
             print("Result directory: {}".format("Running"))
         else:
             print("Result directory: {}".format("Missing"))
+        # get cluster monitoring Prometheus
+        monitoring_running = cluster.test_if_monitoring_healthy()
+        if monitoring_running:
+            print("Cluster Prometheus: {}".format("Running"))
+        else:
+            print("Cluster Prometheus: {}".format("Not running"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)
@@ -142,6 +178,14 @@ def manage():
             pvcs_status = cluster.get_pvc_status(app=app, component='storage', experiment='', configuration='', pvc=pvc)
             #print("PVCsStatus", pvcs_status)
             volumes[pvc]['status'] = pvcs_status[0].phase
+            if 'volume_size' in pvc_labels:
+                volumes[pvc]['size'] = pvc_labels['volume_size']
+            else:
+                volumes[pvc]['size'] = ""
+            if 'volume_used' in pvc_labels:
+                volumes[pvc]['used'] = pvc_labels['volume_used']
+            else:
+                volumes[pvc]['used'] = ""
         #print(volumes)
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T
