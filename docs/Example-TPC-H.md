@@ -364,7 +364,7 @@ MySQL-BHT-8-8-1                                          132.57                 
 PostgreSQL-BHT-8-1                                       116.69                             3.84
 ```
 
-This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 
 ## Perform Benchmark - Throughput Test
 
