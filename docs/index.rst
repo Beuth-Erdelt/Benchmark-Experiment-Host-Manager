@@ -18,7 +18,6 @@
     ./Concept.md
     ./Config.md
     ./DBMS.md
-    ./Monitoring.md
     ./CONTRIBUTING.md
     ./bexhoma
 

@@ -262,7 +262,7 @@ PostgreSQL-64-8-114688-1                                       190.45           
 PostgreSQL-64-8-131072-1                                       146.15                             4.02
 ```
 
-This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.

@@ -11,3 +11,4 @@ dist/*
 .spyproject/*
 docs/html/*
 api/*
+bexhoma/__pycache__/*

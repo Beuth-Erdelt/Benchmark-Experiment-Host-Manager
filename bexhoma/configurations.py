@@ -1498,11 +1498,14 @@ scrape_configs:
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
             parts = stdout.split(" ")
             parts = [x for x in parts if x != '']
-            size = parts[1]
-            #command = "df -h | grep volumes | awk -F ' ' '{print $3}'"
-            #stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-            used = parts[2]
-            return size, used
+            if len(parts) > 2:
+                size = parts[1]
+                #command = "df -h | grep volumes | awk -F ' ' '{print $3}'"
+                #stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+                used = parts[2]
+                return size, used
+            else:
+                return 0,0
         except Exception as e:
             logging.error(e)
             return "", ""
@@ -3338,7 +3341,7 @@ class kinetica(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace=''):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
