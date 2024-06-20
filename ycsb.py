@@ -432,6 +432,7 @@ if __name__ == '__main__':
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
         #print("Experiment starts at {} ({})".format(start_datetime, start))
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
         print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
         # run workflow
         experiment.work_benchmark_list()
