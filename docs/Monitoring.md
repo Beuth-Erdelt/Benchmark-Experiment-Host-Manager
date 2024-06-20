@@ -131,11 +131,9 @@ Note that the metrics make a summation over all matching components (containers,
 
 ### Installation Templates
 
-cAdvisor
-* container `cadvisor` and a service with `port-monitoring` 9300
-* example per SUT: `k8s/deploymenttemplate-PostgreSQL.yml`
-* example per node: `k8s/daemonsettemplate-monitoring.yml`
+cAdvisor runs as a container `cadvisor` and a service with `port-monitoring` 9300
+* example per SUT (sidecar container): `k8s/deploymenttemplate-PostgreSQL.yml`
+* example per node (daemonset): `k8s/daemonsettemplate-monitoring.yml`
 
-Prometheus
-* container with a service with `port-prometheus` 9090
+Prometheus runs as a container with a service with `port-prometheus` 9090
 * `k8s/deploymenttemplate-bexhoma-prometheus.yml`
