@@ -232,6 +232,18 @@ if __name__ == '__main__':
     experiment.loading_active = True
     experiment.use_distributed_datasource = True
     experiment.set_experiment(script='Schema')
+    # note more infos about experiment in workload description
+    experiment.workload['info'] = experiment.workload['info']+" TPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
+    if request_storage_type is not None:
+        experiment.workload['info'] = experiment.workload['info']+" Database is persistent on a volume of type {}.".format(request_storage_type)
+    if shuffle_queries:
+        experiment.workload['info'] = experiment.workload['info']+" Query ordering is as required by the TPC."
+    else:
+        experiment.workload['info'] = experiment.workload['info']+" Query ordering is Q1 - Q22."
+    if recreate_parameter:
+        experiment.workload['info'] = experiment.workload['info']+" All instances use different query parameters."
+    else:
+        experiment.workload['info'] = experiment.workload['info']+" All instances use the same query parameters."
     # optionally set some indexes and constraints after import
     if init_indexes or init_constraints or init_statistics:
         experiment.set_experiment(indexing='Index')
@@ -243,8 +255,6 @@ if __name__ == '__main__':
             experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
             experiment.workload['info'] = experiment.workload['info']+" Import sets indexes and constraints after loading and recomputes statistics."
     #experiment.set_experiment(script='Schema', indexing='Index')
-    # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+" TPC-H data is loaded from a filesystem using several processes."
     if len(limit_import_table):
         # import is limited to single table
         experiment.workload['info'] = experiment.workload['info']+" Import is limited to table {}.".format(limit_import_table)
