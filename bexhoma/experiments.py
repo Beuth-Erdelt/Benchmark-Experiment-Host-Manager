@@ -30,7 +30,7 @@
 """
 from dbmsbenchmarker import parameter, tools, inspector
 import logging
-#import urllib3
+import urllib3
 import gc
 import shutil # for zipping
 from os import makedirs, path
@@ -46,7 +46,7 @@ import ast
 
 from bexhoma import evaluators
 
-#urllib3.disable_warnings()
+urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 

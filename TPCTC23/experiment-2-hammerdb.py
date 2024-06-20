@@ -9,9 +9,8 @@ User can also choose some parameters like number of warehouses and request some 
 """
 from bexhoma import *
 from dbmsbenchmarker import *
-#import experiments
 import logging
-#import urllib3
+import urllib3
 import logging
 import argparse
 import time
@@ -19,7 +18,7 @@ from timeit import default_timer
 import datetime
 
 
-#urllib3.disable_warnings()
+urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
