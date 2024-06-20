@@ -34,18 +34,18 @@ nohup python experiment-2-3-tpch-loading-filesystem.py profiling \
 from bexhoma import *
 from dbmsbenchmarker import *
 import logging
-import urllib3
+#import urllib3
 import logging
 import argparse
 import time
 from timeit import default_timer
 import datetime
 # queue
-import redis
+#import redis
 import subprocess
 import psutil
 
-urllib3.disable_warnings()
+#urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':

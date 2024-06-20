@@ -19,7 +19,7 @@
 from bexhoma import *
 from dbmsbenchmarker import *
 import logging
-import urllib3
+#import urllib3
 import logging
 import argparse
 import time
@@ -28,7 +28,7 @@ from tabulate import tabulate
 from datetime import datetime
 from prettytable import PrettyTable, ALL
 
-urllib3.disable_warnings()
+#urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 
