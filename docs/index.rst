@@ -17,6 +17,7 @@
     ./Example-custom.md
     ./Concept.md
     ./Config.md
+    ./Monitoring.md
     ./DBMS.md
     ./CONTRIBUTING.md
     ./bexhoma
