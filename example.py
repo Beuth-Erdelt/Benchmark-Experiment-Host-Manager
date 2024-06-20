@@ -8,7 +8,7 @@ Performs experiment by running custom SQL queries.
 from bexhoma import *
 from dbmsbenchmarker import *
 import logging
-import urllib3
+#import urllib3
 import logging
 import argparse
 import time
@@ -19,7 +19,7 @@ import redis
 import subprocess
 import psutil
 
-urllib3.disable_warnings()
+#urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
