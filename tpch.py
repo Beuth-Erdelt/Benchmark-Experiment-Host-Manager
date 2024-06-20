@@ -176,15 +176,18 @@ if __name__ == '__main__':
         )
         # patch: use short profiling (only keys)
         experiment.set_queryfile('queries-tpch-profiling-keys.config')
-    if monitoring:
+    if monitoring_cluster:
+        # monitor all nodes of cluster (for not missing any component)
+        experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+        cluster.start_monitoring_cluster()
+        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by a cluster-wide installation."
+    elif monitoring:
         # we want to monitor resource consumption
         experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by sidecar containers."
     else:
         # we want to just run the queries
         experiment.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
-    if monitoring_cluster:
-        # monitor all nodes of cluster (for not missing any component)
-        cluster.start_monitoring_cluster()
     # set resources for dbms
     experiment.set_resources(
         requests = {
@@ -232,10 +235,13 @@ if __name__ == '__main__':
     # optionally set some indexes and constraints after import
     if init_indexes or init_constraints or init_statistics:
         experiment.set_experiment(indexing='Index')
+        experiment.workload['info'] = experiment.workload['info']+" Import sets indexes after loading."
         if init_constraints:
             experiment.set_experiment(indexing='Index_and_Constraints')
+            experiment.workload['info'] = experiment.workload['info']+" Import sets indexes and constraints after loading."
         if init_statistics:
             experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
+            experiment.workload['info'] = experiment.workload['info']+" Import sets indexes and constraints after loading and recomputes statistics."
     #experiment.set_experiment(script='Schema', indexing='Index')
     # note more infos about experiment in workload description
     experiment.workload['info'] = experiment.workload['info']+" TPC-H data is loaded from a filesystem using several processes."
@@ -244,10 +250,10 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Import is limited to table {}.".format(limit_import_table)
     if len(args.dbms):
         # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Import is limited to DBMS {}.".format(args.dbms)
-    if len(list_loading_split):
+        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(", ".join(args.dbms))
+    if len(list_loading_pods):
         # import uses several processes in pods
-        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes.".format(num_loading_split)
+        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes (pods).".format(list_loading_pods)
     # fix loading
     if not request_node_loading is None:
         experiment.patch_loading(patch="""

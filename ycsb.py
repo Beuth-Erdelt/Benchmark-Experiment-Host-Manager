@@ -227,7 +227,7 @@ if __name__ == '__main__':
     experiment.workload['info'] = experiment.workload['info']+" YCSB data is loaded using several processes."
     if len(args.dbms):
         # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(args.dbms)
+        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(", ".join(args.dbms))
     # fix loading
     if not request_node_loading is None:
         experiment.patch_loading(patch="""
