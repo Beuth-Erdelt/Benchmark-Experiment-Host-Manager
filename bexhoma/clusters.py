@@ -849,7 +849,9 @@ class testbed():
         :return: stdout of the shell command
         """
         if len(pod) == 0:
-            pod = self.activepod
+            self.logger.debug('testbed.execute_command_in_pod({}): empty pod name given for command'.format(command))
+            return "", "", ""
+            #pod = self.activepod
         command_clean = command.replace('"','\\"')
         if len(container) > 0:
             fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)

@@ -128,6 +128,15 @@ def manage():
         if len(dashboard_name) > 0:
             status = cluster.get_pod_status(dashboard_name)
             print("Dashboard: {}".format(status))
+            # get cluster monitoring Prometheus
+            monitoring_running = cluster.test_if_monitoring_healthy()
+            if monitoring_running:
+                print("Cluster Prometheus: {}".format("Running"))
+            else:
+                print("Cluster Prometheus: {}".format("Not running"))
+        else:
+            print("Dashboard: {}".format("Not running"))
+            print("Cluster Prometheus: {}".format("Unknown"))
         # check message queue
         messagequeue_name = cluster.get_pods(component='messagequeue')
         if len(messagequeue_name) > 0:
@@ -145,12 +154,6 @@ def manage():
             print("Result directory: {}".format("Running"))
         else:
             print("Result directory: {}".format("Missing"))
-        # get cluster monitoring Prometheus
-        monitoring_running = cluster.test_if_monitoring_healthy()
-        if monitoring_running:
-            print("Cluster Prometheus: {}".format("Running"))
-        else:
-            print("Cluster Prometheus: {}".format("Not running"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)

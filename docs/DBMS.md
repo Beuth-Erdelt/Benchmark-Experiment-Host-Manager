@@ -120,7 +120,7 @@ as default settings.
 
 ```
        'MariaDB': {
-            'loadData': 'mysql < {scriptname}',
+            'loadData': 'mariadb < {scriptname}',
             'template': {
                 'version': 'v10.4.6',
                 'alias': 'GP A',
@@ -130,7 +130,7 @@ as default settings.
                     'driver': "org.mariadb.jdbc.Driver",
                     'auth': ["root", ""],
                     'url': 'jdbc:mysql://{serverip}:9091/{dbname}',
-                    'jar': './mariadb-java-client-2.3.0.jar'
+                    'jar': './mariadb-java-client-3.1.0.jar'
                 }
             },
             'logfile': '',
