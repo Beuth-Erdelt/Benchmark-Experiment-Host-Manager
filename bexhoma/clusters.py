@@ -1321,7 +1321,7 @@ class testbed():
         self.logger.debug('testbed.test_if_monitoring_healthy()')
         config_K8s = self.config['credentials']['k8s']
         if 'service_monitoring' in config_K8s['monitor']:
-            url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'])
+            url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'], service="monitoring")
             query = "node_memory_MemTotal_bytes"
             safe_query = urllib.parse.quote_plus(query)
             try:

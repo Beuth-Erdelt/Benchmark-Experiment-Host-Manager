@@ -729,7 +729,7 @@ class default():
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         """
-        if not self.experiment.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
+        if not self.experiment.monitoring_active or (self.experiment.cluster.monitor_cluster_active and self.experiment.cluster.monitor_cluster_exists):
             return
         if len(app) == 0:
             app = self.appname

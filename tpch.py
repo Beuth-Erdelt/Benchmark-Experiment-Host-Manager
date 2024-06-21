@@ -245,13 +245,14 @@ if __name__ == '__main__':
     # optionally set some indexes and constraints after import
     if init_indexes or init_constraints or init_statistics:
         experiment.set_experiment(indexing='Index')
-        experiment.workload['info'] = experiment.workload['info']+" Import sets indexes after loading."
+        init_scripts = " Import sets indexes after loading."
         if init_constraints:
             experiment.set_experiment(indexing='Index_and_Constraints')
-            experiment.workload['info'] = experiment.workload['info']+" Import sets indexes and constraints after loading."
+            init_scripts = " Import sets indexes and constraints after loading."
         if init_statistics:
             experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
-            experiment.workload['info'] = experiment.workload['info']+" Import sets indexes and constraints after loading and recomputes statistics."
+            init_scripts = " Import sets indexes and constraints after loading and recomputes statistics."
+        experiment.workload['info'] = experiment.workload['info']+init_scripts
     #experiment.set_experiment(script='Schema', indexing='Index')
     if len(limit_import_table):
         # import is limited to single table
@@ -261,7 +262,7 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(", ".join(args.dbms))
     if len(list_loading_pods):
         # import uses several processes in pods
-        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes (pods).".format(list_loading_pods)
+        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes (pods).".format(" and ".join(map(str, list_loading_pods)))
     # fix loading
     if not request_node_loading is None:
         experiment.patch_loading(patch="""
@@ -439,6 +440,7 @@ if __name__ == '__main__':
         start_datetime = str(datetime.datetime.now())
         print("{:30s}: has code {}".format("Experiment",experiment.code))
         print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment
