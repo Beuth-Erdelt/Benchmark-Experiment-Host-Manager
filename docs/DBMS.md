@@ -296,7 +296,7 @@ As of bexhoma version `v0.7.0` this contains
           "--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
         ]
 ```
-as default settings.
+as default settings. It also runs MySQL 8.4.0 as default. Please visit the official website for explanations about settings, https://dev.mysql.com/doc/refman/8.4/en/mysql-nutshell.html
 
 ### Configuration
 
