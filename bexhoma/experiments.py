@@ -1240,10 +1240,10 @@ class default():
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=True)
         #####################
-        print("\n### Errors")
+        print("\n### Errors (failed queries)")
         print(evaluate.get_total_errors().T)
         #####################
-        print("\n### Warnings")
+        print("\n### Warnings (result mismatch)")
         print(evaluate.get_total_warnings().T)
         #####################
         print("\n### Latency of Timer Execution [ms]")
