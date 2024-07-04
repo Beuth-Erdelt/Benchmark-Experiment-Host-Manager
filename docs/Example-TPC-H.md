@@ -37,7 +37,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Message Queue: Running
 Data directory: Running
