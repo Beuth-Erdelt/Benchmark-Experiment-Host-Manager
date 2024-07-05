@@ -5,7 +5,6 @@
 """
 from bexhoma import *
 from dbmsbenchmarker import *
-#import experiments
 import logging
 import urllib3
 import logging

@@ -8,14 +8,18 @@ cd evaluator_dbmsbenchmarker
 python create_Dockerfiles.py
 #docker build -f Dockerfile_v0.13.6 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.6 --no-cache .
 #docker build -f Dockerfile_v0.13.6 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.6 .
-docker push bexhoma/evaluator_dbmsbenchmarker:v0.13.6 &
+docker push bexhoma/evaluator_dbmsbenchmarker:dev &
+#docker push bexhoma/evaluator_dbmsbenchmarker:v0.13.7 &
+#docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.0 &
 cd ..
 
 cd benchmarker_dbmsbenchmarker
 python create_Dockerfiles.py
 #docker build -f Dockerfile_v0.13.6 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.6 --no-cache .
 #docker build -f Dockerfile_v0.13.6 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.6 .
-docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.6 &
+docker push bexhoma/benchmarker_dbmsbenchmarker:dev &
+#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.13.7 &
+#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.0 &
 cd ..
 
 ###########

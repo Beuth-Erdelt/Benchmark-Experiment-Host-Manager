@@ -5,7 +5,6 @@
 """
 from bexhoma import *
 from dbmsbenchmarker import *
-#import experiments
 import logging
 import urllib3
 import logging
@@ -28,40 +27,36 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL'], default=[])
-    parser.add_argument('-workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='a')
-    parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
-    parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
-    parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
-    parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
-    parser.add_argument('-m', '--monitoring', help='activates monitoring for sut', action='store_true')
-    parser.add_argument('-mc', '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
-    parser.add_argument('-ms', '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
-    parser.add_argument('-dt', '--datatransfer', help='activates datatransfer', action='store_true', default=False)
-    parser.add_argument('-md', '--monitoring-delay', help='time to wait [s] before execution of the runs of a query', default=10)
-    parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
-    parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="")
-    parser.add_argument('-nl', '--num-loading', help='number of parallel loaders per configuration', default=1)
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[], action='append')
+    parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
+    parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
+    parser.add_argument('-m',   '--monitoring', help='activates monitoring for sut', action='store_true')
+    parser.add_argument('-mc',  '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
+    parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
+    parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
+    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="")
+    parser.add_argument('-nl',  '--num-loading', help='number of parallel loaders per configuration', default=1)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1,8")
-    parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
-    parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor (SF) = number of operations in millions (=SF if not set)', default=None)
-    parser.add_argument('-su', '--scaling-users', help='scaling factor = number of total threads', default=64)
+    parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'e', 'f'], default='a')
+    parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
+    parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor = number of operations in millions (=SF if not set)', default=None)
+    parser.add_argument('-su',  '--scaling-users', help='scaling factor = number of total threads', default=64)
     parser.add_argument('-sbs', '--scaling-batchsize', help='batch size', default="")
     parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
-    parser.add_argument('-tb', '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
-    parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
-    parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
-    parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
-    parser.add_argument('-rct', '--request-cpu-type', help='request node having node label cpu=', default='')
-    parser.add_argument('-rg', '--request-gpu', help='request number of gpus', default=1)
-    parser.add_argument('-rgt', '--request-gpu-type', help='request node having node label gpu=', default='a100')
+    parser.add_argument('-tb',  '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
+    parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=180)
+    parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
+    parser.add_argument('-rc',  '--request-cpu', help='request cpus for sut, default 4', default='4')
+    parser.add_argument('-rct', '--request-cpu-type', help='request node for sut to have node label cpu=', default='')
+    parser.add_argument('-rg',  '--request-gpu', help='request number of gpus for sut', default=1)
+    parser.add_argument('-rgt', '--request-gpu-type', help='request node for sut to have node label gpu=', default='')
     parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared'])
     parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
-    parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
-    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node', default=None)
-    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
-    parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
+    parser.add_argument('-rnn', '--request-node-name', help='request a specific node for sut', default=None)
+    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node for loading pods', default=None)
+    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node for benchmarking pods', default=None)
+    parser.add_argument('-tr',  '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -88,7 +83,6 @@ if __name__ == '__main__':
         list_target_factors = [int(x) for x in list_target_factors]
     batchsize = args.scaling_batchsize
     timeout = int(args.timeout)
-    numRun = int(args.num_run)
     num_experiment_to_apply = int(args.num_config)
     num_loading = int(args.num_loading)
     #num_loading_pods = int(args.num_loading_pods)
@@ -107,7 +101,6 @@ if __name__ == '__main__':
     request_node_name = args.request_node_name
     request_node_loading = args.request_node_loading
     request_node_benchmarking = args.request_node_benchmarking
-    datatransfer = args.datatransfer
     test_result = args.test_result
     code = args.experiment
     # set cluster
@@ -233,7 +226,7 @@ if __name__ == '__main__':
     experiment.workload['info'] = experiment.workload['info']+" YCSB data is loaded using several processes."
     if len(args.dbms):
         # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(args.dbms)
+        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(", ".join(args.dbms))
     # fix loading
     if not request_node_loading is None:
         experiment.patch_loading(patch="""
@@ -282,11 +275,10 @@ if __name__ == '__main__':
                 if len(list_clients) > 0:
                     # we want several benchmarking instances per installation
                     benchmarking_pods = list_clients
-                if (args.dbms == "PostgreSQL" or len(args.dbms) == 0):
+                if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'postgresql'
                         )
@@ -303,7 +295,6 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
                     config.set_benchmarking_parameters(
                         #PARALLEL = str(pods),
                         SF = SF,
@@ -317,11 +308,10 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
-                if (args.dbms == "MySQL" or len(args.dbms) == 0):
+                if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
-                    #name_format = 'PostgreSQL-{}-{}-{}-{}'.format(cluster_name, pods, worker, target)
                     name_format = 'MySQL-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS B')
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
@@ -338,9 +328,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
                     config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
                         SF = SF,
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = threads_per_pod,
@@ -352,6 +340,70 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
+                if ("MariaDB" in args.dbms or len(args.dbms) == 0):
+                    # MariaDB
+                    name_format = 'MariaDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS C')
+                    config.set_storage(
+                        storageConfiguration = 'mariadb'
+                        )
+                    config.set_loading_parameters(
+                        PARALLEL = str(pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.set_loading(parallel=pods, num_pods=pods)
+                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
+                    config.set_benchmarking_parameters(
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.add_benchmark_list(benchmarking_pods)
+                if ("YugabyteDB" in args.dbms or len(args.dbms) == 0):
+                    # YugabyteDB
+                    name_format = 'YugabyteDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
+                    config.set_loading_parameters(
+                        PARALLEL = str(pods),
+                        SF = SF,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        ROWS = ycsb_rows,
+                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.set_loading(parallel=pods, num_pods=pods)
+                    config.set_benchmarking_parameters(
+                        SF = SF,
+                        YCSB_THREADCOUNT = threads_per_pod,
+                        YCSB_TARGET = target_per_pod,
+                        YCSB_STATUS = 1,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        ROWS = ycsb_rows,
+                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.add_benchmark_list(benchmarking_pods)
+                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
@@ -380,6 +432,7 @@ if __name__ == '__main__':
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
         #print("Experiment starts at {} ({})".format(start_datetime, start))
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
         print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
         # run workflow
         experiment.work_benchmark_list()

@@ -6,6 +6,9 @@
 [![Documentation Status](https://readthedocs.org/projects/bexhoma/badge/?version=latest)](https://bexhoma.readthedocs.io/en/latest/?badge=latest)
 
 # Benchmark Experiment Host Manager (Bexhoma)
+
+## Orchestrating Cloud-Native Benchmarking Experiments with Kubernetes
+
 This Python tools helps **managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment**.
 It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
 
@@ -23,7 +26,7 @@ The basic workflow is [1,2]: start a containerized version of the DBMS, install 
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.
 
 It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments as in [4].
-See [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/TPCTC23/README.md) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
+See [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/TPCTC23) results as presented in [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880) and how they are generated.
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/).
 
@@ -55,9 +58,9 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 1. Run `python ycsb.py -ms 1 -dbms PostgreSQL -workload a run`.  
   This installs PostgreSQL and runs YCSB workload A with varying target. The driver is monolithic with 64 threads. The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
-1. You can watch status using `bexperiments status` while running. This is equivalent to `python cluster.py status`.
+1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
-  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. This is equivalent to `python cluster.py dashboard`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
 
@@ -65,9 +68,9 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
 
 1. Run `python tpch.py -ms 1 -dbms PostgreSQL run`.  
   This installs PostgreSQL and runs TPC-H at scale factor 1. The driver is monolithic.
-1. You can watch status using `bexperiments status` while running. This is equivalent to `python cluster.py status`.
+1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
-  For further inspections, run `bexperiments dashboard` to connect to a dashboard. This is equivalent to `python cluster.py dashboard`.  You can open a Jupyter notebook at `http://localhost:8888`.
+  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open a Jupyter notebook at `http://localhost:8888`.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html
 
