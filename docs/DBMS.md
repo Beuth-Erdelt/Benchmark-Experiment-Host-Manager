@@ -160,8 +160,8 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
                 'docker_alias': 'Columnwise',
                  'JDBC': {
                     'auth': ['monetdb', 'monetdb'],
-                    'driver': 'nl.cwi.monetdb.jdbc.MonetDriver',
-                    'jar': 'monetdb-jdbc-3.2.jre8.jar',
+                    'driver': 'org.monetdb.jdbc.MonetDriver',
+                    'jar': 'jars/monetdb-jdbc-3.3.jre8',
                     'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout=0'
                 }
             },
