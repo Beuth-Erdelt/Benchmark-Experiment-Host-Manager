@@ -868,7 +868,7 @@ class default():
                             print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                             if len(config.benchmarking_parameters_list) > 0:
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
-                                print("We will change parameters of benchmark", benchmarking_parameters)
+                                print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
                                 config.set_benchmarking_parameters(**benchmarking_parameters)
                             if config.num_experiment_to_apply > 1:
                                 connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
@@ -2000,6 +2000,147 @@ class benchbase(default):
         self.cluster.kubectl(cmd['download_results'])
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
+    def show_summary(self):
+        #print('benchbase.show_summary()')
+        print("\n## Show Summary")
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+            workload_properties = ast.literal_eval(inp.read())
+        print("\n### Workload\n    "+workload_properties['name'])
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
+        print("\n### Connections")
+        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        pretty_connections = json.dumps(connections, indent=2)
+        #print(pretty_connections)
+        connections_sorted = sorted(connections, key=lambda c: c['name'])
+        for c in connections_sorted:
+            print(c['name'],
+                  "uses docker image",
+                  c['parameter']['dockerimage'])
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            for info in infos:
+                print(info)
+        #print("found", len(connections), "connections")
+        #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
+        #evaluate.load_experiment(code=code, silent=False)
+        evaluation = evaluators.benchbase(code=code, path=resultfolder)
+        #####################
+        """
+        df = evaluation.get_df_loading()
+        if not df.empty:
+            print("\n### Loading")
+            df = df.sort_values(['configuration','experiment_run','client'])
+            df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+            #print(df)
+            #print(df.columns)
+            df_plot = evaluation.loading_set_datatypes(df)
+            df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+            #print(df_aggregated)
+            #print(df_aggregated.T)
+            df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
+            df_aggregated = df_aggregated[['experiment_run',"terminals","target","pod_count","Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]]
+            print(df_aggregated)
+        """
+        #####################
+        warehouses = 0
+        df = evaluation.get_df_benchmarking()
+        if not df.empty:
+            print("\n### Execution")
+            warehouses = int(df['sf'].max())
+            df.fillna(0, inplace=True)
+            df_plot = evaluation.benchmarking_set_datatypes(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            #print(df_aggregated)
+            #print(df_aggregated.T)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
+            #columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+            columns = ["Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            print(df_aggregated_reduced)
+        print("\nWarehouses:", warehouses)
+        #####################
+        workflow = evaluation.reconstruct_workflow(df)
+        if len(workflow) > 0:
+            print("\n### Workflow")
+            for c in workflow:
+                print("DBMS", c, "- Pods", workflow[c])
+        #####################
+        print("\n### Loading")
+        #connections_sorted = sorted(connections, key=lambda c: c['name']) 
+        result = dict()
+        for c in connections_sorted:
+            """
+            print(c['name'], 
+                  c['timeLoad'], 
+                  '[s] for', 
+                  c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'], 
+                  'threads on',
+                  c['hostsystem']['node'])
+            """
+            result[c['name']] = {
+                'time_load': c['timeIngesting'],
+                'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'],
+                #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
+                'pods': c['parameter']['parallelism'],
+            }
+            #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
+        df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
+        #print(df)
+        #df = df.T.pivot(columns='terminals', index='target', values='time_load')
+        df_connections = df.copy().T
+        #print(df_connections.T)
+        df_tpx = (warehouses*3600.0)/df.T.sort_index()
+        print(df_tpx)
+        #df_loading_tpx = df_tpx['time_load']
+        df['Imported warehouses [1/h]'] = df_tpx['time_load']
+        print(df_loading_tpx)
+        #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
+        #####################
+        self.show_summary_monitoring()
+    def show_summary_monitoring(self):
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluation = evaluators.benchbase(code=code, path=resultfolder)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Loader")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Benchmarker")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
 
 
 
