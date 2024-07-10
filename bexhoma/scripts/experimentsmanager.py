@@ -282,6 +282,10 @@ def manage():
                         #    apps[configuration]['loaded'] += '-'+pod_labels[pod]['timeLoadingEnd']
                         #if 'timeLoading' in pod_labels[pod]:
                         #    apps[configuration]['loaded'] += '='+pod_labels[pod]['timeLoading']+'s'
+                    if pod in pod_labels and 'usecase' in pod_labels[pod]:
+                        apps[configuration]['use case'] = pod_labels[pod]['usecase']
+                    else:
+                        apps[configuration]['use case'] = ""
                 ############
                 component = 'worker'
                 apps[configuration][component] = ''
