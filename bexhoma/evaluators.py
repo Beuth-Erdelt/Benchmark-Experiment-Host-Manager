@@ -1163,7 +1163,7 @@ class tpcc(logger):
                 'duration':'max',
                 'sf':'max',
                 'run':'max',
-                'errors':'max',
+                'errors':'sum',
                 'vusers_loading':'max',
                 'vusers':'sum',
                 #'vusers':'max',
@@ -1176,8 +1176,8 @@ class tpcc(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
