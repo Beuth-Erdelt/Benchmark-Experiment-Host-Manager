@@ -1,3 +1,4 @@
 sphinx
 sphinx-rtd-theme
 sphinx-mdinclude
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
