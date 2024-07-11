@@ -4,7 +4,7 @@ metadata:
   labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
   name: bexhoma-benchmarker
 spec:
-  backoffLimit: 1
+  backoffLimit: 4
   completions: 1
   parallelism: 1
   template:
@@ -14,13 +14,15 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
+      #- name: private-registry-auth
       nodeSelector: 
       tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_hammerdb:4.5
         imagePullPolicy: Always
-        #imagePullPolicy: IfNotPresent
         env:
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
         - {name: DBMSBENCHMARKER_CODE, value: '1611607321'}
@@ -41,17 +43,17 @@ spec:
         - {name: HAMMERDB_ITERATIONS, value: '10000000'}
         - {name: HAMMERDB_TYPE, value: 'postgresql'}
         resources:
-          #limits: {cpu: 8000m, memory: 16Gi}
-          #requests: {cpu: 8000m, memory: 16Gi}
+          #limits: {cpu: 4000m}
+          #, memory: 16Gi}
+          #requests: {cpu: 4000m}
+          #, memory: 16Gi}
         securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
+          privileged: true
         volumeMounts:
+        #- name: bexhoma-results
+        #  mountPath: /results
       restartPolicy: Never
       volumes:
+      #- name: bexhoma-results
+      #  persistentVolumeClaim:
+      #    claimName: bexhoma-results
