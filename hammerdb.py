@@ -132,7 +132,7 @@ if __name__ == '__main__':
         # we want all TPC-C queries
         #experiment.set_queries_full()
         experiment.set_workload(
-            name = 'TPC-C Workload SF='+str(SF),
+            name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
             info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
             defaultParameters = {'SF': SF}
         )
@@ -197,7 +197,7 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(args.dbms)
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="tpcc",
+        usecase="hammerdb_tpcc",
         experiment_design="4",
         warehouses=SF,
         #users_loading=scaling_users,

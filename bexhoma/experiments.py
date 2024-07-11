@@ -1642,7 +1642,7 @@ class tpcc(default):
         df = evaluation.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
-            print(df)
+            #print(df)
             warehouses = int(df['sf'].max())
             df.fillna(0, inplace=True)
             df_plot = evaluation.benchmarking_set_datatypes(df)
@@ -1666,7 +1666,7 @@ class tpcc(default):
         #connections_sorted = sorted(connections, key=lambda c: c['name']) 
         result = dict()
         for c in connections_sorted:
-            print(c)
+            #print(c)
             """
             print(c['name'], 
                   c['timeLoad'], 
