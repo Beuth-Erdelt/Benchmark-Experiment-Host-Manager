@@ -538,6 +538,9 @@ class ycsb(logger):
             #print(columns)
             df.columns = columns
             df.index.name = connection_name
+            # number of inserts must be integer - otherwise conversion will fail
+            #if '[INSERT].Return=OK' in columns and df['[INSERT].Return=OK'] == 'NaN':
+            #    df['[INSERT].Return=OK'] = 0
             return df
         except Exception as e:
             print(e)
@@ -549,6 +552,7 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
+        df.fillna(0, inplace=True)
         df_typed = df.astype({
             'connection':'str',
             'configuration':'str',
@@ -722,6 +726,7 @@ class ycsb(logger):
         :return: DataFrame of results
         """
         #df = evaluation.get_df_loading()
+        df.fillna(0, inplace=True)
         df_typed = df.astype({
             'connection':'str',
             'configuration':'str',
