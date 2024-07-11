@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[], action='append')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB'], default=[], action='append')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
@@ -373,7 +373,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
-                if ("YugabyteDB" in args.dbms or len(args.dbms) == 0):
+                if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
@@ -387,7 +387,7 @@ if __name__ == '__main__':
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
                         ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
@@ -399,7 +399,7 @@ if __name__ == '__main__':
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
                         ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
