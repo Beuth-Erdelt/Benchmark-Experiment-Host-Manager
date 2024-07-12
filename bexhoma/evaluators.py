@@ -432,11 +432,12 @@ class logger(base):
             monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
     def get_monitoring_metric(self, metric, component="loading"):
         """
-        Returns list of names of metrics using during monitoring.
+        Returns DataFrame containing metrics measured from a specific component.
 
-        :return: List of monitoring metrics
+        :return: DataFrame of monitoring metrics
         """
         filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        #print("Looking for {}".format(filename))
         if os.path.isfile(self.path+"/"+filename):
             df = pd.read_csv(self.path+"/"+filename).T
             #print(df)

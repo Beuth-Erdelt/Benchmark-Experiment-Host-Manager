@@ -741,6 +741,10 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
+        if self.experiment.cluster.monitor_cluster_active:
+            print("{:30s}: wants to monitor all components in cluster".format(configuration))
+        if not self.experiment.cluster.monitor_cluster_exists:
+            print("{:30s}: cannot rely on preinstalled monitoring".format(configuration))
         print("{:30s}: start monitoring with prometheus pod".format(configuration))
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:

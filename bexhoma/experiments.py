@@ -1239,17 +1239,38 @@ class default():
                 print(info)
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=True)
+        query_properties = evaluate.get_experiment_query_properties()
+        #print(query_properties)
+        def map_index_to_queryname(numQuery):
+            if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
+                return query_properties[numQuery[1:]]['config']['title']
+            else:
+                return numQuery
         #####################
         print("\n### Errors (failed queries)")
-        print(evaluate.get_total_errors().T)
+        df = evaluate.get_total_errors().T
+        num_errors = df.sum().sum()
+        if num_errors > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No errors")
         #####################
         print("\n### Warnings (result mismatch)")
-        print(evaluate.get_total_warnings().T)
+        df = evaluate.get_total_warnings().T
+        num_warnings = df.sum().sum()
+        if num_warnings > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No warnings")
         #####################
         print("\n### Latency of Timer Execution [ms]")
         df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
         if not df is None:
-            print(df.sort_index().T.round(2))
+            df = df.sort_index().T.round(2)
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
         #####################
         print("\n### Loading [s]")
         times = {}
@@ -1561,6 +1582,12 @@ class tpcc(default):
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
         # copy logs and yamls to result folder
@@ -1923,6 +1950,12 @@ class ycsb(default):
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
         cmd = {}
         #stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
         #self.logger.debug('copy config connections.config: {}'.format(stdout))
@@ -2133,6 +2166,12 @@ class benchbase(default):
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
         cmd = {}

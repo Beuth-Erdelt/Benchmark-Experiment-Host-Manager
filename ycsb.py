@@ -13,6 +13,7 @@ import time
 from timeit import default_timer
 import datetime
 import pandas as pd
+import types
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -378,6 +379,36 @@ if __name__ == '__main__':
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
                     config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
+                    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+                        """
+                        Generate a name for the monitoring component.
+                        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
+                        For Kinetica, the service to be monitored is named 'bexhoma-service-kinetica'.
+
+                        :param app: app the component belongs to
+                        :param component: Component, for example sut or monitoring
+                        :param experiment: Unique identifier of the experiment
+                        :param configuration: Name of the dbms configuration
+                        """
+                        if component == 'sut':
+                            name = 'yb-tserver-'
+                        else:
+                            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+                        self.logger.debug("yugabytedb.create_monitoring({})".format(name))
+                        return name
+                    config.create_monitoring = types.MethodType(create_monitoring, config)
+                    def get_worker_endpoints(self):
+                        """
+                        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
+                        These are IPs of cAdvisor instances.
+                        The endpoint list is to be filled in a config of an instance of Prometheus.
+                        For Kinetica the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
+
+                        :return: list of endpoints
+                        """
+                        endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+                        self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
+                        return endpoints
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
