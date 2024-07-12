@@ -149,6 +149,12 @@ if __name__ == '__main__':
             info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
             defaultParameters = {'SF': SF}
         )
+    if monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
+    else:
+        # we want to just run the queries
+        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
@@ -228,8 +234,7 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="type_of_benchmark",
-        experiment_design="5",
+        usecase="benchbase_tpcc",
         warehouses=SF,
         #users_loading=scaling_users,
         #users_benchmarking=str(num_virtual_users),
