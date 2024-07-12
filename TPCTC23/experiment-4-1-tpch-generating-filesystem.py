@@ -34,12 +34,10 @@ import argparse
 import time
 from timeit import default_timer
 import datetime
-# queue
-import redis
 import subprocess
 import psutil
 
-urllib3.disable_warnings()
+#urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':

@@ -12,60 +12,115 @@ To include a DBMS in a Kubernetes-based experiment you will need
 This document contains examples for
 * [MariaDB](#mariadb)
 * [MonetDB](#monetdb)
-* [OmniSci](#omnisci)
 * [PostgreSQL](#postgresql)
+* [MySQL](#mysql)
 
 
 ## Example Explained
 
+### Configuration
+
+DBMS can be adressed using a key.
+We have to define some data per key, for example for the key `PostgreSQL` we use:
+
+```
+'PostgreSQL': {
+    'loadData': 'psql -U postgres < {scriptname}',
+    'delay_prepare': 60,
+    'template': {
+        'version': 'v11.4',
+        'alias': 'General-B',
+        'docker_alias': 'GP-B',
+         'JDBC': {
+            'driver': "org.postgresql.Driver",
+            'auth': ["postgres", ""],
+            'url': 'jdbc:postgresql://{serverip}:9091/postgres?reWriteBatchedInserts=true',
+            'jar': 'postgresql-42.5.0.jar'
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+},
+```
+This has
+* a base name for the DBMS
+* a `delay_prepare` in seconds to wait before system is considered ready
+* a placeholder `template` for the [benchmark tool DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file)  
+  Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.  
+* assumed to have the JDBC driver jar locally available inside the benchmarking tool
+* a command `loadData` for running the init scripts  
+  Some placeholders in the URL are: `serverip` (set automatically to match the corresponding pod), `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
+* `{serverip}` as a placeholder for the host address
+* `{dbname}` as a placeholder for the db name
+* an optional `priceperhourdollar` (currently ignored)
+* an optional name of a `logfile` that is downloaded after the benchmark
+* name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
+
+### Deployment Manifests
+
+Every DBMS that is deployed by bexhoma needs a YAML manifest.
+See for example https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
+
+You may want to pay attention to name of the secret:
+```
+      imagePullSecrets:
+      - {name: dockerhub}
+```
+Another section that might be interesting is
+```
+      tolerations:
+```
+
+#### Parametrize Templates
+
+Some parameters can be changed per DBMS or per experiment in Python, for example
+```
+experiment.set_resources(
+    requests = {
+        'cpu': cpu,
+        'memory': memory,
+        'gpu': 0
+    },
+    limits = {
+        'cpu': 0,
+        'memory': 0
+    },
+    nodeSelector = {
+        'cpu': cpu_type,
+        'gpu': '',
+    })
+experiment.set_resources(
+    nodeSelector = {
+        'cpu': cpu_type,
+        'gpu': '',
+        'kubernetes.io/hostname': request_node_name
+    })        
+```
+
+The parameters can be set via CLI (see for example `tpch.py`).
+
+## MariaDB
+
 ### Deployment
 
-See documentation of [deployments](Deployments.html).
+https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml
+
+As of bexhoma version `v0.7.1` this contains
+```
+        args: [
+          "--innodb_log_buffer_size", "17179869184",
+          "--innodb-write-io-threads", "16",
+          "--innodb-log-file-size", "4294967296"
+        ]
+```
+as default settings.
 
 ### Configuration
 
 ```
-'dockers': {
-    'OmniSci': {
-        'loadData': 'bin/omnisql -u admin -pHyperInteractive < {scriptname}',     # DBMS: Command to Login and Run Scripts
-        'template': {                                                             # Template for Benchmark Tool
-            'version': 'CE v5.4',
-            'alias': 'GPU',
-            'docker_alias': 'GPU',
-            'JDBC': {
-                'driver': 'com.omnisci.jdbc.OmniSciDriver',
-                'url': 'jdbc:omnisci:{serverip}:9091:omnisci',
-                'auth': {'user': 'admin', 'password': 'HyperInteractive'},
-                'jar': './omnisci-jdbc-4.7.1.jar'                                   # DBMS: Local Path to JDBC Jar
-            }
-        },
-        'logfile': '/omnisci-storage/data/mapd_log/omnisci_server.INFO',          # DBMS: Path to Log File on Server
-        'datadir': '/omnisci-storage/data/mapd_data/',                            # DBMS: Path to directory containing data storage
-        'priceperhourdollar': 0.0,                                                # DBMS: Price per hour in USD if DBMS is rented
-    }
-}
-```
-This has
-* a base name for the DBMS
-* a placeholder `template` for the [benchmark tool](https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Options.html#connection-file)
-* the JDBC driver jar locally available
-* a command `loadData` for running the init scripts with `{scriptname}` as a placeholder for the script name inside the container
-* `{serverip}` as a placeholder for the host address (localhost for k8s, an Elastic IP for AWS)
-* `{dbname}` as a placeholder for the db name
-* an optional `priceperhourdollar`
-* an optional name of a `logfile` that is downloaded after the benchmark
-* name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
-
-## MariaDB
-
-**Deployment**
-
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml
-
-**Configuration**
-```
        'MariaDB': {
-            'loadData': 'mysql < {scriptname}',
+            'loadData': 'mariadb < {scriptname}',
             'template': {
                 'version': 'v10.4.6',
                 'alias': 'GP A',
@@ -75,7 +130,7 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
                     'driver': "org.mariadb.jdbc.Driver",
                     'auth': ["root", ""],
                     'url': 'jdbc:mysql://{serverip}:9091/{dbname}',
-                    'jar': './mariadb-java-client-2.3.0.jar'
+                    'jar': './mariadb-java-client-3.1.0.jar'
                 }
             },
             'logfile': '',
@@ -84,17 +139,18 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
         },
 ```
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDB)
 
 ## MonetDB
 
-**Deployment**
+### Deployment
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MonetDB.yml
 
-**Configuration**
+### Configuration
+
 ```
        'MonetDB': {
             'loadData': 'cd /home/monetdb;echo "user=monetdb\npassword=monetdb" > .monetdb;mclient demo < {scriptname}',
@@ -104,8 +160,8 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
                 'docker_alias': 'Columnwise',
                  'JDBC': {
                     'auth': ['monetdb', 'monetdb'],
-                    'driver': 'nl.cwi.monetdb.jdbc.MonetDriver',
-                    'jar': 'monetdb-jdbc-3.2.jre8.jar',
+                    'driver': 'org.monetdb.jdbc.MonetDriver',
+                    'jar': 'jars/monetdb-jdbc-3.3.jre8',
                     'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout=0'
                 }
             },
@@ -115,45 +171,14 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
         },
 ```
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MonetDB)
 
-## OmniSci
-
-**Deployment**
-
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OmniSci.yml
-
-**Configuration**
-```
-        'OmniSci': {
-            'loadData': 'bin/omnisql -u admin -pHyperInteractive < {scriptname}',
-            'template': {
-                'version': 'CE v4.7',
-                'alias': 'GPU A',
-                'docker_alias': 'GPU A',
-                'JDBC': {
-                    'driver': 'com.omnisci.jdbc.OmniSciDriver',
-                    'url': 'jdbc:omnisci:{serverip}:9091:omnisci',
-                    'auth': {'user': 'admin', 'password': 'HyperInteractive'},
-                    'jar': './omnisci-jdbc-4.7.1.jar'
-                }
-            },
-            'logfile': '/omnisci-storage/data/mapd_log/omnisci_server.INFO',
-            'datadir': '/omnisci-storage/',
-            'priceperhourdollar': 0.0,
-        },
-```
-
-***DDL Scripts***
-
-Example for [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/OmniSci)
-
 ## PostgreSQL
 
-**Deployment**
+### Deployment
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
 
@@ -199,7 +224,7 @@ As of bexhoma version `v0.7.0` this contains
 ```
 as default settings.
 
-**Configuration**
+### Configuration
 
 ```
         'PostgreSQL': {
@@ -221,7 +246,7 @@ as default settings.
         },
 ```
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/PostgreSQL)
@@ -229,7 +254,7 @@ Example for
 
 ## MySQL
 
-**Deployment**
+### Deployment
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml
 
@@ -271,9 +296,9 @@ As of bexhoma version `v0.7.0` this contains
           "--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
         ]
 ```
-as default settings.
+as default settings. It also runs MySQL 8.4.0 as default. Please visit the official website for explanations about settings, https://dev.mysql.com/doc/refman/8.4/en/mysql-nutshell.html
 
-**Configuration**
+### Configuration
 
 ```
         'MySQL': {
@@ -300,8 +325,36 @@ as default settings.
 This uses `delay_prepare` to make bexhoma wait 5 minutes before starting to query the dbms.
 This is because configuring InnoDB takes a while and the server might restart during that period.
 
-***DDL Scripts***
+### DDL Scripts
 
 Example for
 * [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MySQL)
 * [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
+
+
+## Add a new DBMS
+
+Suppose you want to add a new DBMS called `newDBMS`.
+
+You will need to
+* add a corresponding section to the dockers part in `cluster.config`.
+* add a YAML template for the DBMS component called `k8s/deploymenttemplate-NewDBMS.yml` (just copy `k8s/deploymenttemplate-Dummy.yml`)
+* add schema scripts for the DBMS in a subfolder of `experiments/`
+* add a section to the Python management script, e.g., `example.py`. Look for  
+```
+    # add configs
+    if args.dbms == "Dummy":
+        # Dummy DBMS
+        name_format = 'Dummy-{cluster}'
+        config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
+        config.loading_finished = True
+```  
+The parameter `docker='Dummy'` refers to the key in the dockers section in `cluster.config` and the name of the file in `k8s/`.
+You may add several DBMS by this way to the same experiment for comparison.
+Note that `example.py` contains a line
+```
+parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['Dummy'])
+```
+which filters command line arguments and restricts to adding only one DBMS (you may want to ignore `args.dbms` instead).
+
+If you need a JDBC driver different  from the above, please raise an issue: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues

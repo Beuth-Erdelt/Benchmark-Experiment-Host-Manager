@@ -11,3 +11,5 @@ dist/*
 .spyproject/*
 docs/html/*
 api/*
+bexhoma/__pycache__/*
+/cluster-monitoring-default.config

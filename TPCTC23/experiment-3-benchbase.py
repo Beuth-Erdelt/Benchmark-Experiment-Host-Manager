@@ -9,7 +9,6 @@ User can also choose some parameters like number of warehouses and request some 
 """
 from bexhoma import *
 from dbmsbenchmarker import *
-#import experiments
 import logging
 import urllib3
 import logging

@@ -19,7 +19,6 @@ metadata:
 spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
-  #- {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5433}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
@@ -43,6 +42,7 @@ spec:
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
+      terminationGracePeriodSeconds: 120
       containers:
       - name: dbms
         #image: yugabytedb/yugabyte:2.17.1.0-b439
@@ -54,14 +54,6 @@ spec:
           value: /var/lib/postgresql/data/pgdata
         ports:
         - {containerPort: 5432}
-        #- {containerPort: 5433}
-        #env:
-        #command: ["bin/yugabyted", "start"]
-        #ports: #-p7000:7000 -p9000:9000 -p5433:5433 -p9042:9042\
-        #- {containerPort: 7000}
-        #- {containerPort: 9000}
-        #- {containerPort: 5433}
-        #- {containerPort: 9042}
         resources:
           limits: {cpu: 1000m, memory: 1Gi}
           requests: {cpu: 1000m, memory: 1Gi}
