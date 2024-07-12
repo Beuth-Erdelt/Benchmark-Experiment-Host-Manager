@@ -4,9 +4,9 @@ metadata:
   labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
   name: bexhoma-sensor
 spec:
-  backoffLimit: 1
-  completions: 1
-  parallelism: 1
+  backoffLimit: 4
+  completions: 4
+  parallelism: 4
   template:
     metadata:
       labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
@@ -14,13 +14,15 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      nodeSelector:
+      #- name: private-registry-auth
+      nodeSelector: 
       tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       containers:
       - name: sensor
         image: bexhoma/generator_hammerdb:4.5
         imagePullPolicy: Always
-        #imagePullPolicy: IfNotPresent
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-timescaledb-aws-1658676533'}
         - {name: BEXHOMA_PORT, value: '9091'}
@@ -32,17 +34,12 @@ spec:
         - {name: RNGSEED, value: '123'}
         - {name: HAMMERDB_TYPE, value: 'mysql'}
         resources:
-          #limits: {cpu: 1000m, memory: 16Gi}
-          #requests: {cpu: 1000m, memory: 16Gi}
+          #limits: {cpu: 100m}
+          #, memory: 16Gi}
+          #requests: {cpu: 4000m}
+          #, memory: 16Gi}
         securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
+          privileged: true
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpcc/"

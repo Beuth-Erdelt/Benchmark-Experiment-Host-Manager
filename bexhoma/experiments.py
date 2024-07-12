@@ -42,6 +42,7 @@ import re
 import pandas as pd
 import pickle
 import json
+import ast
 
 from bexhoma import evaluators
 
@@ -727,6 +728,12 @@ class default():
         :param intervals: Seconds to wait before checking change of status
         :param stop: Tells if SUT should be removed when all benchmarking has finished. Set to False if we want to have loaded SUTs for inspection.
         """
+        # test if there is a Pometheus server running in the cluster
+        if self.cluster.test_if_monitoring_healthy():
+            self.cluster.monitor_cluster_exists = True
+            print("{:30s}: is running".format("Cluster monitoring"))
+        else:
+            self.cluster.monitor_cluster_exists = False
         do = True
         while do:
             #time.sleep(intervals)
@@ -861,7 +868,7 @@ class default():
                             print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                             if len(config.benchmarking_parameters_list) > 0:
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
-                                print("We will change parameters of benchmark", benchmarking_parameters)
+                                print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
                                 config.set_benchmarking_parameters(**benchmarking_parameters)
                             if config.num_experiment_to_apply > 1:
                                 connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
@@ -883,17 +890,20 @@ class default():
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                    while config.sut_is_existing():
+                                        print("{:30s}: still being removed".format(config.configuration))
+                                        self.wait(30)
                                     print("{:30s}: starts again".format(config.configuration))
                                     config.benchmark_list = config.benchmark_list_template.copy()
                                     # wait for PV to be gone completely
-                                    self.wait(60)
+                                    #self.wait(60)
                                     config.reset_sut()
                                     config.start_sut()
                                     self.wait(10)
                                 else:
                                     config.experiment_done = True
                             else:
-                                print("{} can be stopped, be we leave it running".format(config.configuration))
+                                print("{} can be stopped, but we leave it running".format(config.configuration))
                 else:
                     print("{:30s}: is loading".format(config.configuration))
             # all jobs of configuration - benchmarker
@@ -961,6 +971,7 @@ class default():
                         #    self.cluster.delete_pod(p)
                     self.end_benchmarking(job, config)
                     self.cluster.delete_job(job)
+                    config.check_volumes()
             if len(pods) == 0 and len(jobs) == 0:
                 do = False
                 for config in self.configurations:
@@ -1176,7 +1187,7 @@ class default():
                     # get metrics of benchmarker components
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                    if len(endpoints_cluster)>0:
+                    if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker".format(connection))
                         cmd['fetch_benchmarker_metrics'] = 'python metrics.py -r /results/ -db -ct benchmarker -cn dbmsbenchmarker -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
                         #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
@@ -1200,8 +1211,203 @@ class default():
         self.evaluator.end_loading(jobname)
     def show_summary(self):
         self.cluster.logger.debug('default.show_summary()')
-        pass
-
+        print("\n## Show Summary")
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+            workload_properties = ast.literal_eval(inp.read())
+        print("\n### Workload\n    "+workload_properties['name'])
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
+        print("\n### Connections")
+        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        pretty_connections = json.dumps(connections, indent=2)
+        #print(pretty_connections)
+        connections_sorted = sorted(connections, key=lambda c: c['name'])
+        for c in connections_sorted:
+            print(c['name'],
+                  "uses docker image",
+                  c['parameter']['dockerimage'])
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            for info in infos:
+                print(info)
+        evaluate = inspector.inspector(resultfolder)
+        evaluate.load_experiment(code=code, silent=True)
+        query_properties = evaluate.get_experiment_query_properties()
+        #print(query_properties)
+        def map_index_to_queryname(numQuery):
+            if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
+                return query_properties[numQuery[1:]]['config']['title']
+            else:
+                return numQuery
+        #####################
+        print("\n### Errors (failed queries)")
+        df = evaluate.get_total_errors().T
+        num_errors = df.sum().sum()
+        if num_errors > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No errors")
+        #####################
+        print("\n### Warnings (result mismatch)")
+        df = evaluate.get_total_warnings().T
+        num_warnings = df.sum().sum()
+        if num_warnings > 0:
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        else:
+            print("No warnings")
+        #####################
+        print("\n### Latency of Timer Execution [ms]")
+        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        if not df is None:
+            df = df.sort_index().T.round(2)
+            df.index = df.index.map(map_index_to_queryname)
+            print(df)
+        #####################
+        print("\n### Loading [s]")
+        times = {}
+        for c, connection in evaluate.benchmarks.dbms.items():
+            times[c]={}
+            if 'timeGenerate' in connection.connectiondata:
+                times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
+            if 'timeIngesting' in connection.connectiondata:
+                times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
+            if 'timeSchema' in connection.connectiondata:
+                times[c]['timeSchema'] = connection.connectiondata['timeSchema']
+            if 'timeIndex' in connection.connectiondata:
+                times[c]['timeIndex'] = connection.connectiondata['timeIndex']
+            if 'timeLoad' in connection.connectiondata:
+                times[c]['timeLoad'] = connection.connectiondata['timeLoad']
+        df = pd.DataFrame(times)
+        df = df.reindex(sorted(df.columns), axis=1)
+        print(df.round(2).T)
+        #####################
+        print("\n### Geometric Mean of Medians of Timer Run [s]")
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index()
+        df.columns = ['Geo Times [s]']
+        print(df.round(2))
+        #####################
+        print("\n### Power@Size")
+        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        df = (df/1000.0).sort_index().astype('float')
+        df = float(parameter.defaultParameters['SF'])*3600./df
+        df.columns = ['Power@Size [~Q/h]']
+        print(df.round(2))
+        #####################
+        # aggregate time and throughput for parallel pods
+        print("\n### Throughput@Size")
+        df_merged_time = pd.DataFrame()
+        for connection_nr, connection in evaluate.benchmarks.dbms.items():
+            df_time = pd.DataFrame()
+            c = connection.connectiondata
+            connection_name = c['name']
+            orig_name = c['orig_name']
+            eva = evaluate.get_experiment_connection_properties(c['name'])
+            df_time.index = [connection_name]
+            #df_time['SF'] = int(SF)
+            #print(c)
+            df_time['orig_name'] = orig_name
+            df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
+            df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
+            #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
+            df_time['num_experiment'] = int(c['parameter']['numExperiment'])
+            df_time['num_client'] = int(c['parameter']['client'])
+            df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
+            df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
+            df_merged_time = pd.concat([df_merged_time, df_time])
+        df_time = df_merged_time.sort_index()
+        benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
+        benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
+        df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
+        df_benchmark.columns = ['time [s]']
+        benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
+        df_benchmark['count'] = benchmark_count['benchmark_end']
+        df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
+        df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        index_names = list(df_benchmark.index.names)
+        index_names[0] = "DBMS"
+        df_benchmark.rename_axis(index_names, inplace=True)
+        print(df_benchmark)
+        #####################
+        self.show_summary_monitoring()
+    def show_summary_monitoring_table(self, evaluate, component):
+        df_monitoring = list()
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
+        df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+        #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+        df_cleaned = pd.DataFrame(df)
+        df_cleaned.columns = ["CPU [CPUs]"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_util', component=component)
+        #df = evaluate.get_loading_metrics('total_cpu_util')
+        df = df.max().sort_index()
+        df_cleaned = pd.DataFrame(df)
+        df_cleaned.columns = ["Max CPU"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_memory', component=component)/1024
+        #df = evaluate.get_loading_metrics('total_cpu_memory')/1024
+        df = df.max().sort_index()
+        df_cleaned = pd.DataFrame(df).round(2)
+        df_cleaned.columns = ["Max RAM [Gb]"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        ##########
+        df = evaluate.get_monitoring_metric(metric='total_cpu_memory_cached', component=component)/1024
+        #df = evaluate.get_loading_metrics('total_cpu_memory_cached')/1024
+        df = df.max().sort_index()
+        df_cleaned = pd.DataFrame(df)
+        df_cleaned.columns = ["Max RAM Cached [Gb]"]
+        if not df_cleaned.empty:
+            df_monitoring.append(df_cleaned.copy())
+        return df_monitoring
+    def show_summary_monitoring(self):
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluate = inspector.inspector(resultfolder)
+        evaluate.load_experiment(code=code, silent=True)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluate, "loading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluate, "loader")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Loader")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluate, "stream")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluate, "benchmarker")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Benchmarker")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
 
 
 
@@ -1299,135 +1505,7 @@ class tpch(default):
         self.set_queryfile('queries-tpch.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
-    def show_summary(self):
-        self.cluster.logger.debug('tpch.show_summary()')
-        print("\n## Show Summary")
-        pd.set_option("display.max_rows", None)
-        pd.set_option('display.max_colwidth', None)
-        pd.set_option('display.max_rows', 500)
-        pd.set_option('display.max_columns', 500)
-        pd.set_option('display.width', 1000)
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        evaluate = inspector.inspector(resultfolder)
-        evaluate.load_experiment(code=code, silent=False)
-        #####################
-        print("\n### Errors")
-        print(evaluate.get_total_errors().T)
-        #####################
-        print("\n### Warnings")
-        print(evaluate.get_total_warnings().T)
-        #####################
-        print("\n### Latency of Timer Execution [ms]")
-        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
-        if not df is None:
-            print(df.sort_index().T.round(2))
-        #####################
-        print("\n### Loading [s]")
-        times = {}
-        for c, connection in evaluate.benchmarks.dbms.items():
-            times[c]={}
-            if 'timeGenerate' in connection.connectiondata:
-                times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
-            if 'timeIngesting' in connection.connectiondata:
-                times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
-            if 'timeSchema' in connection.connectiondata:
-                times[c]['timeSchema'] = connection.connectiondata['timeSchema']
-            if 'timeIndex' in connection.connectiondata:
-                times[c]['timeIndex'] = connection.connectiondata['timeIndex']
-            if 'timeLoad' in connection.connectiondata:
-                times[c]['timeLoad'] = connection.connectiondata['timeLoad']
-        df = pd.DataFrame(times)
-        df = df.reindex(sorted(df.columns), axis=1)
-        print(df.round(2).T)
-        #####################
-        print("\n### Geometric Mean of Medians of Timer Run [s]")
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index()
-        df.columns = ['Geo Times [s]']
-        print(df.round(2))
-        #####################
-        print("\n### TPC-H Power@Size")
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index().astype('float')
-        df = float(parameter.defaultParameters['SF'])*3600./df
-        df.columns = ['Power@Size [~Q/h]']
-        print(df.round(2))
-        #####################
-        # aggregate time and throughput for parallel pods
-        print("\n### TPC-H Throughput@Size")
-        df_merged_time = pd.DataFrame()
-        for connection_nr, connection in evaluate.benchmarks.dbms.items():
-            df_time = pd.DataFrame()
-            c = connection.connectiondata
-            connection_name = c['name']
-            orig_name = c['orig_name']
-            eva = evaluate.get_experiment_connection_properties(c['name'])
-            df_time.index = [connection_name]
-            #df_time['SF'] = int(SF)
-            #print(c)
-            df_time['orig_name'] = orig_name
-            df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
-            df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
-            #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
-            df_time['num_experiment'] = int(c['parameter']['numExperiment'])
-            df_time['num_client'] = int(c['parameter']['client'])
-            df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
-            df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
-            df_merged_time = pd.concat([df_merged_time, df_time])
-        df_time = df_merged_time.sort_index()
-        benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
-        benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
-        df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
-        df_benchmark.columns = ['time [s]']
-        benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
-        df_benchmark['count'] = benchmark_count['benchmark_end']
-        df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-        df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
-        index_names = list(df_benchmark.index.names)
-        index_names[0] = "DBMS"
-        df_benchmark.rename_axis(index_names, inplace=True)
-        print(df_benchmark)
-        #####################
-        if (self.monitoring_active or self.cluster.monitor_cluster_active):
-            #####################
-            df = evaluate.get_loading_metrics('total_cpu_util_s')
-            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
-            ##########
-            df = evaluate.get_loading_metrics('total_cpu_memory')/1024
-            df = df.T.max().sort_index()
-            df2 = pd.DataFrame(df).round(2)
-            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
-            ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Ingestion")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
-            #####################
-            df = evaluate.get_streaming_metrics('total_cpu_util_s')
-            df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
-            ##########
-            df = evaluate.get_streaming_metrics('total_cpu_memory')/1024
-            df = df.T.max().sort_index()
-            df2 = pd.DataFrame(df)
-            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
-            ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Execution")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
+
 
 
 """
@@ -1506,6 +1584,12 @@ class tpcc(default):
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
         # copy logs and yamls to result folder
         #print("Copy configuration and logs", end="", flush=True)
         #directory = os.fsencode(self.path)
@@ -1533,6 +1617,146 @@ class tpcc(default):
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
+    def show_summary(self):
+        #print('tpcc.show_summary()')
+        print("\n## Show Summary")
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+            workload_properties = ast.literal_eval(inp.read())
+        print("\n### Workload\n    "+workload_properties['name'])
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
+        print("\n### Connections")
+        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        pretty_connections = json.dumps(connections, indent=2)
+        #print(pretty_connections)
+        connections_sorted = sorted(connections, key=lambda c: c['name'])
+        for c in connections_sorted:
+            print(c['name'],
+                  "uses docker image",
+                  c['parameter']['dockerimage'])
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            for info in infos:
+                print(info)
+        #print("found", len(connections), "connections")
+        #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
+        #evaluate.load_experiment(code=code, silent=False)
+        evaluation = evaluators.tpcc(code=code, path=resultfolder)
+        #####################
+        df = evaluation.get_df_loading()
+        if not df.empty:
+            print("\n### Loading")
+            print(df)
+            #df = df.sort_values(['configuration','experiment_run','client'])
+            #df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+            #print(df)
+            #print(df.columns)
+            #df_plot = evaluation.loading_set_datatypes(df)
+            #df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+            #df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
+            #df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            #print(df_aggregated)
+        #####################
+        df = evaluation.get_df_benchmarking()
+        warehouses = 0
+        df = evaluation.get_df_benchmarking()
+        if not df.empty:
+            print("\n### Execution")
+            #print(df)
+            warehouses = int(df['sf'].max())
+            df.fillna(0, inplace=True)
+            df_plot = evaluation.benchmarking_set_datatypes(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['experiment_run',"vusers","client","pod_count"]].copy()
+            columns = ["NOPM", "TPM", "duration", "errors"]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            print(df_aggregated_reduced)
+        print("\nWarehouses:", warehouses)
+        #####################
+        workflow = evaluation.reconstruct_workflow(df)
+        if len(workflow) > 0:
+            print("\n### Workflow")
+            for c in workflow:
+                print("DBMS", c, "- Pods", workflow[c])
+        #####################
+        print("\n### Loading")
+        #connections_sorted = sorted(connections, key=lambda c: c['name']) 
+        result = dict()
+        for c in connections_sorted:
+            #print(c)
+            """
+            print(c['name'], 
+                  c['timeLoad'], 
+                  '[s] for', 
+                  c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'], 
+                  'threads on',
+                  c['hostsystem']['node'])
+            """
+            result[c['name']] = {
+                'time_load': c['timeIngesting'],
+                #'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'], # these are the benchmark clients
+                'terminals': c['parameter']['connection_parameter']['loading_parameters']['PARALLEL'],
+                #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
+                'pods': c['parameter']['parallelism'],
+            }
+            #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
+        df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
+        #print(df)
+        #df = df.T.pivot(columns='terminals', index='target', values='time_load')
+        df_connections = df.copy().T
+        #print(df_connections)
+        df_time_load = pd.DataFrame(df_connections['time_load'], columns=['time_load'])
+        df_tpx = (warehouses*3600.0)/df_time_load.sort_index()
+        #print(df_tpx)
+        #df_loading_tpx = df_tpx['time_load']
+        df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        print(df_connections)
+        #####################
+        self.show_summary_monitoring()
+    def show_summary_monitoring(self):
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Loader")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Benchmarker")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+
 
 
 
@@ -1726,6 +1950,12 @@ class ycsb(default):
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
         cmd = {}
         #stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
         #self.logger.debug('copy config connections.config: {}'.format(stdout))
@@ -1748,6 +1978,25 @@ class ycsb(default):
         pd.set_option('display.width', 1000)
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
+        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+            workload_properties = ast.literal_eval(inp.read())
+        print("\n### Workload\n    "+workload_properties['name'])
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
+        print("\n### Connections")
+        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        pretty_connections = json.dumps(connections, indent=2)
+        #print(pretty_connections)
+        connections_sorted = sorted(connections, key=lambda c: c['name'])
+        for c in connections_sorted:
+            print(c['name'],
+                  "uses docker image",
+                  c['parameter']['dockerimage'])
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            for info in infos:
+                print(info)
+        #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
@@ -1780,45 +2029,41 @@ class ycsb(default):
             print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
+        self.show_summary_monitoring()
+    def show_summary_monitoring(self):
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            evaluation.transform_monitoring_results(component="loading")
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
             #####################
-            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='loading').min()
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Ingestion (via counter) [CPUs]"]
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
             ##########
-            df = evaluation.get_monitoring_metric('total_cpu_memory', component='loading').max()/1024
-            df2 = pd.DataFrame(df)
-            df2.columns = ["SUT - Max RAM of Ingestion [Gb]"]
-            ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Ingestion")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Loader")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
             #####################
-            evaluation.transform_monitoring_results(component="stream")
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
             #####################
-            df = evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').max() - evaluation.get_monitoring_metric('total_cpu_util_s', component='stream').min()
-            df1 = pd.DataFrame(df)
-            df1.columns = ["SUT - CPU of Execution (via counter) [CPUs]"]
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
             ##########
-            df = evaluation.get_monitoring_metric('total_cpu_memory', component='stream').max()/1024
-            df2 = pd.DataFrame(df)
-            df2.columns = ["SUT - Max RAM of Execution [Gb]"]
-            ##########
-            if not df1.empty or not df2.empty:
-                print("\n### Execution")
-            if not df1.empty and not df2.empty:
-                print(pd.concat([df1, df2], axis=1).round(2))
-            elif not df1.empty:
-                print(df1.round(2))
-            elif not df2.empty:
-                print(df2.round(2))
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Benchmarker")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+
 
 
 """
@@ -1923,11 +2168,158 @@ class benchbase(default):
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
         cmd = {}
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
+    def show_summary(self):
+        #print('benchbase.show_summary()')
+        print("\n## Show Summary")
+        pd.set_option("display.max_rows", None)
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+            workload_properties = ast.literal_eval(inp.read())
+        print("\n### Workload\n    "+workload_properties['name'])
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
+        print("\n### Connections")
+        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+        pretty_connections = json.dumps(connections, indent=2)
+        #print(pretty_connections)
+        connections_sorted = sorted(connections, key=lambda c: c['name'])
+        for c in connections_sorted:
+            print(c['name'],
+                  "uses docker image",
+                  c['parameter']['dockerimage'])
+            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            for info in infos:
+                print(info)
+        #print("found", len(connections), "connections")
+        #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
+        #evaluate.load_experiment(code=code, silent=False)
+        evaluation = evaluators.benchbase(code=code, path=resultfolder)
+        #####################
+        """
+        df = evaluation.get_df_loading()
+        if not df.empty:
+            print("\n### Loading")
+            df = df.sort_values(['configuration','experiment_run','client'])
+            df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+            #print(df)
+            #print(df.columns)
+            df_plot = evaluation.loading_set_datatypes(df)
+            df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+            #print(df_aggregated)
+            #print(df_aggregated.T)
+            df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
+            df_aggregated = df_aggregated[['experiment_run',"terminals","target","pod_count","Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]]
+            print(df_aggregated)
+        """
+        #####################
+        warehouses = 0
+        df = evaluation.get_df_benchmarking()
+        if not df.empty:
+            print("\n### Execution")
+            warehouses = int(df['sf'].max())
+            df.fillna(0, inplace=True)
+            df_plot = evaluation.benchmarking_set_datatypes(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            #print(df_aggregated)
+            #print(df_aggregated.T)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
+            #columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+            columns = ["time", "Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            print(df_aggregated_reduced)
+        print("\nWarehouses:", warehouses)
+        #####################
+        workflow = evaluation.reconstruct_workflow(df)
+        if len(workflow) > 0:
+            print("\n### Workflow")
+            for c in workflow:
+                print("DBMS", c, "- Pods", workflow[c])
+        #####################
+        print("\n### Loading")
+        #connections_sorted = sorted(connections, key=lambda c: c['name']) 
+        result = dict()
+        for c in connections_sorted:
+            """
+            print(c['name'], 
+                  c['timeLoad'], 
+                  '[s] for', 
+                  c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'], 
+                  'threads on',
+                  c['hostsystem']['node'])
+            """
+            result[c['name']] = {
+                'time_load': c['timeIngesting'],
+                'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'],
+                #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
+                'pods': c['parameter']['parallelism'],
+            }
+            #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
+        df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
+        #print(df)
+        #df = df.T.pivot(columns='terminals', index='target', values='time_load')
+        df_connections = df.copy().T
+        #print(df_connections)
+        df_tpx = (warehouses*3600.0)/df_connections.sort_index()
+        #print(df_tpx)
+        #df_loading_tpx = df_tpx['time_load']
+        df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        print(df_connections)
+        #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
+        #####################
+        self.show_summary_monitoring()
+    def show_summary_monitoring(self):
+        resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        code = self.code
+        evaluation = evaluators.benchbase(code=code, path=resultfolder)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Loader")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - SUT")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Benchmarker")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                print(df)
 
 
 
@@ -1968,4 +2360,49 @@ class example(default):
             info = 'This experiment performs some custom queries.'
             )
         self.storage_label = 'example'
+
+
+"""
+############################################################################
+TPCx-AI
+############################################################################
+"""
+
+class tpcxai(default):
+    """
+    Class for defining an TPCx-AI experiment.
+    This sets
+
+    * the folder to the experiment - including query file and schema informations per dbms
+    * name and information about the experiment
+    * additional parameters - here SF (the scaling factor)
+    """
+    def __init__(self,
+            cluster,
+            code=None,
+            queryfile = 'queries-tpcxai.config',
+            SF = '100',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            script=None
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        if script is None:
+            script = 'SF'+str(SF)+'-index'
+        self.set_experiment(volume='tpcxai')
+        self.set_experiment(script=script)
+        self.cluster.set_experiments_configfolder('experiments/tpcxai')
+        parameter.defaultParameters = {'SF': str(SF)}
+        self.set_additional_labels(SF=SF)
+        self.set_queryfile(queryfile)
+        self.set_workload(
+            name = 'TPCx-AI Queries SF='+str(SF),
+            info = 'This experiment performs some TPCx-AI inspired queries.'
+            )
+        self.storage_label = 'tpcxai-'+str(SF)
+    def set_queries_full(self):
+        self.set_queryfile('queries-tpcxai.config')
+    def set_queries_profiling(self):
+        self.set_queryfile('queries-tpcxai-profiling.config')
 

@@ -37,7 +37,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Message Queue: Running
 Data directory: Running
@@ -267,20 +267,20 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```bash
-usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
-               [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
-               {profiling,run,start,load,empty}
+usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-sf SCALING_FACTOR]
+               [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
+               {profiling,run,start,load,empty,summary}
 
 Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk).
 
 positional arguments:
-  {profiling,run,start,load,empty}
+  {profiling,run,start,load,empty,summary}
                         profile the import or run the TPC-H queries
 
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MonetDB,MySQL}
+  -dbms {PostgreSQL,MonetDB,MySQL}, --dbms {PostgreSQL,MonetDB,MySQL}
                         DBMS to load the data
   -lit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
                         limit import to one table, name of this table
@@ -289,15 +289,12 @@ options:
                         context of Kubernetes (for a multi cluster environment), default is current context
   -e EXPERIMENT, --experiment EXPERIMENT
                         sets experiment code for continuing started experiment
-  -d, --detached        puts most of the experiment workflow inside the cluster
   -m, --monitoring      activates monitoring
   -mc, --monitoring-cluster
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates datatransfer
-  -md MONITORING_DELAY, --monitoring-delay MONITORING_DELAY
-                        time to wait [s] before execution of the runs of a query
+  -dt, --datatransfer   activates transfer of data per query (not only execution)
   -nr NUM_RUN, --num-run NUM_RUN
                         number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
@@ -315,21 +312,25 @@ options:
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
   -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        request ram
+                        request ram for sut, default 16Gi
   -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        request cpus
+                        request cpus for sut, default 4
   -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
-                        request node having node label cpu=
+                        request node for sut to have node label cpu=
   -rg REQUEST_GPU, --request-gpu REQUEST_GPU
-                        request number of gpus
+                        request number of gpus for sut
   -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
-                        request node having node label gpu=
+                        request node for sut to have node label gpu=
   -rst {None,,local-hdd,shared}, --request-storage-type {None,,local-hdd,shared}
                         request persistent storage of certain type
   -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
                         request persistent storage of certain size
   -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
-                        request a specific node
+                        request a specific node for sut
+  -rnl REQUEST_NODE_LOADING, --request-node-loading REQUEST_NODE_LOADING
+                        request a specific node for loading pods
+  -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
+                        request a specific node for benchmarking pods
   -tr, --test-result    test if result fulfills some basic requirements
   -ii, --init-indexes   adds indexes to tables after ingestion
   -ic, --init-constraints
@@ -363,7 +364,7 @@ MySQL-BHT-8-8-1                                          132.57                 
 PostgreSQL-BHT-8-1                                       116.69                             3.84
 ```
 
-This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 
 ## Perform Benchmark - Throughput Test
 
@@ -414,11 +415,28 @@ The first instance of PostgreSQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
 ```
-+-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
-| Volumes                           | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   |
-+===================================+=================+==============+==============+===================+============+======================+===========+==========+
-| bexhoma-storage-postgresql-tpch-1 | postgresql      | tpch-1       | True         |            185.41 | PostgreSQL | local-hdd            | 50Gi      | Bound    |
-+-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| Volumes                            | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
++====================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
+| bexhoma-storage-monetdb-tpch-10    | monetdb         | tpch-10      | True         |               576 | MonetDB    | shared               | 100Gi     | Bound    | 100G   | 21G    |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-monetdb-tpch-100   | monetdb         | tpch-100     | True         |              7061 | MonetDB    | shared               | 300Gi     | Bound    | 300G   | 210G   |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-monetdb-tpch-3     | monetdb         | tpch-3       | True         |               215 | MonetDB    | shared               | 100Gi     | Bound    | 100G   | 6.2G   |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-monetdb-tpch-30    | monetdb         | tpch-30      | True         |              1734 | MonetDB    | shared               | 150Gi     | Bound    | 150G   | 63G    |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-mysql-tpch-1       | mysql           | tpch-1       | True         |              2178 | MySQL      | shared               | 30Gi      | Bound    | 30G    | 11G    |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-mysql-tpch-10      | mysql           | tpch-10      | True         |             33932 | MySQL      | shared               | 150Gi     | Bound    | 150G   | 36G    |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-postgresql-tpch-1  | postgresql      | tpch-1       | True         |               148 | PostgreSQL | shared               | 100Gi     | Bound    | 100G   | 2.7G   |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-postgresql-tpch-10 | postgresql      | tpch-10      | True         |              2581 | PostgreSQL | shared               | 100Gi     | Bound    | 100G   | 26G    |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-postgresql-tpch-30 | postgresql      | tpch-30      | True         |             10073 | PostgreSQL | shared               | 150Gi     | Bound    | 150G   | 76G    |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+
 +------------------+--------------+--------------+---------------+
 | 1707740320       | sut          |   loaded [s] | benchmarker   |
 +==================+==============+==============+===============+

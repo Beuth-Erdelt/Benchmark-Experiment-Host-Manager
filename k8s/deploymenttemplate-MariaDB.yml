@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 3306}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      containers:
+      - name: dbms
+        image: mariadb:11.4.2
+        #image: mariadb:10.5.8
+        #args: ["--innodb_log_buffer_size", "17179869184", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296", "--LimitMEMLOCK", "16M"]
+        #args: ["--innodb_log_buffer_size", "17179869184", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
+        args: [
+          # Some of these need restart
+          # The comments come from MySQL 8.3 docs
+          # https://dev.mysql.com/doc/refman/8.3/en/optimizing-innodb-logging.html
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-performance-multiple_io_threads.html
+          "--innodb-write-io-threads=64",             # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_write_io_threads
+          "--innodb-read-io-threads=64",              # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_read_io_threads
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-linux-native-aio.html
+          "--innodb-use-native-aio=0",                # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_use_native_aio
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_page_size
+          # "--innodb-page-size=4K",                  # Small for OLTP or similar to filesystem page size
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_buffer_pool_chunk_size
+          # To avoid potential performance issues, the number of chunks (innodb_buffer_pool_size / innodb_buffer_pool_chunk_size) should not exceed 1000.
+          "--innodb-buffer-pool-chunk-size=500M",     # Small when size of pool changes often
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_buffer_pool_instances
+          # https://releem.com/docs/mysql-performance-tuning/innodb_buffer_pool_size
+          ##"--innodb-buffer-pool-instances=64",        # Parallelizes reads, but may lock writes
+          "--innodb-buffer-pool-size=32G",            # Buffer pool size must always be equal to or a multiple of innodb_buffer_pool_chunk_size * innodb_buffer_pool_instances.
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-configuring-io-capacity.html
+          "--innodb-io-capacity=1000",                # Faster SSD assumed
+          # https://dev.mysql.com/doc/refman/8.0/en/innodb-redo-log-buffer.html
+          "--innodb-log-buffer-size=32G",             # The size in bytes of the buffer that InnoDB uses to write to the log files on disk
+          ##"--innodb-redo-log-capacity=8G",            # Defines the amount of disk space occupied by redo log files
+          "--innodb-flush-log-at-trx-commit=0",       # The default setting of 1 is required for full ACID compliance. With a setting of 0, logs are written and flushed to disk once per second.
+          # https://dev.mysql.com/doc/refman/8.3/en/online-ddl-parallel-thread-configuration.html
+          ##"--innodb-parallel-read-threads=64",        # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_parallel_read_threads
+          ##"--innodb-ddl-threads=64",                  # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_threads
+          ##"--innodb-ddl-buffer-size=128M",            # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
+          # https://dev.mysql.com/doc/refman/8.3/en/server-system-variables.html#sysvar_tmp_table_size
+          "--tmp-table-size=1GB",                     # Defines the maximum size of internal in-memory temporary tables
+          "--max-heap-table-size=1GB",                # Maximum size to which user-created MEMORY tables are permitted to grow
+          # https://dev.mysql.com/doc/refman/8.3/en/innodb-doublewrite-buffer.html
+          "--innodb-doublewrite=0",
+          ##"--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
+          "--innodb_log_buffer_size=4294967295",        # MariaDB max value https://mariadb.com/kb/en/innodb-system-variables/#innodb_log_buffer_size
+        ]
+        env:
+          - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
+        ports:
+        - {containerPort: 3306}
+        - {containerPort: 9000}
+        resources:
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          #, ephemeral-storage: "1536Gi"}
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+        - {mountPath: /var/lib/mysql, name: benchmark-storage-volume}
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 150m
+            memory: 200Mi
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk

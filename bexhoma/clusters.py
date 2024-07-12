@@ -43,6 +43,8 @@ import shutil
 import json
 import ast
 import copy
+import urllib.request
+import urllib.parse
 
 from dbmsbenchmarker import *
 from bexhoma import experiments
@@ -107,6 +109,7 @@ class testbed():
         self.port = self.contextdata['port']
         self.monitoring_active = True
         self.monitor_cluster_active = False
+        self.monitor_cluster_exists = False                                                     # True, if there are cAdvisors and a Prometheus server independent from bexhoma
         # k8s:
         self.namespace = self.contextdata['namespace']
         self.appname = self.config['credentials']['k8s']['appname']
@@ -846,7 +849,9 @@ class testbed():
         :return: stdout of the shell command
         """
         if len(pod) == 0:
-            pod = self.activepod
+            self.logger.debug('testbed.execute_command_in_pod({}): empty pod name given for command'.format(command))
+            return "", "", ""
+            #pod = self.activepod
         command_clean = command.replace('"','\\"')
         if len(container) > 0:
             fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
@@ -966,7 +971,7 @@ class testbed():
         scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiments_configfolder, docker=self.d)
         i = 0
         for script in self.initscript:
-            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
+            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script, namespace=self.namespace)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.execute_command_in_pod(cmd['copy_init_scripts'], container='dbms')
             i = i + 1
     def pod_log(self, pod, container=''):
@@ -1308,6 +1313,56 @@ class testbed():
                self.wait(10, silent=True)
             print("done")
             return
+    def test_if_monitoring_healthy(self):
+        """
+        Tests if query_range?query=node_memory_MemTotal_bytes&start=1&end=2&step=1 at service_monitoring returns status code of 200.
+        This is for testing if Prometheus is up and running.
+
+        :return: True if Prometheus returns status code 200
+        """
+        self.logger.debug('testbed.test_if_monitoring_healthy()')
+        config_K8s = self.config['credentials']['k8s']
+        if 'service_monitoring' in config_K8s['monitor']:
+            url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'], service="monitoring")
+            query = "node_memory_MemTotal_bytes"
+            safe_query = urllib.parse.quote_plus(query)
+            try:
+                self.logger.debug('Test URL {}'.format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1"))
+                #code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
+                # curl -ILs www.welt.de | head -n 1|cut -d$' ' -f2
+                pod_dashboard = self.get_dashboard_pod_name()
+                self.logger.debug('Inside pod {}'.format(pod_dashboard))
+                cmd = {}
+                command = "curl -is '{}' | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
+                self.logger.debug('Command {}'.format(command))
+                #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
+                #cores = os.popen(fullcommand).read()
+                stdin, stdout, stderr = self.execute_command_in_pod(pod=pod_dashboard, command=command, container="dashboard")
+                #print("Return", stdout, stderr)
+                status = stdout#os.popen(fullcommand).read()
+                if len(status)>0:
+                    #return int(status)
+                    #print(int(status))
+                    if int(status) == 200:
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+                #except Exception as e:
+                #    logging.error(e)
+                #    return 0
+                # curl -I http://www.example.org
+                #if code == 200:
+                #    #print("{:30s}: is running".format("Prometheus"))
+                #    return True
+                #else:
+                #    #print("{:30s}: is not running".format("Prometheus"))
+                #    return False
+            except Exception as e:
+                #print("{:30s}: is not running".format("Prometheus"))
+                print(e)
+                return False
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
         Starts the monitoring component and its service.
@@ -1317,6 +1372,9 @@ class testbed():
         :param component: Component name, should be 'monitoring' typically
         """
         self.monitor_cluster_active = True
+        self.monitor_cluster_exists = self.test_if_monitoring_healthy()
+        if self.monitor_cluster_exists:
+            return
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
             # monitoring exists

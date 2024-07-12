@@ -9,7 +9,7 @@ References:
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -dbms PostgreSQL -workload a -tr run`
+Example: `python ycsb.py -ms 1 -dbms PostgreSQL --workload a -tr run`
 
 This
 * loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
@@ -24,7 +24,7 @@ This
       * imports it into the DBMS
   * runs `n` parallel streams of YCSB queries per DBMS
     * 1.000.000 operations
-    * workload A = 50% read / 50% write (`-workload`)
+    * workload A = 50% read / 50% write (`--workload`)
     * target throughput is `t` * 16384
   * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
@@ -143,39 +143,32 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
 ```bash
-usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-workload {a,b,c,d,e,f}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-mc] [-ms MAX_SUT] [-dt] [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-sf SCALING_FACTOR]
-               [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS] [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
-               [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
-               {run,start,load}
+usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-wl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
+               [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
+               [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
+               {run,start,load,summary}
 
 Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*1,000,000. This installs a clean copy for each target and split of the driver. Optionally monitoring is activated.
 
 positional arguments:
-  {run,start,load}      import YCSB data or run YCSB queries
+  {run,start,load,summary}
+                        import YCSB data or run YCSB queries
 
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MySQL}
+  -dbms {PostgreSQL,MySQL}, --dbms {PostgreSQL,MySQL}
                         DBMS to load the data
-  -workload {a,b,c,d,e,f}
-                        YCSB default workload
   -db, --debug          dump debug informations
   -cx CONTEXT, --context CONTEXT
                         context of Kubernetes (for a multi cluster environment), default is current context
   -e EXPERIMENT, --experiment EXPERIMENT
                         sets experiment code for continuing started experiment
-  -d, --detached        puts most of the experiment workflow inside the cluster
   -m, --monitoring      activates monitoring for sut
   -mc, --monitoring-cluster
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates datatransfer
-  -md MONITORING_DELAY, --monitoring-delay MONITORING_DELAY
-                        time to wait [s] before execution of the runs of a query
-  -nr NUM_RUN, --num-run NUM_RUN
-                        number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of runs per configuration
   -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
@@ -184,10 +177,12 @@ options:
                         number of parallel loaders per configuration
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
+  -wl {a,b,c,e,f}, --workload {a,b,c,e,f}
+                        YCSB default workload
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF) = number of rows in millions
   -sfo SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
-                        scaling factor (SF) = number of operations in millions (=SF if not set)
+                        scaling factor = number of operations in millions (=SF if not set)
   -su SCALING_USERS, --scaling-users SCALING_USERS
                         scaling factor = number of total threads
   -sbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
@@ -199,25 +194,25 @@ options:
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
   -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        request ram
+                        request ram for sut, default 16Gi
   -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        request cpus
+                        request cpus for sut, default 4
   -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
-                        request node having node label cpu=
+                        request node for sut to have node label cpu=
   -rg REQUEST_GPU, --request-gpu REQUEST_GPU
-                        request number of gpus
+                        request number of gpus for sut
   -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
-                        request node having node label gpu=
+                        request node for sut to have node label gpu=
   -rst {None,,local-hdd,shared}, --request-storage-type {None,,local-hdd,shared}
                         request persistent storage of certain type
   -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
                         request persistent storage of certain size
   -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
-                        request a specific node
+                        request a specific node for sut
   -rnl REQUEST_NODE_LOADING, --request-node-loading REQUEST_NODE_LOADING
-                        request a specific node
+                        request a specific node for loading pods
   -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
-                        request a specific node
+                        request a specific node for benchmarking pods
   -tr, --test-result    test if result fulfills some basic requirements
 ```
 
@@ -267,7 +262,7 @@ PostgreSQL-64-8-114688-1                                       190.45           
 PostgreSQL-64-8-131072-1                                       146.15                             4.02
 ```
 
-This gives a survey about CPU (in CPU seconds) and RAM usage (in Mb) during loading and execution of the benchmark.
+This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
@@ -279,7 +274,7 @@ We might only want to benchmark the workloads of YCSB in different configuration
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -m -workload a -tr -nlp 1 -dbms PostgreSQL -ne 1,2 -nc 2 -ltf 2 run`
+Example: `python ycsb.py -ms 1 -m --workload a -tr -nlp 1 -dbms PostgreSQL -ne 1,2 -nc 2 -ltf 2 run`
 
 This loads a YCSB data set with 1 pod (`-lnp`) of 64 threads.
 There are two executions (`-ne`) run against the database, the first with 1 driver and the second with two drivers.
@@ -308,7 +303,7 @@ PostgreSQL-64-1-32768-2-2               2      128   65536          2           
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
 
-Example: `python ycsb.py -ms 1 -m -dbms MySQL -workload a -tr -nc 2 -rst local-hdd -rss 50Gi run`
+Example: `python ycsb.py -ms 1 -m -dbms MySQL --workload a -tr -nc 2 -rst local-hdd -rss 50Gi run`
 
 The following status shows we have two volumes of type `local-hdd`. Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
@@ -316,13 +311,13 @@ The first instance of MySQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
 ```
-+-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
-| Volumes                           | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   |   storage | status   |
-+===================================+=================+==============+==============+===================+============+======================+===========+==========+
-| bexhoma-storage-mysql-ycsb-1      | mysql           | ycsb-1       | True         |           2398.11 | MySQL      | local-hdd            |      50Gi | Bound    |
-+-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
-| bexhoma-storage-postgresql-ycsb-1 | postgresql      | ycsb-1       | True         |             61.82 | PostgreSQL | local-hdd            |      50Gi | Bound    |
-+-----------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| Volumes                            | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
++====================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
+| bexhoma-storage-postgresql-ycsb-1  | postgresql      | ycsb-1       | True         |                64 | PostgreSQL | shared               | 50Gi      | Bound    | 50G    | 2.1G   |
++------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
++------------------+--------------+--------------+--------------------------+
+
 +------------------+--------------+--------------+--------------+---------------+
 | 1706957093       | sut          |   loaded [s] | monitoring   | benchmarker   |
 +==================+==============+==============+==============+===============+
