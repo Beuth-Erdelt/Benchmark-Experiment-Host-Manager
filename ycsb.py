@@ -465,6 +465,7 @@ if __name__ == '__main__':
         #print("Experiment starts at {} ({})".format(start_datetime, start))
         print("{:30s}: has code {}".format("Experiment",experiment.code))
         print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment
