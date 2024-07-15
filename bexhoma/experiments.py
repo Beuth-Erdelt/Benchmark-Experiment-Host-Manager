@@ -1386,7 +1386,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "loader")
@@ -1394,7 +1394,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "stream")
@@ -1402,7 +1402,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "benchmarker")
@@ -1410,7 +1410,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 
@@ -1738,7 +1738,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -1746,7 +1746,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -1754,7 +1754,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -1762,7 +1762,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 
@@ -2049,7 +2049,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -2057,7 +2057,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -2065,7 +2065,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -2073,7 +2073,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 
@@ -2310,7 +2310,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -2318,7 +2318,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -2326,7 +2326,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -2334,7 +2334,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 
