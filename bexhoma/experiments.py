@@ -1386,6 +1386,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "loader")
@@ -1393,6 +1394,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "stream")
@@ -1400,6 +1402,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "benchmarker")
@@ -1407,6 +1410,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
 
 
@@ -1542,7 +1546,7 @@ class tpcc(default):
             name = 'TPC-C Queries SF='+str(SF),
             info = 'This experiment performs some TPC-C inspired workloads.'
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'hammerdb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def test_results(self):
@@ -1734,6 +1738,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -1741,6 +1746,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -1748,6 +1754,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -1755,6 +1762,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
 
 
@@ -2041,6 +2049,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -2048,6 +2057,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -2055,6 +2065,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -2062,6 +2073,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
 
 
@@ -2100,7 +2112,7 @@ class benchbase(default):
             name = 'Benchbase Queries SF='+str(SF),
             info = 'This experiment performs some Benchbase workloads.'
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def log_to_df(self, filename):
@@ -2298,6 +2310,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -2305,6 +2318,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -2312,6 +2326,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -2319,6 +2334,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=natural_sort(df.index))
                 print(df)
 
 
