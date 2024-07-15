@@ -212,7 +212,10 @@ if __name__ == '__main__':
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=SU, pods=pods)
                 config = configurations.hammerdb(experiment=experiment, docker='PostgreSQL', configuration=config_name, dialect='PostgreSQL', alias='DBMS D')
-                #config.num_loading = 1
+                config.set_storage(
+                    storageConfiguration = 'postgresql'
+                )
+               #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = SU,
                     SF = SF,
@@ -249,6 +252,9 @@ if __name__ == '__main__':
                 name_format = 'MySQL-{cluster}-{users}'
                 config_name = name_format.format(cluster=cluster_name, users=SU)
                 config = configurations.hammerdb(experiment=experiment, docker='MySQL', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'mysql'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = SU,

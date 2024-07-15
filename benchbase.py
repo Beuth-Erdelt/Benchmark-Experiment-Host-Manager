@@ -248,6 +248,9 @@ if __name__ == '__main__':
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, pods=pods)
                 config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=config_name, dialect='PostgreSQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'postgresql'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = 1,#str(pods),
@@ -302,6 +305,9 @@ if __name__ == '__main__':
                 name_format = 'MySQL-{cluster}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, pods=pods)
                 config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'mysql'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = 1,#str(pods),
@@ -368,6 +374,9 @@ if __name__ == '__main__':
                 name_format = 'MariaDB-{cluster}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, pods=pods)
                 config = configurations.benchbase(experiment=experiment, docker='MariaDB', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'mariadb'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = 1,#str(pods),
