@@ -194,6 +194,7 @@ if __name__ == '__main__':
             df = pd.DataFrame(volumes).T
             #print(df)
             h = ['Volumes'] + list(df.columns)
+            df = df.reindex(index=evaluators.natural_sort(df.index))
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
         # get all worker volumes
         pvcs = cluster.get_pvc(app=app, component='worker', experiment='', configuration='')
@@ -386,12 +387,14 @@ if __name__ == '__main__':
             h = [df.index.name] + list(df.columns)
             if args.verbose:
                 # this shows all columns even if empty
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
             else:
                 df_empty = df.eq('')
                 df_short = df.drop(df_empty.columns[df_empty.all()].tolist(), axis=1)
                 h_short = [df_short.index.name] + list(df_short.columns)
                 # this shows only columns with not all empty
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
     benchmarker.logger.setLevel(logging.ERROR)
 
