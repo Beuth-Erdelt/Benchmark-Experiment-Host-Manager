@@ -2258,6 +2258,7 @@ class benchbase(default):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
@@ -2295,6 +2296,7 @@ class benchbase(default):
         #print(df_tpx)
         #df_loading_tpx = df_tpx['time_load']
         df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
         print(df_connections)
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
