@@ -42,7 +42,7 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
-      terminationGracePeriodSeconds: 120
+      terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
         image: postgres:16.1
@@ -56,7 +56,8 @@ spec:
           preStop:
             exec:
               #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -D /var/lib/postgresql/data -m fast"]
-              command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -m fast"]
+              #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -m fast"]
+              command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -m smart -t 120"]
         ports:
         - {containerPort: 5432}
         securityContext:
