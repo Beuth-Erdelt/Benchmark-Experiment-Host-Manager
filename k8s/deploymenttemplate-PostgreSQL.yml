@@ -53,11 +53,32 @@ spec:
           value: /var/lib/postgresql/data/pgdata
         # pg_ctl: cannot be run as root
         lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
               #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -D /var/lib/postgresql/data -m fast"]
               #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -m fast"]
-              command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -m smart -t 120"]
+              #command: ["echo 'PRESTOP' ;", "/bin/sh", "-c", "gosu postgres pg_ctl stop -m smart -t 120"]
+              #command: ["/bin/sh", "-c", "echo 'Hello from the preStop handler'; gosu postgres pg_ctl stop -m smart -t 120"]
+              #command: ["gosu postgres", "pg_ctl stop -m smart -t 120"]
+              #command: ["/bin/sh", "-c"]
+              #args: ["gosu postgres pg_ctl stop -m smart -t 120"]
+              #command: ["/bin/sh", "-c", "gosu postgres 'pg_ctl stop -m smart -t 120'"]
+              #command: ["/bin/sh", "-c", "gosu postgres '/usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120'"]
+              #command: ["/bin/sh -c 'gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120'"]
+              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
+              #command: ["/bin/sh", "-c", "echo 'Hello from the preStop handler' > /usr/share/message && cat /usr/share/message"]
+        #command: ["sh", "-c", "trap 'gosu postgres pg_ctl stop -m smart' SIGTERM; gosu postgres postgres"] # trap: SIGTERM: bad trap
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - postgres
+          initialDelaySeconds: 15
+          periodSeconds: 60
         ports:
         - {containerPort: 5432}
         securityContext:
@@ -85,7 +106,7 @@ spec:
           "-c", "max_wal_size=32GB",
           "-c", "shared_buffers=64GB",
           #"-c", "shared_memory_size=32GB", # read-only
-          "-c", "max_connections=1024",
+          "-c", "max_connections=2048",
           "-c", "autovacuum_max_workers=10",
           "-c", "autovacuum_vacuum_cost_limit=3000",
           "-c", "vacuum_cost_limit=1000",
