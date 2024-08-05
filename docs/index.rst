@@ -19,6 +19,7 @@
     ./Config.md
     ./Monitoring.md
     ./DBMS.md
+    ./TestCases.md
     ./CONTRIBUTING.md
     ./bexhoma
 
