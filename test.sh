@@ -215,7 +215,7 @@ sleep 5
 # 16 terminals in 1 pod
 # target is 16384 ops
 # no persistent storage
-nohup python benchbase.py \
+nohup python benchbase.py -ms 1 -tr \
 	-sf 16 \
 	-ltf 16 \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -238,7 +238,7 @@ sleep 5
 # target is 16384 ops
 # monitoring of all components activated
 # no persistent storage
-nohup python benchbase.py \
+nohup python benchbase.py -ms 1 -tr \
 	-sf 16 \
 	-ltf 16 \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -263,7 +263,7 @@ sleep 5
 # data is stored persistently in a PV of type shared and size 30Gi
 # monitoring of all components activated
 # run twice
-nohup python benchbase.py \
+nohup python benchbase.py -ms 1 -tr \
 	-sf 16 \
 	-ltf 16 \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

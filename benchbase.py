@@ -459,6 +459,8 @@ if __name__ == '__main__':
         end = default_timer()
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
+    elif args.mode == 'summary':
+        experiment.show_summary()
     else:
         # configure number of clients per config
         #list_clients = args.num_query_executors.split(",")
