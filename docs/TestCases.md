@@ -1,5 +1,12 @@
 # Test Cases
 
+There is a variety of combination of options to be tested.
+
+We here list some more basic use cases to test the functionality of bexhoma.
+
+See [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test.sh) for implementations.
+You will have to change the node selectors there.
+
 
 ## TPC-H
 
@@ -7,8 +14,11 @@
 
 `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -dbms PostgreSQL run`
 
-* SF=1, loaded by 8 pods, indexed, into PostgreSQL
-* 1 execution stream (power test)
+* SF = 1
+* PostgreSQL 8 loader, indexed
+* 1x(1) benchmarker = 1 execution stream (power test)
+* no persistent storage
+* no monitoring
 
 yields (after ca. 10 minutes) something like
 
@@ -88,8 +98,12 @@ PostgreSQL-BHT-8-1 1  1              1                 30      1   1            
 
 `python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -dbms PostgreSQL -m -mc run`
 
-* SF=1, loaded by 8 pods, indexed, into PostgreSQL
-* 1 execution stream (power test)
+* SF = 1
+* PostgreSQL 8 loader, indexed
+* 1x(1) benchmarker = 1 execution stream (power test)
+* no persistent storage
+* no monitoring
+* monitoring all components
 
 yields (after ca. 10 minutes) something like
 
@@ -181,6 +195,17 @@ PostgreSQL-BHT-8-1           0        0           0.0                  0.0
 
 ```
 
+### TPC-H Throughput Test
+
+`python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -dbms PostgreSQL -m -mc -rst shared -rss 100Gi run`
+
+* SF = 1
+* PostgreSQL 8 loader, indexed
+* 2x(1,2) benchmarker = 1 and 2 execution streams
+* persistent storage of class shared
+* monitoring all components
+
+yields (after ca. 10 minutes) something like
 
 
 
@@ -240,6 +265,7 @@ PostgreSQL-BHT-1-1      253.0        1.0   1.0                 227.667984
 * 16 terminals in 1 pod
 * target is 16384 ops
 * monitoring of all components activated
+* no persistent storage
 
 yields (after ca. 10 minutes) something like
 
@@ -293,17 +319,65 @@ PostgreSQL-BHT-1-1      280.62        0          4.22                 5.95
 PostgreSQL-BHT-1-1      193.35        0          1.41                 1.41
 ```
 
+### Benchbase Complex
+
+`python benchbase.py -ltf 16 -dbms PostgreSQL -nvu 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run`
+
+* 16 warehouses
+* 16 terminals in 1 pod and 16 terminals in 2 pods (8 each)
+* target is 16384 ops
+* data is stored persistently in a PV of type shared and size 30Gi
+* monitoring of all components activated
+
+yields (after ca. 10 minutes) something like
+
+```
+## Show Summary
+
+### Workload
+    Benchbase Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS. Benchbase data is generated and loaded using several threads. Benchmark is limited to DBMS PostgreSQL. Benchmark is tpcc.
+
+### Connections
+PostgreSQL-BHT-1-1 uses docker image postgres:16.1
+    RAM:541031743488
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.4.0-105-generic
+    node:cl-worker13
+    disk:1386631412
+    datadisk:4409168
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                    experiment_run  terminals  target  pod_count  time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-BHT-1-1               1         16   16384          1  60.0                       2421.65                                                      11612.0                                               6561.0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-BHT-1 - Pods [[1]]
+
+### Loading
+                    time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-BHT-1-1      253.0        1.0   1.0                 227.667984
+
+```
+
 
 
 ## HammerDB
 
 ### HammerDB Simple
 
-`python hammerdb.py -dbms PostgreSQL -nvu "8" -su 16 -sf 16 -nbp 2 run`
+`python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 run`
 
 * 16 warehouses
 * 16 threads used for loading
-* 8 terminals in 2 pod
+* 8 terminals in 1 pod
+* no persistent storage
 
 yields (after ca. 10 minutes)
 
@@ -344,12 +418,13 @@ PostgreSQL-BHT-16-2-1       94.0       16.0   2.0                 612.765957
 
 ### HammerDB Monitoring
 
-`python hammerdb.py -dbms PostgreSQL -nvu "8" -su 16 -sf 16 -nbp 2 -m -mc run`
+`python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -m -mc run`
 
 * 16 warehouses
 * 16 threads used for loading
-* 8 terminals in 2 pod
+* 8 terminals in 1 pod
 * monitoring of all components activated
+* no persistent storage
 
 yields (after ca. 10 minutes)
 
@@ -403,15 +478,109 @@ PostgreSQL-BHT-16-2-1    15336.25    36.38          5.02                  5.6
 PostgreSQL-BHT-16-2-1        7.32     0.01          0.05                 0.05
 ```
 
+### HammerDB Complex
+
+`python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run`
+
+* 16 warehouses
+* 16 threads used for loading
+* 8 terminals in 1 pod and in 2 pods (4 each)
+* data is stored persistently in a PV of type shared and size 30Gi
+* monitoring of all components activated
+
+yields (after ca. 10 minutes)
+
+```
+## Show Summary
+
+### Workload
+    HammerDB Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS. TPC-C data is generated and loaded using several threads. Benchmark is limited to DBMS PostgreSQL.
+
+### Connections
+PostgreSQL-BHT-16-2-1 uses docker image postgres:16.1
+    RAM:541037633536
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.4.0-81-generic
+    node:cl-worker11
+    disk:450769736
+    datadisk:3376936
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                       experiment_run  vusers  client  pod_count    NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-2-1               1       8       1          2  9728.0  30066.0         5       0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-BHT-16-2 - Pods [[2]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-BHT-16-2-1       94.0       16.0   2.0                 612.765957
+```
+
+
+
 
 ## YCSB
 
+
+### YCSB Loader Test for Persistency
+
+`python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms PostgreSQL -wl a -ne 1,2 -nc 2 -rst shared -rss 100Gi run`
+
+* SF = 1 (1 million rows and operations)
+* PostgreSQL
+* Workload A
+* 64 loader threads, split into 8 parallel pods
+* persistent storage of class shared
+* 64 execution threads, split into 8 parallel pods
+* [1,2] execute (64 threads in 8 pods and 128 threads in 16 pods)
+* target is 16384 ops
+* run twice
+
+yields (after ca. 10 minutes) something like
+
+```
+## Show Summary
+
+### Workload
+    YCSB SF=1
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries. YCSB is performed using several threads and processes. Benchmark is limited to DBMS ['PostgreSQL']. YCSB data is loaded using several processes. Benchmark is limited to DBMS PostgreSQL.
+
+### Connections
+PostgreSQL-64-8-16384-1 uses docker image postgres:16.1
+    RAM:541037633536
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.4.0-81-generic
+    node:cl-worker11
+    disk:449814036
+    datadisk:2455656
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-8-16384               1       64   16384          8                   16336.733043                61226.0             1000000                            1075.375
+
+### Execution
+                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-16384-1               1       64   16384          8                       16334.03                61253.0            499897                            549.88              500103                               730.0
+```
 
 ### YCSB Execution
 
 `python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms PostgreSQL -wl a run`
 
-* 1 million rows and operations
+* python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms PostgreSQL -wl a -m -mc run
+* SF = 1 (1 million rows and operations)
 * workload A
 * 64 loader threads, split into 8 parallel pods
 * 64 execution threads, split into 8 parallel pods
@@ -452,7 +621,7 @@ PostgreSQL-64-8-16384-1               1       64   16384          8             
 
 `python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms PostgreSQL -wl a -m -mc run`
 
-* 1 million rows and operations
+* SF = 1 (1 million rows and operations)
 * workload A
 * 64 loader threads, split into 8 parallel pods
 * 64 execution threads, split into 8 parallel pods
@@ -505,7 +674,6 @@ PostgreSQL-64-8-16384-1      177.59     2.78          3.99                 4.85
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
 PostgreSQL-64-8-16384-1        13.6        0          0.32                 0.33
 ```
-
 
 
 
