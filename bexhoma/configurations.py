@@ -729,7 +729,7 @@ class default():
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         """
-        if not self.experiment.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
+        if not self.experiment.monitoring_active or (self.experiment.cluster.monitor_cluster_active and self.experiment.cluster.monitor_cluster_exists):
             return
         if len(app) == 0:
             app = self.appname
@@ -741,6 +741,10 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
+        if self.experiment.cluster.monitor_cluster_active:
+            print("{:30s}: wants to monitor all components in cluster".format(configuration))
+        if not self.experiment.cluster.monitor_cluster_exists:
+            print("{:30s}: cannot rely on preinstalled monitoring".format(configuration))
         print("{:30s}: start monitoring with prometheus pod".format(configuration))
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:
@@ -2151,7 +2155,7 @@ scrape_configs:
                 # get metrics of loader components
                 # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
+                if len(endpoints_cluster)>0 or self.experiment.cluster.monitor_cluster_exists:
                     # data generator container
                     print("{:30s}: collecting metrics of data generator".format(connection))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(

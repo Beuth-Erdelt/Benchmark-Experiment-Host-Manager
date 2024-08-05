@@ -94,7 +94,9 @@ echo "Start at $bexhoma_start_epoch epoch seconds"
 if test $DBMSBENCHMARKER_DEV -gt 0
 then
 	# dev environment
+	git checkout dev
 	git pull
+	git status
 fi
 
 ######################## Convert parameters ###################

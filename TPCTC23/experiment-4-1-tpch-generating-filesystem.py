@@ -28,14 +28,12 @@ nohup python experiment-2-1-tpch-loading.py run \
 from bexhoma import *
 from dbmsbenchmarker import *
 import logging
-#import urllib3
+import urllib3
 import logging
 import argparse
 import time
 from timeit import default_timer
 import datetime
-# queue
-#import redis
 import subprocess
 import psutil
 

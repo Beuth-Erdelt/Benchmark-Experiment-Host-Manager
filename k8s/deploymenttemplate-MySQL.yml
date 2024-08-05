@@ -44,7 +44,8 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dbms
-        image: mysql:8.0.36                           # latest bug fixes
+        image: mysql:8.4.0                            # latest image, default InnoDB settigns have changed
+        #image: mysql:8.0.36                          # latest bug fixes
         #image: mysql:8.1.0                           # no docs
         #image: mysql:8.2.0                           # no docs
         #image: mysql:8.3.0                           # current, but slow import (?)

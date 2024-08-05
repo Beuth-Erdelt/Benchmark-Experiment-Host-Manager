@@ -5,17 +5,17 @@
 """
 from bexhoma import *
 from dbmsbenchmarker import *
-#import experiments
 import logging
-#import urllib3
+import urllib3
 import logging
 import argparse
 import time
 from timeit import default_timer
 import datetime
 import pandas as pd
+import types
 
-#urllib3.disable_warnings()
+urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[], action='append')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB'], default=[], action='append')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     experiment.workload['info'] = experiment.workload['info']+" YCSB data is loaded using several processes."
     if len(args.dbms):
         # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(args.dbms)
+        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(", ".join(args.dbms))
     # fix loading
     if not request_node_loading is None:
         experiment.patch_loading(patch="""
@@ -374,11 +374,41 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
-                if ("YugabyteDB" in args.dbms or len(args.dbms) == 0):
+                if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
                     config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
+                    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+                        """
+                        Generate a name for the monitoring component.
+                        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
+                        For Kinetica, the service to be monitored is named 'bexhoma-service-kinetica'.
+
+                        :param app: app the component belongs to
+                        :param component: Component, for example sut or monitoring
+                        :param experiment: Unique identifier of the experiment
+                        :param configuration: Name of the dbms configuration
+                        """
+                        if component == 'sut':
+                            name = 'yb-tserver-'
+                        else:
+                            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+                        self.logger.debug("yugabytedb.create_monitoring({})".format(name))
+                        return name
+                    config.create_monitoring = types.MethodType(create_monitoring, config)
+                    def get_worker_endpoints(self):
+                        """
+                        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
+                        These are IPs of cAdvisor instances.
+                        The endpoint list is to be filled in a config of an instance of Prometheus.
+                        For Kinetica the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
+
+                        :return: list of endpoints
+                        """
+                        endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+                        self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
+                        return endpoints
                     config.set_loading_parameters(
                         PARALLEL = str(pods),
                         SF = SF,
@@ -388,7 +418,7 @@ if __name__ == '__main__':
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
                         ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.set_loading(parallel=pods, num_pods=pods)
@@ -400,7 +430,7 @@ if __name__ == '__main__':
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_WORKLOAD = args.workload,
                         ROWS = ycsb_rows,
-                        OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
                     config.add_benchmark_list(benchmarking_pods)
@@ -433,7 +463,9 @@ if __name__ == '__main__':
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
         #print("Experiment starts at {} ({})".format(start_datetime, start))
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
         print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment

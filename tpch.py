@@ -17,18 +17,16 @@ Nodes can be fixed.
 from bexhoma import *
 from dbmsbenchmarker import *
 import logging
-#import urllib3
+import urllib3
 import logging
 import argparse
 import time
 from timeit import default_timer
 import datetime
-# queue
-#import redis
 import subprocess
 import psutil
 
-#urllib3.disable_warnings()
+urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
@@ -37,7 +35,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL'], default=[], action='append')
+    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB'], default=[], action='append')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -176,15 +174,18 @@ if __name__ == '__main__':
         )
         # patch: use short profiling (only keys)
         experiment.set_queryfile('queries-tpch-profiling-keys.config')
-    if monitoring:
+    if monitoring_cluster:
+        # monitor all nodes of cluster (for not missing any component)
+        experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+        cluster.start_monitoring_cluster()
+        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by a cluster-wide installation."
+    elif monitoring:
         # we want to monitor resource consumption
         experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by sidecar containers."
     else:
         # we want to just run the queries
         experiment.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
-    if monitoring_cluster:
-        # monitor all nodes of cluster (for not missing any component)
-        cluster.start_monitoring_cluster()
     # set resources for dbms
     experiment.set_resources(
         requests = {
@@ -229,25 +230,39 @@ if __name__ == '__main__':
     experiment.loading_active = True
     experiment.use_distributed_datasource = True
     experiment.set_experiment(script='Schema')
+    # note more infos about experiment in workload description
+    experiment.workload['info'] = experiment.workload['info']+" TPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
+    if request_storage_type is not None:
+        experiment.workload['info'] = experiment.workload['info']+" Database is persistent on a volume of type {}.".format(request_storage_type)
+    if shuffle_queries:
+        experiment.workload['info'] = experiment.workload['info']+" Query ordering is as required by the TPC."
+    else:
+        experiment.workload['info'] = experiment.workload['info']+" Query ordering is Q1 - Q22."
+    if recreate_parameter:
+        experiment.workload['info'] = experiment.workload['info']+" All instances use different query parameters."
+    else:
+        experiment.workload['info'] = experiment.workload['info']+" All instances use the same query parameters."
     # optionally set some indexes and constraints after import
     if init_indexes or init_constraints or init_statistics:
         experiment.set_experiment(indexing='Index')
+        init_scripts = " Import sets indexes after loading."
         if init_constraints:
             experiment.set_experiment(indexing='Index_and_Constraints')
+            init_scripts = " Import sets indexes and constraints after loading."
         if init_statistics:
             experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
+            init_scripts = " Import sets indexes and constraints after loading and recomputes statistics."
+        experiment.workload['info'] = experiment.workload['info']+init_scripts
     #experiment.set_experiment(script='Schema', indexing='Index')
-    # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+" TPC-H data is loaded from a filesystem using several processes."
     if len(limit_import_table):
         # import is limited to single table
         experiment.workload['info'] = experiment.workload['info']+" Import is limited to table {}.".format(limit_import_table)
     if len(args.dbms):
         # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Import is limited to DBMS {}.".format(args.dbms)
-    if len(list_loading_split):
+        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(", ".join(args.dbms))
+    if len(list_loading_pods):
         # import uses several processes in pods
-        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes.".format(num_loading_split)
+        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes (pods).".format(" and ".join(map(str, list_loading_pods)))
     # fix loading
     if not request_node_loading is None:
         experiment.patch_loading(patch="""
@@ -423,7 +438,9 @@ if __name__ == '__main__':
         # total time of experiment
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
         print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment

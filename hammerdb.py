@@ -9,8 +9,9 @@ User can also choose some parameters like number of warehouses and request some 
 """
 from bexhoma import *
 from dbmsbenchmarker import *
+#import experiments
 import logging
-#import urllib3
+import urllib3
 import logging
 import argparse
 import time
@@ -18,7 +19,7 @@ from timeit import default_timer
 import datetime
 
 
-#urllib3.disable_warnings()
+urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
@@ -131,18 +132,16 @@ if __name__ == '__main__':
         # we want all TPC-C queries
         #experiment.set_queries_full()
         experiment.set_workload(
-            name = 'TPC-C Workload SF='+str(SF),
+            name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
             info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
             defaultParameters = {'SF': SF}
         )
+    if monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
     else:
-        # we want to profile the import
-        #experiment.set_queries_profiling()
-        experiment.set_workload(
-            name = 'TPC-C Data Profiling PostgreSQL SF='+str(SF),
-            info = 'This experiment compares importing TPC-C data sets into different DBMS.',
-            defaultParameters = {'SF': SF}
-        )
+        # we want to just run the queries
+        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
@@ -196,7 +195,7 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(args.dbms)
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="tpcc",
+        usecase="hammerdb_tpcc",
         experiment_design="4",
         warehouses=SF,
         #users_loading=scaling_users,
@@ -213,7 +212,10 @@ if __name__ == '__main__':
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=SU, pods=pods)
                 config = configurations.hammerdb(experiment=experiment, docker='PostgreSQL', configuration=config_name, dialect='PostgreSQL', alias='DBMS D')
-                #config.num_loading = 1
+                config.set_storage(
+                    storageConfiguration = 'postgresql'
+                )
+               #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = SU,
                     SF = SF,
@@ -250,6 +252,9 @@ if __name__ == '__main__':
                 name_format = 'MySQL-{cluster}-{users}'
                 config_name = name_format.format(cluster=cluster_name, users=SU)
                 config = configurations.hammerdb(experiment=experiment, docker='MySQL', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'mysql'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = SU,
@@ -306,7 +311,10 @@ if __name__ == '__main__':
         # total time of experiment
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
-        print("Experiment starts at {} ({})".format(start_datetime, start))
+        #print("Experiment starts at {} ({})".format(start_datetime, start))
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
+        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment
@@ -326,4 +334,5 @@ if __name__ == '__main__':
         cluster.restart_dashboard()
         #cluster.stop_dashboard()
         #cluster.start_dashboard()
+        experiment.show_summary()
 exit()

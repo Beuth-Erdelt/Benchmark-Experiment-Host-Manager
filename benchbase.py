@@ -9,8 +9,9 @@ User can also choose some parameters like number of warehouses and request some 
 """
 from bexhoma import *
 from dbmsbenchmarker import *
+#import experiments
 import logging
-#import urllib3
+import urllib3
 import logging
 import argparse
 import time
@@ -18,7 +19,7 @@ from timeit import default_timer
 import datetime
 
 
-#urllib3.disable_warnings()
+urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     parser.add_argument('-rnl', '--request-node-loading', help='request a specific node', default=None)
     parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
     parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
-    parser.add_argument('-nti', '--num-time', help='time per benchmark in seconds', default="60")
+    #parser.add_argument('-nti', '--num-time', help='time per benchmark in seconds', default="60")
     parser.add_argument('-b', '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter'])
     parser.add_argument('-nt', '--num-target', help='total number of loaders per configuration', default="1024")
     parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 1024 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
@@ -84,7 +85,7 @@ if __name__ == '__main__':
     if len(scaling_users) > 0:
         list_scaling_users = scaling_users.split(",")
         list_scaling_users = [int(x) for x in list_scaling_users]
-    SD = str(args.scaling_duration)
+    SD = int(args.scaling_duration)*60
     target_base = int(args.target_base)
     list_target_factors = args.list_target_factors
     if len(list_target_factors) > 0:
@@ -101,7 +102,7 @@ if __name__ == '__main__':
     if len(num_benchmarking_pods) > 0:
         num_benchmarking_pods = num_benchmarking_pods.split(",")
         list_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
-        print(list_benchmarking_pods)
+        #print(list_benchmarking_pods)
     cpu = str(args.request_cpu)
     memory = str(args.request_ram)
     cpu_type = str(args.request_cpu_type)
@@ -116,7 +117,7 @@ if __name__ == '__main__':
     test_result = args.test_result
     code = args.experiment
     type_of_benchmark = args.benchmark
-    benchbase_time = args.num_time# = 300
+    #benchbase_time = args.num_time# = 300
     aws = args.aws
     if aws:
         cluster = clusters.aws(context=args.context)
@@ -144,18 +145,16 @@ if __name__ == '__main__':
         # we want all TPC-C queries
         #experiment.set_queries_full()
         experiment.set_workload(
-            name = 'Benchbase Workload SF='+str(SF),
+            name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
             info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
             defaultParameters = {'SF': SF}
         )
+    if monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
     else:
-        # we want to profile the import
-        #experiment.set_queries_profiling()
-        experiment.set_workload(
-            name = 'Benchbase Data Profiling PostgreSQL SF='+str(SF),
-            info = 'This experiment compares importing Benchbase data sets into different DBMS.',
-            defaultParameters = {'SF': SF}
-        )
+        # we want to just run the queries
+        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
@@ -235,8 +234,7 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="type_of_benchmark",
-        experiment_design="5",
+        usecase="benchbase_tpcc",
         warehouses=SF,
         #users_loading=scaling_users,
         #users_benchmarking=str(num_virtual_users),
@@ -250,6 +248,9 @@ if __name__ == '__main__':
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, pods=pods)
                 config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=config_name, dialect='PostgreSQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'postgresql'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = 1,#str(pods),
@@ -259,7 +260,7 @@ if __name__ == '__main__':
                     BEXHOMA_DATABASE = 'postgres',
                     #BENCHBASE_TARGET = int(target),
                     BENCHBASE_TERMINALS = SU,
-                    BENCHBASE_TIME = benchbase_time,
+                    BENCHBASE_TIME = SD,
                     BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                     )
                 config.set_loading(parallel=1, num_pods=1)
@@ -277,7 +278,7 @@ if __name__ == '__main__':
                             BENCHBASE_TARGET = int(target/pods), # split target
                             #BENCHBASE_TARGET = target,#int(target/pods),
                             BENCHBASE_TERMINALS = int(virtual_users/pods),
-                            BENCHBASE_TIME = benchbase_time,
+                            BENCHBASE_TIME = SD,
                             BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                             )
                 config.add_benchmark_list([int(pods)]*(len(list_target_factors)*len(num_virtual_users_list)))
@@ -304,6 +305,9 @@ if __name__ == '__main__':
                 name_format = 'MySQL-{cluster}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, pods=pods)
                 config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'mysql'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = 1,#str(pods),
@@ -313,7 +317,7 @@ if __name__ == '__main__':
                     BEXHOMA_DATABASE = 'benchbase',
                     #BENCHBASE_TARGET = int(target),
                     BENCHBASE_TERMINALS = SU,
-                    BENCHBASE_TIME = benchbase_time,
+                    BENCHBASE_TIME = SD,
                     BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                     BEXHOMA_USER = "root",
                     BEXHOMA_PASSWORD = "root",
@@ -333,7 +337,7 @@ if __name__ == '__main__':
                             BENCHBASE_TARGET = int(target/pods), # split target
                             #BENCHBASE_TARGET = target,#int(target/pods),
                             BENCHBASE_TERMINALS = int(virtual_users/pods),
-                            BENCHBASE_TIME = benchbase_time,
+                            BENCHBASE_TIME = SD,
                             BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                             BEXHOMA_USER = "root",
                             BEXHOMA_PASSWORD = "root",
@@ -370,6 +374,9 @@ if __name__ == '__main__':
                 name_format = 'MariaDB-{cluster}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, pods=pods)
                 config = configurations.benchbase(experiment=experiment, docker='MariaDB', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'mariadb'
+                )
                 #config.num_loading = 1
                 config.set_loading_parameters(
                     PARALLEL = 1,#str(pods),
@@ -379,7 +386,7 @@ if __name__ == '__main__':
                     BEXHOMA_DATABASE = 'benchbase',
                     #BENCHBASE_TARGET = int(target),
                     BENCHBASE_TERMINALS = SU,
-                    BENCHBASE_TIME = benchbase_time,
+                    BENCHBASE_TIME = SD,
                     BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                     BEXHOMA_USER = "root",
                     BEXHOMA_PASSWORD = "root",
@@ -399,7 +406,7 @@ if __name__ == '__main__':
                             BENCHBASE_TARGET = int(target/pods), # split target
                             #BENCHBASE_TARGET = target,#int(target/pods),
                             BENCHBASE_TERMINALS = int(virtual_users/pods),
-                            BENCHBASE_TIME = benchbase_time,
+                            BENCHBASE_TIME = SD,
                             BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                             BEXHOMA_USER = "root",
                             BEXHOMA_PASSWORD = "root",
@@ -461,7 +468,10 @@ if __name__ == '__main__':
         # total time of experiment
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
-        print("Experiment starts at {} ({})".format(start_datetime, start))
+        #print("Experiment starts at {} ({})".format(start_datetime, start))
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
+        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
         # run workflow
         experiment.work_benchmark_list()
         # total time of experiment
@@ -481,4 +491,5 @@ if __name__ == '__main__':
         cluster.restart_dashboard()
         #cluster.stop_dashboard()
         #cluster.start_dashboard()
+        experiment.show_summary()
 exit()

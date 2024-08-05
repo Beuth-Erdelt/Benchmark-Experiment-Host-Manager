@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS public.usertable CASCADE;
 
+-- wait 10 seconds
+select (pg_sleep(10.0::double precision)::text = '')::text;
 
 alter database yugabyte SET temp_file_limit=-1;
 

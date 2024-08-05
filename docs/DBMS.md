@@ -120,7 +120,7 @@ as default settings.
 
 ```
        'MariaDB': {
-            'loadData': 'mysql < {scriptname}',
+            'loadData': 'mariadb < {scriptname}',
             'template': {
                 'version': 'v10.4.6',
                 'alias': 'GP A',
@@ -130,7 +130,7 @@ as default settings.
                     'driver': "org.mariadb.jdbc.Driver",
                     'auth': ["root", ""],
                     'url': 'jdbc:mysql://{serverip}:9091/{dbname}',
-                    'jar': './mariadb-java-client-2.3.0.jar'
+                    'jar': './mariadb-java-client-3.1.0.jar'
                 }
             },
             'logfile': '',
@@ -160,8 +160,8 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8
                 'docker_alias': 'Columnwise',
                  'JDBC': {
                     'auth': ['monetdb', 'monetdb'],
-                    'driver': 'nl.cwi.monetdb.jdbc.MonetDriver',
-                    'jar': 'monetdb-jdbc-3.2.jre8.jar',
+                    'driver': 'org.monetdb.jdbc.MonetDriver',
+                    'jar': 'jars/monetdb-jdbc-3.3.jre8',
                     'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout=0'
                 }
             },
@@ -296,7 +296,7 @@ As of bexhoma version `v0.7.0` this contains
           "--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
         ]
 ```
-as default settings.
+as default settings. It also runs MySQL 8.4.0 as default. Please visit the official website for explanations about settings, https://dev.mysql.com/doc/refman/8.4/en/mysql-nutshell.html
 
 ### Configuration
 

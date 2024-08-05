@@ -432,11 +432,12 @@ class logger(base):
             monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
     def get_monitoring_metric(self, metric, component="loading"):
         """
-        Returns list of names of metrics using during monitoring.
+        Returns DataFrame containing metrics measured from a specific component.
 
-        :return: List of monitoring metrics
+        :return: DataFrame of monitoring metrics
         """
         filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        #print("Looking for {}".format(filename))
         if os.path.isfile(self.path+"/"+filename):
             df = pd.read_csv(self.path+"/"+filename).T
             #print(df)
@@ -538,6 +539,9 @@ class ycsb(logger):
             #print(columns)
             df.columns = columns
             df.index.name = connection_name
+            # number of inserts must be integer - otherwise conversion will fail
+            #if '[INSERT].Return=OK' in columns and df['[INSERT].Return=OK'] == 'NaN':
+            #    df['[INSERT].Return=OK'] = 0
             return df
         except Exception as e:
             print(e)
@@ -549,6 +553,7 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
+        df.fillna(0, inplace=True)
         df_typed = df.astype({
             'connection':'str',
             'configuration':'str',
@@ -722,6 +727,7 @@ class ycsb(logger):
         :return: DataFrame of results
         """
         #df = evaluation.get_df_loading()
+        df.fillna(0, inplace=True)
         df_typed = df.astype({
             'connection':'str',
             'configuration':'str',
@@ -1011,8 +1017,8 @@ class benchbase(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             #print(dict_grp)
@@ -1163,7 +1169,7 @@ class tpcc(logger):
                 'duration':'max',
                 'sf':'max',
                 'run':'max',
-                'errors':'max',
+                'errors':'sum',
                 'vusers_loading':'max',
                 'vusers':'sum',
                 #'vusers':'max',
@@ -1176,8 +1182,8 @@ class tpcc(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
-            dict_grp['configuration'] = grp['configuration'][0]
-            dict_grp['experiment_run'] = grp['experiment_run'][0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}

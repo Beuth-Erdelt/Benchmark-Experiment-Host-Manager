@@ -849,7 +849,9 @@ class testbed():
         :return: stdout of the shell command
         """
         if len(pod) == 0:
-            pod = self.activepod
+            self.logger.debug('testbed.execute_command_in_pod({}): empty pod name given for command'.format(command))
+            return "", "", ""
+            #pod = self.activepod
         command_clean = command.replace('"','\\"')
         if len(container) > 0:
             fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
@@ -1321,7 +1323,7 @@ class testbed():
         self.logger.debug('testbed.test_if_monitoring_healthy()')
         config_K8s = self.config['credentials']['k8s']
         if 'service_monitoring' in config_K8s['monitor']:
-            url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'])
+            url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'], service="monitoring")
             query = "node_memory_MemTotal_bytes"
             safe_query = urllib.parse.quote_plus(query)
             try:

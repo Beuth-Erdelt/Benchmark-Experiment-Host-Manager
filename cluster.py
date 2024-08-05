@@ -19,7 +19,7 @@
 from bexhoma import *
 from dbmsbenchmarker import *
 import logging
-#import urllib3
+import urllib3
 import logging
 import argparse
 import time
@@ -29,7 +29,7 @@ from datetime import datetime
 import multiprocessing as mp
 from prettytable import PrettyTable, ALL
 
-#urllib3.disable_warnings()
+urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 
@@ -128,6 +128,15 @@ if __name__ == '__main__':
         if len(dashboard_name) > 0:
             status = cluster.get_pod_status(dashboard_name)
             print("Dashboard: {}".format(status))
+            # get cluster monitoring Prometheus
+            monitoring_running = cluster.test_if_monitoring_healthy()
+            if monitoring_running:
+                print("Cluster Prometheus: {}".format("Running"))
+            else:
+                print("Cluster Prometheus: {}".format("Not running"))
+        else:
+            print("Dashboard: {}".format("Not running"))
+            print("Cluster Prometheus: {}".format("Unknown"))
         # check message queue
         messagequeue_name = cluster.get_pods(component='messagequeue')
         if len(messagequeue_name) > 0:
@@ -136,21 +145,15 @@ if __name__ == '__main__':
         # get data directory
         pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
         if len(pvcs) > 0:
-            print("Data Directory: {}".format("Running"))
+            print("Data directory: {}".format("Running"))
         else:
-            print("Data Directory: {}".format("Missing"))
+            print("Data directory: {}".format("Missing"))
         # get result directory
         pvcs = cluster.get_pvc(app=app, component='results', experiment='', configuration='')
         if len(pvcs) > 0:
-            print("Result Directory: {}".format("Running"))
+            print("Result directory: {}".format("Running"))
         else:
-            print("Result Directory: {}".format("Missing"))
-        # get cluster monitoring Prometheus
-        monitoring_running = cluster.test_if_monitoring_healthy()
-        if monitoring_running:
-            print("Cluster Prometheus: {}".format("Running"))
-        else:
-            print("Cluster Prometheus: {}".format("Not running"))
+            print("Result directory: {}".format("Missing"))
         # get all storage volumes
         pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
         #print("PVCs", pvcs)
@@ -191,6 +194,7 @@ if __name__ == '__main__':
             df = pd.DataFrame(volumes).T
             #print(df)
             h = ['Volumes'] + list(df.columns)
+            df = df.reindex(index=evaluators.natural_sort(df.index))
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
         # get all worker volumes
         pvcs = cluster.get_pvc(app=app, component='worker', experiment='', configuration='')
@@ -279,6 +283,10 @@ if __name__ == '__main__':
                         #   apps[configuration]['loaded'] += '-'+pod_labels[pod]['timeLoadingEnd']
                         #if 'timeLoading' in pod_labels[pod]:
                         #   apps[configuration]['loaded'] += '='+pod_labels[pod]['timeLoading']+'s'
+                    if pod in pod_labels and 'usecase' in pod_labels[pod]:
+                        apps[configuration]['use case'] = pod_labels[pod]['usecase']
+                    else:
+                        apps[configuration]['use case'] = ""
                 ############
                 component = 'worker'
                 apps[configuration][component] = ''
@@ -379,12 +387,14 @@ if __name__ == '__main__':
             h = [df.index.name] + list(df.columns)
             if args.verbose:
                 # this shows all columns even if empty
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
             else:
                 df_empty = df.eq('')
                 df_short = df.drop(df_empty.columns[df_empty.all()].tolist(), axis=1)
                 h_short = [df_short.index.name] + list(df_short.columns)
                 # this shows only columns with not all empty
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
     benchmarker.logger.setLevel(logging.ERROR)
 
