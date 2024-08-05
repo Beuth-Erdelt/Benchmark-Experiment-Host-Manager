@@ -285,7 +285,7 @@ sleep 5
 
 
 #### HammerDB Simple
-# python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 run
+# python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 run
 # 16 warehouses
 # 16 threads used for loading
 # 8 terminals in 1 pod
@@ -307,7 +307,7 @@ sleep 5
 
 
 #### HammerDB Monitoring
-# python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -m -mc run
+# python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -m -mc run
 # 16 warehouses
 # 16 threads used for loading
 # 8 terminals in 1 pod
@@ -331,7 +331,7 @@ sleep 5
 
 
 #### HammerDB Complex
-# python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run
+# python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run
 # 16 warehouses
 # 16 threads used for loading
 # 8 terminals in 1 pod and in 2 pods (4 each)

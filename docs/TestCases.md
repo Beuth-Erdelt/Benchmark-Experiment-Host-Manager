@@ -372,7 +372,7 @@ PostgreSQL-BHT-1-1      253.0        1.0   1.0                 227.667984
 
 ### HammerDB Simple
 
-`python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 run`
+`python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 run`
 
 * 16 warehouses
 * 16 threads used for loading
@@ -418,7 +418,7 @@ PostgreSQL-BHT-16-2-1       94.0       16.0   2.0                 612.765957
 
 ### HammerDB Monitoring
 
-`python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -m -mc run`
+`python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -m -mc run`
 
 * 16 warehouses
 * 16 threads used for loading
@@ -480,7 +480,7 @@ PostgreSQL-BHT-16-2-1        7.32     0.01          0.05                 0.05
 
 ### HammerDB Complex
 
-`python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run`
+`python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run`
 
 * 16 warehouses
 * 16 threads used for loading
