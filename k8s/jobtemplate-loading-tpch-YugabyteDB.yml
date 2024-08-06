@@ -14,7 +14,9 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       tolerations:
       initContainers:
       - name: datagenerator
