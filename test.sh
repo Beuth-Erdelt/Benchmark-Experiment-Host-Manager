@@ -13,7 +13,6 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 # Workload A
 # 64 loader threads, split into 8 parallel pods
 # persistent storage of class shared
-# 64 execution threads, split into 8 parallel pods
 # [1,2] execute (64 threads in 8 pods and 128 threads in 16 pods)
 # target is 16384 ops
 # run twice
@@ -58,19 +57,20 @@ sleep 5
 
 
 #### YCSB Execution Test (TestCases.md)
-# python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms PostgreSQL -wl a run
 # SF = 1 (1 million rows and operations)
 # workload A
-# 64 loader threads, split into 8 parallel pods
-# 64 execution threads, split into 8 parallel pods
+# 64 loader threads, split into 8 parallel pods, so each pod has 8 threads
+# 8 execution threads, used 1x (=8 threads) and 8x (=64 threads)
 # target is 16384 ops
+# persistent storage of class shared
 nohup python ycsb.py -ms 1 --workload a -tr \
 	-nlp 8 -su 64 \
 	-dbms PostgreSQL \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-ne 1 \
+	-ne 1,8 \
 	-nc 1 \
 	-ltf 1 \
+	-rst shared -rss 100Gi \
 	run &>logs/test_ycsb_testcase_3.log &
 
 # watch -n 30 tail -n 50 logs/test_ycsb_testcase_3.log
@@ -81,20 +81,20 @@ sleep 5
 
 
 #### YCSB Execution Monitoring (TestCases.md)
-# python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms PostgreSQL -wl a -m -mc run
 # SF = 1 (1 million rows and operations)
 # workload A
-# 64 loader threads, split into 8 parallel pods
-# 64 execution threads, split into 8 parallel pods
+# 64 loader threads, split into 8 parallel pods, so each pod has 8 threads
+# 8 execution threads, used 1x (=8 threads) and 8x (=64 threads)
 # target is 16384 ops
-# monitoring of all components activated
+# persistent storage of class shared
 nohup python ycsb.py -ms 1 --workload a -tr \
 	-nlp 8 -su 64 \
 	-dbms PostgreSQL \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-ne 1 \
+	-ne 1,8 \
 	-nc 1 \
 	-ltf 1 \
+	-rst shared -rss 100Gi \
 	-m -mc \
 	run &>logs/test_ycsb_testcase_4.log &
 
@@ -137,7 +137,6 @@ sleep 5
 
 
 #### TPC-H Power Test - only PostgreSQL (TestCases.md)
-# python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -dbms PostgreSQL run
 # SF = 1
 # PostgreSQL 8 loader, indexed
 # 1x(1) benchmarker = 1 execution stream (power test)
@@ -159,19 +158,19 @@ sleep 5
 
 
 #### TPC-H Monitoring Test (TestCases.md)
-# python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -dbms PostgreSQL -m -mc run
-# SF = 1
+# SF = 3
 # PostgreSQL 8 loader, indexed
 # 1x(1) benchmarker = 1 execution stream (power test)
-# no persistent storage
+# persistent storage of class shared
 # monitoring all components
-nohup python tpch.py -ms 1 -dt -sf 1 -ii -ic -is \
+nohup python tpch.py -ms 1 -dt -sf 3 -ii -ic -is \
 	-nlp 8 -nlt 8 \
 	-nc 1 -ne 1 \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
 	-t 1200 \
 	-dbms PostgreSQL \
 	-m -mc \
+	-rst shared -rss 100Gi \
 	run &>logs/test_tpch_testcase_2.log &
 
 # watch -n 30 tail -n 50 logs/test_tpch_testcase_2.log
@@ -182,10 +181,9 @@ sleep 5
 
 
 #### TPC-H Throughput Test
-# python tpch.py -dt -nlp 8 -nlt 8 -sf 1 -ii -ic -is -dbms PostgreSQL -m -mc -rst shared -rss 100Gi run
 # SF = 1
 # PostgreSQL 8 loader, indexed
-# 2x(1,2) benchmarker = 1 and 2 execution streams
+# 2x(1,2) benchmarker = 1 and 2 execution streams (run twice)
 # persistent storage of class shared
 # monitoring all components
 nohup python tpch.py -ms 1 -dt -sf 1 -ii -ic -is \
@@ -210,9 +208,8 @@ sleep 5
 
 
 #### Benchbase Simple
-# python benchbase.py -ltf 16 -dbms PostgreSQL -nvu 16 -sf 16 -nbp 1 run
 # 16 warehouses
-# 16 terminals in 1 pod
+# 16 terminals in 1 pod at execution
 # target is 16384 ops
 # no persistent storage
 nohup python benchbase.py -ms 1 -tr \
@@ -232,12 +229,11 @@ sleep 5
 
 
 #### Benchbase Monitoring
-# python benchbase.py -ltf 16 -dbms PostgreSQL -nvu 16 -sf 16 -nbp 1 -m -mc run
 # 16 warehouses
 # 16 terminals in 1 pod
 # target is 16384 ops
 # monitoring of all components activated
-# no persistent storage
+# data is stored persistently in a PV of type shared and size 50Gi
 nohup python benchbase.py -ms 1 -tr \
 	-sf 16 \
 	-ltf 16 \
@@ -246,6 +242,7 @@ nohup python benchbase.py -ms 1 -tr \
 	-nvu 16 \
 	-nbp 1 \
 	-m -mc \
+	-rst shared -rss 50Gi \
 	run &>logs/test_benchbase_testcase_2.log &
 
 # watch -n 30 tail -n 50 logs/test_benchbase_testcase_2.log
@@ -256,11 +253,10 @@ sleep 5
 
 
 #### Benchbase Complex
-# python benchbase.py -ltf 16 -dbms PostgreSQL -nvu 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run
 # 16 warehouses
 # 16 terminals in 1 pod and 16 terminals in 2 pods (8 each)
 # target is 16384 ops
-# data is stored persistently in a PV of type shared and size 30Gi
+# data is stored persistently in a PV of type shared and size 50Gi
 # monitoring of all components activated
 # run twice
 nohup python benchbase.py -ms 1 -tr \
@@ -271,7 +267,7 @@ nohup python benchbase.py -ms 1 -tr \
 	-nvu 16 \
 	-nbp 1,2 \
 	-m -mc \
-	-rst shared -rss 30Gi \
+	-rst shared -rss 50Gi \
 	-nc 2 \
 	run &>logs/test_benchbase_testcase_3.log &
 
@@ -285,7 +281,6 @@ sleep 5
 
 
 #### HammerDB Simple
-# python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 run
 # 16 warehouses
 # 16 threads used for loading
 # 8 terminals in 1 pod
@@ -307,12 +302,11 @@ sleep 5
 
 
 #### HammerDB Monitoring
-# python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -m -mc run
 # 16 warehouses
 # 16 threads used for loading
 # 8 terminals in 1 pod
+# data is stored persistently in a PV of type shared and size 30Gi
 # monitoring of all components activated
-# no persistent storage
 nohup python hammerdb.py \
 	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
 	-dbms PostgreSQL \
@@ -321,6 +315,7 @@ nohup python hammerdb.py \
 	-sf 16 \
 	-nbp 1 \
 	-m -mc \
+	-rst shared -rss 30Gi \
 	run &>logs/test_hammerdb_testcase_2.log &
 
 # watch -n 30 tail -n 50 logs/test_hammerdb_testcase_2.log
@@ -331,10 +326,9 @@ sleep 5
 
 
 #### HammerDB Complex
-# python hammerdb.py -tr -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1,2 -rst shared -rss 30Gi -m -mc run
 # 16 warehouses
 # 16 threads used for loading
-# 8 terminals in 1 pod and in 2 pods (4 each)
+# 8 terminals in 1 pod and in 2 pods (4 terminals each)
 # data is stored persistently in a PV of type shared and size 30Gi
 # monitoring of all components activated
 nohup python hammerdb.py \
@@ -343,7 +337,7 @@ nohup python hammerdb.py \
 	-nvu '8' \
 	-su 16 \
 	-sf 16 \
-	-nbp 1 \
+	-nbp 1,2 \
 	-m -mc \
 	-rst shared -rss 30Gi \
 	run &>logs/test_hammerdb_testcase_3.log &

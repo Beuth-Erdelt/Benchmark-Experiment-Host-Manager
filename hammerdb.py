@@ -59,6 +59,8 @@ if __name__ == '__main__':
     parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared'])
     parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
     parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
+    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node', default=None)
+    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
     parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
@@ -102,6 +104,8 @@ if __name__ == '__main__':
     request_storage_type = args.request_storage_type
     request_storage_size = args.request_storage_size
     request_node_name = args.request_node_name
+    request_node_loading = args.request_node_loading
+    request_node_benchmarking = args.request_node_benchmarking
     datatransfer = args.datatransfer
     test_result = args.test_result
     code = args.experiment
@@ -163,13 +167,6 @@ if __name__ == '__main__':
             'gpu': '',
             #'kubernetes.io/hostname': 'cl-worker13'
         })
-    if request_node_name is not None:
-        experiment.set_resources(
-            nodeSelector = {
-                'cpu': cpu_type,
-                'gpu': '',
-                'kubernetes.io/hostname': request_node_name
-            })        
     # persistent storage
     #print(request_storage_type)
     #if not request_storage_type is None:# and (request_storage_type == 'shared' or request_storage_type == 'local-hdd'):
@@ -193,6 +190,34 @@ if __name__ == '__main__':
     if len(args.dbms):
         # import is limited to single DBMS
         experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(args.dbms)
+    if not request_node_loading is None:
+        experiment.patch_loading(patch="""
+        spec:
+          template:
+            spec:
+              nodeSelector:
+                kubernetes.io/hostname: {node}
+        """.format(node=request_node_loading))
+        experiment.workload['info'] = experiment.workload['info']+" Loading is fixed to {}.".format(request_node_loading)
+    # fix benchmarking
+    if not request_node_benchmarking is None:
+        experiment.patch_benchmarking(patch="""
+        spec:
+          template:
+            spec:
+              nodeSelector:
+                kubernetes.io/hostname: {node}
+        """.format(node=request_node_benchmarking))
+        experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
+    # fix SUT
+    if not request_node_name is None:
+        experiment.set_resources(
+            nodeSelector = {
+                'cpu': cpu_type,
+                'gpu': '',
+                'kubernetes.io/hostname': request_node_name
+            })        
+        experiment.workload['info'] = experiment.workload['info']+" SUT is fixed to {}.".format(request_node_name)
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="hammerdb_tpcc",

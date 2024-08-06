@@ -171,13 +171,6 @@ if __name__ == '__main__':
             'gpu': '',
             #'kubernetes.io/hostname': 'cl-worker13'
         })
-    if request_node_name is not None:
-        experiment.set_resources(
-            nodeSelector = {
-                'cpu': cpu_type,
-                'gpu': '',
-                'kubernetes.io/hostname': request_node_name
-            })        
     # persistent storage
     #print(request_storage_type)
     #if not request_storage_type is None:# and (request_storage_type == 'shared' or request_storage_type == 'local-hdd'):
@@ -248,6 +241,15 @@ if __name__ == '__main__':
                 kubernetes.io/hostname: {node}
         """.format(node=request_node_benchmarking))
         experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
+    # fix SUT
+    if not request_node_name is None:
+        experiment.set_resources(
+            nodeSelector = {
+                'cpu': cpu_type,
+                'gpu': '',
+                'kubernetes.io/hostname': request_node_name
+            })        
+        experiment.workload['info'] = experiment.workload['info']+" SUT is fixed to {}.".format(request_node_name)
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="ycsb",
