@@ -57,21 +57,21 @@ sleep 5
 
 
 #### YCSB Execution Test (TestCases.md)
-# SF = 1 (1 million rows and operations)
-# workload A
-# 64 loader threads, split into 8 parallel pods, so each pod has 8 threads
-# 8 execution threads, used 1x (=8 threads) and 8x (=64 threads)
-# target is 16384 ops
-# persistent storage of class shared
-nohup python ycsb.py -ms 1 --workload a -tr \
-	-nlp 8 -su 64 \
-	-dbms PostgreSQL \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-ne 1,8 \
-	-nc 1 \
-	-ltf 1 \
-	-rst shared -rss 100Gi \
-	run &>logs/test_ycsb_testcase_3.log &
+nohup python ycsb.py -ms 1 -tr \
+    --workload a \
+    -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -tb 131072 \
+    -nlp 8 \
+    -nlt 64 \
+    -nlf 1 \
+    -nbp 1,8 \
+    -nbt 64 \
+    -nbf 1 \
+    -ne 1,2 \
+    -nc 2 \
+    -rst shared -rss 100Gi \
+    run &>logs/test_ycsb_testcase_2.log &
 
 # watch -n 30 tail -n 50 logs/test_ycsb_testcase_3.log
 
@@ -96,7 +96,7 @@ nohup python ycsb.py -ms 1 --workload a -tr \
 	-ltf 1 \
 	-rst shared -rss 100Gi \
 	-m -mc \
-	run &>logs/test_ycsb_testcase_4.log &
+	run &>logs/test_ycsb_testcase_3.log &
 
 # watch -n 30 tail -n 50 logs/test_ycsb_testcase_4.log
 

@@ -895,6 +895,7 @@ class default():
                                         self.wait(30)
                                     print("{:30s}: starts again".format(config.configuration))
                                     config.benchmark_list = config.benchmark_list_template.copy()
+                                    config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
                                     # wait for PV to be gone completely
                                     #self.wait(60)
                                     config.reset_sut()
@@ -1730,7 +1731,7 @@ class tpcc(default):
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
-        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        evaluation = evaluators.base(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
