@@ -413,18 +413,15 @@ PostgreSQL-BHT-8-2-2        0.00      0.0          0.25                 0.27
 ```
 python benchbase.py -ms 1 -tr \
     -sf 16 \
-    -ltf 16 \
+    -sd 5 \
     -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
     -dbms PostgreSQL \
-    -nvu 16 \
+    -tb 1024 \
     -nbp 1 \
+    -nbt 16 \
+    -nbf 8 \
     run
 ```
-
-* 16 warehouses
-* 16 terminals in 1 pod at execution
-* target is 16384 ops
-* no persistent storage
 
 yields (after ca. 10 minutes) something like
 
@@ -468,21 +465,17 @@ PostgreSQL-BHT-1-1      129.0        1.0   1.0                 446.511628
 ```
 python benchbase.py -ms 1 -tr \
     -sf 16 \
-    -ltf 16 \
+    -sd 5 \
     -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
     -dbms PostgreSQL \
-    -nvu 16 \
+    -tb 1024 \
     -nbp 1 \
+    -nbt 16 \
+    -nbf 8 \
     -m -mc \
     -rst shared -rss 50Gi \
     run
 ```
-
-* 16 warehouses
-* 16 terminals in 1 pod at execution
-* target is 16384 ops
-* monitoring of all components activated
-* data is stored persistently in a PV of type shared and size 50Gi
 
 yields (after ca. 10 minutes) something like
 
@@ -492,50 +485,55 @@ yields (after ca. 10 minutes) something like
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
     This includes no queries. Benchbase runs the benchmark
-    This experiment compares run time and resource consumption of Benchbase queries in different DBMS. Benchbase data is generated and loaded using several threads. Benchmark is limited to DBMS PostgreSQL. Benchmark is tpcc. Loading is fixed to cl-worker19. Benchmarking is fixed to cl-worker19. SUT is fixed to cl-worker11.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 300 minutes.
+Benchmark is limited to DBMS PostgreSQL. Loading is fixed to cl-worker19. Benchmarking is fixed to cl-worker19. SUT is fixed to cl-worker11.
+Loading is tested with [1] threads and [1] target factors of base 1024, split into [1] pods.
+Benchmarking is tested with [16] threads and [8] target factors of base 1024, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-1-1 uses docker image postgres:16.1
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:217698780
-    datadisk:4408528
-    volume_size:50G
-    volume_used:4.1G
+    disk:250129124
+    datadisk:4409312
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                    experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-BHT-1-1               1         16   16384          1  300.0                       2636.29                                                      13427.0                                               6063.0
+                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2597.98                                                      13766.0                                               6153.0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-BHT-1 - Pods [[1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
-                    time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-1-1      132.0        1.0   1.0                 436.363636
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-1-1-1024-1      135.0        1.0   1.0                 426.666667
 
 ### Ingestion - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1       657.6     1.56          3.85                 5.23
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      524.45      1.8          3.69                 4.88
 
 ### Ingestion - Loader
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1      938.94    10.93          1.31                 1.31
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1     1052.18        0          1.33                 1.33
 
 ### Execution - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1     2456.61     7.58           4.7                 6.03
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1     2656.26      7.7          4.88                  7.2
 
 ### Execution - Benchmarker
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1     1494.24     5.01          1.43                 1.43
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1     1411.58     4.96          1.46                 1.46
 ```
 
 ### Benchbase Complex
