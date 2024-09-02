@@ -6,26 +6,21 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-
-#### YCSB Loader Test for Persistency (TestCases.md)
-# SF = 1 (1 million rows and operations)
-# PostgreSQL
-# Workload A
-# 64 loader threads, split into 8 parallel pods
-# persistent storage of class shared
-# [1,2] execute (64 threads in 8 pods and 128 threads in 16 pods)
-# target is 16384 ops
-# run twice
+### YCSB Loader Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-	--workload a \
-	-nlp 8 \
-	-dbms PostgreSQL \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-ne 1,2 \
-	-nc 2 \
-	-ltf 1 \
-	-rst shared -rss 100Gi \
-	run &>logs/test_ycsb_testcase_1.log &
+    --workload a \
+    -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -tb 131072 \
+    -nlp 4,8 \
+    -nlt 32,64 \
+    -nlf 1 \
+    -nbp 1 \
+    -nbt 64 \
+    -nbf 1 \
+    -ne 1 \
+    -nc 1 \
+	run </dev/null &>logs/test_ycsb_testcase_1.log &
 
 #watch -n 30 tail -n 50 logs/test_ycsb_testcase_1.log
 
@@ -34,29 +29,33 @@ nohup python ycsb.py -ms 1 -tr \
 sleep 5
 
 
-#### YCSB Execution Test
-# SF = 1
-# PostgreSQL 1 loader
-# 2x(1,2) benchmarker
-# persistent storage of class shared
-#nohup python ycsb.py -ms 1 -m --workload a -tr \
-#	-nlp 1 \
-#	-dbms PostgreSQL \
-#	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-#	-ne 1,2 \
-#	-nc 2 \
-#	-ltf 2 \
-#	-rst shared -rss 100Gi \
-#	run &>logs/test_ycsb_testcase_2.log &
 
-# watch -n 30 tail -n 50 logs/test_ycsb_testcase_2.log
+### YCSB Loader Test for Persistency (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+    --workload a \
+    -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -tb 131072 \
+    -nlp 8 \
+    -nlt 64 \
+    -nlf 1 \
+    -nbp 1 \
+    -nbt 64 \
+    -nbf 1 \
+    -ne 1 \
+    -nc 2 \
+    -rst shared -rss 100Gi \
+    run </dev/null &>logs/test_ycsb_testcase_2.log &
+
+#watch -n 30 tail -n 50 logs/test_ycsb_testcase_2.log
 
 
 #### Wait so that experiments receive different codes
-#sleep 5
+sleep 5
 
 
-#### YCSB Execution Test (TestCases.md)
+
+### YCSB Execution for Scaling and Repetition (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
     --workload a \
     -dbms PostgreSQL \
@@ -71,7 +70,7 @@ nohup python ycsb.py -ms 1 -tr \
     -ne 1,2 \
     -nc 2 \
     -rst shared -rss 100Gi \
-    run &>logs/test_ycsb_testcase_2.log &
+    run </dev/null &>logs/test_ycsb_testcase_3.log &
 
 # watch -n 30 tail -n 50 logs/test_ycsb_testcase_3.log
 
@@ -80,23 +79,23 @@ nohup python ycsb.py -ms 1 -tr \
 sleep 5
 
 
-#### YCSB Execution Monitoring (TestCases.md)
-# SF = 1 (1 million rows and operations)
-# workload A
-# 64 loader threads, split into 8 parallel pods, so each pod has 8 threads
-# 8 execution threads, used 1x (=8 threads) and 8x (=64 threads)
-# target is 16384 ops
-# persistent storage of class shared
-nohup python ycsb.py -ms 1 --workload a -tr \
-	-nlp 8 -su 64 \
-	-dbms PostgreSQL \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-ne 1,8 \
-	-nc 1 \
-	-ltf 1 \
-	-rst shared -rss 100Gi \
-	-m -mc \
-	run &>logs/test_ycsb_testcase_3.log &
+
+### YCSB Execution Different Workload (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+    --workload e \
+    -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -tb 131072 \
+    -nlp 8 \
+    -nlt 64 \
+    -nlf 1 \
+    -nbp 8 \
+    -nbt 64 \
+    -nbf 1 \
+    -ne 1 \
+    -nc 1 \
+    -rst shared -rss 100Gi \
+    run </dev/null &>logs/test_ycsb_testcase_4.log &
 
 # watch -n 30 tail -n 50 logs/test_ycsb_testcase_4.log
 
@@ -105,32 +104,32 @@ nohup python ycsb.py -ms 1 --workload a -tr \
 sleep 5
 
 
-#### YCSB Execution Complex (TestCases.md)
-# python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms PostgreSQL -wl a -rst shared -rss 30Gi -m -mc -ne 1,2 -nc 2 run
-# SF = 1 (1 million rows and operations)
-# workload A
-# 64 loader threads, split into 8 parallel pods
-# 64 execution threads, split into 8 parallel pods
-# target is 16384 ops
-# data is stored persistently in a PV of type shared and size 30Gi
-# 2x(1,2) benchmarker
-# monitoring of all components activated
-#nohup python ycsb.py -ms 1 --workload a -tr \
-#	-nlp 8 -su 64 \
-#	-dbms PostgreSQL \
-#	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-#	-ne 1,2 \
-#	-nc 2 \
-#	-ltf 1 \
-#	-m -mc \
-#	-rst shared -rss 30Gi \
-#	run &>logs/test_ycsb_testcase_5.log &
+
+#### YCSB Execution Monitoring (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+    --workload a \
+    -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -tb 131072 \
+    -nlp 8 \
+    -nlt 64 \
+    -nlf 1 \
+    -nbp 1,8 \
+    -nbt 64 \
+    -nbf 1 \
+    -ne 1 \
+    -nc 1 \
+    -rst shared -rss 100Gi \
+    -m -mc \
+    -sf 10 \
+    run </dev/null &>logs/test_ycsb_testcase_5.log &
 
 # watch -n 30 tail -n 50 logs/test_ycsb_testcase_5.log
 
 
 #### Wait so that experiments receive different codes
-#sleep 5
+sleep 5
+
 
 
 

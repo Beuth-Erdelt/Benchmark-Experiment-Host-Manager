@@ -1,7 +1,20 @@
 """
-:Date: 2022-11-28
-:Version: 0.1
-:Authors: Patrick Erdelt
+    This script contains code that manages YCSB experiments in a K8s cluster.
+
+    Copyright (C) 2021  Patrick Erdelt
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from bexhoma import *
 from dbmsbenchmarker import *
@@ -49,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor = number of operations in millions (=SF if not set)', default=None)
     #parser.add_argument('-su',  '--scaling-users', help='scaling factor = number of total threads', default=64)
     parser.add_argument('-sbs', '--scaling-batchsize', help='batch size', default="")
-    parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
+    #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb',  '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
     parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=180)
     parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
@@ -85,10 +98,10 @@ if __name__ == '__main__':
     ycsb_operations = int(SFO)*1000000
     #SU = int(args.scaling_users)
     target_base = int(args.target_base)
-    list_target_factors = args.list_target_factors
-    if len(list_target_factors) > 0:
-        list_target_factors = list_target_factors.split(",")
-        list_target_factors = [int(x) for x in list_target_factors]
+    #list_target_factors = args.list_target_factors
+    #if len(list_target_factors) > 0:
+    #    list_target_factors = list_target_factors.split(",")
+    #    list_target_factors = [int(x) for x in list_target_factors]
     batchsize = args.scaling_batchsize
     timeout = int(args.timeout)
     num_experiment_to_apply = int(args.num_config)
@@ -248,7 +261,7 @@ if __name__ == '__main__':
     #experiment.name_format = '{dbms}-{threads}-{pods}-{target}'
     experiment.set_experiment(script='Schema')
     # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+"\nWorkload is '{}'.".format(upper(args.workload))
+    experiment.workload['info'] = experiment.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
     experiment.workload['info'] = experiment.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
     experiment.workload['info'] = experiment.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
     if len(args.dbms):
@@ -291,7 +304,7 @@ if __name__ == '__main__':
     if num_experiment_to_apply > 1: 
         experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
     else:
-        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} once."
+        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run once."
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="ycsb",
@@ -300,20 +313,13 @@ if __name__ == '__main__':
         OPERATIONS=ycsb_operations,
         workload=args.workload,
         )
-    #experiment.add_benchmark_list(list_clients)
     for loading_threads in num_loading_threads:#[8]:#[64]:
         for loading_pods in num_loading_pods:#[1,2]:#[1,8]:#range(2,5):
-            #pods = 2**p
-            #for t in range(1, 15):#range(1, 2):#range(1, 15):
             for factor_loading in num_loading_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
                 loading_target = target_base*factor_loading#4*4096*t
                 loading_threads_per_pod = int(loading_threads/loading_pods)
                 ycsb_operations_per_pod = int(ycsb_operations/loading_pods)
                 loading_target_per_pod = int(loading_target/loading_pods)
-                #benchmarking_pods = [loading_pods]
-                #if len(list_clients) > 0:
-                #    # we want several benchmarking instances per installation
-                #    benchmarking_pods = list_clients
                 if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
@@ -344,6 +350,7 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
                                     print("benchmarking_pods_scaled", benchmarking_pods_scaled)
@@ -351,9 +358,10 @@ if __name__ == '__main__':
                                     print("ycsb_operations_per_pod", ycsb_operations_per_pod)
                                     print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
                                     print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(num_executor*benchmarking_pods),
+                                        PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
@@ -364,89 +372,116 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         )
-                    #print(list_clients*(len(num_benchmarking_target_factors)*len(num_benchmarking_threads)*len(num_benchmarking_pods)))
-                    print(executor_list)
-                    #config.add_benchmark_list(list_clients*(len(num_benchmarking_target_factors)*len(num_benchmarking_threads)*len(num_benchmarking_pods)))
-                    #config.benchmarking_parameters_list = config.benchmarking_parameters_list * num_experiment_to_apply
+                    #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    """config.set_benchmarking_parameters(
-                        #PARALLEL = str(pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        YCSB_ROWS = ycsb_rows,
-                        YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.add_benchmark_list(benchmarking_pods)"""
                 if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
                     name_format = 'MySQL-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS B')
+                    config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS B')
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
                     config.set_loading_parameters(
-                        PARALLEL = str(pods),
+                        PARALLEL = str(loading_pods),
                         SF = SF,
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
                         YCSB_WORKLOAD = args.workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    config.set_benchmarking_parameters(
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        YCSB_ROWS = ycsb_rows,
-                        YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.add_benchmark_list(benchmarking_pods)
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
                 if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                     # MariaDB
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS C')
+                    config = configurations.ycsb(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS C')
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
                     config.set_loading_parameters(
-                        PARALLEL = str(pods),
+                        PARALLEL = str(loading_pods),
                         SF = SF,
                         BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
                         YCSB_WORKLOAD = args.workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    #config.set_loading(parallel=num_loading, num_pods=num_loading_pods)
-                    config.set_benchmarking_parameters(
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_THREADCOUNT = loading_threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        YCSB_ROWS = ycsb_rows,
-                        YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.add_benchmark_list(benchmarking_pods)
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
                 if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
@@ -483,30 +518,52 @@ if __name__ == '__main__':
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
                     config.set_loading_parameters(
-                        PARALLEL = str(pods),
+                        PARALLEL = str(loading_pods),
                         SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
                         BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_STATUS = 1,
                         YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
+                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         )
-                    config.set_loading(parallel=pods, num_pods=pods)
-                    config.set_benchmarking_parameters(
-                        SF = SF,
-                        YCSB_THREADCOUNT = threads_per_pod,
-                        YCSB_TARGET = target_per_pod,
-                        YCSB_STATUS = 1,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        ROWS = ycsb_rows,
-                        YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.add_benchmark_list(benchmarking_pods)
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(num_executor*benchmarking_pods),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
                     cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     # wait for necessary nodegroups to have planned size
     if aws:
