@@ -142,6 +142,8 @@ if __name__ == '__main__':
         if len(messagequeue_name) > 0:
             status = cluster.get_pod_status(messagequeue_name[0])
             print("Message Queue: {}".format(status))
+        else:
+            print("Message Queue: Not running")
         # get data directory
         pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
         if len(pvcs) > 0:
