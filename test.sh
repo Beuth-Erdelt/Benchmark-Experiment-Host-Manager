@@ -274,7 +274,7 @@ nohup python tpch.py -ms 1 -tr \
 
 
 #### Wait so that experiments receive different codes
-sleep 1800
+sleep 600
 
 
 ### TPC-H Monitoring (TestCases.md)

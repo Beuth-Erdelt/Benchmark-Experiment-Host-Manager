@@ -44,11 +44,17 @@ if __name__ == '__main__':
     parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
     parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
-    parser.add_argument('-nvu', '--num-virtual-users', help='space separated list of number of virtual users for HammerDB', default="1")
-    parser.add_argument('-nrt', '--num-rampup-time', help='Rampup time in minutes', default=2)
+    parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
+    parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
+    #parser.add_argument('-nlf', '--num-loading-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
     parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
+    parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
+    #parser.add_argument('-nbf', '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
+    #parser.add_argument('-nvu', '--num-virtual-users', help='space separated list of number of virtual users for HammerDB', default="1")
+    parser.add_argument('-nrt', '--num-rampup-time', help='Rampup time in minutes', default=2)
+    #parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of warehouses', default=1)
-    parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
+    #parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
     parser.add_argument('-sd', '--scaling-duration', help='scaling factor = duration in minutes', default=5)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
@@ -85,17 +91,48 @@ if __name__ == '__main__':
     timeout = int(args.timeout)
     numRun = int(args.num_run)
     num_experiment_to_apply = int(args.num_config)
-    #num_virtual_users = args.num_virtual_users
-    num_rampup = args.num_rampup_time
-    num_virtual_users = args.num_virtual_users
-    if len(num_virtual_users) > 0:
-        num_virtual_users = num_virtual_users.split(" ")
-        num_virtual_users_list = [int(x) for x in num_virtual_users]
+    num_loading_pods = args.num_loading_pods
+    if len(num_loading_pods) > 0:
+        num_loading_pods = num_loading_pods.split(",")
+        num_loading_pods = [int(x) for x in num_loading_pods]
+    num_loading_threads = args.num_loading_threads
+    if len(num_loading_threads) > 0:
+        num_loading_threads = num_loading_threads.split(",")
+        num_loading_threads = [int(x) for x in num_loading_threads]
+    num_loading_target_factors = args.num_loading_target_factors
+    if len(num_loading_target_factors) > 0:
+        num_loading_target_factors = num_loading_target_factors.split(",")
+        num_loading_target_factors = [int(x) for x in num_loading_target_factors]
     num_benchmarking_pods = args.num_benchmarking_pods
     if len(num_benchmarking_pods) > 0:
         num_benchmarking_pods = num_benchmarking_pods.split(",")
-        list_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
-        #print(list_benchmarking_pods)
+        num_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
+    num_benchmarking_threads = args.num_benchmarking_threads
+    if len(num_benchmarking_threads) > 0:
+        num_benchmarking_threads = num_benchmarking_threads.split(",")
+        num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
+    num_benchmarking_target_factors = args.num_benchmarking_target_factors
+    if len(num_benchmarking_target_factors) > 0:
+        num_benchmarking_target_factors = num_benchmarking_target_factors.split(",")
+        num_benchmarking_target_factors = [int(x) for x in num_benchmarking_target_factors]
+    #num_virtual_users = args.num_virtual_users
+    # configure number of clients per config
+    list_clients = args.num_query_executors.split(",")
+    if len(list_clients) > 0:
+        list_clients = [int(x) for x in list_clients if len(x) > 0]
+    else:
+        list_clients = []
+    #num_virtual_users = args.num_virtual_users
+    num_rampup = args.num_rampup_time
+    #num_virtual_users = args.num_virtual_users
+    #if len(num_virtual_users) > 0:
+    #    num_virtual_users = num_virtual_users.split(" ")
+    #    num_virtual_users_list = [int(x) for x in num_virtual_users]
+    #num_benchmarking_pods = args.num_benchmarking_pods
+    #if len(num_benchmarking_pods) > 0:
+    #    num_benchmarking_pods = num_benchmarking_pods.split(",")
+    #    list_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
+    #    #print(list_benchmarking_pods)
     cpu = str(args.request_cpu)
     memory = str(args.request_ram)
     cpu_type = str(args.request_cpu_type)
@@ -106,7 +143,7 @@ if __name__ == '__main__':
     request_node_name = args.request_node_name
     request_node_loading = args.request_node_loading
     request_node_benchmarking = args.request_node_benchmarking
-    datatransfer = args.datatransfer
+    #datatransfer = args.datatransfer
     test_result = args.test_result
     code = args.experiment
     aws = args.aws
@@ -140,15 +177,17 @@ if __name__ == '__main__':
             info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
             defaultParameters = {'SF': SF}
         )
-    if monitoring:
-        # we want to monitor resource consumption
-        experiment.monitoring_active = True
-    else:
-        # we want to just run the queries
-        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
+    elif monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by sidecar containers."
+    else:
+        # we want to just run the queries
+        experiment.monitoring_active = False
     #experiment.set_queryfile('queries-tpcds-profiling-tables.config')
     # set resources for dbms
     #experiment.connectionmanagement['timeout'] = 180
@@ -186,10 +225,14 @@ if __name__ == '__main__':
             benchmarking = 'sut',
             )
     # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+" TPC-C data is generated and loaded using several threads."
+    experiment.workload['info'] = experiment.workload['info']+"\nTPC-C data is generated and loaded using several threads."
+    if SF:
+        experiment.workload['info'] = experiment.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
+    if SD:
+        experiment.workload['info'] = experiment.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
     if len(args.dbms):
         # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(args.dbms)
+        experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(args.dbms)
     if not request_node_loading is None:
         experiment.patch_loading(patch="""
         spec:
@@ -198,7 +241,7 @@ if __name__ == '__main__':
               nodeSelector:
                 kubernetes.io/hostname: {node}
         """.format(node=request_node_loading))
-        experiment.workload['info'] = experiment.workload['info']+" Loading is fixed to {}.".format(request_node_loading)
+        experiment.workload['info'] = experiment.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
     # fix benchmarking
     if not request_node_benchmarking is None:
         experiment.patch_benchmarking(patch="""
@@ -208,7 +251,7 @@ if __name__ == '__main__':
               nodeSelector:
                 kubernetes.io/hostname: {node}
         """.format(node=request_node_benchmarking))
-        experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
+        experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
     # fix SUT
     if not request_node_name is None:
         experiment.set_resources(
@@ -217,7 +260,16 @@ if __name__ == '__main__':
                 'gpu': '',
                 'kubernetes.io/hostname': request_node_name
             })        
-        experiment.workload['info'] = experiment.workload['info']+" SUT is fixed to {}.".format(request_node_name)
+        experiment.workload['info'] = experiment.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+    if request_storage_type and request_storage_size:
+        experiment.workload['info'] = experiment.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
+    experiment.workload['info'] = experiment.workload['info']+"\nLoading is tested with {} threads and {} target factors of base {}, split into {} pods.".format(num_loading_threads, num_loading_target_factors, target_base, num_loading_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is tested with {} threads and {} target factors of base {}, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_target_factors, target_base, num_benchmarking_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+    if num_experiment_to_apply > 1: 
+        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
+    else:
+        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run once."
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="hammerdb_tpcc",
@@ -230,8 +282,11 @@ if __name__ == '__main__':
     experiment.loading_active = True
     experiment.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
     experiment.set_experiment(script='Schema')
-    for SU in list_scaling_users:               # reinstall for new number of loading threads
-        for pods in list_benchmarking_pods:     # reinstall for new number of benchmarking pods
+    #for SU in list_scaling_users:               # reinstall for new number of loading threads
+    #    for pods in list_benchmarking_pods:     # reinstall for new number of benchmarking pods
+    for loading_threads in num_loading_threads:#[8]:#[64]:
+        for loading_pods in [1]:#num_loading_pods:#[1,2]:#[1,8]:#range(2,5):
+            loading_threads_per_pod = int(loading_threads/loading_pods)
             if args.dbms == "PostgreSQL":
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
@@ -247,7 +302,7 @@ if __name__ == '__main__':
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "postgresql",
-                    HAMMERDB_VUSERS = num_virtual_users#"1 2 4 8 16 32"
+                    HAMMERDB_VUSERS = loading_threads_per_pod,#num_virtual_users#"1 2 4 8 16 32"
                 )
                 #config.set_loading(parallel=SU, num_pods=SU)
                 config.set_loading(parallel=1, num_pods=1)
@@ -262,16 +317,45 @@ if __name__ == '__main__':
                     )
                 config.add_benchmark_list([int(pods)])
                 """
-                for virtual_users in num_virtual_users_list:
-                    config.add_benchmarking_parameters(
-                        PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_RAMPUP = str(num_rampup),
-                        HAMMERDB_TYPE = "postgresql",
-                        HAMMERDB_VUSERS = int(virtual_users/pods),
-                        )
-                config.add_benchmark_list([pods]*len(num_virtual_users_list))
+                executor_list = []
+                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
+                    for benchmarking_threads in num_benchmarking_threads:
+                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                            for num_executor in list_clients:
+                                benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                """
+                                print("benchmarking_target", benchmarking_target)
+                                print("benchmarking_pods", benchmarking_pods)
+                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                print("benchmarking_threads", benchmarking_threads)
+                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                """
+                                executor_list.append(benchmarking_pods_scaled)
+                                config.add_benchmarking_parameters(
+                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    SF = SF,
+                                    BEXHOMA_SYNCH_LOAD = 1,
+                                    HAMMERDB_DURATION = str(SD),
+                                    HAMMERDB_RAMPUP = str(num_rampup),
+                                    HAMMERDB_TYPE = "postgresql",
+                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,#int(virtual_users/pods),
+                                    )
+                #print(executor_list)
+                config.add_benchmark_list(executor_list)
+                #for virtual_users in num_virtual_users_list:
+                #    config.add_benchmarking_parameters(
+                #        PARALLEL = SU,
+                #        SF = SF,
+                #        HAMMERDB_DURATION = str(SD),
+                #        HAMMERDB_RAMPUP = str(num_rampup),
+                #        HAMMERDB_TYPE = "postgresql",
+                #        HAMMERDB_VUSERS = int(virtual_users/pods),
+                #        )
+                #config.add_benchmark_list([pods]*len(num_virtual_users_list))
             if args.dbms == "MySQL":
                 # MySQL
                 name_format = 'MySQL-{cluster}-{users}'
@@ -287,25 +371,57 @@ if __name__ == '__main__':
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "mysql",
-                    HAMMERDB_VUSERS = num_virtual_users,#"1 2 4 8 16 32"
+                    HAMMERDB_VUSERS = loading_threads_per_pod,#num_virtual_users,#"1 2 4 8 16 32"
                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
                     USER = "root",
                     PASSWORD = "root",
                 )
                 #config.set_loading(parallel=SU, num_pods=SU)
                 config.set_loading(parallel=1, num_pods=1)
-                for virtual_users in num_virtual_users_list:
-                    config.add_benchmarking_parameters(
-                        PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_RAMPUP = str(num_rampup),
-                        HAMMERDB_TYPE = "mysql",
-                        HAMMERDB_VUSERS = virtual_users,
-                        HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                        USER = "root",
-                        PASSWORD = "root",
-                        )
+                executor_list = []
+                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
+                    for benchmarking_threads in num_benchmarking_threads:
+                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                            for num_executor in list_clients:
+                                benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                """
+                                print("benchmarking_target", benchmarking_target)
+                                print("benchmarking_pods", benchmarking_pods)
+                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                print("benchmarking_threads", benchmarking_threads)
+                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                """
+                                executor_list.append(benchmarking_pods_scaled)
+                                config.add_benchmarking_parameters(
+                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    SF = SF,
+                                    BEXHOMA_SYNCH_LOAD = 1,
+                                    HAMMERDB_DURATION = str(SD),
+                                    HAMMERDB_RAMPUP = str(num_rampup),
+                                    HAMMERDB_TYPE = "mysql",
+                                    HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
+                                    USER = "root",
+                                    PASSWORD = "root",
+                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,#int(virtual_users/pods),
+                                    )
+                #print(executor_list)
+                config.add_benchmark_list(executor_list)
+                #for virtual_users in num_virtual_users_list:
+                #    config.add_benchmarking_parameters(
+                #        PARALLEL = SU,
+                #        SF = SF,
+                #        HAMMERDB_DURATION = str(SD),
+                #        HAMMERDB_RAMPUP = str(num_rampup),
+                #        HAMMERDB_TYPE = "mysql",
+                #        HAMMERDB_VUSERS = virtual_users,
+                #        HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
+                #        USER = "root",
+                #        PASSWORD = "root",
+                #        )
     # wait for necessary nodegroups to have planned size
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
