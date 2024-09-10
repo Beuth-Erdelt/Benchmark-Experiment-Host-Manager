@@ -18,20 +18,19 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 ### TPC-H Simple
 
 ```
-python tpch.py -ms 1 -dt -sf 1 -ii -ic -is \
-    -nlp 8 -nlt 8 \
-    -nc 1 -ne 1 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+python tpch.py -ms 1 -tr \
+    -sf 1 \
+    -dt \
     -t 1200 \
     -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -ii -ic -is \
+    -nlp 8 \
+    -nbp 1 \
+    -ne 1 \
+    -nc 1 \
     run
 ```
-
-* SF = 1
-* PostgreSQL 8 loader, indexed
-* 1x(1) benchmarker = 1 execution stream (power test)
-* no persistent storage
-* no monitoring
 
 yields (after ca. 10 minutes) something like
 
@@ -110,22 +109,20 @@ PostgreSQL-BHT-8-1 1  1              1                 28      1   1            
 ### TPC-H Monitoring
 
 ```
-python tpch.py -ms 1 -dt -sf 3 -ii -ic -is \
-    -nlp 8 -nlt 8 \
-    -nc 1 -ne 1 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+python tpch.py -ms 1 -tr \
+    -sf 3 \
+    -dt \
     -t 1200 \
     -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -ii -ic -is \
+    -nlp 8 \
+    -nbp 1 \
+    -ne 1 \
+    -nc 1 \
     -m -mc \
-    -rst shared -rss 100Gi \
     run
 ```
-
-* SF = 3
-* PostgreSQL 8 loader, indexed
-* 1x(1) benchmarker = 1 execution stream (power test)
-* persistent storage of class shared
-* monitoring all components
 
 yields (after ca. 10 minutes) something like
 
@@ -221,22 +218,21 @@ PostgreSQL-BHT-8-1       14.39        0          0.27                 0.27
 ### TPC-H Throughput Test
 
 ```
-python tpch.py -ms 1 -dt -sf 1 -ii -ic -is \
-    -nlp 8 -nlt 8 \
-    -nc 2 -ne 1,2 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+python tpch.py -ms 1 -tr \
+    -sf 1 \
+    -dt \
     -t 1200 \
     -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -ii -ic -is \
+    -nlp 8 \
+    -nbp 1 \
+    -ne 1,2 \
+    -nc 2 \
     -m -mc \
     -rst shared -rss 100Gi \
     run
 ```
-
-* SF = 1
-* PostgreSQL 8 loader, indexed
-* 2x(1,2) benchmarker = 1 and 2 execution streams (run twice)
-* persistent storage of class shared
-* monitoring all components
 
 yields (after ca. 10 minutes) something like
 
@@ -984,7 +980,7 @@ python ycsb.py -ms 1 -tr \
     run
 ```
 
-yields (after ca. 10 minutes) something like
+yields (after ca. 20 minutes) something like
 
 ```
 ## Show Summary
