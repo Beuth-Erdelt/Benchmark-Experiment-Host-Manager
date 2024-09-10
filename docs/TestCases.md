@@ -124,7 +124,7 @@ python tpch.py -ms 1 -tr \
     run
 ```
 
-yields (after ca. 10 minutes) something like
+yields (after ca. 15 minutes) something like
 
 ```
 ## Show Summary
@@ -234,7 +234,7 @@ python tpch.py -ms 1 -tr \
     run
 ```
 
-yields (after ca. 10 minutes) something like
+yields (after ca. 15 minutes) something like
 
 ```
 ## Show Summary
@@ -726,6 +726,19 @@ PostgreSQL-BHT-1-2-1     1284.23     4.91          2.73                 2.73
 PostgreSQL-BHT-2-1-1     1116.75     2.38          2.69                 2.69
 PostgreSQL-BHT-2-2-1     1116.75     4.77          4.47                 4.47
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

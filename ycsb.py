@@ -190,15 +190,17 @@ if __name__ == '__main__':
             info = 'This imports YCSB data sets.',
             defaultParameters = {'SF': SF}
         )
-    if monitoring:
-        # we want to monitor resource consumption
-        experiment.monitoring_active = True
-    else:
-        # we want to just run the queries
-        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
+    elif monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by sidecar containers."
+    else:
+        # we want to just run the queries
+        experiment.monitoring_active = False
     #experiment.set_queryfile('queries-tpcds-profiling-tables.config')
     # set resources for dbms
     #experiment.connectionmanagement['timeout'] = 180
@@ -248,7 +250,7 @@ if __name__ == '__main__':
             benchmarking = 'auxiliary',
             )
     # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+" YCSB is performed using several threads and processes."
+    experiment.workload['info'] = experiment.workload['info']+"\nYCSB is performed using several threads and processes."
     #if len(args.dbms):
     #    # import is limited to single DBMS
     #    experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(args.dbms)
@@ -262,8 +264,8 @@ if __name__ == '__main__':
     experiment.set_experiment(script='Schema')
     # note more infos about experiment in workload description
     experiment.workload['info'] = experiment.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
-    experiment.workload['info'] = experiment.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
-    experiment.workload['info'] = experiment.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
+    experiment.workload['info'] = experiment.workload['info']+" Number of rows to insert is {}.".format(ycsb_rows)
+    experiment.workload['info'] = experiment.workload['info']+" Number of operations is {}.".format(ycsb_operations)
     if len(args.dbms):
         # import is limited to single DBMS
         experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(", ".join(args.dbms))

@@ -150,11 +150,12 @@ class default():
         """
         self.cluster.logger.debug('base.test_results()')
         self.evaluator.test_results()
-        workflow = self.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")
+        # not yet implemented in detail for dbmsbenchmarker:
+        #workflow = self.get_workflow_list()
+        #if workflow == self.evaluator.workflow:
+        #    print("Result workflow complete")
+        #else:
+        #    print("Result workflow not complete")
     def test_results_in_dashboard(self):
         """
         DEPRECATED? Not used currently - depends on good test script for dbmsbenchmarker
@@ -1750,10 +1751,11 @@ class tpcc(default):
         print(df_connections)
         #####################
         self.show_summary_monitoring()
+        evaluation.test_results_column(df_aggregated_reduced, "NOPM")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
-        evaluation = evaluators.base(code=code, path=resultfolder)
+        evaluation = evaluators.tpcc(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")

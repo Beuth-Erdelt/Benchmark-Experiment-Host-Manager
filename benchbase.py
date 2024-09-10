@@ -187,15 +187,17 @@ if __name__ == '__main__':
             info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
             defaultParameters = {'SF': SF}
         )
-    if monitoring:
-        # we want to monitor resource consumption
-        experiment.monitoring_active = True
-    else:
-        # we want to just run the queries
-        experiment.monitoring_active = False
     if monitoring_cluster:
         # monitor all nodes of cluster (for not missing any component)
         cluster.start_monitoring_cluster()
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
+    elif monitoring:
+        # we want to monitor resource consumption
+        experiment.monitoring_active = True
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by sidecar containers."
+    else:
+        # we want to just run the queries
+        experiment.monitoring_active = False
     #experiment.set_queryfile('queries-tpcds-profiling-tables.config')
     # set resources for dbms
     #experiment.connectionmanagement['timeout'] = 180
@@ -255,7 +257,7 @@ if __name__ == '__main__':
               nodeSelector:
                 kubernetes.io/hostname: {node}
         """.format(node=request_node_loading))
-        experiment.workload['info'] = experiment.workload['info']+" Loading is fixed to {}.".format(request_node_loading)
+        experiment.workload['info'] = experiment.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
     # fix benchmarking
     if not request_node_benchmarking is None:
         experiment.patch_benchmarking(patch="""
@@ -265,7 +267,7 @@ if __name__ == '__main__':
               nodeSelector:
                 kubernetes.io/hostname: {node}
         """.format(node=request_node_benchmarking))
-        experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
+        experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
     # fix SUT
     if not request_node_name is None:
         experiment.set_resources(

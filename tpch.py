@@ -193,11 +193,11 @@ if __name__ == '__main__':
         # monitor all nodes of cluster (for not missing any component)
         experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
         cluster.start_monitoring_cluster()
-        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by a cluster-wide installation."
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
     elif monitoring:
         # we want to monitor resource consumption
         experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
-        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by sidecar containers."
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by sidecar containers."
     else:
         # we want to just run the queries
         experiment.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
@@ -239,9 +239,7 @@ if __name__ == '__main__':
     experiment.use_distributed_datasource = True
     experiment.set_experiment(script='Schema')
     # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+" TPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
-    if request_storage_type is not None:
-        experiment.workload['info'] = experiment.workload['info']+"\nDatabase is persistent on a volume of type {}.".format(request_storage_type)
+    experiment.workload['info'] = experiment.workload['info']+"\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
     if shuffle_queries:
         experiment.workload['info'] = experiment.workload['info']+"\nQuery ordering is as required by the TPC."
     else:
@@ -300,6 +298,15 @@ if __name__ == '__main__':
                 'kubernetes.io/hostname': request_node_name
             })        
         experiment.workload['info'] = experiment.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+    if request_storage_type and request_storage_size:
+        experiment.workload['info'] = experiment.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
+    experiment.workload['info'] = experiment.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+    if num_experiment_to_apply > 1: 
+        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
+    else:
+        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run once."
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="tpc-h",

@@ -24,6 +24,7 @@ ENV HAMMERDB_DURATION 5
 # Number of transactions before logging off
 ENV HAMMERDB_ITERATIONS 10000000
 ENV HAMMERDB_MYSQL_ENGINE innodb
+ENV HAMMERDB_VUSERS 1
 
 # set async_client $pg_async_client;# Number of asynchronous clients per Vuser
 # set async_verbose $pg_async_verbose;# Report activity of asynchronous clients

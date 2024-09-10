@@ -83,10 +83,10 @@ if __name__ == '__main__':
     monitoring_cluster = args.monitoring_cluster
     mode = str(args.mode)
     SF = str(args.scaling_factor)
-    scaling_users = str(args.scaling_users)
-    if len(scaling_users) > 0:
-        list_scaling_users = scaling_users.split(",")
-        list_scaling_users = [int(x) for x in list_scaling_users]
+    #scaling_users = str(args.scaling_users)
+    #if len(scaling_users) > 0:
+    #    list_scaling_users = scaling_users.split(",")
+    #    list_scaling_users = [int(x) for x in list_scaling_users]
     SD = str(args.scaling_duration)
     timeout = int(args.timeout)
     numRun = int(args.num_run)
@@ -99,10 +99,6 @@ if __name__ == '__main__':
     if len(num_loading_threads) > 0:
         num_loading_threads = num_loading_threads.split(",")
         num_loading_threads = [int(x) for x in num_loading_threads]
-    num_loading_target_factors = args.num_loading_target_factors
-    if len(num_loading_target_factors) > 0:
-        num_loading_target_factors = num_loading_target_factors.split(",")
-        num_loading_target_factors = [int(x) for x in num_loading_target_factors]
     num_benchmarking_pods = args.num_benchmarking_pods
     if len(num_benchmarking_pods) > 0:
         num_benchmarking_pods = num_benchmarking_pods.split(",")
@@ -111,11 +107,6 @@ if __name__ == '__main__':
     if len(num_benchmarking_threads) > 0:
         num_benchmarking_threads = num_benchmarking_threads.split(",")
         num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
-    num_benchmarking_target_factors = args.num_benchmarking_target_factors
-    if len(num_benchmarking_target_factors) > 0:
-        num_benchmarking_target_factors = num_benchmarking_target_factors.split(",")
-        num_benchmarking_target_factors = [int(x) for x in num_benchmarking_target_factors]
-    #num_virtual_users = args.num_virtual_users
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -263,8 +254,8 @@ if __name__ == '__main__':
         experiment.workload['info'] = experiment.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
     if request_storage_type and request_storage_size:
         experiment.workload['info'] = experiment.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
-    experiment.workload['info'] = experiment.workload['info']+"\nLoading is tested with {} threads and {} target factors of base {}, split into {} pods.".format(num_loading_threads, num_loading_target_factors, target_base, num_loading_pods)
-    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is tested with {} threads and {} target factors of base {}, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_target_factors, target_base, num_benchmarking_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
     experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
     if num_experiment_to_apply > 1: 
         experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
@@ -290,14 +281,14 @@ if __name__ == '__main__':
             if args.dbms == "PostgreSQL":
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
-                config_name = name_format.format(cluster=cluster_name, users=SU, pods=pods)
+                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 config = configurations.hammerdb(experiment=experiment, docker='PostgreSQL', configuration=config_name, dialect='PostgreSQL', alias='DBMS D')
                 config.set_storage(
                     storageConfiguration = 'postgresql'
                 )
                #config.num_loading = 1
                 config.set_loading_parameters(
-                    PARALLEL = SU,
+                    PARALLEL = 1,
                     SF = SF,
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
@@ -358,15 +349,15 @@ if __name__ == '__main__':
                 #config.add_benchmark_list([pods]*len(num_virtual_users_list))
             if args.dbms == "MySQL":
                 # MySQL
-                name_format = 'MySQL-{cluster}-{users}'
-                config_name = name_format.format(cluster=cluster_name, users=SU)
+                name_format = 'MySQL-{cluster}-{users}-{pods}'
+                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 config = configurations.hammerdb(experiment=experiment, docker='MySQL', configuration=config_name, dialect='MySQL', alias='DBMS D')
                 config.set_storage(
                     storageConfiguration = 'mysql'
                 )
                 #config.num_loading = 1
                 config.set_loading_parameters(
-                    PARALLEL = SU,
+                    PARALLEL = 1,
                     SF = SF,
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
