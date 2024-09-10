@@ -1,10 +1,13 @@
 #!/bin/bash
 
-mkdir -p ./logs/
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
+
 
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
@@ -20,13 +23,13 @@ nohup python ycsb.py -ms 1 -tr \
     -nbf 1 \
     -ne 1 \
     -nc 1 \
-	run </dev/null &>logs/test_ycsb_testcase_1.log &
+    run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
 
-#watch -n 30 tail -n 50 logs/test_ycsb_testcase_1.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_1.log
 
 
 #### Wait so that experiments receive different codes
-sleep 600
+sleep 900
 
 
 
@@ -48,13 +51,13 @@ nohup python ycsb.py -ms 1 -tr \
     -ne 1 \
     -nc 2 \
     -rst shared -rss 100Gi \
-    run </dev/null &>logs/test_ycsb_testcase_2.log &
+    run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
 
-#watch -n 30 tail -n 50 logs/test_ycsb_testcase_2.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_2.log
 
 
 #### Wait so that experiments receive different codes
-sleep 600
+sleep 900
 
 
 
@@ -73,9 +76,9 @@ nohup python ycsb.py -ms 1 -tr \
     -ne 1,2 \
     -nc 2 \
     -rst shared -rss 100Gi \
-    run </dev/null &>logs/test_ycsb_testcase_3.log &
+    run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
 
-# watch -n 30 tail -n 50 logs/test_ycsb_testcase_3.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_3.log
 
 
 #### Wait so that experiments receive different codes
@@ -98,13 +101,13 @@ nohup python ycsb.py -ms 1 -tr \
     -ne 1 \
     -nc 1 \
     -rst shared -rss 100Gi \
-    run </dev/null &>logs/test_ycsb_testcase_4.log &
+    run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
 
-# watch -n 30 tail -n 50 logs/test_ycsb_testcase_4.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_4.log
 
 
 #### Wait so that experiments receive different codes
-sleep 600
+sleep 900
 
 
 
@@ -125,13 +128,24 @@ nohup python ycsb.py -ms 1 -tr \
     -rst shared -rss 100Gi \
     -m -mc \
     -sf 10 \
-    run </dev/null &>logs/test_ycsb_testcase_5.log &
+    run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
 
-# watch -n 30 tail -n 50 logs/test_ycsb_testcase_5.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_5.log
 
 
 #### Wait so that experiments receive different codes
-sleep 600
+sleep 900
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -152,13 +166,13 @@ nohup python benchbase.py -ms 1 -tr \
     -nbf 8 \
     -ne 1 \
     -nc 1 \
-    run </dev/null &>logs/test_benchbase_testcase_1.log &
+    run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
 
-# watch -n 30 tail -n 50 logs/test_benchbase_testcase_1.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
 
 
 #### Wait so that experiments receive different codes
-sleep 600
+sleep 900
 
 
 kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
@@ -176,14 +190,14 @@ nohup python benchbase.py -ms 1 -tr \
     -nbf 8 \
     -ne 1 \
     -nc 2 \
-	-rst shared -rss 50Gi \
-    run </dev/null &>logs/test_benchbase_testcase_2.log &
+    -rst shared -rss 50Gi \
+    run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
 
-# watch -n 30 tail -n 50 logs/test_benchbase_testcase_1.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
 
 
 #### Wait so that experiments receive different codes
-sleep 600
+sleep 900
 
 
 #### Benchbase Monitoring
@@ -199,13 +213,13 @@ nohup python benchbase.py -ms 1 -tr \
     -ne 1 \
     -nc 1 \
     -m -mc \
-    run </dev/null &>logs/test_benchbase_testcase_3.log &
+    run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
 
-# watch -n 30 tail -n 50 logs/test_benchbase_testcase_3.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_3.log
 
 
 #### Wait so that experiments receive different codes
-sleep 600
+sleep 900
 
 
 #### Benchbase Complex
@@ -221,10 +235,10 @@ nohup python benchbase.py -ms 1 -tr \
     -ne 1,2 \
     -nc 2 \
     -m -mc \
-	-rst shared -rss 50Gi \
-    run </dev/null &>logs/test_benchbase_testcase_4.log &
+    -rst shared -rss 50Gi \
+    run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
 
-# watch -n 30 tail -n 50 logs/test_benchbase_testcase_4.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_4.log
 
 
 #### Wait so that experiments receive different codes

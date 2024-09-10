@@ -2020,8 +2020,8 @@ class ycsb(default):
             df_plot = evaluation.loading_set_datatypes(df)
             df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
-            df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-            print(df_aggregated)
+            df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            print(df_aggregated_loaded)
         #####################
         df = evaluation.get_df_benchmarking()
         if not df.empty:
@@ -2039,6 +2039,8 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         self.show_summary_monitoring()
+        evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
+        evaluation.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -2302,6 +2304,7 @@ class benchbase(default):
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         self.show_summary_monitoring()
+        evaluation.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code

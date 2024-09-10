@@ -406,6 +406,22 @@ PostgreSQL-BHT-8-2-2        0.00      0.0          0.25                 0.27
 ```
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Benchbase
 
 ### Benchbase Simple
@@ -420,6 +436,70 @@ python benchbase.py -ms 1 -tr \
     -nbp 1 \
     -nbt 16 \
     -nbf 8 \
+    -ne 1 \
+    -nc 1 \
+    run
+```
+
+yields (after ca. 10 minutes) something like
+
+```
+## Show Summary
+
+### Workload
+    Benchbase Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS. Benchbase data is generated and loaded using several threads. Benchmark is limited to DBMS PostgreSQL. Benchmark is tpcc. Loading is fixed to cl-worker19. Benchmarking is fixed to cl-worker19. SUT is fixed to cl-worker11.
+
+### Connections
+PostgreSQL-BHT-1-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:222106168
+    datadisk:4409556
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                    experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-BHT-1-1               1         16   16384          1  300.0                       2644.12                                                      13523.0                                               6045.0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-BHT-1 - Pods [[1]]
+
+### Loading
+                    time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-BHT-1-1      129.0        1.0   1.0                 446.511628
+```
+
+
+### Benchbase Persistency
+
+
+Make sure, the database does not exist:
+```
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
+sleep 10
+```
+
+```
+python benchbase.py -ms 1 -tr \
+    -sf 16 \
+    -sd 1 \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -dbms PostgreSQL \
+    -tb 1024 \
+    -nbp 1 \
+    -nbt 16 \
+    -nbf 8 \
+    -ne 1 \
+    -nc 2 \
+    -rst shared -rss 50Gi \
     run
 ```
 
@@ -472,8 +552,9 @@ python benchbase.py -ms 1 -tr \
     -nbp 1 \
     -nbt 16 \
     -nbf 8 \
+    -ne 1 \
+    -nc 1 \
     -m -mc \
-    -rst shared -rss 50Gi \
     run
 ```
 
@@ -541,23 +622,19 @@ PostgreSQL-1-1-1024-1     1411.58     4.96          1.46                 1.46
 ```
 python benchbase.py -ms 1 -tr \
     -sf 16 \
-    -ltf 16 \
+    -sd 2 \
     -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
     -dbms PostgreSQL \
-    -nvu 16 \
+    -tb 1024 \
     -nbp 1,2 \
+    -nbt 8 \
+    -nbf 8 \
+    -ne 1,2 \
+    -nc 2 \
     -m -mc \
     -rst shared -rss 50Gi \
-    -nc 2 \
     run
 ```
-
-* 16 warehouses
-* 16 terminals in 1 pod and 16 terminals in 2 pods (8 each)
-* target is 16384 ops
-* data is stored persistently in a PV of type shared and size 50Gi
-* monitoring of all components activated
-* run twice
 
 yields (after ca. 30 minutes) something like
 
@@ -871,6 +948,16 @@ PostgreSQL-BHT-16-2-1    12815.67    31.46          4.39                 4.54
 PostgreSQL-BHT-16-1-1       21.05     0.05          0.03                 0.03
 PostgreSQL-BHT-16-2-1       21.95     0.05          0.05                 0.05
 ```
+
+
+
+
+
+
+
+
+
+
 
 
 
