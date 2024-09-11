@@ -43,6 +43,7 @@ import pandas as pd
 import pickle
 import json
 import ast
+from types import SimpleNamespace
 
 from bexhoma import evaluators
 
@@ -141,6 +142,133 @@ class default():
         self.configurations = []
         self.storage_label = ''
         self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        numRun = int(args.num_run)
+        datatransfer = args.datatransfer
+        num_experiment_to_apply = int(args.num_config)
+        # configure number of clients per config
+        list_clients = args.num_query_executors.split(",")
+        if len(list_clients) > 0:
+            list_clients = [int(x) for x in list_clients if len(x) > 0]
+        else:
+            list_clients = []
+        monitoring = args.monitoring
+        monitoring_cluster = args.monitoring_cluster
+        #num_loading = int(args.num_loading)
+        num_loading_split = args.num_loading_split
+        if len(num_loading_split) > 0:
+            num_loading = num_loading_split.split(",")
+            list_loading_split = [int(x) for x in num_loading]
+        #num_loading_pods = int(args.num_loading_pods)
+        num_loading_pods = args.num_loading_pods
+        if len(num_loading_pods) > 0:
+            num_loading_pods = num_loading_pods.split(",")
+            num_loading_pods = [int(x) for x in num_loading_pods]
+        num_loading_threads = args.num_loading_threads
+        if len(num_loading_threads) > 0:
+            num_loading_threads = num_loading_threads.split(",")
+            num_loading_threads = [int(x) for x in num_loading_threads]
+        num_benchmarking_pods = args.num_benchmarking_pods
+        if len(num_benchmarking_pods) > 0:
+            num_benchmarking_pods = num_benchmarking_pods.split(",")
+            num_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
+        num_benchmarking_threads = args.num_benchmarking_threads
+        if len(num_benchmarking_threads) > 0:
+            num_benchmarking_threads = num_benchmarking_threads.split(",")
+            num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
+        cpu = str(args.request_cpu)
+        memory = str(args.request_ram)
+        cpu_type = str(args.request_cpu_type)
+        gpu_type = str(args.request_gpu_type)
+        gpus = str(args.request_gpu)
+        request_storage_type = args.request_storage_type
+        request_storage_size = args.request_storage_size
+        request_node_name = args.request_node_name
+        request_node_loading = args.request_node_loading
+        request_node_benchmarking = args.request_node_benchmarking
+        self.cluster.start_datadir()
+        self.cluster.start_resultdir()
+        self.cluster.start_dashboard()
+        self.cluster.start_messagequeue()
+        if monitoring_cluster:
+            # monitor all nodes of cluster (for not missing any component)
+            self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+            self.cluster.start_monitoring_cluster()
+            self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
+        elif monitoring:
+            # we want to monitor resource consumption
+            self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+            self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by sidecar containers."
+        else:
+            # we want to just run the queries
+            self.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
+        # set resources for dbms
+        self.set_resources(
+            requests = {
+                'cpu': cpu,
+                'memory': memory,
+                'gpu': 0
+            },
+            limits = {
+                'cpu': 0,
+                'memory': 0
+            },
+            nodeSelector = {
+                'cpu': cpu_type,
+                'gpu': '',
+            })
+        # persistent storage
+        self.set_storage(
+            storageClassName = request_storage_type,
+            storageSize = request_storage_size,#'100Gi',
+            keep = True
+            )
+        # note more infos about experiment in workload description
+        if len(args.dbms):
+            # import is limited to single DBMS
+            self.workload['info'] = self.workload['info']+"\nBenchmark is limited to DBMS {}.".format(", ".join(args.dbms))
+        if len(num_loading_pods):
+            # import uses several processes in pods
+            self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
+        # fix loading
+        if not request_node_loading is None:
+            self.patch_loading(patch="""
+            spec:
+              template:
+                spec:
+                  nodeSelector:
+                    kubernetes.io/hostname: {node}
+            """.format(node=request_node_loading))
+            self.workload['info'] = self.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
+        # fix benchmarking
+        if not request_node_benchmarking is None:
+            self.patch_benchmarking(patch="""
+            spec:
+              template:
+                spec:
+                  nodeSelector:
+                    kubernetes.io/hostname: {node}
+            """.format(node=request_node_benchmarking))
+            self.workload['info'] = self.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
+        # fix SUT
+        if not request_node_name is None:
+            self.set_resources(
+                nodeSelector = {
+                    'cpu': cpu_type,
+                    'gpu': '',
+                    'kubernetes.io/hostname': request_node_name
+                })        
+            self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        if request_storage_type and request_storage_size:
+            self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
+        self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
+        self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+        self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+        if num_experiment_to_apply > 1: 
+            self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
+        else:
+            self.workload['info'] = self.workload['info']+"\nExperiment is run once."
     def test_results(self):
         """
         Run test script locally.
