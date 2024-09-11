@@ -1,0 +1,60 @@
+## Show Summary
+
+### Workload
+    YCSB SF=10
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+System metrics are monitored by a cluster-wide installation.
+YCSB is performed using several threads and processes.
+Workload is 'A'. Number of rows to insert is 10000000. Number of operations is 10000000.
+Benchmark is limited to DBMS PostgreSQL.
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 100Gi.
+Loading is tested with [64] threads and [1] target factors of base 131072, split into [8] pods.
+Benchmarking is tested with [64] threads and [1] target factors of base 131072, split into [1, 8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:246352796
+    datadisk:31274608
+    volume_size:100G
+    volume_used:30G
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-131072-2 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:246352796
+    datadisk:31343584
+    volume_size:100G
+    volume_used:30G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-131072-1               1       64  131072          1                       61102.29               163660.0           5001386                            1493.0             4998614                             2261.00
+PostgreSQL-64-8-131072-2               1       64  131072          8                      123841.13                84979.0           4999519                            1344.5             5000481                             1730.88
+
+### Execution - SUT
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-131072-1     1567.69     0.31         16.83                31.27
+PostgreSQL-64-8-131072-2     1638.59    10.74         17.76                32.17
+
+### Execution - Benchmarker
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-131072-1      586.80     5.91          0.61                 0.61
+PostgreSQL-64-8-131072-2      575.98     3.47          5.03                 5.06
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

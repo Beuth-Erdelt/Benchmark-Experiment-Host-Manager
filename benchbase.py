@@ -244,7 +244,7 @@ if __name__ == '__main__':
     if SF:
         experiment.workload['info'] = experiment.workload['info']+" Scaling factor (e.g., number of warehouses) is {}.".format(SF)
     if SD:
-        experiment.workload['info'] = experiment.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
+        experiment.workload['info'] = experiment.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
     if len(args.dbms):
         # import is limited to single DBMS
         experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(", ".join(args.dbms))

@@ -2034,6 +2034,7 @@ class ycsb(default):
         #evaluate.load_experiment(code=code, silent=False)
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
         #####################
+        test_loading = False
         df = evaluation.get_df_loading()
         if not df.empty:
             print("\n### Loading")
@@ -2046,6 +2047,7 @@ class ycsb(default):
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             print(df_aggregated_loaded)
+            test_loading = True
         #####################
         df = evaluation.get_df_benchmarking()
         if not df.empty:
@@ -2063,7 +2065,8 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         self.show_summary_monitoring()
-        evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
+        if test_loading:
+            evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
         evaluation.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']

@@ -39,7 +39,7 @@ nohup python tpch.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 600
 
 
@@ -61,7 +61,7 @@ nohup python tpch.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_2.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 #### Delete persistent storage
@@ -88,7 +88,7 @@ nohup python tpch.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_3.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 
@@ -124,7 +124,7 @@ nohup python benchbase.py -ms 1 -tr \
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 
@@ -150,7 +150,7 @@ nohup python benchbase.py -ms 1 -tr \
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 
@@ -172,7 +172,7 @@ nohup python benchbase.py -ms 1 -tr \
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_3.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 
@@ -195,9 +195,8 @@ nohup python benchbase.py -ms 1 -tr \
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_4.log
 
 
-#### Wait so that experiments receive different codes
-#sleep 5
-
+#### Wait so that next experiment receives a different code
+sleep 1800
 
 
 
@@ -225,7 +224,7 @@ nohup python hammerdb.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_1.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 #### Delete persistent storage
@@ -250,7 +249,7 @@ nohup python hammerdb.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_2.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 1200
 
 
@@ -272,7 +271,7 @@ nohup python hammerdb.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_3.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 1200
 
 
@@ -319,7 +318,7 @@ nohup python ycsb.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_1.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 1200
 
 
@@ -349,7 +348,7 @@ nohup python ycsb.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_2.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 
@@ -375,7 +374,7 @@ nohup python ycsb.py -ms 1 -tr \
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_3.log
 
 
-#### Wait so that experiments receive different codes
+#### Wait so that next experiment receives a different code
 sleep 900
 
 
@@ -401,8 +400,8 @@ nohup python ycsb.py -ms 1 -tr \
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_4.log
 
 
-#### Wait so that experiments receive different codes
-sleep 900
+#### Wait so that next experiment receives a different code
+sleep 600
 
 
 
@@ -429,7 +428,31 @@ nohup python ycsb.py -ms 1 -tr \
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_5.log
 
 
-#### Wait so that experiments receive different codes
-sleep 900
+#### Wait so that next experiment receives a different code
+sleep 600
 
+
+
+###########################################
+############## Clean Folder ###############
+###########################################
+
+
+
+export MYDIR=$(pwd)
+cd $LOG_DIR
+# remove connection errors from logs
+grep -rl "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." . | xargs sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
+cd $MYDIR
+
+# Loop over each text file in the source directory
+for file in "$LOG_DIR"/*.log; do
+    # Get the filename without the path and extension
+    echo "Cleaning $file"
+    filename=$(basename "$file" .log)
+    # Extract lines starting from "## Show Summary" and save as <filename>_summary.txt in the destination directory
+    awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
+done
+
+echo "Extraction complete! Files are saved in $LOG_DIR."
 
