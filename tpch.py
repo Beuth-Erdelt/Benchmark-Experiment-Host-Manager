@@ -81,54 +81,35 @@ if __name__ == '__main__':
         logger_bexhoma.setLevel(logging.DEBUG)
         logger_loader = logging.getLogger('load_data_asynch')
         logger_loader.setLevel(logging.DEBUG)
-    # set parameter
-    monitoring = args.monitoring
-    monitoring_cluster = args.monitoring_cluster
+    ##############
+    ### set parameters
+    ##############
+    command_args = vars(args)
+    ##############
+    ### workflow parameters
+    ##############
+    # start with old experiment?
+    code = args.experiment
+    # only create testbed or also run a benchmark?
     mode = str(args.mode)
+    # scaling of data
     SF = str(args.scaling_factor)
+    # timeout of a benchmark
     timeout = int(args.timeout)
-    numRun = int(args.num_run)
+    # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
-    #num_loading = int(args.num_loading)
-    num_loading_split = args.num_loading_split
-    if len(num_loading_split) > 0:
-        num_loading = num_loading_split.split(",")
-        list_loading_split = [int(x) for x in num_loading]
-    #num_loading_pods = int(args.num_loading_pods)
-    num_loading_pods = args.num_loading_pods
-    if len(num_loading_pods) > 0:
-        num_loading_pods = num_loading_pods.split(",")
-        num_loading_pods = [int(x) for x in num_loading_pods]
-    num_loading_threads = args.num_loading_threads
-    if len(num_loading_threads) > 0:
-        num_loading_threads = num_loading_threads.split(",")
-        num_loading_threads = [int(x) for x in num_loading_threads]
-    num_benchmarking_pods = args.num_benchmarking_pods
-    if len(num_benchmarking_pods) > 0:
-        num_benchmarking_pods = num_benchmarking_pods.split(",")
-        num_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
-    num_benchmarking_threads = args.num_benchmarking_threads
-    if len(num_benchmarking_threads) > 0:
-        num_benchmarking_threads = num_benchmarking_threads.split(",")
-        num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
+    # should results be tested for validity?
+    test_result = args.test_result
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
-    cpu = str(args.request_cpu)
-    memory = str(args.request_ram)
-    cpu_type = str(args.request_cpu_type)
-    gpu_type = str(args.request_gpu_type)
-    gpus = str(args.request_gpu)
-    request_storage_type = args.request_storage_type
-    request_storage_size = args.request_storage_size
-    request_node_name = args.request_node_name
-    request_node_loading = args.request_node_loading
-    request_node_benchmarking = args.request_node_benchmarking
-    datatransfer = args.datatransfer
-    test_result = args.test_result
+    ##############
+    ### specific to: dbmsbenchmarker TPC-H
+    ##############
+    # shuffle ordering and random parameters
     recreate_parameter = args.recreate_parameter
     shuffle_queries = args.shuffle_queries
     # indexes
@@ -137,9 +118,9 @@ if __name__ == '__main__':
     init_statistics = args.init_statistics
     # limit to one table
     limit_import_table = args.limit_import_table
-    # start with old experiment?
-    code = args.experiment
-    # set cluster
+    ##############
+    ### set cluster
+    ##############
     aws = args.aws
     if aws:
         cluster = clusters.aws(context=args.context)
@@ -153,11 +134,15 @@ if __name__ == '__main__':
     else:
         cluster = clusters.kubernetes(context=args.context)
     cluster_name = cluster.contextdata['clustername']
+    # limit number of sut
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment
     if code is None:
         code = cluster.code
+    ##############
+    ### prepare and configure experiment
+    ##############
     experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
@@ -189,43 +174,8 @@ if __name__ == '__main__':
         )
         # patch: use short profiling (only keys)
         experiment.set_queryfile('queries-tpch-profiling-keys.config')
-    if monitoring_cluster:
-        # monitor all nodes of cluster (for not missing any component)
-        experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
-        cluster.start_monitoring_cluster()
-        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
-    elif monitoring:
-        # we want to monitor resource consumption
-        experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
-        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by sidecar containers."
-    else:
-        # we want to just run the queries
-        experiment.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
-    # set resources for dbms
-    experiment.set_resources(
-        requests = {
-            'cpu': cpu,
-            'memory': memory,
-            'gpu': 0
-        },
-        limits = {
-            'cpu': 0,
-            'memory': 0
-        },
-        nodeSelector = {
-            'cpu': cpu_type,
-            'gpu': '',
-        })
-    # persistent storage
-    experiment.set_storage(
-        storageClassName = request_storage_type,
-        storageSize = request_storage_size,#'100Gi',
-        keep = True
-        )
-    cluster.start_datadir()
-    cluster.start_resultdir()
-    cluster.start_dashboard()
-    cluster.start_messagequeue()
+    experiment.prepare_testbed(command_args)
+    # set node groups for components
     if aws:
         # set node labes for components
         experiment.set_nodes(
@@ -238,7 +188,11 @@ if __name__ == '__main__':
     experiment.loading_active = True
     experiment.use_distributed_datasource = True
     experiment.set_experiment(script='Schema')
-    # note more infos about experiment in workload description
+    # add labels about the use case
+    experiment.set_additional_labels(
+        usecase="tpc-h",
+        experiment_design="parallel-loading"
+    )
     experiment.workload['info'] = experiment.workload['info']+"\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
     if shuffle_queries:
         experiment.workload['info'] = experiment.workload['info']+"\nQuery ordering is as required by the TPC."
@@ -263,56 +217,9 @@ if __name__ == '__main__':
     if len(limit_import_table):
         # import is limited to single table
         experiment.workload['info'] = experiment.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
-    if len(args.dbms):
-        # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(", ".join(args.dbms))
-    if len(num_loading_pods):
-        # import uses several processes in pods
-        experiment.workload['info'] = experiment.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
-    # fix loading
-    if not request_node_loading is None:
-        experiment.patch_loading(patch="""
-        spec:
-          template:
-            spec:
-              nodeSelector:
-                kubernetes.io/hostname: {node}
-        """.format(node=request_node_loading))
-        experiment.workload['info'] = experiment.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
-    # fix benchmarking
-    if not request_node_benchmarking is None:
-        experiment.patch_benchmarking(patch="""
-        spec:
-          template:
-            spec:
-              nodeSelector:
-                kubernetes.io/hostname: {node}
-        """.format(node=request_node_benchmarking))
-        experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
-    # fix SUT
-    if not request_node_name is None:
-        experiment.set_resources(
-            nodeSelector = {
-                'cpu': cpu_type,
-                'gpu': '',
-                'kubernetes.io/hostname': request_node_name
-            })        
-        experiment.workload['info'] = experiment.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
-    if request_storage_type and request_storage_size:
-        experiment.workload['info'] = experiment.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
-    experiment.workload['info'] = experiment.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
-    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
-    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
-    if num_experiment_to_apply > 1: 
-        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
-    else:
-        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run once."
-    # add labels about the use case
-    experiment.set_additional_labels(
-        usecase="tpc-h",
-        experiment_design="parallel-loading"
-        )
-    # add configs
+    ##############
+    ### add configs of dbms to be tested
+    ##############
     for loading_pods_split in list_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
         for loading_pods_total in num_loading_pods: # number of loading pods in total
             # split number of loading pods into parallel potions
@@ -429,11 +336,15 @@ if __name__ == '__main__':
                         DBMSBENCHMARKER_DEV = debugging,
                         )
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-    # wait for necessary nodegroups to have planned size
+    ##############
+    ### wait for necessary nodegroups to have planned size
+    ##############
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
         pass
-    # branch for workflows
+    ##############
+    ### branch for workflows
+    ##############
     if args.mode == 'start':
         experiment.start_sut()
     elif args.mode == 'load':
@@ -454,10 +365,6 @@ if __name__ == '__main__':
     elif args.mode == 'summary':
         experiment.show_summary()
     else:
-        # configure number of clients per config
-        #list_clients = args.num_query_executors.split(",")
-        #if len(list_clients) > 0:
-        #    list_clients = [int(x) for x in list_clients]
         experiment.add_benchmark_list(list_clients)
         # total time of experiment
         start = default_timer()
