@@ -15,7 +15,18 @@ References:
 
 For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
-Example: `python benchbase.py -ms 1 -tr -ltf 16 -dbms PostgreSQL -nvu 16 -sf 16 -nbp 1 -sd 5 run`
+Example:
+```
+python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -ltf 16 \
+  -tb 1024 \
+  -dbms PostgreSQL \
+  -nbp 1 \
+  -nbt 16 \
+  run
+```
 
 This
 * starts a clean instance of PostgreSQL (`-dbms`)
@@ -26,8 +37,8 @@ This
   * using all threads of driver machine (benchbase setting)
 * runs 1 (`-nbp`) streams of TPC-C queries (per DBMS)
     * running for 5 (`-sd`) minutes
-    * each stream (pod) having 16 threads (`-nvu`) to simulate 16 users
-    * target is 16x(`-ltf`) 1024 ops
+    * each stream (pod) having 16 threads (`-nbt`) to simulate 16 users
+    * target is 16x(`-ltf`) 1024 (`-tb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary

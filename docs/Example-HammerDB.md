@@ -19,7 +19,17 @@ References
 
 For performing the experiment we can run the [hammerdb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/hammerdb.py).
 
-Example: `python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -sd 5 run`
+Example:
+```
+python hammerdb.py -ms 1 \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1 \
+  -nbt 8 \
+  run
+```
 
 This
 * starts a clean instance of PostgreSQL (`-dbms`)
@@ -27,10 +37,10 @@ This
 * starts 1 loader pod (per DBMS) that
   * creates TPC-C schema in the database
   * imports data for 16 (`-sf`) warehouses into the DBMS
-  * using 16 (`-su`) threads
+  * using 16 (`-nlt`) threads
 * runs 1 (`-nbp`) streams of TPC-C queries (per DBMS)
     * running for 5 (`-sd`) minutes
-    * each stream (pod) having 8 threads (`-nvu`) to simulate 8 users
+    * each stream (pod) having 8 threads (`-nbt`) to simulate 8 users
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
