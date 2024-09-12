@@ -134,38 +134,6 @@ echo "YCSB_TARGET $YCSB_TARGET"
 echo "YCSB_WORKLOAD $YCSB_WORKLOAD"
 echo "YCSB_BATCHSIZE:$YCSB_BATCHSIZE"
 
-######################## Wait until all pods of job are ready ########################
-if test $BEXHOMA_SYNCH_LOAD -gt 0
-then
-    echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-    # add this pod to counter
-    redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-    # wait for number of pods to be as expected
-    while : ; do
-        PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-        echo "Found $PODS_RUNNING / $NUM_PODS running pods"
-        if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
-        then
-            echo "PODS_RUNNING contains a number."
-        else
-            echo "PODS_RUNNING does not contain a number."
-            exit 0
-        fi
-        if  test "$PODS_RUNNING" == $NUM_PODS
-        then
-            echo "OK"
-            break
-        elif test "$PODS_RUNNING" -gt $NUM_PODS
-        then
-            echo "Too many pods! Restart occured?"
-            exit 0
-        else
-            echo "We have to wait"
-            sleep 1
-        fi
-    done
-fi
-
 ######################## Generate driver file ########################
 echo "db.driver=$BEXHOMA_DRIVER
 db.url=$BEXHOMA_URL
