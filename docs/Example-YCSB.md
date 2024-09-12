@@ -53,14 +53,15 @@ You can watch the status while benchmark is running via `bexperiments status`
 
 ```
 Dashboard: Running
+Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+------------------------+--------------+--------------+-------------+--------------+
-| 1706264335             | sut          |   loaded [s] | loading     | monitoring   |
-+========================+==============+==============+=============+==============+
-| PostgreSQL-64-1-131072 | (1. Running) |         0.64 | (1 Running) | (Running)    |
-+------------------------+--------------+--------------+-------------+--------------+
++-----------------------+--------------+--------------+------------+-------------+
+| 1726160982            | sut          |   loaded [s] | use case   | loading     |
++=======================+==============+==============+============+=============+
+| PostgreSQL-64-1-16384 | (1. Running) |            1 | ycsb       | (1 Running) |
++-----------------------+--------------+--------------+------------+-------------+
 ```
 
 The code `1706264335` is the unique identifier of the experiment.
