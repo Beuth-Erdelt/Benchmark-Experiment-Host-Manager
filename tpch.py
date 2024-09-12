@@ -112,10 +112,6 @@ if __name__ == '__main__':
     # shuffle ordering and random parameters
     recreate_parameter = args.recreate_parameter
     shuffle_queries = args.shuffle_queries
-    # indexes
-    init_indexes = args.init_indexes
-    init_constraints = args.init_constraints
-    init_statistics = args.init_statistics
     # limit to one table
     limit_import_table = args.limit_import_table
     ##############
@@ -148,33 +144,12 @@ if __name__ == '__main__':
     experiment.prometheus_timeout = "30s"
     # remove running dbms
     #experiment.clean()
-    if mode == 'run':
-        # we want all TPC-H queries
-        experiment.set_queries_full()
-        experiment.set_workload(
-            name = 'TPC-H Queries SF='+str(SF),
-            info = 'This experiment compares run time and resource consumption of TPC-H queries in different DBMS.',
-            defaultParameters = {'SF': SF}
-        )
-    elif mode == 'empty':
-        # set benchmarking queries to dummy - SELECT 1
-        experiment.set_queryfile('queries-tpch-empty.config')
-        experiment.set_workload(
-            name = 'TPC-H Data Dummy SF='+str(SF),
-            info = 'This experiment is for testing loading. It just runs a SELECT 1 query.',
-            defaultParameters = {'SF': SF}
-        )
-    else:
-        # we want to profile the import
-        experiment.set_queries_profiling()
-        experiment.set_workload(
-            name = 'TPC-H Data Profiling SF='+str(SF),
-            info = 'This experiment compares imported TPC-H data sets in different DBMS.',
-            defaultParameters = {'SF': SF}
-        )
-        # patch: use short profiling (only keys)
-        experiment.set_queryfile('queries-tpch-profiling-keys.config')
     experiment.prepare_testbed(command_args)
+    num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
+    num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
+    num_loading_split = experiment.get_parameter_as_list('num_loading_split')
+    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
+    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
     # set node groups for components
     if aws:
         # set node labes for components
@@ -184,43 +159,15 @@ if __name__ == '__main__':
             monitoring = 'auxiliary',
             benchmarking = 'auxiliary',
             )
-    # new loading in cluster
-    experiment.loading_active = True
-    experiment.use_distributed_datasource = True
-    experiment.set_experiment(script='Schema')
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="tpc-h",
         experiment_design="parallel-loading"
     )
-    experiment.workload['info'] = experiment.workload['info']+"\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
-    if shuffle_queries:
-        experiment.workload['info'] = experiment.workload['info']+"\nQuery ordering is as required by the TPC."
-    else:
-        experiment.workload['info'] = experiment.workload['info']+"\nQuery ordering is Q1 - Q22."
-    if recreate_parameter:
-        experiment.workload['info'] = experiment.workload['info']+"\nAll instances use different query parameters."
-    else:
-        experiment.workload['info'] = experiment.workload['info']+"\nAll instances use the same query parameters."
-    # optionally set some indexes and constraints after import
-    if init_indexes or init_constraints or init_statistics:
-        experiment.set_experiment(indexing='Index')
-        init_scripts = " Import sets indexes after loading."
-        if init_constraints:
-            experiment.set_experiment(indexing='Index_and_Constraints')
-            init_scripts = "\nImport sets indexes and constraints after loading."
-        if init_statistics:
-            experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
-            init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
-        experiment.workload['info'] = experiment.workload['info']+init_scripts
-    #experiment.set_experiment(script='Schema', indexing='Index')
-    if len(limit_import_table):
-        # import is limited to single table
-        experiment.workload['info'] = experiment.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
     ##############
     ### add configs of dbms to be tested
     ##############
-    for loading_pods_split in list_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
+    for loading_pods_split in num_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
         for loading_pods_total in num_loading_pods: # number of loading pods in total
             # split number of loading pods into parallel potions
             if loading_pods_total < loading_pods_split:
