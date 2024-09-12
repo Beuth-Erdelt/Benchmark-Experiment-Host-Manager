@@ -9,10 +9,27 @@ References:
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: `python ycsb.py -ms 1 -dbms PostgreSQL --workload a -tr run`
+Example: 
+```
+python ycsb.py -ms 1 -tr \
+    -sf 1 \
+    --workload a \
+    -dbms PostgreSQL \
+    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+    -tb 16384 \
+    -nlp 1,8 \
+    -nlt 64 \
+    -nlf 1,4 \
+    -nbp 1,8 \
+    -nbt 64 \
+    -nbf 2,3 \
+    -ne 1 \
+    -nc 1 \
+    run
+```
 
 This
-* loops over `n` in [1,8] and `t` in [1,2,3,4,5,6,7,8]
+* loops over `n` in [1,8] and `t` in [1,4]
   * starts a clean instance of PostgreSQL (`-dbms`)
     * data directory inside a Docker container
   * creates YCSB schema in each database
@@ -22,11 +39,12 @@ This
       * target throughput is `t` * 16384
       * generates YCSB data = 1.000.000 rows (i.e., SF=1)
       * imports it into the DBMS
-  * runs `n` parallel streams of YCSB queries per DBMS
-    * 1.000.000 operations
-    * workload A = 50% read / 50% write (`--workload`)
-    * target throughput is `t` * 16384
-  * with a maximum of 1 DBMS per time (`-ms`)
+  * loops over `m` in [1,8] and `s` in [2,3]
+    * runs `m` parallel streams of YCSB queries per DBMS
+      * 1.000.000 operations
+      * workload A = 50% read / 50% write (`--workload`)
+      * target throughput is `s` * 16384
+    * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
 
