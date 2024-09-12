@@ -17,31 +17,30 @@ echo "benchmark started at $DBMSBENCHMARKER_NOW"
 echo "benchmark should wait until $DBMSBENCHMARKER_START"
 if test "$DBMSBENCHMARKER_START" != "0"
 then
-	benchmark_start_epoch=$(date -u -d "$DBMSBENCHMARKER_NOW" +%s)
-	echo "that is $benchmark_start_epoch"
+    benchmark_start_epoch=$(date -u -d "$DBMSBENCHMARKER_NOW" +%s)
+    echo "that is $benchmark_start_epoch"
 
-	TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
-	echo "now is $current_epoch"
-	current_epoch=$(date -u +%s)
-	echo "that is $current_epoch"
-	target_epoch=$(date -u -d "$DBMSBENCHMARKER_START" +%s)
-	echo "wait until $DBMSBENCHMARKER_START"
-	echo "that is $target_epoch"
-	sleep_seconds=$(( $target_epoch - $current_epoch ))
-	echo "that is wait $sleep_seconds seconds"
+    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
+    echo "now is $current_epoch"
+    current_epoch=$(date -u +%s)
+    echo "that is $current_epoch"
+    target_epoch=$(date -u -d "$DBMSBENCHMARKER_START" +%s)
+    echo "wait until $DBMSBENCHMARKER_START"
+    echo "that is $target_epoch"
+    sleep_seconds=$(( $target_epoch - $current_epoch ))
+    echo "that is wait $sleep_seconds seconds"
 
-	if test $sleep_seconds -lt 0
-	then
-		echo "start time has already passed"
-	    exit 0
-	fi
+    if test $sleep_seconds -lt 0
+    then
+        echo "start time has already passed"
+        exit 0
+    fi
 
-	sleep $sleep_seconds
-	bexhoma_start_epoch=$(date -u +%s)
+    sleep $sleep_seconds
+    bexhoma_start_epoch=$(date -u +%s)
 else
-	echo "ignore that start time"
+    echo "ignore that start time"
 fi
-
 
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
@@ -49,17 +48,18 @@ echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERI
 CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$CHILD" ]
 then
-	CHILD=1
+    CHILD=1
 fi
 
+######################## Adjust parameter to job number ########################
 if [ -z "$YCSB_ROWS" ]
 then
-	YCSB_ROWS=$((SF*100000))
+    YCSB_ROWS=$((SF*100000))
 fi
 
 if [ -z "$YCSB_OPERATIONS" ]
 then
-	YCSB_OPERATIONS=$((SF*100000))
+    YCSB_OPERATIONS=$((SF*100000))
 fi
 
 ######################## Generate workflow ########################
@@ -105,6 +105,13 @@ then
     while : ; do
         PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
         echo "Found $PODS_RUNNING / $NUM_PODS running pods"
+        if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+        then
+            echo "PODS_RUNNING contains a number."
+        else
+            echo "PODS_RUNNING does not contain a number."
+            exit 0
+        fi
         if  test "$PODS_RUNNING" == $NUM_PODS
         then
             echo "OK"
@@ -130,11 +137,11 @@ db.passwd=$BEXHOMA_PASSWORD
 
 if [ -z "$YCSB_BATCHSIZE" ]
 then
-	echo "YCSB_BATCHSIZE is empty"
+    echo "YCSB_BATCHSIZE is empty"
 else
     echo "YCSB_BATCHSIZE is NOT empty"
-	echo "db.batchsize=$YCSB_BATCHSIZE" >> db.properties
-	echo "jdbc.batchupdateapi=true" >> db.properties
+    echo "db.batchsize=$YCSB_BATCHSIZE" >> db.properties
+    echo "jdbc.batchupdateapi=true" >> db.properties
 fi
 
 cat db.properties
@@ -197,10 +204,10 @@ bexhoma_start_epoch=$(date -u +%s)
 ######################## Execute workload ###################
 if test $YCSB_STATUS -ne 0
 then
-	# report status
-	time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+    # report status
+    time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
 else
-	time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
+    time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
 fi
 
 ######################## End time measurement ###################

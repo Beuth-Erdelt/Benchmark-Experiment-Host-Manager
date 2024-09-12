@@ -43,15 +43,45 @@ else
 fi
 
 ######################## Get number of client in job queue ########################
-#echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-#redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-#CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+# redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$CHILD" ]
 then
-	CHILD=1
+    echo "No entry found in message queue. I assume this is the first child."
+    CHILD=1
+else
+    echo "Found entry number $CHILD in message queue."
 fi
-# echo "$CHILD" > /tmp/ycsb/CHILD
 
+######################## Wait until all pods of job are ready ########################
+echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+# add this pod to counter
+redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+# wait for number of pods to be as expected
+while : ; do
+    PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+    echo "Found $PODS_RUNNING / $NUM_PODS running pods"
+    if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+    then
+        echo "PODS_RUNNING contains a number."
+    else
+        echo "PODS_RUNNING does not contain a number."
+        exit 0
+    fi
+    if  test "$PODS_RUNNING" == $NUM_PODS
+    then
+        echo "OK, found $NUM_PODS ready pods."
+        break
+    elif test "$PODS_RUNNING" -gt $NUM_PODS
+    then
+        echo "Too many pods! Restart occured?"
+        exit 0
+    else
+        echo "We have to wait"
+        sleep 1
+    fi
+done
 
 ######################## Show more parameters ########################
 echo "CHILD $CHILD"
