@@ -14,7 +14,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```
-python tpch.py -ms 1 -dt
+python tpch.py -ms 1 -dt \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
