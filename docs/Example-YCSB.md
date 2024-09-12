@@ -15,7 +15,6 @@ python ycsb.py -ms 1 -tr \
     -sf 1 \
     --workload a \
     -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
     -tb 16384 \
     -nlp 1,8 \
     -nlt 64 \

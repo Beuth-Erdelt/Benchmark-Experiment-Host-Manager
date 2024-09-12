@@ -16,6 +16,62 @@ mkdir -p $LOG_DIR
 
 
 
+
+nohup python ycsb.py -ms 1 -tr \
+    -sf 1 \
+    --workload a \
+    -dbms PostgreSQL \
+    -tb 16384 \
+    -nlp 1,8 \
+    -nlt 64 \
+    -nlf 1,4 \
+    -nbp 1,8 \
+    -nbt 64 \
+    -nbf 2,3 \
+    -ne 1 \
+    -nc 1 \
+    run </dev/null &>$LOG_DIR/doc_ycsb_testcase.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -ltf 16 \
+  -tb 1024 \
+  -dbms PostgreSQL \
+  -nbp 1 \
+  -nbt 16 \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+nohup python tpch.py -ms 1 -dt \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+nohup python hammerdb.py -ms 1 \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1 \
+  -nbt 8 \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
 ###########################################
 ################## TPC-H ##################
 ###########################################
@@ -430,6 +486,16 @@ nohup python ycsb.py -ms 1 -tr \
 
 #### Wait so that next experiment receives a different code
 sleep 600
+
+
+
+
+
+
+
+
+
+
 
 
 
