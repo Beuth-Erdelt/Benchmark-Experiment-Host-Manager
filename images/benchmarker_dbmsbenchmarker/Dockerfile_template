@@ -1,4 +1,4 @@
-FROM python:3.11.9
+FROM python:3.12.5
 
 # does not compile numpy correctly
 # FROM python:3.13-rc-slim
