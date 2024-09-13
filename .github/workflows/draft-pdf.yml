@@ -1,4 +1,6 @@
-on: [push]
+on:
+  change:
+    types: [push]
     branches: [ master ]
 
 jobs:
