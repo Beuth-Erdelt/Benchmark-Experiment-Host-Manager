@@ -1,0 +1,58 @@
+## Show Summary
+
+### Workload
+    Benchbase Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+System metrics are monitored by a cluster-wide installation.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 300 minutes.
+Benchmark is limited to DBMS PostgreSQL.
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19. SUT is fixed to cl-worker11.
+Loading is tested with [1] threads and [1] target factors of base 1024, split into [1] pods.
+Benchmarking is tested with [16] threads and [8] target factors of base 1024, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250758856
+    datadisk:4409292
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2613.37                                                      13747.0                                               6116.0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-1-1-1024-1      133.0        1.0   1.0                 433.082707
+
+### Ingestion - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      431.09        0          3.54                 4.58
+
+### Ingestion - Loader
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      850.59    11.82           1.3                  1.3
+
+### Execution - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1     2693.03     7.58          4.75                 7.06
+
+### Execution - Benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1     1379.28     4.87          1.44                 1.44
+TEST passed: Throughput (requests/second) contains no 0 or NaN

@@ -1,0 +1,74 @@
+## Show Summary
+
+### Workload
+    YCSB SF=1
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+YCSB is performed using several threads and processes.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000.
+Benchmark is limited to DBMS PostgreSQL.
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [32, 64] threads and [1] target factors of base 131072, split into [4, 8] pods.
+Benchmarking is tested with [64] threads and [1] target factors of base 131072, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-32-4-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248719104
+    datadisk:2369252
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-32-8-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248488556
+    datadisk:2155028
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-4-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248669748
+    datadisk:2336108
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248620120
+    datadisk:2270204
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-32-4-131072               1       32  131072          4                   82218.168751                12295.0             1000000                             2407.50
+PostgreSQL-64-4-131072               1       64  131072          4                   94546.665011                10726.0             1000000                             3733.50
+PostgreSQL-32-8-131072               1       32  131072          8                   83941.922729                12407.0             1000000                             2449.50
+PostgreSQL-64-8-131072               1       64  131072          8                  103176.883355                 9889.0             1000000                             4141.25
+
+### Execution
+                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-32-4-131072-1               1       64  131072          1                      100452.03                 9955.0            499573                            1670.0              500427                              3375.0
+PostgreSQL-32-8-131072-1               1       64  131072          1                      110485.03                 9051.0            499909                            1357.0              500091                              2012.0
+PostgreSQL-64-4-131072-1               1       64  131072          1                       79321.01                12607.0            501186                            3247.0              498814                              6279.0
+PostgreSQL-64-8-131072-1               1       64  131072          1                      114077.12                 8766.0            499293                            1355.0              500707                              2002.0
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

@@ -67,152 +67,116 @@ At the end of a benchmark you will see a summary like
 
 ```bash
 ## Show Summary
-Read results
-Connections:
-MonetDB-BHT-8-1-1
-MySQL-BHT-8-8-1-1
-PostgreSQL-BHT-8-1-1
-Queries:
-0: Q1 = Pricing Summary Report (TPC-H Q1)
-1: Q2 = Minimum Cost Supplier Query (TPC-H Q2)
-2: Q3 = Shipping Priority (TPC-H Q3)
-3: Q4 = Order Priority Checking Query (TPC-H Q4)
-4: Q5 = Local Supplier Volume (TPC-H Q5)
-5: Q6 = Forecasting Revenue Change (TPC-H Q6)
-6: Q7 = Forecasting Revenue Change (TPC-H Q7)
-7: Q8 = National Market Share (TPC-H Q8)
-8: Q9 = Product Type Profit Measure (TPC-H Q9)
-9: Q10 = Forecasting Revenue Change (TPC-H Q10)
-10: Q11 = Important Stock Identification (TPC-H Q11)
-11: Q12 = Shipping Modes and Order Priority (TPC-H Q12)
-12: Q13 = Customer Distribution (TPC-H Q13)
-13: Q14 = Forecasting Revenue Change (TPC-H Q14)
-14: Q15 = Top Supplier Query (TPC-H Q15)
-15: Q16 = Parts/Supplier Relationship (TPC-H Q16)
-16: Q17 = Small-Quantity-Order Revenue (TPC-H Q17)
-17: Q18 = Large Volume Customer (TPC-H Q18)
-18: Q19 = Discounted Revenue (TPC-H Q19)
-19: Q20 = Potential Part Promotion (TPC-H Q20)
-20: Q21 = Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
-21: Q22 = Global Sales Opportunity Query (TPC-H Q22)
-Load Evaluation
 
-### Errors
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1               False              False                 False
-Q2               False              False                 False
-Q3               False              False                 False
-Q4               False              False                 False
-Q5               False              False                 False
-Q6               False              False                 False
-Q7               False              False                 False
-Q8               False              False                 False
-Q9               False              False                 False
-Q10              False              False                 False
-Q11              False              False                 False
-Q12              False              False                 False
-Q13              False              False                 False
-Q14              False              False                 False
-Q15              False              False                 False
-Q16              False              False                 False
-Q17              False              False                 False
-Q18              False              False                 False
-Q19              False              False                 False
-Q20              False              False                 False
-Q21              False              False                 False
-Q22              False              False                 False
+### Workload
+    TPC-H Queries SF=1
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS. System metrics are monitored by sidecar containers. TPC-H (SF=1) data is loaded and benchmark is executed. Query ordering is Q1 - Q22. All instances use the same query parameters. Import sets indexes and constraints after loading and recomputes statistics. Import is handled by 8 processes (pods). Loading is fixed to cl-worker19. Benchmarking is fixed to cl-worker19.
 
-### Warnings
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1               False              False                 False
-Q2               False              False                 False
-Q3               False              False                 False
-Q4               False              False                 False
-Q5               False              False                 False
-Q6               False              False                 False
-Q7               False              False                 False
-Q8               False              False                 False
-Q9               False              False                 False
-Q10              False              False                 False
-Q11              False              False                 False
-Q12              False              False                 False
-Q13              False              False                 False
-Q14              False              False                 False
-Q15              False              False                 False
-Q16              False              False                 False
-Q17              False              False                 False
-Q18              False              False                 False
-Q19              False              False                 False
-Q20              False              False                 False
-Q21              False              False                 False
-Q22              False              False                 False
+### Connections
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:219812964
+    datadisk:2140488
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:220513336
+    datadisk:2841028
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-8-1-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:229113308
+    datadisk:11440648
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:220495176
+    datadisk:2822856
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1              2404.64           33934.30               2612.67
-Q2                30.12             361.71                441.01
-Q3               151.54            3897.70                794.99
-Q4                52.34            1882.83               1311.89
-Q5                73.99            3639.32                698.28
-Q6                33.68            4465.72                539.06
-Q7                95.63            7349.12                810.43
-Q8               449.77            6828.98                656.06
-Q9               111.96            5704.00               1145.25
-Q10              175.70            3128.08               1321.12
-Q11               31.90             363.01                258.32
-Q12               67.53            7294.59               1069.99
-Q13              555.90            8787.78               2008.54
-Q14               41.45            5265.07                596.09
-Q15               60.05           22688.57                583.01
-Q16              116.17            1057.91                591.68
-Q17               72.47             799.00               2024.25
-Q18              964.94            6488.35               7099.96
-Q19               91.28             387.99               1595.01
-Q20               97.20             586.58                668.23
-Q21             3185.97           16793.11                932.27
-Q22               67.00             512.73                253.11
+DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                             27224.44            1198.49           29465.35               2539.98
+Minimum Cost Supplier Query (TPC-H Q2)                         1366.83              30.66             362.51                418.77
+Shipping Priority (TPC-H Q3)                                   4947.24             120.71            4387.90                717.64
+Order Priority Checking Query (TPC-H Q4)                       1131.88              62.84            1558.12               1224.10
+Local Supplier Volume (TPC-H Q5)                               3264.71              92.07            4215.46                619.37
+Forecasting Revenue Change (TPC-H Q6)                          3474.30              30.67            4401.30                480.72
+Forecasting Revenue Change (TPC-H Q7)                          3651.95              81.24            6326.71                737.87
+National Market Share (TPC-H Q8)                               6458.91             381.02             978.41                593.04
+Product Type Profit Measure (TPC-H Q9)                         5619.83             108.25            7062.07               1055.11
+Forecasting Revenue Change (TPC-H Q10)                         3002.64             167.04            3186.57               1224.47
+Important Stock Identification (TPC-H Q11)                      365.99              24.89             546.08                241.12
+Shipping Modes and Order Priority (TPC-H Q12)                 11693.52              63.96            6980.28                986.10
+Customer Distribution (TPC-H Q13)                              9922.65             530.81           13211.49               2098.30
+Forecasting Revenue Change (TPC-H Q14)                        29553.15              58.05            5072.48                513.55
+Top Supplier Query (TPC-H Q15)                                 7774.44              38.16           43652.26                526.68
+Parts/Supplier Relationship (TPC-H Q16)                         710.20             108.88             968.86                554.75
+Small-Quantity-Order Revenue (TPC-H Q17)                        159.35              47.84            1195.15               2019.26
+Large Volume Customer (TPC-H Q18)                             10178.10             216.49            5970.15               8334.45
+Discounted Revenue (TPC-H Q19)                                  312.01              75.31             446.99                663.41
+Potential Part Promotion (TPC-H Q20)                            534.27              78.42             851.82                661.02
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          198962.74            1739.79           18693.09                886.85
+Global Sales Opportunity Query (TPC-H Q22)                      398.47              55.81             484.69                232.21
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1              1.0           22.0        8.80      34.36    102.16
-MySQL-BHT-8-8-1-1              1.0          435.0        3.78    1793.84   2262.63
-PostgreSQL-BHT-8-1-1           1.0           25.0        0.61      88.96    139.58
+MariaDB-BHT-8-1-1              0.0          315.0         2.0     1514.0    1838.0
+MonetDB-BHT-8-1-1              1.0           17.0         7.0       27.0      58.0
+MySQL-BHT-8-8-1-1              1.0          467.0         3.0     2134.0    2612.0
+PostgreSQL-BHT-8-1-1           1.0           24.0         1.0       87.0     121.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
-DBMS
-MonetDB-BHT-8-1-1              0.16
-MySQL-BHT-8-8-1-1              3.11
-PostgreSQL-BHT-8-1-1           0.95
+DBMS                               
+MariaDB-BHT-8-1-1              3.31
+MonetDB-BHT-8-1-1              0.13
+MySQL-BHT-8-8-1-1              3.15
+PostgreSQL-BHT-8-1-1           0.87
 
-### TPC-H Power@Size
+### Power@Size
                       Power@Size [~Q/h]
-DBMS
-MonetDB-BHT-8-1-1              27011.62
-MySQL-BHT-8-8-1-1               1187.97
-PostgreSQL-BHT-8-1-1            3924.04
+DBMS                                   
+MariaDB-BHT-8-1-1               1121.24
+MonetDB-BHT-8-1-1              33362.60
+MySQL-BHT-8-8-1-1               1174.65
+PostgreSQL-BHT-8-1-1            4322.39
 
-### TPC-H Throughput@Size
+### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS               SF num_experiment num_client
-MonetDB-BHT-8-1    1  1              1                 13      1   1                  6092.31
-MySQL-BHT-8-8-1    1  1              1                147      1   1                   538.78
-PostgreSQL-BHT-8-1 1  1              1                 33      1   1                  2400.00
-
-### Ingestion
-                    SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
-DBMS
-MonetDB-BHT-8-1                                          139.25                             1.23
-MySQL-BHT-8-8-1                                         3015.80                            47.16
-PostgreSQL-BHT-8-1                                       150.89                             3.74
-
-### Execution
-                    SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
-DBMS
-MonetDB-BHT-8-1                                           17.13                             1.57
-MySQL-BHT-8-8-1                                          130.73                            47.31
-PostgreSQL-BHT-8-1                                        63.62                             3.78
+DBMS               SF num_experiment num_client                                              
+MariaDB-BHT-8-1    1  1              1                334      1   1                   237.13
+MonetDB-BHT-8-1    1  1              1                  9      1   1                  8800.00
+MySQL-BHT-8-8-1    1  1              1                165      1   1                   480.00
+PostgreSQL-BHT-8-1 1  1              1                 32      1   1                  2475.00
 ```
+
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
 Please note that the results are not suitable for being published as official TPC-H results.
@@ -267,8 +231,10 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```bash
-usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-sf SCALING_FACTOR]
-               [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
+usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL,MariaDB}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN] [-nc NUM_CONFIG]
+               [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU]
+               [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
+               [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
                {profiling,run,start,load,empty,summary}
 
 Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk).
@@ -280,8 +246,8 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MonetDB,MySQL}, --dbms {PostgreSQL,MonetDB,MySQL}
-                        DBMS to load the data
+  -dbms {PostgreSQL,MonetDB,MySQL,MariaDB}, --dbms {PostgreSQL,MonetDB,MySQL,MariaDB}
+                        DBMS
   -lit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
                         limit import to one table, name of this table
   -db, --debug          dump debug informations
@@ -349,22 +315,38 @@ options:
 
 If monitoring is activated, the summary also contains a section like
 ```bash
-### Ingestion
-                    SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
-DBMS
-MonetDB-BHT-8-1                                          142.81                             1.21
-MySQL-BHT-8-8-1                                         3046.31                            47.20
-PostgreSQL-BHT-8-1                                       137.44                             3.94
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1        1328.42     1.69          9.94                 9.95
+MonetDB-BHT-8-1         137.86     2.31          1.13                 3.81
+MySQL-BHT-8-8-1        8333.65     5.07         47.14                56.03
+PostgreSQL-BHT-8-1       99.55     0.02          3.72                 4.91
 
-### Execution
-                    SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
-DBMS
-MonetDB-BHT-8-1                                           34.85                             1.76
-MySQL-BHT-8-8-1                                          132.57                            47.37
-PostgreSQL-BHT-8-1                                       116.69                             3.84
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1           6.05     0.01          0.45                 1.01
+MonetDB-BHT-8-1           0.00     0.00          0.00                 0.00
+MySQL-BHT-8-8-1          19.24     0.01          0.18                 1.16
+PostgreSQL-BHT-8-1        0.00     0.00          0.00                 0.00
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1         307.26     1.00         10.02                10.03
+MonetDB-BHT-8-1           0.00     0.00          1.13                 3.81
+MySQL-BHT-8-8-1         163.38     0.77         47.35                56.29
+PostgreSQL-BHT-8-1       54.24     0.00          3.72                 4.91
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1           13.6     0.20          0.26                 0.26
+MonetDB-BHT-8-1            0.0     0.00          0.00                 0.00
+MySQL-BHT-8-8-1           15.6     0.04          0.30                 0.30
+PostgreSQL-BHT-8-1         0.0     0.00          0.00                 0.00
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
+MonetDB is very fast, so we cannot see a lot (metrics are fetched every 10 seconds).
+
 
 ## Perform Benchmark - Throughput Test
 
@@ -375,26 +357,34 @@ Example: `python tpch.py -dt -nlp 8 -ii -ic -is -ne 1,2 -dbms PostgreSQL -t 1200
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
 ```bash
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-8-1-1           1.0           26.0         1.0       87.0     132.0
+PostgreSQL-BHT-8-2-1           1.0           26.0         1.0       87.0     132.0
+PostgreSQL-BHT-8-2-2           1.0           26.0         1.0       87.0     132.0
+
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
-DBMS
-PostgreSQL-BHT-8-1-1           0.96
-PostgreSQL-BHT-8-2-1           0.99
-PostgreSQL-BHT-8-2-2           0.97
+DBMS                               
+PostgreSQL-BHT-8-1-1           0.84
+PostgreSQL-BHT-8-2-1           0.85
+PostgreSQL-BHT-8-2-2           0.84
 
-### TPC-H Power@Size
+### Power@Size
                       Power@Size [~Q/h]
-DBMS
-PostgreSQL-BHT-8-1-1            3990.33
-PostgreSQL-BHT-8-2-1            3867.48
-PostgreSQL-BHT-8-2-2            3937.01
+DBMS                                   
+PostgreSQL-BHT-8-1-1            4417.91
+PostgreSQL-BHT-8-2-1            4378.97
+PostgreSQL-BHT-8-2-2            4411.48
 
-### TPC-H Throughput@Size
+### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS               SF num_experiment num_client
-PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
-PostgreSQL-BHT-8-2 1  1              2                 38      2   1                  4168.42
+DBMS               SF num_experiment num_client                                              
+PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+PostgreSQL-BHT-8-2 1  1              2                 29      2   1                  5462.07
 ```
+
+All executions use the same database, so loading times are the same.
 
 Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
 You can change this via
