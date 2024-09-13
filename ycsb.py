@@ -86,71 +86,44 @@ if __name__ == '__main__':
         logger_bexhoma.setLevel(logging.DEBUG)
         logger_loader = logging.getLogger('load_data_asynch')
         logger_loader.setLevel(logging.DEBUG)
-    # set parameter
-    monitoring = args.monitoring
-    monitoring_cluster = args.monitoring_cluster
+    ##############
+    ### set parameters
+    ##############
+    command_args = vars(args)
+    ##############
+    ### workflow parameters
+    ##############
+    # start with old experiment?
+    code = args.experiment
+    # only create testbed or also run a benchmark?
     mode = str(args.mode)
+    # scaling of data
     SF = str(args.scaling_factor)
-    SFO = str(args.scaling_factor_operations)
-    if SFO == 'None':
-        SFO = SF
-    ycsb_rows = int(SF)*1000000 # 1kb each, that is SF is size in GB
-    ycsb_operations = int(SFO)*1000000
-    #SU = int(args.scaling_users)
-    target_base = int(args.target_base)
-    #list_target_factors = args.list_target_factors
-    #if len(list_target_factors) > 0:
-    #    list_target_factors = list_target_factors.split(",")
-    #    list_target_factors = [int(x) for x in list_target_factors]
-    batchsize = args.scaling_batchsize
+    # timeout of a benchmark
     timeout = int(args.timeout)
+    # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
-    #num_loading = int(args.num_loading)
-    #num_loading_pods = int(args.num_loading_pods)
-    num_loading_pods = args.num_loading_pods
-    if len(num_loading_pods) > 0:
-        num_loading_pods = num_loading_pods.split(",")
-        num_loading_pods = [int(x) for x in num_loading_pods]
-    num_loading_threads = args.num_loading_threads
-    if len(num_loading_threads) > 0:
-        num_loading_threads = num_loading_threads.split(",")
-        num_loading_threads = [int(x) for x in num_loading_threads]
-    num_loading_target_factors = args.num_loading_target_factors
-    if len(num_loading_target_factors) > 0:
-        num_loading_target_factors = num_loading_target_factors.split(",")
-        num_loading_target_factors = [int(x) for x in num_loading_target_factors]
-    num_benchmarking_pods = args.num_benchmarking_pods
-    if len(num_benchmarking_pods) > 0:
-        num_benchmarking_pods = num_benchmarking_pods.split(",")
-        num_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
-    num_benchmarking_threads = args.num_benchmarking_threads
-    if len(num_benchmarking_threads) > 0:
-        num_benchmarking_threads = num_benchmarking_threads.split(",")
-        num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
-    num_benchmarking_target_factors = args.num_benchmarking_target_factors
-    if len(num_benchmarking_target_factors) > 0:
-        num_benchmarking_target_factors = num_benchmarking_target_factors.split(",")
-        num_benchmarking_target_factors = [int(x) for x in num_benchmarking_target_factors]
-    #num_virtual_users = args.num_virtual_users
+    # should results be tested for validity?
+    test_result = args.test_result
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
-    cpu = str(args.request_cpu)
-    memory = str(args.request_ram)
-    cpu_type = str(args.request_cpu_type)
-    gpu_type = str(args.request_gpu_type)
-    gpus = str(args.request_gpu)
-    request_storage_type = args.request_storage_type
-    request_storage_size = args.request_storage_size
-    request_node_name = args.request_node_name
-    request_node_loading = args.request_node_loading
-    request_node_benchmarking = args.request_node_benchmarking
-    test_result = args.test_result
-    code = args.experiment
-    # set cluster
+    ##############
+    ### specific to: YCSB
+    ##############
+    SFO = str(args.scaling_factor_operations)
+    if SFO == 'None':
+        SFO = SF
+    ycsb_rows = int(SF)*1000000 # 1kb each, that is SF is size in GB
+    ycsb_operations = int(SFO)*1000000
+    target_base = int(args.target_base)
+    batchsize = args.scaling_batchsize
+    ##############
+    ### set cluster
+    ##############
     aws = args.aws
     if aws:
         cluster = clusters.aws(context=args.context)
@@ -169,78 +142,22 @@ if __name__ == '__main__':
     # set experiment
     if code is None:
         code = cluster.code
+    ##############
+    ### prepare and configure experiment
+    ##############
     experiment = experiments.ycsb(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
     # remove running dbms
     #experiment.clean()
-    if mode == 'run':
-        # we want all YCSB queries
-        #experiment.set_queries_full()
-        experiment.set_workload(
-            name = 'YCSB SF='+str(SF),
-            info = 'This experiment compares run time and resource consumption of YCSB queries.',
-            defaultParameters = {'SF': SF}
-        )
-    else:
-        # we want to profile the import
-        #experiment.set_queries_profiling()
-        experiment.set_workload(
-            name = 'YCSB Data Loading SF='+str(SF),
-            info = 'This imports YCSB data sets.',
-            defaultParameters = {'SF': SF}
-        )
-    if monitoring_cluster:
-        # monitor all nodes of cluster (for not missing any component)
-        cluster.start_monitoring_cluster()
-        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
-    elif monitoring:
-        # we want to monitor resource consumption
-        experiment.monitoring_active = True
-        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by sidecar containers."
-    else:
-        # we want to just run the queries
-        experiment.monitoring_active = False
-    #experiment.set_queryfile('queries-tpcds-profiling-tables.config')
-    # set resources for dbms
-    #experiment.connectionmanagement['timeout'] = 180
-    experiment.set_resources(
-        requests = {
-            'cpu': cpu,
-            'memory': memory,
-            'gpu': 0
-        },
-        limits = {
-            'cpu': 0,
-            'memory': 0
-        },
-        nodeSelector = {
-            'cpu': cpu_type,
-            'gpu': '',
-            #'kubernetes.io/hostname': 'cl-worker13'
-        })
-    # persistent storage
-    #print(request_storage_type)
-    #if not request_storage_type is None:# and (request_storage_type == 'shared' or request_storage_type == 'local-hdd'):
-    experiment.set_storage(
-        storageClassName = request_storage_type,
-        storageSize = request_storage_size,#'100Gi',
-        keep = True,
-        #storageConfiguration = 'mysql-bht'
-        )
+    experiment.prepare_testbed(command_args)
+    num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
+    num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
+    num_loading_target_factors = experiment.get_parameter_as_list('num_loading_target_factors')
+    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
+    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
+    num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
     # set node labes for components
-    """
-    experiment.set_nodes(
-        #maintaining = 'auxiliary',
-        loading = 'loading',
-        sut = 'sut',
-        #benchmarking = 'benchmarker',
-        )
-    """
-    cluster.start_datadir()
-    cluster.start_resultdir()
-    cluster.start_dashboard()
-    cluster.start_messagequeue()
     if aws:
         # set node labes for components
         experiment.set_nodes(
@@ -249,70 +166,12 @@ if __name__ == '__main__':
             monitoring = 'auxiliary',
             benchmarking = 'auxiliary',
             )
-    # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+"\nYCSB is performed using several threads and processes."
-    #if len(args.dbms):
-    #    # import is limited to single DBMS
-    #    experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(args.dbms)
-    #if len(list_loading_split):
-    #    # import uses several processes in pods
-    #    experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes.".format(num_loading_split)
-    # add configs
-    experiment.loading_active = True
-    experiment.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
-    #experiment.name_format = '{dbms}-{threads}-{pods}-{target}'
-    experiment.set_experiment(script='Schema')
-    # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
-    experiment.workload['info'] = experiment.workload['info']+" Number of rows to insert is {}.".format(ycsb_rows)
-    experiment.workload['info'] = experiment.workload['info']+" Number of operations is {}.".format(ycsb_operations)
-    if len(args.dbms):
-        # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(", ".join(args.dbms))
-    # fix loading
-    if not request_node_loading is None:
-        experiment.patch_loading(patch="""
-        spec:
-          template:
-            spec:
-              nodeSelector:
-                kubernetes.io/hostname: {node}
-        """.format(node=request_node_loading))
-        experiment.workload['info'] = experiment.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
-    # fix benchmarking
-    if not request_node_benchmarking is None:
-        experiment.patch_benchmarking(patch="""
-        spec:
-          template:
-            spec:
-              nodeSelector:
-                kubernetes.io/hostname: {node}
-        """.format(node=request_node_benchmarking))
-        experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
-    # fix SUT
-    if not request_node_name is None:
-        experiment.set_resources(
-            nodeSelector = {
-                'cpu': cpu_type,
-                'gpu': '',
-                'kubernetes.io/hostname': request_node_name
-            })        
-        experiment.workload['info'] = experiment.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
-    if request_storage_type and request_storage_size:
-        experiment.workload['info'] = experiment.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
-    experiment.workload['info'] = experiment.workload['info']+"\nLoading is tested with {} threads and {} target factors of base {}, split into {} pods.".format(num_loading_threads, num_loading_target_factors, target_base, num_loading_pods)
-    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is tested with {} threads and {} target factors of base {}, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_target_factors, target_base, num_benchmarking_pods)
-    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
-    if num_experiment_to_apply > 1: 
-        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
-    else:
-        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run once."
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="ycsb",
         experiment_design="compare-scaleout",
-        ROWS=ycsb_rows,
-        OPERATIONS=ycsb_operations,
+        rows=ycsb_rows,
+        operations=ycsb_operations,
         workload=args.workload,
         )
     for loading_threads in num_loading_threads:#[8]:#[64]:
