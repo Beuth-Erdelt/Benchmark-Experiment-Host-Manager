@@ -2418,6 +2418,37 @@ class benchbase(default):
         self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SD = int(args.scaling_duration)*60
+        target_base = int(args.target_base)
+        type_of_benchmark = args.benchmark
+        num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
+        if mode == 'run':
+            # we want all TPC-C queries
+            #experiment.set_queries_full()
+            self.set_workload(
+                name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
+                info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
+                defaultParameters = {'SF': SF}
+            )
+        # add configs
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nBenchbase data is generated and loaded using several threads."
+        if len(type_of_benchmark):
+            self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
+        if SF:
+            self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses) is {}.".format(SF)
+        if SD:
+            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
+        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
+        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
