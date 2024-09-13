@@ -163,7 +163,9 @@ if __name__ == '__main__':
         #users_loading=scaling_users,
         #users_benchmarking=str(num_virtual_users),
         )
-    # add configs
+    ##############
+    ### add configs of dbms to be tested
+    ##############
     for loading_threads in [1]:                 # always maximum
         for loading_pods in [1]:                # always only 1 pod
             for factor_loading in [1]:          # always maximum

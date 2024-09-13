@@ -1801,6 +1801,27 @@ class tpcc(default):
         self.storage_label = 'hammerdb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SD = int(args.scaling_duration)
+        if mode == 'run':
+            self.set_workload(
+                name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
+                info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
+                defaultParameters = {'SF': SF}
+            )
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nTPC-C data is generated and loaded using several threads."
+        if SF:
+            self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
+        if SD:
+            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
+        default.prepare_testbed(self, parameter)
     def test_results(self):
         """
         Run test script locally.
@@ -2185,8 +2206,6 @@ class ycsb(default):
         num_loading_target_factors = self.get_parameter_as_list('num_loading_target_factors')
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
-            # we want all YCSB queries
-            #self.set_queries_full()
             self.set_workload(
                 name = 'YCSB SF='+str(SF),
                 info = 'This experiment compares run time and resource consumption of YCSB queries.',
@@ -2200,17 +2219,14 @@ class ycsb(default):
                 info = 'This imports YCSB data sets.',
                 defaultParameters = {'SF': SF}
             )
-        # add configs
         self.loading_active = True
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
-        #self.name_format = '{dbms}-{threads}-{pods}-{target}'
         self.set_experiment(script='Schema')
         # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
         self.workload['info'] = self.workload['info']+" Number of rows to insert is {}.".format(ycsb_rows)
         self.workload['info'] = self.workload['info']+" Number of operations is {}.".format(ycsb_operations)
         self.workload['info'] = self.workload['info']+" Batch size is '{}'.".format(batchsize)
-        # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
         self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
         self.workload['info'] = self.workload['info']+" Factors for loading are {}.".format(num_loading_target_factors)
@@ -2427,14 +2443,11 @@ class benchbase(default):
         type_of_benchmark = args.benchmark
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
-            # we want all TPC-C queries
-            #experiment.set_queries_full()
             self.set_workload(
                 name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
                 info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
                 defaultParameters = {'SF': SF}
             )
-        # add configs
         self.loading_active = True
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.set_experiment(script='Schema')
