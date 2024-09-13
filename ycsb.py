@@ -174,6 +174,9 @@ if __name__ == '__main__':
         operations=ycsb_operations,
         workload=args.workload,
         )
+    ##############
+    ### add configs of dbms to be tested
+    ##############
     for loading_threads in num_loading_threads:#[8]:#[64]:
         for loading_pods in num_loading_pods:#[1,2]:#[1,8]:#range(2,5):
             for factor_loading in num_loading_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
