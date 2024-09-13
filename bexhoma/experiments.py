@@ -141,6 +141,58 @@ class default():
         self.configurations = []
         self.storage_label = ''
         self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+    def test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        self.cluster.logger.debug('base.test_results()')
+        self.evaluator.test_results()
+        # not yet implemented in detail for dbmsbenchmarker:
+        #workflow = self.get_workflow_list()
+        #if workflow == self.evaluator.workflow:
+        #    print("Result workflow complete")
+        #else:
+        #    print("Result workflow not complete")
+    def test_results_in_dashboard(self):
+        """
+        DEPRECATED? Not used currently - depends on good test script for dbmsbenchmarker
+        Run test script in dashboard pod.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+        if len(pod_dashboard) > 0:
+            #pod_dashboard = pods[0]
+            status = self.cluster.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            while status != "Running":
+                self.wait(10)
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+            cmd = {}
+            # only zip first level
+            #cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+            # zip complete folder
+            cmd['test_results'] = 'python test-result.py -e {code} -r /results/;echo $?'.format(code=self.code)
+            # include sub directories
+            #cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
+            #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['test_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            try:
+                if len(stdout) > 0:
+                    print(stdout)
+                    return int(stdout.splitlines()[-1:][0])
+                else:
+                    return 1
+            except Exception as e:
+                return 1
+            finally:
+                return 1
+        return 1
     def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
@@ -439,42 +491,6 @@ class default():
             #stdout, stderr = proc.communicate()
         # local:
         #shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
-    def test_results(self):
-        """
-        Run test script in dashboard pod.
-        Extract exit code.
-
-        :return: exit code of test script
-        """
-        pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
-        if len(pod_dashboard) > 0:
-            #pod_dashboard = pods[0]
-            status = self.cluster.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
-            while status != "Running":
-                self.wait(10)
-                status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
-            cmd = {}
-            # only zip first level
-            #cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
-            # zip complete folder
-            cmd['test_results'] = 'python test-result.py -e {code} -r /results/;echo $?'.format(code=self.code)
-            # include sub directories
-            #cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
-            #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['test_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            try:
-                if len(stdout) > 0:
-                    print(stdout)
-                    return int(stdout.splitlines()[-1:][0])
-                else:
-                    return 1
-            except Exception as e:
-                return 1
-            finally:
-                return 1
-        return 1
     def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
         """
         Read experiment details from cluster config
@@ -568,7 +584,7 @@ class default():
             filename = os.fsdecode(file)
             if filename.endswith(".pickle"): 
                 df = pd.read_pickle(self.path+"/"+filename)
-                print(df)
+                print(self.path+"/"+filename, df)
     def stop_maintaining(self):
         """
         Stop all maintaining jobs of this experiment.
@@ -895,6 +911,7 @@ class default():
                                         self.wait(30)
                                     print("{:30s}: starts again".format(config.configuration))
                                     config.benchmark_list = config.benchmark_list_template.copy()
+                                    config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
                                     # wait for PV to be gone completely
                                     #self.wait(60)
                                     config.reset_sut()
@@ -1237,6 +1254,8 @@ class default():
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+        evaluation = evaluators.base(code=code, path=resultfolder)
+        #####################
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=True)
         query_properties = evaluate.get_experiment_query_properties()
@@ -1294,6 +1313,7 @@ class default():
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index()
         df.columns = ['Geo Times [s]']
+        df_geo_mean_runtime = df.copy()
         print(df.round(2))
         #####################
         print("\n### Power@Size")
@@ -1301,6 +1321,7 @@ class default():
         df = (df/1000.0).sort_index().astype('float')
         df = float(parameter.defaultParameters['SF'])*3600./df
         df.columns = ['Power@Size [~Q/h]']
+        df_power = df.copy()
         print(df.round(2))
         #####################
         # aggregate time and throughput for parallel pods
@@ -1339,6 +1360,9 @@ class default():
         print(df_benchmark)
         #####################
         self.show_summary_monitoring()
+        evaluation.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+        evaluation.test_results_column(df_power, "Power@Size [~Q/h]")
+        evaluation.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
     def show_summary_monitoring_table(self, evaluate, component):
         df_monitoring = list()
         ##########
@@ -1386,6 +1410,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "loader")
@@ -1393,6 +1418,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "stream")
@@ -1400,6 +1426,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "benchmarker")
@@ -1407,6 +1434,7 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 
@@ -1542,7 +1570,7 @@ class tpcc(default):
             name = 'TPC-C Queries SF='+str(SF),
             info = 'This experiment performs some TPC-C inspired workloads.'
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'hammerdb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def test_results(self):
@@ -1723,10 +1751,11 @@ class tpcc(default):
         print(df_connections)
         #####################
         self.show_summary_monitoring()
+        evaluation.test_results_column(df_aggregated_reduced, "NOPM")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
-        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        evaluation = evaluators.tpcc(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
@@ -1734,6 +1763,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -1741,6 +1771,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -1748,6 +1779,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -1755,6 +1787,7 @@ class tpcc(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 
@@ -2001,6 +2034,7 @@ class ycsb(default):
         #evaluate.load_experiment(code=code, silent=False)
         evaluation = evaluators.ycsb(code=code, path=resultfolder)
         #####################
+        test_loading = False
         df = evaluation.get_df_loading()
         if not df.empty:
             print("\n### Loading")
@@ -2011,8 +2045,9 @@ class ycsb(default):
             df_plot = evaluation.loading_set_datatypes(df)
             df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
-            df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-            print(df_aggregated)
+            df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            print(df_aggregated_loaded)
+            test_loading = True
         #####################
         df = evaluation.get_df_benchmarking()
         if not df.empty:
@@ -2030,6 +2065,9 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         self.show_summary_monitoring()
+        if test_loading:
+            evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
+        evaluation.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -2041,6 +2079,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -2048,6 +2087,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -2055,6 +2095,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -2062,6 +2103,7 @@ class ycsb(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 
@@ -2100,7 +2142,7 @@ class benchbase(default):
             name = 'Benchbase Queries SF='+str(SF),
             info = 'This experiment performs some Benchbase workloads.'
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def log_to_df(self, filename):
@@ -2246,6 +2288,7 @@ class benchbase(default):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
@@ -2283,10 +2326,12 @@ class benchbase(default):
         #print(df_tpx)
         #df_loading_tpx = df_tpx['time_load']
         df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
         print(df_connections)
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         self.show_summary_monitoring()
+        evaluation.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -2298,6 +2343,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
@@ -2305,6 +2351,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
@@ -2312,6 +2359,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
@@ -2319,6 +2367,7 @@ class benchbase(default):
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
 
 

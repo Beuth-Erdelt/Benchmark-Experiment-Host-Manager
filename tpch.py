@@ -50,6 +50,8 @@ if __name__ == '__main__':
     parser.add_argument('-nls', '--num-loading-split', help='portion of loaders that should run in parallel', default="1")
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
+    parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
+    parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
     parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF)', default=1)
     parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=600)
     parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
@@ -96,12 +98,25 @@ if __name__ == '__main__':
     num_loading_pods = args.num_loading_pods
     if len(num_loading_pods) > 0:
         num_loading_pods = num_loading_pods.split(",")
-        list_loading_pods = [int(x) for x in num_loading_pods]
-    #num_loading_threads = int(args.num_loading_threads)
+        num_loading_pods = [int(x) for x in num_loading_pods]
     num_loading_threads = args.num_loading_threads
     if len(num_loading_threads) > 0:
         num_loading_threads = num_loading_threads.split(",")
-        list_loading_threads = [int(x) for x in num_loading_threads]
+        num_loading_threads = [int(x) for x in num_loading_threads]
+    num_benchmarking_pods = args.num_benchmarking_pods
+    if len(num_benchmarking_pods) > 0:
+        num_benchmarking_pods = num_benchmarking_pods.split(",")
+        num_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
+    num_benchmarking_threads = args.num_benchmarking_threads
+    if len(num_benchmarking_threads) > 0:
+        num_benchmarking_threads = num_benchmarking_threads.split(",")
+        num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
+    # configure number of clients per config
+    list_clients = args.num_query_executors.split(",")
+    if len(list_clients) > 0:
+        list_clients = [int(x) for x in list_clients if len(x) > 0]
+    else:
+        list_clients = []
     cpu = str(args.request_cpu)
     memory = str(args.request_ram)
     cpu_type = str(args.request_cpu_type)
@@ -178,11 +193,11 @@ if __name__ == '__main__':
         # monitor all nodes of cluster (for not missing any component)
         experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
         cluster.start_monitoring_cluster()
-        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by a cluster-wide installation."
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
     elif monitoring:
         # we want to monitor resource consumption
         experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
-        experiment.workload['info'] = experiment.workload['info']+" System metrics are monitored by sidecar containers."
+        experiment.workload['info'] = experiment.workload['info']+"\nSystem metrics are monitored by sidecar containers."
     else:
         # we want to just run the queries
         experiment.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
@@ -201,13 +216,6 @@ if __name__ == '__main__':
             'cpu': cpu_type,
             'gpu': '',
         })
-    if request_node_name is not None:
-        experiment.set_resources(
-            nodeSelector = {
-                'cpu': cpu_type,
-                'gpu': '',
-                'kubernetes.io/hostname': request_node_name
-            })        
     # persistent storage
     experiment.set_storage(
         storageClassName = request_storage_type,
@@ -231,38 +239,36 @@ if __name__ == '__main__':
     experiment.use_distributed_datasource = True
     experiment.set_experiment(script='Schema')
     # note more infos about experiment in workload description
-    experiment.workload['info'] = experiment.workload['info']+" TPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
-    if request_storage_type is not None:
-        experiment.workload['info'] = experiment.workload['info']+" Database is persistent on a volume of type {}.".format(request_storage_type)
+    experiment.workload['info'] = experiment.workload['info']+"\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
     if shuffle_queries:
-        experiment.workload['info'] = experiment.workload['info']+" Query ordering is as required by the TPC."
+        experiment.workload['info'] = experiment.workload['info']+"\nQuery ordering is as required by the TPC."
     else:
-        experiment.workload['info'] = experiment.workload['info']+" Query ordering is Q1 - Q22."
+        experiment.workload['info'] = experiment.workload['info']+"\nQuery ordering is Q1 - Q22."
     if recreate_parameter:
-        experiment.workload['info'] = experiment.workload['info']+" All instances use different query parameters."
+        experiment.workload['info'] = experiment.workload['info']+"\nAll instances use different query parameters."
     else:
-        experiment.workload['info'] = experiment.workload['info']+" All instances use the same query parameters."
+        experiment.workload['info'] = experiment.workload['info']+"\nAll instances use the same query parameters."
     # optionally set some indexes and constraints after import
     if init_indexes or init_constraints or init_statistics:
         experiment.set_experiment(indexing='Index')
         init_scripts = " Import sets indexes after loading."
         if init_constraints:
             experiment.set_experiment(indexing='Index_and_Constraints')
-            init_scripts = " Import sets indexes and constraints after loading."
+            init_scripts = "\nImport sets indexes and constraints after loading."
         if init_statistics:
             experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
-            init_scripts = " Import sets indexes and constraints after loading and recomputes statistics."
+            init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
         experiment.workload['info'] = experiment.workload['info']+init_scripts
     #experiment.set_experiment(script='Schema', indexing='Index')
     if len(limit_import_table):
         # import is limited to single table
-        experiment.workload['info'] = experiment.workload['info']+" Import is limited to table {}.".format(limit_import_table)
+        experiment.workload['info'] = experiment.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
     if len(args.dbms):
         # import is limited to single DBMS
-        experiment.workload['info'] = experiment.workload['info']+" Benchmark is limited to DBMS {}.".format(", ".join(args.dbms))
-    if len(list_loading_pods):
+        experiment.workload['info'] = experiment.workload['info']+"\nBenchmark is limited to DBMS {}.".format(", ".join(args.dbms))
+    if len(num_loading_pods):
         # import uses several processes in pods
-        experiment.workload['info'] = experiment.workload['info']+" Import is handled by {} processes (pods).".format(" and ".join(map(str, list_loading_pods)))
+        experiment.workload['info'] = experiment.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
     # fix loading
     if not request_node_loading is None:
         experiment.patch_loading(patch="""
@@ -272,7 +278,7 @@ if __name__ == '__main__':
               nodeSelector:
                 kubernetes.io/hostname: {node}
         """.format(node=request_node_loading))
-        experiment.workload['info'] = experiment.workload['info']+" Loading is fixed to {}.".format(request_node_loading)
+        experiment.workload['info'] = experiment.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
     # fix benchmarking
     if not request_node_benchmarking is None:
         experiment.patch_benchmarking(patch="""
@@ -282,7 +288,25 @@ if __name__ == '__main__':
               nodeSelector:
                 kubernetes.io/hostname: {node}
         """.format(node=request_node_benchmarking))
-        experiment.workload['info'] = experiment.workload['info']+" Benchmarking is fixed to {}.".format(request_node_benchmarking)
+        experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
+    # fix SUT
+    if not request_node_name is None:
+        experiment.set_resources(
+            nodeSelector = {
+                'cpu': cpu_type,
+                'gpu': '',
+                'kubernetes.io/hostname': request_node_name
+            })        
+        experiment.workload['info'] = experiment.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+    if request_storage_type and request_storage_size:
+        experiment.workload['info'] = experiment.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
+    experiment.workload['info'] = experiment.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+    experiment.workload['info'] = experiment.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+    if num_experiment_to_apply > 1: 
+        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
+    else:
+        experiment.workload['info'] = experiment.workload['info']+"\nExperiment is run once."
     # add labels about the use case
     experiment.set_additional_labels(
         usecase="tpc-h",
@@ -290,7 +314,7 @@ if __name__ == '__main__':
         )
     # add configs
     for loading_pods_split in list_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
-        for loading_pods_total in list_loading_pods: # number of loading pods in total
+        for loading_pods_total in num_loading_pods: # number of loading pods in total
             # split number of loading pods into parallel potions
             if loading_pods_total < loading_pods_split:
                 # thats not possible
@@ -431,9 +455,9 @@ if __name__ == '__main__':
         experiment.show_summary()
     else:
         # configure number of clients per config
-        list_clients = args.num_query_executors.split(",")
-        if len(list_clients) > 0:
-            list_clients = [int(x) for x in list_clients]
+        #list_clients = args.num_query_executors.split(",")
+        #if len(list_clients) > 0:
+        #    list_clients = [int(x) for x in list_clients]
         experiment.add_benchmark_list(list_clients)
         # total time of experiment
         start = default_timer()

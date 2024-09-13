@@ -196,6 +196,7 @@ class default():
         self.benchmark_list = copy.deepcopy(list_clients)
         # this queue will stay as a template for future copies of the configuration
         self.benchmark_list_template = copy.deepcopy(list_clients)
+        self.benchmarking_parameters_list_template = copy.deepcopy(self.benchmarking_parameters_list)
     def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
