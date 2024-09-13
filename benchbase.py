@@ -416,10 +416,15 @@ if __name__ == '__main__':
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         )
                     """
-    # wait for necessary nodegroups to have planned size
+    ##############
+    ### wait for necessary nodegroups to have planned size
+    ##############
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
         pass
+    ##############
+    ### branch for workflows
+    ##############
     if args.mode == 'start':
         experiment.start_sut()
     elif args.mode == 'load':
