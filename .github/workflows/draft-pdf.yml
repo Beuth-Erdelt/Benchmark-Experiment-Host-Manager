@@ -1,6 +1,5 @@
 on:
-  change:
-    types: [push]
+  push:
     branches: [ master ]
 
 jobs:
