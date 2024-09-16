@@ -1,18 +1,146 @@
-usage: benchbase.py [-h] [-aws] [-dbms {PostgreSQL,MySQL,MariaDB,YugabyteDB}]
-                    [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc]
-                    [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS]
-                    [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
-                    [-nlf NUM_LOADING_TARGET_FACTORS]
-                    [-nbp NUM_BENCHMARKING_PODS]
-                    [-nbt NUM_BENCHMARKING_THREADS]
-                    [-nbf NUM_BENCHMARKING_TARGET_FACTORS]
-                    [-sf SCALING_FACTOR] [-sd SCALING_DURATION] [-t TIMEOUT]
-                    [-rr REQUEST_RAM] [-rc REQUEST_CPU]
-                    [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
-                    [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}]
-                    [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME]
-                    [-rnl REQUEST_NODE_LOADING]
-                    [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-b {tpcc,twitter}]
-                    [-tb TARGET_BASE]
-                    {run,start,load}
-benchbase.py: error: argument mode: invalid choice: '16' (choose from 'run', 'start', 'load')
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1726502585
+Experiment                    : starts at 2024-09-16 18:03:04.936896 (1238525.060876868)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
+Benchmark is limited to DBMS PostgreSQL.
+Import is handled by 1 processes (pods).
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+PostgreSQL-1-1-1024           : will start now
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : will start loading but not before 2024-09-16 16:05:05 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : will start loading but not before 2024-09-16 16:05:05
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : start asynch loading scripts of type loaded
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+PostgreSQL-1-1-1024           : showing loader times
+PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 65
+PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
+PostgreSQL-1-1-1024-1         : start benchmarking
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1726502585
+- waiting 10s -               : done
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1726502585-1-1-czsqf: found
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+PostgreSQL-1-1-1024           : has running benchmarks
+PostgreSQL-1-1-1024-1         : showing benchmarker times
+PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 341
+PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1726502805, 1726503112)]
+PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1726502805, 1726503112)]}
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+PostgreSQL-1-1-1024           : can be stopped
+Experiment ends at 2024-09-16 18:12:52.571147 (1239112.695126619): 587.6342497509904s total
+bexhoma-dashboard-9b85f945f-4jw4f Running
+Benchmarking                                     connection  ... Latency Distribution.Average Latency (microseconds)
+connection_pod                                  ...                                                    
+PostgreSQL-1-1-1024-1-1  PostgreSQL-1-1-1024-1  ...                                                5000
+
+[1 rows x 36 columns]
+Workflow {'PostgreSQL-1-1-1024': [[1]]}
+Result workflow complete
+
+## Show Summary
+
+### Workload
+    Benchbase Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
+Benchmark is limited to DBMS PostgreSQL.
+Import is handled by 1 processes (pods).
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:331872776
+    datadisk:4131080
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       3198.76                                                      11442.0                                               5000.0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-1-1-1024-1       65.0        1.0   1.0                 886.153846
+TEST passed: Throughput (requests/second) contains no 0 or NaN
