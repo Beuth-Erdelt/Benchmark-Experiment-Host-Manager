@@ -158,8 +158,6 @@ class default():
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
-        numRun = int(args.num_run)
-        datatransfer = args.datatransfer
         num_experiment_to_apply = int(args.num_config)
         # configure number of clients per config
         list_clients = args.num_query_executors.split(",")
@@ -169,12 +167,22 @@ class default():
             list_clients = []
         monitoring = args.monitoring
         monitoring_cluster = args.monitoring_cluster
+        # only for dbmsbenchmarker
+        if 'num_run' in parameter:
+            numRun = int(args.num_run)
+        else:
+            numRun = 0
+        if 'datatransfer' in parameter:
+            datatransfer = args.datatransfer
+        else:
+            datatransfer = False
         #num_loading = int(args.num_loading)
-        num_loading_split = args.num_loading_split
-        if len(num_loading_split) > 0:
-            num_loading = num_loading_split.split(",")
-            list_loading_split = [int(x) for x in num_loading]
+        #num_loading_split = args.num_loading_split
+        #if len(num_loading_split) > 0:
+        #    num_loading = num_loading_split.split(",")
+        #    list_loading_split = [int(x) for x in num_loading]
         #num_loading_pods = int(args.num_loading_pods)
+        """
         num_loading_pods = args.num_loading_pods
         if len(num_loading_pods) > 0:
             num_loading_pods = num_loading_pods.split(",")
@@ -191,6 +199,11 @@ class default():
         if len(num_benchmarking_threads) > 0:
             num_benchmarking_threads = num_benchmarking_threads.split(",")
             num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
+        """
+        num_loading_pods = self.get_parameter_as_list('num_loading_pods')
+        num_loading_threads = self.get_parameter_as_list('num_loading_threads')
+        num_benchmarking_pods = self.get_parameter_as_list('num_benchmarking_pods')
+        num_benchmarking_threads = self.get_parameter_as_list('num_benchmarking_threads')
         cpu = str(args.request_cpu)
         memory = str(args.request_ram)
         cpu_type = str(args.request_cpu_type)
@@ -207,12 +220,16 @@ class default():
         self.cluster.start_messagequeue()
         if monitoring_cluster:
             # monitor all nodes of cluster (for not missing any component)
-            self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+            self.monitoring_active = True
+            if numRun > 0:
+                self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
             self.cluster.start_monitoring_cluster()
             self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
         elif monitoring:
             # we want to monitor resource consumption
-            self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+            self.monitoring_active = True
+            if numRun > 0:
+                self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
             self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by sidecar containers."
         else:
             # we want to just run the queries
@@ -1784,6 +1801,27 @@ class tpcc(default):
         self.storage_label = 'hammerdb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SD = int(args.scaling_duration)
+        if mode == 'run':
+            self.set_workload(
+                name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
+                info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
+                defaultParameters = {'SF': SF}
+            )
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nTPC-C data is generated and loaded using several threads."
+        if SF:
+            self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
+        if SD:
+            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
+        default.prepare_testbed(self, parameter)
     def test_results(self):
         """
         Run test script locally.
@@ -2154,6 +2192,46 @@ class ycsb(default):
         self.storage_label = 'ycsb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SFO = str(args.scaling_factor_operations)
+        if SFO == 'None':
+            SFO = SF
+        ycsb_rows = int(SF)*1000000 # 1kb each, that is SF is size in GB
+        ycsb_operations = int(SFO)*1000000
+        target_base = int(args.target_base)
+        batchsize = args.scaling_batchsize
+        num_loading_target_factors = self.get_parameter_as_list('num_loading_target_factors')
+        num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
+        if mode == 'run':
+            self.set_workload(
+                name = 'YCSB SF='+str(SF),
+                info = 'This experiment compares run time and resource consumption of YCSB queries.',
+                defaultParameters = {'SF': SF}
+            )
+        else:
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'YCSB Data Loading SF='+str(SF),
+                info = 'This imports YCSB data sets.',
+                defaultParameters = {'SF': SF}
+            )
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
+        self.workload['info'] = self.workload['info']+" Number of rows to insert is {}.".format(ycsb_rows)
+        self.workload['info'] = self.workload['info']+" Number of operations is {}.".format(ycsb_operations)
+        self.workload['info'] = self.workload['info']+" Batch size is '{}'.".format(batchsize)
+        self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
+        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
+        self.workload['info'] = self.workload['info']+" Factors for loading are {}.".format(num_loading_target_factors)
+        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        default.prepare_testbed(self, parameter)
     def test_results(self):
         """
         Run test script locally.
@@ -2356,6 +2434,34 @@ class benchbase(default):
         self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SD = int(args.scaling_duration)*60
+        target_base = int(args.target_base)
+        type_of_benchmark = args.benchmark
+        num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
+        if mode == 'run':
+            self.set_workload(
+                name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
+                info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
+                defaultParameters = {'SF': SF}
+            )
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nBenchbase data is generated and loaded using several threads."
+        if len(type_of_benchmark):
+            self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
+        if SF:
+            self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses) is {}.".format(SF)
+        if SD:
+            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
+        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
+        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
