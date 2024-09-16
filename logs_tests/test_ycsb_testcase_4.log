@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1726057940
-Experiment                    : starts at 2024-09-11 14:32:20.427820 (793880.55180063)
+Experiment                    : has code 1726495034
+Experiment                    : starts at 2024-09-16 15:57:14.070349 (1230974.194329369)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 YCSB is performed using several threads and processes.
 Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000.
@@ -21,51 +21,47 @@ Cluster monitoring            : is running
 PostgreSQL-64-8-131072        : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-64-8-131072        : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-131072        : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-131072        : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 PostgreSQL-64-8-131072        : will start now
 PostgreSQL-64-8-131072        : storage exists bexhoma-storage-postgresql-ycsb-1
 PostgreSQL-64-8-131072        : loading is set to finished
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-09-11 12:36:21 (that is in 60 secs)
+PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-09-16 14:00:14 (that is in 60 secs)
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-09-11 12:36:21
+PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-09-16 14:00:14
 done
 PostgreSQL-64-8-131072        : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-64-8-131072        : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 16384, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'e', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
 PostgreSQL-64-8-131072-1      : start benchmarking
-PostgreSQL-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1726057940
+PostgreSQL-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1726495034
 - waiting 10s -               : done
-PostgreSQL-64-8-131072        : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-131072-1726057940-1-1-8cgsp: found
+PostgreSQL-64-8-131072        : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-131072-1726495034-1-1-42r2p: found
 - waiting 30s -               : done
 PostgreSQL-64-8-131072        : has running benchmarks
 done
 PostgreSQL-64-8-131072        : has running benchmarks
 PostgreSQL-64-8-131072-1      : showing benchmarker times
-PostgreSQL-64-8-131072-1      : benchmarker timespan (start to end single container [s]) = 79
-PostgreSQL-64-8-131072-1      : benchmarker times (start/end per pod and container) = [(1726058194, 1726058237), (1726058194, 1726058240), (1726058193, 1726058241), (1726058193, 1726058239), (1726058193, 1726058238), (1726058193, 1726058240), (1726058193, 1726058240), (1726058194, 1726058236)]
-PostgreSQL-64-8-131072-1      : found and updated times {'benchmarker': [(1726058194, 1726058237), (1726058194, 1726058240), (1726058193, 1726058241), (1726058193, 1726058239), (1726058193, 1726058238), (1726058193, 1726058240), (1726058193, 1726058240), (1726058194, 1726058236)]}
+PostgreSQL-64-8-131072-1      : benchmarker timespan (start to end single container [s]) = 74
+PostgreSQL-64-8-131072-1      : benchmarker times (start/end per pod and container) = [(1726495227, 1726495266), (1726495227, 1726495269), (1726495227, 1726495270), (1726495226, 1726495267), (1726495226, 1726495267), (1726495226, 1726495267), (1726495227, 1726495269), (1726495227, 1726495268)]
+PostgreSQL-64-8-131072-1      : found and updated times {'benchmarker': [(1726495227, 1726495266), (1726495227, 1726495269), (1726495227, 1726495270), (1726495226, 1726495267), (1726495226, 1726495267), (1726495226, 1726495267), (1726495227, 1726495269), (1726495227, 1726495268)]}
 done
 PostgreSQL-64-8-131072        : can be stopped
-Experiment                    : ends at 2024-09-11 14:38:17.586542 (794237.710520912) - 357.16s total
-bexhoma-dashboard-9b85f945f-pz5fz Running
+Experiment                    : ends at 2024-09-16 16:02:04.321856 (1231264.445835745) - 290.25s total
+bexhoma-dashboard-9b85f945f-4jw4f Running
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
-Benchmarking                                           connection  ... [INSERT].Return=OK
-connection_pod                                        ...                   
-PostgreSQL-64-8-131072-1-1  PostgreSQL-64-8-131072-1  ...                NaN
-PostgreSQL-64-8-131072-1-2  PostgreSQL-64-8-131072-1  ...                NaN
-PostgreSQL-64-8-131072-1-3  PostgreSQL-64-8-131072-1  ...                 48
-PostgreSQL-64-8-131072-1-4  PostgreSQL-64-8-131072-1  ...                 18
-PostgreSQL-64-8-131072-1-5  PostgreSQL-64-8-131072-1  ...                NaN
-PostgreSQL-64-8-131072-1-6  PostgreSQL-64-8-131072-1  ...                NaN
-PostgreSQL-64-8-131072-1-7  PostgreSQL-64-8-131072-1  ...                NaN
-PostgreSQL-64-8-131072-1-8  PostgreSQL-64-8-131072-1  ...                 27
+Benchmarking                                           connection  ... [SCAN].Return=OK
+connection_pod                                        ...                 
+PostgreSQL-64-8-131072-1-1  PostgreSQL-64-8-131072-1  ...           118752
+PostgreSQL-64-8-131072-1-2  PostgreSQL-64-8-131072-1  ...           118731
+PostgreSQL-64-8-131072-1-3  PostgreSQL-64-8-131072-1  ...           118655
+PostgreSQL-64-8-131072-1-4  PostgreSQL-64-8-131072-1  ...           118882
+PostgreSQL-64-8-131072-1-5  PostgreSQL-64-8-131072-1  ...           118803
+PostgreSQL-64-8-131072-1-6  PostgreSQL-64-8-131072-1  ...           118836
+PostgreSQL-64-8-131072-1-7  PostgreSQL-64-8-131072-1  ...           118819
+PostgreSQL-64-8-131072-1-8  PostgreSQL-64-8-131072-1  ...           118773
 
-[8 rows x 50 columns]
+[8 rows x 43 columns]
 Workflow {'PostgreSQL-64-8-131072': [[8]]}
 Result workflow complete
 
@@ -94,14 +90,14 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246352796
-    datadisk:5128856
+    disk:246373372
+    datadisk:3895408
     volume_size:100G
-    volume_used:4.9G
+    volume_used:3.8G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          8                       22246.73                47813.0                  93                               728.5            950279                            5316.5
+PostgreSQL-64-8-131072-1               1       64  131072          8                       24458.95                42970.0               49749                              2722.0            950251                            5048.0
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

@@ -1,6 +1,6 @@
 Dashboard                     : is running
-Experiment                    : has code 1725992010
-Experiment                    : starts at 2024-09-10 20:13:29.691123 (727949.8151032)
+Experiment                    : has code 1726489624
+Experiment                    : starts at 2024-09-16 14:27:04.154243 (1225564.278223286)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 System metrics are monitored by a cluster-wide installation.
 TPC-C data is generated and loaded using several threads.
@@ -15,54 +15,14 @@ Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 PostgreSQL-BHT-8-1            : will start now
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-10 18:25:31 (that is in 60 secs)
+PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-16 12:29:04 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-10 18:25:31
+PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-16 12:29:04
 done
 PostgreSQL-BHT-8-1            : is not loaded yet
 PostgreSQL-BHT-8-1            : start asynch loading scripts of type loaded
@@ -79,7 +39,7 @@ PostgreSQL-BHT-8-1            : loader timespan (first to last [s]) = 105
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
 PostgreSQL-BHT-8-1-1          : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1725992010
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726489624
 - waiting 10s -               : done
 found
 PostgreSQL-BHT-8-1-1          : collecting loading metrics of SUT
@@ -116,15 +76,15 @@ PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-1          : showing benchmarker times
-PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 476
-PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1725992858, 1725993310)]
-PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1725992858, 1725993310)]}
+PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 477
+PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1726489871, 1726490317)]
+PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1726489871, 1726490317)]}
 PostgreSQL-BHT-8-1-1          : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-1          : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : can be stopped
-Experiment ends at 2024-09-10 20:36:12.327405 (729312.451386261): 1362.6362830610014s total
-bexhoma-dashboard-9b85f945f-7gwns Running
+Experiment ends at 2024-09-16 14:39:47.420791 (1226327.544770009): 763.2665467229672s total
+bexhoma-dashboard-9b85f945f-cjkf2 Running
                                 connection  ...        dbms
 PostgreSQL-BHT-8-1-1                        ...            
 0                     PostgreSQL-BHT-8-1-1  ...  PostgreSQL
@@ -175,8 +135,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246349848
-    datadisk:3381845
+    disk:246373040
+    datadisk:3381941
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
@@ -184,7 +144,7 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
 
 ### Execution
                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11799.0  36283.0         5       0
+PostgreSQL-BHT-8-1-1               1      16       1          1  12939.0  40453.0         5       0
 
 Warehouses: 16
 
@@ -197,17 +157,17 @@ PostgreSQL-BHT-8-1-1      105.0        1.0   1.0                 548.571429
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       121.4     0.45          3.83                 5.51
+PostgreSQL-BHT-8-1-1      132.31     1.43          3.61                 5.18
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      329.94      5.2          0.07                 0.07
+PostgreSQL-BHT-8-1-1      316.75     2.09          0.08                 0.08
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1    25890.95     61.0          5.34                 7.01
+PostgreSQL-BHT-8-1-1    26389.42    62.91          5.39                 7.03
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       45.74     0.11          0.05                 0.06
+PostgreSQL-BHT-8-1-1        46.3     0.12          0.06                 0.06
 TEST passed: NOPM contains no 0 or NaN

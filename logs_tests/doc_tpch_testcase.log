@@ -1,0 +1,9 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/tpch.py", line 259, in <module>
+    for threads in list_loading_threads:
+                   ^^^^^^^^^^^^^^^^^^^^
+NameError: name 'list_loading_threads' is not defined. Did you mean: 'num_loading_threads'?

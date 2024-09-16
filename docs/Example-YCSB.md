@@ -64,13 +64,13 @@ Result directory: Running
 +-----------------------+--------------+--------------+------------+-------------+
 ```
 
-The code `1706264335` is the unique identifier of the experiment.
+The code `1726160982` is the unique identifier of the experiment.
 You can find the number also in the output of `ycsb.py`.
 
 ### Cleanup
 
 The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
-If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1706264335` (removes everything that is related to experiment `1706264335`).
+If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1726160982` (removes everything that is related to experiment `1726160982`).
 
 ## Evaluate Results
 
@@ -119,7 +119,7 @@ PostgreSQL-64-8-131072-1       64  131072          8                      115356
 We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
-To see the summary of experiment `1706264335` you can simply call `python ycsb.py -e 1706264335 summary`.
+To see the summary of experiment `1726160982` you can simply call `python ycsb.py -e 1726160982 summary`.
 
 ### Detailed Evaluation
 

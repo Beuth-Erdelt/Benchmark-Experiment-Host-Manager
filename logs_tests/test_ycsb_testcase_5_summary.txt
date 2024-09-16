@@ -24,10 +24,10 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246352796
-    datadisk:31274608
+    disk:246373372
+    datadisk:31570304
     volume_size:100G
-    volume_used:30G
+    volume_used:31G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2 uses docker image postgres:16.1
@@ -36,25 +36,25 @@ PostgreSQL-64-8-131072-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246352796
-    datadisk:31343584
+    disk:246373544
+    datadisk:31734264
     volume_size:100G
-    volume_used:30G
+    volume_used:31G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          1                       61102.29               163660.0           5001386                            1493.0             4998614                             2261.00
-PostgreSQL-64-8-131072-2               1       64  131072          8                      123841.13                84979.0           4999519                            1344.5             5000481                             1730.88
+PostgreSQL-64-8-131072-1               1       64  131072          1                        56333.9               177513.0           5004890                            1661.0             4995110                             3029.00
+PostgreSQL-64-8-131072-2               1       64  131072          8                       130077.9                79157.0           5002758                             950.0             4997242                             1525.88
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-131072-1     1567.69     0.31         16.83                31.27
-PostgreSQL-64-8-131072-2     1638.59    10.74         17.76                32.17
+PostgreSQL-64-8-131072-1     1859.84    19.17         15.47                30.34
+PostgreSQL-64-8-131072-2     1234.24     0.01         18.20                33.06
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-131072-1      586.80     5.91          0.61                 0.61
-PostgreSQL-64-8-131072-2      575.98     3.47          5.03                 5.06
+PostgreSQL-64-8-131072-1      710.68     5.42          0.61                 0.61
+PostgreSQL-64-8-131072-2      406.20     0.00          5.15                 5.17
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

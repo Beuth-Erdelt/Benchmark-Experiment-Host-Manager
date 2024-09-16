@@ -1,0 +1,18 @@
+usage: benchbase.py [-h] [-aws] [-dbms {PostgreSQL,MySQL,MariaDB,YugabyteDB}]
+                    [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc]
+                    [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS]
+                    [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
+                    [-nlf NUM_LOADING_TARGET_FACTORS]
+                    [-nbp NUM_BENCHMARKING_PODS]
+                    [-nbt NUM_BENCHMARKING_THREADS]
+                    [-nbf NUM_BENCHMARKING_TARGET_FACTORS]
+                    [-sf SCALING_FACTOR] [-sd SCALING_DURATION] [-t TIMEOUT]
+                    [-rr REQUEST_RAM] [-rc REQUEST_CPU]
+                    [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
+                    [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}]
+                    [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME]
+                    [-rnl REQUEST_NODE_LOADING]
+                    [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-b {tpcc,twitter}]
+                    [-tb TARGET_BASE]
+                    {run,start,load}
+benchbase.py: error: argument mode: invalid choice: '16' (choose from 'run', 'start', 'load')

@@ -24,8 +24,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246349848
-    datadisk:3381845
+    disk:246373040
+    datadisk:3381941
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
@@ -33,7 +33,7 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
 
 ### Execution
                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11799.0  36283.0         5       0
+PostgreSQL-BHT-8-1-1               1      16       1          1  12939.0  40453.0         5       0
 
 Warehouses: 16
 
@@ -46,17 +46,17 @@ PostgreSQL-BHT-8-1-1      105.0        1.0   1.0                 548.571429
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       121.4     0.45          3.83                 5.51
+PostgreSQL-BHT-8-1-1      132.31     1.43          3.61                 5.18
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      329.94      5.2          0.07                 0.07
+PostgreSQL-BHT-8-1-1      316.75     2.09          0.08                 0.08
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1    25890.95     61.0          5.34                 7.01
+PostgreSQL-BHT-8-1-1    26389.42    62.91          5.39                 7.03
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       45.74     0.11          0.05                 0.06
+PostgreSQL-BHT-8-1-1        46.3     0.12          0.06                 0.06
 TEST passed: NOPM contains no 0 or NaN
