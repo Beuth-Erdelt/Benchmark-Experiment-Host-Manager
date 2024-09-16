@@ -1789,6 +1789,7 @@ class tpcc(default):
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
         self.set_experiment(volume='tpcc')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/tpcc')
@@ -2180,6 +2181,7 @@ class ycsb(default):
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
         self.set_experiment(volume='ycsb')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/ycsb')
@@ -2422,6 +2424,7 @@ class benchbase(default):
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
         self.set_experiment(volume='benchbase')
         self.set_experiment(script='Schema')
         self.cluster.set_experiments_configfolder('experiments/benchbase')
