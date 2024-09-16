@@ -23,14 +23,14 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246352796
-    datadisk:5128856
+    disk:246373372
+    datadisk:3895408
     volume_size:100G
-    volume_used:4.9G
+    volume_used:3.8G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          8                       22246.73                47813.0                  93                               728.5            950279                            5316.5
+PostgreSQL-64-8-131072-1               1       64  131072          8                       24458.95                42970.0               49749                              2722.0            950251                            5048.0
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

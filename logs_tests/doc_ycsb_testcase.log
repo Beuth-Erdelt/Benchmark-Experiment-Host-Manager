@@ -1,0 +1,34 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1726499568
+Experiment                    : starts at 2024-09-16 17:12:48.439868 (1235508.563849253)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+YCSB is performed using several threads and processes.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000.
+Benchmark is limited to DBMS PostgreSQL.
+Loading is tested with [64] threads and [1, 4] target factors of base 16384, split into [1, 8] pods.
+Benchmarking is tested with [64] threads and [2, 3] target factors of base 16384, split into [1, 8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+PostgreSQL-64-1-16384         : will start now
+PostgreSQL-64-1-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-1-16384         : is not loaded yet
+PostgreSQL-64-1-16384         : will start loading but not before 2024-09-16 15:14:48 (that is in 60 secs)
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-1-16384         : is not loaded yet
+PostgreSQL-64-1-16384         : will start loading but not before 2024-09-16 15:14:48
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : 
