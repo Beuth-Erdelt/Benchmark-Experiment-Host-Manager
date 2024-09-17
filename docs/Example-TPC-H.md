@@ -14,7 +14,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```
-python tpch.py -ms 1 -dt \
+python tpch.py -dt \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -23,7 +23,7 @@ python tpch.py -ms 1 -dt \
 ```
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL
+* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB
   * data directory inside a Docker container
   * with a maximum of 1 DBMS per time (`-ms`)
 * creates TPC-H schema in each database
@@ -79,46 +79,55 @@ At the end of a benchmark you will see a summary like
 ### Workload
     TPC-H Queries SF=1
     This includes the reading queries of TPC-H.
-    This experiment compares run time and resource consumption of TPC-H queries in different DBMS. System metrics are monitored by sidecar containers. TPC-H (SF=1) data is loaded and benchmark is executed. Query ordering is Q1 - Q22. All instances use the same query parameters. Import sets indexes and constraints after loading and recomputes statistics. Import is handled by 8 processes (pods). Loading is fixed to cl-worker19. Benchmarking is fixed to cl-worker19.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
+Import is handled by 8 processes (pods).
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
 
 ### Connections
 MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:219812964
-    datadisk:2140488
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:331214072
+    datadisk:2141512
     requests_cpu:4
     requests_memory:16Gi
 MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
-    RAM:541008605184
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:220513336
-    datadisk:2841028
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:331745244
+    datadisk:2841020
     requests_cpu:4
     requests_memory:16Gi
 MySQL-BHT-8-8-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008592896
     Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:229113308
-    datadisk:11440648
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:341048348
+    datadisk:11440660
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:220495176
-    datadisk:2822856
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:330618956
+    datadisk:2822424
     requests_cpu:4
     requests_memory:16Gi
 
@@ -130,59 +139,62 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                             27224.44            1198.49           29465.35               2539.98
-Minimum Cost Supplier Query (TPC-H Q2)                         1366.83              30.66             362.51                418.77
-Shipping Priority (TPC-H Q3)                                   4947.24             120.71            4387.90                717.64
-Order Priority Checking Query (TPC-H Q4)                       1131.88              62.84            1558.12               1224.10
-Local Supplier Volume (TPC-H Q5)                               3264.71              92.07            4215.46                619.37
-Forecasting Revenue Change (TPC-H Q6)                          3474.30              30.67            4401.30                480.72
-Forecasting Revenue Change (TPC-H Q7)                          3651.95              81.24            6326.71                737.87
-National Market Share (TPC-H Q8)                               6458.91             381.02             978.41                593.04
-Product Type Profit Measure (TPC-H Q9)                         5619.83             108.25            7062.07               1055.11
-Forecasting Revenue Change (TPC-H Q10)                         3002.64             167.04            3186.57               1224.47
-Important Stock Identification (TPC-H Q11)                      365.99              24.89             546.08                241.12
-Shipping Modes and Order Priority (TPC-H Q12)                 11693.52              63.96            6980.28                986.10
-Customer Distribution (TPC-H Q13)                              9922.65             530.81           13211.49               2098.30
-Forecasting Revenue Change (TPC-H Q14)                        29553.15              58.05            5072.48                513.55
-Top Supplier Query (TPC-H Q15)                                 7774.44              38.16           43652.26                526.68
-Parts/Supplier Relationship (TPC-H Q16)                         710.20             108.88             968.86                554.75
-Small-Quantity-Order Revenue (TPC-H Q17)                        159.35              47.84            1195.15               2019.26
-Large Volume Customer (TPC-H Q18)                             10178.10             216.49            5970.15               8334.45
-Discounted Revenue (TPC-H Q19)                                  312.01              75.31             446.99                663.41
-Potential Part Promotion (TPC-H Q20)                            534.27              78.42             851.82                661.02
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          198962.74            1739.79           18693.09                886.85
-Global Sales Opportunity Query (TPC-H Q22)                      398.47              55.81             484.69                232.21
+Pricing Summary Report (TPC-H Q1)                             27334.45            1192.61           30102.73               2541.59
+Minimum Cost Supplier Query (TPC-H Q2)                         1288.24              27.92             362.79                436.70
+Shipping Priority (TPC-H Q3)                                   5281.21             126.68            4690.49                748.25
+Order Priority Checking Query (TPC-H Q4)                       1716.41              51.53            1636.46               1278.48
+Local Supplier Volume (TPC-H Q5)                               4309.82              72.41            4419.60                658.51
+Forecasting Revenue Change (TPC-H Q6)                          4072.93              34.64            4274.89                515.87
+Forecasting Revenue Change (TPC-H Q7)                          4104.62              90.65            7388.37                784.30
+National Market Share (TPC-H Q8)                               6742.79             347.23           10024.10                967.86
+Product Type Profit Measure (TPC-H Q9)                         5793.65              92.37            7573.79               1105.39
+Forecasting Revenue Change (TPC-H Q10)                         3032.82             162.80            3318.24               1277.95
+Important Stock Identification (TPC-H Q11)                      384.40              21.56             487.07                246.55
+Shipping Modes and Order Priority (TPC-H Q12)                 11848.87              57.55            7005.94               1004.50
+Customer Distribution (TPC-H Q13)                             10505.14             513.21           14718.99               1991.11
+Forecasting Revenue Change (TPC-H Q14)                        30010.96              35.43            5702.43                544.14
+Top Supplier Query (TPC-H Q15)                                 7383.56              35.26           47070.44                547.81
+Parts/Supplier Relationship (TPC-H Q16)                         718.25              93.47            1051.36                553.54
+Small-Quantity-Order Revenue (TPC-H Q17)                        159.49              50.99            1298.74               1998.81
+Large Volume Customer (TPC-H Q18)                             11043.64             187.38            6614.63               8020.56
+Discounted Revenue (TPC-H Q19)                                  350.72              73.43             584.10                689.27
+Potential Part Promotion (TPC-H Q20)                            668.98              71.46            1004.23                652.75
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          203547.36            1878.94           19600.18                908.31
+Global Sales Opportunity Query (TPC-H Q22)                      435.27              62.39             532.11                246.33
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              0.0          315.0         2.0     1514.0    1838.0
-MonetDB-BHT-8-1-1              1.0           17.0         7.0       27.0      58.0
-MySQL-BHT-8-8-1-1              1.0          467.0         3.0     2134.0    2612.0
-PostgreSQL-BHT-8-1-1           1.0           24.0         1.0       87.0     121.0
+MariaDB-BHT-8-1-1              1.0          313.0         2.0     1495.0    1830.0
+MonetDB-BHT-8-1-1              1.0           17.0         7.0       24.0      75.0
+MySQL-BHT-8-8-1-1              1.0          912.0         3.0     2279.0    3219.0
+PostgreSQL-BHT-8-1-1           1.0           25.0         1.0       86.0     136.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-MariaDB-BHT-8-1-1              3.31
-MonetDB-BHT-8-1-1              0.13
-MySQL-BHT-8-8-1-1              3.15
-PostgreSQL-BHT-8-1-1           0.87
+MariaDB-BHT-8-1-1              3.56
+MonetDB-BHT-8-1-1              0.12
+MySQL-BHT-8-8-1-1              3.71
+PostgreSQL-BHT-8-1-1           0.90
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1               1121.24
-MonetDB-BHT-8-1-1              33362.60
-MySQL-BHT-8-8-1-1               1174.65
-PostgreSQL-BHT-8-1-1            4322.39
+MariaDB-BHT-8-1-1               1038.18
+MonetDB-BHT-8-1-1              35804.24
+MySQL-BHT-8-8-1-1                989.28
+PostgreSQL-BHT-8-1-1            4122.21
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-MariaDB-BHT-8-1    1  1              1                334      1   1                   237.13
-MonetDB-BHT-8-1    1  1              1                  9      1   1                  8800.00
-MySQL-BHT-8-8-1    1  1              1                165      1   1                   480.00
+MariaDB-BHT-8-1    1  1              1                343      1   1                   230.90
+MonetDB-BHT-8-1    1  1              1                  8      1   1                  9900.00
+MySQL-BHT-8-8-1    1  1              1                182      1   1                   435.16
 PostgreSQL-BHT-8-1 1  1              1                 32      1   1                  2475.00
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
 ```
 
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
@@ -240,9 +252,9 @@ You maybe want to adjust some of the parameters that are set in the file: `pytho
 
 ```bash
 usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL,MariaDB}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN] [-nc NUM_CONFIG]
-               [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-sf SCALING_FACTOR] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU]
-               [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
-               [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
+               [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS] [-nbt NUM_BENCHMARKING_THREADS] [-sf SCALING_FACTOR]
+               [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
+               [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
                {profiling,run,start,load,empty,summary}
 
 Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk).
@@ -281,6 +293,10 @@ options:
                         total number of loaders per configuration
   -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
                         total number of threads per loading process
+  -nbp NUM_BENCHMARKING_PODS, --num-benchmarking-pods NUM_BENCHMARKING_PODS
+                        comma separated list of number of benchmarkers per configuration
+  -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
+                        total number of threads per benchmarking process
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF)
   -t TIMEOUT, --timeout TIMEOUT

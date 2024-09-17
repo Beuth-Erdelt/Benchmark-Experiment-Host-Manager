@@ -436,6 +436,38 @@ sleep 600
 
 
 
+###########################################
+############# Generate Docs ###############
+###########################################
+
+
+#### TCP-H Compare (Example-TPC-H.md)
+nohup python tpch.py -dt \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase.log &
+
+#### Wait so that next experiment receives a different code
+sleep 7200
+
+
+
+#### HammerDB Scale (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
 
 
 
