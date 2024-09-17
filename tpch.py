@@ -256,7 +256,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MySQL" in args.dbms or len(args.dbms) == 0):
                 # MySQL
-                for threads in list_loading_threads:
+                for threads in num_loading_threads:
                     name_format = 'MySQL-{cluster}-{pods}-{threads}'
                     config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='MySQL', alias='DBMS A1')
                     config.set_storage(
