@@ -25,8 +25,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249195396
-    datadisk:2822680
+    disk:249196752
+    datadisk:2823016
     requests_cpu:4
     requests_memory:16Gi
 
@@ -38,32 +38,32 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 2528.11
-Minimum Cost Supplier Query (TPC-H Q2)                             419.69
-Shipping Priority (TPC-H Q3)                                       722.18
-Order Priority Checking Query (TPC-H Q4)                          1208.14
-Local Supplier Volume (TPC-H Q5)                                   620.96
-Forecasting Revenue Change (TPC-H Q6)                              473.13
-Forecasting Revenue Change (TPC-H Q7)                              742.27
-National Market Share (TPC-H Q8)                                   580.45
-Product Type Profit Measure (TPC-H Q9)                            1050.25
-Forecasting Revenue Change (TPC-H Q10)                            1208.50
-Important Stock Identification (TPC-H Q11)                         235.97
-Shipping Modes and Order Priority (TPC-H Q12)                      991.42
-Customer Distribution (TPC-H Q13)                                 1962.69
-Forecasting Revenue Change (TPC-H Q14)                             513.81
-Top Supplier Query (TPC-H Q15)                                     526.91
-Parts/Supplier Relationship (TPC-H Q16)                            565.77
-Small-Quantity-Order Revenue (TPC-H Q17)                          1972.21
-Large Volume Customer (TPC-H Q18)                                 6490.45
-Discounted Revenue (TPC-H Q19)                                     671.89
-Potential Part Promotion (TPC-H Q20)                               648.23
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                901.40
-Global Sales Opportunity Query (TPC-H Q22)                         227.10
+Pricing Summary Report (TPC-H Q1)                                 2493.16
+Minimum Cost Supplier Query (TPC-H Q2)                             414.27
+Shipping Priority (TPC-H Q3)                                       724.43
+Order Priority Checking Query (TPC-H Q4)                          1239.55
+Local Supplier Volume (TPC-H Q5)                                   619.84
+Forecasting Revenue Change (TPC-H Q6)                              478.67
+Forecasting Revenue Change (TPC-H Q7)                              744.60
+National Market Share (TPC-H Q8)                                   587.28
+Product Type Profit Measure (TPC-H Q9)                            1065.18
+Forecasting Revenue Change (TPC-H Q10)                            1214.05
+Important Stock Identification (TPC-H Q11)                         247.10
+Shipping Modes and Order Priority (TPC-H Q12)                      984.09
+Customer Distribution (TPC-H Q13)                                 2038.24
+Forecasting Revenue Change (TPC-H Q14)                             517.57
+Top Supplier Query (TPC-H Q15)                                     532.80
+Parts/Supplier Relationship (TPC-H Q16)                            558.68
+Small-Quantity-Order Revenue (TPC-H Q17)                          1947.05
+Large Volume Customer (TPC-H Q18)                                 7059.62
+Discounted Revenue (TPC-H Q19)                                     667.85
+Potential Part Promotion (TPC-H Q20)                               657.55
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                902.79
+Global Sales Opportunity Query (TPC-H Q22)                         232.66
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       84.0     120.0
+PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       85.0     123.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
@@ -73,7 +73,7 @@ PostgreSQL-BHT-8-1-1           0.86
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4402.66
+PostgreSQL-BHT-8-1-1            4356.34
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]

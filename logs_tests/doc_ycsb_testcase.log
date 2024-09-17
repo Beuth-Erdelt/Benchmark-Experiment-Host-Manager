@@ -13,7 +13,6 @@ Benchmarking is tested with [64] threads and [2, 3] target factors of base 16384
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 PostgreSQL-64-1-16384         : will start now
 PostgreSQL-64-1-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
@@ -30,5 +29,385 @@ PostgreSQL-64-1-16384         : is not loaded yet
 PostgreSQL-64-1-16384         : will start loading but not before 2024-09-16 15:14:48
 PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-16384         : is not loaded yet
+PostgreSQL-64-1-16384         : start asynch loading scripts of type loaded
+PostgreSQL-64-1-16384         : is loading
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-1-16384         : is loading
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-1-16384         : is loading
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-16384         : showing loader times
+PostgreSQL-64-1-16384         : loader timespan (first to last [s]) = 62
+PostgreSQL-64-1-16384         : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-64-1-16384         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-16384-1       : start benchmarking
+PostgreSQL-64-1-16384         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-16384-1726499568-1-1-rcnlk: found
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-16384         : has running benchmarks
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-16384-1       : showing benchmarker times
+PostgreSQL-64-1-16384-1       : benchmarker timespan (start to end single container [s]) = 41
+PostgreSQL-64-1-16384-1       : benchmarker times (start/end per pod and container) = [(1726499786, 1726499818)]
+done
+PostgreSQL-64-1-16384         : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-64-1-16384         : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 4096, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-16384-2       : start benchmarking
+PostgreSQL-64-1-16384         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-16384-1726499568-1-2-8fnhl: found
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-16384         : has running benchmarks
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-16384-2       : showing benchmarker times
+PostgreSQL-64-1-16384-2       : benchmarker timespan (start to end single container [s]) = 44
+PostgreSQL-64-1-16384-2       : benchmarker times (start/end per pod and container) = [(1726499866, 1726499897), (1726499866, 1726499897), (1726499865, 1726499896), (1726499865, 1726499896), (1726499865, 1726499896), (1726499866, 1726499897), (1726499865, 1726499896), (1726499866, 1726499896)]
+done
+PostgreSQL-64-1-16384         : benchmarks done 0 of 1. This will be client 3
+PostgreSQL-64-1-16384         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 49152, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-16384-3       : start benchmarking
+PostgreSQL-64-1-16384         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-16384-1726499568-1-3-45b4q: found
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-16384         : has running benchmarks
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-16384-3       : showing benchmarker times
+PostgreSQL-64-1-16384-3       : benchmarker timespan (start to end single container [s]) = 41
+PostgreSQL-64-1-16384-3       : benchmarker times (start/end per pod and container) = [(1726499939, 1726499960)]
+done
+PostgreSQL-64-1-16384         : benchmarks done 0 of 1. This will be client 4
+PostgreSQL-64-1-16384         : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 6144, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-16384-4       : start benchmarking
+PostgreSQL-64-1-16384         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-16384-1726499568-1-4-24jmf: found
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-16384         : has running benchmarks
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-16384-4       : showing benchmarker times
+PostgreSQL-64-1-16384-4       : benchmarker timespan (start to end single container [s]) = 43
+PostgreSQL-64-1-16384-4       : benchmarker times (start/end per pod and container) = [(1726500019, 1726500040), (1726500020, 1726500041), (1726500019, 1726500040), (1726500020, 1726500040), (1726500019, 1726500040), (1726500020, 1726500041), (1726500020, 1726500040), (1726500019, 1726500040)]
+done
+PostgreSQL-64-1-16384         : can be stopped
+PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-65536         : will start now
+PostgreSQL-64-8-16384         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-1-65536         : is not loaded yet
+PostgreSQL-64-1-65536         : will start loading but not before 2024-09-16 15:23:26 (that is in 60 secs)
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-1-65536         : is not loaded yet
+PostgreSQL-64-1-65536         : will start loading but not before 2024-09-16 15:23:26
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-65536         : is not loaded yet
+PostgreSQL-64-1-65536         : start asynch loading scripts of type loaded
+PostgreSQL-64-1-65536         : is loading
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-65536         : showing loader times
+PostgreSQL-64-1-65536         : loader timespan (first to last [s]) = 15
+PostgreSQL-64-1-65536         : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-64-1-65536         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-65536-1       : start benchmarking
+PostgreSQL-64-1-65536         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-65536         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-65536-1726499568-1-1-mrwjd: found
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-65536         : has running benchmarks
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-65536-1       : showing benchmarker times
+PostgreSQL-64-1-65536-1       : benchmarker timespan (start to end single container [s]) = 41
+PostgreSQL-64-1-65536-1       : benchmarker times (start/end per pod and container) = [(1726500243, 1726500274)]
+done
+PostgreSQL-64-1-65536         : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-64-1-65536         : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 4096, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-65536-2       : start benchmarking
+PostgreSQL-64-1-65536         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-65536         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-65536-1726499568-1-2-2kjpp: found
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-1-65536         : has running benchmarks
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-65536         : has running benchmarks
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-65536-2       : showing benchmarker times
+PostgreSQL-64-1-65536-2       : benchmarker timespan (start to end single container [s]) = 74
+PostgreSQL-64-1-65536-2       : benchmarker times (start/end per pod and container) = [(1726500325, 1726500356), (1726500325, 1726500356), (1726500325, 1726500356), (1726500325, 1726500356), (1726500324, 1726500355), (1726500325, 1726500356), (1726500325, 1726500356), (1726500325, 1726500355)]
+done
+PostgreSQL-64-1-65536         : benchmarks done 0 of 1. This will be client 3
+PostgreSQL-64-1-65536         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 49152, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-65536-3       : start benchmarking
+PostgreSQL-64-1-65536         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-65536         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-65536-1726499568-1-3-kvnqv: found
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-65536         : has running benchmarks
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-65536-3       : showing benchmarker times
+PostgreSQL-64-1-65536-3       : benchmarker timespan (start to end single container [s]) = 41
+PostgreSQL-64-1-65536-3       : benchmarker times (start/end per pod and container) = [(1726500425, 1726500446)]
+done
+PostgreSQL-64-1-65536         : benchmarks done 0 of 1. This will be client 4
+PostgreSQL-64-1-65536         : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 6144, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-1-65536-4       : start benchmarking
+PostgreSQL-64-1-65536         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-1-65536         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-65536-1726499568-1-4-5cvkz: found
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-1-65536         : has running benchmarks
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-1-65536-4       : showing benchmarker times
+PostgreSQL-64-1-65536-4       : benchmarker timespan (start to end single container [s]) = 44
+PostgreSQL-64-1-65536-4       : benchmarker times (start/end per pod and container) = [(1726500505, 1726500525), (1726500504, 1726500525), (1726500504, 1726500525), (1726500504, 1726500525), (1726500505, 1726500525), (1726500504, 1726500525), (1726500504, 1726500525), (1726500504, 1726500525)]
+done
+PostgreSQL-64-1-65536         : can be stopped
+PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-8-16384         : will start now
+PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is not loaded yet
+PostgreSQL-64-8-16384         : will start loading but not before 2024-09-16 15:31:34 (that is in 60 secs)
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is not loaded yet
+PostgreSQL-64-8-16384         : will start loading but not before 2024-09-16 15:31:34
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-8-16384         : is not loaded yet
+PostgreSQL-64-8-16384         : start asynch loading scripts of type loaded
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-8-16384         : showing loader times
+PostgreSQL-64-8-16384         : loader timespan (first to last [s]) = 62
+PostgreSQL-64-8-16384         : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-64-8-16384         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-8-16384-1       : start benchmarking
+PostgreSQL-64-8-16384         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-8-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-16384-1726499568-1-1-v5r72: found
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PostgreSQL-64-8-16384-1       : showing benchmarker times
+PostgreSQL-64-8-16384-1       : benchmarker timespan (start to end single container [s]) = 40
+PostgreSQL-64-8-16384-1       : benchmarker times (start/end per pod and container) = [(1726500795, 1726500826)]
+done
+PostgreSQL-64-8-16384         : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-64-8-16384         : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 4096, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+PostgreSQL-64-8-16384-2       : start benchmarking
+PostgreSQL-64-8-16384         : benchmarking results in folder /home/perdelt/benchmarks/1726499568
+- waiting 10s -               : done
+PostgreSQL-64-8-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-16384-1726499568-1-2-5sbgf: found
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : 
