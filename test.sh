@@ -150,7 +150,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+sleep 600
 
 
 ### Benchbase Monitoring (TestCases.md)
@@ -271,7 +271,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 2400
+sleep 3600
 
 
 
@@ -318,7 +318,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 2400
+sleep 1200
 
 
 
@@ -348,7 +348,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+sleep 600
 
 
 
@@ -374,7 +374,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+sleep 900
 
 
 
@@ -400,7 +400,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+sleep 300
 
 
 
