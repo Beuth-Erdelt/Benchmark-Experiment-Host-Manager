@@ -26,7 +26,7 @@ python hammerdb.py -ms 1 \
   -sd 5 \
   -dbms PostgreSQL \
   -nlt 16 \
-  -nbp 1 \
+  -nbp 1,2 \
   -nbt 8 \
   run
 ```
@@ -38,9 +38,10 @@ This
   * creates TPC-C schema in the database
   * imports data for 16 (`-sf`) warehouses into the DBMS
   * using 16 (`-nlt`) threads
-* runs 1 (`-nbp`) streams of TPC-C queries (per DBMS)
+* runs streams of TPC-C queries (per DBMS)
     * running for 5 (`-sd`) minutes
-    * each stream (pod) having 8 threads (`-nbt`) to simulate 8 users
+    * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
+    * `-nbp`: first stream 1 pos, second stream 2 pods (8 threads each)
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -51,72 +52,88 @@ You can watch the status while benchmark is running via `bexperiments status`
 
 ```
 Dashboard: Running
+Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+------------------------+--------------+--------------+-------------+--------------+
-| 1706264335             | sut          |   loaded [s] | loading     | monitoring   |
-+========================+==============+==============+=============+==============+
-| PostgreSQL-64-1-131072 | (1. Running) |         0.64 | (1 Running) | (Running)    |
-+------------------------+--------------+--------------+-------------+--------------+
++---------------------+--------------+--------------+---------------+-------------+
+| 1726578005          | sut          |   loaded [s] | use case      | loading     |
++=====================+==============+==============+===============+=============+
+| PostgreSQL-BHT-16-1 | (1. Running) |            1 | hammerdb_tpcc | (1 Running) |
++---------------------+--------------+--------------+---------------+-------------+
 ```
 
-The code `1706264335` is the unique identifier of the experiment.
+The code `1726578005` is the unique identifier of the experiment.
 You can find the number also in the output of `hammerdb.py`.
 
 ### Cleanup
 
 The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
-If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1706264335` (removes everything that is related to experiment `1706264335`).
+If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1726578005` (removes everything that is related to experiment `1726578005`).
 
 ## Evaluate Results
 
 At the end of a benchmark you will see a summary like
 
 ```bash
-### Loading
-                        threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-1-16384        64   16384          1                   16285.849226                61403.0             1000000                             1283.00
-PostgreSQL-64-8-16384        64   16384          8                   16189.808395                62334.0             1000000                             1029.25
-PostgreSQL-64-1-32768        64   32768          1                   32334.206357                30927.0             1000000                             2993.00
-PostgreSQL-64-8-32768        64   32768          8                   32487.310483                30788.0             1000000                             2362.50
-PostgreSQL-64-1-49152        64   49152          1                   47429.330298                21084.0             1000000                             4343.00
-PostgreSQL-64-8-49152        64   49152          8                   48401.920774                20850.0             1000000                             3848.50
-PostgreSQL-64-1-65536        64   65536          1                   63881.436055                15654.0             1000000                             6127.00
-PostgreSQL-64-8-65536        64   65536          8                   64436.143011                15540.0             1000000                             4843.00
-PostgreSQL-64-1-81920        64   81920          1                   71078.257161                14069.0             1000000                             6219.00
-PostgreSQL-64-8-81920        64   81920          8                   72415.868804                14361.0             1000000                             5296.00
-PostgreSQL-64-1-98304        64   98304          1                   81586.032471                12257.0             1000000                             5027.00
-PostgreSQL-64-8-98304        64   98304          8                   86657.160474                11681.0             1000000                             5571.00
-PostgreSQL-64-1-114688       64  114688          1                   74693.755602                13388.0             1000000                             5923.00
-PostgreSQL-64-8-114688       64  114688          8                   80616.643342                13037.0             1000000                             5275.50
-PostgreSQL-64-1-131072       64  131072          1                   81766.148814                12230.0             1000000                             6087.00
-PostgreSQL-64-8-131072       64  131072          8                   80708.979092                12469.0             1000000                             5656.00
+## Show Summary
+
+### Workload
+    HammerDB Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+TPC-C data is generated and loaded using several threads.
+Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Import is handled by 1 processes (pods).
+Loading is tested with [16] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1, 2] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:332979336
+    datadisk:3377384
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:333866000
+    datadisk:4264048
+    requests_cpu:4
+    requests_memory:16Gi
 
 ### Execution
-                          threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-1-16384-1        64   16384          1                       16281.61                61419.0            499663                            540.00              500337                              743.00
-PostgreSQL-64-8-16384-1        64   16384          8                       16313.68                61310.0            500621                            544.75              499379                              759.38
-PostgreSQL-64-1-32768-1        64   32768          1                       32171.93                31083.0            500316                            570.00              499684                              925.00
-PostgreSQL-64-8-32768-1        64   32768          8                       32481.38                30794.0            500704                            594.88              499296                              839.75
-PostgreSQL-64-1-49152-1        64   49152          1                       48351.22                20682.0            499465                            808.00              500535                             1395.00
-PostgreSQL-64-8-49152-1        64   49152          8                       48521.04                20624.0            500275                            946.75              499725                             1554.88
-PostgreSQL-64-1-65536-1        64   65536          1                       62468.77                16008.0            499253                           1069.00              500747                             1656.00
-PostgreSQL-64-8-65536-1        64   65536          8                       64434.09                15541.0            500305                           1056.00              499695                             1617.00
-PostgreSQL-64-1-81920-1        64   81920          1                       78659.64                12713.0            500203                           1313.00              499797                             2055.00
-PostgreSQL-64-8-81920-1        64   81920          8                       79285.81                12740.0            500409                           1337.38              499591                             2126.25
-PostgreSQL-64-1-98304-1        64   98304          1                       89421.44                11183.0            499133                           1425.00              500867                             2767.00
-PostgreSQL-64-8-98304-1        64   98304          8                       87541.47                11748.0            500122                           1363.75              499878                             2414.00
-PostgreSQL-64-1-114688-1       64  114688          1                      101770.81                 9826.0            500000                           1351.00              500000                             2213.00
-PostgreSQL-64-8-114688-1       64  114688          8                      104663.23                 9835.0            500450                           1515.62              499550                             2866.25
-PostgreSQL-64-1-131072-1       64  131072          1                       88354.83                11318.0            499788                           1566.00              500212                             3451.00
-PostgreSQL-64-8-131072-1       64  131072          8                      115356.26                 9250.0            500084                           1526.75              499916                             3356.75
+                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1  11662.0  36280.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2  10590.5  32580.0         5       0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-BHT-16-1-1      124.0        1.0   1.0                 464.516129
+PostgreSQL-BHT-16-1-2      124.0        1.0   2.0                 464.516129
+TEST passed: NOPM contains no 0 or NaN
 ```
 
 We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
-To see the summary of experiment `1706264335` you can simply call `python hammerdb.py -e 1706264335 summary`.
+To see the summary of experiment `1726578005` you can simply call `python hammerdb.py -e 1726578005 summary`.
 
 ### Detailed Evaluation
 
@@ -154,21 +171,22 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python hammerdb.py -h`
 
 ```bash
-usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-wl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
-               [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
-               [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
-               {run,start,load,summary}
+usage: hammerdb.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,SingleStore,CockroachDB,MySQL,MariaDB,YugabyteDB,Kinetica}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN]
+                   [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS] [-nbt NUM_BENCHMARKING_THREADS] [-nrt NUM_RAMPUP_TIME]
+                   [-sf SCALING_FACTOR] [-sd SCALING_DURATION] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE]
+                   [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
+                   {run,start,load,summary}
 
-Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*1,000,000. This installs a clean copy for each target and split of the driver. Optionally monitoring is activated.
+Perform TPC-C inspired benchmarks in a Kubernetes cluster. Optionally monitoring is actived. User can also choose some parameters like number of warehouses and request some resources.
 
 positional arguments:
   {run,start,load,summary}
-                        import YCSB data or run YCSB queries
+                        start sut, also load data or also run the TPC-C queries
 
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MySQL}, --dbms {PostgreSQL,MySQL}
+  -dbms {PostgreSQL,MonetDB,SingleStore,CockroachDB,MySQL,MariaDB,YugabyteDB,Kinetica}
                         DBMS to load the data
   -db, --debug          dump debug informations
   -cx CONTEXT, --context CONTEXT
@@ -180,50 +198,49 @@ options:
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
+  -dt, --datatransfer   activates datatransfer
+  -nr NUM_RUN, --num-run NUM_RUN
+                        number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of runs per configuration
   -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
                         comma separated list of number of parallel clients
-  -nl NUM_LOADING, --num-loading NUM_LOADING
-                        number of parallel loaders per configuration
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
-  -wl {a,b,c,e,f}, --workload {a,b,c,e,f}
-                        YCSB default workload
+  -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
+                        total number of threads per loading process
+  -nbp NUM_BENCHMARKING_PODS, --num-benchmarking-pods NUM_BENCHMARKING_PODS
+                        comma separated list of number of benchmarkers per configuration
+  -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
+                        total number of threads per benchmarking process
+  -nrt NUM_RAMPUP_TIME, --num-rampup-time NUM_RAMPUP_TIME
+                        Rampup time in minutes
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
-                        scaling factor (SF) = number of rows in millions
-  -sfo SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
-                        scaling factor = number of operations in millions (=SF if not set)
-  -su SCALING_USERS, --scaling-users SCALING_USERS
-                        scaling factor = number of total threads
-  -sbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
-                        batch size
-  -ltf LIST_TARGET_FACTORS, --list-target-factors LIST_TARGET_FACTORS
-                        comma separated list of factors of 16384 ops as target - default range(1,9)
-  -tb TARGET_BASE, --target-base TARGET_BASE
-                        ops as target, base for factors - default 16384 = 2**14
+                        scaling factor (SF) = number of warehouses
+  -sd SCALING_DURATION, --scaling-duration SCALING_DURATION
+                        scaling factor = duration in minutes
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
   -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        request ram for sut, default 16Gi
+                        request ram
   -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        request cpus for sut, default 4
+                        request cpus
   -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
-                        request node for sut to have node label cpu=
+                        request node having node label cpu=
   -rg REQUEST_GPU, --request-gpu REQUEST_GPU
-                        request number of gpus for sut
+                        request number of gpus
   -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
-                        request node for sut to have node label gpu=
+                        request node having node label gpu=
   -rst {None,,local-hdd,shared}, --request-storage-type {None,,local-hdd,shared}
                         request persistent storage of certain type
   -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
                         request persistent storage of certain size
   -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
-                        request a specific node for sut
+                        request a specific node
   -rnl REQUEST_NODE_LOADING, --request-node-loading REQUEST_NODE_LOADING
-                        request a specific node for loading pods
+                        request a specific node
   -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
-                        request a specific node for benchmarking pods
+                        request a specific node
   -tr, --test-result    test if result fulfills some basic requirements
 ```
 
@@ -292,18 +309,13 @@ The first instance of PostgreSQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
 ```
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| Volumes                            | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
-+====================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
-| bexhoma-storage-postgresql-ycsb-1  | postgresql      | ycsb-1       | True         |                64 | PostgreSQL | shared               | 50Gi      | Bound    | 50G    | 2.1G   |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-+------------------+--------------+--------------+--------------------------+
-
-+------------------+--------------+--------------+--------------+---------------+
-| 1706957093       | sut          |   loaded [s] | monitoring   | benchmarker   |
-+==================+==============+==============+==============+===============+
-| MySQL-64-1-16384 | (2. Running) |      2398.11 | (Running)    | (1. Running)  |
-+------------------+--------------+--------------+--------------+---------------+
++------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| Volumes                                  | configuration   | experiment    | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
++------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-postgresql-hammerdb-16   | postgresql      | hammerdb-16   | True         |               101 | PostgreSQL | shared               | 30Gi      | Bound    | 30G    | 4.8G   |
++------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-postgresql-hammerdb-128  | postgresql      | hammerdb-128  | True         |               369 | PostgreSQL | shared               | 50Gi      | Bound    | 50G    | 43G    |
++------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 ```
 
 
