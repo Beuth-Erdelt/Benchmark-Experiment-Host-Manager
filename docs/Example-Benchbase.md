@@ -20,11 +20,11 @@ Example:
 python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
-  -ltf 16 \
-  -tb 1024 \
   -dbms PostgreSQL \
-  -nbp 1 \
+  -nbp 1,2 \
   -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
   run
 ```
 
@@ -35,9 +35,10 @@ This
   * creates TPC-C schema in the database
   * imports data for 16 (`-sf`) warehouses into the DBMS
   * using all threads of driver machine (benchbase setting)
-* runs 1 (`-nbp`) streams of TPC-C queries (per DBMS)
+* runs streams of TPC-C queries (per DBMS)
     * running for 5 (`-sd`) minutes
-    * each stream (pod) having 16 threads (`-nbt`) to simulate 16 users
+    * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
+    * `-nbp`: first stream 1 pos, second stream 2 pods (8 threads each)
     * target is 16x(`-ltf`) 1024 (`-tb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
@@ -49,23 +50,24 @@ You can watch the status while benchmark is running via `bexperiments status`
 
 ```
 Dashboard: Running
+Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+------------------------+--------------+--------------+-------------+--------------+
-| 1706264335             | sut          |   loaded [s] | loading     | monitoring   |
-+========================+==============+==============+=============+==============+
-| PostgreSQL-64-1-131072 | (1. Running) |         0.64 | (1 Running) | (Running)    |
-+------------------------+--------------+--------------+-------------+--------------+
++---------------------+--------------+--------------+----------------+-----------------------------+
+| 1726658756          | sut          |   loaded [s] | use case       | benchmarker                 |
++=====================+==============+==============+================+=============================+
+| PostgreSQL-1-1-1024 | (1. Running) |           62 | benchbase_tpcc | (2. Succeeded) (2. Running) |
++---------------------+--------------+--------------+----------------+-----------------------------+
 ```
 
-The code `1706264335` is the unique identifier of the experiment.
+The code `1726658756` is the unique identifier of the experiment.
 You can find the number also in the output of `benchbase.py`.
 
 ### Cleanup
 
 The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
-If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1706264335` (removes everything that is related to experiment `1706264335`).
+If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1726658756` (removes everything that is related to experiment `1726658756`).
 
 ## Evaluate Results
 
@@ -114,7 +116,7 @@ PostgreSQL-64-8-131072-1       64  131072          8                      115356
 We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
-To see the summary of experiment `1706264335` you can simply call `python benchbase.py -e 1706264335 summary`.
+To see the summary of experiment `1726658756` you can simply call `python benchbase.py -e 1726658756 summary`.
 
 ### Detailed Evaluation
 
@@ -156,21 +158,21 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python hammerdb.py -h`
 
 ```bash
-usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-wl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
-               [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
-               [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
-               {run,start,load,summary}
+usage: benchbase.py [-h] [-aws] [-dbms {PostgreSQL,MySQL,MariaDB,YugabyteDB}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nlp NUM_LOADING_PODS]
+                    [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS] [-nbt NUM_BENCHMARKING_THREADS] [-nbf NUM_BENCHMARKING_TARGET_FACTORS] [-sf SCALING_FACTOR] [-sd SCALING_DURATION] [-t TIMEOUT]
+                    [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
+                    [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-b {tpcc,twitter}] [-tb TARGET_BASE]
+                    {run,start,load}
 
-Perform YCSB benchmarks in a Kubernetes cluster. Number of rows and operations is SF*1,000,000. This installs a clean copy for each target and split of the driver. Optionally monitoring is activated.
+Perform TPC-C inspired benchmarks based on Benchbase in a Kubernetes cluster. Optionally monitoring is actived. User can also choose some parameters like number of warehouses and request some resources.
 
 positional arguments:
-  {run,start,load,summary}
-                        import YCSB data or run YCSB queries
+  {run,start,load}      start sut, also load data or also run the TPC-C queries
 
 options:
   -h, --help            show this help message and exit
   -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MySQL}, --dbms {PostgreSQL,MySQL}
+  -dbms {PostgreSQL,MySQL,MariaDB,YugabyteDB}, --dbms {PostgreSQL,MySQL,MariaDB,YugabyteDB}
                         DBMS to load the data
   -db, --debug          dump debug informations
   -cx CONTEXT, --context CONTEXT
@@ -186,47 +188,47 @@ options:
                         number of runs per configuration
   -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
                         comma separated list of number of parallel clients
-  -nl NUM_LOADING, --num-loading NUM_LOADING
-                        number of parallel loaders per configuration
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
-  -wl {a,b,c,e,f}, --workload {a,b,c,e,f}
-                        YCSB default workload
-  -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
-                        scaling factor (SF) = number of rows in millions
-  -sfo SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
-                        scaling factor = number of operations in millions (=SF if not set)
-  -su SCALING_USERS, --scaling-users SCALING_USERS
-                        scaling factor = number of total threads
-  -sbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
-                        batch size
-  -ltf LIST_TARGET_FACTORS, --list-target-factors LIST_TARGET_FACTORS
+  -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
+                        total number of threads per loading process
+  -nbp NUM_BENCHMARKING_PODS, --num-benchmarking-pods NUM_BENCHMARKING_PODS
+                        comma separated list of number of benchmarkers per configuration
+  -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
+                        total number of threads per benchmarking process
+  -nbf NUM_BENCHMARKING_TARGET_FACTORS, --num-benchmarking-target-factors NUM_BENCHMARKING_TARGET_FACTORS
                         comma separated list of factors of 16384 ops as target - default range(1,9)
-  -tb TARGET_BASE, --target-base TARGET_BASE
-                        ops as target, base for factors - default 16384 = 2**14
+  -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
+                        scaling factor (SF) = number of warehouses
+  -sd SCALING_DURATION, --scaling-duration SCALING_DURATION
+                        scaling factor = duration in minutes
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
   -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        request ram for sut, default 16Gi
+                        request ram
   -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        request cpus for sut, default 4
+                        request cpus
   -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
-                        request node for sut to have node label cpu=
+                        request node having node label cpu=
   -rg REQUEST_GPU, --request-gpu REQUEST_GPU
-                        request number of gpus for sut
+                        request number of gpus
   -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
-                        request node for sut to have node label gpu=
+                        request node having node label gpu=
   -rst {None,,local-hdd,shared}, --request-storage-type {None,,local-hdd,shared}
                         request persistent storage of certain type
   -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
                         request persistent storage of certain size
   -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
-                        request a specific node for sut
+                        request a specific node
   -rnl REQUEST_NODE_LOADING, --request-node-loading REQUEST_NODE_LOADING
-                        request a specific node for loading pods
+                        request a specific node
   -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
-                        request a specific node for benchmarking pods
+                        request a specific node
   -tr, --test-result    test if result fulfills some basic requirements
+  -b {tpcc,twitter}, --benchmark {tpcc,twitter}
+                        type of benchmark
+  -tb TARGET_BASE, --target-base TARGET_BASE
+                        ops as target, base for factors - default 1024 = 2**10
 ```
 
 ## Monitoring
