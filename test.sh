@@ -23,17 +23,17 @@ mkdir -p $LOG_DIR
 
 ### TPC-H Power Test - only PostgreSQL (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
-    -sf 1 \
-    -dt \
-    -t 1200 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -ii -ic -is \
-    -nlp 8 \
-    -nbp 1 \
-    -ne 1 \
-    -nc 1 \
-    run </dev/null &>$LOG_DIR/test_tpch_testcase_1.log &
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_1.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
 
@@ -44,18 +44,18 @@ sleep 600
 
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
-    -sf 3 \
-    -dt \
-    -t 1200 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -ii -ic -is \
-    -nlp 8 \
-    -nbp 1 \
-    -ne 1 \
-    -nc 1 \
-    -m -mc \
-    run </dev/null &>$LOG_DIR/test_tpch_testcase_2.log &
+  -sf 3 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_2.log
 
@@ -70,19 +70,19 @@ sleep 10
 
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
-    -sf 1 \
-    -dt \
-    -t 1200 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -ii -ic -is \
-    -nlp 8 \
-    -nbp 1 \
-    -ne 1,2 \
-    -nc 2 \
-    -m -mc \
-    -rst shared -rss 100Gi \
-    run </dev/null &>$LOG_DIR/test_tpch_testcase_3.log &
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_3.log
 
@@ -108,17 +108,17 @@ sleep 900
 
 #### Benchbase Simple (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 5 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1 \
-    -nbt 16 \
-    -nbf 8 \
-    -ne 1 \
-    -nc 1 \
-    run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
 
@@ -133,18 +133,18 @@ sleep 10
 
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 1 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1 \
-    -nbt 16 \
-    -nbf 8 \
-    -ne 1 \
-    -nc 2 \
-    -rst shared -rss 50Gi \
-    run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
+  -sf 16 \
+  -sd 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
 
@@ -155,18 +155,18 @@ sleep 600
 
 ### Benchbase Monitoring (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 5 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1 \
-    -nbt 16 \
-    -nbf 8 \
-    -ne 1 \
-    -nc 1 \
-    -m -mc \
-    run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_3.log
 
@@ -177,19 +177,19 @@ sleep 600
 
 ### Benchbase Complex (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 2 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1,2 \
-    -nbt 8 \
-    -nbf 8 \
-    -ne 1,2 \
-    -nc 2 \
-    -m -mc \
-    -rst shared -rss 50Gi \
-    run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
+  -sf 16 \
+  -sd 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1,2 \
+  -nbt 8 \
+  -nbf 8 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_4.log
 
@@ -210,15 +210,15 @@ sleep 1800
 
 ### HammerDB Simple (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
-    -sf 16 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -nlt 8 \
-    -nbp 1 \
-    -nbt 16 \
-    -ne 1 \
-    -nc 1 \
-    run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_1.log
 
@@ -233,17 +233,17 @@ sleep 10
 
 ### HammerDB Monitoring (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
-    -sf 16 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -nlt 8 \
-    -nbp 1 \
-    -nbt 16 \
-    -ne 1 \
-    -nc 1 \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
 	-m -mc \
 	-rst shared -rss 30Gi \
-    run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_2.log
 
@@ -254,18 +254,18 @@ sleep 900
 
 ### HammerDB Complex (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
-    -sf 16 \
-    -sd 2 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -nlt 8 \
-    -nbp 1,2 \
-    -nbt 16 \
-    -ne 1,2 \
-    -nc 2 \
+  -sf 16 \
+  -sd 2 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -ne 1,2 \
+  -nc 2 \
 	-m -mc \
 	-rst shared -rss 30Gi \
-    run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_3.log
 
@@ -299,20 +299,20 @@ sleep 3600
 
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 4,8 \
-    -nlt 32,64 \
-    -nlf 1 \
-    -nbp 1 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1 \
-    -nc 1 \
-    run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 4,8 \
+  -nlt 32,64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_1.log
 
@@ -328,21 +328,21 @@ sleep 10
 
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 1 \
-    -nbp 1 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1 \
-    -nc 2 \
-    -rst shared -rss 100Gi \
-    run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_2.log
 
@@ -354,21 +354,21 @@ sleep 600
 
 ### YCSB Execution for Scaling and Repetition (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 1 \
-    -nbp 1,8 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1,2 \
-    -nc 2 \
-    -rst shared -rss 100Gi \
-    run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_3.log
 
@@ -380,21 +380,21 @@ sleep 900
 
 ### YCSB Execution Different Workload (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload e \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 1 \
-    -nbp 8 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1 \
-    -nc 1 \
-    -rst shared -rss 100Gi \
-    run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
+  -sf 1 \
+  --workload e \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_4.log
 
@@ -406,23 +406,23 @@ sleep 300
 
 #### YCSB Execution Monitoring (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 1 \
-    -nbp 1,8 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1 \
-    -nc 1 \
-    -rst shared -rss 100Gi \
-    -m -mc \
-    -sf 10 \
-    run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  -m -mc \
+  -sf 10 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_5.log
 
@@ -470,19 +470,19 @@ sleep 1800
 
 #### YCSB Scale Loading (Example-YCSB.md)
 nohup python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -tb 16384 \
-    -nlp 1,8 \
-    -nlt 64 \
-    -nlf 1,4 \
-    -nbp 1 \
-    -nbt 64 \
-    -nbf 2 \
-    -ne 1 \
-    -nc 1 \
-    run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 1,8 \
+  -nlt 64 \
+  -nlf 1,4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 2 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
 
 #### Wait so that next experiment receives a different code
 sleep 1800
@@ -490,19 +490,61 @@ sleep 1800
 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
 nohup python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -tb 16384 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 4 \
-    -nbp 1,8 \
-    -nbt 64 \
-    -nbf 2,3 \
-    -ne 1 \
-    -nc 1 \
-    run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2,3 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2,3 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+#### YCSB Persistent Storage (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2,3 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
 sleep 1800
@@ -517,7 +559,40 @@ nohup python benchbase.py -ms 1 -tr \
   -nbt 16 \
   -nbf 16 \
   -tb 1024 \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+#### Benchbase Monitoring (Example-Benchbase.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+#### Benchbase Persistent Storage (Example-Benchbase.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
 sleep 1800
