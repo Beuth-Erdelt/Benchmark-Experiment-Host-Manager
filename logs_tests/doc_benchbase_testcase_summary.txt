@@ -20,14 +20,14 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-117-generic
     node:cl-worker12
-    disk:331872776
-    datadisk:4131080
+    disk:314318932
+    datadisk:4409236
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       3198.76                                                      11442.0                                               5000.0
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       3183.99                                                      10944.0                                               5022.0
 
 Warehouses: 16
 
@@ -36,5 +36,5 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1       65.0        1.0   1.0                 886.153846
+PostgreSQL-1-1-1024-1       61.0        1.0   1.0                 944.262295
 TEST passed: Throughput (requests/second) contains no 0 or NaN

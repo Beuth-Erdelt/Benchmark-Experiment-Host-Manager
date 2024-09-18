@@ -442,7 +442,7 @@ sleep 600
 
 
 #### TCP-H Compare (Example-TPC-H.md)
-nohup python tpch.py -dt \
+nohup python tpch.py -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -450,12 +450,11 @@ nohup python tpch.py -dt \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase.log &
 
 #### Wait so that next experiment receives a different code
-sleep 7200
-
+sleep 3600
 
 
 #### HammerDB Scale (Example-HammerDB.md)
-nohup python hammerdb.py -ms 1 \
+nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -469,6 +468,59 @@ nohup python hammerdb.py -ms 1 \
 sleep 1800
 
 
+#### YCSB Scale Loading (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+    -sf 1 \
+    --workload a \
+    -dbms PostgreSQL \
+    -tb 16384 \
+    -nlp 1,8 \
+    -nlt 64 \
+    -nlf 1,4 \
+    -nbp 1 \
+    -nbt 64 \
+    -nbf 2 \
+    -ne 1 \
+    -nc 1 \
+    run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+#### YCSB Scale Benchmarking (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+    -sf 1 \
+    --workload a \
+    -dbms PostgreSQL \
+    -tb 16384 \
+    -nlp 8 \
+    -nlt 64 \
+    -nlf 4 \
+    -nbp 1,8 \
+    -nbt 64 \
+    -nbf 2,3 \
+    -ne 1 \
+    -nc 1 \
+    run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+#### Benchbase Scale (Example-Benchbase.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase.log &
+
+#### Wait so that next experiment receives a different code
+sleep 1800
 
 
 

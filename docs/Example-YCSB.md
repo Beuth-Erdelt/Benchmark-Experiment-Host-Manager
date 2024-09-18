@@ -77,43 +77,210 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 ```bash
+## Show Summary
+
+### Workload
+    YCSB SF=1
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are []. Factors for benchmarking are [].
+Benchmark is limited to DBMS PostgreSQL.
+Import is handled by 1 and 8 processes (pods).
+Loading is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-64-1-16384-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:309947380
+    datadisk:39372
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-16384-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:309947380
+    datadisk:39372
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-16384-3 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:309947380
+    datadisk:39372
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-16384-4 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:309947380
+    datadisk:39372
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-65536-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312231624
+    datadisk:2323612
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-65536-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312809324
+    datadisk:2901312
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-65536-3 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312999124
+    datadisk:3091112
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-65536-4 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:313136836
+    datadisk:3228824
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-16384-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312358576
+    datadisk:2450056
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-16384-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312804344
+    datadisk:2895824
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-16384-3 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312979088
+    datadisk:3070568
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-16384-4 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:313133696
+    datadisk:3225176
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312293100
+    datadisk:2384236
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312805416
+    datadisk:2896092
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-3 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:312979960
+    datadisk:3070620
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-4 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:313134648
+    datadisk:3225308
+    requests_cpu:4
+    requests_memory:16Gi
+
 ### Loading
-                        threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-1-16384        64   16384          1                   16285.849226                61403.0             1000000                             1283.00
-PostgreSQL-64-8-16384        64   16384          8                   16189.808395                62334.0             1000000                             1029.25
-PostgreSQL-64-1-32768        64   32768          1                   32334.206357                30927.0             1000000                             2993.00
-PostgreSQL-64-8-32768        64   32768          8                   32487.310483                30788.0             1000000                             2362.50
-PostgreSQL-64-1-49152        64   49152          1                   47429.330298                21084.0             1000000                             4343.00
-PostgreSQL-64-8-49152        64   49152          8                   48401.920774                20850.0             1000000                             3848.50
-PostgreSQL-64-1-65536        64   65536          1                   63881.436055                15654.0             1000000                             6127.00
-PostgreSQL-64-8-65536        64   65536          8                   64436.143011                15540.0             1000000                             4843.00
-PostgreSQL-64-1-81920        64   81920          1                   71078.257161                14069.0             1000000                             6219.00
-PostgreSQL-64-8-81920        64   81920          8                   72415.868804                14361.0             1000000                             5296.00
-PostgreSQL-64-1-98304        64   98304          1                   81586.032471                12257.0             1000000                             5027.00
-PostgreSQL-64-8-98304        64   98304          8                   86657.160474                11681.0             1000000                             5571.00
-PostgreSQL-64-1-114688       64  114688          1                   74693.755602                13388.0             1000000                             5923.00
-PostgreSQL-64-8-114688       64  114688          8                   80616.643342                13037.0             1000000                             5275.50
-PostgreSQL-64-1-131072       64  131072          1                   81766.148814                12230.0             1000000                             6087.00
-PostgreSQL-64-8-131072       64  131072          8                   80708.979092                12469.0             1000000                             5656.00
+                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-1-16384               1       64   16384          1                       0.000000                10233.0                   0                                0.00
+PostgreSQL-64-8-16384               1       64   16384          8                   16339.268600                61205.0             1000000                              634.25
+PostgreSQL-64-1-65536               1       64   65536          1                   64160.143719                15586.0             1000000                             4099.00
+PostgreSQL-64-8-65536               1       64   65536          8                   64817.216610                15431.0             1000000                             3308.50
 
 ### Execution
-                          threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-1-16384-1        64   16384          1                       16281.61                61419.0            499663                            540.00              500337                              743.00
-PostgreSQL-64-8-16384-1        64   16384          8                       16313.68                61310.0            500621                            544.75              499379                              759.38
-PostgreSQL-64-1-32768-1        64   32768          1                       32171.93                31083.0            500316                            570.00              499684                              925.00
-PostgreSQL-64-8-32768-1        64   32768          8                       32481.38                30794.0            500704                            594.88              499296                              839.75
-PostgreSQL-64-1-49152-1        64   49152          1                       48351.22                20682.0            499465                            808.00              500535                             1395.00
-PostgreSQL-64-8-49152-1        64   49152          8                       48521.04                20624.0            500275                            946.75              499725                             1554.88
-PostgreSQL-64-1-65536-1        64   65536          1                       62468.77                16008.0            499253                           1069.00              500747                             1656.00
-PostgreSQL-64-8-65536-1        64   65536          8                       64434.09                15541.0            500305                           1056.00              499695                             1617.00
-PostgreSQL-64-1-81920-1        64   81920          1                       78659.64                12713.0            500203                           1313.00              499797                             2055.00
-PostgreSQL-64-8-81920-1        64   81920          8                       79285.81                12740.0            500409                           1337.38              499591                             2126.25
-PostgreSQL-64-1-98304-1        64   98304          1                       89421.44                11183.0            499133                           1425.00              500867                             2767.00
-PostgreSQL-64-8-98304-1        64   98304          8                       87541.47                11748.0            500122                           1363.75              499878                             2414.00
-PostgreSQL-64-1-114688-1       64  114688          1                      101770.81                 9826.0            500000                           1351.00              500000                             2213.00
-PostgreSQL-64-8-114688-1       64  114688          8                      104663.23                 9835.0            500450                           1515.62              499550                             2866.25
-PostgreSQL-64-1-131072-1       64  131072          1                       88354.83                11318.0            499788                           1566.00              500212                             3451.00
-PostgreSQL-64-8-131072-1       64  131072          8                      115356.26                 9250.0            500084                           1526.75              499916                             3356.75
+                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-1-16384-1               1       64   32768          1                       32454.89                30812.0                 0                              0.00                   0                                0.00
+PostgreSQL-64-1-65536-1               1       64   32768          1                       32404.41                30860.0            500789                            375.00              499211                              572.00
+PostgreSQL-64-8-16384-1               1       64   32768          1                       32425.42                30840.0            500473                            384.00              499527                              566.00
+PostgreSQL-64-8-65536-1               1       64   32768          1                       32410.71                30854.0            499892                            398.00              500108                              585.00
+PostgreSQL-64-1-16384-2               1       64   32768          8                       32588.42                30695.0                 0                              0.00                   0                                0.00
+PostgreSQL-64-1-65536-2               1       64   32768          8                       32585.10                30707.0            500025                            367.38              499975                              509.88
+PostgreSQL-64-8-16384-2               1       64   32768          8                       32586.03                30696.0            500376                            371.75              499624                              515.75
+PostgreSQL-64-8-65536-2               1       64   32768          8                       32591.07                30690.0            501194                            392.50              498806                              524.12
+PostgreSQL-64-1-16384-3               1       64   49152          1                       48306.85                20701.0                 0                              0.00                   0                                0.00
+PostgreSQL-64-1-65536-3               1       64   49152          1                       48358.24                20679.0            500744                            507.00              499256                              799.00
+PostgreSQL-64-8-16384-3               1       64   49152          1                       48285.85                20710.0            500172                            444.00              499828                              745.00
+PostgreSQL-64-8-65536-3               1       64   49152          1                       48376.95                20671.0            500631                            455.00              499369                              680.00
+PostgreSQL-64-1-16384-4               1       64   49152          8                       48738.89                20537.0                 0                              0.00                   0                                0.00
+PostgreSQL-64-1-65536-4               1       64   49152          8                       48736.51                20530.0            500011                            379.38              499989                              540.25
+PostgreSQL-64-8-16384-4               1       64   49152          8                       48734.14                20536.0            500680                            402.50              499320                              595.00
+PostgreSQL-64-8-65536-4               1       64   49152          8                       48738.59                20525.0            500381                            381.25              499619                              548.75
+TEST failed: [OVERALL].Throughput(ops/sec) contains 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 ```
 
 We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
