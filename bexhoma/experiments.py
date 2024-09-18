@@ -153,6 +153,8 @@ class default():
         if len(value) > 0:
             values = value.split(",")
             value = [int(x) for x in values]
+        elif value.isdigit():
+            value = list(str(int(value)))
         return value
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
