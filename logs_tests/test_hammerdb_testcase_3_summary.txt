@@ -25,10 +25,10 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:4290673
+    disk:246389540
+    datadisk:4361121
     volume_size:30G
-    volume_used:4.1G
+    volume_used:4.2G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
@@ -37,8 +37,8 @@ PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:4396621
+    disk:246389540
+    datadisk:4466781
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -49,8 +49,8 @@ PostgreSQL-BHT-8-1-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4531061
+    disk:246389540
+    datadisk:4598965
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -61,10 +61,10 @@ PostgreSQL-BHT-8-1-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4624397
+    disk:246389540
+    datadisk:4694789
     volume_size:30G
-    volume_used:4.4G
+    volume_used:4.2G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
@@ -73,8 +73,8 @@ PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4726729
+    disk:246389540
+    datadisk:4804161
     volume_size:30G
     volume_used:4.6G
     requests_cpu:4
@@ -85,10 +85,10 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4804397
+    disk:246389540
+    datadisk:4882517
     volume_size:30G
-    volume_used:4.6G
+    volume_used:4.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
@@ -97,10 +97,10 @@ PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4909909
+    disk:246389540
+    datadisk:4981485
     volume_size:30G
-    volume_used:4.6G
+    volume_used:4.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
@@ -109,59 +109,59 @@ PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4987269
+    disk:246389712
+    datadisk:5056789
     volume_size:30G
     volume_used:4.8G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                        experiment_run  vusers  client  pod_count      NOPM       TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1      16       1          1  10957.00  34241.00         2       0
-PostgreSQL-BHT-8-1-1-2               1      32       2          2  11999.50  34535.50         2       0
-PostgreSQL-BHT-8-1-1-3               1      16       3          2   9345.50  29973.00         2       0
-PostgreSQL-BHT-8-1-1-4               1      32       4          4   9840.75  28867.75         2       0
-PostgreSQL-BHT-8-1-2-1               2      16       1          1   9676.00  30576.00         2       0
-PostgreSQL-BHT-8-1-2-2               2      32       2          2  10901.50  31587.00         2       0
-PostgreSQL-BHT-8-1-2-3               2      16       3          2   8787.50  27795.00         2       0
-PostgreSQL-BHT-8-1-2-4               2      32       4          4   9313.25  27692.25         2       0
+                        experiment_run  vusers  client  pod_count      NOPM      TPM  duration  errors
+PostgreSQL-BHT-8-1-1-1               1      16       1          1  11158.00  34741.0         2       0
+PostgreSQL-BHT-8-1-1-2               1      32       2          2  11567.00  33597.5         2       0
+PostgreSQL-BHT-8-1-1-3               1      16       3          2   9566.50  30690.0         2       0
+PostgreSQL-BHT-8-1-1-4               1      32       4          4  10431.75  30559.5         2       0
+PostgreSQL-BHT-8-1-2-1               2      16       1          1   9440.00  30013.0         2       0
+PostgreSQL-BHT-8-1-2-2               2      32       2          2  10366.00  30044.5         2       0
+PostgreSQL-BHT-8-1-2-3               2      16       3          2   8429.00  26961.0         2       0
+PostgreSQL-BHT-8-1-2-4               2      32       4          4   9383.50  27446.5         2       0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-BHT-8-1 - Pods [[2, 4, 2, 1], [4, 2, 2, 1]]
+DBMS PostgreSQL-BHT-8-1 - Pods [[4, 2, 2, 1], [4, 1, 2, 2]]
 
 ### Loading
                         time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1-1      100.0        1.0   1.0                      576.0
-PostgreSQL-BHT-8-1-1-2      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-1-3      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-1-4      100.0        1.0   4.0                      576.0
-PostgreSQL-BHT-8-1-2-1      100.0        1.0   1.0                      576.0
-PostgreSQL-BHT-8-1-2-2      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-2-3      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-2-4      100.0        1.0   4.0                      576.0
+PostgreSQL-BHT-8-1-1-1      110.0        1.0   1.0                 523.636364
+PostgreSQL-BHT-8-1-1-2      110.0        1.0   2.0                 523.636364
+PostgreSQL-BHT-8-1-1-3      110.0        1.0   2.0                 523.636364
+PostgreSQL-BHT-8-1-1-4      110.0        1.0   4.0                 523.636364
+PostgreSQL-BHT-8-1-2-1      110.0        1.0   1.0                 523.636364
+PostgreSQL-BHT-8-1-2-2      110.0        1.0   2.0                 523.636364
+PostgreSQL-BHT-8-1-2-3      110.0        1.0   2.0                 523.636364
+PostgreSQL-BHT-8-1-2-4      110.0        1.0   4.0                 523.636364
 
 ### Execution - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1    14035.47    62.87          4.93                 7.14
-PostgreSQL-BHT-8-1-1-2    15629.52    63.64          5.63                 6.48
-PostgreSQL-BHT-8-1-1-3    15257.81    53.30          5.24                 6.19
-PostgreSQL-BHT-8-1-1-4    14176.61    63.60          5.91                 6.94
-PostgreSQL-BHT-8-1-2-1    60623.84    62.83          9.27                12.83
-PostgreSQL-BHT-8-1-2-2    13874.96    63.60          5.85                 6.83
-PostgreSQL-BHT-8-1-2-3    15682.67    62.78          5.50                 6.56
-PostgreSQL-BHT-8-1-2-4    15723.85    63.53          6.05                 7.18
+PostgreSQL-BHT-8-1-1-1    14269.78    61.29          5.08                 7.29
+PostgreSQL-BHT-8-1-1-2    15565.25    62.69          5.48                 7.74
+PostgreSQL-BHT-8-1-1-3    13643.26    62.83          5.29                 7.71
+PostgreSQL-BHT-8-1-1-4    16152.32    63.63          5.85                 8.33
+PostgreSQL-BHT-8-1-2-1    62489.86    62.81          9.42                14.51
+PostgreSQL-BHT-8-1-2-2    15808.32    63.63          5.98                 8.59
+PostgreSQL-BHT-8-1-2-3    14594.90    62.85          5.57                 8.26
+PostgreSQL-BHT-8-1-2-4    16079.04    63.64          6.15                 8.91
 
 ### Execution - Benchmarker
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       22.07     0.10          0.06                 0.06
-PostgreSQL-BHT-8-1-1-2       23.76     0.11          0.17                 0.17
-PostgreSQL-BHT-8-1-1-3       19.43     0.11          0.18                 0.18
-PostgreSQL-BHT-8-1-1-4       17.06     0.05          0.20                 0.20
-PostgreSQL-BHT-8-1-2-1       23.18     0.09          0.19                 0.19
-PostgreSQL-BHT-8-1-2-2       18.83     0.05          0.16                 0.16
-PostgreSQL-BHT-8-1-2-3       17.56     0.08          0.18                 0.18
-PostgreSQL-BHT-8-1-2-4       18.60     0.05          0.20                 0.20
+PostgreSQL-BHT-8-1-1-1       23.72     0.10          0.06                 0.06
+PostgreSQL-BHT-8-1-1-2       23.72     0.10          0.16                 0.17
+PostgreSQL-BHT-8-1-1-3       24.45     0.04          0.18                 0.18
+PostgreSQL-BHT-8-1-1-4       20.56     0.05          0.20                 0.20
+PostgreSQL-BHT-8-1-2-1       22.63     0.08          0.13                 0.13
+PostgreSQL-BHT-8-1-2-2       17.60     0.05          0.16                 0.16
+PostgreSQL-BHT-8-1-2-3       23.32     0.08          0.18                 0.18
+PostgreSQL-BHT-8-1-2-4       14.29     0.05          0.20                 0.20
 TEST passed: NOPM contains no 0 or NaN

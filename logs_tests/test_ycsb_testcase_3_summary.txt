@@ -24,10 +24,10 @@ PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:2931136
+    disk:246389712
+    datadisk:2937640
     volume_size:100G
-    volume_used:2.8G
+    volume_used:2.9G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-1-2 uses docker image postgres:16.1
@@ -36,10 +36,10 @@ PostgreSQL-64-8-131072-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:2940816
+    disk:246389712
+    datadisk:2947608
     volume_size:100G
-    volume_used:2.8G
+    volume_used:2.9G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-1-3 uses docker image postgres:16.1
@@ -48,10 +48,10 @@ PostgreSQL-64-8-131072-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3138456
+    disk:246389712
+    datadisk:3153880
     volume_size:100G
-    volume_used:2.8G
+    volume_used:2.9G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-1-4 uses docker image postgres:16.1
@@ -60,10 +60,10 @@ PostgreSQL-64-8-131072-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3288736
+    disk:246389712
+    datadisk:3344016
     volume_size:100G
-    volume_used:2.8G
+    volume_used:2.9G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
@@ -72,10 +72,10 @@ PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3520176
+    disk:246389712
+    datadisk:3654432
     volume_size:100G
-    volume_used:3.4G
+    volume_used:3.5G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-2 uses docker image postgres:16.1
@@ -84,10 +84,10 @@ PostgreSQL-64-8-131072-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3524128
+    disk:246389880
+    datadisk:3657856
     volume_size:100G
-    volume_used:3.4G
+    volume_used:3.5G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-3 uses docker image postgres:16.1
@@ -96,10 +96,10 @@ PostgreSQL-64-8-131072-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3646168
+    disk:246389880
+    datadisk:3804824
     volume_size:100G
-    volume_used:3.4G
+    volume_used:3.5G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-4 uses docker image postgres:16.1
@@ -108,21 +108,21 @@ PostgreSQL-64-8-131072-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3648904
+    disk:246389880
+    datadisk:3807480
     volume_size:100G
-    volume_used:3.4G
+    volume_used:3.5G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                       63564.71                15732.0            500546                           1365.00              499454                             1713.00
-PostgreSQL-64-8-131072-1-3               1       64  131072          8                      119634.40                 8507.0            500220                            968.25              499780                             1517.12
-PostgreSQL-64-8-131072-1-2               1      128  262144          2                       92718.61                10958.0            499999                           1936.50              500001                            53647.00
-PostgreSQL-64-8-131072-1-4               1      128  262144         16                      112027.76                 9416.0            499650                           2935.88              500350                            21887.50
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       57032.05                17534.0            499642                           1364.00              500358                             1683.00
-PostgreSQL-64-8-131072-2-3               2       64  131072          8                      127014.91                 7907.0            499572                            873.00              500428                             1386.50
-PostgreSQL-64-8-131072-2-2               2      128  262144          2                       97432.97                10338.0            500001                           1822.50              499999                            44143.00
-PostgreSQL-64-8-131072-2-4               2      128  262144         16                      140828.26                 7483.0            500423                           3146.62              499577                             5770.75
+PostgreSQL-64-8-131072-1-1               1       64  131072          1                       65893.52                15176.0            500058                           1442.00              499942                             1972.00
+PostgreSQL-64-8-131072-1-3               1       64  131072          8                      120155.75                 8844.0            500990                           1375.12              499010                             1966.38
+PostgreSQL-64-8-131072-1-2               1      128  262144          2                       64700.80                15517.0            499365                           1927.50              500635                            65279.00
+PostgreSQL-64-8-131072-1-4               1      128  262144         16                       94954.08                10775.0            499576                           2759.25              500424                            48961.00
+PostgreSQL-64-8-131072-2-1               2       64  131072          1                       46080.83                21701.0            500632                           1418.00              499368                             1856.00
+PostgreSQL-64-8-131072-2-3               2       64  131072          8                      126982.27                 7888.0            501068                            904.75              498932                             1460.88
+PostgreSQL-64-8-131072-2-2               2      128  262144          2                       89340.79                11341.0            499776                           1903.00              500224                            57727.00
+PostgreSQL-64-8-131072-2-4               2      128  262144         16                      105175.49                 9834.0            499656                           2621.88              500344                            37617.00
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

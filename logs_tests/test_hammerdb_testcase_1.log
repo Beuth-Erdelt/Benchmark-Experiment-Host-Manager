@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1726509581
-Experiment                    : starts at 2024-09-16 19:59:41.137149 (1245521.26112973)
+Experiment                    : has code 1726836790
+Experiment                    : starts at 2024-09-20 14:53:09.801374 (1572729.925355646)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
@@ -21,10 +21,10 @@ done
 PostgreSQL-BHT-8-1            : will start now
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-16 18:01:41 (that is in 60 secs)
+PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-20 12:55:10 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-16 18:01:41
+PostgreSQL-BHT-8-1            : will start loading but not before 2024-09-20 12:55:10
 done
 PostgreSQL-BHT-8-1            : is not loaded yet
 PostgreSQL-BHT-8-1            : start asynch loading scripts of type loaded
@@ -41,9 +41,9 @@ PostgreSQL-BHT-8-1            : loader timespan (first to last [s]) = 100
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
 PostgreSQL-BHT-8-1-1          : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726509581
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726836790
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726509581-1-1-xg77r: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726836790-1-1-wsws5: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -76,12 +76,12 @@ done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-1          : showing benchmarker times
 PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 462
-PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1726509828, 1726510276)]
-PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1726509828, 1726510276)]}
+PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1726837037, 1726837475)]
+PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1726837037, 1726837475)]}
 done
 PostgreSQL-BHT-8-1            : can be stopped
-Experiment ends at 2024-09-16 20:12:00.227867 (1246260.351846938): 739.0907172081061s total
-bexhoma-dashboard-9b85f945f-lk8lz Running
+Experiment ends at 2024-09-20 15:05:28.750210 (1573468.874190954): 738.948835307965s total
+bexhoma-dashboard-9b85f945f-lvz65 Running
                                 connection  ...        dbms
 PostgreSQL-BHT-8-1-1                        ...            
 0                     PostgreSQL-BHT-8-1-1  ...  PostgreSQL
@@ -131,14 +131,14 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249750592
-    datadisk:3376528
+    disk:249765884
+    datadisk:3376500
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11500.0  35639.0         5       0
+PostgreSQL-BHT-8-1-1               1      16       1          1  11766.0  36465.0         5       0
 
 Warehouses: 16
 
