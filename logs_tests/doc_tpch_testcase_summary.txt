@@ -8,50 +8,50 @@ TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Import sets indexes and constraints after loading and recomputes statistics.
-Import is handled by 8 processes (pods).
-Loading is tested with [8] threads, split into [8] pods.
+Import is handled by 4 processes (pods).
+Loading is tested with [4] threads, split into [4] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
-    RAM:541025361920
+MariaDB-BHT-4-1-1 uses docker image mariadb:11.4.2
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker2
-    disk:282706024
-    datadisk:2143560
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:362155480
+    datadisk:2138440
     requests_cpu:4
     requests_memory:16Gi
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+MonetDB-BHT-4-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:363179996
+    datadisk:3162556
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-4-4-1-1 uses docker image mysql:8.4.0
+    RAM:541008601088
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:171043400
+    datadisk:11440684
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-BHT-4-1-1 uses docker image postgres:16.1
     RAM:541008601088
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-117-generic
     node:cl-worker4
-    disk:180008232
-    datadisk:2841028
-    requests_cpu:4
-    requests_memory:16Gi
-MySQL-BHT-8-8-1-1 uses docker image mysql:8.4.0
-    RAM:541008592896
-    Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker12
-    disk:321375912
-    datadisk:11440660
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008592896
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker12
-    disk:321493920
-    datadisk:2822472
+    disk:182797600
+    datadisk:2822600
     requests_cpu:4
     requests_memory:16Gi
 
@@ -59,63 +59,85 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
 No errors
 
 ### Warnings (result mismatch)
-No warnings
+                                                     MariaDB-BHT-4-1-1  MonetDB-BHT-4-1-1  MySQL-BHT-4-4-1-1  PostgreSQL-BHT-4-1-1
+Pricing Summary Report (TPC-H Q1)                                False              False              False                 False
+Minimum Cost Supplier Query (TPC-H Q2)                           False              False              False                 False
+Shipping Priority (TPC-H Q3)                                     False              False              False                 False
+Order Priority Checking Query (TPC-H Q4)                         False              False              False                 False
+Local Supplier Volume (TPC-H Q5)                                 False              False              False                 False
+Forecasting Revenue Change (TPC-H Q6)                            False              False              False                 False
+Forecasting Revenue Change (TPC-H Q7)                            False              False              False                 False
+National Market Share (TPC-H Q8)                                 False              False              False                 False
+Product Type Profit Measure (TPC-H Q9)                           False              False              False                 False
+Forecasting Revenue Change (TPC-H Q10)                           False              False              False                  True
+Important Stock Identification (TPC-H Q11)                       False              False              False                 False
+Shipping Modes and Order Priority (TPC-H Q12)                    False              False              False                 False
+Customer Distribution (TPC-H Q13)                                False              False              False                 False
+Forecasting Revenue Change (TPC-H Q14)                           False              False              False                 False
+Top Supplier Query (TPC-H Q15)                                   False              False              False                 False
+Parts/Supplier Relationship (TPC-H Q16)                          False              False              False                 False
+Small-Quantity-Order Revenue (TPC-H Q17)                         False              False              False                 False
+Large Volume Customer (TPC-H Q18)                                False              False              False                 False
+Discounted Revenue (TPC-H Q19)                                   False              False              False                 False
+Potential Part Promotion (TPC-H Q20)                             False              False              False                 False
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)              False              False              False                 False
+Global Sales Opportunity Query (TPC-H Q22)                       False              False              False                 False
 
 ### Latency of Timer Execution [ms]
-DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                             31726.13            1290.01           28834.50               2508.66
-Minimum Cost Supplier Query (TPC-H Q2)                         1479.40              33.41             364.23                420.15
-Shipping Priority (TPC-H Q3)                                   6194.10             268.61            4543.48                734.04
-Order Priority Checking Query (TPC-H Q4)                       1289.62              91.11            1639.62               1261.83
-Local Supplier Volume (TPC-H Q5)                               3726.42              98.37            4299.99                636.45
-Forecasting Revenue Change (TPC-H Q6)                          3830.74              31.23            4441.98                487.02
-Forecasting Revenue Change (TPC-H Q7)                          4036.30             145.60            6396.58                752.47
-National Market Share (TPC-H Q8)                               7004.33             445.27            9484.54                594.78
-Product Type Profit Measure (TPC-H Q9)                         6753.58             162.92            7246.71               1057.44
-Forecasting Revenue Change (TPC-H Q10)                         3599.59             179.59            3126.08               1212.55
-Important Stock Identification (TPC-H Q11)                      484.42              31.82             569.96                244.51
-Shipping Modes and Order Priority (TPC-H Q12)                 13594.29              83.16            6890.90               1010.08
-Customer Distribution (TPC-H Q13)                             11032.03             648.28           13375.74               1929.80
-Forecasting Revenue Change (TPC-H Q14)                        32842.79              44.52            5321.48                532.46
-Top Supplier Query (TPC-H Q15)                                 8406.00              46.05           44265.10                532.97
-Parts/Supplier Relationship (TPC-H Q16)                         814.07             127.71             877.14                542.29
-Small-Quantity-Order Revenue (TPC-H Q17)                        174.51             108.36            1157.29               2053.85
-Large Volume Customer (TPC-H Q18)                             11572.49             239.42            5794.85               6398.98
-Discounted Revenue (TPC-H Q19)                                  370.18              97.31             412.61                680.27
-Potential Part Promotion (TPC-H Q20)                            750.81             113.92             814.39                681.44
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          226148.63            2882.67           18624.64                886.54
-Global Sales Opportunity Query (TPC-H Q22)                      464.68              82.76             471.52                238.55
+DBMS                                                 MariaDB-BHT-4-1-1  MonetDB-BHT-4-1-1  MySQL-BHT-4-4-1-1  PostgreSQL-BHT-4-1-1
+Pricing Summary Report (TPC-H Q1)                             27634.87            1167.02           25477.62               2298.14
+Minimum Cost Supplier Query (TPC-H Q2)                         1241.09              24.90             317.27                447.40
+Shipping Priority (TPC-H Q3)                                   5242.43             109.44            3896.38                668.67
+Order Priority Checking Query (TPC-H Q4)                       1243.39              69.38            1388.21               1121.73
+Local Supplier Volume (TPC-H Q5)                               3549.20              76.32            3182.68                583.33
+Forecasting Revenue Change (TPC-H Q6)                          3557.61              31.36            3578.17                449.67
+Forecasting Revenue Change (TPC-H Q7)                          3866.20              89.54            5344.91                711.03
+National Market Share (TPC-H Q8)                               6598.59             385.57            8126.23                776.40
+Product Type Profit Measure (TPC-H Q9)                         5808.52              94.13            6305.53                976.54
+Forecasting Revenue Change (TPC-H Q10)                         2932.28             161.33            2654.69               1126.31
+Important Stock Identification (TPC-H Q11)                      383.35              25.24             454.64                259.81
+Shipping Modes and Order Priority (TPC-H Q12)                 11985.54              61.64            5926.49                876.73
+Customer Distribution (TPC-H Q13)                              9856.14             550.60           11577.54               1713.26
+Forecasting Revenue Change (TPC-H Q14)                        29457.39              45.90            4485.44                486.85
+Top Supplier Query (TPC-H Q15)                                 7766.05              36.68           39089.45                492.50
+Parts/Supplier Relationship (TPC-H Q16)                         686.27             100.77             770.04                477.91
+Small-Quantity-Order Revenue (TPC-H Q17)                        169.77              69.10            1066.96               1886.75
+Large Volume Customer (TPC-H Q18)                             10533.00             184.85            5281.71               5709.71
+Discounted Revenue (TPC-H Q19)                                  296.76              66.37             381.85                627.28
+Potential Part Promotion (TPC-H Q20)                            534.58              76.97             685.49                588.08
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          205328.62            1865.43           16133.79                828.34
+Global Sales Opportunity Query (TPC-H Q22)                      414.81              52.41             422.86                254.95
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              1.0          192.0         1.0     1031.0    1256.0
-MonetDB-BHT-8-1-1              0.0           23.0         8.0       32.0      95.0
-MySQL-BHT-8-8-1-1              1.0          490.0         3.0     2104.0    2610.0
-PostgreSQL-BHT-8-1-1           1.0           31.0         1.0       88.0     154.0
+MariaDB-BHT-4-1-1              0.0          270.0         2.0     1546.0    1826.0
+MonetDB-BHT-4-1-1              1.0           27.0         8.0       35.0      76.0
+MySQL-BHT-4-4-1-1              1.0          496.0         5.0     2021.0    2546.0
+PostgreSQL-BHT-4-1-1           1.0           35.0         1.0       79.0     121.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-MariaDB-BHT-8-1-1              3.80
-MonetDB-BHT-8-1-1              0.16
-MySQL-BHT-8-8-1-1              3.46
-PostgreSQL-BHT-8-1-1           0.85
+MariaDB-BHT-4-1-1              3.35
+MonetDB-BHT-4-1-1              0.12
+MySQL-BHT-4-4-1-1              2.96
+PostgreSQL-BHT-4-1-1           0.81
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1                968.01
-MonetDB-BHT-8-1-1              25546.11
-MySQL-BHT-8-8-1-1               1064.15
-PostgreSQL-BHT-8-1-1            4339.44
+MariaDB-BHT-4-1-1               1100.50
+MonetDB-BHT-4-1-1              34490.14
+MySQL-BHT-4-4-1-1               1239.67
+PostgreSQL-BHT-4-1-1            4597.26
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-MariaDB-BHT-8-1    1  1              1                378      1   1                   209.52
-MonetDB-BHT-8-1    1  1              1                  9      1   1                  8800.00
-MySQL-BHT-8-8-1    1  1              1                172      1   1                   460.47
-PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+MariaDB-BHT-4-1    1  1              1                342      1   1                   231.58
+MonetDB-BHT-4-1    1  1              1                  8      1   1                  9900.00
+MySQL-BHT-4-4-1    1  1              1                149      1   1                   531.54
+PostgreSQL-BHT-4-1 1  1              1                 25      1   1                  3168.00
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
