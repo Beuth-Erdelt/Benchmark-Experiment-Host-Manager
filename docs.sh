@@ -25,7 +25,25 @@ nohup python hammerdb.py -ms 1 -tr \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase.log &
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_scale.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+#### HammerDB Monitoring (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log &
 
 
 #### Wait so that next experiment receives a different code
@@ -46,6 +64,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 2 \
   -ne 1 \
   -nc 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
 
 #### Wait so that next experiment receives a different code
@@ -66,6 +85,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 2,3 \
   -ne 1 \
   -nc 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
 
 #### Wait so that next experiment receives a different code
@@ -87,6 +107,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
@@ -108,6 +129,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
@@ -123,6 +145,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbt 16 \
   -nbf 16 \
   -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
 
 #### Wait so that next experiment receives a different code
@@ -139,6 +162,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
@@ -156,6 +180,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -nc 2 \
   -rst shared -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
@@ -168,6 +193,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nlt 8 \
   -sf 1 \
   -ii -ic -is \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase.log &
 
 #### Wait so that next experiment receives a different code
