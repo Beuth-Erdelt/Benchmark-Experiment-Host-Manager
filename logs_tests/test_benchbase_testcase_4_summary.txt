@@ -25,8 +25,8 @@ PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:4274592
+    disk:246389372
+    datadisk:4237976
     volume_size:50G
     volume_used:4.1G
     requests_cpu:4
@@ -37,8 +37,8 @@ PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:4382720
+    disk:246389372
+    datadisk:4356736
     volume_size:50G
     volume_used:4.1G
     requests_cpu:4
@@ -49,8 +49,8 @@ PostgreSQL-1-1-1024-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:4634176
+    disk:246389372
+    datadisk:4601232
     volume_size:50G
     volume_used:4.1G
     requests_cpu:4
@@ -61,8 +61,8 @@ PostgreSQL-1-1-1024-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:4964192
+    disk:246389372
+    datadisk:4961840
     volume_size:50G
     volume_used:4.1G
     requests_cpu:4
@@ -73,8 +73,8 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:5901576
+    disk:246389372
+    datadisk:5878608
     volume_size:50G
     volume_used:5.7G
     requests_cpu:4
@@ -85,8 +85,8 @@ PostgreSQL-1-1-1024-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:6016656
+    disk:246389372
+    datadisk:5979512
     volume_size:50G
     volume_used:5.7G
     requests_cpu:4
@@ -97,10 +97,10 @@ PostgreSQL-1-1-1024-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:6274416
+    disk:246389372
+    datadisk:6218752
     volume_size:50G
-    volume_used:5.8G
+    volume_used:5.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
@@ -109,59 +109,59 @@ PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:6411736
+    disk:246389372
+    datadisk:6354408
     volume_size:50G
-    volume_used:5.8G
+    volume_used:6.0G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                          experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1028.55                                                      12618.0                                              7768.00
-PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2408.42                                                      15433.0                                              6634.00
-PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1300.57                                                      13805.0                                              6140.00
-PostgreSQL-1-1-1024-1-4               1         16   16384          4  120.0                       1992.49                                                      18331.0                                              8018.75
-PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                       1095.30                                                      12173.0                                              7294.00
-PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2488.65                                                      15011.0                                              6419.00
-PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1344.85                                                      13752.0                                              5937.50
-PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       2103.45                                                      17977.0                                              7594.50
+PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1124.22                                                      12434.0                                               7106.0
+PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2327.23                                                      15703.0                                               6866.0
+PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1277.48                                                      14213.0                                               6250.0
+PostgreSQL-1-1-1024-1-4               1         16   16384          4  120.0                       1955.67                                                      18427.0                                               8168.0
+PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                        967.22                                                      13188.0                                               8260.0
+PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2342.42                                                      15399.0                                               6818.5
+PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1330.74                                                      13749.0                                               6001.0
+PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       2062.63                                                      17990.0                                               7746.0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-1-1-1024 - Pods [[4, 2, 2, 1], [2, 4, 2, 1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[4, 2, 1, 2], [2, 4, 1, 2]]
 
 ### Loading
                          time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1-1      149.0        1.0   1.0                 386.577181
-PostgreSQL-1-1-1024-1-2      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-1-3      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-1-4      149.0        1.0   4.0                 386.577181
-PostgreSQL-1-1-1024-2-1      149.0        1.0   1.0                 386.577181
-PostgreSQL-1-1-1024-2-2      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-2-3      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-2-4      149.0        1.0   4.0                 386.577181
+PostgreSQL-1-1-1024-1-1      145.0        1.0   1.0                 397.241379
+PostgreSQL-1-1-1024-1-2      145.0        1.0   2.0                 397.241379
+PostgreSQL-1-1-1024-1-3      145.0        1.0   2.0                 397.241379
+PostgreSQL-1-1-1024-1-4      145.0        1.0   4.0                 397.241379
+PostgreSQL-1-1-1024-2-1      145.0        1.0   1.0                 397.241379
+PostgreSQL-1-1-1024-2-2      145.0        1.0   2.0                 397.241379
+PostgreSQL-1-1-1024-2-3      145.0        1.0   2.0                 397.241379
+PostgreSQL-1-1-1024-2-4      145.0        1.0   4.0                 397.241379
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      147.29     0.04          3.00                 5.20
-PostgreSQL-1-1-1024-1-2      507.27     7.11          3.58                 6.01
-PostgreSQL-1-1-1024-1-3      305.77     1.43          3.79                 6.42
-PostgreSQL-1-1-1024-1-4      516.16     0.00          4.07                 6.88
-PostgreSQL-1-1-1024-2-1      189.92     3.48          7.14                12.87
-PostgreSQL-1-1-1024-2-2      618.11     2.24          3.82                 6.94
-PostgreSQL-1-1-1024-2-3      292.17     3.55          4.01                 7.28
-PostgreSQL-1-1-1024-2-4      562.41     0.00          4.33                 7.82
+PostgreSQL-1-1-1024-1-1      301.65     0.71          3.19                 5.46
+PostgreSQL-1-1-1024-1-2      747.20     5.61          3.70                 6.21
+PostgreSQL-1-1-1024-1-3      533.43     3.60          3.83                 6.49
+PostgreSQL-1-1-1024-1-4      784.53     5.81          4.02                 6.87
+PostgreSQL-1-1-1024-2-1      287.54     4.01          7.22                12.92
+PostgreSQL-1-1-1024-2-2      857.08     7.27          3.84                 6.92
+PostgreSQL-1-1-1024-2-3      532.30     3.69          3.96                 7.18
+PostgreSQL-1-1-1024-2-4      387.42     0.55          4.22                 7.55
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      230.76     1.06          1.32                 1.32
-PostgreSQL-1-1-1024-1-2      297.47     2.55          3.97                 3.97
-PostgreSQL-1-1-1024-1-3      230.76     0.00          4.88                 4.88
-PostgreSQL-1-1-1024-1-4      315.54     2.08          5.08                 5.08
-PostgreSQL-1-1-1024-2-1      233.12     0.00          3.05                 3.05
-PostgreSQL-1-1-1024-2-2      357.43     2.48          3.47                 3.47
-PostgreSQL-1-1-1024-2-3      167.33     1.27          4.75                 4.75
-PostgreSQL-1-1-1024-2-4      310.40     0.00          5.77                 5.77
+PostgreSQL-1-1-1024-1-1      170.01     2.47          1.31                 1.31
+PostgreSQL-1-1-1024-1-2      439.62     2.34          3.98                 3.98
+PostgreSQL-1-1-1024-1-3      192.43     1.18          5.05                 5.05
+PostgreSQL-1-1-1024-1-4      272.48     0.99          6.42                 6.42
+PostgreSQL-1-1-1024-2-1      288.38     2.40          4.31                 4.31
+PostgreSQL-1-1-1024-2-2      446.81     4.64          4.00                 4.00
+PostgreSQL-1-1-1024-2-3      224.79     0.00          5.33                 5.33
+PostgreSQL-1-1-1024-2-4      504.53     0.00          6.64                 6.64
 TEST passed: Throughput (requests/second) contains no 0 or NaN

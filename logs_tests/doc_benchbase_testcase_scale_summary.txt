@@ -8,36 +8,45 @@ Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
 Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
 Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [16] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008601088
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:250798496
-    datadisk:4409292
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:182319476
+    datadisk:3819620
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:185599412
+    datadisk:7083172
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2600.11                                                      13420.0                                               6148.0
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2134.88                                                      16764.0                                               7491.0
+PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       1909.99                                                      19804.0                                               8374.0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-1-1-1024 - Pods [[1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      134.0        1.0   1.0                 429.850746
+PostgreSQL-1-1-1024-1       63.0        1.0   1.0                 914.285714
+PostgreSQL-1-1-1024-2       63.0        1.0   2.0                 914.285714
 TEST passed: Throughput (requests/second) contains no 0 or NaN

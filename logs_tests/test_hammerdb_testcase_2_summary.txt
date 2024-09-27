@@ -25,8 +25,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374060
-    datadisk:3381837
+    disk:246389548
+    datadisk:3381293
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
@@ -34,7 +34,7 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
 
 ### Execution
                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11758.0  36683.0         5       0
+PostgreSQL-BHT-8-1-1               1      16       1          1  13227.0  40854.0         5       0
 
 Warehouses: 16
 
@@ -43,21 +43,21 @@ DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
 
 ### Loading
                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1      100.0        1.0   1.0                      576.0
+PostgreSQL-BHT-8-1-1      110.0        1.0   1.0                 523.636364
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       92.17     1.61          3.66                  5.3
+PostgreSQL-BHT-8-1-1      126.31        0          3.82                 5.39
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      302.34        0          0.08                 0.08
+PostgreSQL-BHT-8-1-1      322.09     4.26          0.07                 0.07
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1    26158.49    62.88          5.39                 7.07
+PostgreSQL-BHT-8-1-1     26510.1    62.92          5.39                 7.07
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       44.65     0.11          0.06                 0.06
+PostgreSQL-BHT-8-1-1       46.49     0.12          0.06                 0.06
 TEST passed: NOPM contains no 0 or NaN

@@ -1,0 +1,72 @@
+## Show Summary
+
+### Workload
+    YCSB SF=1
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are []. Factors for benchmarking are [].
+Benchmark is limited to DBMS PostgreSQL.
+Import is handled by 1 and 8 processes (pods).
+Loading is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is tested with [64] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-64-1-16384-1 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:180714156
+    datadisk:2452172
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-1-65536-1 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:180467768
+    datadisk:2205784
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-16384-1 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:180712468
+    datadisk:2450484
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:180466912
+    datadisk:2204928
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-1-16384               1       64   16384          1                   16298.590172                61355.0             1000000                              2359.0
+PostgreSQL-64-8-16384               1       64   16384          8                   16341.171089                61207.0             1000000                              2705.0
+PostgreSQL-64-1-65536               1       64   65536          1                   63488.032506                15751.0             1000000                              7363.0
+PostgreSQL-64-8-65536               1       64   65536          8                   64838.241976                15435.0             1000000                              6589.5
+
+### Execution
+                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-1-16384-1               1       64   32768          1                       32412.81                30852.0            501161                             764.0              498839                              1324.0
+PostgreSQL-64-1-65536-1               1       64   32768          1                       32449.62                30817.0            500076                             910.0              499924                              1517.0
+PostgreSQL-64-8-16384-1               1       64   32768          1                       32448.57                30818.0            500877                             800.0              499123                              1329.0
+PostgreSQL-64-8-65536-1               1       64   32768          1                       32431.73                30834.0            500143                             712.0              499857                              1258.0
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
