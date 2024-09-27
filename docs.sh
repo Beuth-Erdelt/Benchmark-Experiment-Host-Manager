@@ -194,10 +194,57 @@ nohup python tpch.py -ms 1 -dt -tr \
   -sf 1 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase.log &
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
 
 #### Wait so that next experiment receives a different code
 sleep 7200
+
+
+#### TCP-H Monitoring (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
+
+#### Wait so that next experiment receives a different code
+sleep 600
+
+
+#### TCP-H Throughput (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  -nc 1 \
+  -ne 1,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
+
+#### Wait so that next experiment receives a different code
+sleep 600
+
+
+#### TCP-H Persistent Storage (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
+
+#### Wait so that next experiment receives a different code
+sleep 600
 
 
 
