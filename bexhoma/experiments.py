@@ -259,8 +259,15 @@ class default():
             )
         # note more infos about experiment in workload description
         if len(args.dbms):
-            # import is limited to single DBMS
-            self.workload['info'] = self.workload['info']+"\nBenchmark is limited to DBMS {}.".format(", ".join(args.dbms))
+            # import is limited to some DBMS
+            #if "," in args.dbms:
+            #    # list of DBMS
+            #    dbms = ", ".join(args.dbms)
+            #else:
+            #    # single DBMS
+            #    dbms = args.dbms
+            dbms = args.dbms
+            self.workload['info'] = self.workload['info']+"\nBenchmark is limited to DBMS {}.".format(dbms)
         if len(num_loading_pods):
             # import uses several processes in pods
             self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))

@@ -166,7 +166,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 1200
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
