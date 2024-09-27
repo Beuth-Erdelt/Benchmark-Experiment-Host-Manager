@@ -1704,6 +1704,8 @@ class tpch(default):
         self.set_queryfile('queries-tpch-profiling.config')
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
         mode = str(parameter['mode'])
         SF = str(self.SF)
         # shuffle ordering and random parameters
@@ -1813,6 +1815,8 @@ class tpcc(default):
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
         mode = str(parameter['mode'])
         SF = str(self.SF)
         SD = int(args.scaling_duration)
@@ -2205,6 +2209,8 @@ class ycsb(default):
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
         mode = str(parameter['mode'])
         SF = str(self.SF)
         SFO = str(args.scaling_factor_operations)
@@ -2448,6 +2454,8 @@ class benchbase(default):
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
         mode = str(parameter['mode'])
         SF = str(self.SF)
         SD = int(args.scaling_duration)*60
