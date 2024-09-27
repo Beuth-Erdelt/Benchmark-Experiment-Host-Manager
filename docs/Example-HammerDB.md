@@ -130,8 +130,7 @@ PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
 TEST passed: NOPM contains no 0 or NaN
 ```
 
-We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
-The runtime is between 8 seconds and 1 minute.
+We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
 
 To see the summary of experiment `1726578005` you can simply call `python hammerdb.py -e 1726578005 summary`.
 
@@ -251,43 +250,82 @@ options:
 If monitoring is activated, the summary also contains a section like
 
 ```bash
-### Ingestion
-                          SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
-PostgreSQL-64-1-16384-1                                        211.08                             3.56
-PostgreSQL-64-1-32768-1                                        208.34                             3.51
-PostgreSQL-64-1-49152-1                                         43.55                             2.78
-PostgreSQL-64-1-65536-1                                         95.57                             3.16
-PostgreSQL-64-1-81920-1                                        224.71                             3.50
-PostgreSQL-64-1-98304-1                                        208.72                             3.50
-PostgreSQL-64-1-114688-1                                        39.80                             2.74
-PostgreSQL-64-1-131072-1                                       142.15                             3.47
-PostgreSQL-64-8-16384-1                                        192.93                             3.51
-PostgreSQL-64-8-32768-1                                        185.90                             3.50
-PostgreSQL-64-8-49152-1                                        191.40                             3.81
-PostgreSQL-64-8-65536-1                                        189.31                             3.77
-PostgreSQL-64-8-81920-1                                        141.00                             3.46
-PostgreSQL-64-8-98304-1                                        117.22                             3.28
-PostgreSQL-64-8-114688-1                                       209.95                             3.50
-PostgreSQL-64-8-131072-1                                       208.55                             3.50
+## Show Summary
+
+### Workload
+    HammerDB Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+TPC-C data is generated and loaded using several threads.
+Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [16] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1, 2] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250283616
+    datadisk:3377276
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251219648
+    datadisk:4313308
+    requests_cpu:4
+    requests_memory:16Gi
 
 ### Execution
-                          SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
-PostgreSQL-64-1-16384-1                                        158.03                             4.02
-PostgreSQL-64-1-32768-1                                        171.52                             4.02
-PostgreSQL-64-1-49152-1                                        131.15                             3.98
-PostgreSQL-64-1-65536-1                                        185.56                             3.68
-PostgreSQL-64-1-81920-1                                          0.00                             3.50
-PostgreSQL-64-1-98304-1                                          0.00                             3.50
-PostgreSQL-64-1-114688-1                                         0.00                             3.50
-PostgreSQL-64-1-131072-1                                         0.00                             3.50
-PostgreSQL-64-8-16384-1                                        122.51                             3.98
-PostgreSQL-64-8-32768-1                                        110.22                             3.97
-PostgreSQL-64-8-49152-1                                        163.70                             4.00
-PostgreSQL-64-8-65536-1                                          0.00                             3.50
-PostgreSQL-64-8-81920-1                                        169.54                             4.00
-PostgreSQL-64-8-98304-1                                         66.88                             3.92
-PostgreSQL-64-8-114688-1                                       190.45                             3.69
-PostgreSQL-64-8-131072-1                                       146.15                             4.02
+                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1  12447.0  38156.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2  10576.5  32801.0         5       0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
+PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
+
+### Ingestion - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-16-1-1       93.49     1.81          3.72                 4.38
+PostgreSQL-BHT-16-1-2       93.49     1.81          3.72                 4.38
+
+### Ingestion - Loader
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-16-1-1      209.57        0          0.14                 0.14
+PostgreSQL-BHT-16-1-2      209.57        0          0.14                 0.14
+
+### Execution - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-16-1-1    26425.11    62.79          5.45                 6.22
+PostgreSQL-BHT-16-1-2    26610.13    62.59          5.61                 6.59
+
+### Execution - Benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-16-1-1       46.97     0.14          0.06                 0.06
+PostgreSQL-BHT-16-1-2       46.97     0.10          0.12                 0.12
+TEST passed: NOPM contains no 0 or NaN
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
