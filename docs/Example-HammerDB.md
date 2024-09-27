@@ -98,8 +98,8 @@ PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-117-generic
     node:cl-worker12
-    disk:332979336
-    datadisk:3377384
+    disk:313545868
+    datadisk:3376692
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
@@ -108,25 +108,25 @@ PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-117-generic
     node:cl-worker12
-    disk:333866000
-    datadisk:4264048
+    disk:314521268
+    datadisk:4352092
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1  11662.0  36280.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2  10590.5  32580.0         5       0
+PostgreSQL-BHT-16-1-1               1      16       1          1  13012.0  40471.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2  11434.5  35596.5         5       0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
+DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-16-1-1      124.0        1.0   1.0                 464.516129
-PostgreSQL-BHT-16-1-2      124.0        1.0   2.0                 464.516129
+PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
+PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
 TEST passed: NOPM contains no 0 or NaN
 ```
 
@@ -301,9 +301,22 @@ This is too coarse for such a quick example.
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
 
-Example: `python hammerdb.py -dbms PostgreSQL -nvu '8' -su 16 -sf 16 -nbp 1 -sd 5 -nc 2 -rst local-hdd -rss 50Gi run`
+Example:
+```
+python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 30Gi \
+  run
+```
 
-The following status shows we have two volumes of type `local-hdd`. Every experiment running HammerDB's TPC-C of SF=16 (warehouses) will take the databases from these volumes and skip loading.
+The following status shows we have two volumes of type `shared`.
+Every experiment running HammerDB's TPC-C of SF=16 (warehouses) will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of PostgreSQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.

@@ -488,9 +488,26 @@ PostgreSQL-64-1-32768-2-2               2      128   65536          2           
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
 
-Example: `python ycsb.py -ms 1 -m -dbms MySQL --workload a -tr -nc 2 -rst local-hdd -rss 50Gi run`
-
-The following status shows we have two volumes of type `local-hdd`. Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
+Example:
+```
+python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 2 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run
+```
+The following status shows we have one volume of type `shared`.
+Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of MySQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
@@ -501,13 +518,6 @@ All other instances just use the database without generating and loading data.
 +====================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
 | bexhoma-storage-postgresql-ycsb-1  | postgresql      | ycsb-1       | True         |                64 | PostgreSQL | shared               | 50Gi      | Bound    | 50G    | 2.1G   |
 +------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-+------------------+--------------+--------------+--------------------------+
-
-+------------------+--------------+--------------+--------------+---------------+
-| 1706957093       | sut          |   loaded [s] | monitoring   | benchmarker   |
-+==================+==============+==============+==============+===============+
-| MySQL-64-1-16384 | (2. Running) |      2398.11 | (Running)    | (1. Running)  |
-+------------------+--------------+--------------+--------------+---------------+
 ```
 
 

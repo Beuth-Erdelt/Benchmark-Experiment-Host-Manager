@@ -74,43 +74,46 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 ```bash
-### Loading
-                        threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-1-16384        64   16384          1                   16285.849226                61403.0             1000000                             1283.00
-PostgreSQL-64-8-16384        64   16384          8                   16189.808395                62334.0             1000000                             1029.25
-PostgreSQL-64-1-32768        64   32768          1                   32334.206357                30927.0             1000000                             2993.00
-PostgreSQL-64-8-32768        64   32768          8                   32487.310483                30788.0             1000000                             2362.50
-PostgreSQL-64-1-49152        64   49152          1                   47429.330298                21084.0             1000000                             4343.00
-PostgreSQL-64-8-49152        64   49152          8                   48401.920774                20850.0             1000000                             3848.50
-PostgreSQL-64-1-65536        64   65536          1                   63881.436055                15654.0             1000000                             6127.00
-PostgreSQL-64-8-65536        64   65536          8                   64436.143011                15540.0             1000000                             4843.00
-PostgreSQL-64-1-81920        64   81920          1                   71078.257161                14069.0             1000000                             6219.00
-PostgreSQL-64-8-81920        64   81920          8                   72415.868804                14361.0             1000000                             5296.00
-PostgreSQL-64-1-98304        64   98304          1                   81586.032471                12257.0             1000000                             5027.00
-PostgreSQL-64-8-98304        64   98304          8                   86657.160474                11681.0             1000000                             5571.00
-PostgreSQL-64-1-114688       64  114688          1                   74693.755602                13388.0             1000000                             5923.00
-PostgreSQL-64-8-114688       64  114688          8                   80616.643342                13037.0             1000000                             5275.50
-PostgreSQL-64-1-131072       64  131072          1                   81766.148814                12230.0             1000000                             6087.00
-PostgreSQL-64-8-131072       64  131072          8                   80708.979092                12469.0             1000000                             5656.00
+## Show Summary
+
+### Workload
+    Benchbase Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
+Benchmark is limited to DBMS PostgreSQL.
+Import is handled by 1 processes (pods).
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker12
+    disk:314318932
+    datadisk:4409236
+    requests_cpu:4
+    requests_memory:16Gi
 
 ### Execution
-                          threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-1-16384-1        64   16384          1                       16281.61                61419.0            499663                            540.00              500337                              743.00
-PostgreSQL-64-8-16384-1        64   16384          8                       16313.68                61310.0            500621                            544.75              499379                              759.38
-PostgreSQL-64-1-32768-1        64   32768          1                       32171.93                31083.0            500316                            570.00              499684                              925.00
-PostgreSQL-64-8-32768-1        64   32768          8                       32481.38                30794.0            500704                            594.88              499296                              839.75
-PostgreSQL-64-1-49152-1        64   49152          1                       48351.22                20682.0            499465                            808.00              500535                             1395.00
-PostgreSQL-64-8-49152-1        64   49152          8                       48521.04                20624.0            500275                            946.75              499725                             1554.88
-PostgreSQL-64-1-65536-1        64   65536          1                       62468.77                16008.0            499253                           1069.00              500747                             1656.00
-PostgreSQL-64-8-65536-1        64   65536          8                       64434.09                15541.0            500305                           1056.00              499695                             1617.00
-PostgreSQL-64-1-81920-1        64   81920          1                       78659.64                12713.0            500203                           1313.00              499797                             2055.00
-PostgreSQL-64-8-81920-1        64   81920          8                       79285.81                12740.0            500409                           1337.38              499591                             2126.25
-PostgreSQL-64-1-98304-1        64   98304          1                       89421.44                11183.0            499133                           1425.00              500867                             2767.00
-PostgreSQL-64-8-98304-1        64   98304          8                       87541.47                11748.0            500122                           1363.75              499878                             2414.00
-PostgreSQL-64-1-114688-1       64  114688          1                      101770.81                 9826.0            500000                           1351.00              500000                             2213.00
-PostgreSQL-64-8-114688-1       64  114688          8                      104663.23                 9835.0            500450                           1515.62              499550                             2866.25
-PostgreSQL-64-1-131072-1       64  131072          1                       88354.83                11318.0            499788                           1566.00              500212                             3451.00
-PostgreSQL-64-8-131072-1       64  131072          8                      115356.26                 9250.0            500084                           1526.75              499916                             3356.75
+                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       3183.99                                                      10944.0                                               5022.0
+
+Warehouses: 16
+
+### Workflow
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-1-1-1024-1       61.0        1.0   1.0                 944.262295
+TEST passed: Throughput (requests/second) contains no 0 or NaN
 ```
 
 We can see that the overall throughput is close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
@@ -301,12 +304,6 @@ All other instances just use the database without generating and loading data.
 +====================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
 | bexhoma-storage-postgresql-ycsb-1  | postgresql      | ycsb-1       | True         |                64 | PostgreSQL | shared               | 50Gi      | Bound    | 50G    | 2.1G   |
 +------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-
-+------------------+--------------+--------------+--------------+---------------+
-| 1706957093       | sut          |   loaded [s] | monitoring   | benchmarker   |
-+==================+==============+==============+==============+===============+
-| MySQL-64-1-16384 | (2. Running) |      2398.11 | (Running)    | (1. Running)  |
-+------------------+--------------+--------------+--------------+---------------+
 ```
 
 
