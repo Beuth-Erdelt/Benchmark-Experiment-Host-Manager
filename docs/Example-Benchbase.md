@@ -255,76 +255,79 @@ If monitoring is activated, the summary also contains a section like
 ## Show Summary
 
 ### Workload
-    Benchbase Workload SF=16 (warehouses for TPC-C)
-    This includes no queries. Benchbase runs the benchmark
-    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
+    HammerDB Workload SF=16 (warehouses for TPC-C)
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+TPC-C data is generated and loaded using several threads.
+Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
 Import is handled by 1 processes (pods).
-Loading is tested with [1] threads, split into [1] pods.
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [16] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 
 ### Connections
-PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008601088
+PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
+    RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:182696000
-    datadisk:4179592
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250283616
+    datadisk:3377276
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008601088
+PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
+    RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:185699320
-    datadisk:7183076
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251219648
+    datadisk:4313308
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2208.06                                                      16431.0                                               7243.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       1959.59                                                      19360.0                                               8163.0
+                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1  12447.0  38156.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2  10576.5  32801.0         5       0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
+DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1       63.0        1.0   1.0                 914.285714
-PostgreSQL-1-1-1024-2       63.0        1.0   2.0                 914.285714
+PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
+PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      412.89      7.9           3.6                  4.7
-PostgreSQL-1-1-1024-2      412.89      7.9           3.6                  4.7
+PostgreSQL-BHT-16-1-1       93.49     1.81          3.72                 4.38
+PostgreSQL-BHT-16-1-2       93.49     1.81          3.72                 4.38
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1        0.02        0           0.0                  0.0
-PostgreSQL-1-1-1024-2        0.02        0           0.0                  0.0
+PostgreSQL-BHT-16-1-1      209.57        0          0.14                 0.14
+PostgreSQL-BHT-16-1-2      209.57        0          0.14                 0.14
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     3712.93    11.12          4.66                 6.83
-PostgreSQL-1-1-1024-2     2985.84    10.28          5.28                 7.95
+PostgreSQL-BHT-16-1-1    26425.11    62.79          5.45                 6.22
+PostgreSQL-BHT-16-1-2    26610.13    62.59          5.61                 6.59
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      471.27     1.85          1.41                 1.41
-PostgreSQL-1-1-1024-2      471.27     0.87          4.07                 4.07
-TEST passed: Throughput (requests/second) contains no 0 or NaN
+PostgreSQL-BHT-16-1-1       46.97     0.14          0.06                 0.06
+PostgreSQL-BHT-16-1-2       46.97     0.10          0.12                 0.12
+TEST passed: NOPM contains no 0 or NaN
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.

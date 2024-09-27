@@ -2,14 +2,17 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1727347669
-Experiment                    : starts at 2024-09-26 12:47:49.160870 (2083609.284845207)
+Experiment                    : has code 1727434002
+Experiment                    : starts at 2024-09-27 12:46:42.510994 (2169942.634970393)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
@@ -19,10 +22,10 @@ done
 PostgreSQL-1-1-1024           : will start now
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2024-09-26 10:49:49 (that is in 60 secs)
+PostgreSQL-1-1-1024           : will start loading but not before 2024-09-27 10:48:43 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2024-09-26 10:49:49
+PostgreSQL-1-1-1024           : will start loading but not before 2024-09-27 10:48:43
 done
 PostgreSQL-1-1-1024           : is not loaded yet
 PostgreSQL-1-1-1024           : start asynch loading scripts of type loaded
@@ -31,13 +34,17 @@ PostgreSQL-1-1-1024           : is loading
 PostgreSQL-1-1-1024           : is loading
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
 done
 PostgreSQL-1-1-1024           : showing loader times
-PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 63
+PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 135
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-1         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727347669
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727434002
 - waiting 10s -               : done
 found
 PostgreSQL-1-1-1024-1         : collecting loading metrics of SUT
@@ -64,16 +71,16 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-1         : showing benchmarker times
-PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 326
-PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1727347886, 1727348191)]
-PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1727347886, 1727348191)]}
+PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 329
+PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1727434280, 1727434585)]
+PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1727434280, 1727434585)]}
 PostgreSQL-1-1-1024-1         : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-1         : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 2
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-2         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727347669
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727434002
 - waiting 10s -               : done
 found
 PostgreSQL-1-1-1024-2         : collecting loading metrics of SUT
@@ -100,20 +107,20 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-2         : showing benchmarker times
-PostgreSQL-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 326
-PostgreSQL-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1727348256, 1727348559), (1727348256, 1727348559)]
-PostgreSQL-1-1-1024-2         : found and updated times {'benchmarker': [(1727348256, 1727348559), (1727348256, 1727348559)]}
+PostgreSQL-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 330
+PostgreSQL-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1727434655, 1727434958), (1727434655, 1727434959)]
+PostgreSQL-1-1-1024-2         : found and updated times {'benchmarker': [(1727434655, 1727434958), (1727434655, 1727434959)]}
 PostgreSQL-1-1-1024-2         : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-2         : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : can be stopped
-Experiment ends at 2024-09-26 13:03:39.202980 (2084559.32696015): 950.0421149430331s total
-bexhoma-dashboard-9b85f945f-d6dfj Running
+Experiment ends at 2024-09-27 13:03:44.572130 (2170964.696110285): 1022.0611398918554s total
+bexhoma-dashboard-9b85f945f-qthqg Running
 Benchmarking                                     connection  ... Latency Distribution.Average Latency (microseconds)
 connection_pod                                  ...                                                    
-PostgreSQL-1-1-1024-2-1  PostgreSQL-1-1-1024-2  ...                                                8059
-PostgreSQL-1-1-1024-1-1  PostgreSQL-1-1-1024-1  ...                                                7243
-PostgreSQL-1-1-1024-2-2  PostgreSQL-1-1-1024-2  ...                                                8267
+PostgreSQL-1-1-1024-2-1  PostgreSQL-1-1-1024-2  ...                                                6648
+PostgreSQL-1-1-1024-2-2  PostgreSQL-1-1-1024-2  ...                                                6820
+PostgreSQL-1-1-1024-1-1  PostgreSQL-1-1-1024-1  ...                                                6232
 
 [3 rows x 36 columns]
 Workflow {'PostgreSQL-1-1-1024': [[2, 1]]}
@@ -130,6 +137,9 @@ Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmar
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
@@ -137,30 +147,30 @@ Experiment is run once.
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008601088
+    RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:182696000
-    datadisk:4179592
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251316384
+    datadisk:4409884
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008601088
+    RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:185699320
-    datadisk:7183076
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254510152
+    datadisk:7603652
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2208.06                                                      16431.0                                               7243.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       1959.59                                                      19360.0                                               8163.0
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2565.06                                                      13699.0                                               6232.0
+PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       2373.90                                                      15393.0                                               6734.0
 
 Warehouses: 16
 
@@ -169,26 +179,26 @@ DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1       63.0        1.0   1.0                 914.285714
-PostgreSQL-1-1-1024-2       63.0        1.0   2.0                 914.285714
+PostgreSQL-1-1-1024-1      135.0        1.0   1.0                 426.666667
+PostgreSQL-1-1-1024-2      135.0        1.0   2.0                 426.666667
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      412.89      7.9           3.6                  4.7
-PostgreSQL-1-1-1024-2      412.89      7.9           3.6                  4.7
+PostgreSQL-1-1-1024-1      901.97     4.78          4.02                 5.64
+PostgreSQL-1-1-1024-2      901.97     4.78          4.02                 5.64
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1        0.02        0           0.0                  0.0
-PostgreSQL-1-1-1024-2        0.02        0           0.0                  0.0
+PostgreSQL-1-1-1024-1     1030.01    10.61          1.29                 1.29
+PostgreSQL-1-1-1024-2     1030.01    10.61          1.29                 1.29
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     3712.93    11.12          4.66                 6.83
-PostgreSQL-1-1-1024-2     2985.84    10.28          5.28                 7.95
+PostgreSQL-1-1-1024-1     2167.39     7.62          4.84                 7.11
+PostgreSQL-1-1-1024-2     1920.75     7.28          5.42                 8.24
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      471.27     1.85          1.41                 1.41
-PostgreSQL-1-1-1024-2      471.27     0.87          4.07                 4.07
+PostgreSQL-1-1-1024-1     1323.28     4.87          1.43                 1.43
+PostgreSQL-1-1-1024-2     1323.28     2.55          4.16                 4.16
 TEST passed: Throughput (requests/second) contains no 0 or NaN
