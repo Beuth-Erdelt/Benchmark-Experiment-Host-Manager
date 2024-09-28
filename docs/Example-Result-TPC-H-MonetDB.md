@@ -29,7 +29,7 @@ Monitoring is activated (`-m`) for all components (`-mc`).
 The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
 
 ```bash
-mkdir -p ./logs/
+mkdir -p ./logs_tests/
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
@@ -45,7 +45,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs/test_tpch_monetdb_1.log &
+  run &>logs_tests/test_tpch_monetdb_1.log &
 ```
 
 ### Status Data Disk
@@ -289,7 +289,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs/test_tpch_monetdb_2.log &
+  run &>logs_tests/test_tpch_monetdb_2.log &
 ```
 
 ## Perform Benchmark - Throughput Test
@@ -316,6 +316,6 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs/test_tpch_monetdb_2.log &
+  run &>logs_tests/test_tpch_monetdb_2.log &
 ```
 
