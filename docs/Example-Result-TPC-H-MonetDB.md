@@ -295,7 +295,7 @@ nohup python tpch.py -ms 1 \
 ## Perform Benchmark - Throughput Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
+We then run two power tests, one after the other, and then a throughput test with 5 parallel driver (`-ne 1,1,5`). and shut down the DBMS.
 This is repeated 5 times (`-nc`).
 
 
