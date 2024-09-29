@@ -698,12 +698,13 @@ class default():
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
                 status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
+                self.cluster.logger.debug(pod_dashboard+status)
                 while status != "Running":
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
-                    print(pod_dashboard, status)
+                    self.cluster.logger.debug(pod_dashboard+status)
         # copy logs and yamls to result folder
+        """
         print("Copy configuration and logs", end="", flush=True)
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
@@ -712,6 +713,7 @@ class default():
                 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
                 print(".", end="", flush=True)
         print("done!")
+        """
         cmd = {}
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
         self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
@@ -724,8 +726,17 @@ class default():
         self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
         print("done!")
         # download evaluation cubes
+        print("{:30s}: downloading partial results".format("Experiment"))
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        self.cluster.kubectl(cmd['upload_results'])
         #print("{:30s}: downloading partial results".format("Experiment"))
         #print("{:30s}: uploading full results".format("Experiment"))
+        # single files?
+        """
         filename = 'evaluation.json'
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
@@ -745,6 +756,7 @@ class default():
         # this includes all measures like times and monitoring data
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        """
         ############ HammerDB
         #self.path = "/home/perdelt/benchmarks/1668286639/"
         directory = os.fsencode(self.path)
@@ -893,12 +905,19 @@ class default():
 
         :return: Dict of benchmarking workflow
         """
+        # planned workflow is part of the workload
+        if 'workflow_planned' in self.workload:
+            return self.workload['workflow_planned']
+        # planned workflow is given by cli arguments and must be constructed
         workflow = {}
         for configuration in self.configurations:
             workflow[configuration.configuration] = [configuration.benchmark_list_template for i in range(configuration.num_experiment_to_apply)]
         self.cluster.logger.debug('default.get_workflow_list({})'.format(workflow))
         #print(workflow)
         return workflow
+    def store_workflow_results(self):
+        workflow = self.get_workflow_list()
+        self.workload['workflow_planned'] = workflow
     def work_benchmark_list(self, intervals=30, stop=True):
         """
         Run typical workflow:
@@ -1903,8 +1922,10 @@ class tpcc(default):
         #print("done!")
         # download all results from cluster
         #filename = 'evaluation.json'
+        print("{:30s}: downloading partial results".format("Experiment"))
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
@@ -2276,11 +2297,11 @@ class ycsb(default):
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
                 status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
+                self.cluster.logger.debug(pod_dashboard+status)
                 while status != "Running":
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
-                    print(pod_dashboard, status)
+                    self.cluster.logger.debug(pod_dashboard+status)
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -2534,11 +2555,11 @@ class benchbase(default):
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
                 status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
+                self.cluster.logger.debug(pod_dashboard+status)
                 while status != "Running":
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
-                    print(pod_dashboard, status)
+                    self.cluster.logger.debug(pod_dashboard+status)
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -2554,8 +2575,10 @@ class benchbase(default):
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
         cmd = {}
+        print("{:30s}: downloading partial results".format("Experiment"))
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):

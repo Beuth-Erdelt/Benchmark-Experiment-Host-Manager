@@ -27,6 +27,8 @@ from timeit import default_timer
 import datetime
 import pandas as pd
 import types
+import math
+
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -473,7 +475,9 @@ if __name__ == '__main__':
         duration_experiment = end - start
         #print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
         print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
+        experiment.workload['duration'] = math.ceil(duration_experiment)
         ##################
+        experiment.store_workflow_results()
         experiment.evaluate_results()
         experiment.stop_benchmarker()
         experiment.stop_sut()
