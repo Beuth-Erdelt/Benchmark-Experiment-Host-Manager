@@ -17,6 +17,7 @@ import argparse
 import time
 from timeit import default_timer
 import datetime
+import math
 
 
 urllib3.disable_warnings()
@@ -348,7 +349,9 @@ if __name__ == '__main__':
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
         print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+        experiment.workload['duration'] = math.ceil(duration_experiment)
         ##################
+        experiment.store_workflow_results()
         experiment.evaluate_results()
         experiment.stop_benchmarker()
         experiment.stop_sut()
