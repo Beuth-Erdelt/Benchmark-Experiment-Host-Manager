@@ -477,8 +477,8 @@ if __name__ == '__main__':
         print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
         experiment.workload['duration'] = math.ceil(duration_experiment)
         ##################
-        experiment.store_workflow_results()
         experiment.evaluate_results()
+        experiment.store_workflow_results()
         experiment.stop_benchmarker()
         experiment.stop_sut()
         #experiment.zip() # OOM? exit code 137

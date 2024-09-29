@@ -715,6 +715,7 @@ class default():
         print("done!")
         """
         cmd = {}
+        # specific to dbmsbenchmarker
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
         self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
         print("Join results ", end="", flush=True)
@@ -918,6 +919,21 @@ class default():
     def store_workflow_results(self):
         workflow = self.get_workflow_list()
         self.workload['workflow_planned'] = workflow
+        self.update_workload()
+    def update_workload(self):
+        if len(self.configurations) > 0:
+            # there is a configuration, i.e., also a query.config file
+            if len(self.workload) > 0:
+                #configuration = self.configurations[0]
+                # write appended query config
+                filename = self.path+"/queries.config"
+                with open(filename,'r') as inp:
+                    queryconfig = ast.literal_eval(inp.read())
+                    for k,v in self.workload.items():
+                        queryconfig[k] = v
+                #filename = self.benchmark.path+'/queries.config'
+                with open(filename, 'w') as outp:
+                    outp.write(str(queryconfig))
     def work_benchmark_list(self, intervals=30, stop=True):
         """
         Run typical workflow:
