@@ -157,6 +157,7 @@ class default():
             value = list(str(int(value)))
         return value
     def prepare_testbed(self, parameter):
+        self.workload['type'] = 'dbmsbenchmarker'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -1738,6 +1739,7 @@ class tpch(default):
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
     def prepare_testbed(self, parameter):
+        self.workload['type'] = 'tpch'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -1849,6 +1851,7 @@ class tpcc(default):
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
+        self.workload['type'] = 'tpcc'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -2245,6 +2248,7 @@ class ycsb(default):
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
+        self.workload['type'] = 'ycsb'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -2490,6 +2494,7 @@ class benchbase(default):
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
+        self.workload['type'] = 'benchbase'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
