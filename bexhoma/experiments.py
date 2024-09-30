@@ -1479,6 +1479,7 @@ class default():
         print("\n### Workload\n    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
+        print("    Type: "+workload_properties['type'])
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -1603,6 +1604,11 @@ class default():
             print("\n#### Actual")
             for c in workflow:
                 print("DBMS", c, "- Pods", workflow[c])
+            workflow = workload_properties['workflow_planned']
+            if len(workflow) > 0:
+                print("\n#### Planned")
+                for c in workflow:
+                    print("DBMS", c, "- Pods", workflow[c])
         #####################
         self.show_summary_monitoring()
         evaluation.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
@@ -2007,6 +2013,7 @@ class tpcc(default):
         print("\n### Workload\n    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
+        print("    Type: "+workload_properties['type'])
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2064,6 +2071,11 @@ class tpcc(default):
             print("\n#### Actual")
             for c in workflow:
                 print("DBMS", c, "- Pods", workflow[c])
+            workflow = workload_properties['workflow_planned']
+            if len(workflow) > 0:
+                print("\n#### Planned")
+                for c in workflow:
+                    print("DBMS", c, "- Pods", workflow[c])
         #####################
         print("\n### Loading")
         #connections_sorted = sorted(connections, key=lambda c: c['name']) 
@@ -2465,6 +2477,11 @@ class ycsb(default):
             print("\n#### Actual")
             for c in workflow:
                 print("DBMS", c, "- Pods", workflow[c])
+            workflow = workload_properties['workflow_planned']
+            if len(workflow) > 0:
+                print("\n#### Planned")
+                for c in workflow:
+                    print("DBMS", c, "- Pods", workflow[c])
         #####################
         self.show_summary_monitoring()
         if test_loading:
@@ -2675,6 +2692,7 @@ class benchbase(default):
         print("\n### Workload\n    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
+        print("    Type: "+workload_properties['type'])
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2737,6 +2755,11 @@ class benchbase(default):
             print("\n#### Actual")
             for c in workflow:
                 print("DBMS", c, "- Pods", workflow[c])
+            workflow = workload_properties['workflow_planned']
+            if len(workflow) > 0:
+                print("\n#### Planned")
+                for c in workflow:
+                    print("DBMS", c, "- Pods", workflow[c])
         #####################
         print("\n### Loading")
         #connections_sorted = sorted(connections, key=lambda c: c['name']) 
