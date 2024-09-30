@@ -109,11 +109,45 @@ class base:
         * each 2 experiment runs
         * consisting of [1,2] benchmarker (first 1 pod, then 2 pods in parallel)
 
-        :param df: DataFrame of benchmarking results 
+        :param df: DataFrame of benchmarking results - time format (pods already aggregated)
         :return: Dict of connections
         """
         # Tree of elements of the workflow
+        #workflow = dict()
+        #return workflow
+        # Tree of elements of the workflow
+        configs = dict()
+        for index, row in df.iterrows():
+            #print(row['experiment_run'], row['configuration'])
+            if row['orig_name'] not in configs:
+                configs[row['orig_name']] = dict()
+                #configs[row['configuration']]
+            if row['num_experiment'] not in configs[row['orig_name']]:
+                configs[row['orig_name']][row['num_experiment']] = dict()
+            if row['num_client'] not in configs[row['orig_name']][row['num_experiment']]:
+                configs[row['orig_name']][row['num_experiment']][row['num_client']] = dict()
+                configs[row['orig_name']][row['num_experiment']][row['num_client']]['pods'] = dict()
+                configs[row['orig_name']][row['num_experiment']][row['num_client']]['result_count'] = 0
+                #configs[row['configuration']][row['experiment_run']][row['client']]['run'] = dict()
+            configs[row['orig_name']][row['num_experiment']][row['num_client']]['pods'][row['pods']] = True
+            configs[row['orig_name']][row['num_experiment']][row['num_client']]['result_count'] = configs[row['orig_name']][row['num_experiment']][row['num_client']]['result_count'] + 1
+            #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']] = dict()
+            #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']]['vusers'] = row['vusers']
+        #print(configs)
+        #pretty_configs = json.dumps(configs, indent=2)
+        #print(pretty_configs)
+        # Flat version of workflow
         workflow = dict()
+        for index, row in configs.items():
+            workflow[index] = []
+            for i, v in row.items():
+                l = []
+                for j, w in v.items():
+                    l.append(len(w['pods']))
+                workflow[index].append(l)
+        #print(workflow)
+        #pretty_workflow = json.dumps(workflow, indent=2)
+        #print(pretty_workflow)
         return workflow
     def test_results(self):
         """
