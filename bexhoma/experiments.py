@@ -1480,6 +1480,7 @@ class default():
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
         print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2014,6 +2015,7 @@ class tpcc(default):
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
         print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2423,6 +2425,8 @@ class ycsb(default):
         print("\n### Workload\n    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
+        print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2693,6 +2697,7 @@ class benchbase(default):
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'])
         print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
