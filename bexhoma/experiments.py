@@ -1462,6 +1462,9 @@ class default():
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
         self.evaluator.end_loading(jobname)
     def show_summary(self):
+        """
+        Show a summary of an experiment of type dbmsbenchmarker.
+        """
         self.cluster.logger.debug('default.show_summary()')
         print("\n## Show Summary")
         pd.set_option("display.max_rows", None)
@@ -1593,6 +1596,13 @@ class default():
         index_names[0] = "DBMS"
         df_benchmark.rename_axis(index_names, inplace=True)
         print(df_benchmark)
+        #####################
+        workflow = evaluation.reconstruct_workflow(df_time)
+        if len(workflow) > 0:
+            print("\n### Workflow")
+            print("\n#### Actual")
+            for c in workflow:
+                print("DBMS", c, "- Pods", workflow[c])
         #####################
         self.show_summary_monitoring()
         evaluation.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
@@ -2051,6 +2061,7 @@ class tpcc(default):
         workflow = evaluation.reconstruct_workflow(df)
         if len(workflow) > 0:
             print("\n### Workflow")
+            print("\n#### Actual")
             for c in workflow:
                 print("DBMS", c, "- Pods", workflow[c])
         #####################
@@ -2448,6 +2459,13 @@ class ycsb(default):
             print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
+        workflow = evaluation.reconstruct_workflow(df)
+        if len(workflow) > 0:
+            print("\n### Workflow")
+            print("\n#### Actual")
+            for c in workflow:
+                print("DBMS", c, "- Pods", workflow[c])
+        #####################
         self.show_summary_monitoring()
         if test_loading:
             evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
@@ -2716,6 +2734,7 @@ class benchbase(default):
         workflow = evaluation.reconstruct_workflow(df)
         if len(workflow) > 0:
             print("\n### Workflow")
+            print("\n#### Actual")
             for c in workflow:
                 print("DBMS", c, "- Pods", workflow[c])
         #####################
