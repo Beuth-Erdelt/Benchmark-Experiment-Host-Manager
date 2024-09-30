@@ -310,6 +310,27 @@ class default():
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
+    def get_dashboard_pod(self, pod_dashboard=''):
+        """
+        Get name of dashboard pod.
+        This also checks the status. Waits until available.
+        If name of dashboard pod is known: do nothing
+
+        :param pod_dashboard: Optional name of dashboard pod
+        """
+        self.cluster.logger.debug('testbed.get_dashboard_pod()')
+        # download results
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                self.cluster.logger.debug(pod_dashboard+status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    self.cluster.logger.debug(pod_dashboard+status)
+        return pod_dashboard
     def test_results(self):
         """
         Run test script locally.
@@ -695,6 +716,8 @@ class default():
         4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
         """
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
@@ -704,6 +727,7 @@ class default():
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     self.cluster.logger.debug(pod_dashboard+status)
+            """
         # copy logs and yamls to result folder
         """
         print("Copy configuration and logs", end="", flush=True)
@@ -935,6 +959,13 @@ class default():
                 #filename = self.benchmark.path+'/queries.config'
                 with open(filename, 'w') as outp:
                     outp.write(str(queryconfig))
+        print("{:30s}: uploading workload file".format("Experiment"))
+        pod_dashboard = self.get_dashboard_pod()
+        cmd = {}
+        # single file
+        filename = 'queries.config'
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+        self.cluster.kubectl(cmd['upload_results'])
     def work_benchmark_list(self, intervals=30, stop=True):
         """
         Run typical workflow:
@@ -1896,6 +1927,8 @@ class tpcc(default):
         self.cluster.logger.debug('tpcc.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
@@ -1905,6 +1938,7 @@ class tpcc(default):
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     print(pod_dashboard, status)
+            """
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -2313,6 +2347,8 @@ class ycsb(default):
         self.evaluator.evaluate_results(pod_dashboard)
         # download results
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
@@ -2322,6 +2358,7 @@ class ycsb(default):
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     self.cluster.logger.debug(pod_dashboard+status)
+            """
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -2572,6 +2609,8 @@ class benchbase(default):
         self.evaluator.evaluate_results(pod_dashboard)
         # download results
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
@@ -2581,6 +2620,7 @@ class benchbase(default):
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     self.cluster.logger.debug(pod_dashboard+status)
+            """
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
