@@ -5,9 +5,12 @@
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
 Database is persisted to disk of type shared and size 50Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1] pods.
@@ -16,34 +19,34 @@ Experiment is run 2 times.
 
 ### Connections
 PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
-    RAM:541008601088
+    RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:178516888
-    datadisk:6659256
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:247507912
+    datadisk:7687880
     volume_size:50G
-    volume_used:6.4G
+    volume_used:7.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
-    RAM:541008601088
+    RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:178516520
-    datadisk:7181424
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:247507912
+    datadisk:8483320
     volume_size:50G
-    volume_used:6.9G
+    volume_used:8.1G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                          experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1-1               1         16   16384          1  300.0                       1988.65                                                      16734.0                                               8042.0
-PostgreSQL-1-1-1024-2-1               2         16   16384          1  300.0                       1933.14                                                      17050.0                                               8274.0
+PostgreSQL-1-1-1024-1-1               1         16   16384          1  300.0                       2290.09                                                      14011.0                                               6980.0
+PostgreSQL-1-1-1024-2-1               2         16   16384          1  300.0                       2268.34                                                      13665.0                                               7047.0
 
 Warehouses: 16
 
