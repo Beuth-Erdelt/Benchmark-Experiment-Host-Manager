@@ -157,7 +157,9 @@ class default():
             value = list(str(int(value)))
         return value
     def prepare_testbed(self, parameter):
-        self.workload['type'] = 'dbmsbenchmarker'
+        if not 'type' in self.workload or len(self.workload['type']) == 0:
+            # set default workload type
+            self.workload['type'] = 'dbmsbenchmarker'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -1477,10 +1479,10 @@ class default():
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
         print("\n### Workload\n    "+workload_properties['name'])
-        print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2012,10 +2014,10 @@ class tpcc(default):
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
         print("\n### Workload\n    "+workload_properties['name'])
-        print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2423,10 +2425,10 @@ class ycsb(default):
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
         print("\n### Workload\n    "+workload_properties['name'])
-        print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2694,10 +2696,10 @@ class benchbase(default):
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
         print("\n### Workload\n    "+workload_properties['name'])
-        print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    "+workload_properties['intro'])
+        print("    "+workload_properties['info'])
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
