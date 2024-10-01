@@ -2,6 +2,8 @@
 
 ### Workload
     TPC-H Queries SF=1
+    Type: dbmsbenchmarker
+    Duration: 419s 
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -26,8 +28,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250331188
-    datadisk:2822744
+    disk:250345956
+    datadisk:2821984
     requests_cpu:4
     requests_memory:16Gi
 
@@ -39,63 +41,71 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 2554.64
-Minimum Cost Supplier Query (TPC-H Q2)                             415.39
-Shipping Priority (TPC-H Q3)                                       725.01
-Order Priority Checking Query (TPC-H Q4)                          1226.04
-Local Supplier Volume (TPC-H Q5)                                   620.66
-Forecasting Revenue Change (TPC-H Q6)                              475.95
-Forecasting Revenue Change (TPC-H Q7)                              733.88
-National Market Share (TPC-H Q8)                                   588.70
-Product Type Profit Measure (TPC-H Q9)                            1072.63
-Forecasting Revenue Change (TPC-H Q10)                            1204.52
-Important Stock Identification (TPC-H Q11)                         239.62
-Shipping Modes and Order Priority (TPC-H Q12)                      996.80
-Customer Distribution (TPC-H Q13)                                 2019.12
-Forecasting Revenue Change (TPC-H Q14)                             519.48
-Top Supplier Query (TPC-H Q15)                                     525.79
-Parts/Supplier Relationship (TPC-H Q16)                            558.97
-Small-Quantity-Order Revenue (TPC-H Q17)                          1920.87
-Large Volume Customer (TPC-H Q18)                                 7485.05
-Discounted Revenue (TPC-H Q19)                                     668.53
-Potential Part Promotion (TPC-H Q20)                               655.63
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                885.45
-Global Sales Opportunity Query (TPC-H Q22)                         232.05
+Pricing Summary Report (TPC-H Q1)                                 2570.29
+Minimum Cost Supplier Query (TPC-H Q2)                             420.82
+Shipping Priority (TPC-H Q3)                                       722.27
+Order Priority Checking Query (TPC-H Q4)                          1237.69
+Local Supplier Volume (TPC-H Q5)                                   623.96
+Forecasting Revenue Change (TPC-H Q6)                              482.77
+Forecasting Revenue Change (TPC-H Q7)                              748.48
+National Market Share (TPC-H Q8)                                   590.96
+Product Type Profit Measure (TPC-H Q9)                            1057.38
+Forecasting Revenue Change (TPC-H Q10)                            1237.88
+Important Stock Identification (TPC-H Q11)                         235.24
+Shipping Modes and Order Priority (TPC-H Q12)                      999.28
+Customer Distribution (TPC-H Q13)                                 1955.61
+Forecasting Revenue Change (TPC-H Q14)                             519.54
+Top Supplier Query (TPC-H Q15)                                     537.98
+Parts/Supplier Relationship (TPC-H Q16)                            547.98
+Small-Quantity-Order Revenue (TPC-H Q17)                          1957.86
+Large Volume Customer (TPC-H Q18)                                 7317.09
+Discounted Revenue (TPC-H Q19)                                     676.91
+Potential Part Promotion (TPC-H Q20)                               635.92
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                886.70
+Global Sales Opportunity Query (TPC-H Q22)                         231.41
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       85.0     122.0
+PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       84.0     120.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-8-1-1           0.86
+PostgreSQL-BHT-8-1-1           0.87
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4359.46
+PostgreSQL-BHT-8-1-1            4356.88
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1 1  1              1                 40      1   1                   1980.0
+PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      142.28        0          3.77                 4.96
+PostgreSQL-BHT-8-1      138.91     0.19          3.74                 4.93
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1        0.45        0          0.04                 0.11
+PostgreSQL-BHT-8-1        0.86        0          0.06                 0.21
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       94.81        0           6.9                 8.09
+PostgreSQL-BHT-8-1      122.33        0          3.84                 5.03
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       10.93        0          0.24                 0.25
+PostgreSQL-BHT-8-1       11.41        0          0.23                 0.24
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN

@@ -2,6 +2,8 @@
 
 ### Workload
     YCSB SF=1
+    Type: dbmsbenchmarker
+    Duration: 1072s 
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -23,8 +25,8 @@ PostgreSQL-64-1-16384-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249958948
-    datadisk:2451536
+    disk:249974992
+    datadisk:2451884
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-1-65536-1 uses docker image postgres:16.1
@@ -33,8 +35,8 @@ PostgreSQL-64-1-65536-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249844684
-    datadisk:2353656
+    disk:249731440
+    datadisk:2224716
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-16384-1 uses docker image postgres:16.1
@@ -43,8 +45,8 @@ PostgreSQL-64-8-16384-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249958136
-    datadisk:2450724
+    disk:249973392
+    datadisk:2450284
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
@@ -53,23 +55,37 @@ PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249958152
-    datadisk:2450740
+    disk:249973520
+    datadisk:2450412
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-1-16384               1       64   16384          1                   16278.691193                61430.0             1000000                             935.000
-PostgreSQL-64-8-16384               1       64   16384          8                   16319.803137                61290.0             1000000                             796.125
-PostgreSQL-64-1-65536               1       64   65536          1                   63706.440721                15697.0             1000000                            4255.000
-PostgreSQL-64-8-65536               1       64   65536          8                   64523.943107                15505.0             1000000                            3604.750
+PostgreSQL-64-1-16384               1       64   16384          1                   16268.098259                61470.0             1000000                              1132.0
+PostgreSQL-64-8-16384               1       64   16384          8                   16320.502740                61296.0             1000000                               763.5
+PostgreSQL-64-1-65536               1       64   65536          1                   63718.618580                15694.0             1000000                              5891.0
+PostgreSQL-64-8-65536               1       64   65536          8                   64551.546486                15502.0             1000000                              3508.0
 
 ### Execution
                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-1-16384-1               1       64   32768          1                       32263.27                30995.0            500703                             464.0              499297                               655.0
-PostgreSQL-64-1-65536-1               1       64   32768          1                       32319.58                30941.0            499969                             525.0              500031                               739.0
-PostgreSQL-64-8-16384-1               1       64   32768          1                       32292.44                30967.0            500503                             455.0              499497                               679.0
-PostgreSQL-64-8-65536-1               1       64   32768          1                       32291.40                30968.0            499725                             481.0              500275                               710.0
+PostgreSQL-64-1-16384-1               1       64   32768          1                       32299.74                30960.0            499768                             433.0              500232                               637.0
+PostgreSQL-64-1-65536-1               1       64   32768          1                       32289.31                30970.0            499836                             459.0              500164                               680.0
+PostgreSQL-64-8-16384-1               1       64   32768          1                       32330.02                30931.0            500273                             477.0              499727                               708.0
+PostgreSQL-64-8-65536-1               1       64   32768          1                       32326.89                30934.0            499145                             433.0              500855                               634.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-65536 - Pods [[1]]
+DBMS PostgreSQL-64-1-65536 - Pods [[1]]
+DBMS PostgreSQL-64-8-16384 - Pods [[1]]
+DBMS PostgreSQL-64-1-16384 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-64-1-16384 - Pods [[1]]
+DBMS PostgreSQL-64-1-65536 - Pods [[1]]
+DBMS PostgreSQL-64-8-16384 - Pods [[1]]
+DBMS PostgreSQL-64-8-65536 - Pods [[1]]
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

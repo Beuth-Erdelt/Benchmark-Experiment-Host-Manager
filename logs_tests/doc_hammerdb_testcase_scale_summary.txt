@@ -2,6 +2,8 @@
 
 ### Workload
     HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: dbmsbenchmarker
+    Duration: 1207s 
     This includes no queries. HammerDB runs the benchmark
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
@@ -23,8 +25,8 @@ PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250283792
-    datadisk:3377112
+    disk:250900184
+    datadisk:3377272
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
@@ -33,20 +35,25 @@ PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:251195792
-    datadisk:4289112
+    disk:251856300
+    datadisk:4333388
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1  12029.0  37469.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2  10168.5  31827.5         5       0
+PostgreSQL-BHT-16-1-1               1      16       1          1  12754.0  39383.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2  11115.0  34367.0         5       0
 
 Warehouses: 16
 
 ### Workflow
+
+#### Actual
 DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]

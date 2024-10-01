@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1727455566
-Experiment                    : starts at 2024-09-27 18:46:06.483427 (2191506.607408292)
+Experiment                    : has code 1727787366
+Experiment                    : starts at 2024-10-01 14:56:06.053439 (2523306.177420725)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -25,13 +25,13 @@ MariaDB-BHT-8                 : has to wait - 0 running and 1 pending pods: max 
 MySQL-BHT-8-8                 : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-09-27 16:48:07 (that is in 60 secs)
+PostgreSQL-BHT-8              : will start loading but not before 2024-10-01 12:58:06 (that is in 60 secs)
 MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-09-27 16:48:07
+PostgreSQL-BHT-8              : will start loading but not before 2024-10-01 12:58:06
 MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -55,8 +55,8 @@ MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max 
 done
 PostgreSQL-BHT-8              : showing loader times
 PostgreSQL-BHT-8              : generator timespan (first to last [s]) = 1
-PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 29
-PostgreSQL-BHT-8              : total timespan (first to last [s]) = 36
+PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 26
+PostgreSQL-BHT-8              : total timespan (first to last [s]) = 34
 PostgreSQL-BHT-8              : start asynch loading scripts of type indexed
 PostgreSQL-BHT-8              : is loading
 MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -75,13 +75,13 @@ MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max 
 done
 PostgreSQL-BHT-8              : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-8-1            : start benchmarking
-PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1727455566
+PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1727787366
 - waiting 10s -               : done
-PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1727455566-1-1-l5kmk: found
+PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1727787366-1-1-qlxnr: found
 MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-done
+- waiting 30s -               : done
 PostgreSQL-BHT-8              : has running benchmarks
 MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -93,7 +93,7 @@ MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max 
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-BHT-8-1            : showing benchmarker times
 PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 70
-PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1727455886, 1727455915)]
+PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1727787687, 1727787716)]
 done
 PostgreSQL-BHT-8              : can be stopped
 MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -105,12 +105,12 @@ MariaDB-BHT-8                 : has to wait - 0 running and 1 pending pods: max 
 MySQL-BHT-8-8                 : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2024-09-27 16:55:01 (that is in 60 secs)
+MonetDB-BHT-8                 : will start loading but not before 2024-10-01 13:05:01 (that is in 60 secs)
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2024-09-27 16:55:01
+MonetDB-BHT-8                 : will start loading but not before 2024-10-01 13:05:01
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
@@ -126,8 +126,8 @@ MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max 
 done
 MonetDB-BHT-8                 : showing loader times
 MonetDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MonetDB-BHT-8                 : loader timespan (first to last [s]) = 19
-MonetDB-BHT-8                 : total timespan (first to last [s]) = 27
+MonetDB-BHT-8                 : loader timespan (first to last [s]) = 21
+MonetDB-BHT-8                 : total timespan (first to last [s]) = 29
 MonetDB-BHT-8                 : start asynch loading scripts of type indexed
 MonetDB-BHT-8                 : is loading
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -135,9 +135,9 @@ MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max 
 done
 MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
 MonetDB-BHT-8-1               : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1727455566
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1727787366
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1727455566-1-1-4p4cx: .found
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1727787366-1-1-wb7kw: .found
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
@@ -146,7 +146,7 @@ MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max 
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MonetDB-BHT-8-1               : showing benchmarker times
 MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 50
-MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1727456213, 1727456221)]
+MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1727788012, 1727788020)]
 done
 MonetDB-BHT-8                 : can be stopped
 MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -160,15 +160,18 @@ MariaDB-BHT-8                 : will start now
 MySQL-BHT-8-8                 : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-09-27 17:00:34 (that is in 60 secs)
+MariaDB-BHT-8                 : will start loading but not before 2024-10-01 13:10:34 (that is in 60 secs)
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-09-27 17:00:34
+MariaDB-BHT-8                 : will start loading but not before 2024-10-01 13:10:34
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MariaDB-BHT-8                 : is not loaded yet
 MariaDB-BHT-8                 : start asynch loading scripts of type loaded
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 MariaDB-BHT-8                 : is loading
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
@@ -210,9 +213,18 @@ MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max 
 done
 MariaDB-BHT-8                 : showing loader times
 MariaDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MariaDB-BHT-8                 : loader timespan (first to last [s]) = 340
-MariaDB-BHT-8                 : total timespan (first to last [s]) = 348
+MariaDB-BHT-8                 : loader timespan (first to last [s]) = 363
+MariaDB-BHT-8                 : total timespan (first to last [s]) = 371
 MariaDB-BHT-8                 : start asynch loading scripts of type indexed
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 MariaDB-BHT-8                 : is loading
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
@@ -368,9 +380,9 @@ MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max 
 done
 MariaDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
 MariaDB-BHT-8-1               : start benchmarking
-MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1727455566
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1727787366
 - waiting 10s -               : done
-MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1727455566-1-1-92fvh: found
+MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1727787366-1-1-t2rfc: .found
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MariaDB-BHT-8                 : has running benchmarks
@@ -409,8 +421,8 @@ done
 MariaDB-BHT-8                 : has running benchmarks
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MariaDB-BHT-8-1               : showing benchmarker times
-MariaDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 372
-MariaDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1727458380, 1727458729)]
+MariaDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 382
+MariaDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1727790311, 1727790657)]
 done
 MariaDB-BHT-8                 : can be stopped
 MySQL-BHT-8-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -418,34 +430,34 @@ done
 MySQL-BHT-8-8                 : will start now
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37 (that is in 300 secs)
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52 (that is in 300 secs)
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is not loaded yet
-MySQL-BHT-8-8                 : will start loading but not before 2024-09-27 17:45:37
+MySQL-BHT-8-8                 : will start loading but not before 2024-10-01 13:57:52
 done
 MySQL-BHT-8-8                 : is not loaded yet
 MySQL-BHT-8-8                 : start asynch loading scripts of type loaded
@@ -485,13 +497,19 @@ MySQL-BHT-8-8                 : is loading
 done
 MySQL-BHT-8-8                 : is loading
 done
-MySQL-BHT-8-8                 : is loading
-done
 MySQL-BHT-8-8                 : showing loader times
-MySQL-BHT-8-8                 : generator timespan (first to last [s]) = 0
-MySQL-BHT-8-8                 : loader timespan (first to last [s]) = 537
-MySQL-BHT-8-8                 : total timespan (first to last [s]) = 545
+MySQL-BHT-8-8                 : generator timespan (first to last [s]) = 1
+MySQL-BHT-8-8                 : loader timespan (first to last [s]) = 498
+MySQL-BHT-8-8                 : total timespan (first to last [s]) = 505
 MySQL-BHT-8-8                 : start asynch loading scripts of type indexed
+MySQL-BHT-8-8                 : is loading
+- waiting 30s -               : done
+MySQL-BHT-8-8                 : is loading
+- waiting 30s -               : done
+MySQL-BHT-8-8                 : is loading
+- waiting 30s -               : done
+MySQL-BHT-8-8                 : is loading
+- waiting 30s -               : done
 MySQL-BHT-8-8                 : is loading
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : is loading
@@ -638,9 +656,9 @@ MySQL-BHT-8-8                 : is loading
 done
 MySQL-BHT-8-8                 : benchmarks done 0 of 1. This will be client 1
 MySQL-BHT-8-8-1               : start benchmarking
-MySQL-BHT-8-8                 : benchmarking results in folder /home/perdelt/benchmarks/1727455566
+MySQL-BHT-8-8                 : benchmarking results in folder /home/perdelt/benchmarks/1727787366
 - waiting 10s -               : done
-MySQL-BHT-8-8                 : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-8-1727455566-1-1-hxcfm: found
+MySQL-BHT-8-8                 : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-8-1727787366-1-1-6k6lk: found
 - waiting 30s -               : done
 MySQL-BHT-8-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -654,21 +672,24 @@ MySQL-BHT-8-8                 : has running benchmarks
 done
 MySQL-BHT-8-8                 : has running benchmarks
 MySQL-BHT-8-8-1               : showing benchmarker times
-MySQL-BHT-8-8-1               : benchmarker timespan (start to end single container [s]) = 191
-MySQL-BHT-8-8-1               : benchmarker times (start/end per pod and container) = [(1727461915, 1727462088)]
-MySQL-BHT-8-8-1               : found and updated times {'benchmarker': [(1727461915, 1727462088)]}
+MySQL-BHT-8-8-1               : benchmarker timespan (start to end single container [s]) = 192
+MySQL-BHT-8-8-1               : benchmarker times (start/end per pod and container) = [(1727793939, 1727794110)]
+MySQL-BHT-8-8-1               : found and updated times {'benchmarker': [(1727793939, 1727794110)]}
 done
 MySQL-BHT-8-8                 : can be stopped
-Experiment                    : ends at 2024-09-27 20:35:27.318213 (2198067.442193684) - 6560.83s total
-bexhoma-dashboard-9b85f945f-7ksmz Running
-.done!
+Experiment                    : ends at 2024-10-01 16:49:13.815700 (2530093.939680043) - 6787.76s total
 Join results done!
 done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
 
 ## Show Summary
 
 ### Workload
     TPC-H Queries SF=1
+    Type: dbmsbenchmarker
+    Duration: 6788s 
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -691,8 +712,8 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249652672
-    datadisk:2144584
+    disk:249664272
+    datadisk:2140488
     requests_cpu:4
     requests_memory:16Gi
 MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
@@ -701,7 +722,7 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250349116
+    disk:250364812
     datadisk:2841024
     requests_cpu:4
     requests_memory:16Gi
@@ -710,8 +731,8 @@ MySQL-BHT-8-8-1-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:258948928
-    datadisk:11440652
+    disk:258964620
+    datadisk:11440648
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
@@ -720,8 +741,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250330668
-    datadisk:2822564
+    disk:250346024
+    datadisk:2822392
     requests_cpu:4
     requests_memory:16Gi
 
@@ -729,63 +750,99 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
 No errors
 
 ### Warnings (result mismatch)
-No warnings
+                                                     MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                                False              False              False                 False
+Minimum Cost Supplier Query (TPC-H Q2)                           False              False              False                 False
+Shipping Priority (TPC-H Q3)                                     False              False              False                 False
+Order Priority Checking Query (TPC-H Q4)                         False              False              False                 False
+Local Supplier Volume (TPC-H Q5)                                 False              False              False                 False
+Forecasting Revenue Change (TPC-H Q6)                            False              False              False                 False
+Forecasting Revenue Change (TPC-H Q7)                            False              False              False                 False
+National Market Share (TPC-H Q8)                                 False              False              False                 False
+Product Type Profit Measure (TPC-H Q9)                           False              False              False                 False
+Forecasting Revenue Change (TPC-H Q10)                           False              False              False                  True
+Important Stock Identification (TPC-H Q11)                       False              False              False                 False
+Shipping Modes and Order Priority (TPC-H Q12)                    False              False              False                 False
+Customer Distribution (TPC-H Q13)                                False              False              False                 False
+Forecasting Revenue Change (TPC-H Q14)                           False              False              False                 False
+Top Supplier Query (TPC-H Q15)                                   False              False              False                 False
+Parts/Supplier Relationship (TPC-H Q16)                          False              False              False                 False
+Small-Quantity-Order Revenue (TPC-H Q17)                         False              False              False                 False
+Large Volume Customer (TPC-H Q18)                                False              False              False                 False
+Discounted Revenue (TPC-H Q19)                                   False              False              False                 False
+Potential Part Promotion (TPC-H Q20)                             False              False              False                 False
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)              False              False              False                 False
+Global Sales Opportunity Query (TPC-H Q22)                       False              False              False                 False
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                             28708.47            1180.63           29649.25               2525.85
-Minimum Cost Supplier Query (TPC-H Q2)                         1384.04              26.49             343.48                427.90
-Shipping Priority (TPC-H Q3)                                   6274.82             111.73            4434.53                726.08
-Order Priority Checking Query (TPC-H Q4)                       1338.43              52.76            1598.75               1256.79
-Local Supplier Volume (TPC-H Q5)                               3548.09              72.67            4200.01                631.34
-Forecasting Revenue Change (TPC-H Q6)                          3472.55              31.95            4242.63                479.83
-Forecasting Revenue Change (TPC-H Q7)                          3834.84              90.97            6573.48                763.89
-National Market Share (TPC-H Q8)                               7159.48             395.52            9404.29                597.75
-Product Type Profit Measure (TPC-H Q9)                         6324.31             118.15            7149.07               1072.70
-Forecasting Revenue Change (TPC-H Q10)                         3008.81             190.47            3175.24               1229.89
-Important Stock Identification (TPC-H Q11)                      465.51              21.60             515.84                244.68
-Shipping Modes and Order Priority (TPC-H Q12)                 11930.00              60.06            6924.24                980.66
-Customer Distribution (TPC-H Q13)                             10034.18             498.99           13225.95               1929.17
-Forecasting Revenue Change (TPC-H Q14)                        30383.70              42.59            5040.86                514.54
-Top Supplier Query (TPC-H Q15)                                 7529.17              38.02           43937.24                526.16
-Parts/Supplier Relationship (TPC-H Q16)                         729.39              99.40             975.61                554.26
-Small-Quantity-Order Revenue (TPC-H Q17)                        172.89              46.43            1235.54               1976.13
-Large Volume Customer (TPC-H Q18)                             10549.10             186.20            6134.63               6989.12
-Discounted Revenue (TPC-H Q19)                                  307.34              76.72             431.38                670.71
-Potential Part Promotion (TPC-H Q20)                            576.47              83.79             828.61                658.28
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          207409.08            1849.69           18529.20                857.39
-Global Sales Opportunity Query (TPC-H Q22)                      409.86              59.13             524.74                234.53
+Pricing Summary Report (TPC-H Q1)                             28212.79            1279.25           29264.78               2509.78
+Minimum Cost Supplier Query (TPC-H Q2)                         1347.96              27.79             350.37                404.71
+Shipping Priority (TPC-H Q3)                                   5533.44             110.67            4394.45                726.86
+Order Priority Checking Query (TPC-H Q4)                       1348.26              49.57            1615.91               1220.30
+Local Supplier Volume (TPC-H Q5)                               3546.07              65.77            3782.38                626.97
+Forecasting Revenue Change (TPC-H Q6)                          3501.06              32.45            4265.21                480.73
+Forecasting Revenue Change (TPC-H Q7)                          3723.40              77.47            6308.88                732.16
+National Market Share (TPC-H Q8)                               6866.72             328.71            9760.63                578.29
+Product Type Profit Measure (TPC-H Q9)                         5729.25              93.31            6986.76               1056.58
+Forecasting Revenue Change (TPC-H Q10)                         2965.17             164.58            3216.54               1196.92
+Important Stock Identification (TPC-H Q11)                      362.57              23.50             483.41                238.68
+Shipping Modes and Order Priority (TPC-H Q12)                 12313.73              56.50            6762.52                982.33
+Customer Distribution (TPC-H Q13)                             10036.42             510.67           13272.87               1947.75
+Forecasting Revenue Change (TPC-H Q14)                        32053.05              34.59            5011.54                509.72
+Top Supplier Query (TPC-H Q15)                                 7228.12              37.73           42957.00                527.11
+Parts/Supplier Relationship (TPC-H Q16)                         779.34              93.34             997.20                559.13
+Small-Quantity-Order Revenue (TPC-H Q17)                        159.27              48.10            1231.86               1927.87
+Large Volume Customer (TPC-H Q18)                             10429.29             169.44            6158.22               6843.84
+Discounted Revenue (TPC-H Q19)                                  291.26              66.31             428.32                667.13
+Potential Part Promotion (TPC-H Q20)                            536.01              70.36             806.18                645.68
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          204242.15            1688.44           18731.20                881.96
+Global Sales Opportunity Query (TPC-H Q22)                      457.16              58.17             531.41                230.90
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              1.0          340.0         2.0     1533.0    1883.0
-MonetDB-BHT-8-1-1              1.0           19.0         8.0       26.0      61.0
-MySQL-BHT-8-8-1-1              0.0          537.0         3.0     2140.0    2688.0
-PostgreSQL-BHT-8-1-1           1.0           29.0         1.0       86.0     123.0
+MariaDB-BHT-8-1-1              1.0          363.0         2.0     1613.0    1986.0
+MonetDB-BHT-8-1-1              1.0           21.0         8.0       28.0      65.0
+MySQL-BHT-8-8-1-1              1.0          498.0         3.0     2289.0    2797.0
+PostgreSQL-BHT-8-1-1           1.0           26.0         1.0       83.0     118.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-MariaDB-BHT-8-1-1              3.54
+MariaDB-BHT-8-1-1              3.43
 MonetDB-BHT-8-1-1              0.12
-MySQL-BHT-8-8-1-1              3.49
-PostgreSQL-BHT-8-1-1           0.86
+MySQL-BHT-8-8-1-1              3.46
+PostgreSQL-BHT-8-1-1           0.85
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1               1053.66
-MonetDB-BHT-8-1-1              34735.91
-MySQL-BHT-8-8-1-1               1059.53
-PostgreSQL-BHT-8-1-1            4352.89
+MariaDB-BHT-8-1-1               1083.01
+MonetDB-BHT-8-1-1              37144.57
+MySQL-BHT-8-8-1-1               1069.53
+PostgreSQL-BHT-8-1-1            4409.36
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-MariaDB-BHT-8-1    1  1              1                349      1   1                   226.93
+MariaDB-BHT-8-1    1  1              1                346      1   1                   228.90
 MonetDB-BHT-8-1    1  1              1                  8      1   1                  9900.00
-MySQL-BHT-8-8-1    1  1              1                173      1   1                   457.80
+MySQL-BHT-8-8-1    1  1              1                171      1   1                   463.16
 PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-BHT-8-1 - Pods [[1]]
+DBMS MonetDB-BHT-8-1 - Pods [[1]]
+DBMS MySQL-BHT-8-8-1 - Pods [[1]]
+DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+DBMS MonetDB-BHT-8 - Pods [[1]]
+DBMS MariaDB-BHT-8 - Pods [[1]]
+DBMS MySQL-BHT-8-8 - Pods [[1]]
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN

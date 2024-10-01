@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1727439966
-Experiment                    : starts at 2024-09-27 14:26:06.478408 (2175906.602389405)
+Experiment                    : has code 1727771766
+Experiment                    : starts at 2024-10-01 10:36:06.067263 (2507706.191244041)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
@@ -21,10 +21,10 @@ done
 PostgreSQL-BHT-16-1           : will start now
 - waiting 30s -               : done
 PostgreSQL-BHT-16-1           : is not loaded yet
-PostgreSQL-BHT-16-1           : will start loading but not before 2024-09-27 12:28:07 (that is in 60 secs)
+PostgreSQL-BHT-16-1           : will start loading but not before 2024-10-01 08:38:06 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-16-1           : is not loaded yet
-PostgreSQL-BHT-16-1           : will start loading but not before 2024-09-27 12:28:07
+PostgreSQL-BHT-16-1           : will start loading but not before 2024-10-01 08:38:06
 done
 PostgreSQL-BHT-16-1           : is not loaded yet
 PostgreSQL-BHT-16-1           : start asynch loading scripts of type loaded
@@ -39,9 +39,9 @@ PostgreSQL-BHT-16-1           : loader timespan (first to last [s]) = 84
 PostgreSQL-BHT-16-1           : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-16-1           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
 PostgreSQL-BHT-16-1-1         : start benchmarking
-PostgreSQL-BHT-16-1           : benchmarking results in folder /home/perdelt/benchmarks/1727439966
+PostgreSQL-BHT-16-1           : benchmarking results in folder /home/perdelt/benchmarks/1727771766
 - waiting 10s -               : done
-PostgreSQL-BHT-16-1           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-16-1-1727439966-1-1-tqvv9: found
+PostgreSQL-BHT-16-1           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-16-1-1727771766-1-1-l9bhb: found
 - waiting 30s -               : done
 PostgreSQL-BHT-16-1           : has running benchmarks
 - waiting 30s -               : done
@@ -74,15 +74,15 @@ done
 PostgreSQL-BHT-16-1           : has running benchmarks
 PostgreSQL-BHT-16-1-1         : showing benchmarker times
 PostgreSQL-BHT-16-1-1         : benchmarker timespan (start to end single container [s]) = 462
-PostgreSQL-BHT-16-1-1         : benchmarker times (start/end per pod and container) = [(1727440183, 1727440622)]
-PostgreSQL-BHT-16-1-1         : found and updated times {'benchmarker': [(1727440183, 1727440622)]}
+PostgreSQL-BHT-16-1-1         : benchmarker times (start/end per pod and container) = [(1727771983, 1727772433)]
+PostgreSQL-BHT-16-1-1         : found and updated times {'benchmarker': [(1727771983, 1727772433)]}
 done
 PostgreSQL-BHT-16-1           : benchmarks done 0 of 1. This will be client 2
 PostgreSQL-BHT-16-1           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 8}
 PostgreSQL-BHT-16-1-2         : start benchmarking
-PostgreSQL-BHT-16-1           : benchmarking results in folder /home/perdelt/benchmarks/1727439966
+PostgreSQL-BHT-16-1           : benchmarking results in folder /home/perdelt/benchmarks/1727771766
 - waiting 10s -               : done
-PostgreSQL-BHT-16-1           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-16-1-1727439966-1-2-glz8b: found
+PostgreSQL-BHT-16-1           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-16-1-1727771766-1-2-k454c: found
 - waiting 30s -               : done
 PostgreSQL-BHT-16-1           : has running benchmarks
 - waiting 30s -               : done
@@ -114,13 +114,23 @@ PostgreSQL-BHT-16-1           : has running benchmarks
 done
 PostgreSQL-BHT-16-1           : has running benchmarks
 PostgreSQL-BHT-16-1-2         : showing benchmarker times
-PostgreSQL-BHT-16-1-2         : benchmarker timespan (start to end single container [s]) = 462
-PostgreSQL-BHT-16-1-2         : benchmarker times (start/end per pod and container) = [(1727440680, 1727441128), (1727440680, 1727441131)]
-PostgreSQL-BHT-16-1-2         : found and updated times {'benchmarker': [(1727440680, 1727441128), (1727440680, 1727441131)]}
+PostgreSQL-BHT-16-1-2         : benchmarker timespan (start to end single container [s]) = 463
+PostgreSQL-BHT-16-1-2         : benchmarker times (start/end per pod and container) = [(1727772481, 1727772927), (1727772481, 1727772918)]
+PostgreSQL-BHT-16-1-2         : found and updated times {'benchmarker': [(1727772481, 1727772927), (1727772481, 1727772918)]}
 done
 PostgreSQL-BHT-16-1           : can be stopped
-Experiment ends at 2024-09-27 14:46:11.452658 (2177111.576637654): 1204.9742482490838s total
-bexhoma-dashboard-9b85f945f-vn75k Running
+Experiment ends at 2024-10-01 10:56:12.906234 (2508913.030213495): 1206.8389694537036s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+                                  connection  ...        dbms
+PostgreSQL-BHT-16-1-2                         ...            
+0                      PostgreSQL-BHT-16-1-2  ...  PostgreSQL
+
+[1 rows x 17 columns]
+PostgreSQL-BHT-16-1-2
+['8']
+vusers 8
                                   connection  ...        dbms
 PostgreSQL-BHT-16-1-2                         ...            
 0                      PostgreSQL-BHT-16-1-2  ...  PostgreSQL
@@ -139,14 +149,6 @@ PostgreSQL-BHT-16-1-1-1  PostgreSQL-BHT-16-1-1  ...  PostgreSQL
 connection_pod
 ['8', '8', '16']
 vusers 8 8 16
-                                  connection  ...        dbms
-PostgreSQL-BHT-16-1-2                         ...            
-0                      PostgreSQL-BHT-16-1-2  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-16-1-2
-['8']
-vusers 8
                                   connection  ...        dbms
 PostgreSQL-BHT-16-1-1                         ...            
 0                      PostgreSQL-BHT-16-1-1  ...  PostgreSQL
@@ -169,6 +171,8 @@ Result workflow not complete
 
 ### Workload
     HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: dbmsbenchmarker
+    Duration: 1207s 
     This includes no queries. HammerDB runs the benchmark
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
@@ -190,8 +194,8 @@ PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250283792
-    datadisk:3377112
+    disk:250900184
+    datadisk:3377272
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
@@ -200,20 +204,25 @@ PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:251195792
-    datadisk:4289112
+    disk:251856300
+    datadisk:4333388
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1  12029.0  37469.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2  10168.5  31827.5         5       0
+PostgreSQL-BHT-16-1-1               1      16       1          1  12754.0  39383.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2  11115.0  34367.0         5       0
 
 Warehouses: 16
 
 ### Workflow
+
+#### Actual
 DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
