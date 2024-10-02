@@ -203,7 +203,7 @@ Moreover the loading times (schema creation, ingestion and indexing), the geomet
 Please note that the results are not suitable for being published as official TPC-H results.
 In particular the refresh streams are missing.
 
-To see the summary of experiment `1706255897` you can simply call `python tpch.py -e 1706255897 summary`.
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 

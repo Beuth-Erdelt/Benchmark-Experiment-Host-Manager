@@ -130,7 +130,7 @@ TEST passed: Throughput (requests/second) contains no 0 or NaN
 
 We can see that the overall throughput is close to the target and that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads).
 
-To see the summary of experiment `1726658756` you can simply call `python benchbase.py -e 1726658756 summary`.
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 

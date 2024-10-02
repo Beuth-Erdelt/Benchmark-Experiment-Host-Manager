@@ -155,7 +155,7 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 We can see that the overall throughput is very close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
-To see the summary of experiment `1726160982` you can simply call `python ycsb.py -e 1726160982 summary`.
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 

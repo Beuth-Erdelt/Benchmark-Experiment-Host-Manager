@@ -132,7 +132,7 @@ TEST passed: NOPM contains no 0 or NaN
 
 We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
 
-To see the summary of experiment `1726578005` you can simply call `python hammerdb.py -e 1726578005 summary`.
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 
