@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1726838600
-Experiment                    : starts at 2024-09-20 15:23:20.229641 (1574540.35361779)
+Experiment                    : has code 1727806164
+Experiment                    : starts at 2024-10-01 20:09:24.403762 (2542104.527737473)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -24,16 +24,16 @@ PostgreSQL-BHT-8-1            : will start now
 PostgreSQL-BHT-8-1            : storage exists bexhoma-storage-postgresql-hammerdb-16
 PostgreSQL-BHT-8-1            : loading is set to finished
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-09-20 13:25:20 (that is in 60 secs)
+PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-10-01 18:11:24 (that is in 60 secs)
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-09-20 13:25:20
+PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-10-01 18:11:24
 done
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 2. This will be client 1
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
 PostgreSQL-BHT-8-1-1-1        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-1-1-cph6m: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-1-2s424: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -53,18 +53,18 @@ PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-1-1        : showing benchmarker times
-PostgreSQL-BHT-8-1-1-1        : benchmarker timespan (start to end single container [s]) = 282
-PostgreSQL-BHT-8-1-1-1        : benchmarker times (start/end per pod and container) = [(1726838725, 1726838989)]
-PostgreSQL-BHT-8-1-1-1        : found and updated times {'benchmarker': [(1726838725, 1726838989)]}
+PostgreSQL-BHT-8-1-1-1        : benchmarker timespan (start to end single container [s]) = 281
+PostgreSQL-BHT-8-1-1-1        : benchmarker times (start/end per pod and container) = [(1727806290, 1727806547)]
+PostgreSQL-BHT-8-1-1-1        : found and updated times {'benchmarker': [(1727806290, 1727806547)]}
 PostgreSQL-BHT-8-1-1-1        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-1-1        : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 2. This will be client 2
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
 PostgreSQL-BHT-8-1-1-2        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-1-2-nlpp7: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-2-m6xjp: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -85,72 +85,54 @@ done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-1-2        : showing benchmarker times
 PostgreSQL-BHT-8-1-1-2        : benchmarker timespan (start to end single container [s]) = 282
-PostgreSQL-BHT-8-1-1-2        : benchmarker times (start/end per pod and container) = [(1726839053, 1726839327), (1726839053, 1726839328)]
-PostgreSQL-BHT-8-1-1-2        : found and updated times {'benchmarker': [(1726839053, 1726839327), (1726839053, 1726839328)]}
+PostgreSQL-BHT-8-1-1-2        : benchmarker times (start/end per pod and container) = [(1727806619, 1727806890), (1727806620, 1727806893)]
+PostgreSQL-BHT-8-1-1-2        : found and updated times {'benchmarker': [(1727806619, 1727806890), (1727806620, 1727806893)]}
 PostgreSQL-BHT-8-1-1-2        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-1-2        : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 2. This will be client 3
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 8}
 PostgreSQL-BHT-8-1-1-3        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-1-3-lmjfx: found
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
+list index out of range
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+list index out of range
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
 PostgreSQL-BHT-8-1-1-3        : showing benchmarker times
-PostgreSQL-BHT-8-1-1-3        : benchmarker timespan (start to end single container [s]) = 283
-PostgreSQL-BHT-8-1-1-3        : benchmarker times (start/end per pod and container) = [(1726839382, 1726839649), (1726839382, 1726839657)]
-PostgreSQL-BHT-8-1-1-3        : found and updated times {'benchmarker': [(1726839382, 1726839649), (1726839382, 1726839657)]}
+PostgreSQL-BHT-8-1-1-3        : benchmarker timespan (start to end single container [s]) = 71
+PostgreSQL-BHT-8-1-1-3        : benchmarker times (start/end per pod and container) = []
+PostgreSQL-BHT-8-1-1-3        : found and updated times {'benchmarker': []}
 PostgreSQL-BHT-8-1-1-3        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-1-3        : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 2. This will be client 4
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '4', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 8}
 PostgreSQL-BHT-8-1-1-4        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-1-4-52w8h: found
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
-done
-PostgreSQL-BHT-8-1            : has running benchmarks
+list index out of range
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+list index out of range
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+list index out of range
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+list index out of range
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
 PostgreSQL-BHT-8-1-1-4        : showing benchmarker times
-PostgreSQL-BHT-8-1-1-4        : benchmarker timespan (start to end single container [s]) = 314
-PostgreSQL-BHT-8-1-1-4        : benchmarker times (start/end per pod and container) = [(1726839713, 1726839973), (1726839712, 1726839990), (1726839712, 1726839974), (1726839712, 1726839986)]
-PostgreSQL-BHT-8-1-1-4        : found and updated times {'benchmarker': [(1726839713, 1726839973), (1726839712, 1726839990), (1726839712, 1726839974), (1726839712, 1726839986)]}
+PostgreSQL-BHT-8-1-1-4        : benchmarker timespan (start to end single container [s]) = 72
+PostgreSQL-BHT-8-1-1-4        : benchmarker times (start/end per pod and container) = []
+PostgreSQL-BHT-8-1-1-4        : found and updated times {'benchmarker': []}
 PostgreSQL-BHT-8-1-1-4        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-1-4        : collecting metrics of benchmarker
 done
@@ -162,16 +144,16 @@ PostgreSQL-BHT-8-1            : storage exists bexhoma-storage-postgresql-hammer
 PostgreSQL-BHT-8-1            : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-09-20 13:49:54 (that is in 60 secs)
+PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-10-01 18:28:31 (that is in 60 secs)
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-09-20 13:49:54
+PostgreSQL-BHT-8-1            : will start benchmarking but not before 2024-10-01 18:28:31
 done
 PostgreSQL-BHT-8-1            : benchmarks done 1 of 2. This will be client 1
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
 PostgreSQL-BHT-8-1-2-1        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-2-1-28t9r: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-2-1-wt7tc: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -192,17 +174,17 @@ done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-2-1        : showing benchmarker times
 PostgreSQL-BHT-8-1-2-1        : benchmarker timespan (start to end single container [s]) = 281
-PostgreSQL-BHT-8-1-2-1        : benchmarker times (start/end per pod and container) = [(1726840199, 1726840465)]
-PostgreSQL-BHT-8-1-2-1        : found and updated times {'benchmarker': [(1726840199, 1726840465)]}
+PostgreSQL-BHT-8-1-2-1        : benchmarker times (start/end per pod and container) = [(1727807316, 1727807586)]
+PostgreSQL-BHT-8-1-2-1        : found and updated times {'benchmarker': [(1727807316, 1727807586)]}
 PostgreSQL-BHT-8-1-2-1        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-2-1        : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : benchmarks done 1 of 2. This will be client 2
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
 PostgreSQL-BHT-8-1-2-2        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-2-2-2hkjs: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-2-2-p5c62: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -221,19 +203,21 @@ PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
+done
+PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-2-2        : showing benchmarker times
-PostgreSQL-BHT-8-1-2-2        : benchmarker timespan (start to end single container [s]) = 283
-PostgreSQL-BHT-8-1-2-2        : benchmarker times (start/end per pod and container) = [(1726840528, 1726840791), (1726840528, 1726840793)]
-PostgreSQL-BHT-8-1-2-2        : found and updated times {'benchmarker': [(1726840528, 1726840791), (1726840528, 1726840793)]}
+PostgreSQL-BHT-8-1-2-2        : benchmarker timespan (start to end single container [s]) = 311
+PostgreSQL-BHT-8-1-2-2        : benchmarker times (start/end per pod and container) = [(1727807646, 1727807904), (1727807646, 1727807923)]
+PostgreSQL-BHT-8-1-2-2        : found and updated times {'benchmarker': [(1727807646, 1727807904), (1727807646, 1727807923)]}
 PostgreSQL-BHT-8-1-2-2        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-2-2        : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : benchmarks done 1 of 2. This will be client 3
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 8}
 PostgreSQL-BHT-8-1-2-3        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-2-3-m2jzm: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-2-3-shs4p: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -254,17 +238,19 @@ done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-2-3        : showing benchmarker times
 PostgreSQL-BHT-8-1-2-3        : benchmarker timespan (start to end single container [s]) = 282
-PostgreSQL-BHT-8-1-2-3        : benchmarker times (start/end per pod and container) = [(1726840856, 1726841109), (1726840856, 1726841115)]
-PostgreSQL-BHT-8-1-2-3        : found and updated times {'benchmarker': [(1726840856, 1726841109), (1726840856, 1726841115)]}
+PostgreSQL-BHT-8-1-2-3        : benchmarker times (start/end per pod and container) = [(1727808005, 1727808273), (1727808005, 1727808281)]
+PostgreSQL-BHT-8-1-2-3        : found and updated times {'benchmarker': [(1727808005, 1727808273), (1727808005, 1727808281)]}
 PostgreSQL-BHT-8-1-2-3        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-2-3        : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : benchmarks done 1 of 2. This will be client 4
 PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '4', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 8}
 PostgreSQL-BHT-8-1-2-4        : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1726838600
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1727806164
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1726838600-2-4-gfxhj: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1727806164-2-4-5w662: found
+- waiting 30s -               : done
+PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -284,29 +270,1975 @@ PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-2-4        : showing benchmarker times
-PostgreSQL-BHT-8-1-2-4        : benchmarker timespan (start to end single container [s]) = 283
-PostgreSQL-BHT-8-1-2-4        : benchmarker times (start/end per pod and container) = [(1726841188, 1726841462), (1726841187, 1726841450), (1726841188, 1726841460), (1726841188, 1726841446)]
-PostgreSQL-BHT-8-1-2-4        : found and updated times {'benchmarker': [(1726841188, 1726841462), (1726841187, 1726841450), (1726841188, 1726841460), (1726841188, 1726841446)]}
+PostgreSQL-BHT-8-1-2-4        : benchmarker timespan (start to end single container [s]) = 313
+PostgreSQL-BHT-8-1-2-4        : benchmarker times (start/end per pod and container) = [(1727808337, 1727808620), (1727808337, 1727808622), (1727808337, 1727808612), (1727808337, 1727808619)]
+PostgreSQL-BHT-8-1-2-4        : found and updated times {'benchmarker': [(1727808337, 1727808620), (1727808337, 1727808622), (1727808337, 1727808612), (1727808337, 1727808619)]}
 PostgreSQL-BHT-8-1-2-4        : collecting execution metrics of SUT
 PostgreSQL-BHT-8-1-2-4        : collecting metrics of benchmarker
 done
 PostgreSQL-BHT-8-1            : can be stopped
-Experiment ends at 2024-09-20 16:11:50.224649 (1577450.348629289): 2909.9950114991516s total
-bexhoma-dashboard-9b85f945f-dmlxt Running
+Experiment ends at 2024-10-01 20:51:28.825489 (2544628.949469022): 2524.4217315488495s total
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-4c7vb.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-3-6hmbc.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-sf9d6.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-42c5l.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-rzrtz.dbmsbenchmarker.log
+Length mismatch: Expected axis has 0 elements, new values have 17 elements
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 1140, in log_to_df
+    df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 17 elements
+
+Error in bexhoma-benchmarker-postgresql-bht-8-1-1727806164-1-4-4p4t9.dbmsbenchmarker.log
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
                                     connection  ...        dbms
-PostgreSQL-BHT-8-1-1-4                          ...            
-0                       PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-4                          ...            
+0                       PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
 
 [1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-4
+PostgreSQL-BHT-8-1-2-4
 ['8']
 vusers 8
                                     connection  ...        dbms
-PostgreSQL-BHT-8-1-1-2                          ...            
-0                       PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-2                          ...            
+0                       PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
 
 [1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-2
+PostgreSQL-BHT-8-1-2-2
 ['16']
 vusers 16
                                     connection  ...        dbms
@@ -318,19 +2250,11 @@ PostgreSQL-BHT-8-1-2-4
 ['8']
 vusers 8
                                     connection  ...        dbms
-PostgreSQL-BHT-8-1-1-4                          ...            
-0                       PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-3                          ...            
+0                       PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
 
 [1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-4
-['8']
-vusers 8
-                                    connection  ...        dbms
-PostgreSQL-BHT-8-1-1-3                          ...            
-0                       PostgreSQL-BHT-8-1-1-3  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-3
+PostgreSQL-BHT-8-1-2-3
 ['8']
 vusers 8
                                     connection  ...        dbms
@@ -350,6 +2274,14 @@ PostgreSQL-BHT-8-1-2-4
 ['8']
 vusers 8
                                     connection  ...        dbms
+PostgreSQL-BHT-8-1-2-2                          ...            
+0                       PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
+
+[1 rows x 17 columns]
+PostgreSQL-BHT-8-1-2-2
+['16']
+vusers 16
+                                    connection  ...        dbms
 PostgreSQL-BHT-8-1-2-3                          ...            
 0                       PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
 
@@ -357,12 +2289,39 @@ PostgreSQL-BHT-8-1-2-3                          ...
 PostgreSQL-BHT-8-1-2-3
 ['8']
 vusers 8
+                                      connection  ...        dbms
+connection_pod                                    ...            
+PostgreSQL-BHT-8-1-2-4-1  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-2-1  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-4-2  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-3-1  PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-1-1  PostgreSQL-BHT-8-1-2-1  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-4-3  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-2-2  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-3-2  PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
+PostgreSQL-BHT-8-1-1-2-1  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-1-2-2  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-1-1-1  PostgreSQL-BHT-8-1-1-1  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-4-4  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
+
+[12 rows x 17 columns]
+connection_pod
+['8', '16', '8', '8', '16', '8', '16', '8', '16', '16', '16', '8']
+vusers 8 16 8 8 16 8 16 8 16 16 16 8
                                     connection  ...        dbms
-PostgreSQL-BHT-8-1-2-2                          ...            
-0                       PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-1-2                          ...            
+0                       PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
 
 [1 rows x 17 columns]
-PostgreSQL-BHT-8-1-2-2
+PostgreSQL-BHT-8-1-1-2
+['16']
+vusers 16
+                                    connection  ...        dbms
+PostgreSQL-BHT-8-1-1-2                          ...            
+0                       PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
+
+[1 rows x 17 columns]
+PostgreSQL-BHT-8-1-1-2
 ['16']
 vusers 16
                                     connection  ...        dbms
@@ -374,87 +2333,6 @@ PostgreSQL-BHT-8-1-1-1
 ['16']
 vusers 16
                                     connection  ...        dbms
-PostgreSQL-BHT-8-1-1-4                          ...            
-0                       PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-4
-['8']
-vusers 8
-                                    connection  ...        dbms
-PostgreSQL-BHT-8-1-2-2                          ...            
-0                       PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-2-2
-['16']
-vusers 16
-                                    connection  ...        dbms
-PostgreSQL-BHT-8-1-2-4                          ...            
-0                       PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-2-4
-['8']
-vusers 8
-                                      connection  ...        dbms
-connection_pod                                    ...            
-PostgreSQL-BHT-8-1-1-4-1  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-2-1  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-4-1  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-4-2  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-3-1  PostgreSQL-BHT-8-1-1-3  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-1-1  PostgreSQL-BHT-8-1-2-1  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-4-2  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-3-1  PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-2-1  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-1-1  PostgreSQL-BHT-8-1-1-1  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-4-3  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-2-2  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-4-3  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-3-2  PostgreSQL-BHT-8-1-1-3  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-2-2  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-4-4  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-3-2  PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-4-4  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
-
-[18 rows x 17 columns]
-connection_pod
-['8', '16', '8', '8', '8', '16', '8', '8', '16', '16', '8', '16', '8', '8', '16', '8', '8', '8']
-vusers 8 16 8 8 8 16 8 8 16 16 8 16 8 8 16 8 8 8
-                                    connection  ...        dbms
-PostgreSQL-BHT-8-1-1-3                          ...            
-0                       PostgreSQL-BHT-8-1-1-3  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-3
-['8']
-vusers 8
-                                    connection  ...        dbms
-PostgreSQL-BHT-8-1-1-2                          ...            
-0                       PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-2
-['16']
-vusers 16
-                                    connection  ...        dbms
-PostgreSQL-BHT-8-1-1-4                          ...            
-0                       PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1-4
-['8']
-vusers 8
-                                    connection  ...        dbms
-PostgreSQL-BHT-8-1-2-3                          ...            
-0                       PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-2-3
-['8']
-vusers 8
-                                    connection  ...        dbms
 PostgreSQL-BHT-8-1-2-4                          ...            
 0                       PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
 
@@ -464,39 +2342,35 @@ PostgreSQL-BHT-8-1-2-4
 vusers 8
 Benchmarking                                       connection  ...        dbms
 connection_pod                                    ...            
-PostgreSQL-BHT-8-1-1-4-1  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-2-1  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
 PostgreSQL-BHT-8-1-2-4-1  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-4-2  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-3-1  PostgreSQL-BHT-8-1-1-3  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-1-1  PostgreSQL-BHT-8-1-2-1  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-2-1  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
 PostgreSQL-BHT-8-1-2-4-2  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
 PostgreSQL-BHT-8-1-2-3-1  PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-2-1  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-1-1  PostgreSQL-BHT-8-1-1-1  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-4-3  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-2-2-2  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-1-1  PostgreSQL-BHT-8-1-2-1  ...  PostgreSQL
 PostgreSQL-BHT-8-1-2-4-3  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-3-2  PostgreSQL-BHT-8-1-1-3  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-2-2  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
-PostgreSQL-BHT-8-1-1-4-4  PostgreSQL-BHT-8-1-1-4  ...  PostgreSQL
+PostgreSQL-BHT-8-1-2-2-2  PostgreSQL-BHT-8-1-2-2  ...  PostgreSQL
 PostgreSQL-BHT-8-1-2-3-2  PostgreSQL-BHT-8-1-2-3  ...  PostgreSQL
+PostgreSQL-BHT-8-1-1-2-1  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-1-2-2  PostgreSQL-BHT-8-1-1-2  ...  PostgreSQL
+PostgreSQL-BHT-8-1-1-1-1  PostgreSQL-BHT-8-1-1-1  ...  PostgreSQL
 PostgreSQL-BHT-8-1-2-4-4  PostgreSQL-BHT-8-1-2-4  ...  PostgreSQL
 
-[18 rows x 17 columns]
-Workflow {'PostgreSQL-BHT-8-1': [[4, 2, 2, 1], [4, 1, 2, 2]]}
+[12 rows x 17 columns]
+Workflow {'PostgreSQL-BHT-8-1': [[4, 2, 2, 1], [2, 1]]}
 Result workflow not complete
 
 ## Show Summary
 
 ### Workload
     HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: dbmsbenchmarker
+    Duration: 2525s 
     This includes no queries. HammerDB runs the benchmark
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -514,8 +2388,8 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4361121
+    disk:247524628
+    datadisk:4316249
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -526,8 +2400,8 @@ PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4466781
+    disk:247524628
+    datadisk:4425637
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -538,8 +2412,8 @@ PostgreSQL-BHT-8-1-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4598965
+    disk:247524628
+    datadisk:4555013
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -550,8 +2424,8 @@ PostgreSQL-BHT-8-1-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4694789
+    disk:247524628
+    datadisk:4555013
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -562,10 +2436,10 @@ PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4804161
+    disk:247524628
+    datadisk:4553673
     volume_size:30G
-    volume_used:4.6G
+    volume_used:4.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
@@ -574,10 +2448,10 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4882517
+    disk:247524628
+    datadisk:4649429
     volume_size:30G
-    volume_used:4.7G
+    volume_used:4.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
@@ -586,10 +2460,10 @@ PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4981485
+    disk:247524628
+    datadisk:4762725
     volume_size:30G
-    volume_used:4.7G
+    volume_used:4.5G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
@@ -598,28 +2472,31 @@ PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389712
-    datadisk:5056789
+    disk:247524628
+    datadisk:4849781
     volume_size:30G
-    volume_used:4.8G
+    volume_used:4.5G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                        experiment_run  vusers  client  pod_count      NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1      16       1          1  11158.00  34741.0         2       0
-PostgreSQL-BHT-8-1-1-2               1      32       2          2  11567.00  33597.5         2       0
-PostgreSQL-BHT-8-1-1-3               1      16       3          2   9566.50  30690.0         2       0
-PostgreSQL-BHT-8-1-1-4               1      32       4          4  10431.75  30559.5         2       0
-PostgreSQL-BHT-8-1-2-1               2      16       1          1   9440.00  30013.0         2       0
-PostgreSQL-BHT-8-1-2-2               2      32       2          2  10366.00  30044.5         2       0
-PostgreSQL-BHT-8-1-2-3               2      16       3          2   8429.00  26961.0         2       0
-PostgreSQL-BHT-8-1-2-4               2      32       4          4   9383.50  27446.5         2       0
+                        experiment_run  vusers  client  pod_count     NOPM       TPM  duration  errors
+PostgreSQL-BHT-8-1-1-1               1      16       1          1  11284.0  35075.00         2       0
+PostgreSQL-BHT-8-1-1-2               1      32       2          2  11201.5  32750.50         2       0
+PostgreSQL-BHT-8-1-2-1               2      16       1          1  10359.0  32817.00         2       0
+PostgreSQL-BHT-8-1-2-2               2      32       2          2  11106.5  32350.00         2       0
+PostgreSQL-BHT-8-1-2-3               2      16       3          2   9296.5  29795.50         2       0
+PostgreSQL-BHT-8-1-2-4               2      32       4          4   9951.5  29030.25         2       0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-BHT-8-1 - Pods [[4, 2, 2, 1], [4, 1, 2, 2]]
+
+#### Actual
+DBMS PostgreSQL-BHT-8-1 - Pods [[4, 2, 2, 1], [2, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                         time_load  terminals  pods  Imported warehouses [1/h]
@@ -634,23 +2511,23 @@ PostgreSQL-BHT-8-1-2-4      110.0        1.0   4.0                 523.636364
 
 ### Execution - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1    14269.78    61.29          5.08                 7.29
-PostgreSQL-BHT-8-1-1-2    15565.25    62.69          5.48                 7.74
-PostgreSQL-BHT-8-1-1-3    13643.26    62.83          5.29                 7.71
-PostgreSQL-BHT-8-1-1-4    16152.32    63.63          5.85                 8.33
-PostgreSQL-BHT-8-1-2-1    62489.86    62.81          9.42                14.51
-PostgreSQL-BHT-8-1-2-2    15808.32    63.63          5.98                 8.59
-PostgreSQL-BHT-8-1-2-3    14594.90    62.85          5.57                 8.26
-PostgreSQL-BHT-8-1-2-4    16079.04    63.64          6.15                 8.91
+PostgreSQL-BHT-8-1-1-1    14009.45    62.83          4.89                 7.08
+PostgreSQL-BHT-8-1-1-2    14686.86    63.63          5.65                 6.58
+PostgreSQL-BHT-8-1-1-3        0.27     0.00          4.14                 5.07
+PostgreSQL-BHT-8-1-1-4        0.25     0.00          4.14                 5.07
+PostgreSQL-BHT-8-1-2-1    29766.86    62.79          9.02                12.28
+PostgreSQL-BHT-8-1-2-2    15679.63    63.62          5.88                 6.83
+PostgreSQL-BHT-8-1-2-3    14381.26    62.74          5.49                 6.53
+PostgreSQL-BHT-8-1-2-4    16391.02    63.62          6.05                 7.16
 
 ### Execution - Benchmarker
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       23.72     0.10          0.06                 0.06
-PostgreSQL-BHT-8-1-1-2       23.72     0.10          0.16                 0.17
-PostgreSQL-BHT-8-1-1-3       24.45     0.04          0.18                 0.18
-PostgreSQL-BHT-8-1-1-4       20.56     0.05          0.20                 0.20
-PostgreSQL-BHT-8-1-2-1       22.63     0.08          0.13                 0.13
-PostgreSQL-BHT-8-1-2-2       17.60     0.05          0.16                 0.16
-PostgreSQL-BHT-8-1-2-3       23.32     0.08          0.18                 0.18
-PostgreSQL-BHT-8-1-2-4       14.29     0.05          0.20                 0.20
+PostgreSQL-BHT-8-1-1-1       18.98     0.11          0.06                 0.06
+PostgreSQL-BHT-8-1-1-2       19.09     0.11          0.16                 0.17
+PostgreSQL-BHT-8-1-1-3        0.08     0.00          0.11                 0.11
+PostgreSQL-BHT-8-1-1-4       24.17     0.00          0.12                 0.12
+PostgreSQL-BHT-8-1-2-1       20.80     0.09          0.06                 0.06
+PostgreSQL-BHT-8-1-2-2       20.95     0.05          0.17                 0.17
+PostgreSQL-BHT-8-1-2-3       20.99     0.09          0.18                 0.18
+PostgreSQL-BHT-8-1-2-4       18.75     0.04          0.20                 0.20
 TEST passed: NOPM contains no 0 or NaN

@@ -2,11 +2,13 @@
 
 ### Workload
     YCSB SF=1
+    Type: dbmsbenchmarker
+    Duration: 908s 
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are []. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
+YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -24,8 +26,8 @@ PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389712
-    datadisk:2937640
+    disk:247524800
+    datadisk:2958464
     volume_size:100G
     volume_used:2.9G
     requests_cpu:4
@@ -36,8 +38,8 @@ PostgreSQL-64-8-131072-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389712
-    datadisk:2947608
+    disk:247524800
+    datadisk:2968728
     volume_size:100G
     volume_used:2.9G
     requests_cpu:4
@@ -48,8 +50,8 @@ PostgreSQL-64-8-131072-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389712
-    datadisk:3153880
+    disk:247524800
+    datadisk:3157232
     volume_size:100G
     volume_used:2.9G
     requests_cpu:4
@@ -60,8 +62,8 @@ PostgreSQL-64-8-131072-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389712
-    datadisk:3344016
+    disk:247524800
+    datadisk:3307488
     volume_size:100G
     volume_used:2.9G
     requests_cpu:4
@@ -72,10 +74,10 @@ PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389712
-    datadisk:3654432
+    disk:247524800
+    datadisk:3557544
     volume_size:100G
-    volume_used:3.5G
+    volume_used:3.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-2 uses docker image postgres:16.1
@@ -84,10 +86,10 @@ PostgreSQL-64-8-131072-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389880
-    datadisk:3657856
+    disk:247524800
+    datadisk:3560616
     volume_size:100G
-    volume_used:3.5G
+    volume_used:3.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-3 uses docker image postgres:16.1
@@ -96,10 +98,10 @@ PostgreSQL-64-8-131072-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389880
-    datadisk:3804824
+    disk:247524800
+    datadisk:3712448
     volume_size:100G
-    volume_used:3.5G
+    volume_used:3.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-4 uses docker image postgres:16.1
@@ -108,21 +110,29 @@ PostgreSQL-64-8-131072-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389880
-    datadisk:3807480
+    disk:247524800
+    datadisk:3715320
     volume_size:100G
-    volume_used:3.5G
+    volume_used:3.4G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                       65893.52                15176.0            500058                           1442.00              499942                             1972.00
-PostgreSQL-64-8-131072-1-3               1       64  131072          8                      120155.75                 8844.0            500990                           1375.12              499010                             1966.38
-PostgreSQL-64-8-131072-1-2               1      128  262144          2                       64700.80                15517.0            499365                           1927.50              500635                            65279.00
-PostgreSQL-64-8-131072-1-4               1      128  262144         16                       94954.08                10775.0            499576                           2759.25              500424                            48961.00
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       46080.83                21701.0            500632                           1418.00              499368                             1856.00
-PostgreSQL-64-8-131072-2-3               2       64  131072          8                      126982.27                 7888.0            501068                            904.75              498932                             1460.88
-PostgreSQL-64-8-131072-2-2               2      128  262144          2                       89340.79                11341.0            499776                           1903.00              500224                            57727.00
-PostgreSQL-64-8-131072-2-4               2      128  262144         16                      105175.49                 9834.0            499656                           2621.88              500344                            37617.00
+PostgreSQL-64-8-131072-1-1               1       64  131072          1                       63459.83                15758.0            500707                           1368.00              499293                             1664.00
+PostgreSQL-64-8-131072-1-3               1       64  131072          8                      127018.44                 7881.0            500316                            841.00              499684                             1235.12
+PostgreSQL-64-8-131072-1-2               1      128  262144          2                       86331.90                11680.0            500233                           1995.00              499767                            64335.00
+PostgreSQL-64-8-131072-1-4               1      128  262144         16                      109142.24                 9467.0            498761                           2934.50              501239                            29365.00
+PostgreSQL-64-8-131072-2-1               2       64  131072          1                       48957.21                20426.0            499208                           1438.00              500792                             1919.00
+PostgreSQL-64-8-131072-2-3               2       64  131072          8                      126310.18                 8203.0            499540                           1139.88              500460                             1556.38
+PostgreSQL-64-8-131072-2-2               2      128  262144          2                       88398.24                11338.0            499967                           1907.50              500033                            62895.00
+PostgreSQL-64-8-131072-2-4               2      128  262144         16                       98981.81                10558.0            499931                           2613.25              500069                            47463.00
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-131072 - Pods [[16, 1, 8, 2], [16, 8, 2, 1]]
+
+#### Planned
+DBMS PostgreSQL-64-8-131072 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

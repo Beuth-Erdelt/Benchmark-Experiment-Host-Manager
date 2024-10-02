@@ -2,12 +2,14 @@
 
 ### Workload
     HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: dbmsbenchmarker
+    Duration: 2525s 
     This includes no queries. HammerDB runs the benchmark
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -25,8 +27,8 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4361121
+    disk:247524628
+    datadisk:4316249
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -37,8 +39,8 @@ PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4466781
+    disk:247524628
+    datadisk:4425637
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -49,8 +51,8 @@ PostgreSQL-BHT-8-1-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4598965
+    disk:247524628
+    datadisk:4555013
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -61,8 +63,8 @@ PostgreSQL-BHT-8-1-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4694789
+    disk:247524628
+    datadisk:4555013
     volume_size:30G
     volume_used:4.2G
     requests_cpu:4
@@ -73,10 +75,10 @@ PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4804161
+    disk:247524628
+    datadisk:4553673
     volume_size:30G
-    volume_used:4.6G
+    volume_used:4.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
@@ -85,10 +87,10 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4882517
+    disk:247524628
+    datadisk:4649429
     volume_size:30G
-    volume_used:4.7G
+    volume_used:4.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
@@ -97,10 +99,10 @@ PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389540
-    datadisk:4981485
+    disk:247524628
+    datadisk:4762725
     volume_size:30G
-    volume_used:4.7G
+    volume_used:4.5G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
@@ -109,28 +111,31 @@ PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246389712
-    datadisk:5056789
+    disk:247524628
+    datadisk:4849781
     volume_size:30G
-    volume_used:4.8G
+    volume_used:4.5G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                        experiment_run  vusers  client  pod_count      NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1      16       1          1  11158.00  34741.0         2       0
-PostgreSQL-BHT-8-1-1-2               1      32       2          2  11567.00  33597.5         2       0
-PostgreSQL-BHT-8-1-1-3               1      16       3          2   9566.50  30690.0         2       0
-PostgreSQL-BHT-8-1-1-4               1      32       4          4  10431.75  30559.5         2       0
-PostgreSQL-BHT-8-1-2-1               2      16       1          1   9440.00  30013.0         2       0
-PostgreSQL-BHT-8-1-2-2               2      32       2          2  10366.00  30044.5         2       0
-PostgreSQL-BHT-8-1-2-3               2      16       3          2   8429.00  26961.0         2       0
-PostgreSQL-BHT-8-1-2-4               2      32       4          4   9383.50  27446.5         2       0
+                        experiment_run  vusers  client  pod_count     NOPM       TPM  duration  errors
+PostgreSQL-BHT-8-1-1-1               1      16       1          1  11284.0  35075.00         2       0
+PostgreSQL-BHT-8-1-1-2               1      32       2          2  11201.5  32750.50         2       0
+PostgreSQL-BHT-8-1-2-1               2      16       1          1  10359.0  32817.00         2       0
+PostgreSQL-BHT-8-1-2-2               2      32       2          2  11106.5  32350.00         2       0
+PostgreSQL-BHT-8-1-2-3               2      16       3          2   9296.5  29795.50         2       0
+PostgreSQL-BHT-8-1-2-4               2      32       4          4   9951.5  29030.25         2       0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-BHT-8-1 - Pods [[4, 2, 2, 1], [4, 1, 2, 2]]
+
+#### Actual
+DBMS PostgreSQL-BHT-8-1 - Pods [[4, 2, 2, 1], [2, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                         time_load  terminals  pods  Imported warehouses [1/h]
@@ -145,23 +150,23 @@ PostgreSQL-BHT-8-1-2-4      110.0        1.0   4.0                 523.636364
 
 ### Execution - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1    14269.78    61.29          5.08                 7.29
-PostgreSQL-BHT-8-1-1-2    15565.25    62.69          5.48                 7.74
-PostgreSQL-BHT-8-1-1-3    13643.26    62.83          5.29                 7.71
-PostgreSQL-BHT-8-1-1-4    16152.32    63.63          5.85                 8.33
-PostgreSQL-BHT-8-1-2-1    62489.86    62.81          9.42                14.51
-PostgreSQL-BHT-8-1-2-2    15808.32    63.63          5.98                 8.59
-PostgreSQL-BHT-8-1-2-3    14594.90    62.85          5.57                 8.26
-PostgreSQL-BHT-8-1-2-4    16079.04    63.64          6.15                 8.91
+PostgreSQL-BHT-8-1-1-1    14009.45    62.83          4.89                 7.08
+PostgreSQL-BHT-8-1-1-2    14686.86    63.63          5.65                 6.58
+PostgreSQL-BHT-8-1-1-3        0.27     0.00          4.14                 5.07
+PostgreSQL-BHT-8-1-1-4        0.25     0.00          4.14                 5.07
+PostgreSQL-BHT-8-1-2-1    29766.86    62.79          9.02                12.28
+PostgreSQL-BHT-8-1-2-2    15679.63    63.62          5.88                 6.83
+PostgreSQL-BHT-8-1-2-3    14381.26    62.74          5.49                 6.53
+PostgreSQL-BHT-8-1-2-4    16391.02    63.62          6.05                 7.16
 
 ### Execution - Benchmarker
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       23.72     0.10          0.06                 0.06
-PostgreSQL-BHT-8-1-1-2       23.72     0.10          0.16                 0.17
-PostgreSQL-BHT-8-1-1-3       24.45     0.04          0.18                 0.18
-PostgreSQL-BHT-8-1-1-4       20.56     0.05          0.20                 0.20
-PostgreSQL-BHT-8-1-2-1       22.63     0.08          0.13                 0.13
-PostgreSQL-BHT-8-1-2-2       17.60     0.05          0.16                 0.16
-PostgreSQL-BHT-8-1-2-3       23.32     0.08          0.18                 0.18
-PostgreSQL-BHT-8-1-2-4       14.29     0.05          0.20                 0.20
+PostgreSQL-BHT-8-1-1-1       18.98     0.11          0.06                 0.06
+PostgreSQL-BHT-8-1-1-2       19.09     0.11          0.16                 0.17
+PostgreSQL-BHT-8-1-1-3        0.08     0.00          0.11                 0.11
+PostgreSQL-BHT-8-1-1-4       24.17     0.00          0.12                 0.12
+PostgreSQL-BHT-8-1-2-1       20.80     0.09          0.06                 0.06
+PostgreSQL-BHT-8-1-2-2       20.95     0.05          0.17                 0.17
+PostgreSQL-BHT-8-1-2-3       20.99     0.09          0.18                 0.18
+PostgreSQL-BHT-8-1-2-4       18.75     0.04          0.20                 0.20
 TEST passed: NOPM contains no 0 or NaN
