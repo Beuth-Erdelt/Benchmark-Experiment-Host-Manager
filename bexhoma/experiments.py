@@ -157,9 +157,10 @@ class default():
             value = list(str(int(value)))
         return value
     def prepare_testbed(self, parameter):
-        if not 'type' in self.workload or len(self.workload['type']) == 0:
+        if (not 'type' in self.workload) or (len(self.workload['type']) == 0):
             # set default workload type
             self.workload['type'] = 'dbmsbenchmarker'
+            print("Set default type")
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -1628,8 +1629,8 @@ class default():
             for c in workflow_planned:
                 print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
-        print("\n### Tests")
         self.show_summary_monitoring()
+        print("\n### Tests")
         evaluation.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
         evaluation.test_results_column(df_power, "Power@Size [~Q/h]")
         evaluation.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
@@ -2090,7 +2091,7 @@ class tpcc(default):
         print("\nWarehouses:", warehouses)
         #####################
         print("\n### Workflow")
-        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_actual = evaluation.reconstruct_workflow(df)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
             print("\n#### Actual")
@@ -2135,6 +2136,7 @@ class tpcc(default):
         print(df_connections)
         #####################
         self.show_summary_monitoring()
+        print("\n### Tests")
         evaluation.test_results_column(df_aggregated_reduced, "NOPM")
         if self.test_workflow(workflow_actual, workflow_planned):
             print("TEST passed: Workflow as planned")
@@ -2502,7 +2504,7 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         print("\n### Workflow")
-        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_actual = evaluation.reconstruct_workflow(df)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
             print("\n#### Actual")
@@ -2514,6 +2516,7 @@ class ycsb(default):
                 print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         self.show_summary_monitoring()
+        print("\n### Tests")
         if test_loading:
             evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
         evaluation.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
@@ -2785,7 +2788,7 @@ class benchbase(default):
         print("\nWarehouses:", warehouses)
         #####################
         print("\n### Workflow")
-        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_actual = evaluation.reconstruct_workflow(df)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
             print("\n#### Actual")
@@ -2829,6 +2832,7 @@ class benchbase(default):
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         self.show_summary_monitoring()
+        print("\n### Tests")
         evaluation.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if self.test_workflow(workflow_actual, workflow_planned):
             print("TEST passed: Workflow as planned")
