@@ -157,11 +157,9 @@ class default():
             value = list(str(int(value)))
         return value
     def prepare_testbed(self, parameter):
-        print(self.workload)
         if (not 'type' in self.workload) or (len(self.workload['type']) == 0):
             # set default workload type
             self.workload['type'] = 'dbmsbenchmarker'
-            print("Set default type")
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -1777,7 +1775,8 @@ class tpcds(default):
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_workload(
             name = 'TPC-DS Queries SF='+str(SF),
-            info = 'This experiment performs some TPC-DS inspired queries.'
+            info = 'This experiment performs some TPC-DS inspired queries.',
+            type = 'tpcds',
             )
         self.storage_label = 'tpcds-'+str(SF)
     def set_queries_full(self):
@@ -1823,7 +1822,8 @@ class tpch(default):
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'TPC-H Queries SF='+str(SF),
-            info = 'This experiment performs some TPC-H inspired queries.'
+            info = 'This experiment performs some TPC-H inspired queries.',
+            type = 'tpch',
             )
         self.storage_label = 'tpch-'+str(SF)
     def set_queries_full(self):
@@ -1831,7 +1831,6 @@ class tpch(default):
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
     def prepare_testbed(self, parameter):
-        self.workload['type'] = 'tpch'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -1852,6 +1851,7 @@ class tpch(default):
             self.set_workload(
                 name = 'TPC-H Queries SF='+str(SF),
                 info = 'This experiment compares run time and resource consumption of TPC-H queries in different DBMS.',
+                type = 'tpch',
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'empty':
@@ -1860,6 +1860,7 @@ class tpch(default):
             self.set_workload(
                 name = 'TPC-H Data Dummy SF='+str(SF),
                 info = 'This experiment is for testing loading. It just runs a SELECT 1 query.',
+                type = 'tpch',
                 defaultParameters = {'SF': SF}
             )
         else:
@@ -1868,6 +1869,7 @@ class tpch(default):
             self.set_workload(
                 name = 'TPC-H Data Profiling SF='+str(SF),
                 info = 'This experiment compares imported TPC-H data sets in different DBMS.',
+                type = 'tpch',
                 defaultParameters = {'SF': SF}
             )
             # patch: use short profiling (only keys)
@@ -1937,13 +1939,13 @@ class tpcc(default):
         self.set_queryfile('queries.config')
         self.set_workload(
             name = 'TPC-C Queries SF='+str(SF),
-            info = 'This experiment performs some TPC-C inspired workloads.'
+            info = 'This experiment performs some TPC-C inspired workloads.',
+            type = 'tpcc',
             )
         self.storage_label = 'hammerdb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
-        self.workload['type'] = 'tpcc'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -1954,6 +1956,7 @@ class tpcc(default):
             self.set_workload(
                 name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
                 info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
+                type = 'tpcc',
                 defaultParameters = {'SF': SF}
             )
         self.loading_active = True
@@ -2257,7 +2260,8 @@ class iot(default):
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'IoT Queries SF='+str(SF),
-            info = 'This experiment performs some IoT inspired queries.'
+            info = 'This experiment performs some IoT inspired queries.',
+            type = 'iot',
             )
         self.storage_label = 'tpch-'+str(SF)
         self.maintaining_active = True
@@ -2313,7 +2317,8 @@ class tsbs(default):
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'TSBS Queries SF='+str(SF),
-            info = 'This experiment performs some TSBS inspired queries.'
+            info = 'This experiment performs some TSBS inspired queries.',
+            type = 'tsdb',
             )
         self.storage_label = 'tsbs-'+str(SF)
         self.maintaining_active = True
@@ -2370,13 +2375,13 @@ class ycsb(default):
         self.set_queryfile('queries.config')
         self.set_workload(
             name = 'YCSB Queries SF='+str(SF),
-            info = 'This experiment performs some YCSB inspired workloads.'
+            info = 'This experiment performs some YCSB inspired workloads.',
+            type = 'ycsb',
             )
         self.storage_label = 'ycsb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
-        self.workload['type'] = 'ycsb'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -2395,6 +2400,7 @@ class ycsb(default):
             self.set_workload(
                 name = 'YCSB SF='+str(SF),
                 info = 'This experiment compares run time and resource consumption of YCSB queries.',
+                type = 'ycsb',
                 defaultParameters = {'SF': SF}
             )
         else:
@@ -2403,6 +2409,7 @@ class ycsb(default):
             self.set_workload(
                 name = 'YCSB Data Loading SF='+str(SF),
                 info = 'This imports YCSB data sets.',
+                type = 'ycsb',
                 defaultParameters = {'SF': SF}
             )
         self.loading_active = True
@@ -2658,13 +2665,13 @@ class benchbase(default):
         self.set_queryfile('queries.config')
         self.set_workload(
             name = 'Benchbase Queries SF='+str(SF),
-            info = 'This experiment performs some Benchbase workloads.'
+            info = 'This experiment performs some Benchbase workloads.',
+            type = 'benchbase',
             )
         self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
     def prepare_testbed(self, parameter):
-        self.workload['type'] = 'benchbase'
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -2678,6 +2685,7 @@ class benchbase(default):
             self.set_workload(
                 name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
                 info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
+                type = 'benchbase',
                 defaultParameters = {'SF': SF}
             )
         self.loading_active = True
