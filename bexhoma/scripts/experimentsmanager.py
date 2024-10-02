@@ -38,7 +38,7 @@ def manage():
     print(description)
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data','summary'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
@@ -74,6 +74,25 @@ def manage():
             experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
+    elif args.mode == 'summary':
+        if not args.experiment is None:
+            cluster = clusters.kubernetes(clusterconfig, context=args.context)
+            resultfolder = cluster.config['benchmarker']['resultfolder']
+            code = args.experiment
+            with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+                workload_properties = ast.literal_eval(inp.read())
+                match workload_properties['type']:
+                    case 'ycsb':
+                        experiment = experiments.ycsb(cluster=cluster, code=code)
+                    case 'tpcc':
+                        experiment = experiments.tpcc(cluster=cluster, code=code)
+                    case 'tpch':
+                        experiment = experiments.tpch(cluster=cluster, code=code)
+                    case 'benchbase':
+                        experiment = experiments.benchbase(cluster=cluster, code=code)
+                    case _:
+                        experiment = experiments.default(cluster=cluster, code=code)
+                experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_dashboard()

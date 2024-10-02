@@ -74,6 +74,25 @@ if __name__ == '__main__':
             experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
+    elif args.mode == 'summary':
+        if not args.experiment is None:
+            cluster = clusters.kubernetes(clusterconfig, context=args.context)
+            resultfolder = cluster.config['benchmarker']['resultfolder']
+            code = args.experiment
+            with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+                workload_properties = ast.literal_eval(inp.read())
+                match workload_properties['type']:
+                    case 'ycsb':
+                        experiment = experiments.ycsb(cluster=cluster, code=code)
+                    case 'tpcc':
+                        experiment = experiments.tpcc(cluster=cluster, code=code)
+                    case 'tpch':
+                        experiment = experiments.tpch(cluster=cluster, code=code)
+                    case 'benchbase':
+                        experiment = experiments.benchbase(cluster=cluster, code=code)
+                    case _:
+                        experiment = experiments.default(cluster=cluster, code=code)
+                experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_dashboard()
