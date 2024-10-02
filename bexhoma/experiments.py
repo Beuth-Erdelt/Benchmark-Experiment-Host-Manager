@@ -1616,10 +1616,10 @@ class default():
         df_benchmark.rename_axis(index_names, inplace=True)
         print(df_benchmark)
         #####################
+        print("\n### Workflow")
         workflow_actual = evaluation.reconstruct_workflow(df_time)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
-            print("\n### Workflow")
             print("\n#### Actual")
             for c in workflow_actual:
                 print("DBMS", c, "- Pods", workflow_actual[c])
@@ -2089,10 +2089,10 @@ class tpcc(default):
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
+        print("\n### Workflow")
         workflow_actual = evaluation.reconstruct_workflow(df_time)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
-            print("\n### Workflow")
             print("\n#### Actual")
             for c in workflow_actual:
                 print("DBMS", c, "- Pods", workflow_actual[c])
@@ -2501,10 +2501,10 @@ class ycsb(default):
             print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
+        print("\n### Workflow")
         workflow_actual = evaluation.reconstruct_workflow(df_time)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
-            print("\n### Workflow")
             print("\n#### Actual")
             for c in workflow_actual:
                 print("DBMS", c, "- Pods", workflow_actual[c])
@@ -2784,10 +2784,10 @@ class benchbase(default):
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
+        print("\n### Workflow")
         workflow_actual = evaluation.reconstruct_workflow(df_time)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
-            print("\n### Workflow")
             print("\n#### Actual")
             for c in workflow_actual:
                 print("DBMS", c, "- Pods", workflow_actual[c])
