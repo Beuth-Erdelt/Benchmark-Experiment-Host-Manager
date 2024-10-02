@@ -1729,7 +1729,7 @@ class default():
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
-            return test_results
+        return test_results
 
 
 
@@ -2222,7 +2222,7 @@ class tpcc(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-            return test_results
+        return test_results
 
 
 
@@ -2628,7 +2628,7 @@ class ycsb(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-            return test_results
+        return test_results
 
 
 
@@ -2963,7 +2963,7 @@ class benchbase(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-            return test_results
+        return test_results
 
 
 

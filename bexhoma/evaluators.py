@@ -116,21 +116,28 @@ class base:
         #workflow = dict()
         #return workflow
         # Tree of elements of the workflow
+        def remove_after_last_dash(s):
+            index = s.rfind('-')
+            if index != -1:
+                return s[:index]
+            return s  # return the original string if "-" is not found
         configs = dict()
         for index, row in df.iterrows():
             #print(row['experiment_run'], row['configuration'])
-            if row['orig_name'] not in configs:
-                configs[row['orig_name']] = dict()
+            # strip experiment run number
+            configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
+            if configuration_name not in configs:
+                configs[configuration_name] = dict()
                 #configs[row['configuration']]
-            if row['num_experiment'] not in configs[row['orig_name']]:
-                configs[row['orig_name']][row['num_experiment']] = dict()
-            if row['num_client'] not in configs[row['orig_name']][row['num_experiment']]:
-                configs[row['orig_name']][row['num_experiment']][row['num_client']] = dict()
-                configs[row['orig_name']][row['num_experiment']][row['num_client']]['pods'] = dict()
-                configs[row['orig_name']][row['num_experiment']][row['num_client']]['result_count'] = 0
+            if row['num_experiment'] not in configs[configuration_name]:
+                configs[configuration_name][row['num_experiment']] = dict()
+            if row['num_client'] not in configs[configuration_name][row['num_experiment']]:
+                configs[configuration_name][row['num_experiment']][row['num_client']] = dict()
+                configs[configuration_name][row['num_experiment']][row['num_client']]['pods'] = dict()
+                configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] = 0
                 #configs[row['configuration']][row['experiment_run']][row['client']]['run'] = dict()
-            configs[row['orig_name']][row['num_experiment']][row['num_client']]['pods'][row['pods']] = True
-            configs[row['orig_name']][row['num_experiment']][row['num_client']]['result_count'] = configs[row['orig_name']][row['num_experiment']][row['num_client']]['result_count'] + 1
+            configs[configuration_name][row['num_experiment']][row['num_client']]['pods'][row['pods']] = True
+            configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] = configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] + 1
             #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']] = dict()
             #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']]['vusers'] = row['vusers']
         #print(configs)
