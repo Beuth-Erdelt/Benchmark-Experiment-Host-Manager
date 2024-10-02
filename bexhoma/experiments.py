@@ -947,6 +947,21 @@ class default():
         workflow = self.get_workflow_list()
         self.workload['workflow_planned'] = workflow
         self.update_workload()
+    def test_workflow(self, workflow_1, workflow_2):
+        def compare_lists(list1, list2):
+            if len(list1) != len(list2):
+                return False
+            # Sortiere die inneren Listen, um die Reihenfolge zu ignorieren
+            sorted_list1 = sorted([sorted(sublist) for sublist in list1])
+            sorted_list2 = sorted([sorted(sublist) for sublist in list2])
+            return sorted_list1 == sorted_list2
+        if workflow_1.keys() != workflow_2.keys():
+            return False
+        for key in workflow_1:
+            # Vergleiche Listen von Listen unabhängig von der Reihenfolge
+            if not compare_lists(workflow_1[key], workflow_2[key]):
+                return False
+        return True
     def update_workload(self):
         if len(self.configurations) > 0:
             # there is a configuration, i.e., also a query.config file
@@ -1601,22 +1616,27 @@ class default():
         df_benchmark.rename_axis(index_names, inplace=True)
         print(df_benchmark)
         #####################
-        workflow = evaluation.reconstruct_workflow(df_time)
-        if len(workflow) > 0:
+        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
             print("\n### Workflow")
             print("\n#### Actual")
-            for c in workflow:
-                print("DBMS", c, "- Pods", workflow[c])
-            workflow = workload_properties['workflow_planned']
-            if len(workflow) > 0:
-                print("\n#### Planned")
-                for c in workflow:
-                    print("DBMS", c, "- Pods", workflow[c])
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
+        print("\n### Tests")
         self.show_summary_monitoring()
         evaluation.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
         evaluation.test_results_column(df_power, "Power@Size [~Q/h]")
         evaluation.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring_table(self, evaluate, component):
         df_monitoring = list()
         ##########
@@ -2069,17 +2089,18 @@ class tpcc(default):
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
-        workflow = evaluation.reconstruct_workflow(df)
-        if len(workflow) > 0:
+        #####################
+        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
             print("\n### Workflow")
             print("\n#### Actual")
-            for c in workflow:
-                print("DBMS", c, "- Pods", workflow[c])
-            workflow = workload_properties['workflow_planned']
-            if len(workflow) > 0:
-                print("\n#### Planned")
-                for c in workflow:
-                    print("DBMS", c, "- Pods", workflow[c])
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         print("\n### Loading")
         #connections_sorted = sorted(connections, key=lambda c: c['name']) 
@@ -2116,6 +2137,10 @@ class tpcc(default):
         #####################
         self.show_summary_monitoring()
         evaluation.test_results_column(df_aggregated_reduced, "NOPM")
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -2477,22 +2502,26 @@ class ycsb(default):
             print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
-        workflow = evaluation.reconstruct_workflow(df)
-        if len(workflow) > 0:
+        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
             print("\n### Workflow")
             print("\n#### Actual")
-            for c in workflow:
-                print("DBMS", c, "- Pods", workflow[c])
-            workflow = workload_properties['workflow_planned']
-            if len(workflow) > 0:
-                print("\n#### Planned")
-                for c in workflow:
-                    print("DBMS", c, "- Pods", workflow[c])
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         self.show_summary_monitoring()
         if test_loading:
             evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
         evaluation.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -2756,17 +2785,17 @@ class benchbase(default):
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
-        workflow = evaluation.reconstruct_workflow(df)
-        if len(workflow) > 0:
+        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
             print("\n### Workflow")
             print("\n#### Actual")
-            for c in workflow:
-                print("DBMS", c, "- Pods", workflow[c])
-            workflow = workload_properties['workflow_planned']
-            if len(workflow) > 0:
-                print("\n#### Planned")
-                for c in workflow:
-                    print("DBMS", c, "- Pods", workflow[c])
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         print("\n### Loading")
         #connections_sorted = sorted(connections, key=lambda c: c['name']) 
@@ -2802,6 +2831,10 @@ class benchbase(default):
         #####################
         self.show_summary_monitoring()
         evaluation.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
