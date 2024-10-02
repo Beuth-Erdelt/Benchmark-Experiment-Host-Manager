@@ -98,151 +98,117 @@ At the end of a benchmark you will see a summary like
 
 ```bash
 ## Show Summary
-Read results
-Connections:
-MonetDB-BHT-8-1-1
-MySQL-BHT-8-8-1-1
-PostgreSQL-BHT-8-1-1
-Queries:
-0: Q1 = Pricing Summary Report (TPC-H Q1)
-1: Q2 = Minimum Cost Supplier Query (TPC-H Q2)
-2: Q3 = Shipping Priority (TPC-H Q3)
-3: Q4 = Order Priority Checking Query (TPC-H Q4)
-4: Q5 = Local Supplier Volume (TPC-H Q5)
-5: Q6 = Forecasting Revenue Change (TPC-H Q6)
-6: Q7 = Forecasting Revenue Change (TPC-H Q7)
-7: Q8 = National Market Share (TPC-H Q8)
-8: Q9 = Product Type Profit Measure (TPC-H Q9)
-9: Q10 = Forecasting Revenue Change (TPC-H Q10)
-10: Q11 = Important Stock Identification (TPC-H Q11)
-11: Q12 = Shipping Modes and Order Priority (TPC-H Q12)
-12: Q13 = Customer Distribution (TPC-H Q13)
-13: Q14 = Forecasting Revenue Change (TPC-H Q14)
-14: Q15 = Top Supplier Query (TPC-H Q15)
-15: Q16 = Parts/Supplier Relationship (TPC-H Q16)
-16: Q17 = Small-Quantity-Order Revenue (TPC-H Q17)
-17: Q18 = Large Volume Customer (TPC-H Q18)
-18: Q19 = Discounted Revenue (TPC-H Q19)
-19: Q20 = Potential Part Promotion (TPC-H Q20)
-20: Q21 = Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
-21: Q22 = Global Sales Opportunity Query (TPC-H Q22)
-Load Evaluation
 
-### Errors
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1               False              False                 False
-Q2               False              False                 False
-Q3               False              False                 False
-Q4               False              False                 False
-Q5               False              False                 False
-Q6               False              False                 False
-Q7               False              False                 False
-Q8               False              False                 False
-Q9               False              False                 False
-Q10              False              False                 False
-Q11              False              False                 False
-Q12              False              False                 False
-Q13              False              False                 False
-Q14              False              False                 False
-Q15              False              False                 False
-Q16              False              False                 False
-Q17              False              False                 False
-Q18              False              False                 False
-Q19              False              False                 False
-Q20              False              False                 False
-Q21              False              False                 False
-Q22              False              False                 False
+### Workload
+    TPC-H Queries SF=100
+    Type: tpch
+    Duration: 1722s 
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=100) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['MonetDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 300Gi.
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
 
-### Warnings
-     MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1               False              False                 False
-Q2               False              False                 False
-Q3               False              False                 False
-Q4               False              False                 False
-Q5               False              False                 False
-Q6               False              False                 False
-Q7               False              False                 False
-Q8               False              False                 False
-Q9               False              False                 False
-Q10              False              False                 False
-Q11              False              False                 False
-Q12              False              False                 False
-Q13              False              False                 False
-Q14              False              False                 False
-Q15              False              False                 False
-Q16              False              False                 False
-Q17              False              False                 False
-Q18              False              False                 False
-Q19              False              False                 False
-Q20              False              False                 False
-Q21              False              False                 False
-Q22              False              False                 False
+### Connections
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:247527496
+    datadisk:219980771
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Q1              2404.64           33934.30               2612.67
-Q2                30.12             361.71                441.01
-Q3               151.54            3897.70                794.99
-Q4                52.34            1882.83               1311.89
-Q5                73.99            3639.32                698.28
-Q6                33.68            4465.72                539.06
-Q7                95.63            7349.12                810.43
-Q8               449.77            6828.98                656.06
-Q9               111.96            5704.00               1145.25
-Q10              175.70            3128.08               1321.12
-Q11               31.90             363.01                258.32
-Q12               67.53            7294.59               1069.99
-Q13              555.90            8787.78               2008.54
-Q14               41.45            5265.07                596.09
-Q15               60.05           22688.57                583.01
-Q16              116.17            1057.91                591.68
-Q17               72.47             799.00               2024.25
-Q18              964.94            6488.35               7099.96
-Q19               91.28             387.99               1595.01
-Q20               97.20             586.58                668.23
-Q21             3185.97           16793.11                932.27
-Q22               67.00             512.73                253.11
+DBMS                                                 MonetDB-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                            536282.01
+Minimum Cost Supplier Query (TPC-H Q2)                        28478.31
+Shipping Priority (TPC-H Q3)                                  75090.83
+Order Priority Checking Query (TPC-H Q4)                      89125.13
+Local Supplier Volume (TPC-H Q5)                              52790.53
+Forecasting Revenue Change (TPC-H Q6)                         10454.76
+Forecasting Revenue Change (TPC-H Q7)                          8821.75
+National Market Share (TPC-H Q8)                             120188.82
+Product Type Profit Measure (TPC-H Q9)                        35829.34
+Forecasting Revenue Change (TPC-H Q10)                        82006.36
+Important Stock Identification (TPC-H Q11)                     6402.01
+Shipping Modes and Order Priority (TPC-H Q12)                 12074.66
+Customer Distribution (TPC-H Q13)                            203159.36
+Forecasting Revenue Change (TPC-H Q14)                        10736.27
+Top Supplier Query (TPC-H Q15)                                 6750.12
+Parts/Supplier Relationship (TPC-H Q16)                       13460.93
+Small-Quantity-Order Revenue (TPC-H Q17)                      93643.79
+Large Volume Customer (TPC-H Q18)                             61721.43
+Discounted Revenue (TPC-H Q19)                                19798.15
+Potential Part Promotion (TPC-H Q20)                           8916.08
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           23399.45
+Global Sales Opportunity Query (TPC-H Q22)                     6481.31
 
 ### Loading [s]
-                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1              1.0           22.0        8.80      34.36    102.16
-MySQL-BHT-8-8-1-1              1.0          435.0        3.78    1793.84   2262.63
-PostgreSQL-BHT-8-1-1           1.0           25.0        0.61      88.96    139.58
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1           1.0         1686.0         7.0     5358.0    7061.0
 
 ### Geometric Mean of Medians of Timer Run [s]
-                      Geo Times [s]
-DBMS
-MonetDB-BHT-8-1-1              0.16
-MySQL-BHT-8-8-1-1              3.11
-PostgreSQL-BHT-8-1-1           0.95
+                   Geo Times [s]
+DBMS                            
+MonetDB-BHT-8-1-1          30.92
 
-### TPC-H Power@Size
-                      Power@Size [~Q/h]
-DBMS
-MonetDB-BHT-8-1-1              27011.62
-MySQL-BHT-8-8-1-1               1187.97
-PostgreSQL-BHT-8-1-1            3924.04
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MonetDB-BHT-8-1-1           11846.44
 
-### TPC-H Throughput@Size
-                                                 time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS               SF num_experiment num_client
-MonetDB-BHT-8-1    1  1              1                 13      1   1                  6092.31
-MySQL-BHT-8-8-1    1  1              1                147      1   1                   538.78
-PostgreSQL-BHT-8-1 1  1              1                 33      1   1                  2400.00
+### Throughput@Size
+                                               time [s]  count   SF  Throughput@Size [~GB/h]
+DBMS            SF  num_experiment num_client                                               
+MonetDB-BHT-8-1 100 1              1               1524      1  100                  5196.85
 
-### Ingestion
-                    SUT - CPU of Ingestion (via counter) [CPUs]  SUT - Max RAM of Ingestion [Gb]
-DBMS
-MonetDB-BHT-8-1                                          139.25                             1.23
-MySQL-BHT-8-8-1                                         3015.80                            47.16
-PostgreSQL-BHT-8-1                                       150.89                             3.74
+### Workflow
 
-### Execution
-                    SUT - CPU of Execution (via counter) [CPUs]  SUT - Max RAM of Execution [Gb]
-DBMS
-MonetDB-BHT-8-1                                           17.13                             1.57
-MySQL-BHT-8-8-1                                          130.73                            47.31
-PostgreSQL-BHT-8-1                                        63.62                             3.78
+#### Actual
+DBMS MonetDB-BHT-8-1 - Pods [[1]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1     4991.92      8.1         28.92                85.27
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1       22.97     0.03          0.32                 0.35
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST failed: Workflow not as planned
 ```
 
 
@@ -316,6 +282,6 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs_tests/test_tpch_monetdb_2.log &
+  run &>logs_tests/test_tpch_monetdb_3.log &
 ```
 

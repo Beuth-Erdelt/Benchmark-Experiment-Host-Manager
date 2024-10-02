@@ -435,6 +435,66 @@ sleep 600
 
 
 
+
+
+
+###########################################
+############# TPC-H MonetDB ###############
+###########################################
+
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -t 1200 -dt \
+  -rst shared -rss 300Gi \
+  run &>logs_tests/test_tpch_monetdb_1.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 5 -ne 1,1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -t 1200 -dt \
+  -rst shared -rss 300Gi \
+  run &>logs_tests/test_tpch_monetdb_2.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 3600
+
+
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 5 -ne 1,1,5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -t 1200 -dt \
+  -rst shared -rss 300Gi \
+  run &>logs_tests/test_tpch_monetdb_3.log &
+
+#### Wait so that next experiment receives a different code
+sleep 7200
+
+
+
+
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
