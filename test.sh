@@ -61,7 +61,7 @@ nohup python tpch.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+sleep 600
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-postgresql-tpch-1
@@ -271,7 +271,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 3600
+sleep 2400
 
 
 
@@ -318,7 +318,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+sleep 900
 
 
 
