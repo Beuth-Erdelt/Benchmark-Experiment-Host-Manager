@@ -145,6 +145,6 @@ If you use Bexhoma in work contributing to a scientific publication, we kindly a
 > Journal of Open Source Software, 7(79), 4628
 > https://doi.org/10.21105/joss.04628
 
-[4] [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](http://dx.doi.org/10.13140/RG.2.2.29866.18880)
-> Erdelt P.K. (2023)
-> http://dx.doi.org/10.13140/RG.2.2.29866.18880
+[4] [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](https://doi.org/10.1007/978-3-031-68031-1_9)
+> Erdelt P.K. (2024)
+> https://doi.org/10.1007/978-3-031-68031-1_9

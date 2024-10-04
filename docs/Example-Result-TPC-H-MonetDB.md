@@ -211,10 +211,9 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST failed: Workflow not as planned
 ```
 
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Status Data Disk
-
-To see the summary of experiment `1708411664` again you can simply call `python tpch.py -e 1708411664 summary`.
 
 You can inspect a preview list of results via `bexperiments localresults`.
 
@@ -235,7 +234,7 @@ You can inspect a preview list of results via `bexperiments localresults`.
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
-This is repeated 5 times (`-nc`).
+This is repeated 3 times (`-nc`).
 
 
 ```bash
@@ -250,7 +249,7 @@ nohup python tpch.py -ms 1 \
   -sf 100 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
-  -nc 5 -ne 1,1 \
+  -nc 3 -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \
@@ -262,7 +261,7 @@ nohup python tpch.py -ms 1 \
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other, and then a throughput test with 5 parallel driver (`-ne 1,1,5`). and shut down the DBMS.
-This is repeated 5 times (`-nc`).
+This is repeated 3 times (`-nc`).
 
 
 ```bash
@@ -277,7 +276,7 @@ nohup python tpch.py -ms 1 \
   -sf 100 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
-  -nc 5 -ne 1,1,5 \
+  -nc 3 -ne 1,1,5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \

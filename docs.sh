@@ -30,7 +30,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 1200
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -47,7 +47,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 1200
 
 
 #### YCSB Scale Loading (Example-YCSB.md)
@@ -68,7 +68,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 1200
 
 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
@@ -89,7 +89,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 600
 
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -111,7 +111,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 600
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
@@ -133,7 +133,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 900
 
 
 #### Benchbase Scale (Example-Benchbase.md)
@@ -149,7 +149,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 1200
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -184,7 +184,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+sleep 900
 
 
 #### TCP-H Compare (Example-TPC-H.md)
@@ -245,6 +245,61 @@ nohup python tpch.py -ms 1 -dt -tr \
 
 #### Wait so that next experiment receives a different code
 sleep 600
+
+
+
+
+###########################################
+############# TPC-H MonetDB ###############
+###########################################
+
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -t 1200 -dt \
+  -rst shared -rss 300Gi \
+  run &>logs_tests/test_tpch_monetdb_1.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 3 -ne 1,1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -t 1200 -dt \
+  -rst shared -rss 300Gi \
+  run &>logs_tests/test_tpch_monetdb_2.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 3600
+
+
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 3 -ne 1,1,5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -t 1200 -dt \
+  -rst shared -rss 300Gi \
+  run &>logs_tests/test_tpch_monetdb_3.log &
+
+#### Wait so that next experiment receives a different code
+sleep 7200
 
 
 

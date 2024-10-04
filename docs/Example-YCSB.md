@@ -2,8 +2,22 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
+YCSB does allow scaling data generation and ingestion, and scaling the benchmarking driver.
+Scale-out can simulate distributed clients.
+It is not self-evident and sure, that scale-out and scale-up yield the same performance results [3].
+
+> The goal of the YCSB project is to develop a framework and common set of workloads for evaluating the performance of different “key-value” and “cloud” serving stores. [...]
+The workloads in the core package are a variation of the same basic application type. In this application, there is a table of records, each with F fields. Each record is identif ied by a primary key, which is a string like “user234123”. Each field is named field0, field1 and so on. The values of each field are a random string of ASCII characters of length L.
+Each operation against the data store is randomly chosen to be one of:
+> * Insert: Insert a new record.
+> * Update: Update a record by replacing the value of one f ield. 
+> * Read: Read a record, either one randomly chosen field or all fields.
+> * Scan: Scan records in order, starting at a randomly chosen record key. The number of records to scan is randomly chosen. [1,2]
+
 References:
-1. https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
+1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
+1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
+1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
 ## Perform Benchmark
 
@@ -155,7 +169,7 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 We can see that the overall throughput is very close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
-To see the summary of experiment `1726160982` you can simply call `python ycsb.py -e 1726160982 summary`.
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 

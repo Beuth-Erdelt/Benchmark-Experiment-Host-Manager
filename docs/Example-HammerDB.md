@@ -2,6 +2,9 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
+HammerDB's TPC-C implementation does not allow scaling data generation and ingestion, but scaling the benchmarking driver.
+It uses very little resources, but stresses the DBMS a lot. Scale-out can simulate distributed clients [4].
+
 About the benchmark [1]:
 > The TPC-C specification on which TPROC-C is based implements a computer system to fulfil orders from customers to supply products from a company. The company sells 100,000 items and keeps its stock in warehouses. Each warehouse has 10 sales districts and each district serves 3000 customers. The customers call the company whose operators take the order, each order containing a number of items. Orders are usually satisfied from the local warehouse however a small number of items are not in stock at a particular point in time and are supplied by an alternative warehouse. It is important to note that the size of the company is not fixed and can add Warehouses and sales districts as the company grows. For this reason your test schema can be as small or large as you wish with a larger schema requiring a more powerful computer system to process the increased level of transactions. The TPROC-C schema is shown below, in particular note how the number of rows in all of the tables apart from the ITEM table which is fixed is dependent upon the number of warehouses you choose to create your schema.
 
@@ -11,9 +14,10 @@ About the metrics [2]:
 > HammerDB workloads produce 2 statistics to compare systems called **TPM** and NOPM respectively. NOPM value is based on a metric captured from within the test schema itself. As such **NOPM (New Orders per minute)** as a performance metric independent of any particular database implementation is the recommended primary metric to use.
 
 References
-1. https://www.hammerdb.com/docs/ch03s05.html
-1. https://www.hammerdb.com/docs/ch03s04.html
-1. https://www.hammerdb.com/docs/ch03.html
+1. HammerDB Docs: https://www.hammerdb.com/docs/ch03s05.html
+1. HammerDB Docs: https://www.hammerdb.com/docs/ch03s04.html
+1. HammerDB Docs: https://www.hammerdb.com/docs/ch03.html
+1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
 ## Perform Benchmark
 
@@ -132,7 +136,7 @@ TEST passed: NOPM contains no 0 or NaN
 
 We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
 
-To see the summary of experiment `1726578005` you can simply call `python hammerdb.py -e 1726578005 summary`.
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 

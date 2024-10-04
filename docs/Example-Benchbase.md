@@ -2,14 +2,17 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
+Benchbase's TPC-C implementation does not allow scaling data generation and ingestion, but scaling the benchmarking driver.
+It uses quite some resources, so that for simulating a lot of users, scale-out of the driver is necessary [3].
+
 > TPC-C involves a mix of five concurrent transactions of different types and complexity either executed on-line or queued for deferred execution. The database is comprised of nine types of tables with a wide range of record and population sizes. TPC-C is measured in transactions per minute (tpmC). While the benchmark portrays the activity of a wholesale supplier, TPC-C is not limited to the activity of any particular business segment, but, rather represents any industry that must manage, sell, or distribute a product or service.
 
 <img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/tpcc.png" alt="drawing" width="600"/>
 
 References:
-1. https://github.com/cmu-db/benchbase/wiki/TPC-C
-1. http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
-
+1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
 ## Perform Benchmark
 
@@ -130,7 +133,7 @@ TEST passed: Throughput (requests/second) contains no 0 or NaN
 
 We can see that the overall throughput is close to the target and that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads).
 
-To see the summary of experiment `1726658756` you can simply call `python benchbase.py -e 1726658756 summary`.
+To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 
