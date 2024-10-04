@@ -27,6 +27,7 @@ import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
 from prettytable import PrettyTable, ALL
+import ast
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
