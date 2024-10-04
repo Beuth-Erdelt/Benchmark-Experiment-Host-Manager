@@ -2,8 +2,8 @@
 
 ### Workload
     YCSB SF=1
-    Type: dbmsbenchmarker
-    Duration: 231s 
+    Type: ycsb
+    Duration: 230s 
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -26,16 +26,16 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524800
-    datadisk:3894224
+    disk:248937360
+    datadisk:3878456
     volume_size:100G
-    volume_used:3.8G
+    volume_used:3.7G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          8                       22341.29                45639.0               49908                              2727.5            950092                            5030.5
+PostgreSQL-64-8-131072-1               1       64  131072          8                       23108.63                44284.0               49794                              3068.5            950206                            6108.5
 
 ### Workflow
 
@@ -44,4 +44,7 @@ DBMS PostgreSQL-64-8-131072 - Pods [[8]]
 
 #### Planned
 DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+
+### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

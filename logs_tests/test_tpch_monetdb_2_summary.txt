@@ -1,0 +1,140 @@
+## Show Summary
+
+### Workload
+    TPC-H Queries SF=100
+    Type: tpch
+    Duration: 7201s 
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=100) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['MonetDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 300Gi.
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 1] times the number of benchmarking pods.
+Experiment is run 5 times.
+
+### Connections
+MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248937504
+    datadisk:219980776
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248937504
+    datadisk:219980778
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248937688
+    datadisk:219980779
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248937688
+    datadisk:219980781
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-3-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248937688
+    datadisk:219980782
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-4-1-1 uses docker image monetdb/monetdb:Dec2023
+    node:cl-worker11
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-4-2-1 uses docker image monetdb/monetdb:Dec2023
+    node:cl-worker11
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-5-1-1 uses docker image monetdb/monetdb:Dec2023
+    node:cl-worker11
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-5-2-1 uses docker image monetdb/monetdb:Dec2023
+    node:cl-worker11
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+
+### Loading [s]
+                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-1-2-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-2-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-2-2-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-3-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-4-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-4-2-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-5-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-5-2-1           1.0         1686.0         7.0     5358.0    7061.0
+
+### Geometric Mean of Medians of Timer Run [s]
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/tpch.py", line 343, in <module>
+    experiment.show_summary()
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py", line 1572, in show_summary
+    df.columns = ['Geo Times [s]']
+    ^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/core/internals/base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 1 elements

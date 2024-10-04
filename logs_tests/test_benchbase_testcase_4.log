@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1727802554
-Experiment                    : starts at 2024-10-01 19:09:14.243451 (2538494.367429827)
+Experiment                    : has code 1727881718
+Experiment                    : starts at 2024-10-02 17:08:38.570369 (2617658.694347515)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 2 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
@@ -30,16 +30,16 @@ PostgreSQL-1-1-1024           : will start now
 PostgreSQL-1-1-1024           : storage exists bexhoma-storage-postgresql-benchbase-16
 PostgreSQL-1-1-1024           : loading is set to finished
 - waiting 30s -               : done
-PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-01 17:12:44 (that is in 60 secs)
+PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-02 15:12:09 (that is in 60 secs)
 - waiting 30s -               : done
-PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-01 17:12:44
+PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-02 15:12:09
 done
 PostgreSQL-1-1-1024           : benchmarks done 0 of 2. This will be client 1
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-1-1       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-1-pfmt9: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-1-brdr9: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -50,17 +50,17 @@ done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-1-1       : showing benchmarker times
 PostgreSQL-1-1-1024-1-1       : benchmarker timespan (start to end single container [s]) = 131
-PostgreSQL-1-1-1024-1-1       : benchmarker times (start/end per pod and container) = [(1727802769, 1727802893)]
-PostgreSQL-1-1-1024-1-1       : found and updated times {'benchmarker': [(1727802769, 1727802893)]}
+PostgreSQL-1-1-1024-1-1       : benchmarker times (start/end per pod and container) = [(1727881934, 1727882058)]
+PostgreSQL-1-1-1024-1-1       : found and updated times {'benchmarker': [(1727881934, 1727882058)]}
 PostgreSQL-1-1-1024-1-1       : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-1-1       : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : benchmarks done 0 of 2. This will be client 2
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-1-2       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-2-9ksz9: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-2-bswhh: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -70,18 +70,18 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-1-2       : showing benchmarker times
-PostgreSQL-1-1-1024-1-2       : benchmarker timespan (start to end single container [s]) = 132
-PostgreSQL-1-1-1024-1-2       : benchmarker times (start/end per pod and container) = [(1727802944, 1727803067), (1727802944, 1727803066)]
-PostgreSQL-1-1-1024-1-2       : found and updated times {'benchmarker': [(1727802944, 1727803067), (1727802944, 1727803066)]}
+PostgreSQL-1-1-1024-1-2       : benchmarker timespan (start to end single container [s]) = 131
+PostgreSQL-1-1-1024-1-2       : benchmarker times (start/end per pod and container) = [(1727882109, 1727882232), (1727882109, 1727882232)]
+PostgreSQL-1-1-1024-1-2       : found and updated times {'benchmarker': [(1727882109, 1727882232), (1727882109, 1727882232)]}
 PostgreSQL-1-1-1024-1-2       : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-1-2       : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : benchmarks done 0 of 2. This will be client 3
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 4, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-1-3       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-3-l9c4r: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-3-7wm2t: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -92,17 +92,17 @@ done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-1-3       : showing benchmarker times
 PostgreSQL-1-1-1024-1-3       : benchmarker timespan (start to end single container [s]) = 132
-PostgreSQL-1-1-1024-1-3       : benchmarker times (start/end per pod and container) = [(1727803119, 1727803241), (1727803119, 1727803241)]
-PostgreSQL-1-1-1024-1-3       : found and updated times {'benchmarker': [(1727803119, 1727803241), (1727803119, 1727803241)]}
+PostgreSQL-1-1-1024-1-3       : benchmarker times (start/end per pod and container) = [(1727882284, 1727882406), (1727882284, 1727882406)]
+PostgreSQL-1-1-1024-1-3       : found and updated times {'benchmarker': [(1727882284, 1727882406), (1727882284, 1727882406)]}
 PostgreSQL-1-1-1024-1-3       : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-1-3       : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : benchmarks done 0 of 2. This will be client 4
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '4', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 4, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-1-4       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 done
@@ -110,15 +110,15 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 list index out of range
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 PostgreSQL-1-1-1024-1-4       : showing benchmarker times
-PostgreSQL-1-1-1024-1-4       : benchmarker timespan (start to end single container [s]) = 103
+PostgreSQL-1-1-1024-1-4       : benchmarker timespan (start to end single container [s]) = 102
 PostgreSQL-1-1-1024-1-4       : benchmarker times (start/end per pod and container) = []
 PostgreSQL-1-1-1024-1-4       : found and updated times {'benchmarker': []}
 PostgreSQL-1-1-1024-1-4       : collecting execution metrics of SUT
@@ -132,16 +132,16 @@ PostgreSQL-1-1-1024           : storage exists bexhoma-storage-postgresql-benchb
 PostgreSQL-1-1-1024           : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-01 17:26:03 (that is in 60 secs)
+PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-02 15:25:29 (that is in 60 secs)
 - waiting 30s -               : done
-PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-01 17:26:03
+PostgreSQL-1-1-1024           : will start benchmarking but not before 2024-10-02 15:25:29
 done
 PostgreSQL-1-1-1024           : benchmarks done 1 of 2. This will be client 1
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-2-1       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-2-1-8tr45: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-2-1-2z2mw: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -152,17 +152,17 @@ done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-2-1       : showing benchmarker times
 PostgreSQL-1-1-1024-2-1       : benchmarker timespan (start to end single container [s]) = 131
-PostgreSQL-1-1-1024-2-1       : benchmarker times (start/end per pod and container) = [(1727803568, 1727803692)]
-PostgreSQL-1-1-1024-2-1       : found and updated times {'benchmarker': [(1727803568, 1727803692)]}
+PostgreSQL-1-1-1024-2-1       : benchmarker times (start/end per pod and container) = [(1727882734, 1727882857)]
+PostgreSQL-1-1-1024-2-1       : found and updated times {'benchmarker': [(1727882734, 1727882857)]}
 PostgreSQL-1-1-1024-2-1       : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-2-1       : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : benchmarks done 1 of 2. This will be client 2
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-2-2       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-2-2-5hpbb: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-2-2-9cdrc: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -173,17 +173,17 @@ done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-2-2       : showing benchmarker times
 PostgreSQL-1-1-1024-2-2       : benchmarker timespan (start to end single container [s]) = 131
-PostgreSQL-1-1-1024-2-2       : benchmarker times (start/end per pod and container) = [(1727803743, 1727803866), (1727803743, 1727803866)]
-PostgreSQL-1-1-1024-2-2       : found and updated times {'benchmarker': [(1727803743, 1727803866), (1727803743, 1727803866)]}
+PostgreSQL-1-1-1024-2-2       : benchmarker times (start/end per pod and container) = [(1727882909, 1727883032), (1727882909, 1727883032)]
+PostgreSQL-1-1-1024-2-2       : found and updated times {'benchmarker': [(1727882909, 1727883032), (1727882909, 1727883032)]}
 PostgreSQL-1-1-1024-2-2       : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-2-2       : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : benchmarks done 1 of 2. This will be client 3
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 4, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-2-3       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-2-3-8smfw: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-2-3-p49w8: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -193,18 +193,18 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-2-3       : showing benchmarker times
-PostgreSQL-1-1-1024-2-3       : benchmarker timespan (start to end single container [s]) = 131
-PostgreSQL-1-1-1024-2-3       : benchmarker times (start/end per pod and container) = [(1727803918, 1727804040), (1727803917, 1727804039)]
-PostgreSQL-1-1-1024-2-3       : found and updated times {'benchmarker': [(1727803918, 1727804040), (1727803917, 1727804039)]}
+PostgreSQL-1-1-1024-2-3       : benchmarker timespan (start to end single container [s]) = 132
+PostgreSQL-1-1-1024-2-3       : benchmarker times (start/end per pod and container) = [(1727883084, 1727883206), (1727883084, 1727883206)]
+PostgreSQL-1-1-1024-2-3       : found and updated times {'benchmarker': [(1727883084, 1727883206), (1727883084, 1727883206)]}
 PostgreSQL-1-1-1024-2-3       : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-2-3       : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : benchmarks done 1 of 2. This will be client 4
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '4', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 4, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-2-4       : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727802554
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727881718
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727802554-2-4-8lgz5: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727881718-2-4-kkvdw: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -215,1843 +215,1843 @@ done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-2-4       : showing benchmarker times
 PostgreSQL-1-1-1024-2-4       : benchmarker timespan (start to end single container [s]) = 132
-PostgreSQL-1-1-1024-2-4       : benchmarker times (start/end per pod and container) = [(1727804094, 1727804216), (1727804094, 1727804216), (1727804094, 1727804217), (1727804094, 1727804217)]
-PostgreSQL-1-1-1024-2-4       : found and updated times {'benchmarker': [(1727804094, 1727804216), (1727804094, 1727804216), (1727804094, 1727804217), (1727804094, 1727804217)]}
+PostgreSQL-1-1-1024-2-4       : benchmarker times (start/end per pod and container) = [(1727883261, 1727883383), (1727883260, 1727883383), (1727883261, 1727883383), (1727883261, 1727883383)]
+PostgreSQL-1-1-1024-2-4       : found and updated times {'benchmarker': [(1727883261, 1727883383), (1727883260, 1727883383), (1727883261, 1727883383), (1727883261, 1727883383)]}
 PostgreSQL-1-1-1024-2-4       : collecting execution metrics of SUT
 PostgreSQL-1-1-1024-2-4       : collecting metrics of benchmarker
 done
 PostgreSQL-1-1-1024           : can be stopped
-Experiment ends at 2024-10-01 19:37:42.890941 (2540203.014921055): 1708.647491228301s total
+Experiment ends at 2024-10-02 17:37:09.480303 (2619369.604283209): 1710.9099356941879s total
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:35
+02.10.2024 15:20:58
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-k7dbd.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-pdcjj.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:33
+02.10.2024 15:20:59
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-n4bn8.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-zx7jd.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-8dq5h.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hq2qk.dbmsbenchmarker.log
 list index out of range
 Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 921, in log_to_df
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/evaluators.py", line 930, in log_to_df
     duration = re.findall('BEXHOMA_DURATION:(.+?)\n', stdout)[0]
                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
 IndexError: list index out of range
 
-01.10.2024 17:21:34
+02.10.2024 15:21:00
 BEXHOMA_CONNECTION:PostgreSQL-1-1-1024-1-4
 BEXHOMA_EXPERIMENT_RUN:1
 BEXHOMA_CONFIGURATION:PostgreSQL-1-1-1024
 BEXHOMA_CLIENT:4
-benchmark started at 2024-10-01 17:21:31
+benchmark started at 2024-10-02 15:20:57
 benchmark should wait until 0
 ignore that start time
-Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727802554
+Querying message queue bexhoma-benchmarker-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 No entry found in message queue. I assume this is the first child.
-Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727802554
+Querying counter bexhoma-benchmarker-podcount-PostgreSQL-1-1-1024-1-4-1727881718
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Could not connect to Redis at bexhoma-messagequeue:6379: Temporary failure in name resolution
 Found  / 4 running pods
 PODS_RUNNING does not contain a number.
 
-Error in bexhoma-benchmarker-postgresql-1-1-1024-1727802554-1-4-s8sgq.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-postgresql-1-1-1024-1727881718-1-4-hzchj.dbmsbenchmarker.log
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
 Benchmarking                                         connection  ... Latency Distribution.Average Latency (microseconds)
 connection_pod                                      ...                                                    
-PostgreSQL-1-1-1024-2-3-1  PostgreSQL-1-1-1024-2-3  ...                                                6104
-PostgreSQL-1-1-1024-2-4-1  PostgreSQL-1-1-1024-2-4  ...                                                7969
-PostgreSQL-1-1-1024-2-4-2  PostgreSQL-1-1-1024-2-4  ...                                                7675
-PostgreSQL-1-1-1024-2-1-1  PostgreSQL-1-1-1024-2-1  ...                                                7872
-PostgreSQL-1-1-1024-1-3-1  PostgreSQL-1-1-1024-1-3  ...                                                6323
-PostgreSQL-1-1-1024-2-3-2  PostgreSQL-1-1-1024-2-3  ...                                                6121
-PostgreSQL-1-1-1024-2-2-1  PostgreSQL-1-1-1024-2-2  ...                                                6632
-PostgreSQL-1-1-1024-1-1-1  PostgreSQL-1-1-1024-1-1  ...                                                7662
-PostgreSQL-1-1-1024-2-2-2  PostgreSQL-1-1-1024-2-2  ...                                                6522
-PostgreSQL-1-1-1024-1-2-1  PostgreSQL-1-1-1024-1-2  ...                                                6845
-PostgreSQL-1-1-1024-1-3-2  PostgreSQL-1-1-1024-1-3  ...                                                6463
-PostgreSQL-1-1-1024-2-4-3  PostgreSQL-1-1-1024-2-4  ...                                                7704
-PostgreSQL-1-1-1024-1-2-2  PostgreSQL-1-1-1024-1-2  ...                                                6618
-PostgreSQL-1-1-1024-2-4-4  PostgreSQL-1-1-1024-2-4  ...                                                7819
+PostgreSQL-1-1-1024-1-2-1  PostgreSQL-1-1-1024-1-2  ...                                                6952
+PostgreSQL-1-1-1024-2-4-1  PostgreSQL-1-1-1024-2-4  ...                                                8151
+PostgreSQL-1-1-1024-2-2-1  PostgreSQL-1-1-1024-2-2  ...                                                6826
+PostgreSQL-1-1-1024-2-2-2  PostgreSQL-1-1-1024-2-2  ...                                                6837
+PostgreSQL-1-1-1024-2-4-2  PostgreSQL-1-1-1024-2-4  ...                                                8546
+PostgreSQL-1-1-1024-1-2-2  PostgreSQL-1-1-1024-1-2  ...                                                6878
+PostgreSQL-1-1-1024-1-1-1  PostgreSQL-1-1-1024-1-1  ...                                                7416
+PostgreSQL-1-1-1024-2-3-1  PostgreSQL-1-1-1024-2-3  ...                                                6381
+PostgreSQL-1-1-1024-2-1-1  PostgreSQL-1-1-1024-2-1  ...                                                8427
+PostgreSQL-1-1-1024-2-4-3  PostgreSQL-1-1-1024-2-4  ...                                                8299
+PostgreSQL-1-1-1024-2-4-4  PostgreSQL-1-1-1024-2-4  ...                                                8198
+PostgreSQL-1-1-1024-1-3-1  PostgreSQL-1-1-1024-1-3  ...                                                6253
+PostgreSQL-1-1-1024-2-3-2  PostgreSQL-1-1-1024-2-3  ...                                                6242
+PostgreSQL-1-1-1024-1-3-2  PostgreSQL-1-1-1024-1-3  ...                                                6356
 
 [14 rows x 36 columns]
-Workflow {'PostgreSQL-1-1-1024': [[2, 4, 1, 2], [2, 1, 2]]}
+Workflow {'PostgreSQL-1-1-1024': [[2, 1, 2], [4, 2, 2, 1]]}
 Result workflow not complete
 
 ## Show Summary
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
-    Type: dbmsbenchmarker
-    Duration: 1709s 
+    Type: benchbase
+    Duration: 1711s 
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
@@ -2075,10 +2075,10 @@ PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:4292528
+    disk:248937016
+    datadisk:4327464
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.2G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
@@ -2087,10 +2087,10 @@ PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:4402496
+    disk:248937016
+    datadisk:4440824
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.3G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-3 uses docker image postgres:16.1
@@ -2099,10 +2099,10 @@ PostgreSQL-1-1-1024-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:4650704
+    disk:248937016
+    datadisk:4683584
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.3G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-4 uses docker image postgres:16.1
@@ -2111,10 +2111,10 @@ PostgreSQL-1-1-1024-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:4944960
+    disk:248937016
+    datadisk:4928696
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.3G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
@@ -2123,10 +2123,10 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:4943296
+    disk:248937016
+    datadisk:4927032
     volume_size:50G
-    volume_used:4.8G
+    volume_used:4.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-2 uses docker image postgres:16.1
@@ -2135,10 +2135,10 @@ PostgreSQL-1-1-1024-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:5049432
+    disk:248937016
+    datadisk:5026616
     volume_size:50G
-    volume_used:4.8G
+    volume_used:4.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-3 uses docker image postgres:16.1
@@ -2147,10 +2147,10 @@ PostgreSQL-1-1-1024-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:5301624
+    disk:248937016
+    datadisk:5267800
     volume_size:50G
-    volume_used:4.8G
+    volume_used:5.1G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
@@ -2159,63 +2159,69 @@ PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524460
-    datadisk:5534008
+    disk:248937016
+    datadisk:5446400
     volume_size:50G
-    volume_used:4.8G
+    volume_used:5.2G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                          experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1042.79                                                      12443.0                                              7662.00
-PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2373.61                                                      15207.0                                              6731.50
-PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1249.12                                                      14132.0                                              6393.00
-PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                       1015.01                                                      12804.0                                              7872.00
-PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2429.02                                                      15207.0                                              6577.00
-PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1306.40                                                      13955.0                                              6112.50
-PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       2050.26                                                      18143.0                                              7791.75
+PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1077.29                                                      12160.0                                               7416.0
+PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2309.94                                                      15701.0                                               6915.0
+PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1266.49                                                      13966.0                                               6304.5
+PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                        948.15                                                      13195.0                                               8427.0
+PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2337.97                                                      15291.0                                               6831.5
+PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1265.16                                                      14275.0                                               6311.5
+PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       1925.56                                                      18509.0                                               8298.5
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[2, 4, 1, 2], [2, 1, 2]]
+DBMS PostgreSQL-1-1-1024 - Pods [[2, 1, 2], [4, 2, 2, 1]]
 
 #### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                          time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1-1      116.0        1.0   1.0                 496.551724
-PostgreSQL-1-1-1024-1-2      116.0        1.0   2.0                 496.551724
-PostgreSQL-1-1-1024-1-3      116.0        1.0   2.0                 496.551724
-PostgreSQL-1-1-1024-1-4      116.0        1.0   4.0                 496.551724
-PostgreSQL-1-1-1024-2-1      116.0        1.0   1.0                 496.551724
-PostgreSQL-1-1-1024-2-2      116.0        1.0   2.0                 496.551724
-PostgreSQL-1-1-1024-2-3      116.0        1.0   2.0                 496.551724
-PostgreSQL-1-1-1024-2-4      116.0        1.0   4.0                 496.551724
+PostgreSQL-1-1-1024-1-1      140.0        1.0   1.0                 411.428571
+PostgreSQL-1-1-1024-1-2      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-1-3      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-1-4      140.0        1.0   4.0                 411.428571
+PostgreSQL-1-1-1024-2-1      140.0        1.0   1.0                 411.428571
+PostgreSQL-1-1-1024-2-2      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-2-3      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-2-4      140.0        1.0   4.0                 411.428571
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      115.85     2.29          2.94                 5.16
-PostgreSQL-1-1-1024-1-2      528.98     7.09          3.59                 6.04
-PostgreSQL-1-1-1024-1-3      259.26     0.64          3.77                 6.37
-PostgreSQL-1-1-1024-1-4        0.35     0.00          3.78                 6.44
-PostgreSQL-1-1-1024-2-1      300.95     3.91          7.02                12.40
-PostgreSQL-1-1-1024-2-2     1676.72     5.42          7.00                12.39
-PostgreSQL-1-1-1024-2-3      434.56     3.67          3.98                 7.10
-PostgreSQL-1-1-1024-2-4      367.02     6.11          4.17                 7.38
+PostgreSQL-1-1-1024-1-1      255.46     3.98          3.13                 5.44
+PostgreSQL-1-1-1024-1-2      805.31     6.09          3.71                 6.26
+PostgreSQL-1-1-1024-1-3      418.90     3.80          3.82                 6.51
+PostgreSQL-1-1-1024-1-4       39.19     0.00          3.82                 6.51
+PostgreSQL-1-1-1024-2-1      213.58     0.05          6.89                12.28
+PostgreSQL-1-1-1024-2-2      646.89     3.61          3.74                 6.63
+PostgreSQL-1-1-1024-2-3      330.78     3.72          3.91                 6.95
+PostgreSQL-1-1-1024-2-4      631.96     2.96          4.22                 7.47
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      212.28     2.48          1.32                 1.32
-PostgreSQL-1-1-1024-1-2      262.71     5.07          3.59                 3.59
-PostgreSQL-1-1-1024-1-3      212.28     1.30          4.37                 4.37
-PostgreSQL-1-1-1024-1-4      262.68     0.00          3.89                 3.89
-PostgreSQL-1-1-1024-2-1      165.08     0.00          1.33                 1.33
-PostgreSQL-1-1-1024-2-2      492.73     2.35          4.02                 4.02
-PostgreSQL-1-1-1024-2-3      165.14     0.00          5.22                 5.22
-PostgreSQL-1-1-1024-2-4      437.48     1.02          6.34                 6.34
+PostgreSQL-1-1-1024-1-1      143.46     2.43          1.29                 1.29
+PostgreSQL-1-1-1024-1-2      460.36     0.00          3.95                 3.95
+PostgreSQL-1-1-1024-1-3      148.70     0.00          4.89                 4.89
+PostgreSQL-1-1-1024-1-4      460.31     0.00          4.90                 4.90
+PostgreSQL-1-1-1024-2-1       64.63     1.13          0.64                 0.64
+PostgreSQL-1-1-1024-2-2      357.70     2.32          3.30                 3.30
+PostgreSQL-1-1-1024-2-3      189.09     1.17          4.99                 4.99
+PostgreSQL-1-1-1024-2-4      324.48     0.98          5.65                 5.65
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST failed: Workflow not as planned

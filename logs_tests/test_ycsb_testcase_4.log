@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1727812474
-Experiment                    : starts at 2024-10-01 21:54:34.354403 (2548414.478384472)
+Experiment                    : has code 1727891639
+Experiment                    : starts at 2024-10-02 19:53:58.743856 (2627578.867837275)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
 YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
@@ -23,40 +23,40 @@ PostgreSQL-64-8-131072        : will start now
 PostgreSQL-64-8-131072        : storage exists bexhoma-storage-postgresql-ycsb-1
 PostgreSQL-64-8-131072        : loading is set to finished
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-10-01 19:56:34 (that is in 60 secs)
+PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-10-02 17:55:59 (that is in 60 secs)
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-10-01 19:56:34
+PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-10-02 17:55:59
 done
 PostgreSQL-64-8-131072        : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-64-8-131072        : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 16384, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'e', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
 PostgreSQL-64-8-131072-1      : start benchmarking
-PostgreSQL-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1727812474
+PostgreSQL-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1727891639
 - waiting 10s -               : done
-PostgreSQL-64-8-131072        : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-131072-1727812474-1-1-7rfzq: found
+PostgreSQL-64-8-131072        : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-131072-1727891639-1-1-5tzpp: found
 - waiting 30s -               : done
 PostgreSQL-64-8-131072        : has running benchmarks
 done
 PostgreSQL-64-8-131072        : has running benchmarks
 PostgreSQL-64-8-131072-1      : showing benchmarker times
-PostgreSQL-64-8-131072-1      : benchmarker timespan (start to end single container [s]) = 74
-PostgreSQL-64-8-131072-1      : benchmarker times (start/end per pod and container) = [(1727812608, 1727812653), (1727812608, 1727812653), (1727812608, 1727812654), (1727812608, 1727812653), (1727812609, 1727812654), (1727812608, 1727812654), (1727812608, 1727812652), (1727812608, 1727812654)]
-PostgreSQL-64-8-131072-1      : found and updated times {'benchmarker': [(1727812608, 1727812653), (1727812608, 1727812653), (1727812608, 1727812654), (1727812608, 1727812653), (1727812609, 1727812654), (1727812608, 1727812654), (1727812608, 1727812652), (1727812608, 1727812654)]}
+PostgreSQL-64-8-131072-1      : benchmarker timespan (start to end single container [s]) = 73
+PostgreSQL-64-8-131072-1      : benchmarker times (start/end per pod and container) = [(1727891771, 1727891816), (1727891771, 1727891816), (1727891771, 1727891815), (1727891772, 1727891812), (1727891771, 1727891815), (1727891771, 1727891815), (1727891771, 1727891815), (1727891771, 1727891815)]
+PostgreSQL-64-8-131072-1      : found and updated times {'benchmarker': [(1727891771, 1727891816), (1727891771, 1727891816), (1727891771, 1727891815), (1727891772, 1727891812), (1727891771, 1727891815), (1727891771, 1727891815), (1727891771, 1727891815), (1727891771, 1727891815)]}
 done
 PostgreSQL-64-8-131072        : can be stopped
-Experiment                    : ends at 2024-10-01 21:58:25.298338 (2548645.422317153) - 230.94s total
+Experiment                    : ends at 2024-10-02 19:57:48.692223 (2627808.816203561) - 229.95s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
 Benchmarking                                           connection  ... [SCAN].Return=OK
 connection_pod                                        ...                 
-PostgreSQL-64-8-131072-1-1  PostgreSQL-64-8-131072-1  ...           118715
-PostgreSQL-64-8-131072-1-2  PostgreSQL-64-8-131072-1  ...           118798
-PostgreSQL-64-8-131072-1-3  PostgreSQL-64-8-131072-1  ...           118714
-PostgreSQL-64-8-131072-1-4  PostgreSQL-64-8-131072-1  ...           118800
-PostgreSQL-64-8-131072-1-5  PostgreSQL-64-8-131072-1  ...           118895
-PostgreSQL-64-8-131072-1-6  PostgreSQL-64-8-131072-1  ...           118689
-PostgreSQL-64-8-131072-1-7  PostgreSQL-64-8-131072-1  ...           118653
-PostgreSQL-64-8-131072-1-8  PostgreSQL-64-8-131072-1  ...           118828
+PostgreSQL-64-8-131072-1-1  PostgreSQL-64-8-131072-1  ...           118801
+PostgreSQL-64-8-131072-1-2  PostgreSQL-64-8-131072-1  ...           118679
+PostgreSQL-64-8-131072-1-3  PostgreSQL-64-8-131072-1  ...           118840
+PostgreSQL-64-8-131072-1-4  PostgreSQL-64-8-131072-1  ...           118752
+PostgreSQL-64-8-131072-1-5  PostgreSQL-64-8-131072-1  ...           118745
+PostgreSQL-64-8-131072-1-6  PostgreSQL-64-8-131072-1  ...           118801
+PostgreSQL-64-8-131072-1-7  PostgreSQL-64-8-131072-1  ...           118727
+PostgreSQL-64-8-131072-1-8  PostgreSQL-64-8-131072-1  ...           118861
 
 [8 rows x 43 columns]
 Workflow {'PostgreSQL-64-8-131072': [[8]]}
@@ -66,8 +66,8 @@ Result workflow complete
 
 ### Workload
     YCSB SF=1
-    Type: dbmsbenchmarker
-    Duration: 231s 
+    Type: ycsb
+    Duration: 230s 
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -90,16 +90,16 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524800
-    datadisk:3894224
+    disk:248937360
+    datadisk:3878456
     volume_size:100G
-    volume_used:3.8G
+    volume_used:3.7G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          8                       22341.29                45639.0               49908                              2727.5            950092                            5030.5
+PostgreSQL-64-8-131072-1               1       64  131072          8                       23108.63                44284.0               49794                              3068.5            950206                            6108.5
 
 ### Workflow
 
@@ -108,4 +108,7 @@ DBMS PostgreSQL-64-8-131072 - Pods [[8]]
 
 #### Planned
 DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+
+### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

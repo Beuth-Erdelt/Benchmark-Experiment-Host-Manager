@@ -2,8 +2,8 @@
 
 ### Workload
     YCSB SF=1
-    Type: dbmsbenchmarker
-    Duration: 437s 
+    Type: ycsb
+    Duration: 438s 
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -26,10 +26,10 @@ PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524808
-    datadisk:2040896
+    disk:248937364
+    datadisk:2089608
     volume_size:100G
-    volume_used:1.9G
+    volume_used:1.8G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
@@ -38,8 +38,8 @@ PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:247524800
-    datadisk:2928952
+    disk:248937356
+    datadisk:2905288
     volume_size:100G
     volume_used:2.8G
     requests_cpu:4
@@ -47,12 +47,12 @@ PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
 
 ### Loading
                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-131072               1       64  131072          8                   94782.140007                10948.0             1000000                              4072.0
+PostgreSQL-64-8-131072               1       64  131072          8                   97340.058973                10632.0             1000000                              3922.5
 
 ### Execution
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                      109194.15                 9158.0            498851                            1430.0              501149                              2461.0
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       75918.62                13172.0            499898                            1429.0              500102                              1903.0
+PostgreSQL-64-8-131072-1-1               1       64  131072          1                      115207.37                 8680.0            500343                            1378.0              499657                              1953.0
+PostgreSQL-64-8-131072-2-1               2       64  131072          1                       71895.89                13909.0            500011                            1426.0              499989                              1842.0
 
 ### Workflow
 
@@ -61,5 +61,8 @@ DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
 
 #### Planned
 DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
+
+### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

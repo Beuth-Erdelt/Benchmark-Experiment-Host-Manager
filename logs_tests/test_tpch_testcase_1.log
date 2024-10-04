@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1727798334
-Experiment                    : starts at 2024-10-01 17:58:53.673635 (2534273.79761656)
+Experiment                    : has code 1727877498
+Experiment                    : starts at 2024-10-02 15:58:18.024505 (2613438.148485716)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -23,10 +23,10 @@ done
 PostgreSQL-BHT-8              : will start now
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-10-01 16:00:54 (that is in 60 secs)
+PostgreSQL-BHT-8              : will start loading but not before 2024-10-02 14:00:18 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-10-01 16:00:54
+PostgreSQL-BHT-8              : will start loading but not before 2024-10-02 14:00:18
 done
 PostgreSQL-BHT-8              : is not loaded yet
 PostgreSQL-BHT-8              : start asynch loading scripts of type loaded
@@ -39,7 +39,7 @@ done
 PostgreSQL-BHT-8              : showing loader times
 PostgreSQL-BHT-8              : generator timespan (first to last [s]) = 1
 PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 28
-PostgreSQL-BHT-8              : total timespan (first to last [s]) = 36
+PostgreSQL-BHT-8              : total timespan (first to last [s]) = 37
 PostgreSQL-BHT-8              : start asynch loading scripts of type indexed
 PostgreSQL-BHT-8              : is loading
 - waiting 30s -               : done
@@ -49,20 +49,18 @@ PostgreSQL-BHT-8              : is loading
 done
 PostgreSQL-BHT-8              : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-8-1            : start benchmarking
-PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1727798334
+PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1727877498
 - waiting 10s -               : done
-PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1727798334-1-1-7wq8k: found
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1727877498-1-1-gcc27: .found
 done
 PostgreSQL-BHT-8              : has running benchmarks
 PostgreSQL-BHT-8-1            : showing benchmarker times
-PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 71
-PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1727798655, 1727798684)]
-PostgreSQL-BHT-8-1            : found and updated times {'benchmarker': [(1727798655, 1727798684)]}
+PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 51
+PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1727877823, 1727877851)]
+PostgreSQL-BHT-8-1            : found and updated times {'benchmarker': [(1727877823, 1727877851)]}
 done
 PostgreSQL-BHT-8              : can be stopped
-Experiment                    : ends at 2024-10-01 18:05:49.080071 (2534689.204051287) - 415.41s total
+Experiment                    : ends at 2024-10-02 16:04:53.178304 (2613833.302283833) - 395.15s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -73,8 +71,8 @@ Experiment                    : uploading workload file
 
 ### Workload
     TPC-H Queries SF=1
-    Type: dbmsbenchmarker
-    Duration: 416s 
+    Type: tpch
+    Duration: 396s 
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -98,8 +96,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250347496
-    datadisk:2823352
+    disk:250350012
+    datadisk:2822128
     requests_cpu:4
     requests_memory:16Gi
 
@@ -111,32 +109,32 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 2523.04
-Minimum Cost Supplier Query (TPC-H Q2)                             419.43
-Shipping Priority (TPC-H Q3)                                       732.48
-Order Priority Checking Query (TPC-H Q4)                          1257.61
-Local Supplier Volume (TPC-H Q5)                                   636.56
-Forecasting Revenue Change (TPC-H Q6)                              474.38
-Forecasting Revenue Change (TPC-H Q7)                              751.54
-National Market Share (TPC-H Q8)                                   594.01
-Product Type Profit Measure (TPC-H Q9)                            1059.28
-Forecasting Revenue Change (TPC-H Q10)                            1220.42
-Important Stock Identification (TPC-H Q11)                         239.98
-Shipping Modes and Order Priority (TPC-H Q12)                      999.58
-Customer Distribution (TPC-H Q13)                                 1990.22
-Forecasting Revenue Change (TPC-H Q14)                             522.41
-Top Supplier Query (TPC-H Q15)                                     530.42
-Parts/Supplier Relationship (TPC-H Q16)                            558.74
-Small-Quantity-Order Revenue (TPC-H Q17)                          1967.66
-Large Volume Customer (TPC-H Q18)                                 6709.83
-Discounted Revenue (TPC-H Q19)                                     677.41
-Potential Part Promotion (TPC-H Q20)                               652.00
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                872.63
-Global Sales Opportunity Query (TPC-H Q22)                         232.36
+Pricing Summary Report (TPC-H Q1)                                 2518.05
+Minimum Cost Supplier Query (TPC-H Q2)                             425.98
+Shipping Priority (TPC-H Q3)                                       728.71
+Order Priority Checking Query (TPC-H Q4)                          1223.85
+Local Supplier Volume (TPC-H Q5)                                   636.65
+Forecasting Revenue Change (TPC-H Q6)                              485.96
+Forecasting Revenue Change (TPC-H Q7)                              752.28
+National Market Share (TPC-H Q8)                                   600.46
+Product Type Profit Measure (TPC-H Q9)                            1057.89
+Forecasting Revenue Change (TPC-H Q10)                            1200.26
+Important Stock Identification (TPC-H Q11)                         238.03
+Shipping Modes and Order Priority (TPC-H Q12)                      980.31
+Customer Distribution (TPC-H Q13)                                 1944.32
+Forecasting Revenue Change (TPC-H Q14)                             518.97
+Top Supplier Query (TPC-H Q15)                                     534.09
+Parts/Supplier Relationship (TPC-H Q16)                            562.49
+Small-Quantity-Order Revenue (TPC-H Q17)                          1911.99
+Large Volume Customer (TPC-H Q18)                                 6459.88
+Discounted Revenue (TPC-H Q19)                                     673.38
+Potential Part Promotion (TPC-H Q20)                               654.71
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                887.67
+Global Sales Opportunity Query (TPC-H Q22)                         229.98
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       85.0     122.0
+PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       85.0     123.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
@@ -146,20 +144,23 @@ PostgreSQL-BHT-8-1-1           0.86
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4359.23
+PostgreSQL-BHT-8-1-1            4380.38
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+PostgreSQL-BHT-8-1 1  1              1                 28      1   1                  2828.57
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 #### Planned
 DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Workflow as planned
