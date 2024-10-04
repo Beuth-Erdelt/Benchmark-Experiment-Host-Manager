@@ -717,6 +717,8 @@ class default():
         3) All results of all DBMS are joined (merge.py of benchmarker) in dashboard pod
         4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
         """
+        self.cluster.logger.debug('default.evaluate_results()')
+        self.evaluator.evaluate_results(pod_dashboard)
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
             """
@@ -784,7 +786,6 @@ class default():
         # this includes all measures like times and monitoring data
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
-        """
         ############ HammerDB
         #self.path = "/home/perdelt/benchmarks/1668286639/"
         directory = os.fsencode(self.path)
@@ -793,6 +794,7 @@ class default():
             if filename.endswith(".pickle"): 
                 df = pd.read_pickle(self.path+"/"+filename)
                 print(self.path+"/"+filename, df)
+        """
     def stop_maintaining(self):
         """
         Stop all maintaining jobs of this experiment.
