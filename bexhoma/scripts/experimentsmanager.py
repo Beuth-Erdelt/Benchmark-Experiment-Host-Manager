@@ -93,6 +93,9 @@ def manage():
                         experiment = experiments.benchbase(cluster=cluster, code=code)
                     case _:
                         experiment = experiments.default(cluster=cluster, code=code)
+                # regenerate results - only for debugging
+                #experiment.evaluate_results()
+                #experiment.store_workflow_results()
                 experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)

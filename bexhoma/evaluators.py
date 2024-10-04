@@ -212,10 +212,11 @@ class logger(base):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
                 #print(filename)
-                df = self.log_to_df(path+"/"+filename)
+                df, errors = self.log_to_df(path+"/"+filename)
                 #print(df)
                 if df.empty:
                     print("Error in "+filename)
+                    print(errors)
                 else:
                     filename_df = path+"/"+filename+".df.pickle"
                     f = open(filename_df, "wb")
@@ -235,10 +236,11 @@ class logger(base):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".sensor.log"):
                 #print(filename)
-                df = self.log_to_df(path+"/"+filename)
+                df, errors = self.log_to_df(path+"/"+filename)
                 #print(df)
                 if df.empty:
                     print("Error in "+filename)
+                    print(errors)
                 else:
                     filename_df = path+"/"+filename+".df.pickle"
                     f = open(filename_df, "wb")
@@ -436,7 +438,8 @@ class logger(base):
         :param filename: Name of the log file 
         :return: DataFrame of results
         """
-        return pd.DataFrame()
+        errors_general = {filename: dict()}
+        return pd.DataFrame(), errors_general
     def test_results(self):
         """
         Run test script locally.
@@ -554,6 +557,7 @@ class ycsb(logger):
         :param filename: Name of the log file 
         :return: DataFrame of results
         """
+        errors_general = {filename: dict()}
         try:
             with open(filename) as f:
                 lines = f.readlines()
@@ -606,10 +610,10 @@ class ycsb(logger):
             # number of inserts must be integer - otherwise conversion will fail
             #if '[INSERT].Return=OK' in columns and df['[INSERT].Return=OK'] == 'NaN':
             #    df['[INSERT].Return=OK'] = 0
-            return df
+            return df, errors_general
         except Exception as e:
             print(e)
-            return pd.DataFrame()
+            return pd.DataFrame(), errors_general
     def benchmarking_set_datatypes(self, df):
         """
         Transforms a pandas DataFrame collection of benchmarking results to suitable data types.
@@ -928,6 +932,23 @@ class benchbase(logger):
         """
         stdout = ""
         df_header = pd.DataFrame()
+        errors_general = {filename: dict()}
+        try:
+            with open(filename) as f:
+                lines = f.readlines()
+            stdout = "".join(lines)
+            error_message = 'Temporary failure in name resolution'
+            error = re.findall('(.+?)'+error_message, stdout)
+            #print(type(error), len(error))
+            if len(error) > 0:
+                errors_general[filename][error_message] = list()
+                for e in error:
+                    errors_general[filename][error_message].append(e)
+                    #print(i)
+            #print(errors)
+            #exit()
+        except Exception as e:
+            pass
         try:
             with open(filename) as f:
                 lines = f.readlines()
@@ -979,17 +1000,17 @@ class benchbase(logger):
                     df = pd.concat([df_header, df], axis=1)
                     df.index.name = connection_name
                     #print(df)
-                    return df
+                    return df, errors_general
                 else:
                     print("no results found in log file {}".format(filename))
-                    return df_header
+                    return df_header, errors_general
             else:
-                return df_header#pd.DataFrame()
+                return df_header, errors_general#pd.DataFrame()
         except Exception as e:
             print(e)
             print(traceback.format_exc())
             print(stdout)
-            return df_header
+            return df_header, errors_general
     def benchmarking_set_datatypes(self, df):
         """
         Transforms a pandas DataFrame collection of benchmarking results to suitable data types.
@@ -1113,6 +1134,7 @@ class tpcc(logger):
         :param filename: Name of the log file 
         :return: DataFrame of results
         """
+        errors_general = {filename: dict()}
         try:
             with open(filename) as f:
                 lines = f.readlines()
@@ -1135,7 +1157,7 @@ class tpcc(logger):
             if len(error_timesynch) > 0:
                 # log is incomplete
                 print(filename, "log is incomplete")
-                return pd.DataFrame()
+                return pd.DataFrame(), errors_general
             pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
             errors = re.findall('Error ', stdout)
             if len(errors) > 0:
@@ -1155,11 +1177,11 @@ class tpcc(logger):
             df = pd.DataFrame(result_list)
             df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
             df.index.name = connection_name
-            return df
+            return df, errors_general
         except Exception as e:
             print(e)
             print(traceback.format_exc())
-            return pd.DataFrame()
+            return pd.DataFrame(), errors_general
     def test_results(self):
         """
         Run test script locally.
