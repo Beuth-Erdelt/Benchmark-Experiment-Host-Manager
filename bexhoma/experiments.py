@@ -719,6 +719,7 @@ class default():
         """
         self.cluster.logger.debug('default.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
             """
@@ -1995,6 +1996,7 @@ class tpcc(default):
         """
         self.cluster.logger.debug('tpcc.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
             """
@@ -2452,6 +2454,7 @@ class ycsb(default):
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['errors'] = self.evaluator.workflow_errors
         # download results
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
@@ -2755,6 +2758,7 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['errors'] = self.evaluator.workflow_errors
         # download results
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
