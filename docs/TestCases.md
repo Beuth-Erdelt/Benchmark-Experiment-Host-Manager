@@ -39,13 +39,15 @@ yields (after ca. 10 minutes) something like
 
 ### Workload
     TPC-H Queries SF=1
+    Type: tpch
+    Duration: 396s 
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Import sets indexes and constraints after loading and recomputes statistics.
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -62,8 +64,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249196752
-    datadisk:2823016
+    disk:250350012
+    datadisk:2822128
     requests_cpu:4
     requests_memory:16Gi
 
@@ -75,28 +77,28 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 2493.16
-Minimum Cost Supplier Query (TPC-H Q2)                             414.27
-Shipping Priority (TPC-H Q3)                                       724.43
-Order Priority Checking Query (TPC-H Q4)                          1239.55
-Local Supplier Volume (TPC-H Q5)                                   619.84
-Forecasting Revenue Change (TPC-H Q6)                              478.67
-Forecasting Revenue Change (TPC-H Q7)                              744.60
-National Market Share (TPC-H Q8)                                   587.28
-Product Type Profit Measure (TPC-H Q9)                            1065.18
-Forecasting Revenue Change (TPC-H Q10)                            1214.05
-Important Stock Identification (TPC-H Q11)                         247.10
-Shipping Modes and Order Priority (TPC-H Q12)                      984.09
-Customer Distribution (TPC-H Q13)                                 2038.24
-Forecasting Revenue Change (TPC-H Q14)                             517.57
-Top Supplier Query (TPC-H Q15)                                     532.80
-Parts/Supplier Relationship (TPC-H Q16)                            558.68
-Small-Quantity-Order Revenue (TPC-H Q17)                          1947.05
-Large Volume Customer (TPC-H Q18)                                 7059.62
-Discounted Revenue (TPC-H Q19)                                     667.85
-Potential Part Promotion (TPC-H Q20)                               657.55
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                902.79
-Global Sales Opportunity Query (TPC-H Q22)                         232.66
+Pricing Summary Report (TPC-H Q1)                                 2518.05
+Minimum Cost Supplier Query (TPC-H Q2)                             425.98
+Shipping Priority (TPC-H Q3)                                       728.71
+Order Priority Checking Query (TPC-H Q4)                          1223.85
+Local Supplier Volume (TPC-H Q5)                                   636.65
+Forecasting Revenue Change (TPC-H Q6)                              485.96
+Forecasting Revenue Change (TPC-H Q7)                              752.28
+National Market Share (TPC-H Q8)                                   600.46
+Product Type Profit Measure (TPC-H Q9)                            1057.89
+Forecasting Revenue Change (TPC-H Q10)                            1200.26
+Important Stock Identification (TPC-H Q11)                         238.03
+Shipping Modes and Order Priority (TPC-H Q12)                      980.31
+Customer Distribution (TPC-H Q13)                                 1944.32
+Forecasting Revenue Change (TPC-H Q14)                             518.97
+Top Supplier Query (TPC-H Q15)                                     534.09
+Parts/Supplier Relationship (TPC-H Q16)                            562.49
+Small-Quantity-Order Revenue (TPC-H Q17)                          1911.99
+Large Volume Customer (TPC-H Q18)                                 6459.88
+Discounted Revenue (TPC-H Q19)                                     673.38
+Potential Part Promotion (TPC-H Q20)                               654.71
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                887.67
+Global Sales Opportunity Query (TPC-H Q22)                         229.98
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
@@ -110,15 +112,26 @@ PostgreSQL-BHT-8-1-1           0.86
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4356.34
+PostgreSQL-BHT-8-1-1            4380.38
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+PostgreSQL-BHT-8-1 1  1              1                 28      1   1                  2828.57
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
 
@@ -147,6 +160,8 @@ yields (after ca. 15 minutes) something like
 
 ### Workload
     TPC-H Queries SF=3
+    Type: tpch
+    Duration: 689s 
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -154,7 +169,7 @@ Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Import sets indexes and constraints after loading and recomputes statistics.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -171,8 +186,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254757072
-    datadisk:8383336
+    disk:257273840
+    datadisk:8383832
     requests_cpu:4
     requests_memory:16Gi
 
@@ -184,32 +199,32 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 6188.20
-Minimum Cost Supplier Query (TPC-H Q2)                            2074.19
-Shipping Priority (TPC-H Q3)                                      2375.46
-Order Priority Checking Query (TPC-H Q4)                          3025.23
-Local Supplier Volume (TPC-H Q5)                                  2212.66
-Forecasting Revenue Change (TPC-H Q6)                             1149.08
-Forecasting Revenue Change (TPC-H Q7)                             2265.09
-National Market Share (TPC-H Q8)                                  1397.82
-Product Type Profit Measure (TPC-H Q9)                            3202.67
-Forecasting Revenue Change (TPC-H Q10)                            3122.82
-Important Stock Identification (TPC-H Q11)                         559.37
-Shipping Modes and Order Priority (TPC-H Q12)                     2431.24
-Customer Distribution (TPC-H Q13)                                 6557.62
-Forecasting Revenue Change (TPC-H Q14)                            1239.35
-Top Supplier Query (TPC-H Q15)                                    1362.21
-Parts/Supplier Relationship (TPC-H Q16)                           1294.57
-Small-Quantity-Order Revenue (TPC-H Q17)                          5782.30
-Large Volume Customer (TPC-H Q18)                                20626.61
-Discounted Revenue (TPC-H Q19)                                    1866.65
-Potential Part Promotion (TPC-H Q20)                              1192.11
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               2850.45
-Global Sales Opportunity Query (TPC-H Q22)                         462.22
+Pricing Summary Report (TPC-H Q1)                                 6192.75
+Minimum Cost Supplier Query (TPC-H Q2)                            2091.15
+Shipping Priority (TPC-H Q3)                                      2424.71
+Order Priority Checking Query (TPC-H Q4)                          3061.48
+Local Supplier Volume (TPC-H Q5)                                  2210.63
+Forecasting Revenue Change (TPC-H Q6)                             1139.04
+Forecasting Revenue Change (TPC-H Q7)                             2284.62
+National Market Share (TPC-H Q8)                                  1404.12
+Product Type Profit Measure (TPC-H Q9)                            3123.02
+Forecasting Revenue Change (TPC-H Q10)                            3004.63
+Important Stock Identification (TPC-H Q11)                         551.70
+Shipping Modes and Order Priority (TPC-H Q12)                     2425.46
+Customer Distribution (TPC-H Q13)                                 6418.72
+Forecasting Revenue Change (TPC-H Q14)                            1257.36
+Top Supplier Query (TPC-H Q15)                                    1368.61
+Parts/Supplier Relationship (TPC-H Q16)                           1267.73
+Small-Quantity-Order Revenue (TPC-H Q17)                          5629.60
+Large Volume Customer (TPC-H Q18)                                20725.30
+Discounted Revenue (TPC-H Q19)                                    1924.23
+Potential Part Promotion (TPC-H Q20)                              1164.31
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               2731.14
+Global Sales Opportunity Query (TPC-H Q22)                         459.42
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0          104.0         1.0      212.0     325.0
+PostgreSQL-BHT-8-1-1           1.0          111.0         1.0      215.0     335.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
@@ -219,31 +234,47 @@ PostgreSQL-BHT-8-1-1            2.3
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4822.01
+PostgreSQL-BHT-8-1-1            4848.96
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1 3  1              1                 77      1   3                  3085.71
+PostgreSQL-BHT-8-1 3  1              1                 80      1   3                   2970.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      392.24     1.41          6.39                10.64
+PostgreSQL-BHT-8-1      398.22     2.09          6.51                10.76
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1        8.52     0.06          0.76                 2.28
+PostgreSQL-BHT-8-1        8.63        0          0.77                 2.28
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      173.81     3.51          6.63                10.87
+PostgreSQL-BHT-8-1      384.69     3.64          6.82                11.07
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       11.17        0          0.24                 0.25
+PostgreSQL-BHT-8-1        11.5        0          0.23                 0.24
+
+### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST passed: Workflow as planned
 ```
 
 ### TPC-H Throughput Test
@@ -272,6 +303,8 @@ yields (after ca. 15 minutes) something like
 
 ### Workload
     TPC-H Queries SF=1
+    Type: tpch
+    Duration: 929s 
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -279,7 +312,7 @@ Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Import sets indexes and constraints after loading and recomputes statistics.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -297,8 +330,8 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373904
-    datadisk:2822984
+    disk:248936652
+    datadisk:2822736
     volume_size:100G
     volume_used:2.7G
     requests_cpu:4
@@ -309,8 +342,8 @@ PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373904
-    datadisk:2822984
+    disk:248936860
+    datadisk:2822736
     volume_size:100G
     volume_used:2.7G
     requests_cpu:4
@@ -321,8 +354,8 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373904
-    datadisk:2822984
+    disk:248936860
+    datadisk:2822736
     volume_size:100G
     volume_used:2.7G
     requests_cpu:4
@@ -333,8 +366,8 @@ PostgreSQL-BHT-8-2-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:2822984
+    disk:248936840
+    datadisk:2822736
     volume_size:100G
     volume_used:2.7G
     requests_cpu:4
@@ -345,8 +378,8 @@ PostgreSQL-BHT-8-2-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:2822984
+    disk:248936840
+    datadisk:2822736
     volume_size:100G
     volume_used:2.7G
     requests_cpu:4
@@ -357,8 +390,8 @@ PostgreSQL-BHT-8-2-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:2822984
+    disk:248936840
+    datadisk:2822736
     volume_size:100G
     volume_used:2.7G
     requests_cpu:4
@@ -372,70 +405,79 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-1-2-1  PostgreSQL-BHT-8-1-2-2  PostgreSQL-BHT-8-2-1-1  PostgreSQL-BHT-8-2-2-1  PostgreSQL-BHT-8-2-2-2
-Pricing Summary Report (TPC-H Q1)                                   2672.44                 2525.77                 2543.15                14990.48                 2508.68                 2512.74
-Minimum Cost Supplier Query (TPC-H Q2)                               807.42                  416.50                  419.34                 3454.00                  414.38                  423.96
-Shipping Priority (TPC-H Q3)                                        1302.45                  729.22                  725.37                 4798.06                  752.29                  758.35
-Order Priority Checking Query (TPC-H Q4)                            1233.78                 1210.91                 1230.73                 1237.82                 1262.13                 1237.96
-Local Supplier Volume (TPC-H Q5)                                     622.07                  642.54                  633.58                  641.07                  669.24                  663.98
-Forecasting Revenue Change (TPC-H Q6)                                471.98                  493.60                  486.25                  489.24                  505.34                  508.09
-Forecasting Revenue Change (TPC-H Q7)                               1270.33                  732.61                  725.63                 1003.42                  765.38                  751.80
-National Market Share (TPC-H Q8)                                     836.68                  598.53                  589.10                  713.36                  612.28                  612.50
-Product Type Profit Measure (TPC-H Q9)                              1838.59                 1036.77                 1047.79                 1570.29                 1082.44                 1036.73
-Forecasting Revenue Change (TPC-H Q10)                              1191.01                 1175.82                 1191.82                 1218.83                 1236.26                 1221.05
-Important Stock Identification (TPC-H Q11)                           239.93                  244.18                  246.99                  243.92                  251.36                  250.40
-Shipping Modes and Order Priority (TPC-H Q12)                        984.48                  992.87                  989.47                  992.03                 1014.93                  993.86
-Customer Distribution (TPC-H Q13)                                   1902.72                 1908.29                 1890.49                 1944.39                 1963.85                 1955.49
-Forecasting Revenue Change (TPC-H Q14)                               509.20                  512.61                  509.94                  523.72                  549.72                  538.19
-Top Supplier Query (TPC-H Q15)                                       524.90                  540.52                  536.65                  541.40                  553.32                  551.25
-Parts/Supplier Relationship (TPC-H Q16)                              563.82                  562.94                  561.51                  558.85                  559.16                  560.83
-Small-Quantity-Order Revenue (TPC-H Q17)                            1783.72                 1840.77                 1818.46                 1840.48                 2064.88                 1893.64
-Large Volume Customer (TPC-H Q18)                                   7326.47                 7453.61                 7426.17                 6149.28                 8190.63                 7986.14
-Discounted Revenue (TPC-H Q19)                                       657.22                  671.44                  662.57                  680.59                  688.21                  690.03
-Potential Part Promotion (TPC-H Q20)                                 643.95                  633.65                  632.16                  634.58                  660.55                  648.07
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                 1912.28                  869.46                  850.06                 1782.10                  876.62                  850.13
-Global Sales Opportunity Query (TPC-H Q22)                           261.03                  217.09                  215.63                  261.08                  213.14                  215.21
+Pricing Summary Report (TPC-H Q1)                                   2756.00                 2534.75                 2535.25                14119.18                 2565.51                 2571.79
+Minimum Cost Supplier Query (TPC-H Q2)                               464.38                  432.43                  431.94                 5324.89                  434.76                  431.71
+Shipping Priority (TPC-H Q3)                                         770.36                  723.43                  730.39                 6792.36                  760.45                  776.70
+Order Priority Checking Query (TPC-H Q4)                            1334.68                 1309.18                 1300.62                 1246.18                 1256.42                 1251.28
+Local Supplier Volume (TPC-H Q5)                                     668.90                  632.22                  637.11                  653.33                  661.63                  679.79
+Forecasting Revenue Change (TPC-H Q6)                                511.75                  486.05                  488.62                  500.62                  510.86                  520.06
+Forecasting Revenue Change (TPC-H Q7)                                833.18                  743.39                  747.72                 1150.01                  741.63                  769.24
+National Market Share (TPC-H Q8)                                     675.09                  590.59                  601.45                  674.49                  607.47                  623.72
+Product Type Profit Measure (TPC-H Q9)                              1167.95                 1090.70                 1111.11                 1533.60                 1086.91                 1087.04
+Forecasting Revenue Change (TPC-H Q10)                              1324.00                 1242.58                 1251.42                 1248.54                 1276.28                 1273.38
+Important Stock Identification (TPC-H Q11)                           263.13                  251.19                  248.92                  242.83                  251.04                  251.12
+Shipping Modes and Order Priority (TPC-H Q12)                       1062.88                 1003.16                 1006.56                 1016.53                 1032.74                 1034.17
+Customer Distribution (TPC-H Q13)                                   2215.76                 2038.91                 2046.91                 2043.55                 2053.20                 2037.29
+Forecasting Revenue Change (TPC-H Q14)                               556.32                  525.59                  532.72                  535.73                  561.66                  547.04
+Top Supplier Query (TPC-H Q15)                                       603.09                  531.66                  539.34                  545.08                  566.37                  556.02
+Parts/Supplier Relationship (TPC-H Q16)                              608.66                  572.70                  576.08                  559.47                  571.74                  569.10
+Small-Quantity-Order Revenue (TPC-H Q17)                            2104.29                 2007.04                 2029.72                 1850.03                 1913.35                 1902.69
+Large Volume Customer (TPC-H Q18)                                   7351.66                 7261.50                 7169.16                 6362.48                 7198.30                 7305.13
+Discounted Revenue (TPC-H Q19)                                       693.49                  681.62                  680.98                  686.90                  696.24                  700.38
+Potential Part Promotion (TPC-H Q20)                                 712.03                  643.07                  657.41                  925.62                  639.74                  630.51
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  903.24                  848.23                  849.80                 1991.62                  851.09                  848.94
+Global Sales Opportunity Query (TPC-H Q22)                           256.00                  227.17                  226.61                  256.98                  216.10                  215.28
 
 ### Loading [s]
                         timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1-1           1.0           26.0         2.0       98.0     133.0
-PostgreSQL-BHT-8-1-2-1           1.0           26.0         2.0       98.0     133.0
-PostgreSQL-BHT-8-1-2-2           1.0           26.0         2.0       98.0     133.0
-PostgreSQL-BHT-8-2-1-1           1.0           26.0         2.0       98.0     133.0
-PostgreSQL-BHT-8-2-2-1           1.0           26.0         2.0       98.0     133.0
-PostgreSQL-BHT-8-2-2-2           1.0           26.0         2.0       98.0     133.0
+PostgreSQL-BHT-8-1-1-1           1.0           28.0         1.0      102.0     139.0
+PostgreSQL-BHT-8-1-2-1           1.0           28.0         1.0      102.0     139.0
+PostgreSQL-BHT-8-1-2-2           1.0           28.0         1.0      102.0     139.0
+PostgreSQL-BHT-8-2-1-1           1.0           28.0         1.0      102.0     139.0
+PostgreSQL-BHT-8-2-2-1           1.0           28.0         1.0      102.0     139.0
+PostgreSQL-BHT-8-2-2-2           1.0           28.0         1.0      102.0     139.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                         Geo Times [s]
 DBMS                                 
-PostgreSQL-BHT-8-1-1-1           1.00
-PostgreSQL-BHT-8-1-2-1           0.85
-PostgreSQL-BHT-8-1-2-2           0.85
-PostgreSQL-BHT-8-2-1-1           1.19
-PostgreSQL-BHT-8-2-2-1           0.89
-PostgreSQL-BHT-8-2-2-2           0.87
+PostgreSQL-BHT-8-1-1-1           0.94
+PostgreSQL-BHT-8-1-2-1           0.87
+PostgreSQL-BHT-8-1-2-2           0.88
+PostgreSQL-BHT-8-2-1-1           1.28
+PostgreSQL-BHT-8-2-2-1           0.88
+PostgreSQL-BHT-8-2-2-2           0.88
 
 ### Power@Size
                         Power@Size [~Q/h]
 DBMS                                     
-PostgreSQL-BHT-8-1-1-1            3735.71
-PostgreSQL-BHT-8-1-2-1            4393.11
-PostgreSQL-BHT-8-1-2-2            4409.71
-PostgreSQL-BHT-8-2-1-1            3125.54
-PostgreSQL-BHT-8-2-2-1            4252.42
-PostgreSQL-BHT-8-2-2-2            4303.51
+PostgreSQL-BHT-8-1-1-1            4021.39
+PostgreSQL-BHT-8-1-2-1            4308.46
+PostgreSQL-BHT-8-1-2-2            4285.89
+PostgreSQL-BHT-8-2-1-1            2923.32
+PostgreSQL-BHT-8-2-2-1            4260.41
+PostgreSQL-BHT-8-2-2-2            4249.41
 
 ### Throughput@Size
                                                    time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS                 SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1-1 1  1              1                 37      1   1                  2140.54
-PostgreSQL-BHT-8-1-2 1  1              2                 29      2   1                  5462.07
-PostgreSQL-BHT-8-2-1 1  2              1                 50      1   1                  1584.00
-PostgreSQL-BHT-8-2-2 1  2              2                 31      2   1                  5109.68
+PostgreSQL-BHT-8-1-1 1  1              1                 31      1   1                  2554.84
+PostgreSQL-BHT-8-1-2 1  1              2                 30      2   1                  5280.00
+PostgreSQL-BHT-8-2-1 1  2              1                 54      1   1                  1466.67
+PostgreSQL-BHT-8-2-2 1  2              2                 30      2   1                  5280.00
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8-1 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-8-2 - Pods [[1, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1, 2], [1, 2]]
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      108.89     0.02          3.69                 5.37
-PostgreSQL-BHT-8-1-2      108.89     0.02          3.69                 5.37
+PostgreSQL-BHT-8-1-1      107.31     1.01          3.69                 5.46
+PostgreSQL-BHT-8-1-2      107.31     1.01          3.69                 5.46
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
@@ -444,20 +486,28 @@ PostgreSQL-BHT-8-1-2           0        0           0.0                  0.0
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       93.63     0.00          7.28                 7.55
-PostgreSQL-BHT-8-1-2       13.61     0.00          7.28                 7.55
-PostgreSQL-BHT-8-2-1        0.56     0.01          6.15                 6.70
-PostgreSQL-BHT-8-2-2      484.46     0.00          7.58                 9.75
+PostgreSQL-BHT-8-1-1      115.94     1.97          3.80                 5.26
+PostgreSQL-BHT-8-1-2        0.27     0.01          3.80                 5.26
+PostgreSQL-BHT-8-2-1      111.47     1.93          7.59                10.44
+PostgreSQL-BHT-8-2-2      220.68     0.00          3.78                 5.18
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       11.81      0.0          0.22                 0.23
-PostgreSQL-BHT-8-1-2        0.00      0.0          0.22                 0.23
-PostgreSQL-BHT-8-2-1        0.00      0.0          0.00                 0.00
-PostgreSQL-BHT-8-2-2        0.00      0.0          0.00                 0.00
+PostgreSQL-BHT-8-1-1       13.50      0.0          0.26                 0.27
+PostgreSQL-BHT-8-1-2        0.00      0.0          0.26                 0.27
+PostgreSQL-BHT-8-2-1       13.50      0.0          0.26                 0.27
+PostgreSQL-BHT-8-2-2       24.07      0.0          0.74                 0.77
+
+### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
+
+TEST failed: Workflow not as planned
 ```
 
 
@@ -503,11 +553,13 @@ yields (after ca. 10 minutes) something like
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 619s 
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -524,24 +576,32 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250783132
-    datadisk:4409244
+    disk:253346796
+    datadisk:4409948
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2640.05                                                      13265.0                                               6054.0
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2638.88                                                      13239.0                                               6057.0
 
 Warehouses: 16
 
 ### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
+
+#### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      123.0        1.0   1.0                 468.292683
+PostgreSQL-1-1-1024-1      129.0        1.0   1.0                 446.511628
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
 
@@ -577,11 +637,13 @@ yields (after ca. 10 minutes) something like
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 644s 
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -599,10 +661,10 @@ PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:4409104
+    disk:248936844
+    datadisk:4409008
     volume_size:50G
-    volume_used:4.3G
+    volume_used:4.1G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
@@ -611,8 +673,8 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:5110288
+    disk:248936844
+    datadisk:5110696
     volume_size:50G
     volume_used:4.9G
     requests_cpu:4
@@ -620,19 +682,27 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
 
 ### Execution
                          experiment_run  terminals  target  pod_count  time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1-1               1         16    8192          1  60.0                       2523.45                                                      14188.0                                               6329.0
-PostgreSQL-1-1-1024-2-1               2         16    8192          1  60.0                       1540.08                                                      14727.0                                              10377.0
+PostgreSQL-1-1-1024-1-1               1         16    8192          1  60.0                       2570.31                                                      13837.0                                               6214.0
+PostgreSQL-1-1-1024-2-1               2         16    8192          1  60.0                       1610.60                                                      15045.0                                               9922.0
 
 Warehouses: 16
 
 ### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[1], [1]]
+
+#### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1], [1]]
 
 ### Loading
                          time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1-1      149.0        1.0   1.0                 386.577181
-PostgreSQL-1-1-1024-2-1      149.0        1.0   1.0                 386.577181
+PostgreSQL-1-1-1024-1-1      140.0        1.0   1.0                 411.428571
+PostgreSQL-1-1-1024-2-1      140.0        1.0   1.0                 411.428571
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
 
@@ -661,12 +731,14 @@ yields (after ca. 10 minutes) something like
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 681s 
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -683,40 +755,53 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250783436
-    datadisk:4409548
+    disk:253346116
+    datadisk:4409268
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2645.79                                                      13363.0                                               6041.0
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                        2639.3                                                      13377.0                                               6056.0
 
 Warehouses: 16
 
 ### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
+
+#### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      133.0        1.0   1.0                 433.082707
+PostgreSQL-1-1-1024-1      137.0        1.0   1.0                 420.437956
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      811.76        0          4.01                 5.64
+PostgreSQL-1-1-1024-1       563.1      7.7          3.74                 4.97
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     1111.02    11.38          1.34                 1.34
+PostgreSQL-1-1-1024-1      959.55        0           1.3                  1.3
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     2065.99     7.49          4.84                 7.13
+PostgreSQL-1-1-1024-1     2630.98     7.69          4.76                 7.07
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     1303.79     4.91          1.43                 1.43
+PostgreSQL-1-1-1024-1     1420.86     5.03          1.42                 1.42
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST passed: Workflow as planned
 ```
 
 ### Benchbase Complex
@@ -745,12 +830,14 @@ yields (after ca. 30 minutes) something like
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1711s 
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 2 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 2 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -768,10 +855,10 @@ PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:4274592
+    disk:248937016
+    datadisk:4327464
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.2G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
@@ -780,10 +867,10 @@ PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:4382720
+    disk:248937016
+    datadisk:4440824
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.3G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-3 uses docker image postgres:16.1
@@ -792,10 +879,10 @@ PostgreSQL-1-1-1024-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246373884
-    datadisk:4634176
+    disk:248937016
+    datadisk:4683584
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.3G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-4 uses docker image postgres:16.1
@@ -804,10 +891,10 @@ PostgreSQL-1-1-1024-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:4964192
+    disk:248937016
+    datadisk:4928696
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.3G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
@@ -816,10 +903,10 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:5901576
+    disk:248937016
+    datadisk:4927032
     volume_size:50G
-    volume_used:5.7G
+    volume_used:4.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-2 uses docker image postgres:16.1
@@ -828,10 +915,10 @@ PostgreSQL-1-1-1024-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:6016656
+    disk:248937016
+    datadisk:5026616
     volume_size:50G
-    volume_used:5.7G
+    volume_used:4.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-3 uses docker image postgres:16.1
@@ -840,10 +927,10 @@ PostgreSQL-1-1-1024-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:6274416
+    disk:248937016
+    datadisk:5267800
     volume_size:50G
-    volume_used:5.8G
+    volume_used:5.1G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
@@ -852,62 +939,72 @@ PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:6411736
+    disk:248937016
+    datadisk:5446400
     volume_size:50G
-    volume_used:5.8G
+    volume_used:5.2G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                          experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1028.55                                                      12618.0                                              7768.00
-PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2408.42                                                      15433.0                                              6634.00
-PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1300.57                                                      13805.0                                              6140.00
-PostgreSQL-1-1-1024-1-4               1         16   16384          4  120.0                       1992.49                                                      18331.0                                              8018.75
-PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                       1095.30                                                      12173.0                                              7294.00
-PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2488.65                                                      15011.0                                              6419.00
-PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1344.85                                                      13752.0                                              5937.50
-PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       2103.45                                                      17977.0                                              7594.50
+PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1077.29                                                      12160.0                                               7416.0
+PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2309.94                                                      15701.0                                               6915.0
+PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1266.49                                                      13966.0                                               6304.5
+PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                        948.15                                                      13195.0                                               8427.0
+PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2337.97                                                      15291.0                                               6831.5
+PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1265.16                                                      14275.0                                               6311.5
+PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       1925.56                                                      18509.0                                               8298.5
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-1-1-1024 - Pods [[4, 2, 2, 1], [2, 4, 2, 1]]
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[2, 1, 2], [4, 2, 2, 1]]
+
+#### Planned
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                          time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1-1      149.0        1.0   1.0                 386.577181
-PostgreSQL-1-1-1024-1-2      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-1-3      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-1-4      149.0        1.0   4.0                 386.577181
-PostgreSQL-1-1-1024-2-1      149.0        1.0   1.0                 386.577181
-PostgreSQL-1-1-1024-2-2      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-2-3      149.0        1.0   2.0                 386.577181
-PostgreSQL-1-1-1024-2-4      149.0        1.0   4.0                 386.577181
+PostgreSQL-1-1-1024-1-1      140.0        1.0   1.0                 411.428571
+PostgreSQL-1-1-1024-1-2      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-1-3      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-1-4      140.0        1.0   4.0                 411.428571
+PostgreSQL-1-1-1024-2-1      140.0        1.0   1.0                 411.428571
+PostgreSQL-1-1-1024-2-2      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-2-3      140.0        1.0   2.0                 411.428571
+PostgreSQL-1-1-1024-2-4      140.0        1.0   4.0                 411.428571
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      147.29     0.04          3.00                 5.20
-PostgreSQL-1-1-1024-1-2      507.27     7.11          3.58                 6.01
-PostgreSQL-1-1-1024-1-3      305.77     1.43          3.79                 6.42
-PostgreSQL-1-1-1024-1-4      516.16     0.00          4.07                 6.88
-PostgreSQL-1-1-1024-2-1      189.92     3.48          7.14                12.87
-PostgreSQL-1-1-1024-2-2      618.11     2.24          3.82                 6.94
-PostgreSQL-1-1-1024-2-3      292.17     3.55          4.01                 7.28
-PostgreSQL-1-1-1024-2-4      562.41     0.00          4.33                 7.82
+PostgreSQL-1-1-1024-1-1      255.46     3.98          3.13                 5.44
+PostgreSQL-1-1-1024-1-2      805.31     6.09          3.71                 6.26
+PostgreSQL-1-1-1024-1-3      418.90     3.80          3.82                 6.51
+PostgreSQL-1-1-1024-1-4       39.19     0.00          3.82                 6.51
+PostgreSQL-1-1-1024-2-1      213.58     0.05          6.89                12.28
+PostgreSQL-1-1-1024-2-2      646.89     3.61          3.74                 6.63
+PostgreSQL-1-1-1024-2-3      330.78     3.72          3.91                 6.95
+PostgreSQL-1-1-1024-2-4      631.96     2.96          4.22                 7.47
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      230.76     1.06          1.32                 1.32
-PostgreSQL-1-1-1024-1-2      297.47     2.55          3.97                 3.97
-PostgreSQL-1-1-1024-1-3      230.76     0.00          4.88                 4.88
-PostgreSQL-1-1-1024-1-4      315.54     2.08          5.08                 5.08
-PostgreSQL-1-1-1024-2-1      233.12     0.00          3.05                 3.05
-PostgreSQL-1-1-1024-2-2      357.43     2.48          3.47                 3.47
-PostgreSQL-1-1-1024-2-3      167.33     1.27          4.75                 4.75
-PostgreSQL-1-1-1024-2-4      310.40     0.00          5.77                 5.77
+PostgreSQL-1-1-1024-1-1      143.46     2.43          1.29                 1.29
+PostgreSQL-1-1-1024-1-2      460.36     0.00          3.95                 3.95
+PostgreSQL-1-1-1024-1-3      148.70     0.00          4.89                 4.89
+PostgreSQL-1-1-1024-1-4      460.31     0.00          4.90                 4.90
+PostgreSQL-1-1-1024-2-1       64.63     1.13          0.64                 0.64
+PostgreSQL-1-1-1024-2-2      357.70     2.32          3.30                 3.30
+PostgreSQL-1-1-1024-2-3      189.09     1.17          4.99                 4.99
+PostgreSQL-1-1-1024-2-4      324.48     0.98          5.65                 5.65
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST failed: Workflow not as planned
 ```
 
 

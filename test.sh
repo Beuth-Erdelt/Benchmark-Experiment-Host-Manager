@@ -70,7 +70,7 @@ sleep 10
 
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
-  -sf 1 \
+  -sf 3 \
   -dt \
   -t 1200 \
   -dbms PostgreSQL \
@@ -88,7 +88,7 @@ nohup python tpch.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+sleep 1200
 
 
 

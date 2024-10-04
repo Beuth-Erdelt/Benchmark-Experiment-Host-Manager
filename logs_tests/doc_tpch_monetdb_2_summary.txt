@@ -1,0 +1,167 @@
+## Show Summary
+
+### Workload
+    TPC-H Queries SF=100
+    Type: tpch
+    Duration: 4675s 
+    Code: 1728050276
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=100) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['MonetDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 300Gi.
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 1] times the number of benchmarking pods.
+Experiment is run 2 times.
+
+### Connections
+MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248944868
+    datadisk:219980808
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248945040
+    datadisk:219980810
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248945040
+    datadisk:219980811
+    volume_size:300G
+    volume_used:210G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248945040
+    datadisk:219980813
+    volume_size:300G
+    volume_used:215G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1
+Pricing Summary Report (TPC-H Q1)                              505174.61            225816.02            504923.89            220729.45
+Minimum Cost Supplier Query (TPC-H Q2)                          24963.25             10460.09             25758.95              9824.44
+Shipping Priority (TPC-H Q3)                                    69786.37             18405.81             66668.69             11038.47
+Order Priority Checking Query (TPC-H Q4)                        79890.52              9662.41             78152.62             12436.11
+Local Supplier Volume (TPC-H Q5)                                41142.95              4567.03             39594.81              6131.07
+Forecasting Revenue Change (TPC-H Q6)                            6896.89              4090.36              6668.81              2608.60
+Forecasting Revenue Change (TPC-H Q7)                            6556.63              3193.75              8955.74              2814.76
+National Market Share (TPC-H Q8)                               111989.66             31936.32            160026.78             27055.97
+Product Type Profit Measure (TPC-H Q9)                          23644.96             19728.72             26571.27             14346.01
+Forecasting Revenue Change (TPC-H Q10)                          57943.90             30986.14             58281.73             24621.33
+Important Stock Identification (TPC-H Q11)                       6186.01              1098.22              6121.36               933.75
+Shipping Modes and Order Priority (TPC-H Q12)                   11159.33              1044.30             11683.17              1645.67
+Customer Distribution (TPC-H Q13)                              191400.91            153886.67            204990.53             99235.57
+Forecasting Revenue Change (TPC-H Q14)                           4849.71              1929.96              5293.94              1092.17
+Top Supplier Query (TPC-H Q15)                                   5307.21              4391.66              6300.97              4867.53
+Parts/Supplier Relationship (TPC-H Q16)                         13796.50             11741.23             15827.69             12475.68
+Small-Quantity-Order Revenue (TPC-H Q17)                        44204.81             45007.60             41865.09             41020.78
+Large Volume Customer (TPC-H Q18)                               57608.52            110672.15             49518.73            103647.20
+Discounted Revenue (TPC-H Q19)                                  13604.58              8477.58             13426.63              4019.95
+Potential Part Promotion (TPC-H Q20)                            10365.46              3516.04              8477.78              3297.92
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)             20833.77             17521.73             20971.12             17658.79
+Global Sales Opportunity Query (TPC-H Q22)                       6256.54              8119.35              6710.01              6663.57
+
+### Loading [s]
+                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-1-2-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-2-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-2-2-1           1.0         1686.0         7.0     5358.0    7061.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                     Geo Times [s]
+DBMS                              
+MonetDB-BHT-8-1-1-1          25.15
+MonetDB-BHT-8-1-2-1          12.11
+MonetDB-BHT-8-2-1-1          26.11
+MonetDB-BHT-8-2-2-1          10.53
+
+### Power@Size
+                     Power@Size [~Q/h]
+DBMS                                  
+MonetDB-BHT-8-1-1-1           14567.42
+MonetDB-BHT-8-1-2-1           31555.75
+MonetDB-BHT-8-2-1-1           14021.90
+MonetDB-BHT-8-2-2-1           36249.36
+
+### Throughput@Size
+                                                 time [s]  count   SF  Throughput@Size [~GB/h]
+DBMS              SF  num_experiment num_client                                               
+MonetDB-BHT-8-1-1 100 1              1               1330      1  100                  5954.89
+MonetDB-BHT-8-1-2 100 1              2                737      1  100                 10746.27
+MonetDB-BHT-8-2-1 100 2              1               1383      1  100                  5726.68
+MonetDB-BHT-8-2-2 100 2              2                639      1  100                 12394.37
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1, 1], [1, 1]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1, 1], [1, 1]]
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1-1     5777.03    15.25         45.07                91.43
+MonetDB-BHT-8-1-2     3707.17    12.35         36.87               140.22
+MonetDB-BHT-8-2-1     9830.07    18.48         43.82                85.06
+MonetDB-BHT-8-2-2     4480.58    14.62         54.91               140.84
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1-1       23.65     0.06          0.32                 0.33
+MonetDB-BHT-8-1-2       23.65     0.08          0.56                 0.58
+MonetDB-BHT-8-2-1       21.65     0.01          0.55                 0.58
+MonetDB-BHT-8-2-2       22.54     0.07          0.55                 0.57
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST passed: Workflow as planned

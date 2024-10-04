@@ -81,54 +81,55 @@ At the end of a benchmark you will see a summary like
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 619s 
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
 Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [16] threads, split into [1, 2] pods.
+Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008601088
+    RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:182319476
-    datadisk:3819620
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008601088
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:185599412
-    datadisk:7083172
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:253346796
+    datadisk:4409948
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2134.88                                                      16764.0                                               7491.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       1909.99                                                      19804.0                                               8374.0
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2638.88                                                      13239.0                                               6057.0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1       63.0        1.0   1.0                 914.285714
-PostgreSQL-1-1-1024-2       63.0        1.0   2.0                 914.285714
+PostgreSQL-1-1-1024-1      129.0        1.0   1.0                 446.511628
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
 We can see that the overall throughput is close to the target and that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads).
@@ -258,79 +259,86 @@ If monitoring is activated, the summary also contains a section like
 ## Show Summary
 
 ### Workload
-    HammerDB Workload SF=16 (warehouses for TPC-C)
-    This includes no queries. HammerDB runs the benchmark
-    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
-TPC-C data is generated and loaded using several threads.
-Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: dbmsbenchmarker
+    Duration: 1010s 
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Loading is tested with [16] threads, split into [1] pods.
+Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250283616
-    datadisk:3377276
+    disk:251932920
+    datadisk:4409308
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
+PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008605184
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:251219648
-    datadisk:4313308
+    disk:255212460
+    datadisk:7688848
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1  12447.0  38156.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2  10576.5  32801.0         5       0
+                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2636.89                                                      13165.0                                               6061.0
+PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       2263.45                                                      15991.0                                               7061.5
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1]]
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
+
+#### Planned
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
-PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
+PostgreSQL-1-1-1024-1      138.0        1.0   1.0                 417.391304
+PostgreSQL-1-1-1024-2      138.0        1.0   2.0                 417.391304
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1       93.49     1.81          3.72                 4.38
-PostgreSQL-BHT-16-1-2       93.49     1.81          3.72                 4.38
+PostgreSQL-1-1-1024-1      665.11     2.16          3.78                 5.04
+PostgreSQL-1-1-1024-2      665.11     2.16          3.78                 5.04
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1      209.57        0          0.14                 0.14
-PostgreSQL-BHT-16-1-2      209.57        0          0.14                 0.14
+PostgreSQL-1-1-1024-1     1004.51        0          1.31                 1.31
+PostgreSQL-1-1-1024-2     1004.51        0          1.31                 1.31
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1    26425.11    62.79          5.45                 6.22
-PostgreSQL-BHT-16-1-2    26610.13    62.59          5.61                 6.59
+PostgreSQL-1-1-1024-1     2608.10     7.66          4.79                 7.06
+PostgreSQL-1-1-1024-2     2219.59     7.38          5.39                 8.20
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1       46.97     0.14          0.06                 0.06
-PostgreSQL-BHT-16-1-2       46.97     0.10          0.12                 0.12
-TEST passed: NOPM contains no 0 or NaN
+PostgreSQL-1-1-1024-1     1471.65     4.88          1.45                 1.45
+PostgreSQL-1-1-1024-2     1471.65     2.31          4.18                 4.18
+TEST passed: Throughput (requests/second) contains no 0 or NaN
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.

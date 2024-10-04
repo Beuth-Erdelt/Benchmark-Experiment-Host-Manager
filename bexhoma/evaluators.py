@@ -116,6 +116,7 @@ class base:
         #workflow = dict()
         #return workflow
         # Tree of elements of the workflow
+        #print(df)
         def remove_after_last_dash(s):
             index = s.rfind('-')
             if index != -1:
@@ -125,7 +126,12 @@ class base:
         for index, row in df.iterrows():
             #print(row['experiment_run'], row['configuration'])
             # strip experiment run number
-            configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
+            #configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
+            client_name_pattern = "{}-{}".format(row['num_experiment'], row['num_client'])
+            if row['orig_name'].endswith(client_name_pattern):
+                configuration_name = row['orig_name'][:-len(client_name_pattern)-1]
+            else:
+                configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
             if configuration_name not in configs:
                 configs[configuration_name] = dict()
                 #configs[row['configuration']]
@@ -150,7 +156,8 @@ class base:
             for i, v in row.items():
                 l = []
                 for j, w in v.items():
-                    l.append(len(w['pods']))
+                    #l.append(len(w['pods']))
+                    l.append(w['result_count'])
                 workflow[index].append(l)
         #print(workflow)
         #pretty_workflow = json.dumps(workflow, indent=2)
