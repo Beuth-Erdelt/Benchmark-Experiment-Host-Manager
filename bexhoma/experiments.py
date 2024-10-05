@@ -1501,7 +1501,10 @@ class default():
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if len(workload_properties['workflow_errors']) > 0:
+            for error in workload_properties['workflow_errors']:
+                print("    Error: "+error)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2070,7 +2073,10 @@ class tpcc(default):
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if len(workload_properties['workflow_errors']) > 0:
+            for error in workload_properties['workflow_errors']:
+                print("    Error: "+error)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2512,7 +2518,10 @@ class ycsb(default):
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if len(workload_properties['workflow_errors']) > 0:
+            for error in workload_properties['workflow_errors']:
+                print("    Error: "+error)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2811,7 +2820,10 @@ class benchbase(default):
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if len(workload_properties['workflow_errors']) > 0:
+            for error in workload_properties['workflow_errors']:
+                print("    Error: "+error)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
