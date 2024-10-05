@@ -1515,7 +1515,7 @@ class default():
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
-        evaluation = evaluators.base(code=code, path=resultfolder)
+        #evaluation = evaluators.base(code=code, path=resultfolder)
         #####################
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=True)
@@ -1623,7 +1623,7 @@ class default():
         print(df_benchmark)
         #####################
         print("\n### Workflow")
-        workflow_actual = evaluation.reconstruct_workflow(df_time)
+        workflow_actual = self.evaluator.reconstruct_workflow(df_time)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
             print("\n#### Actual")
@@ -1634,11 +1634,11 @@ class default():
             for c in workflow_planned:
                 print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
-        test_results_monitoring = self.show_summary_monitoring(evaluation)
+        test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
-        evaluation.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
-        evaluation.test_results_column(df_power, "Power@Size [~Q/h]")
-        evaluation.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+        self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
+        self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.test_workflow(workflow_actual, workflow_planned):
@@ -1680,7 +1680,7 @@ class default():
         if not df_cleaned.empty:
             df_monitoring.append(df_cleaned.copy())
         return df_monitoring
-    def show_summary_monitoring(self, evaluation):
+    def show_summary_monitoring(self):
         test_results = ""
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -1694,7 +1694,7 @@ class default():
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
@@ -1706,7 +1706,7 @@ class default():
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
@@ -1718,7 +1718,7 @@ class default():
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
@@ -1730,7 +1730,7 @@ class default():
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
@@ -2087,9 +2087,9 @@ class tpcc(default):
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
-        evaluation = evaluators.tpcc(code=code, path=resultfolder)
+        #evaluation = evaluators.tpcc(code=code, path=resultfolder)
         #####################
-        df = evaluation.get_df_loading()
+        df = self.evaluator.get_df_loading()
         if not df.empty:
             print("\n### Loading")
             print(df)
@@ -2103,16 +2103,16 @@ class tpcc(default):
             #df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             #print(df_aggregated)
         #####################
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         warehouses = 0
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
             #print(df)
             warehouses = int(df['sf'].max())
             df.fillna(0, inplace=True)
-            df_plot = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"vusers","client","pod_count"]].copy()
             columns = ["NOPM", "TPM", "duration", "errors"]
@@ -2123,7 +2123,7 @@ class tpcc(default):
         print("\nWarehouses:", warehouses)
         #####################
         print("\n### Workflow")
-        workflow_actual = evaluation.reconstruct_workflow(df)
+        workflow_actual = self.evaluator.reconstruct_workflow(df)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
             print("\n#### Actual")
@@ -2167,66 +2167,66 @@ class tpcc(default):
         df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
         print(df_connections)
         #####################
-        test_results_monitoring = self.show_summary_monitoring(evaluation)
+        test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
-        evaluation.test_results_column(df_aggregated_reduced, "NOPM")
+        self.evaluator.test_results_column(df_aggregated_reduced, "NOPM")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.test_workflow(workflow_actual, workflow_planned):
             print("TEST passed: Workflow as planned")
         else:
             print("TEST failed: Workflow not as planned")
-    def show_summary_monitoring(self, evaluation):
+    def show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
         #code = self.code
         #evaluation = evaluators.tpcc(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loader")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "stream")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
@@ -2529,29 +2529,29 @@ class ycsb(default):
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
-        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         #####################
         test_loading = False
-        df = evaluation.get_df_loading()
+        df = self.evaluator.get_df_loading()
         if not df.empty:
             print("\n### Loading")
             df = df.sort_values(['configuration','experiment_run','client'])
             df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
             #print(df)
             #print(df.columns)
-            df_plot = evaluation.loading_set_datatypes(df)
-            df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.loading_set_datatypes(df)
+            df_aggregated = self.evaluator.loading_aggregate_by_parallel_pods(df_plot)
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             print(df_aggregated_loaded)
             test_loading = True
         #####################
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
             df.fillna(0, inplace=True)
-            df_plot = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count"]].copy()
             columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
@@ -2562,7 +2562,7 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         print("\n### Workflow")
-        workflow_actual = evaluation.reconstruct_workflow(df)
+        workflow_actual = self.evaluator.reconstruct_workflow(df)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
             print("\n#### Actual")
@@ -2573,68 +2573,68 @@ class ycsb(default):
             for c in workflow_planned:
                 print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
-        test_results_monitoring = self.show_summary_monitoring(evaluation)
+        test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
         if test_loading:
-            evaluation.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
-        evaluation.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
+            self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
+        self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.test_workflow(workflow_actual, workflow_planned):
             print("TEST passed: Workflow as planned")
         else:
             print("TEST failed: Workflow not as planned")
-    def show_summary_monitoring(self, evaluation):
+    def show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
         #code = self.code
         #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loader")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "stream")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
@@ -2828,7 +2828,7 @@ class benchbase(default):
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
-        evaluation = evaluators.benchbase(code=code, path=resultfolder)
+        #evaluation = evaluators.benchbase(code=code, path=resultfolder)
         #####################
         """
         df = evaluation.get_df_loading()
@@ -2848,13 +2848,13 @@ class benchbase(default):
         """
         #####################
         warehouses = 0
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
             warehouses = int(df['sf'].max())
             df.fillna(0, inplace=True)
-            df_plot = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             #print(df_aggregated)
             #print(df_aggregated.T)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
@@ -2869,7 +2869,7 @@ class benchbase(default):
         print("\nWarehouses:", warehouses)
         #####################
         print("\n### Workflow")
-        workflow_actual = evaluation.reconstruct_workflow(df)
+        workflow_actual = self.evaluator.reconstruct_workflow(df)
         workflow_planned = workload_properties['workflow_planned']
         if len(workflow_actual) > 0:
             print("\n#### Actual")
@@ -2912,66 +2912,66 @@ class benchbase(default):
         print(df_connections)
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
-        test_results_monitoring = self.show_summary_monitoring(evaluation)
+        test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
-        evaluation.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
+        self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.test_workflow(workflow_actual, workflow_planned):
             print("TEST passed: Workflow as planned")
         else:
             print("TEST failed: Workflow not as planned")
-    def show_summary_monitoring(self, evaluation):
+    def show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
         #code = self.code
         #evaluation = evaluators.benchbase(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loader")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "stream")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
-                if not evaluation.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
