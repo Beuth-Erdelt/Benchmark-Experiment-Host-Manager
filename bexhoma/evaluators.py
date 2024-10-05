@@ -46,6 +46,10 @@ class base:
 
       1. `path`: path to result folders
       1. `code`: Id of the experiment (name of result folder)
+      1. `include_loading`: Bool if loading is included
+      1. `include_benchmarking`: Bool if benchmarking is included
+      1. `workflow`: Dict for storing actual workload (set later)
+      1. `workflow_errors`: Dict for storing errors during workflow (set later)
     """
     def __init__(self, code, path, include_loading=False, include_benchmarking=True):
         """
@@ -62,6 +66,64 @@ class base:
         self.include_benchmarking = include_benchmarking
         self.workflow = dict()
         self.workflow_errors = dict()
+    def log_to_df(self, filename):
+        """
+        Transforms a log file in text format into a pandas DataFrame.
+
+        :param filename: Name of the log file 
+        :return: DataFrame of results
+        """
+        self.workflow_errors[filename] = dict()
+        # test for known errors
+        try:
+            with open(filename) as f:
+                lines = f.readlines()
+            stdout = "".join(lines)
+            def test_for_known_errors(text, error_message):
+                error = re.findall('(.+?)'+error_message, text)
+                #print(type(error), len(error))
+                if len(error) > 0:
+                    self.workflow_errors[filename][error_message] = list()
+                    for e in error:
+                        self.workflow_errors[filename][error_message].append(e)
+                        #print(i)
+            error_message = 'Temporary failure in name resolution'
+            test_for_known_errors(stdout, error_message)
+            #print(errors)
+            #exit()
+        except Exception as e:
+            pass
+        return pd.DataFrame()
+    def transform_all_logs_benchmarking(self):
+        """
+        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
+        This DataFrame is stored as a pickled file.
+        """
+        directory = os.fsencode(self.path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
+                #print("filename:", filename)
+                pod_name = filename[filename.rindex("-")+1:-len(".log")]
+                #print("pod_name:", pod_name)
+                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
+                #print("jobname:", jobname)
+                self.end_benchmarking(jobname)
+    def transform_all_logs_loading(self):
+        """
+        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
+        This DataFrame is stored as a pickled file.
+        """
+        directory = os.fsencode(self.path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log"):
+                #print("filename:", filename)
+                pod_name = filename[filename.rindex("-")+1:-len(".log")]
+                #print("pod_name:", pod_name)
+                jobname = filename[len("bexhoma-loading-"):-len("-"+pod_name+".sensor.log")]
+                #print("jobname:", jobname)
+                self.end_loading(jobname)
     def end_benchmarking(self, jobname):
         """
         Ends a benchmarker job.
@@ -70,7 +132,24 @@ class base:
 
         :param jobname: Name of the job to clean
         """
-        pass
+        path = self.path
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
+                #print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                #print(df)
+                """
+                if df.empty:
+                    print("Error in "+filename)
+                    print(self.workflow_errors)
+                else:
+                    filename_df = path+"/"+filename+".df.pickle"
+                    f = open(filename_df, "wb")
+                    pickle.dump(df, f)
+                    f.close()
+                """
     def end_loading(self, jobname):
         """
         Ends a loading job.
@@ -79,13 +158,49 @@ class base:
 
         :param jobname: Name of the job to clean
         """
+        path = self.path
+        directory = os.fsencode(path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".sensor.log"):
+                #print(filename)
+                df = self.log_to_df(path+"/"+filename)
+                #print(df)
+                """
+                if df.empty:
+                    print("Error in "+filename)
+                    print(self.workflow_errors)
+                else:
+                    filename_df = path+"/"+filename+".df.pickle"
+                    f = open(filename_df, "wb")
+                    pickle.dump(df, f)
+                    f.close()
+                """
+    def _collect_dfs(self, filename_result='', filename_source_start='', filename_source_end=''):
+        """
+        This method does nothing and must be overloaded.
+        In principle: Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
+        This DataFrame is stored as a pickled file.
+        Source files are identifies by a pattern "filename_source_start*filename_source_end"
+
+        :param filename_result: Name of the pickled result file 
+        :param filename_source_start: Begin of name pattern for source files
+        :param filename_source_end: End of name pattern for source files
+        """
         pass
     def evaluate_results(self, pod_dashboard=''):
         """
-        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
+        Scans all log files and grabs some information.
+        In this class basically it scans for errors.
         """
-        pass
+        if self.include_benchmarking:
+            self.transform_all_logs_benchmarking()
+            # only sensible for logger classes:
+            self._collect_dfs(filename_result="bexhoma-benchmarker.all.df.pickle" , filename_source_start="bexhoma-benchmarker", filename_source_end=".log.df.pickle")
+        if self.include_loading:
+            self.transform_all_logs_loading()
+            # only sensible for logger classes:
+            self._collect_dfs(filename_result="bexhoma-loading.all.df.pickle" , filename_source_start="bexhoma-loading", filename_source_end=".log.df.pickle")
     def get_df_benchmarking(self):
         """
         Returns the DataFrame that containts all information about the benchmarking phase.
@@ -194,10 +309,6 @@ class logger(base):
     """
     Basis class for evaluating an experiment.
     The transforms log files into DataFrames.
-    Constructor sets
-
-      1. `path`: path to result folders
-      1. `code`: Id of the experiment (name of result folder)
     """
     def end_benchmarking(self, jobname):
         """
@@ -284,36 +395,6 @@ class logger(base):
             pickle.dump(df_collected, f)
             f.close()
             #self.cluster.logger.debug(df_collected)
-    def transform_all_logs_benchmarking(self):
-        """
-        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
-        """
-        directory = os.fsencode(self.path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
-                #print("filename:", filename)
-                pod_name = filename[filename.rindex("-")+1:-len(".log")]
-                #print("pod_name:", pod_name)
-                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
-                #print("jobname:", jobname)
-                self.end_benchmarking(jobname)
-    def transform_all_logs_loading(self):
-        """
-        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
-        """
-        directory = os.fsencode(self.path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log"):
-                #print("filename:", filename)
-                pod_name = filename[filename.rindex("-")+1:-len(".log")]
-                #print("pod_name:", pod_name)
-                jobname = filename[len("bexhoma-loading-"):-len("-"+pod_name+".sensor.log")]
-                #print("jobname:", jobname)
-                self.end_loading(jobname)
     def evaluate_results(self, pod_dashboard=''):
         """
         Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
@@ -432,15 +513,6 @@ class logger(base):
         #pretty_workflow = json.dumps(workflow, indent=2)
         #print(pretty_workflow)
         return workflow
-    def log_to_df(self, filename):
-        """
-        Transforms a log file in text format into a pandas DataFrame.
-
-        :param filename: Name of the log file 
-        :return: DataFrame of results
-        """
-        self.workflow_errors[filename] = dict()
-        return pd.DataFrame()
     def test_results(self):
         """
         Run test script locally.
@@ -558,26 +630,8 @@ class ycsb(logger):
         :param filename: Name of the log file 
         :return: DataFrame of results
         """
-        self.workflow_errors[filename] = dict()
         # test for known errors
-        try:
-            with open(filename) as f:
-                lines = f.readlines()
-            stdout = "".join(lines)
-            def test_for_known_errors(text, error_message):
-                error = re.findall('(.+?)'+error_message, text)
-                #print(type(error), len(error))
-                if len(error) > 0:
-                    self.workflow_errors[filename][error_message] = list()
-                    for e in error:
-                        self.workflow_errors[filename][error_message].append(e)
-                        #print(i)
-            error_message = 'Temporary failure in name resolution'
-            test_for_known_errors(stdout, error_message)
-            #print(errors)
-            #exit()
-        except Exception as e:
-            pass
+        base.log_to_df(self, filename)
         # extract status and result fields
         try:
             with open(filename) as f:
@@ -951,26 +1005,8 @@ class benchbase(logger):
         :param filename: Name of the log file 
         :return: DataFrame of results
         """
-        self.workflow_errors[filename] = dict()
         # test for known errors
-        try:
-            with open(filename) as f:
-                lines = f.readlines()
-            stdout = "".join(lines)
-            def test_for_known_errors(text, error_message):
-                error = re.findall('(.+?)'+error_message, text)
-                #print(type(error), len(error))
-                if len(error) > 0:
-                    self.workflow_errors[filename][error_message] = list()
-                    for e in error:
-                        self.workflow_errors[filename][error_message].append(e)
-                        #print(i)
-            error_message = 'Temporary failure in name resolution'
-            test_for_known_errors(stdout, error_message)
-            #print(errors)
-            #exit()
-        except Exception as e:
-            pass
+        base.log_to_df(self, filename)
         # extract status and result fields
         try:
             with open(filename) as f:
@@ -1157,26 +1193,8 @@ class tpcc(logger):
         :param filename: Name of the log file 
         :return: DataFrame of results
         """
-        self.workflow_errors[filename] = dict()
         # test for known errors
-        try:
-            with open(filename) as f:
-                lines = f.readlines()
-            stdout = "".join(lines)
-            def test_for_known_errors(text, error_message):
-                error = re.findall('(.+?)'+error_message, text)
-                #print(type(error), len(error))
-                if len(error) > 0:
-                    self.workflow_errors[filename][error_message] = list()
-                    for e in error:
-                        self.workflow_errors[filename][error_message].append(e)
-                        #print(i)
-            error_message = 'Temporary failure in name resolution'
-            test_for_known_errors(stdout, error_message)
-            #print(errors)
-            #exit()
-        except Exception as e:
-            pass
+        base.log_to_df(self, filename)
         # extract status and result fields
         try:
             with open(filename) as f:
