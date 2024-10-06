@@ -70,11 +70,11 @@ class default():
     This class should be overloaded to define specific experiments.
     """
     def __init__(self,
-            cluster,
-            code=None,
-            num_experiment_to_apply = 1,
-            timeout = 7200,
-            detached=True):
+                 cluster,
+                 code=None,
+                 num_experiment_to_apply = 1,
+                 timeout = 7200,
+                 detached=True):
         """
         Construct a new 'experiment' object.
 
@@ -84,64 +84,74 @@ class default():
         :param timeout: Maximum timeout per query
         :param detached: DEPRECATED - use only True
         """
-        self.cluster = cluster
-        self.code = code
+        self.cluster = cluster                                          # cluster object
+        self.code = code                                                # code of experiment
         if self.code is None:
             self.code = str(round(time.time()))
         else:
             self.code = str(self.code)
-        self.path = self.cluster.resultfolder+"/"+self.code
+        self.path = self.cluster.resultfolder+"/"+self.code             # path to result folder (read from cluster.config)
         if not path.isdir(self.path):
             makedirs(self.path)
-        self.detached = detached
+        self.detached = detached                                        # if orchestrator is living in the cloud (only True is supported)
         self.cluster.set_code(code=self.code)
         self.set_connectionmanagement(
             numProcesses = 1,
             runsPerConnection = 0,
             timeout = timeout,
             singleConnection = True)
-        self.num_experiment_to_apply = num_experiment_to_apply
-        self.max_sut = None
+        self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
+        self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.cluster.add_experiment(self)
-        self.appname = self.cluster.appname
-        self.resources = {}
-        self.ddl_parameters = {}
-        self.eval_parameters = {}
-        self.storage = {}
-        self.nodes = {}
-        self.maintaining_parameters = {}
-        self.loading_parameters = {}
-        self.loading_patch = ""
-        self.benchmarking_patch = ""
-        self.benchmarking_parameters = {}
-        self.jobtemplate_maintaining = ""
-        self.jobtemplate_loading = ""
-        self.querymanagement = {}
-        self.additional_labels = dict()
-        self.workload = {}
-        self.monitoring_active = True
-        self.prometheus_interval = "10s"
-        self.prometheus_timeout = "10s"
-        self.loading_active = False
-        self.num_loading = 0
-        self.num_loading_pods = 0
-        self.maintaining_active = False
-        self.num_maintaining = 0
-        self.num_maintaining_pods = 0
-        self.name_format = None
-        self.script = ""
-        self.initscript = []
-        self.indexing = ""
-        self.indexscript = []
+        self.appname = self.cluster.appname                             # app name for namespacing cluster - default is bexhoma
+        self.resources = {}                                             # dict of resources infos that will be attached to SUT (like requested CPUs)
+        self.ddl_parameters = {}                                        # DDL schema parameter for init scripts (like index type or sharding strategy)
+        self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
+        self.storage = {}                                               # parameters for persistent storage (like type and size)
+        self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
+        self.maintaining_parameters = {}                                # dict of parameters for maintaining component
+        self.loading_parameters = {}                                    # dict of parameters for loading component
+        self.loading_patch = ""                                         # YAML to patch manifest for loading component
+        self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
+        self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
+        self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
+        self.jobtemplate_loading = ""                                   # name of YAML manifest for loading component
+        self.querymanagement = {}                                       # parameters for query.config
+        self.additional_labels = dict()                                 # dict of additional labels for components
+        self.workload = {}                                              # dict containing workload infos - will be written to query.config
+        self.monitoring_active = True                                   # Bool, tells if monitoring is active
+        self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
+        self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
+        self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
+        self.num_loading = 0                                            # number of loading pods in parallel
+        self.num_loading_pods = 0                                       # number of loading pods in total
+        self.maintaining_active = False                                 # Bool, tells if maintaining is active
+        self.num_maintaining = 0                                        # number of maintaining pods in parallel
+        self.num_maintaining_pods = 0                                   # number of maintaining pods in total
+        #self.name_format = None
+        self.script = ""                                                # name of the script collection for creating schema
+        self.initscript = []                                            # list of scripts for creating schema
+        self.indexing = ""                                              # name of the script collection for creating indexes
+        self.indexscript = []                                           # list of scripts for creating indexes
         # command line parameters
-        self.args = None
-        self.args_dict = dict()
+        self.args = None                                                # command line parameters as an object
+        self.args_dict = dict()                                         # command line parameters as a dict
         # k8s:
-        self.namespace = self.cluster.namespace
-        self.configurations = []
-        self.storage_label = ''
-        self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
-    def get_parameter_as_list(self, parameter):
+        self.namespace = self.cluster.namespace                         # name of the K8s namespace to use
+        self.configurations = []                                        # list of configurations (i.e., dbms to test)
+        self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
+        self.experiments_configfolder                                   # relative path to config folder of experiment (e.g., 'experiments/tpch')
+        self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
+            code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+    def get_parameter_as_list(self,
+                              parameter):
+        """
+        Transform comma separated CLI parameters to list.
+        This is for example used to transform num_loading_pods.
+
+        :param parameter: Comma separated list of values
+        :return: Python list of values
+        """
         if parameter in self.args_dict:
             value = self.args_dict[parameter]
         else:
@@ -152,7 +162,17 @@ class default():
         elif value.isdigit():
             value = list(str(int(value)))
         return value
-    def prepare_testbed(self, parameter):
+    def prepare_testbed(self,
+                        parameter):
+        """
+        Prepares a testbed.
+        It takes the CLI arguments as a dict.
+        This method for example sets workload['info'].
+        It also sets monitoring, storage, components settings, SUT resources and nodes for components.
+        It makes sure, dashboard, messagequeue, data dir and result dir are ready.
+
+        :param parameter: Comma separated list of values
+        """
         if (not 'type' in self.workload) or (len(self.workload['type']) == 0):
             # set default workload type
             self.workload['type'] = 'dbmsbenchmarker'
@@ -177,30 +197,6 @@ class default():
             datatransfer = args.datatransfer
         else:
             datatransfer = False
-        #num_loading = int(args.num_loading)
-        #num_loading_split = args.num_loading_split
-        #if len(num_loading_split) > 0:
-        #    num_loading = num_loading_split.split(",")
-        #    list_loading_split = [int(x) for x in num_loading]
-        #num_loading_pods = int(args.num_loading_pods)
-        """
-        num_loading_pods = args.num_loading_pods
-        if len(num_loading_pods) > 0:
-            num_loading_pods = num_loading_pods.split(",")
-            num_loading_pods = [int(x) for x in num_loading_pods]
-        num_loading_threads = args.num_loading_threads
-        if len(num_loading_threads) > 0:
-            num_loading_threads = num_loading_threads.split(",")
-            num_loading_threads = [int(x) for x in num_loading_threads]
-        num_benchmarking_pods = args.num_benchmarking_pods
-        if len(num_benchmarking_pods) > 0:
-            num_benchmarking_pods = num_benchmarking_pods.split(",")
-            num_benchmarking_pods = [int(x) for x in num_benchmarking_pods]
-        num_benchmarking_threads = args.num_benchmarking_threads
-        if len(num_benchmarking_threads) > 0:
-            num_benchmarking_threads = num_benchmarking_threads.split(",")
-            num_benchmarking_threads = [int(x) for x in num_benchmarking_threads]
-        """
         num_loading_pods = self.get_parameter_as_list('num_loading_pods')
         num_loading_threads = self.get_parameter_as_list('num_loading_threads')
         num_benchmarking_pods = self.get_parameter_as_list('num_benchmarking_pods')
@@ -308,7 +304,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
-    def get_dashboard_pod(self, pod_dashboard=''):
+    def get_dashboard_pod(self,
+                          pod_dashboard=''):
         """
         Get name of dashboard pod.
         This also checks the status. Waits until available.
@@ -381,7 +378,9 @@ class default():
             finally:
                 return 1
         return 1
-    def wait(self, sec, silent=False):
+    def wait(self,
+             sec,
+             silent=False):
         """
         Function for waiting some time and inform via output about this
 
@@ -393,7 +392,9 @@ class default():
         #time.sleep(intervals)
         #print("done")
         return self.cluster.wait(sec, silent)
-    def delay(self, sec, silent=False):
+    def delay(self,
+              sec,
+              silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
@@ -402,7 +403,8 @@ class default():
         :param silent: True means we do not output anything about this waiting
         """
         self.wait(sec, silent)
-    def set_queryfile(self, queryfile):
+    def set_queryfile(self,
+                      queryfile):
         """
         Sets the name of a query file of the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
@@ -410,7 +412,8 @@ class default():
         :param code: Unique identifier of an experiment
         """
         self.queryfile = queryfile
-    def set_experiments_configfolder(self, experiments_configfolder):
+    def set_experiments_configfolder(self,
+                                     experiments_configfolder):
         """
         Sets the configuration folder for the experiment.
         Bexhoma expects subfolders for expeiment types, for example tpch.
@@ -419,7 +422,8 @@ class default():
         :param experiments_configfolder: Relative path to an experiment folder
         """
         self.experiments_configfolder = experiments_configfolder
-    def set_additional_labels(self, **kwargs):
+    def set_additional_labels(self,
+                              **kwargs):
         """
         Sets additional labels, that will be put to K8s objects (and ignored otherwise).
         This is for the SUT component.
@@ -428,14 +432,16 @@ class default():
         :param kwargs: Dict of labels, example 'SF' => 100
         """
         self.additional_labels = {**self.additional_labels, **kwargs}
-    def set_workload(self, **kwargs):
+    def set_workload(self,
+                     **kwargs):
         """
         Sets mata data about the experiment, for example name and description.
 
         :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
         """
         self.workload = kwargs
-    def set_querymanagement(self, **kwargs):
+    def set_querymanagement(self,
+                            **kwargs):
         """
         Sets query management data for the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
@@ -444,7 +450,8 @@ class default():
         """
         self.querymanagement = kwargs
     # the following can be overwritten by configuration
-    def set_connectionmanagement(self, **kwargs):
+    def set_connectionmanagement(self,
+                                 **kwargs):
         """
         Sets connection management data for the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
@@ -453,7 +460,8 @@ class default():
         :param kwargs: Dict of meta data, example 'timout' => 60
         """
         self.connectionmanagement = kwargs
-    def set_resources(self, **kwargs):
+    def set_resources(self,
+                      **kwargs):
         """
         Sets resources for the experiment.
         This is for the SUT component.
@@ -462,7 +470,8 @@ class default():
         :param kwargs: Dict of meta data, example 'requests' => {'cpu' => 4}
         """
         self.resources = {**self.resources, **kwargs}
-    def set_ddl_parameters(self, **kwargs):
+    def set_ddl_parameters(self,
+                           **kwargs):
         """
         Sets DDL parameters for the experiments.
         This substitutes placeholders in DDL script.
@@ -471,7 +480,8 @@ class default():
         :param kwargs: Dict of meta data, example 'index' => 'btree'
         """
         self.ddl_parameters = kwargs
-    def set_eval_parameters(self, **kwargs):
+    def set_eval_parameters(self,
+                            **kwargs):
         """
         Sets some arbitrary parameters that are supposed to be handed over to the benchmarker component.
         Can be overwritten by configuration.
@@ -479,7 +489,8 @@ class default():
         :param kwargs: Dict of meta data, example 'type' => 'noindex'
         """
         self.eval_parameters = kwargs
-    def set_storage(self, **kwargs):
+    def set_storage(self,
+                    **kwargs):
         """
         Sets parameters for the storage that might be attached to components.
         This is in particular for the database of dbms under test.
@@ -494,9 +505,25 @@ class default():
         :param kwargs: Dict of meta data, example 'storageSize' => '100Gi'
         """
         self.storage = kwargs
-    def set_nodes(self, **kwargs):
+    def set_nodes(self,
+                  **kwargs):
+        """
+        Sets parameters for nodes for the components of an experiment.
+        Will be used for nodeSelector.
+        Example:
+
+        sut = 'sut',
+        loading = 'auxiliary',
+        monitoring = 'auxiliary',
+        benchmarking = 'auxiliary',
+
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of node infos, example 'sut' => 'sut',
+        """
         self.nodes = kwargs
-    def set_maintaining_parameters(self, **kwargs):
+    def set_maintaining_parameters(self,
+                                   **kwargs):
         """
         Sets ENV for maintaining components.
         Can be overwritten by configuration.
@@ -504,7 +531,9 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.maintaining_parameters = kwargs
-    def set_maintaining(self, parallel, num_pods=None):
+    def set_maintaining(self,
+                        parallel,
+                        num_pods=None):
         """
         Sets job parameters for maintaining components: Number of parallel pods and optionally (if different) total number of pods.
         By default total number of pods is set to number of parallel pods.
@@ -521,7 +550,8 @@ class default():
         # total number at least number of parallel
         if self.num_maintaining_pods < self.num_maintaining:
             self.num_maintaining_pods = self.num_maintaining
-    def set_loading_parameters(self, **kwargs):
+    def set_loading_parameters(self,
+                               **kwargs):
         """
         Sets ENV for loading components.
         Can be overwritten by configuration.
@@ -529,7 +559,8 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
-    def patch_loading(self, patch):
+    def patch_loading(self,
+                        patch):
         """
         Patches YAML of loading components.
         Can be overwritten by configuration.
@@ -537,7 +568,8 @@ class default():
         :param patch: String in YAML format, overwrites basic YAML file content
         """
         self.loading_patch = patch
-    def patch_benchmarking(self, patch):
+    def patch_benchmarking(self,
+                           patch):
         """
         Patches YAML of loading components.
         Can be set by experiment before creation of configuration.
@@ -545,7 +577,9 @@ class default():
         :param patch: String in YAML format, overwrites basic YAML file content
         """
         self.benchmarking_patch = patch
-    def set_loading(self, parallel, num_pods=None):
+    def set_loading(self,
+                    parallel,
+                    num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
         By default total number of pods is set to number of parallel pods.
@@ -562,7 +596,8 @@ class default():
         # total number at least number of parallel
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
-    def set_benchmarking_parameters(self, **kwargs):
+    def set_benchmarking_parameters(self,
+                                    **kwargs):
         """
         Sets ENV for benchmarking components.
         Can be overwritten by configuration.
@@ -570,7 +605,8 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.benchmarking_parameters = kwargs
-    def add_configuration(self, configuration):
+    def add_configuration(self,
+                          configuration):
         """
         Adds a configuration object to the list of configurations of this experiment.
         When a new configuration object is instanciated, an experiment object has to be provided.
@@ -580,8 +616,8 @@ class default():
         """
         self.configurations.append(configuration)
     def set_querymanagement_quicktest(self,
-            numRun=1,
-            datatransfer=False):
+                                      numRun=1,
+                                      datatransfer=False):
         """
         Sets some parameters that are supposed to be suitable for a quick functional test:
 
@@ -679,7 +715,12 @@ class default():
             #stdout, stderr = proc.communicate()
         # local:
         #shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
-    def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
+    def set_experiment(self,
+                       instance=None,
+                       volume=None,
+                       docker=None,
+                       script=None,
+                       indexing=None):
         """
         Read experiment details from cluster config
 
@@ -703,7 +744,8 @@ class default():
         if indexing is not None:
             self.indexing = indexing
             self.indexscript = self.cluster.volumes[self.volume]['initscripts'][self.indexing]
-    def evaluate_results(self, pod_dashboard=''):
+    def evaluate_results(self,
+                         pod_dashboard=''):
         """
         Let the dashboard pod build the evaluations.
         This is specific to dbmsbenchmarker.
@@ -854,7 +896,8 @@ class default():
             deployments = self.cluster.get_deployments(app=app, component=component, experiment=self.code, configuration=configuration)
             for deployment in deployments:
                 self.cluster.delete_deployment(deployment)
-    def stop_benchmarker(self, configuration=''):
+    def stop_benchmarker(self,
+                         configuration=''):
         """
         Stop all benchmarker jobs of this experiment.
         If a dbms configurations is given, use it.
@@ -883,7 +926,7 @@ class default():
         """
         for config in self.configurations:
             config.start_monitoring()
-    def start_sut(self):#, configuration=None):
+    def start_sut(self):
         """
         Start all dbms configurations of this experiment.
         """
@@ -911,7 +954,8 @@ class default():
         """
         for config in self.configurations:
             config.start_loading()
-    def add_benchmark_list(self, list_clients):
+    def add_benchmark_list(self,
+                           list_clients):
         """
         Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
         Example `[1,2,1]` means sequentially we will have 1, then 2 and then 1 benchmarker instances.
@@ -943,25 +987,40 @@ class default():
         #print(workflow)
         return workflow
     def store_workflow_results(self):
+        """
+        Constructs a list of runs for the planned workflow.
+        Stores this information in self.workload['workflow_planned'].
+        Updates query.config locally and remotely via update_workload().
+        """
         workflow = self.get_workflow_list()
         self.workload['workflow_planned'] = workflow
         self.update_workload()
-    def test_workflow(self, workflow_1, workflow_2):
+    def test_workflow(self,
+                      workflow_1,
+                      workflow_2):
+        """
+        Compares two workflow dicts.
+        A workflow is a dict (connection is key, lists of lists are values).
+        Ignores the ordering inside the lists of lists.
+        """
         def compare_lists(list1, list2):
             if len(list1) != len(list2):
                 return False
-            # Sortiere die inneren Listen, um die Reihenfolge zu ignorieren
+            # sort inner lists to ignore ordering
             sorted_list1 = sorted([sorted(sublist) for sublist in list1])
             sorted_list2 = sorted([sorted(sublist) for sublist in list2])
             return sorted_list1 == sorted_list2
         if workflow_1.keys() != workflow_2.keys():
             return False
         for key in workflow_1:
-            # Vergleiche Listen von Listen unabhängig von der Reihenfolge
+            # compare lists, ignoring the ordering
             if not compare_lists(workflow_1[key], workflow_2[key]):
                 return False
         return True
     def update_workload(self):
+        """
+        Updates query.config locally and remotely via dashboard pod.
+        """
         if len(self.configurations) > 0:
             # there is a configuration, i.e., also a query.config file
             if len(self.workload) > 0:
@@ -1311,16 +1370,43 @@ class default():
                         self.cluster.delete_job(job)
                 if len(pods) == 0 and len(jobs) == 0:
                     break
-    def get_job_timing_benchmarking(self, jobname):
+    def get_job_timing_benchmarking(self,
+                                    jobname):
+        """
+        Extracts start and end times from a benchmarking job.
+        This uses extract_job_timing() and sets container to 'dbmsbenchmarker'
+
+        :param jobname: Name of the job
+        :return: List of pairs (start,end) per pod
+        """
         timing_benchmarker = self.extract_job_timing(jobname, container="dbmsbenchmarker")
         return timing_benchmarker
-    def get_job_timing_loading(self, jobname):
+    def get_job_timing_loading(self,
+                               jobname):
+        """
+        Extracts start and end times from a loading job.
+        This uses extract_job_timing() and sets container to 'datagenerator' and 'sensor'.
+
+        :param jobname: Name of the job
+        :return: List of pairs (start,end) per pod, triple of datagenerator, sensor and total (i.e., sum)
+        """
         timing_datagenerator = self.extract_job_timing(jobname, container="datagenerator")
         timing_sensor = self.extract_job_timing(jobname, container="sensor")
         timing_total = timing_datagenerator + timing_sensor
         return timing_datagenerator, timing_sensor, timing_total
         #return total_time, generator_time, loader_time
-    def extract_job_timing(self, jobname, container):
+    def extract_job_timing(self,
+                           jobname,
+                           container):
+        """
+        Extracts start and end times from a job.
+        Looks for all container logs of the job.
+        Start and end are expected to be noted as BEXHOMA_START and BEXHOMA_END in the logs.
+
+        :param jobname: Name of the job
+        :param container: Name of the container in the pods of the job
+        :return: List of pairs (start,end) per pod
+        """
         def get_job_timing(filename):
             """
             Transforms a log file in text format into list of pairs of timing information.
@@ -1368,7 +1454,9 @@ class default():
             """
         #print(timing)
         return timing
-    def end_benchmarking(self, jobname, config=None):
+    def end_benchmarking(self,
+                         jobname,
+                         config=None):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
@@ -1439,7 +1527,7 @@ class default():
                         cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
-                # get monitoring for loading
+                # get monitoring for benchmarking
                 if self.monitoring_active:
                     print("{:30s}: collecting execution metrics of SUT".format(connection))
                     cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
@@ -1468,7 +1556,8 @@ class default():
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
-    def end_loading(self, jobname):
+    def end_loading(self,
+                    jobname):
         """
         Ends a loading job.
         This is for storing or cleaning measures.
@@ -2738,7 +2827,7 @@ class benchbase(default):
         except Exception as e:
             print(e)
             return pd.DataFrame()
-    def get_parts_of_name(self, name):
+    def DEPRECATED_get_parts_of_name(self, name):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))

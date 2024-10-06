@@ -370,6 +370,20 @@ class default():
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
     def set_nodes(self, **kwargs):
+        """
+        Sets parameters for nodes for the components of an experiment.
+        Will be used for nodeSelector.
+        Example:
+
+        sut = 'sut',
+        loading = 'auxiliary',
+        monitoring = 'auxiliary',
+        benchmarking = 'auxiliary',
+
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of node infos, example 'sut' => 'sut',
+        """
         self.nodes = kwargs
     def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
         """ Read experiment details from cluster config"""
