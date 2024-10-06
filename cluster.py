@@ -22,11 +22,9 @@ import logging
 import urllib3
 import logging
 import argparse
-import time
 import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
-import multiprocessing as mp
 from prettytable import PrettyTable, ALL
 
 urllib3.disable_warnings()

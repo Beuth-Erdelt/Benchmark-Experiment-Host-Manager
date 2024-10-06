@@ -28,19 +28,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from dbmsbenchmarker import parameter, tools, inspector
+from dbmsbenchmarker import parameter, inspector
 import logging
 import urllib3
-import gc
-import shutil # for zipping
 from os import makedirs, path
 import time
 import os
-import subprocess
 from datetime import datetime, timedelta
 import re
 import pandas as pd
-import pickle
 import json
 import ast
 from types import SimpleNamespace

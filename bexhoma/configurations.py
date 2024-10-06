@@ -21,24 +21,17 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import time
 #import kubernetes.client
 #from kubernetes.client.rest import ApiException
-from pprint import pprint
 #from kubernetes import client, config
 import subprocess
-import re
 import os
 from timeit import default_timer
-import psutil
 import logging
 import socket
 import yaml
-from tqdm import tqdm
 from collections import Counter
-import shutil
 import json
-import ast
 import copy
 from datetime import datetime, timedelta
 import threading
@@ -48,7 +41,7 @@ from math import ceil
 
 from dbmsbenchmarker import *
 
-from bexhoma import clusters, experiments, evaluators
+from bexhoma import experiments
 
 
 
