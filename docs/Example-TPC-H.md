@@ -14,16 +14,24 @@ This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H
 
 ## Perform Benchmark - Power Test
 
+You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
+```
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+```
+
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```
-python tpch.py -dt \
+nohup python tpch.py -ms 1 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
   -ii -ic -is \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
 ```
 
 This
@@ -344,14 +352,15 @@ options:
 
 Example:
 ```
-python tpch.py -ms 1 -dt -tr \
+nohup python tpch.py -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
   -ii -ic -is \
   -m -mc \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
 ```
 
 If monitoring is activated, the summary also contains a section like
@@ -469,7 +478,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```
-python tpch.py -ms 1 -dt -tr \
+nohup python tpch.py -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -477,7 +486,8 @@ python tpch.py -ms 1 -dt -tr \
   -ii -ic -is \
   -nc 1 \
   -ne 1,2 \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
 ```
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
@@ -610,7 +620,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```
-python tpch.py -ms 1 -dt -tr \
+nohup python tpch.py -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -618,7 +628,8 @@ python tpch.py -ms 1 -dt -tr \
   -ii -ic -is \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
 ```
 The following status shows we have a volumes of type `shared`.
 Every experiment running TPC-H of SF=1 at PostgreSQL will take the database from this volume and skip loading.

@@ -50,6 +50,23 @@ nohup python hammerdb.py -ms 1 -tr \
 sleep 1200
 
 
+#### HammerDB Persistent Storage (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_storage.log &
+
+
+#### Wait so that next experiment receives a different code
+sleep 1200
+
+
 #### YCSB Scale Loading (Example-YCSB.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \

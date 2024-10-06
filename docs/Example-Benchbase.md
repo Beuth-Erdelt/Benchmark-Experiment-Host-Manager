@@ -16,11 +16,18 @@ References:
 
 ## Perform Benchmark
 
+You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
+```
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+```
+
 For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```
-python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -28,7 +35,8 @@ python benchbase.py -ms 1 -tr \
   -nbt 16 \
   -nbf 16 \
   -tb 1024 \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
 ```
 
 This
@@ -253,6 +261,21 @@ options:
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
+Example:
+```
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
+```
+
 If monitoring is activated, the summary also contains a section like
 
 ```bash
@@ -354,17 +377,18 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```
-python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
-  -nbp 1,2 \
+  -nbp 1 \
   -nbt 16 \
   -nbf 16 \
   -tb 1024 \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 ```
 
 The following status shows we have two volumes of type `shared`. Every experiment running Benchbase's TPC-C of SF=16 (warehouses) will take the databases from these volumes and skip loading.

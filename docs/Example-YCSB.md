@@ -21,11 +21,18 @@ References:
 
 ## Perform Benchmark
 
+You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
+```
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+```
+
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example: 
 ```
-python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -38,7 +45,8 @@ python ycsb.py -ms 1 -tr \
   -nbf 2 \
   -ne 1 \
   -nc 1 \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
 ```
 
 This
@@ -284,9 +292,130 @@ options:
   -tr, --test-result    test if result fulfills some basic requirements
 ```
 
+## Perform Execution Benchmark
+
+The default behaviour of bexhoma is that several different settings of the loading component are compared.
+We might only want to benchmark the workloads of YCSB in different configurations and have a fixed loading phase.
+
+For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+
+Example: 
+```
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2,3 \
+  -ne 1 \
+  -nc 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
+```
+This loads a YCSB data set with 8 pods (`-lnp`) of 64 threads in total.
+Each of the drivers has 64 threads and a target of twice or three times (`-ltf`) the base, that is 16384.
+
+```
+## Show Summary
+
+### Workload
+    YCSB SF=1
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are []. Factors for benchmarking are [].
+Benchmark is limited to DBMS PostgreSQL.
+Import is handled by 8 processes (pods).
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+
+### Connections
+PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:180352492
+    datadisk:2089996
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-2 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:181161960
+    datadisk:2898988
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-3 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:181351820
+    datadisk:3089324
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-65536-4 uses docker image postgres:16.1
+    RAM:541008601088
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-117-generic
+    node:cl-worker4
+    disk:181490020
+    datadisk:3227524
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-8-65536               1       64   65536          8                   64841.400426                15435.0             1000000                              6098.5
+
+### Execution
+                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-65536-1               1       64   32768          1                       32434.89                30831.0            499060                            805.00              500940                             1263.00
+PostgreSQL-64-8-65536-2               1       64   32768          8                       32597.05                30691.0            500736                            709.75              499264                             1106.12
+PostgreSQL-64-8-65536-3               1       64   49152          1                       48388.66                20666.0            499989                            937.00              500011                             1562.00
+PostgreSQL-64-8-65536-4               1       64   49152          8                       48762.06                20517.0            500258                            800.25              499742                             1340.00
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+```
+
 ## Monitoring
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+
+Example:
+```
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2,3 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
+```
 
 If monitoring is activated, the summary also contains a section like
 
@@ -396,16 +525,14 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during load
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
 
-## Perform Execution Benchmark
+## Use Persistent Storage
 
-The default behaviour of bexhoma is that several different settings of the loading component are compared.
-We might only want to benchmark the workloads of YCSB in different configurations and have a fixed loading phase.
+The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
+If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
-
-Example: 
+Example:
 ```
-python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -417,106 +544,10 @@ python ycsb.py -ms 1 -tr \
   -nbt 64 \
   -nbf 2,3 \
   -ne 1 \
-  -nc 1 \
-  run
-```
-This loads a YCSB data set with 8 pods (`-lnp`) of 64 threads in total.
-Each of the drivers has 64 threads and a target of twice or three times (`-ltf`) the base, that is 16384.
-
-```
-## Show Summary
-
-### Workload
-    YCSB SF=1
-    This includes no queries. YCSB runs the benchmark
-    This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are []. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
-Import is handled by 8 processes (pods).
-Loading is tested with [64] threads, split into [8] pods.
-Benchmarking is tested with [64] threads, split into [1, 8] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
-
-### Connections
-PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008601088
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:180352492
-    datadisk:2089996
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-8-65536-2 uses docker image postgres:16.1
-    RAM:541008601088
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:181161960
-    datadisk:2898988
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-8-65536-3 uses docker image postgres:16.1
-    RAM:541008601088
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:181351820
-    datadisk:3089324
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-8-65536-4 uses docker image postgres:16.1
-    RAM:541008601088
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-117-generic
-    node:cl-worker4
-    disk:181490020
-    datadisk:3227524
-    requests_cpu:4
-    requests_memory:16Gi
-
-### Loading
-                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-65536               1       64   65536          8                   64841.400426                15435.0             1000000                              6098.5
-
-### Execution
-                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-65536-1               1       64   32768          1                       32434.89                30831.0            499060                            805.00              500940                             1263.00
-PostgreSQL-64-8-65536-2               1       64   32768          8                       32597.05                30691.0            500736                            709.75              499264                             1106.12
-PostgreSQL-64-8-65536-3               1       64   49152          1                       48388.66                20666.0            499989                            937.00              500011                             1562.00
-PostgreSQL-64-8-65536-4               1       64   49152          8                       48762.06                20517.0            500258                            800.25              499742                             1340.00
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-```
-
-## Use Persistent Storage
-
-The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
-If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-
-Example:
-```
-python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  --workload a \
-  -dbms PostgreSQL \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 2 \
-  -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
 ```
 The following status shows we have one volume of type `shared`.
 Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
@@ -531,7 +562,4 @@ All other instances just use the database without generating and loading data.
 | bexhoma-storage-postgresql-ycsb-1  | postgresql      | ycsb-1       | True         |                64 | PostgreSQL | shared               | 50Gi      | Bound    | 50G    | 2.1G   |
 +------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 ```
-
-
-
 
