@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1727782566
-Experiment                    : starts at 2024-10-01 13:36:06.041258 (2518506.165238617)
+Experiment                    : has code 1728065923
+Experiment                    : starts at 2024-10-04 20:18:43.457007 (2801863.580987453)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
@@ -17,14 +17,20 @@ Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 PostgreSQL-1-1-1024           : will start now
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2024-10-01 11:38:06 (that is in 60 secs)
+PostgreSQL-1-1-1024           : will start loading but not before 2024-10-04 18:22:14 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2024-10-01 11:38:06
+PostgreSQL-1-1-1024           : will start loading but not before 2024-10-04 18:22:14
 done
 PostgreSQL-1-1-1024           : is not loaded yet
 PostgreSQL-1-1-1024           : start asynch loading scripts of type loaded
@@ -37,15 +43,17 @@ PostgreSQL-1-1-1024           : is loading
 PostgreSQL-1-1-1024           : is loading
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
 done
 PostgreSQL-1-1-1024           : showing loader times
-PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 136
+PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 151
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-1         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727782566
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1728065923
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727782566-1-1-995g2: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1728065923-1-1-k2jtw: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -67,16 +75,16 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-1         : showing benchmarker times
-PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 311
-PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1727782843, 1727783148)]
-PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1727782843, 1727783148)]}
+PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 312
+PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1728066320, 1728066626)]
+PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1728066320, 1728066626)]}
 done
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 2
 PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 PostgreSQL-1-1-1024-2         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1727782566
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1728065923
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1727782566-1-2-9mjwr: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1728065923-1-2-6r62k: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -98,20 +106,20 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-2         : showing benchmarker times
-PostgreSQL-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 313
-PostgreSQL-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1727783190, 1727783494), (1727783190, 1727783494)]
-PostgreSQL-1-1-1024-2         : found and updated times {'benchmarker': [(1727783190, 1727783494), (1727783190, 1727783494)]}
+PostgreSQL-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 312
+PostgreSQL-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1728066667, 1728066971), (1728066667, 1728066971)]
+PostgreSQL-1-1-1024-2         : found and updated times {'benchmarker': [(1728066667, 1728066971), (1728066667, 1728066971)]}
 done
 PostgreSQL-1-1-1024           : can be stopped
-Experiment ends at 2024-10-01 13:52:10.950793 (2519471.074773194): 964.9095345768146s total
+Experiment ends at 2024-10-04 20:36:48.535352 (2802948.659332199): 1085.0783447460271s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
 Benchmarking                                     connection  ... Latency Distribution.Average Latency (microseconds)
 connection_pod                                  ...                                                    
-PostgreSQL-1-1-1024-2-1  PostgreSQL-1-1-1024-2  ...                                                6541
-PostgreSQL-1-1-1024-2-2  PostgreSQL-1-1-1024-2  ...                                                6705
-PostgreSQL-1-1-1024-1-1  PostgreSQL-1-1-1024-1  ...                                                6196
+PostgreSQL-1-1-1024-2-1  PostgreSQL-1-1-1024-2  ...                                                6894
+PostgreSQL-1-1-1024-2-2  PostgreSQL-1-1-1024-2  ...                                                6743
+PostgreSQL-1-1-1024-1-1  PostgreSQL-1-1-1024-1  ...                                                6237
 
 [3 rows x 36 columns]
 Workflow {'PostgreSQL-1-1-1024': [[2, 1]]}
@@ -121,8 +129,9 @@ Result workflow not complete
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
-    Type: dbmsbenchmarker
-    Duration: 965s 
+    Type: benchbase
+    Duration: 1086s 
+    Code: 1728065923
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
@@ -144,8 +153,8 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:251932584
-    datadisk:4409144
+    disk:253355040
+    datadisk:4409292
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
@@ -154,15 +163,15 @@ PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:255148784
-    datadisk:7625344
+    disk:256548316
+    datadisk:7602568
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2579.97                                                      13764.0                                               6196.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       2413.61                                                      15186.0                                               6623.0
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2562.88                                                      13719.0                                               6237.0
+PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       2344.15                                                      15487.0                                               6818.5
 
 Warehouses: 16
 
@@ -176,6 +185,9 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      136.0        1.0   1.0                 423.529412
-PostgreSQL-1-1-1024-2      136.0        1.0   2.0                 423.529412
+PostgreSQL-1-1-1024-1      151.0        1.0   1.0                 381.456954
+PostgreSQL-1-1-1024-2      151.0        1.0   2.0                 381.456954
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

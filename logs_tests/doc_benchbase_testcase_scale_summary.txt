@@ -2,8 +2,9 @@
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
-    Type: dbmsbenchmarker
-    Duration: 965s 
+    Type: benchbase
+    Duration: 1086s 
+    Code: 1728065923
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
@@ -25,8 +26,8 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:251932584
-    datadisk:4409144
+    disk:253355040
+    datadisk:4409292
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
@@ -35,15 +36,15 @@ PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:255148784
-    datadisk:7625344
+    disk:256548316
+    datadisk:7602568
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2579.97                                                      13764.0                                               6196.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       2413.61                                                      15186.0                                               6623.0
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0                       2562.88                                                      13719.0                                               6237.0
+PostgreSQL-1-1-1024-2               1         16   16384          2  300.0                       2344.15                                                      15487.0                                               6818.5
 
 Warehouses: 16
 
@@ -57,6 +58,9 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      136.0        1.0   1.0                 423.529412
-PostgreSQL-1-1-1024-2      136.0        1.0   2.0                 423.529412
+PostgreSQL-1-1-1024-1      151.0        1.0   1.0                 381.456954
+PostgreSQL-1-1-1024-2      151.0        1.0   2.0                 381.456954
+
+### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

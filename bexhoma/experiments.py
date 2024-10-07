@@ -140,7 +140,7 @@ class default():
         self.namespace = self.cluster.namespace                         # name of the K8s namespace to use
         self.configurations = []                                        # list of configurations (i.e., dbms to test)
         self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
-        self.experiments_configfolder                                   # relative path to config folder of experiment (e.g., 'experiments/tpch')
+        self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
         self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def get_parameter_as_list(self,
@@ -757,7 +757,7 @@ class default():
         """
         self.cluster.logger.debug('default.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
-        self.workload['errors'] = self.evaluator.workflow_errors
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
             """
@@ -1581,15 +1581,17 @@ class default():
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
-        if len(workload_properties['workflow_errors']) > 0:
-            for error in workload_properties['workflow_errors']:
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
                 print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -1823,7 +1825,8 @@ class default():
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
-        return test_results
+        return test_results.rstrip('\n')
+
 
 
 
@@ -2084,7 +2087,7 @@ class tpcc(default):
         """
         self.cluster.logger.debug('tpcc.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
-        self.workload['errors'] = self.evaluator.workflow_errors
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
             """
@@ -2153,15 +2156,17 @@ class tpcc(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
-        if len(workload_properties['workflow_errors']) > 0:
-            for error in workload_properties['workflow_errors']:
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
                 print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2321,7 +2326,8 @@ class tpcc(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-        return test_results
+        return test_results.rstrip('\n')
+
 
 
 
@@ -2545,7 +2551,7 @@ class ycsb(default):
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
-        self.workload['errors'] = self.evaluator.workflow_errors
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         # download results
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
@@ -2598,15 +2604,17 @@ class ycsb(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
-        if len(workload_properties['workflow_errors']) > 0:
-            for error in workload_properties['workflow_errors']:
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
                 print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2732,7 +2740,8 @@ class ycsb(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-        return test_results
+        return test_results.rstrip('\n')
+
 
 
 
@@ -2852,7 +2861,7 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
-        self.workload['errors'] = self.evaluator.workflow_errors
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         # download results
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
@@ -2900,15 +2909,17 @@ class benchbase(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
-        if len(workload_properties['workflow_errors']) > 0:
-            for error in workload_properties['workflow_errors']:
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
                 print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -3072,7 +3083,8 @@ class benchbase(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-        return test_results
+        return test_results.rstrip('\n')
+
 
 
 

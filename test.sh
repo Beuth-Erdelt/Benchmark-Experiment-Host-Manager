@@ -9,8 +9,10 @@ LOG_DIR="./logs_tests"
 mkdir -p $LOG_DIR
 
 
-
-
+#echo "Waiting 12h..."
+#sleep 43200
+#echo "Waiting 24h..."
+#sleep 86400
 
 
 
@@ -241,8 +243,8 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-	-m -mc \
-	-rst shared -rss 30Gi \
+  -m -mc \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_2.log
@@ -263,15 +265,15 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1,2 \
   -nc 2 \
-	-m -mc \
-	-rst shared -rss 30Gi \
+  -m -mc \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_3.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 2400
+sleep 3000
 
 
 

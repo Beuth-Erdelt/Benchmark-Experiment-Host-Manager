@@ -17,30 +17,31 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
 ### TPC-H Simple
 
-```
-python tpch.py -ms 1 -tr \
-    -sf 1 \
-    -dt \
-    -t 1200 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -ii -ic -is \
-    -nlp 8 \
-    -nbp 1 \
-    -ne 1 \
-    -nc 1 \
-    run
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_1.log &
 ```
 
 yields (after ca. 10 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
     TPC-H Queries SF=1
     Type: tpch
-    Duration: 396s 
+    Duration: 414s 
+    Code: 1728147496
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -64,8 +65,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250350012
-    datadisk:2822128
+    disk:251785300
+    datadisk:2822552
     requests_cpu:4
     requests_memory:16Gi
 
@@ -77,47 +78,47 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 2518.05
-Minimum Cost Supplier Query (TPC-H Q2)                             425.98
-Shipping Priority (TPC-H Q3)                                       728.71
-Order Priority Checking Query (TPC-H Q4)                          1223.85
-Local Supplier Volume (TPC-H Q5)                                   636.65
-Forecasting Revenue Change (TPC-H Q6)                              485.96
-Forecasting Revenue Change (TPC-H Q7)                              752.28
-National Market Share (TPC-H Q8)                                   600.46
-Product Type Profit Measure (TPC-H Q9)                            1057.89
-Forecasting Revenue Change (TPC-H Q10)                            1200.26
-Important Stock Identification (TPC-H Q11)                         238.03
-Shipping Modes and Order Priority (TPC-H Q12)                      980.31
-Customer Distribution (TPC-H Q13)                                 1944.32
-Forecasting Revenue Change (TPC-H Q14)                             518.97
-Top Supplier Query (TPC-H Q15)                                     534.09
-Parts/Supplier Relationship (TPC-H Q16)                            562.49
-Small-Quantity-Order Revenue (TPC-H Q17)                          1911.99
-Large Volume Customer (TPC-H Q18)                                 6459.88
-Discounted Revenue (TPC-H Q19)                                     673.38
-Potential Part Promotion (TPC-H Q20)                               654.71
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                887.67
-Global Sales Opportunity Query (TPC-H Q22)                         229.98
+Pricing Summary Report (TPC-H Q1)                                 2698.29
+Minimum Cost Supplier Query (TPC-H Q2)                             451.18
+Shipping Priority (TPC-H Q3)                                       776.51
+Order Priority Checking Query (TPC-H Q4)                          1311.21
+Local Supplier Volume (TPC-H Q5)                                   697.93
+Forecasting Revenue Change (TPC-H Q6)                              518.67
+Forecasting Revenue Change (TPC-H Q7)                              810.92
+National Market Share (TPC-H Q8)                                   635.76
+Product Type Profit Measure (TPC-H Q9)                            1228.00
+Forecasting Revenue Change (TPC-H Q10)                            1329.29
+Important Stock Identification (TPC-H Q11)                         264.15
+Shipping Modes and Order Priority (TPC-H Q12)                     1083.43
+Customer Distribution (TPC-H Q13)                                 2048.55
+Forecasting Revenue Change (TPC-H Q14)                             575.75
+Top Supplier Query (TPC-H Q15)                                     601.07
+Parts/Supplier Relationship (TPC-H Q16)                            609.70
+Small-Quantity-Order Revenue (TPC-H Q17)                          2138.69
+Large Volume Customer (TPC-H Q18)                                 6857.13
+Discounted Revenue (TPC-H Q19)                                     753.24
+Potential Part Promotion (TPC-H Q20)                               727.70
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                964.69
+Global Sales Opportunity Query (TPC-H Q22)                         258.75
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       85.0     123.0
+PostgreSQL-BHT-8-1-1           1.0           44.0         1.0       90.0     143.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-8-1-1           0.86
+PostgreSQL-BHT-8-1-1           0.93
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4380.38
+PostgreSQL-BHT-8-1-1            4008.99
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1 1  1              1                 28      1   1                  2828.57
+PostgreSQL-BHT-8-1 1  1              1                 30      1   1                   2640.0
 
 ### Workflow
 
@@ -137,31 +138,32 @@ TEST passed: Workflow as planned
 
 ### TPC-H Monitoring
 
-```
-python tpch.py -ms 1 -tr \
-    -sf 3 \
-    -dt \
-    -t 1200 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -ii -ic -is \
-    -nlp 8 \
-    -nbp 1 \
-    -ne 1 \
-    -nc 1 \
-    -m -mc \
-    run
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 3 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_2.log &
 ```
 
 yields (after ca. 15 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
     TPC-H Queries SF=3
     Type: tpch
     Duration: 689s 
+    Code: 1728148096
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -186,8 +188,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:257273840
-    datadisk:8383832
+    disk:257345816
+    datadisk:8383076
     requests_cpu:4
     requests_memory:16Gi
 
@@ -199,32 +201,32 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 6192.75
-Minimum Cost Supplier Query (TPC-H Q2)                            2091.15
-Shipping Priority (TPC-H Q3)                                      2424.71
-Order Priority Checking Query (TPC-H Q4)                          3061.48
-Local Supplier Volume (TPC-H Q5)                                  2210.63
-Forecasting Revenue Change (TPC-H Q6)                             1139.04
-Forecasting Revenue Change (TPC-H Q7)                             2284.62
-National Market Share (TPC-H Q8)                                  1404.12
-Product Type Profit Measure (TPC-H Q9)                            3123.02
-Forecasting Revenue Change (TPC-H Q10)                            3004.63
-Important Stock Identification (TPC-H Q11)                         551.70
-Shipping Modes and Order Priority (TPC-H Q12)                     2425.46
-Customer Distribution (TPC-H Q13)                                 6418.72
-Forecasting Revenue Change (TPC-H Q14)                            1257.36
-Top Supplier Query (TPC-H Q15)                                    1368.61
-Parts/Supplier Relationship (TPC-H Q16)                           1267.73
-Small-Quantity-Order Revenue (TPC-H Q17)                          5629.60
-Large Volume Customer (TPC-H Q18)                                20725.30
-Discounted Revenue (TPC-H Q19)                                    1924.23
-Potential Part Promotion (TPC-H Q20)                              1164.31
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               2731.14
-Global Sales Opportunity Query (TPC-H Q22)                         459.42
+Pricing Summary Report (TPC-H Q1)                                 6244.23
+Minimum Cost Supplier Query (TPC-H Q2)                            2130.48
+Shipping Priority (TPC-H Q3)                                      2441.53
+Order Priority Checking Query (TPC-H Q4)                          3118.84
+Local Supplier Volume (TPC-H Q5)                                  2249.99
+Forecasting Revenue Change (TPC-H Q6)                             1154.10
+Forecasting Revenue Change (TPC-H Q7)                             2327.41
+National Market Share (TPC-H Q8)                                  1392.31
+Product Type Profit Measure (TPC-H Q9)                            3122.15
+Forecasting Revenue Change (TPC-H Q10)                            3025.70
+Important Stock Identification (TPC-H Q11)                         559.61
+Shipping Modes and Order Priority (TPC-H Q12)                     2460.50
+Customer Distribution (TPC-H Q13)                                 6165.40
+Forecasting Revenue Change (TPC-H Q14)                            1266.88
+Top Supplier Query (TPC-H Q15)                                    1381.41
+Parts/Supplier Relationship (TPC-H Q16)                           1272.46
+Small-Quantity-Order Revenue (TPC-H Q17)                          5535.95
+Large Volume Customer (TPC-H Q18)                                20719.70
+Discounted Revenue (TPC-H Q19)                                    1887.54
+Potential Part Promotion (TPC-H Q20)                              1146.13
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               2761.80
+Global Sales Opportunity Query (TPC-H Q22)                         454.70
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0          111.0         1.0      215.0     335.0
+PostgreSQL-BHT-8-1-1           1.0          129.0         1.0      219.0     359.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
@@ -234,12 +236,12 @@ PostgreSQL-BHT-8-1-1            2.3
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4848.96
+PostgreSQL-BHT-8-1-1            4836.26
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1 3  1              1                 80      1   3                   2970.0
+PostgreSQL-BHT-8-1 3  1              1                 77      1   3                  3085.71
 
 ### Workflow
 
@@ -251,19 +253,19 @@ DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      398.22     2.09          6.51                10.76
+PostgreSQL-BHT-8-1      448.08     1.32          6.39                10.63
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1        8.63        0          0.77                 2.28
+PostgreSQL-BHT-8-1       13.09     0.07          1.29                 2.76
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      384.69     3.64          6.82                11.07
+PostgreSQL-BHT-8-1      363.81     1.42          7.04                11.29
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1        11.5        0          0.23                 0.24
+PostgreSQL-BHT-8-1       13.77        0          0.27                 0.27
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -279,49 +281,50 @@ TEST passed: Workflow as planned
 
 ### TPC-H Throughput Test
 
-```
-python tpch.py -ms 1 -tr \
-    -sf 1 \
-    -dt \
-    -t 1200 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -ii -ic -is \
-    -nlp 8 \
-    -nbp 1 \
-    -ne 1,2 \
-    -nc 2 \
-    -m -mc \
-    -rst shared -rss 100Gi \
-    run
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 3 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_3.log &
 ```
 
 yields (after ca. 15 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
-    TPC-H Queries SF=1
+TPC-H Queries SF=3
     Type: tpch
-    Duration: 929s 
+    Duration: 891s 
+    Code: 1728312757
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-TPC-H (SF=1) data is loaded and benchmark is executed.
-Query ordering is Q1 - Q22.
-All instances use the same query parameters.
-Import sets indexes and constraints after loading and recomputes statistics.
-System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['PostgreSQL'].
-Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
-Loading is tested with [1] threads, split into [8] pods.
-Benchmarking is tested with [1] threads, split into [1] pods.
-Benchmarking is run as [1, 2] times the number of benchmarking pods.
-Experiment is run 2 times.
+    TPC-H (SF=3) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
 
 ### Connections
 PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
@@ -330,10 +333,10 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936652
-    datadisk:2822736
+    disk:248970540
+    datadisk:8382736
     volume_size:100G
-    volume_used:2.7G
+    volume_used:8.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
@@ -342,10 +345,10 @@ PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936860
-    datadisk:2822736
+    disk:248970540
+    datadisk:8382736
     volume_size:100G
-    volume_used:2.7G
+    volume_used:8.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
@@ -354,10 +357,10 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936860
-    datadisk:2822736
+    disk:248970540
+    datadisk:8382736
     volume_size:100G
-    volume_used:2.7G
+    volume_used:8.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-2-1-1 uses docker image postgres:16.1
@@ -366,10 +369,10 @@ PostgreSQL-BHT-8-2-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936840
-    datadisk:2822736
+    disk:248970540
+    datadisk:8382736
     volume_size:100G
-    volume_used:2.7G
+    volume_used:8.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-2-2-1 uses docker image postgres:16.1
@@ -378,10 +381,10 @@ PostgreSQL-BHT-8-2-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936840
-    datadisk:2822736
+    disk:248970540
+    datadisk:8382736
     volume_size:100G
-    volume_used:2.7G
+    volume_used:8.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-2-2-2 uses docker image postgres:16.1
@@ -390,10 +393,10 @@ PostgreSQL-BHT-8-2-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936840
-    datadisk:2822736
+    disk:248970540
+    datadisk:8382736
     volume_size:100G
-    volume_used:2.7G
+    volume_used:8.0G
     requests_cpu:4
     requests_memory:16Gi
 
@@ -405,109 +408,96 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-1-2-1  PostgreSQL-BHT-8-1-2-2  PostgreSQL-BHT-8-2-1-1  PostgreSQL-BHT-8-2-2-1  PostgreSQL-BHT-8-2-2-2
-Pricing Summary Report (TPC-H Q1)                                   2756.00                 2534.75                 2535.25                14119.18                 2565.51                 2571.79
-Minimum Cost Supplier Query (TPC-H Q2)                               464.38                  432.43                  431.94                 5324.89                  434.76                  431.71
-Shipping Priority (TPC-H Q3)                                         770.36                  723.43                  730.39                 6792.36                  760.45                  776.70
-Order Priority Checking Query (TPC-H Q4)                            1334.68                 1309.18                 1300.62                 1246.18                 1256.42                 1251.28
-Local Supplier Volume (TPC-H Q5)                                     668.90                  632.22                  637.11                  653.33                  661.63                  679.79
-Forecasting Revenue Change (TPC-H Q6)                                511.75                  486.05                  488.62                  500.62                  510.86                  520.06
-Forecasting Revenue Change (TPC-H Q7)                                833.18                  743.39                  747.72                 1150.01                  741.63                  769.24
-National Market Share (TPC-H Q8)                                     675.09                  590.59                  601.45                  674.49                  607.47                  623.72
-Product Type Profit Measure (TPC-H Q9)                              1167.95                 1090.70                 1111.11                 1533.60                 1086.91                 1087.04
-Forecasting Revenue Change (TPC-H Q10)                              1324.00                 1242.58                 1251.42                 1248.54                 1276.28                 1273.38
-Important Stock Identification (TPC-H Q11)                           263.13                  251.19                  248.92                  242.83                  251.04                  251.12
-Shipping Modes and Order Priority (TPC-H Q12)                       1062.88                 1003.16                 1006.56                 1016.53                 1032.74                 1034.17
-Customer Distribution (TPC-H Q13)                                   2215.76                 2038.91                 2046.91                 2043.55                 2053.20                 2037.29
-Forecasting Revenue Change (TPC-H Q14)                               556.32                  525.59                  532.72                  535.73                  561.66                  547.04
-Top Supplier Query (TPC-H Q15)                                       603.09                  531.66                  539.34                  545.08                  566.37                  556.02
-Parts/Supplier Relationship (TPC-H Q16)                              608.66                  572.70                  576.08                  559.47                  571.74                  569.10
-Small-Quantity-Order Revenue (TPC-H Q17)                            2104.29                 2007.04                 2029.72                 1850.03                 1913.35                 1902.69
-Large Volume Customer (TPC-H Q18)                                   7351.66                 7261.50                 7169.16                 6362.48                 7198.30                 7305.13
-Discounted Revenue (TPC-H Q19)                                       693.49                  681.62                  680.98                  686.90                  696.24                  700.38
-Potential Part Promotion (TPC-H Q20)                                 712.03                  643.07                  657.41                  925.62                  639.74                  630.51
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  903.24                  848.23                  849.80                 1991.62                  851.09                  848.94
-Global Sales Opportunity Query (TPC-H Q22)                           256.00                  227.17                  226.61                  256.98                  216.10                  215.28
+Pricing Summary Report (TPC-H Q1)                                  23157.86                 5980.27                 6095.96                19587.35                 6121.09                 6010.60
+Minimum Cost Supplier Query (TPC-H Q2)                              9531.24                 2118.82                 2101.45                10425.32                 2107.33                 2111.57
+Shipping Priority (TPC-H Q3)                                       13390.17                 2376.80                 2400.88                11021.70                 2433.13                 2377.52
+Order Priority Checking Query (TPC-H Q4)                            3050.48                 3006.11                 3007.64                 3061.74                 3051.72                 3075.27
+Local Supplier Volume (TPC-H Q5)                                    2171.41                 2180.48                 2205.50                 2149.66                 2208.18                 2198.94
+Forecasting Revenue Change (TPC-H Q6)                               1089.17                 1112.82                 1086.41                 1114.39                 1124.15                 1133.55
+Forecasting Revenue Change (TPC-H Q7)                               2910.69                 2221.58                 2203.67                 2802.01                 2228.57                 2231.46
+National Market Share (TPC-H Q8)                                    1315.77                 1310.74                 1302.77                 1301.54                 1310.28                 1301.75
+Product Type Profit Measure (TPC-H Q9)                              4357.16                 3136.03                 3167.76                 4486.49                 3163.53                 3191.25
+Forecasting Revenue Change (TPC-H Q10)                              3062.12                 2964.80                 2945.27                 2915.87                 2970.63                 2945.60
+Important Stock Identification (TPC-H Q11)                           559.74                  571.92                  566.22                  560.26                  570.24                  577.96
+Shipping Modes and Order Priority (TPC-H Q12)                       2369.27                 2393.61                 2350.99                 2349.98                 2382.86                 2401.62
+Customer Distribution (TPC-H Q13)                                   6449.74                 6277.40                 6238.73                 6314.22                 6149.98                 6189.48
+Forecasting Revenue Change (TPC-H Q14)                              1168.77                 1202.09                 1160.92                 1167.54                 1198.51                 1196.87
+Top Supplier Query (TPC-H Q15)                                      1325.56                 1331.05                 1348.85                 1315.20                 1342.89                 1345.28
+Parts/Supplier Relationship (TPC-H Q16)                             1253.35                 1322.20                 1280.61                 1292.25                 1304.83                 1299.72
+Small-Quantity-Order Revenue (TPC-H Q17)                            5945.32                 5970.66                 5659.44                 5651.47                 5697.80                 5957.67
+Large Volume Customer (TPC-H Q18)                                  18198.08                18059.26                18400.25                21541.35                20931.06                18540.88
+Discounted Revenue (TPC-H Q19)                                      1811.50                 1831.34                 1811.47                 1804.31                 1815.79                 1818.26
+Potential Part Promotion (TPC-H Q20)                                1177.44                 1084.80                 1080.48                 1141.35                 1124.05                 1160.01
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                 4607.63                 2668.06                 2617.49                 3261.69                 2644.11                 2606.13
+Global Sales Opportunity Query (TPC-H Q22)                           540.30                  427.52                  433.20                  611.50                  424.44                  431.61
 
 ### Loading [s]
                         timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1-1           1.0           28.0         1.0      102.0     139.0
-PostgreSQL-BHT-8-1-2-1           1.0           28.0         1.0      102.0     139.0
-PostgreSQL-BHT-8-1-2-2           1.0           28.0         1.0      102.0     139.0
-PostgreSQL-BHT-8-2-1-1           1.0           28.0         1.0      102.0     139.0
-PostgreSQL-BHT-8-2-2-1           1.0           28.0         1.0      102.0     139.0
-PostgreSQL-BHT-8-2-2-2           1.0           28.0         1.0      102.0     139.0
+PostgreSQL-BHT-8-1-1-1           1.0           80.0         1.0      211.0     300.0
+PostgreSQL-BHT-8-1-2-1           1.0           80.0         1.0      211.0     300.0
+PostgreSQL-BHT-8-1-2-2           1.0           80.0         1.0      211.0     300.0
+PostgreSQL-BHT-8-2-1-1           1.0           80.0         1.0      211.0     300.0
+PostgreSQL-BHT-8-2-2-1           1.0           80.0         1.0      211.0     300.0
+PostgreSQL-BHT-8-2-2-2           1.0           80.0         1.0      211.0     300.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                         Geo Times [s]
 DBMS                                 
-PostgreSQL-BHT-8-1-1-1           0.94
-PostgreSQL-BHT-8-1-2-1           0.87
-PostgreSQL-BHT-8-1-2-2           0.88
-PostgreSQL-BHT-8-2-1-1           1.28
-PostgreSQL-BHT-8-2-2-1           0.88
-PostgreSQL-BHT-8-2-2-2           0.88
+PostgreSQL-BHT-8-1-1-1           2.93
+PostgreSQL-BHT-8-1-2-1           2.23
+PostgreSQL-BHT-8-1-2-2           2.23
+PostgreSQL-BHT-8-2-1-1           2.87
+PostgreSQL-BHT-8-2-2-1           2.26
+PostgreSQL-BHT-8-2-2-2           2.26
 
 ### Power@Size
                         Power@Size [~Q/h]
 DBMS                                     
-PostgreSQL-BHT-8-1-1-1            4021.39
-PostgreSQL-BHT-8-1-2-1            4308.46
-PostgreSQL-BHT-8-1-2-2            4285.89
-PostgreSQL-BHT-8-2-1-1            2923.32
-PostgreSQL-BHT-8-2-2-1            4260.41
-PostgreSQL-BHT-8-2-2-2            4249.41
+PostgreSQL-BHT-8-1-1-1            3785.39
+PostgreSQL-BHT-8-1-2-1            4966.65
+PostgreSQL-BHT-8-1-2-2            4999.53
+PostgreSQL-BHT-8-2-1-1            3867.17
+PostgreSQL-BHT-8-2-2-1            4928.67
+PostgreSQL-BHT-8-2-2-2            4939.85
 
 ### Throughput@Size
                                                    time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS                 SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1-1 1  1              1                 31      1   1                  2554.84
-PostgreSQL-BHT-8-1-2 1  1              2                 30      2   1                  5280.00
-PostgreSQL-BHT-8-2-1 1  2              1                 54      1   1                  1466.67
-PostgreSQL-BHT-8-2-2 1  2              2                 30      2   1                  5280.00
+PostgreSQL-BHT-8-1-1 3  1              1                114      1   3                  2084.21
+PostgreSQL-BHT-8-1-2 3  1              2                 76      2   3                  6252.63
+PostgreSQL-BHT-8-2-1 3  2              1                110      1   3                  2160.00
+PostgreSQL-BHT-8-2-2 3  2              2                 76      2   3                  6252.63
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-8-1 - Pods [[1, 1]]
-DBMS PostgreSQL-BHT-8-2 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-8 - Pods [[1, 2], [1, 2]]
 
 #### Planned
 DBMS PostgreSQL-BHT-8 - Pods [[1, 2], [1, 2]]
 
-### Ingestion - SUT
-                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      107.31     1.01          3.69                 5.46
-PostgreSQL-BHT-8-1-2      107.31     1.01          3.69                 5.46
-
-### Ingestion - Loader
-                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1           0        0           0.0                  0.0
-PostgreSQL-BHT-8-1-2           0        0           0.0                  0.0
-
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      115.94     1.97          3.80                 5.26
-PostgreSQL-BHT-8-1-2        0.27     0.01          3.80                 5.26
-PostgreSQL-BHT-8-2-1      111.47     1.93          7.59                10.44
-PostgreSQL-BHT-8-2-2      220.68     0.00          3.78                 5.18
+PostgreSQL-BHT-8-1-1      147.48     2.51          6.42                10.91
+PostgreSQL-BHT-8-1-2      650.25     1.70          7.12                11.84
+PostgreSQL-BHT-8-2-1     1007.52     3.53         18.41                27.64
+PostgreSQL-BHT-8-2-2      388.57     0.00          6.75                11.49
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       13.50      0.0          0.26                 0.27
-PostgreSQL-BHT-8-1-2        0.00      0.0          0.26                 0.27
-PostgreSQL-BHT-8-2-1       13.50      0.0          0.26                 0.27
-PostgreSQL-BHT-8-2-2       24.07      0.0          0.74                 0.77
+PostgreSQL-BHT-8-1-1       10.31     0.00          0.23                 0.25
+PostgreSQL-BHT-8-1-2       27.24     0.51          0.78                 0.81
+PostgreSQL-BHT-8-2-1       26.31     0.02          0.77                 0.80
+PostgreSQL-BHT-8-2-2       21.65     0.00          0.69                 0.72
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
-TEST failed: Workflow not as planned
+TEST passed: Workflow as planned
 ```
 
 
@@ -531,43 +521,44 @@ TEST failed: Workflow not as planned
 
 ### Benchbase Simple
 
-```
-python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 5 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1 \
-    -nbt 16 \
-    -nbf 8 \
-    -ne 1 \
-    -nc 1 \
-    run
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
 ```
 
 yields (after ca. 10 minutes) something like
 
-```
-## Show Summary
+```bash
+# Show Summary
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
     Duration: 619s 
+    Code: 1728288333
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
-Benchmark is limited to DBMS ['PostgreSQL'].
-Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [16] threads, split into [1] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
@@ -576,14 +567,14 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:253346796
-    datadisk:4409948
+    disk:253378956
+    datadisk:4409604
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2638.88                                                      13239.0                                               6057.0
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2622.86                                                      13505.0                                               6094.0
 
 Warehouses: 16
 
@@ -597,7 +588,7 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      129.0        1.0   1.0                 446.511628
+PostgreSQL-1-1-1024-1      143.0        1.0   1.0                 402.797203
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -609,50 +600,51 @@ TEST passed: Workflow as planned
 
 
 Make sure, the database does not exist:
-```
+```bash
 kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
 sleep 10
 ```
 
-```
-python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 1 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1 \
-    -nbt 16 \
-    -nbf 8 \
-    -ne 1 \
-    -nc 2 \
-    -rst shared -rss 50Gi \
-    run
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
 ```
 
 yields (after ca. 10 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 644s 
+    Duration: 615s 
+    Code: 1728290056
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
-Benchmark is limited to DBMS ['PostgreSQL'].
-Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 50Gi.
-Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [16] threads, split into [1] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run 2 times.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
 
 ### Connections
 PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
@@ -661,10 +653,10 @@ PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936844
-    datadisk:4409008
+    disk:248969348
+    datadisk:4409584
     volume_size:50G
-    volume_used:4.1G
+    volume_used:4.3G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
@@ -673,8 +665,8 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248936844
-    datadisk:5110696
+    disk:248969520
+    datadisk:5131336
     volume_size:50G
     volume_used:4.9G
     requests_cpu:4
@@ -682,8 +674,8 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
 
 ### Execution
                          experiment_run  terminals  target  pod_count  time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1-1               1         16    8192          1  60.0                       2570.31                                                      13837.0                                               6214.0
-PostgreSQL-1-1-1024-2-1               2         16    8192          1  60.0                       1610.60                                                      15045.0                                               9922.0
+PostgreSQL-1-1-1024-1-1               1         16    8192          1  60.0                       2639.86                                                      13274.0                                               6049.0
+PostgreSQL-1-1-1024-2-1               2         16    8192          1  60.0                       1302.11                                                      16165.0                                              12276.0
 
 Warehouses: 16
 
@@ -697,8 +689,8 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1], [1]]
 
 ### Loading
                          time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1-1      140.0        1.0   1.0                 411.428571
-PostgreSQL-1-1-1024-2-1      140.0        1.0   1.0                 411.428571
+PostgreSQL-1-1-1024-1-1      123.0        1.0   1.0                 468.292683
+PostgreSQL-1-1-1024-2-1      123.0        1.0   1.0                 468.292683
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -708,45 +700,46 @@ TEST passed: Workflow as planned
 
 ### Benchbase Monitoring
 
-```
-python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 5 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1 \
-    -nbt 16 \
-    -nbf 8 \
-    -ne 1 \
-    -nc 1 \
-    -m -mc \
-    run
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
 ```
 
 yields (after ca. 10 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 681s 
+    Duration: 650s 
+    Code: 1728290778
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
-System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['PostgreSQL'].
-Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [16] threads, split into [1] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
@@ -755,14 +748,14 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:253346116
-    datadisk:4409268
+    disk:253378808
+    datadisk:4409284
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                        2639.3                                                      13377.0                                               6056.0
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2656.71                                                      13156.0                                               6017.0
 
 Warehouses: 16
 
@@ -776,23 +769,23 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      137.0        1.0   1.0                 420.437956
+PostgreSQL-1-1-1024-1      131.0        1.0   1.0                 439.694656
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1       563.1      7.7          3.74                 4.97
+PostgreSQL-1-1-1024-1      472.34     1.21          3.68                 4.86
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      959.55        0           1.3                  1.3
+PostgreSQL-1-1-1024-1      977.22        0          1.34                 1.34
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     2630.98     7.69          4.76                 7.07
+PostgreSQL-1-1-1024-1     2590.76      7.5          4.75                 7.08
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     1420.86     5.03          1.42                 1.42
+PostgreSQL-1-1-1024-1     1392.81      5.0          1.43                 1.43
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -806,47 +799,48 @@ TEST passed: Workflow as planned
 
 ### Benchbase Complex
 
-```
-python benchbase.py -ms 1 -tr \
-    -sf 16 \
-    -sd 2 \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -dbms PostgreSQL \
-    -tb 1024 \
-    -nbp 1,2 \
-    -nbt 8 \
-    -nbf 8 \
-    -ne 1,2 \
-    -nc 2 \
-    -m -mc \
-    -rst shared -rss 50Gi \
-    run
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1,2 \
+  -nbt 8 \
+  -nbf 8 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
 ```
 
 yields (after ca. 30 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
     Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 1711s 
+    Duration: 1686s 
+    Code: 1728291644
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 2 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
-System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['PostgreSQL'].
-Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 50Gi.
-Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [8] threads, split into [1, 2] pods.
-Benchmarking is run as [1, 2] times the number of benchmarking pods.
-Experiment is run 2 times.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 2 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [8] threads, split into [1, 2] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
 
 ### Connections
 PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
@@ -855,10 +849,10 @@ PostgreSQL-1-1-1024-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:4327464
+    disk:248969520
+    datadisk:4184808
     volume_size:50G
-    volume_used:4.2G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
@@ -867,10 +861,10 @@ PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:4440824
+    disk:248969520
+    datadisk:4290672
     volume_size:50G
-    volume_used:4.3G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-3 uses docker image postgres:16.1
@@ -879,10 +873,10 @@ PostgreSQL-1-1-1024-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:4683584
+    disk:248969520
+    datadisk:4535672
     volume_size:50G
-    volume_used:4.3G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-1-4 uses docker image postgres:16.1
@@ -891,10 +885,10 @@ PostgreSQL-1-1-1024-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:4928696
+    disk:248969520
+    datadisk:4933624
     volume_size:50G
-    volume_used:4.3G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
@@ -903,10 +897,10 @@ PostgreSQL-1-1-1024-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:4927032
+    disk:248969520
+    datadisk:5852200
     volume_size:50G
-    volume_used:4.7G
+    volume_used:5.6G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-2 uses docker image postgres:16.1
@@ -915,10 +909,10 @@ PostgreSQL-1-1-1024-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:5026616
+    disk:248969520
+    datadisk:5954224
     volume_size:50G
-    volume_used:4.7G
+    volume_used:5.7G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-3 uses docker image postgres:16.1
@@ -927,10 +921,10 @@ PostgreSQL-1-1-1024-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:5267800
+    disk:248969520
+    datadisk:6205400
     volume_size:50G
-    volume_used:5.1G
+    volume_used:5.9G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
@@ -939,72 +933,73 @@ PostgreSQL-1-1-1024-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248937016
-    datadisk:5446400
+    disk:248969520
+    datadisk:6338424
     volume_size:50G
-    volume_used:5.2G
+    volume_used:5.9G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                          experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1077.29                                                      12160.0                                               7416.0
-PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2309.94                                                      15701.0                                               6915.0
-PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1266.49                                                      13966.0                                               6304.5
-PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                        948.15                                                      13195.0                                               8427.0
-PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2337.97                                                      15291.0                                               6831.5
-PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1265.16                                                      14275.0                                               6311.5
-PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       1925.56                                                      18509.0                                               8298.5
+PostgreSQL-1-1-1024-1-1               1          8    8192          1  120.0                       1008.85                                                      12609.0                                              7920.00
+PostgreSQL-1-1-1024-1-2               1         16   16384          2  120.0                       2341.82                                                      15682.0                                              6821.00
+PostgreSQL-1-1-1024-1-3               1          8    8192          2  120.0                       1318.82                                                      13570.0                                              6054.50
+PostgreSQL-1-1-1024-1-4               1         16   16384          4  120.0                       1931.91                                                      18397.0                                              8259.25
+PostgreSQL-1-1-1024-2-1               2          8    8192          1  120.0                        965.08                                                      12548.0                                              8279.00
+PostgreSQL-1-1-1024-2-2               2         16   16384          2  120.0                       2438.01                                                      15505.0                                              6553.00
+PostgreSQL-1-1-1024-2-3               2          8    8192          2  120.0                       1304.04                                                      14123.0                                              6124.50
+PostgreSQL-1-1-1024-2-4               2         16   16384          4  120.0                       2031.83                                                      18230.0                                              7862.75
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[2, 1, 2], [4, 2, 2, 1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[2, 4, 2, 1], [4, 2, 2, 1]]
 
 #### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                          time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1-1      140.0        1.0   1.0                 411.428571
-PostgreSQL-1-1-1024-1-2      140.0        1.0   2.0                 411.428571
-PostgreSQL-1-1-1024-1-3      140.0        1.0   2.0                 411.428571
-PostgreSQL-1-1-1024-1-4      140.0        1.0   4.0                 411.428571
-PostgreSQL-1-1-1024-2-1      140.0        1.0   1.0                 411.428571
-PostgreSQL-1-1-1024-2-2      140.0        1.0   2.0                 411.428571
-PostgreSQL-1-1-1024-2-3      140.0        1.0   2.0                 411.428571
-PostgreSQL-1-1-1024-2-4      140.0        1.0   4.0                 411.428571
+PostgreSQL-1-1-1024-1-1      123.0        1.0   1.0                 468.292683
+PostgreSQL-1-1-1024-1-2      123.0        1.0   2.0                 468.292683
+PostgreSQL-1-1-1024-1-3      123.0        1.0   2.0                 468.292683
+PostgreSQL-1-1-1024-1-4      123.0        1.0   4.0                 468.292683
+PostgreSQL-1-1-1024-2-1      123.0        1.0   1.0                 468.292683
+PostgreSQL-1-1-1024-2-2      123.0        1.0   2.0                 468.292683
+PostgreSQL-1-1-1024-2-3      123.0        1.0   2.0                 468.292683
+PostgreSQL-1-1-1024-2-4      123.0        1.0   4.0                 468.292683
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      255.46     3.98          3.13                 5.44
-PostgreSQL-1-1-1024-1-2      805.31     6.09          3.71                 6.26
-PostgreSQL-1-1-1024-1-3      418.90     3.80          3.82                 6.51
-PostgreSQL-1-1-1024-1-4       39.19     0.00          3.82                 6.51
-PostgreSQL-1-1-1024-2-1      213.58     0.05          6.89                12.28
-PostgreSQL-1-1-1024-2-2      646.89     3.61          3.74                 6.63
-PostgreSQL-1-1-1024-2-3      330.78     3.72          3.91                 6.95
-PostgreSQL-1-1-1024-2-4      631.96     2.96          4.22                 7.47
+PostgreSQL-1-1-1024-1-1      357.31     3.80          2.98                 5.23
+PostgreSQL-1-1-1024-1-2      459.40     0.01          3.55                 5.99
+PostgreSQL-1-1-1024-1-3      266.30     0.65          3.77                 6.40
+PostgreSQL-1-1-1024-1-4      508.81     0.00          4.06                 6.88
+PostgreSQL-1-1-1024-2-1      147.84     0.04          7.07                12.78
+PostgreSQL-1-1-1024-2-2      853.18     7.09          3.77                 6.92
+PostgreSQL-1-1-1024-2-3      367.62     3.69          4.01                 7.27
+PostgreSQL-1-1-1024-2-4      702.96     0.00          4.35                 7.82
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1-1      143.46     2.43          1.29                 1.29
-PostgreSQL-1-1-1024-1-2      460.36     0.00          3.95                 3.95
-PostgreSQL-1-1-1024-1-3      148.70     0.00          4.89                 4.89
-PostgreSQL-1-1-1024-1-4      460.31     0.00          4.90                 4.90
-PostgreSQL-1-1-1024-2-1       64.63     1.13          0.64                 0.64
-PostgreSQL-1-1-1024-2-2      357.70     2.32          3.30                 3.30
-PostgreSQL-1-1-1024-2-3      189.09     1.17          4.99                 4.99
-PostgreSQL-1-1-1024-2-4      324.48     0.98          5.65                 5.65
+PostgreSQL-1-1-1024-1-1      214.14     2.49          1.31                 1.31
+PostgreSQL-1-1-1024-1-2      529.77     2.46          3.99                 3.99
+PostgreSQL-1-1-1024-1-3      214.14     1.35          4.79                 4.79
+PostgreSQL-1-1-1024-1-4      397.75     3.41          4.78                 4.78
+PostgreSQL-1-1-1024-2-1      205.66     0.00          2.33                 2.34
+PostgreSQL-1-1-1024-2-2      319.01     0.00          3.31                 3.31
+PostgreSQL-1-1-1024-2-3      240.69     0.00          5.00                 5.00
+PostgreSQL-1-1-1024-2-4      450.79     0.00          6.12                 6.12
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
-TEST failed: Workflow not as planned
+TEST passed: Workflow as planned
 ```
 
 
@@ -1026,31 +1021,34 @@ TEST failed: Workflow not as planned
 
 ### HammerDB Simple
 
-```
-python hammerdb.py -ms 1 -tr \
-    -sf 16 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -nlt 8 \
-    -nbp 1 \
-    -nbt 16 \
-    -ne 1 \
-    -nc 1 \
-    run
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
 ```
 
 yields (after ca. 10 minutes)
 
-```
+```bash
 ## Show Summary
 
 ### Workload
     HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 737s 
+    Code: 1728153517
     This includes no queries. HammerDB runs the benchmark
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -1067,57 +1065,68 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249750592
-    datadisk:3376528
+    disk:252339876
+    datadisk:3376808
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11500.0  35639.0         5       0
+PostgreSQL-BHT-8-1-1               1      16       1          1  11922.0  36996.0         5       0
 
 Warehouses: 16
 
 ### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+
+#### Planned
 DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
 
 ### Loading
                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1      100.0        1.0   1.0                      576.0
+PostgreSQL-BHT-8-1-1      115.0        1.0   1.0                 500.869565
+
+### Tests
 TEST passed: NOPM contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
 
 ### HammerDB Monitoring
 
-```
-python hammerdb.py -ms 1 -tr \
-    -sf 16 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -nlt 8 \
-    -nbp 1 \
-    -nbt 16 \
-    -ne 1 \
-    -nc 1 \
-    -m -mc \
-    -rst shared -rss 30Gi \
-    run
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
 ```
 
-yields (after ca. 20 minutes)
+yields (after ca. 15 minutes)
 
-```
+```bash
 ## Show Summary
 
 ### Workload
     HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 800s 
+    Code: 1728154427
     This includes no queries. HammerDB runs the benchmark
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
+Benchmark is limited to DBMS PostgreSQL.
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -1135,8 +1144,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374060
-    datadisk:3381837
+    disk:248963064
+    datadisk:3381973
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
@@ -1144,75 +1153,91 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
 
 ### Execution
                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11758.0  36683.0         5       0
+PostgreSQL-BHT-8-1-1               1      16       1          1  11630.0  35956.0         5       0
 
 Warehouses: 16
 
 ### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+
+#### Planned
 DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
 
 ### Loading
                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1      100.0        1.0   1.0                      576.0
+PostgreSQL-BHT-8-1-1      120.0        1.0   1.0                      480.0
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       92.17     1.61          3.66                  5.3
+PostgreSQL-BHT-8-1-1      134.05     1.55           3.6                 5.97
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      302.34        0          0.08                 0.08
+PostgreSQL-BHT-8-1-1      322.02        0          0.07                 0.07
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1    26158.49    62.88          5.39                 7.07
+PostgreSQL-BHT-8-1-1    26313.24    62.83          5.16                 5.91
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       44.65     0.11          0.06                 0.06
+PostgreSQL-BHT-8-1-1       45.27     0.11          0.06                 0.06
+
+### Tests
 TEST passed: NOPM contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST passed: Workflow as planned
 ```
 
 ### HammerDB Complex
 
-```
-python hammerdb.py -ms 1 -tr \
-    -sf 16 \
-    -sd 2 \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -nlt 8 \
-    -nbp 1,2 \
-    -nbt 16 \
-    -ne 1,2 \
-    -nc 2 \
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 2 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -ne 1,2 \
+  -nc 2 \
     -m -mc \
     -rst shared -rss 30Gi \
-    run
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
 ```
 
 yields (after ca. 60 minutes)
 
-```
+```bash
 ## Show Summary
 
 ### Workload
-    HammerDB Workload SF=16 (warehouses for TPC-C)
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 3011s 
+    Code: 1728313807
     This includes no queries. HammerDB runs the benchmark
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
-TPC-C data is generated and loaded using several threads.
-Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
-System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS P, o, s, t, g, r, e, S, Q, L.
-Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 30Gi.
-Loading is tested with [8] threads, split into [1] pods.
-Benchmarking is tested with [16] threads, split into [1, 2] pods.
-Benchmarking is run as [1, 2] times the number of benchmarking pods.
-Experiment is run 2 times.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS PostgreSQL.
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [8] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
 
 ### Connections
 PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
@@ -1221,10 +1246,10 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:4290673
+    disk:248970540
+    datadisk:5346001
     volume_size:30G
-    volume_used:4.1G
+    volume_used:5.1G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
@@ -1233,10 +1258,10 @@ PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374052
-    datadisk:4396621
+    disk:248970540
+    datadisk:5401973
     volume_size:30G
-    volume_used:4.2G
+    volume_used:5.1G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-1-3 uses docker image postgres:16.1
@@ -1245,10 +1270,10 @@ PostgreSQL-BHT-8-1-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4531061
+    disk:248970540
+    datadisk:5486093
     volume_size:30G
-    volume_used:4.2G
+    volume_used:5.1G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-1-4 uses docker image postgres:16.1
@@ -1257,10 +1282,10 @@ PostgreSQL-BHT-8-1-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4624397
+    disk:248970540
+    datadisk:5551797
     volume_size:30G
-    volume_used:4.4G
+    volume_used:5.1G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
@@ -1269,10 +1294,10 @@ PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4726729
+    disk:248970540
+    datadisk:5630625
     volume_size:30G
-    volume_used:4.6G
+    volume_used:5.4G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
@@ -1281,10 +1306,10 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4804397
+    disk:248970540
+    datadisk:5680885
     volume_size:30G
-    volume_used:4.6G
+    volume_used:5.5G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
@@ -1293,10 +1318,10 @@ PostgreSQL-BHT-8-1-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4909909
+    disk:248970708
+    datadisk:5750181
     volume_size:30G
-    volume_used:4.6G
+    volume_used:5.5G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
@@ -1305,62 +1330,73 @@ PostgreSQL-BHT-8-1-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374224
-    datadisk:4987269
+    disk:248970708
+    datadisk:5807549
     volume_size:30G
-    volume_used:4.8G
+    volume_used:5.6G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                        experiment_run  vusers  client  pod_count      NOPM       TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1      16       1          1  10957.00  34241.00         2       0
-PostgreSQL-BHT-8-1-1-2               1      32       2          2  11999.50  34535.50         2       0
-PostgreSQL-BHT-8-1-1-3               1      16       3          2   9345.50  29973.00         2       0
-PostgreSQL-BHT-8-1-1-4               1      32       4          4   9840.75  28867.75         2       0
-PostgreSQL-BHT-8-1-2-1               2      16       1          1   9676.00  30576.00         2       0
-PostgreSQL-BHT-8-1-2-2               2      32       2          2  10901.50  31587.00         2       0
-PostgreSQL-BHT-8-1-2-3               2      16       3          2   8787.50  27795.00         2       0
-PostgreSQL-BHT-8-1-2-4               2      32       4          4   9313.25  27692.25         2       0
+                        experiment_run  vusers  client  pod_count    NOPM       TPM  duration  errors
+PostgreSQL-BHT-8-1-1-1               1      16       1          1  7680.0  24734.00         2       0
+PostgreSQL-BHT-8-1-1-2               1      32       2          2  8949.5  25934.50         2       0
+PostgreSQL-BHT-8-1-1-3               1      16       3          2  7227.5  23337.00         2       0
+PostgreSQL-BHT-8-1-1-4               1      32       4          4  8070.5  23905.50         2       0
+PostgreSQL-BHT-8-1-2-1               2      16       1          1  6596.0  21499.00         2       0
+PostgreSQL-BHT-8-1-2-2               2      32       2          2  7463.0  22154.50         2       0
+PostgreSQL-BHT-8-1-2-3               2      16       3          2  6707.0  21318.50         2       0
+PostgreSQL-BHT-8-1-2-4               2      32       4          4  7200.0  21448.75         2       0
 
 Warehouses: 16
 
 ### Workflow
-DBMS PostgreSQL-BHT-8-1 - Pods [[2, 4, 2, 1], [4, 2, 2, 1]]
+
+#### Actual
+DBMS PostgreSQL-BHT-8-1 - Pods [[4, 2, 2, 1], [2, 4, 2, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                         time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1-1      100.0        1.0   1.0                      576.0
-PostgreSQL-BHT-8-1-1-2      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-1-3      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-1-4      100.0        1.0   4.0                      576.0
-PostgreSQL-BHT-8-1-2-1      100.0        1.0   1.0                      576.0
-PostgreSQL-BHT-8-1-2-2      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-2-3      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-2-4      100.0        1.0   4.0                      576.0
+PostgreSQL-BHT-8-1-1-1      120.0        1.0   1.0                      480.0
+PostgreSQL-BHT-8-1-1-2      120.0        1.0   2.0                      480.0
+PostgreSQL-BHT-8-1-1-3      120.0        1.0   2.0                      480.0
+PostgreSQL-BHT-8-1-1-4      120.0        1.0   4.0                      480.0
+PostgreSQL-BHT-8-1-2-1      120.0        1.0   1.0                      480.0
+PostgreSQL-BHT-8-1-2-2      120.0        1.0   2.0                      480.0
+PostgreSQL-BHT-8-1-2-3      120.0        1.0   2.0                      480.0
+PostgreSQL-BHT-8-1-2-4      120.0        1.0   4.0                      480.0
 
 ### Execution - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1    14035.47    62.87          4.93                 7.14
-PostgreSQL-BHT-8-1-1-2    15629.52    63.64          5.63                 6.48
-PostgreSQL-BHT-8-1-1-3    15257.81    53.30          5.24                 6.19
-PostgreSQL-BHT-8-1-1-4    14176.61    63.60          5.91                 6.94
-PostgreSQL-BHT-8-1-2-1    60623.84    62.83          9.27                12.83
-PostgreSQL-BHT-8-1-2-2    13874.96    63.60          5.85                 6.83
-PostgreSQL-BHT-8-1-2-3    15682.67    62.78          5.50                 6.56
-PostgreSQL-BHT-8-1-2-4    15723.85    63.53          6.05                 7.18
+PostgreSQL-BHT-8-1-1-1    12187.83    62.04          5.60                 8.70
+PostgreSQL-BHT-8-1-1-2    16003.08    63.64          6.25                 9.46
+PostgreSQL-BHT-8-1-1-3    15782.82    55.63          5.90                 9.08
+PostgreSQL-BHT-8-1-1-4    15894.09    63.62          6.36                 9.61
+PostgreSQL-BHT-8-1-2-1    61981.82    62.89         10.28                16.81
+PostgreSQL-BHT-8-1-2-2    15696.92    34.02          6.41                 9.82
+PostgreSQL-BHT-8-1-2-3    14798.53    63.03          6.11                 9.56
+PostgreSQL-BHT-8-1-2-4    17115.46    63.60          6.55                10.08
 
 ### Execution - Benchmarker
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       22.07     0.10          0.06                 0.06
-PostgreSQL-BHT-8-1-1-2       23.76     0.11          0.17                 0.17
-PostgreSQL-BHT-8-1-1-3       19.43     0.11          0.18                 0.18
-PostgreSQL-BHT-8-1-1-4       17.06     0.05          0.20                 0.20
-PostgreSQL-BHT-8-1-2-1       23.18     0.09          0.19                 0.19
-PostgreSQL-BHT-8-1-2-2       18.83     0.05          0.16                 0.16
-PostgreSQL-BHT-8-1-2-3       17.56     0.08          0.18                 0.18
-PostgreSQL-BHT-8-1-2-4       18.60     0.05          0.20                 0.20
+PostgreSQL-BHT-8-1-1-1       13.17     0.07          0.06                 0.06
+PostgreSQL-BHT-8-1-1-2       13.17     0.06          0.16                 0.17
+PostgreSQL-BHT-8-1-1-3       21.22     0.05          0.18                 0.18
+PostgreSQL-BHT-8-1-1-4       15.45     0.10          0.20                 0.20
+PostgreSQL-BHT-8-1-2-1       21.06     0.06          0.13                 0.13
+PostgreSQL-BHT-8-1-2-2       15.85     0.07          0.16                 0.16
+PostgreSQL-BHT-8-1-2-3       13.99     0.03          0.18                 0.18
+PostgreSQL-BHT-8-1-2-4       15.11     0.03          0.20                 0.20
+
+### Tests
 TEST passed: NOPM contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST passed: Workflow as planned
 ```
 
 
@@ -1381,44 +1417,47 @@ TEST passed: NOPM contains no 0 or NaN
 
 ### YCSB Loader Test for Scaling the Driver
 
-```
-python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 4,8 \
-    -nlt 32,64 \
-    -nlf 1 \
-    -nbp 1 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1 \
-    -nc 1 \
-    run
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 4,8 \
+  -nlt 32,64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
 ```
 
-yields (after ca. 20 minutes) something like
+yields (after ca. 15 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
-    YCSB SF=1
+YCSB SF=1
+    Type: ycsb
+    Duration: 922s 
+    Code: 1728294637
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are []. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
-Import is handled by 4 and 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Loading is tested with [32, 64] threads, split into [4, 8] pods.
-Benchmarking is tested with [64] threads, split into [1] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 4 and 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [32, 64] threads, split into [4, 8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
 
 ### Connections
 PostgreSQL-32-4-131072-1 uses docker image postgres:16.1
@@ -1427,8 +1466,8 @@ PostgreSQL-32-4-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248565128
-    datadisk:2188340
+    disk:251158144
+    datadisk:2188444
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-32-8-131072-1 uses docker image postgres:16.1
@@ -1437,8 +1476,8 @@ PostgreSQL-32-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248696368
-    datadisk:2319580
+    disk:251092320
+    datadisk:2139004
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-4-131072-1 uses docker image postgres:16.1
@@ -1447,8 +1486,8 @@ PostgreSQL-64-4-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248647400
-    datadisk:2270612
+    disk:251092552
+    datadisk:2122852
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
@@ -1457,69 +1496,90 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246416160
-    datadisk:39372
+    disk:251206656
+    datadisk:2236956
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-32-4-131072               1       32  131072          4                   82173.835235                12341.0             1000000                             2494.50
-PostgreSQL-64-4-131072               1       64  131072          4                  102402.660586                 9886.0             1000000                             3860.00
-PostgreSQL-32-8-131072               1       32  131072          8                   80125.026479                13504.0             1000000                             2439.75
-PostgreSQL-64-8-131072               1       64  131072          8                       0.000000                    0.0                   0                                0.00
+PostgreSQL-32-4-131072               1       32  131072          4                   80283.374645                13080.0             1000000                              2493.5
+PostgreSQL-64-4-131072               1       64  131072          4                   99155.844328                10230.0             1000000                              4230.0
+PostgreSQL-32-8-131072               1       32  131072          8                   82253.389980                12919.0             1000000                              2419.5
+PostgreSQL-64-8-131072               1       64  131072          8                  103530.048470                 9826.0             1000000                              3868.0
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-32-4-131072-1               1       64  131072          1                      114364.14                 8744.0            499806                            1407.0              500194                              2337.0
-PostgreSQL-32-8-131072-1               1       64  131072          1                      119817.88                 8346.0            499265                            1412.0              500735                              2621.0
-PostgreSQL-64-4-131072-1               1       64  131072          1                      119402.99                 8375.0            499833                            1376.0              500167                              1979.0
-TEST failed: [OVERALL].Throughput(ops/sec) contains 0 or NaN
+PostgreSQL-32-4-131072-1               1       64  131072          1                      116076.61                 8615.0            499607                            1111.0              500393                              1774.0
+PostgreSQL-32-8-131072-1               1       64  131072          1                      120322.46                 8311.0            500174                            1302.0              499826                              1839.0
+PostgreSQL-64-4-131072-1               1       64  131072          1                      121212.12                 8250.0            498926                             875.0              501074                              1668.0
+PostgreSQL-64-8-131072-1               1       64  131072          1                      119703.14                 8354.0            500032                            1341.0              499968                              1920.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-131072 - Pods [[1]]
+DBMS PostgreSQL-32-4-131072 - Pods [[1]]
+DBMS PostgreSQL-64-4-131072 - Pods [[1]]
+DBMS PostgreSQL-32-8-131072 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-32-4-131072 - Pods [[1]]
+DBMS PostgreSQL-32-8-131072 - Pods [[1]]
+DBMS PostgreSQL-64-4-131072 - Pods [[1]]
+DBMS PostgreSQL-64-8-131072 - Pods [[1]]
+
+### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
-### YCSB Execution for Scaling and Repetition
+### YCSB Loader Test for Persistency
 
-```
-python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 1 \
-    -nbp 1,8 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1,2 \
-    -nc 2 \
-    -rst shared -rss 100Gi \
-    run
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
 ```
 
-yields (after ca. 15 minutes) something like
+yields (after ca. 10 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
-    YCSB SF=1
+YCSB SF=1
+    Type: ycsb
+    Duration: 439s 
+    Code: 1728295547
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are []. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
-Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
-Loading is tested with [64] threads, split into [8] pods.
-Benchmarking is tested with [64] threads, split into [1, 8] pods.
-Benchmarking is run as [1, 2] times the number of benchmarking pods.
-Experiment is run 2 times.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
 
 ### Connections
 PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
@@ -1528,46 +1588,10 @@ PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:2931136
+    disk:248969696
+    datadisk:2220744
     volume_size:100G
-    volume_used:2.8G
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-8-131072-1-2 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:246374396
-    datadisk:2940816
-    volume_size:100G
-    volume_used:2.8G
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-8-131072-1-3 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:246374396
-    datadisk:3138456
-    volume_size:100G
-    volume_used:2.8G
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-8-131072-1-4 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:246374396
-    datadisk:3288736
-    volume_size:100G
-    volume_used:2.8G
+    volume_used:2.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
@@ -1576,10 +1600,142 @@ PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3520176
+    disk:248969688
+    datadisk:2904992
     volume_size:100G
-    volume_used:3.4G
+    volume_used:2.8G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-8-131072               1       64  131072          8                    98820.33019                10300.0             1000000                              3976.0
+
+### Execution
+                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-131072-1-1               1       64  131072          1                      123380.63                 8105.0            500252                            1359.0              499748                              1891.0
+PostgreSQL-64-8-131072-2-1               2       64  131072          1                       72040.92                13881.0            499882                            1428.0              500118                              1832.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
+
+#### Planned
+DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+
+
+### YCSB Execution for Scaling and Repetition
+
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
+```
+
+yields (after ca. 15 minutes) something like
+
+```bash
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 909s 
+    Code: 1728310490
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248970368
+    datadisk:3227840
+    volume_size:100G
+    volume_used:3.1G
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-131072-1-2 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248970368
+    datadisk:3230864
+    volume_size:100G
+    volume_used:3.1G
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-131072-1-3 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248970368
+    datadisk:3653712
+    volume_size:100G
+    volume_used:3.1G
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-131072-1-4 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248970368
+    datadisk:3836880
+    volume_size:100G
+    volume_used:3.1G
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248970368
+    datadisk:4128192
+    volume_size:100G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-2 uses docker image postgres:16.1
@@ -1588,10 +1744,10 @@ PostgreSQL-64-8-131072-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3524128
+    disk:248970368
+    datadisk:4131720
     volume_size:100G
-    volume_used:3.4G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-3 uses docker image postgres:16.1
@@ -1600,10 +1756,10 @@ PostgreSQL-64-8-131072-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3646168
+    disk:248970368
+    datadisk:4277912
     volume_size:100G
-    volume_used:3.4G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2-4 uses docker image postgres:16.1
@@ -1612,69 +1768,83 @@ PostgreSQL-64-8-131072-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3648904
+    disk:248970368
+    datadisk:4280752
     volume_size:100G
-    volume_used:3.4G
+    volume_used:4.0G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                       63564.71                15732.0            500546                           1365.00              499454                             1713.00
-PostgreSQL-64-8-131072-1-3               1       64  131072          8                      119634.40                 8507.0            500220                            968.25              499780                             1517.12
-PostgreSQL-64-8-131072-1-2               1      128  262144          2                       92718.61                10958.0            499999                           1936.50              500001                            53647.00
-PostgreSQL-64-8-131072-1-4               1      128  262144         16                      112027.76                 9416.0            499650                           2935.88              500350                            21887.50
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       57032.05                17534.0            499642                           1364.00              500358                             1683.00
-PostgreSQL-64-8-131072-2-3               2       64  131072          8                      127014.91                 7907.0            499572                            873.00              500428                             1386.50
-PostgreSQL-64-8-131072-2-2               2      128  262144          2                       97432.97                10338.0            500001                           1822.50              499999                            44143.00
-PostgreSQL-64-8-131072-2-4               2      128  262144         16                      140828.26                 7483.0            500423                           3146.62              499577                             5770.75
+PostgreSQL-64-8-131072-1-1               1       64  131072          1                       41480.01                24108.0            498871                           1344.00              501129                             1718.00
+PostgreSQL-64-8-131072-1-3               1       64  131072          8                      127182.17                 7886.0            500092                           1056.00              499908                             1521.12
+PostgreSQL-64-8-131072-1-2               1      128  262144          2                       88612.54                11354.0            499577                           2089.00              500423                            56719.00
+PostgreSQL-64-8-131072-1-4               1      128  262144         16                      102044.13                10115.0            500637                           2847.25              499363                            39921.00
+PostgreSQL-64-8-131072-2-1               2       64  131072          1                       32155.37                31099.0            500462                           1444.00              499538                             2121.00
+PostgreSQL-64-8-131072-2-3               2       64  131072          8                      126908.33                 7915.0            500151                           1034.50              499849                             1533.38
+PostgreSQL-64-8-131072-2-2               2      128  262144          2                       88046.05                11417.0            500312                           1986.00              499688                            61407.00
+PostgreSQL-64-8-131072-2-4               2      128  262144         16                       98553.48                10576.0            499669                           2620.88              500331                            46513.00
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-131072 - Pods [[8, 16, 1, 2], [16, 8, 1, 2]]
+
+#### Planned
+DBMS PostgreSQL-64-8-131072 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+
+### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
 
-### YCSB Execution Different Workload (TestCases.md)
+### YCSB Execution Different Workload
 
-```
-python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload e \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 1 \
-    -nbp 8 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1 \
-    -nc 1 \
-    -rst shared -rss 100Gi \
-    run
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload e \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
 ```
 
 yields (after ca. 5 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
-    YCSB SF=1
+YCSB SF=1
+    Type: ycsb
+    Duration: 262s 
+    Code: 1728297047
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are []. Factors for benchmarking are [].
-Benchmark is limited to DBMS PostgreSQL.
-Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
-Loading is tested with [64] threads, split into [8] pods.
-Benchmarking is tested with [64] threads, split into [8] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
+    Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
 
 ### Connections
 PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
@@ -1683,8 +1853,8 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:3678280
+    disk:248969688
+    datadisk:3726752
     volume_size:100G
     volume_used:3.6G
     requests_cpu:4
@@ -1692,56 +1862,69 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          8                       25278.82                41289.0               50218                             3116.25            949782                            5919.5
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-```
+PostgreSQL-64-8-131072-1               1       64  131072          8                       24068.35                42214.0               50154                             2958.25            949846                            5449.5
 
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+
+#### Planned
+DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned
+```
 
 ### YCSB Execution Monitoring
 
-```
-python ycsb.py -ms 1 -tr \
-    -sf 1 \
-    --workload a \
-    -dbms PostgreSQL \
-    -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-    -tb 131072 \
-    -nlp 8 \
-    -nlt 64 \
-    -nlf 1 \
-    -nbp 1,8 \
-    -nbt 64 \
-    -nbf 1 \
-    -ne 1 \
-    -nc 1 \
-    -rst shared -rss 100Gi \
-    -m -mc \
-    -sf 10 \
-    run
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  -m -mc \
+  -sf 10 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
 ```
 
 yields (after ca. 10 minutes) something like
 
-```
+```bash
 ## Show Summary
 
 ### Workload
-    YCSB SF=10
+YCSB SF=10
+    Type: ycsb
+    Duration: 574s 
+    Code: 1728297347
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 10000000. Number of operations is 10000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are []. Factors for benchmarking are [].
-System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS PostgreSQL.
-Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
-Loading is tested with [64] threads, split into [8] pods.
-Benchmarking is tested with [64] threads, split into [1, 8] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
+    Workload is 'A'. Number of rows to insert is 10000000. Number of operations is 10000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
 
 ### Connections
 PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
@@ -1750,10 +1933,10 @@ PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:31728184
+    disk:248969688
+    datadisk:33568432
     volume_size:100G
-    volume_used:31G
+    volume_used:33G
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-64-8-131072-2 uses docker image postgres:16.1
@@ -1762,35 +1945,43 @@ PostgreSQL-64-8-131072-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:246374396
-    datadisk:31807712
+    disk:248969768
+    datadisk:33824096
     volume_size:100G
-    volume_used:31G
+    volume_used:33G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          1                       64498.24               155043.0           4999842                           1383.00             5000158                             1808.00
-PostgreSQL-64-8-131072-2               1       64  131072          8                      130431.05                77251.0           5000234                           1228.25             4999766                             1621.25
+PostgreSQL-64-8-131072-1               1       64  131072          1                       44852.10               222955.0           5001348                           1910.00             4998652                             4099.00
+PostgreSQL-64-8-131072-2               1       64  131072          8                      123633.41                82090.0           5000619                           1243.88             4999381                             1676.25
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-131072 - Pods [[8, 1]]
+
+#### Planned
+DBMS PostgreSQL-64-8-131072 - Pods [[1, 8]]
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-131072-1      634.69      9.1         12.99                27.89
-PostgreSQL-64-8-131072-2     1636.94      0.0         17.51                32.41
+PostgreSQL-64-8-131072-1     2008.97    13.49         16.37                33.20
+PostgreSQL-64-8-131072-2     1298.10     0.00         18.77                37.93
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-131072-1      296.33     0.00          0.60                 0.60
-PostgreSQL-64-8-131072-2      658.44     1.27          5.16                 5.19
+PostgreSQL-64-8-131072-1      502.94     3.47          0.60                 0.61
+PostgreSQL-64-8-131072-2      438.98     0.00          5.11                 5.14
+
+### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST passed: Workflow as planned
 ```
-
-
-
-
-
-
 
 
 
