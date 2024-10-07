@@ -93,6 +93,9 @@ class base:
             #exit()
         except Exception as e:
             pass
+        if len(self.workflow_errors[filename]) == 0:
+            # no errors found
+            del self.workflow_errors[filename]
         return pd.DataFrame()
     def transform_all_logs_benchmarking(self):
         """
@@ -194,7 +197,7 @@ class base:
         In this class basically it scans for errors.
         """
         if self.include_benchmarking:
-            self.transform_all_logs_benchmar1king()
+            self.transform_all_logs_benchmarking()
             # only sensible for logger classes:
             self._collect_dfs(filename_result="bexhoma-benchmarker.all.df.pickle" , filename_source_start="bexhoma-benchmarker", filename_source_end=".log.df.pickle")
         if self.include_loading:

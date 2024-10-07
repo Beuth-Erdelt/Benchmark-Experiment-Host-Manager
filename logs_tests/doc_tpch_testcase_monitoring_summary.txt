@@ -2,8 +2,9 @@
 
 ### Workload
     TPC-H Queries SF=1
-    Type: dbmsbenchmarker
-    Duration: 419s 
+    Type: tpch
+    Duration: 388s 
+    Code: 1728076423
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -28,8 +29,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250345956
-    datadisk:2821984
+    disk:251769124
+    datadisk:2823016
     requests_cpu:4
     requests_memory:16Gi
 
@@ -41,42 +42,42 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                 2570.29
-Minimum Cost Supplier Query (TPC-H Q2)                             420.82
-Shipping Priority (TPC-H Q3)                                       722.27
-Order Priority Checking Query (TPC-H Q4)                          1237.69
-Local Supplier Volume (TPC-H Q5)                                   623.96
-Forecasting Revenue Change (TPC-H Q6)                              482.77
-Forecasting Revenue Change (TPC-H Q7)                              748.48
-National Market Share (TPC-H Q8)                                   590.96
-Product Type Profit Measure (TPC-H Q9)                            1057.38
-Forecasting Revenue Change (TPC-H Q10)                            1237.88
-Important Stock Identification (TPC-H Q11)                         235.24
-Shipping Modes and Order Priority (TPC-H Q12)                      999.28
-Customer Distribution (TPC-H Q13)                                 1955.61
-Forecasting Revenue Change (TPC-H Q14)                             519.54
-Top Supplier Query (TPC-H Q15)                                     537.98
-Parts/Supplier Relationship (TPC-H Q16)                            547.98
-Small-Quantity-Order Revenue (TPC-H Q17)                          1957.86
-Large Volume Customer (TPC-H Q18)                                 7317.09
-Discounted Revenue (TPC-H Q19)                                     676.91
-Potential Part Promotion (TPC-H Q20)                               635.92
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                886.70
-Global Sales Opportunity Query (TPC-H Q22)                         231.41
+Pricing Summary Report (TPC-H Q1)                                 2532.85
+Minimum Cost Supplier Query (TPC-H Q2)                             420.58
+Shipping Priority (TPC-H Q3)                                       733.52
+Order Priority Checking Query (TPC-H Q4)                          1254.93
+Local Supplier Volume (TPC-H Q5)                                   634.90
+Forecasting Revenue Change (TPC-H Q6)                              496.66
+Forecasting Revenue Change (TPC-H Q7)                              825.53
+National Market Share (TPC-H Q8)                                   599.74
+Product Type Profit Measure (TPC-H Q9)                            1101.86
+Forecasting Revenue Change (TPC-H Q10)                            1250.83
+Important Stock Identification (TPC-H Q11)                         240.31
+Shipping Modes and Order Priority (TPC-H Q12)                      993.45
+Customer Distribution (TPC-H Q13)                                 2028.24
+Forecasting Revenue Change (TPC-H Q14)                             525.00
+Top Supplier Query (TPC-H Q15)                                     539.90
+Parts/Supplier Relationship (TPC-H Q16)                            587.83
+Small-Quantity-Order Revenue (TPC-H Q17)                          1986.15
+Large Volume Customer (TPC-H Q18)                                 7011.29
+Discounted Revenue (TPC-H Q19)                                     680.12
+Potential Part Promotion (TPC-H Q20)                               662.06
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                878.09
+Global Sales Opportunity Query (TPC-H Q22)                         236.46
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       84.0     120.0
+PostgreSQL-BHT-8-1-1           1.0           24.0         1.0       82.0     117.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-8-1-1           0.87
+PostgreSQL-BHT-8-1-1           0.88
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            4356.88
+PostgreSQL-BHT-8-1-1            4280.58
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
@@ -86,26 +87,34 @@ PostgreSQL-BHT-8-1 1  1              1                 29      1   1            
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 #### Planned
 DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      138.91     0.19          3.74                 4.93
+PostgreSQL-BHT-8-1       128.3      1.3          3.72                 4.91
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1        0.86        0          0.06                 0.21
+PostgreSQL-BHT-8-1           0        0           0.0                  0.0
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      122.33        0          3.84                 5.03
+PostgreSQL-BHT-8-1       79.93        0          3.84                 5.02
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       11.41        0          0.23                 0.24
+PostgreSQL-BHT-8-1        0.01        0           0.0                  0.0
+
+### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+
+TEST passed: Workflow as planned

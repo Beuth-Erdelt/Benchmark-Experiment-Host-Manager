@@ -3,8 +3,8 @@
 ### Workload
     TPC-H Queries SF=100
     Type: tpch
-    Duration: 4675s 
-    Code: 1728050276
+    Duration: 4630s 
+    Code: 1728080023
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=100) data is loaded and benchmark is executed.
@@ -30,8 +30,8 @@ MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Dec2023
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248944868
-    datadisk:219980808
+    disk:248946232
+    datadisk:219980820
     volume_size:300G
     volume_used:210G
     requests_cpu:4
@@ -42,8 +42,8 @@ MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Dec2023
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248945040
-    datadisk:219980810
+    disk:248946400
+    datadisk:219980821
     volume_size:300G
     volume_used:210G
     requests_cpu:4
@@ -54,8 +54,8 @@ MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Dec2023
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248945040
-    datadisk:219980811
+    disk:248946400
+    datadisk:219980822
     volume_size:300G
     volume_used:210G
     requests_cpu:4
@@ -66,10 +66,10 @@ MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Dec2023
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248945040
-    datadisk:219980813
+    disk:248946400
+    datadisk:219980824
     volume_size:300G
-    volume_used:215G
+    volume_used:210G
     requests_cpu:4
     requests_memory:16Gi
 
@@ -81,28 +81,28 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1
-Pricing Summary Report (TPC-H Q1)                              505174.61            225816.02            504923.89            220729.45
-Minimum Cost Supplier Query (TPC-H Q2)                          24963.25             10460.09             25758.95              9824.44
-Shipping Priority (TPC-H Q3)                                    69786.37             18405.81             66668.69             11038.47
-Order Priority Checking Query (TPC-H Q4)                        79890.52              9662.41             78152.62             12436.11
-Local Supplier Volume (TPC-H Q5)                                41142.95              4567.03             39594.81              6131.07
-Forecasting Revenue Change (TPC-H Q6)                            6896.89              4090.36              6668.81              2608.60
-Forecasting Revenue Change (TPC-H Q7)                            6556.63              3193.75              8955.74              2814.76
-National Market Share (TPC-H Q8)                               111989.66             31936.32            160026.78             27055.97
-Product Type Profit Measure (TPC-H Q9)                          23644.96             19728.72             26571.27             14346.01
-Forecasting Revenue Change (TPC-H Q10)                          57943.90             30986.14             58281.73             24621.33
-Important Stock Identification (TPC-H Q11)                       6186.01              1098.22              6121.36               933.75
-Shipping Modes and Order Priority (TPC-H Q12)                   11159.33              1044.30             11683.17              1645.67
-Customer Distribution (TPC-H Q13)                              191400.91            153886.67            204990.53             99235.57
-Forecasting Revenue Change (TPC-H Q14)                           4849.71              1929.96              5293.94              1092.17
-Top Supplier Query (TPC-H Q15)                                   5307.21              4391.66              6300.97              4867.53
-Parts/Supplier Relationship (TPC-H Q16)                         13796.50             11741.23             15827.69             12475.68
-Small-Quantity-Order Revenue (TPC-H Q17)                        44204.81             45007.60             41865.09             41020.78
-Large Volume Customer (TPC-H Q18)                               57608.52            110672.15             49518.73            103647.20
-Discounted Revenue (TPC-H Q19)                                  13604.58              8477.58             13426.63              4019.95
-Potential Part Promotion (TPC-H Q20)                            10365.46              3516.04              8477.78              3297.92
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)             20833.77             17521.73             20971.12             17658.79
-Global Sales Opportunity Query (TPC-H Q22)                       6256.54              8119.35              6710.01              6663.57
+Pricing Summary Report (TPC-H Q1)                              504400.27            221379.52            501015.06            260322.53
+Minimum Cost Supplier Query (TPC-H Q2)                          26883.58              8192.16             27018.37              3578.62
+Shipping Priority (TPC-H Q3)                                    66490.39             10229.35             66343.84             26146.63
+Order Priority Checking Query (TPC-H Q4)                        79389.41             11063.24             76274.84             12850.08
+Local Supplier Volume (TPC-H Q5)                                39136.74              6214.14             39214.54             11026.32
+Forecasting Revenue Change (TPC-H Q6)                            7507.93              3076.38              5363.32              7555.43
+Forecasting Revenue Change (TPC-H Q7)                            6865.79              3148.34              6064.07              5574.21
+National Market Share (TPC-H Q8)                               105043.62             39442.99            108389.15             35141.92
+Product Type Profit Measure (TPC-H Q9)                          25552.11             14532.49             27529.09             27397.68
+Forecasting Revenue Change (TPC-H Q10)                          58121.87             36850.28             63484.94             29877.06
+Important Stock Identification (TPC-H Q11)                       5801.30              1564.66              5960.99              1324.38
+Shipping Modes and Order Priority (TPC-H Q12)                   12819.58              4803.74             13696.60              3411.38
+Customer Distribution (TPC-H Q13)                              184799.96             93951.56            189313.88            144433.86
+Forecasting Revenue Change (TPC-H Q14)                           8829.60              5719.25              7926.17             14215.27
+Top Supplier Query (TPC-H Q15)                                   6888.49              5134.93              6460.70             10321.21
+Parts/Supplier Relationship (TPC-H Q16)                         13271.86             12989.25             13462.51             12460.96
+Small-Quantity-Order Revenue (TPC-H Q17)                        42377.73             15706.71             40919.96            150247.13
+Large Volume Customer (TPC-H Q18)                               51501.02             19455.46             50643.10             48181.81
+Discounted Revenue (TPC-H Q19)                                  13518.81              3099.12             15488.90             13318.37
+Potential Part Promotion (TPC-H Q20)                             8120.04              3814.36             15614.17              7898.74
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)             22869.45             16450.56             22423.79             19286.36
+Global Sales Opportunity Query (TPC-H Q22)                       9535.22              6528.85              6503.92              6431.25
 
 ### Loading [s]
                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
@@ -114,26 +114,26 @@ MonetDB-BHT-8-2-2-1           1.0         1686.0         7.0     5358.0    7061.
 ### Geometric Mean of Medians of Timer Run [s]
                      Geo Times [s]
 DBMS                              
-MonetDB-BHT-8-1-1-1          25.15
-MonetDB-BHT-8-1-2-1          12.11
-MonetDB-BHT-8-2-1-1          26.11
-MonetDB-BHT-8-2-2-1          10.53
+MonetDB-BHT-8-1-1-1          26.44
+MonetDB-BHT-8-1-2-1          11.00
+MonetDB-BHT-8-2-1-1          26.44
+MonetDB-BHT-8-2-2-1          17.08
 
 ### Power@Size
                      Power@Size [~Q/h]
 DBMS                                  
-MonetDB-BHT-8-1-1-1           14567.42
-MonetDB-BHT-8-1-2-1           31555.75
-MonetDB-BHT-8-2-1-1           14021.90
-MonetDB-BHT-8-2-2-1           36249.36
+MonetDB-BHT-8-1-1-1           13865.82
+MonetDB-BHT-8-1-2-1           34395.27
+MonetDB-BHT-8-2-1-1           13873.96
+MonetDB-BHT-8-2-2-1           22074.18
 
 ### Throughput@Size
                                                  time [s]  count   SF  Throughput@Size [~GB/h]
 DBMS              SF  num_experiment num_client                                               
-MonetDB-BHT-8-1-1 100 1              1               1330      1  100                  5954.89
-MonetDB-BHT-8-1-2 100 1              2                737      1  100                 10746.27
-MonetDB-BHT-8-2-1 100 2              1               1383      1  100                  5726.68
-MonetDB-BHT-8-2-2 100 2              2                639      1  100                 12394.37
+MonetDB-BHT-8-1-1 100 1              1               1318      1  100                  6009.10
+MonetDB-BHT-8-1-2 100 1              2                554      1  100                 14296.03
+MonetDB-BHT-8-2-1 100 2              1               1327      1  100                  5968.35
+MonetDB-BHT-8-2-2 100 2              2                863      1  100                  9177.29
 
 ### Workflow
 
@@ -145,17 +145,17 @@ DBMS MonetDB-BHT-8 - Pods [[1, 1], [1, 1]]
 
 ### Execution - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1     5777.03    15.25         45.07                91.43
-MonetDB-BHT-8-1-2     3707.17    12.35         36.87               140.22
-MonetDB-BHT-8-2-1     9830.07    18.48         43.82                85.06
-MonetDB-BHT-8-2-2     4480.58    14.62         54.91               140.84
+MonetDB-BHT-8-1-1     7076.76    23.92         58.56                96.97
+MonetDB-BHT-8-1-2     3953.82    19.03         66.60               141.20
+MonetDB-BHT-8-2-1    11801.33    19.06         69.21               100.00
+MonetDB-BHT-8-2-2     5291.74    15.15         46.78               120.63
 
 ### Execution - Benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1       23.65     0.06          0.32                 0.33
-MonetDB-BHT-8-1-2       23.65     0.08          0.56                 0.58
-MonetDB-BHT-8-2-1       21.65     0.01          0.55                 0.58
-MonetDB-BHT-8-2-2       22.54     0.07          0.55                 0.57
+MonetDB-BHT-8-1-1       22.13     0.02          0.32                 0.33
+MonetDB-BHT-8-1-2       22.13     0.05          0.55                 0.57
+MonetDB-BHT-8-2-1       20.62     0.02          0.33                 0.35
+MonetDB-BHT-8-2-2       20.62     0.02          0.55                 0.59
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN

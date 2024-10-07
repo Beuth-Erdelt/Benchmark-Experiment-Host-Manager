@@ -2,8 +2,9 @@
 
 ### Workload
     TPC-H Queries SF=1
-    Type: dbmsbenchmarker
-    Duration: 6788s 
+    Type: tpch
+    Duration: 4682s 
+    Code: 1728069223
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -26,7 +27,7 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249664272
+    disk:251086408
     datadisk:2140488
     requests_cpu:4
     requests_memory:16Gi
@@ -36,8 +37,8 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250364812
-    datadisk:2841024
+    disk:251786944
+    datadisk:2841020
     requests_cpu:4
     requests_memory:16Gi
 MySQL-BHT-8-8-1-1 uses docker image mysql:8.4.0
@@ -45,8 +46,8 @@ MySQL-BHT-8-8-1-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:258964620
-    datadisk:11440648
+    disk:259487904
+    datadisk:10541792
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
@@ -55,8 +56,8 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250346024
-    datadisk:2822392
+    disk:251768784
+    datadisk:2823016
     requests_cpu:4
     requests_memory:16Gi
 
@@ -66,97 +67,100 @@ No errors
 ### Warnings (result mismatch)
                                                      MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
 Pricing Summary Report (TPC-H Q1)                                False              False              False                 False
-Minimum Cost Supplier Query (TPC-H Q2)                           False              False              False                 False
-Shipping Priority (TPC-H Q3)                                     False              False              False                 False
-Order Priority Checking Query (TPC-H Q4)                         False              False              False                 False
-Local Supplier Volume (TPC-H Q5)                                 False              False              False                 False
+Minimum Cost Supplier Query (TPC-H Q2)                           False              False               True                 False
+Shipping Priority (TPC-H Q3)                                     False              False               True                 False
+Order Priority Checking Query (TPC-H Q4)                         False              False               True                 False
+Local Supplier Volume (TPC-H Q5)                                 False              False               True                 False
 Forecasting Revenue Change (TPC-H Q6)                            False              False              False                 False
-Forecasting Revenue Change (TPC-H Q7)                            False              False              False                 False
-National Market Share (TPC-H Q8)                                 False              False              False                 False
-Product Type Profit Measure (TPC-H Q9)                           False              False              False                 False
-Forecasting Revenue Change (TPC-H Q10)                           False              False              False                  True
-Important Stock Identification (TPC-H Q11)                       False              False              False                 False
-Shipping Modes and Order Priority (TPC-H Q12)                    False              False              False                 False
-Customer Distribution (TPC-H Q13)                                False              False              False                 False
-Forecasting Revenue Change (TPC-H Q14)                           False              False              False                 False
-Top Supplier Query (TPC-H Q15)                                   False              False              False                 False
-Parts/Supplier Relationship (TPC-H Q16)                          False              False              False                 False
-Small-Quantity-Order Revenue (TPC-H Q17)                         False              False              False                 False
-Large Volume Customer (TPC-H Q18)                                False              False              False                 False
-Discounted Revenue (TPC-H Q19)                                   False              False              False                 False
-Potential Part Promotion (TPC-H Q20)                             False              False              False                 False
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)              False              False              False                 False
-Global Sales Opportunity Query (TPC-H Q22)                       False              False              False                 False
+Forecasting Revenue Change (TPC-H Q7)                            False              False               True                 False
+National Market Share (TPC-H Q8)                                 False              False               True                 False
+Product Type Profit Measure (TPC-H Q9)                           False              False               True                 False
+Forecasting Revenue Change (TPC-H Q10)                           False              False               True                 False
+Important Stock Identification (TPC-H Q11)                       False              False               True                 False
+Shipping Modes and Order Priority (TPC-H Q12)                    False              False               True                 False
+Customer Distribution (TPC-H Q13)                                False              False               True                 False
+Forecasting Revenue Change (TPC-H Q14)                           False              False               True                 False
+Top Supplier Query (TPC-H Q15)                                   False              False               True                 False
+Parts/Supplier Relationship (TPC-H Q16)                          False              False               True                 False
+Small-Quantity-Order Revenue (TPC-H Q17)                         False              False               True                 False
+Large Volume Customer (TPC-H Q18)                                False              False               True                 False
+Discounted Revenue (TPC-H Q19)                                   False              False               True                 False
+Potential Part Promotion (TPC-H Q20)                             False              False               True                 False
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)              False              False               True                 False
+Global Sales Opportunity Query (TPC-H Q22)                       False              False               True                 False
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-8-8-1-1  PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                             28212.79            1279.25           29264.78               2509.78
-Minimum Cost Supplier Query (TPC-H Q2)                         1347.96              27.79             350.37                404.71
-Shipping Priority (TPC-H Q3)                                   5533.44             110.67            4394.45                726.86
-Order Priority Checking Query (TPC-H Q4)                       1348.26              49.57            1615.91               1220.30
-Local Supplier Volume (TPC-H Q5)                               3546.07              65.77            3782.38                626.97
-Forecasting Revenue Change (TPC-H Q6)                          3501.06              32.45            4265.21                480.73
-Forecasting Revenue Change (TPC-H Q7)                          3723.40              77.47            6308.88                732.16
-National Market Share (TPC-H Q8)                               6866.72             328.71            9760.63                578.29
-Product Type Profit Measure (TPC-H Q9)                         5729.25              93.31            6986.76               1056.58
-Forecasting Revenue Change (TPC-H Q10)                         2965.17             164.58            3216.54               1196.92
-Important Stock Identification (TPC-H Q11)                      362.57              23.50             483.41                238.68
-Shipping Modes and Order Priority (TPC-H Q12)                 12313.73              56.50            6762.52                982.33
-Customer Distribution (TPC-H Q13)                             10036.42             510.67           13272.87               1947.75
-Forecasting Revenue Change (TPC-H Q14)                        32053.05              34.59            5011.54                509.72
-Top Supplier Query (TPC-H Q15)                                 7228.12              37.73           42957.00                527.11
-Parts/Supplier Relationship (TPC-H Q16)                         779.34              93.34             997.20                559.13
-Small-Quantity-Order Revenue (TPC-H Q17)                        159.27              48.10            1231.86               1927.87
-Large Volume Customer (TPC-H Q18)                             10429.29             169.44            6158.22               6843.84
-Discounted Revenue (TPC-H Q19)                                  291.26              66.31             428.32                667.13
-Potential Part Promotion (TPC-H Q20)                            536.01              70.36             806.18                645.68
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          204242.15            1688.44           18731.20                881.96
-Global Sales Opportunity Query (TPC-H Q22)                      457.16              58.17             531.41                230.90
+Pricing Summary Report (TPC-H Q1)                             28053.05            1171.02           29542.84               2527.16
+Minimum Cost Supplier Query (TPC-H Q2)                         1335.66              27.68               4.66                418.43
+Shipping Priority (TPC-H Q3)                                   5105.25             120.12               2.60                730.04
+Order Priority Checking Query (TPC-H Q4)                       1164.98              53.54               1.82               1237.57
+Local Supplier Volume (TPC-H Q5)                               3303.78              65.26               1.84                637.49
+Forecasting Revenue Change (TPC-H Q6)                          3336.59              32.82            4268.15                483.90
+Forecasting Revenue Change (TPC-H Q7)                          3635.53              85.34               3.60                746.23
+National Market Share (TPC-H Q8)                               6356.12             356.32               3.39                592.97
+Product Type Profit Measure (TPC-H Q9)                         5814.68              95.44               2.74               1078.96
+Forecasting Revenue Change (TPC-H Q10)                         2975.16             161.08               2.79               1251.70
+Important Stock Identification (TPC-H Q11)                      397.30              26.16               2.34                237.40
+Shipping Modes and Order Priority (TPC-H Q12)                 11683.31              71.59               2.31               1010.08
+Customer Distribution (TPC-H Q13)                             10086.02             577.43               2.11               1961.89
+Forecasting Revenue Change (TPC-H Q14)                        29701.76              42.08               2.01                523.22
+Top Supplier Query (TPC-H Q15)                                 7414.86              42.43            4929.67                532.74
+Parts/Supplier Relationship (TPC-H Q16)                         747.53             117.88               2.86                573.74
+Small-Quantity-Order Revenue (TPC-H Q17)                        146.08              62.49               1.89               1798.55
+Large Volume Customer (TPC-H Q18)                             10234.30             237.23               2.37               6203.08
+Discounted Revenue (TPC-H Q19)                                  285.17              74.13               2.96                685.24
+Potential Part Promotion (TPC-H Q20)                            523.18              78.22               2.84                644.63
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          203790.97            1760.64               3.28                873.61
+Global Sales Opportunity Query (TPC-H Q22)                      425.33              53.83             354.53                231.75
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              1.0          363.0         2.0     1613.0    1986.0
-MonetDB-BHT-8-1-1              1.0           21.0         8.0       28.0      65.0
-MySQL-BHT-8-8-1-1              1.0          498.0         3.0     2289.0    2797.0
-PostgreSQL-BHT-8-1-1           1.0           26.0         1.0       83.0     118.0
+MariaDB-BHT-8-1-1              1.0          360.0         2.0     1616.0    1986.0
+MonetDB-BHT-8-1-1              1.0           22.0         8.0       29.0      66.0
+MySQL-BHT-8-8-1-1              1.0          350.0         3.0      391.0     752.0
+PostgreSQL-BHT-8-1-1           1.0           25.0         1.0       86.0     120.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-MariaDB-BHT-8-1-1              3.43
-MonetDB-BHT-8-1-1              0.12
-MySQL-BHT-8-8-1-1              3.46
-PostgreSQL-BHT-8-1-1           0.85
+MariaDB-BHT-8-1-1              3.32
+MonetDB-BHT-8-1-1              0.13
+MySQL-BHT-8-8-1-1              0.01
+PostgreSQL-BHT-8-1-1           0.86
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1               1083.01
-MonetDB-BHT-8-1-1              37144.57
-MySQL-BHT-8-8-1-1               1069.53
-PostgreSQL-BHT-8-1-1            4409.36
+MariaDB-BHT-8-1-1               1118.89
+MonetDB-BHT-8-1-1              33852.42
+MySQL-BHT-8-8-1-1             366329.50
+PostgreSQL-BHT-8-1-1            4382.28
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-MariaDB-BHT-8-1    1  1              1                346      1   1                   228.90
-MonetDB-BHT-8-1    1  1              1                  8      1   1                  9900.00
-MySQL-BHT-8-8-1    1  1              1                171      1   1                   463.16
+MariaDB-BHT-8-1    1  1              1                340      1   1                   232.94
+MonetDB-BHT-8-1    1  1              1                  9      1   1                  8800.00
+MySQL-BHT-8-8-1    1  1              1                 41      1   1                  1931.71
 PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
 
 ### Workflow
 
 #### Actual
-DBMS MariaDB-BHT-8-1 - Pods [[1]]
-DBMS MonetDB-BHT-8-1 - Pods [[1]]
-DBMS MySQL-BHT-8-8-1 - Pods [[1]]
-DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+DBMS MariaDB-BHT-8 - Pods [[1]]
+DBMS MonetDB-BHT-8 - Pods [[1]]
+DBMS MySQL-BHT-8-8 - Pods [[1]]
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 #### Planned
 DBMS PostgreSQL-BHT-8 - Pods [[1]]
 DBMS MonetDB-BHT-8 - Pods [[1]]
 DBMS MariaDB-BHT-8 - Pods [[1]]
 DBMS MySQL-BHT-8-8 - Pods [[1]]
+
+### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Workflow as planned
