@@ -29,6 +29,30 @@ docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.3 &
 cd ..
 
 ###########
+cd tpcds
+cd generator
+docker build -f Dockerfile -t bexhoma/generator_tpcds:latest .
+docker push bexhoma/generator_tpcds:latest &
+cd ..
+
+cd loader_postgresql
+docker build -f Dockerfile -t bexhoma/loader_tpcds_postgresql:latest .
+docker push bexhoma/loader_tpcds_postgresql:latest &
+cd ..
+
+#cd loader_mysql
+#docker build -f Dockerfile -t bexhoma/loader_tpch_mysql:latest .
+#docker push bexhoma/loader_tpch_mysql:latest &
+#cd ..
+
+#cd loader_monetdb
+#docker build -f Dockerfile -t bexhoma/loader_tpch_monetdb:latest .
+#docker push bexhoma/loader_tpch_monetdb:latest &
+#cd ..
+cd ..
+
+
+###########
 cd tpch
 cd generator
 docker build -f Dockerfile -t bexhoma/generator_tpch:latest .

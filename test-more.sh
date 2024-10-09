@@ -37,11 +37,11 @@ wait_process() {
     # Wait until the process with the name passed as an argument has terminated
     while ps aux | grep "[p]ython $process_name.py" > /dev/null; do
         # Process is still running, wait for 5 seconds
-        echo "Waiting for process python $process_name.py to terminate..."
+        echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for process python $process_name.py to terminate..."
         sleep 60
     done
 
-    echo "Process python $process_name.py has terminated."
+    echo "$(date +"%Y-%m-%d %H:%M:%S"): Process python $process_name.py has terminated."
 }
 
 # Example usage
@@ -444,7 +444,7 @@ wait_process "hammerdb"
 
 
 ###########################################
-################## YCSB ###################
+############### YCSB MySQL ################
 ###########################################
 
 
@@ -457,7 +457,7 @@ wait_process "hammerdb"
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   --workload a \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 131072 \
   -nlp 4,8 \
@@ -468,25 +468,26 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_1.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_1.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_1.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "ycsb"
 
 
 
 #### Delete persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-ycsb-1
+kubectl delete pvc bexhoma-storage-mysql-ycsb-1
 sleep 10
 
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   --workload a \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 131072 \
   -nlp 8 \
@@ -498,13 +499,14 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_2.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_2.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_2.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "ycsb"
 
 
 
@@ -512,7 +514,7 @@ sleep 600
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   --workload a \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 131072 \
   -nlp 8 \
@@ -524,13 +526,14 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_3.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_3.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_3.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "ycsb"
 
 
 
@@ -538,7 +541,7 @@ sleep 900
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   --workload e \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 131072 \
   -nlp 8 \
@@ -550,13 +553,14 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_4.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_4.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_4.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 300
+#sleep 300
+wait_process "ycsb"
 
 
 
@@ -564,7 +568,7 @@ sleep 300
 nohup python ycsb.py -ms 1 -tr \
   -sf 10 \
   --workload a \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 131072 \
   -nlp 8 \
@@ -577,15 +581,209 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -rst shared -rss 100Gi \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_5.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_5.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_5.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "ycsb"
 
 
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+############## YCSB MariaDB ###############
+###########################################
+
+
+
+
+
+
+
+### YCSB Loader Test for Scaling the Driver (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 4,8 \
+  -nlt 32,64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-mariadb-ycsb-1
+sleep 10
+
+### YCSB Loader Test for Persistency (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_2.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "ycsb"
+
+
+
+### YCSB Execution for Scaling and Repetition (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_3.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_3.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+### YCSB Execution Different Workload (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload e \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_4.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_4.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 300
+wait_process "ycsb"
+
+
+
+#### YCSB Execution Monitoring (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload a \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_5.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_5.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+
+
+
+
+
+
+
+###########################################
+################## TPC-H ##################
+###########################################
+
+
+
+### TPC-DS Power Test - only PostgreSQL (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 600
+wait_process "tpcds"
 
 
 
