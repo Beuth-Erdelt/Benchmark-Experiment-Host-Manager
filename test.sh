@@ -1,4 +1,18 @@
 #!/bin/bash
+######################################################################################
+# Bash Script for Bexhoma Test Runs - Basic Runs for the Test Cases Doc File
+######################################################################################
+#
+# This scripts starts a sequence of experiments with varying parameters.
+# Each experiment waits until previous tests have been completed.
+# Logs are written to a log folder.
+# At the end, logs are cleaned and the summaries are extracted and stored in separate files.
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2024-10-01
+# Version: 1.0
+######################################################################################
 
 
 BEXHOMA_NODE_SUT="cl-worker11"
