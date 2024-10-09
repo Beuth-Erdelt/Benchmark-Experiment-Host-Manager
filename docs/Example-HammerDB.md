@@ -500,5 +500,5 @@ TEST passed: Workflow as planned
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
-Also note the size descreases from first to second run (PostgreSQL does smoe cleaning?).
+Also note the size descreases from first to second run (PostgreSQL does some cleaning?).
 

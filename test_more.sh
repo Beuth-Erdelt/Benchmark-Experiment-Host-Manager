@@ -259,7 +259,7 @@ wait_process "benchbase"
 
 
 ###########################################
-################ HammerDB #################
+############# HammerDB MySQL ##############
 ###########################################
 
 
@@ -268,30 +268,31 @@ wait_process "benchbase"
 ### HammerDB Simple (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
   -nbp 1 \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_1.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_1.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mysql_1.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "hammerdb"
 
 #### Delete persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
+kubectl delete pvc bexhoma-storage-mysql-hammerdb-16
 sleep 10
 
 
 ### HammerDB Monitoring (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
   -nbp 1 \
@@ -300,20 +301,21 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_2.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mysql_2.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "hammerdb"
 
 
 ### HammerDB Complex (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
   -sd 2 \
-  -dbms PostgreSQL \
+  -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
   -nbp 1,2 \
@@ -322,13 +324,96 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_3.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mysql_3.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 3000
+#sleep 3000
+wait_process "hammerdb"
+
+
+
+
+
+
+
+
+###########################################
+############ HammerDB MariaDB #############
+###########################################
+
+
+
+
+### HammerDB Simple (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mariadb_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "hammerdb"
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-mariadb-hammerdb-16
+sleep 10
+
+
+### HammerDB Monitoring (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mariadb_2.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "hammerdb"
+
+
+### HammerDB Complex (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 2 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mariadb_3.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 3000
+wait_process "hammerdb"
 
 
 
