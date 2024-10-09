@@ -41,14 +41,14 @@ docker push bexhoma/loader_tpcds_postgresql:latest &
 cd ..
 
 #cd loader_mysql
-#docker build -f Dockerfile -t bexhoma/loader_tpch_mysql:latest .
-#docker push bexhoma/loader_tpch_mysql:latest &
+#docker build -f Dockerfile -t bexhoma/loader_tpcds_mysql:latest .
+#docker push bexhoma/loader_tpcds_mysql:latest &
 #cd ..
 
-#cd loader_monetdb
-#docker build -f Dockerfile -t bexhoma/loader_tpch_monetdb:latest .
-#docker push bexhoma/loader_tpch_monetdb:latest &
-#cd ..
+cd loader_monetdb
+docker build -f Dockerfile -t bexhoma/loader_tpcds_monetdb:latest .
+docker push bexhoma/loader_tpcds_monetdb:latest &
+cd ..
 cd ..
 
 

@@ -230,7 +230,7 @@ if __name__ == '__main__':
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MariaDB" in args.dbms or len(args.dbms) == 0):
-                # MonetDB
+                # MariaDB
                 name_format = 'MariaDB-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='MariaDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MySQL', alias='DBMS A1')
                 config.set_storage(
