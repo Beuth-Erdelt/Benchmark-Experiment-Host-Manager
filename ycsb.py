@@ -351,7 +351,7 @@ if __name__ == '__main__':
                 if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=threads, pods=pods, target=target), alias='DBMS D')
+                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
                     config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
