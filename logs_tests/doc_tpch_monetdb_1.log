@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1728078223
-Experiment                    : starts at 2024-10-04 23:43:43.696541 (2814163.820517422)
+Experiment                    : has code 1728337600
+Experiment                    : starts at 2024-10-07 23:46:40.243060 (3073540.367037773)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=100) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -21,20 +21,40 @@ Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MonetDB-BHT-8                 : will start now
 MonetDB-BHT-8                 : storage exists bexhoma-storage-monetdb-tpch-100
 MonetDB-BHT-8                 : loading is set to finished
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-04 21:45:44 (that is in 60 secs)
+MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-07 21:49:40 (that is in 60 secs)
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-04 21:45:44
+MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-07 21:49:40
 done
 MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
 MonetDB-BHT-8-1               : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1728078223
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1728337600
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1728078223-1-1-5vmqf: found
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1728337600-1-1-47z5f: .found
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -126,14 +146,14 @@ MonetDB-BHT-8                 : has running benchmarks
 done
 MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8-1               : showing benchmarker times
-MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 1364
-MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1728078351, 1728079692)]
-MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1728078351, 1728079692)]}
+MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 1616
+MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1728337796, 1728339383)]
+MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1728337796, 1728339383)]}
 MonetDB-BHT-8-1               : collecting execution metrics of SUT
 MonetDB-BHT-8-1               : collecting metrics of benchmarker
 done
 MonetDB-BHT-8                 : can be stopped
-Experiment                    : ends at 2024-10-05 00:09:17.537237 (2815697.661217256) - 1533.84s total
+Experiment                    : ends at 2024-10-08 00:17:26.721350 (3075386.84532969) - 1846.48s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -143,27 +163,27 @@ Experiment                    : uploading workload file
 ## Show Summary
 
 ### Workload
-    TPC-H Queries SF=100
+TPC-H Queries SF=100
     Type: tpch
-    Duration: 1534s 
-    Code: 1728078223
+    Duration: 1847s 
+    Code: 1728337600
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-TPC-H (SF=100) data is loaded and benchmark is executed.
-Query ordering is Q1 - Q22.
-All instances use the same query parameters.
-Import sets indexes and constraints after loading and recomputes statistics.
-System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['MonetDB'].
-Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 300Gi.
-Loading is tested with [8] threads, split into [8] pods.
-Benchmarking is tested with [1] threads, split into [1] pods.
-Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
+    TPC-H (SF=100) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 300Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
 
 ### Connections
 MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
@@ -172,8 +192,8 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248946232
-    datadisk:219980817
+    disk:248971704
+    datadisk:219980828
     volume_size:300G
     volume_used:210G
     requests_cpu:4
@@ -187,28 +207,28 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MonetDB-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                            506968.03
-Minimum Cost Supplier Query (TPC-H Q2)                        34489.78
-Shipping Priority (TPC-H Q3)                                  69039.72
-Order Priority Checking Query (TPC-H Q4)                      79941.65
-Local Supplier Volume (TPC-H Q5)                              40785.69
-Forecasting Revenue Change (TPC-H Q6)                          5755.40
-Forecasting Revenue Change (TPC-H Q7)                          8860.08
-National Market Share (TPC-H Q8)                             111538.17
-Product Type Profit Measure (TPC-H Q9)                        23515.71
-Forecasting Revenue Change (TPC-H Q10)                        58374.94
-Important Stock Identification (TPC-H Q11)                     5337.16
-Shipping Modes and Order Priority (TPC-H Q12)                 11053.19
-Customer Distribution (TPC-H Q13)                            197684.61
-Forecasting Revenue Change (TPC-H Q14)                         4696.82
-Top Supplier Query (TPC-H Q15)                                 6818.26
-Parts/Supplier Relationship (TPC-H Q16)                       14885.78
-Small-Quantity-Order Revenue (TPC-H Q17)                      41996.27
-Large Volume Customer (TPC-H Q18)                             49529.78
-Discounted Revenue (TPC-H Q19)                                14268.94
-Potential Part Promotion (TPC-H Q20)                           9604.76
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           21370.98
-Global Sales Opportunity Query (TPC-H Q22)                     6648.72
+Pricing Summary Report (TPC-H Q1)                            637721.03
+Minimum Cost Supplier Query (TPC-H Q2)                        28708.97
+Shipping Priority (TPC-H Q3)                                  79925.53
+Order Priority Checking Query (TPC-H Q4)                      89958.19
+Local Supplier Volume (TPC-H Q5)                              47184.89
+Forecasting Revenue Change (TPC-H Q6)                          8206.29
+Forecasting Revenue Change (TPC-H Q7)                         10794.91
+National Market Share (TPC-H Q8)                             134400.81
+Product Type Profit Measure (TPC-H Q9)                        34328.54
+Forecasting Revenue Change (TPC-H Q10)                        63909.34
+Important Stock Identification (TPC-H Q11)                     6428.52
+Shipping Modes and Order Priority (TPC-H Q12)                 13313.75
+Customer Distribution (TPC-H Q13)                            230882.81
+Forecasting Revenue Change (TPC-H Q14)                         7139.99
+Top Supplier Query (TPC-H Q15)                                10173.02
+Parts/Supplier Relationship (TPC-H Q16)                       13641.87
+Small-Quantity-Order Revenue (TPC-H Q17)                      42008.34
+Large Volume Customer (TPC-H Q18)                             52259.31
+Discounted Revenue (TPC-H Q19)                                14101.50
+Potential Part Promotion (TPC-H Q20)                          11211.91
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           23796.97
+Global Sales Opportunity Query (TPC-H Q22)                     6541.88
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
@@ -217,17 +237,17 @@ MonetDB-BHT-8-1-1           1.0         1686.0         7.0     5358.0    7061.0
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1          25.81
+MonetDB-BHT-8-1-1          29.77
 
 ### Power@Size
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1           14271.82
+MonetDB-BHT-8-1-1           12333.63
 
 ### Throughput@Size
                                                time [s]  count   SF  Throughput@Size [~GB/h]
 DBMS            SF  num_experiment num_client                                               
-MonetDB-BHT-8-1 100 1              1               1341      1  100                  5906.04
+MonetDB-BHT-8-1 100 1              1               1587      1  100                  4990.55
 
 ### Workflow
 
@@ -239,11 +259,11 @@ DBMS MonetDB-BHT-8 - Pods [[1]]
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      6494.7     18.5         53.34               100.08
+MonetDB-BHT-8-1     6613.58    23.16         46.78                85.29
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       20.81     0.08          0.32                 0.33
+MonetDB-BHT-8-1       22.14     0.02          0.33                 0.35
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -251,5 +271,4 @@ TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-
 TEST passed: Workflow as planned

@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 439s 
-    Code: 1728295547
+    Duration: 440s 
+    Code: 1728373344
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -27,8 +27,8 @@ PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248969696
-    datadisk:2220744
+    disk:248973268
+    datadisk:2122664
     volume_size:100G
     volume_used:2.0G
     requests_cpu:4
@@ -39,8 +39,8 @@ PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:248969688
-    datadisk:2904992
+    disk:248973260
+    datadisk:2907528
     volume_size:100G
     volume_used:2.8G
     requests_cpu:4
@@ -48,12 +48,12 @@ PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
 
 ### Loading
                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-131072               1       64  131072          8                    98820.33019                10300.0             1000000                              3976.0
+PostgreSQL-64-8-131072               1       64  131072          8                    95847.48652                10614.0             1000000                             3982.75
 
 ### Execution
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                      123380.63                 8105.0            500252                            1359.0              499748                              1891.0
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       72040.92                13881.0            499882                            1428.0              500118                              1832.0
+PostgreSQL-64-8-131072-1-1               1       64  131072          1                      114403.39                 8741.0            499485                            1400.0              500515                              2007.0
+PostgreSQL-64-8-131072-2-1               2       64  131072          1                       57683.43                17336.0            499518                            1456.0              500482                              2014.0
 
 ### Workflow
 

@@ -111,7 +111,7 @@ sleep 600
 
 #### YCSB Monitoring (Example-YCSB.md)
 nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
+  -sf 3 \
   --workload a \
   -dbms PostgreSQL \
   -tb 16384 \
@@ -128,7 +128,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-sleep 600
+sleep 1800
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
@@ -222,7 +222,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
-  -sf 1 \
+  -sf 3 \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

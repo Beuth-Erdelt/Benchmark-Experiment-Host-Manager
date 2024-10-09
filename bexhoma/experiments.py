@@ -1621,7 +1621,10 @@ class default():
         df = evaluate.get_total_errors().T
         num_errors = df.sum().sum()
         if num_errors > 0:
+            # set readable names
             df.index = df.index.map(map_index_to_queryname)
+            # remove only False rows
+            df = df[~(df == False).all(axis=1)]
             print(df)
         else:
             print("No errors")
@@ -1630,7 +1633,10 @@ class default():
         df = evaluate.get_total_warnings().T
         num_warnings = df.sum().sum()
         if num_warnings > 0:
+            # set readable names
             df.index = df.index.map(map_index_to_queryname)
+            # remove only False rows
+            df = df[~(df == False).all(axis=1)]
             print(df)
         else:
             print("No warnings")

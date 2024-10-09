@@ -408,7 +408,7 @@ sleep 300
 
 #### YCSB Execution Monitoring (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
+  -sf 10 \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -423,14 +423,13 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -rst shared -rss 100Gi \
   -m -mc \
-  -sf 10 \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_5.log
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+sleep 900
 
 
 
