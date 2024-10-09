@@ -175,7 +175,6 @@ if __name__ == '__main__':
                 loading_target_per_pod = int(loading_target/loading_pods)
                 if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
-                    # PostgreSQL
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
                     config.set_storage(
@@ -224,199 +223,110 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    #name_format = 'PostgreSQL-{cluster}-{pods}'
-                    #config_name = name_format.format(cluster=cluster_name, pods=pods)
-                    #config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=config_name, dialect='PostgreSQL', alias='DBMS D')
-                    #config.set_storage(
-                    #    storageConfiguration = 'postgresql'
-                    #)
-                    #config.num_loading = 1
-                    #config.set_loading_parameters(
-                    #    PARALLEL = 1,#str(pods),
-                    #    SF = SF,
-                    #    BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                    #    BENCHBASE_PROFILE = 'postgres',
-                    #    BEXHOMA_DATABASE = 'postgres',
-                    #    #BENCHBASE_TARGET = int(target),
-                    #    BENCHBASE_TERMINALS = SU,
-                    #    BENCHBASE_TIME = SD,
-                    #    BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                    #    )
-                    #config.set_loading(parallel=1, num_pods=1)
-                    #for t in list_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                    #    target = target_base*t#4*4096*t
-                    #    for virtual_users in num_virtual_users_list:
-                    #        #threads_per_pod = int(threads/pods)
-                    #        #target_per_pod = int(target/pods)
-                    #        config.add_benchmarking_parameters(
-                    #            #PARALLEL = str(pods),
-                    #            SF = SF,
-                    #            BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                    #            BENCHBASE_PROFILE = 'postgres',
-                    #            BEXHOMA_DATABASE = 'postgres',
-                    #            BENCHBASE_TARGET = int(target/pods), # split target
-                    #            #BENCHBASE_TARGET = target,#int(target/pods),
-                    #            BENCHBASE_TERMINALS = int(virtual_users/pods),
-                    #            BENCHBASE_TIME = SD,
-                    #            BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                    #            )
-                    #config.add_benchmark_list([int(pods)]*(len(list_target_factors)*len(num_virtual_users_list)))
-                    """
-                    config.set_loading_parameters(
-                        PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_TYPE = "postgresql",
-                        HAMMERDB_VUSERS = num_virtual_users#"1 2 4 8 16 32"
-                    )
-                    #config.set_loading(parallel=SU, num_pods=SU)
-                    config.set_loading(parallel=1, num_pods=1)
-                    config.set_benchmarking_parameters(
-                        PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_TYPE = "postgresql",
-                        HAMMERDB_VUSERS = num_virtual_users#"1 2 4 8 16 32"
-                        )
-                    """
                 if args.dbms == "MySQL":
                     # MySQL
-                    name_format = 'MySQL-{cluster}-{pods}'
-                    config_name = name_format.format(cluster=cluster_name, pods=pods)
-                    config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                    name_format = 'MySQL-{threads}-{pods}-{target}'
+                    config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'mysql'
-                    )
-                    #config.num_loading = 1
+                        )
                     config.set_loading_parameters(
-                        PARALLEL = 1,#str(pods),
+                        PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'mysql',
                         BEXHOMA_DATABASE = 'benchbase',
                         #BENCHBASE_TARGET = int(target),
-                        BENCHBASE_TERMINALS = SU,
+                        BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "root",
                         )
-                    config.set_loading(parallel=1, num_pods=1)
-                    for t in list_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        target = target_base*t#4*4096*t
-                        for virtual_users in num_virtual_users_list:
-                            #threads_per_pod = int(threads/pods)
-                            #target_per_pod = int(target/pods)
-                            config.add_benchmarking_parameters(
-                                #PARALLEL = str(pods),
-                                SF = SF,
-                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                BENCHBASE_PROFILE = 'mysql',
-                                BEXHOMA_DATABASE = 'benchbase',
-                                BENCHBASE_TARGET = int(target/pods), # split target
-                                #BENCHBASE_TARGET = target,#int(target/pods),
-                                BENCHBASE_TERMINALS = int(virtual_users/pods),
-                                BENCHBASE_TIME = SD,
-                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                BEXHOMA_USER = "root",
-                                BEXHOMA_PASSWORD = "root",
-                                )
-                    config.add_benchmark_list([int(pods)]*(len(list_target_factors)*len(num_virtual_users_list)))
-                    """
-                    config.set_loading_parameters(
-                        PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_TYPE = "mysql",
-                        HAMMERDB_VUSERS = num_virtual_users,#"1 2 4 8 16 32"
-                        HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                        USER = "root",
-                        PASSWORD = "root",
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                    )
-                    #config.set_loading(parallel=SU, num_pods=SU)
-                    config.set_loading(parallel=1, num_pods=1)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_TYPE = "mysql",
-                        HAMMERDB_VUSERS = num_virtual_users,#"1 2 4 8 16 32"
-                        HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                        USER = "root",
-                        PASSWORD = "root",
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        )
-                    """
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                        BENCHBASE_PROFILE = 'postgres',
+                                        BEXHOMA_DATABASE = 'postgres',
+                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
+                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
+                                        BENCHBASE_TIME = SD,
+                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
                 if args.dbms == "MariaDB":
-                    # MySQL
-                    name_format = 'MariaDB-{cluster}-{pods}'
-                    config_name = name_format.format(cluster=cluster_name, pods=pods)
-                    config = configurations.benchbase(experiment=experiment, docker='MariaDB', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                    # MariaDB
+                    name_format = 'MariaDB-{threads}-{pods}-{target}'
+                    config = configurations.benchbase(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'mariadb'
-                    )
-                    #config.num_loading = 1
+                        )
                     config.set_loading_parameters(
-                        PARALLEL = 1,#str(pods),
+                        PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'mariadb',
                         BEXHOMA_DATABASE = 'benchbase',
                         #BENCHBASE_TARGET = int(target),
-                        BENCHBASE_TERMINALS = SU,
+                        BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "root",
                         )
-                    config.set_loading(parallel=1, num_pods=1)
-                    for t in list_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        target = target_base*t#4*4096*t
-                        for virtual_users in num_virtual_users_list:
-                            #threads_per_pod = int(threads/pods)
-                            #target_per_pod = int(target/pods)
-                            config.add_benchmarking_parameters(
-                                #PARALLEL = str(pods),
-                                SF = SF,
-                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                BENCHBASE_PROFILE = 'mariadb',
-                                BEXHOMA_DATABASE = 'benchbase',
-                                BENCHBASE_TARGET = int(target/pods), # split target
-                                #BENCHBASE_TARGET = target,#int(target/pods),
-                                BENCHBASE_TERMINALS = int(virtual_users/pods),
-                                BENCHBASE_TIME = SD,
-                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                BEXHOMA_USER = "root",
-                                BEXHOMA_PASSWORD = "root",
-                                )
-                    config.add_benchmark_list([int(pods)]*(len(list_target_factors)*len(num_virtual_users_list)))
-                    """
-                    config.set_loading_parameters(
-                        PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_TYPE = "mysql",
-                        HAMMERDB_VUSERS = num_virtual_users,#"1 2 4 8 16 32"
-                        HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                        USER = "root",
-                        PASSWORD = "root",
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                    )
-                    #config.set_loading(parallel=SU, num_pods=SU)
-                    config.set_loading(parallel=1, num_pods=1)
-                    config.set_benchmarking_parameters(
-                        #PARALLEL = SU,
-                        SF = SF,
-                        HAMMERDB_DURATION = str(SD),
-                        HAMMERDB_TYPE = "mysql",
-                        HAMMERDB_VUSERS = num_virtual_users,#"1 2 4 8 16 32"
-                        HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                        USER = "root",
-                        PASSWORD = "root",
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        )
-                    """
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                        BENCHBASE_PROFILE = 'postgres',
+                                        BEXHOMA_DATABASE = 'postgres',
+                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
+                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
+                                        BENCHBASE_TIME = SD,
+                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############
