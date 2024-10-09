@@ -1,0 +1,98 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 395s 
+    Code: 1728361603
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251795692
+    datadisk:2822920
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                                 2549.74
+Minimum Cost Supplier Query (TPC-H Q2)                             415.74
+Shipping Priority (TPC-H Q3)                                       733.29
+Order Priority Checking Query (TPC-H Q4)                          1254.07
+Local Supplier Volume (TPC-H Q5)                                   639.37
+Forecasting Revenue Change (TPC-H Q6)                              482.92
+Forecasting Revenue Change (TPC-H Q7)                              740.74
+National Market Share (TPC-H Q8)                                   598.07
+Product Type Profit Measure (TPC-H Q9)                            1078.12
+Forecasting Revenue Change (TPC-H Q10)                            1232.80
+Important Stock Identification (TPC-H Q11)                         240.49
+Shipping Modes and Order Priority (TPC-H Q12)                     1005.48
+Customer Distribution (TPC-H Q13)                                 1950.84
+Forecasting Revenue Change (TPC-H Q14)                             529.70
+Top Supplier Query (TPC-H Q15)                                     540.08
+Parts/Supplier Relationship (TPC-H Q16)                            558.28
+Small-Quantity-Order Revenue (TPC-H Q17)                          1881.90
+Large Volume Customer (TPC-H Q18)                                 6610.72
+Discounted Revenue (TPC-H Q19)                                     676.85
+Potential Part Promotion (TPC-H Q20)                               660.39
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                882.81
+Global Sales Opportunity Query (TPC-H Q22)                         233.04
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       85.0     123.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS                               
+PostgreSQL-BHT-8-1-1           0.87
+
+### Power@Size
+                      Power@Size [~Q/h]
+DBMS                                   
+PostgreSQL-BHT-8-1-1             4353.6
+
+### Throughput@Size
+                                                 time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS               SF num_experiment num_client                                              
+PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Workflow as planned

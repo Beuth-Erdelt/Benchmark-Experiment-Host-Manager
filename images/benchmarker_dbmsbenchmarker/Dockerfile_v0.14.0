@@ -57,8 +57,10 @@ RUN wget https://dlm.mariadb.com/2678616/Connectors/java/connector-java-3.1.0/ma
 RUN cp mariadb-java-client-3.1.0.jar jars/mariadb-java-client-3.1.0.jar
 
 ######### Specific version of MonetDB JDBC #########
-RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.2.jre8.jar --no-check-certificate
-RUN cp monetdb-jdbc-3.2.jre8.jar jars/monetdb-jdbc-3.2.jre8.jar
+#RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.2.jre8.jar --no-check-certificate
+#RUN cp monetdb-jdbc-3.2.jre8.jar jars/monetdb-jdbc-3.2.jre8.jar
+RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
+RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
 
 ######### Specific version of MonetDB JDBC #########
 RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-3.3.jre8.jar --no-check-certificate

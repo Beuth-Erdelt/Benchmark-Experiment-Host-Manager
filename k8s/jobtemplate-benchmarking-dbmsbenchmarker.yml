@@ -20,7 +20,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
-        image: bexhoma/benchmarker_dbmsbenchmarker:v0.14.0
+        image: bexhoma/benchmarker_dbmsbenchmarker:v0.14.3
         #image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.7
         #image: bexhoma/benchmarker_dbmsbenchmarker:dev
         imagePullPolicy: Always

@@ -1,0 +1,125 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 492s 
+    Code: 1728336400
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251793864
+    datadisk:2822280
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-BHT-8-2-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251793864
+    datadisk:2822280
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-BHT-8-2-2 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251793864
+    datadisk:2822280
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-2-1  PostgreSQL-BHT-8-2-2
+Pricing Summary Report (TPC-H Q1)                                 2483.08               2499.21               2512.13
+Minimum Cost Supplier Query (TPC-H Q2)                             418.63                422.42                419.97
+Shipping Priority (TPC-H Q3)                                       733.37                753.01                743.19
+Order Priority Checking Query (TPC-H Q4)                          1255.89               1239.41               1228.93
+Local Supplier Volume (TPC-H Q5)                                   641.86                643.26                663.61
+Forecasting Revenue Change (TPC-H Q6)                              487.00                485.95                506.82
+Forecasting Revenue Change (TPC-H Q7)                              747.35                740.56                762.26
+National Market Share (TPC-H Q8)                                   599.03                600.79                616.99
+Product Type Profit Measure (TPC-H Q9)                            1072.17               1048.75               1068.00
+Forecasting Revenue Change (TPC-H Q10)                            1249.13               1222.73               1253.11
+Important Stock Identification (TPC-H Q11)                         248.02                241.51                242.38
+Shipping Modes and Order Priority (TPC-H Q12)                      984.66                987.59                981.45
+Customer Distribution (TPC-H Q13)                                 1998.50               2027.02               1979.67
+Forecasting Revenue Change (TPC-H Q14)                             524.36                543.79                538.84
+Top Supplier Query (TPC-H Q15)                                     533.43                544.87                548.21
+Parts/Supplier Relationship (TPC-H Q16)                            559.32                556.89                560.63
+Small-Quantity-Order Revenue (TPC-H Q17)                          1946.82               1926.79               1887.35
+Large Volume Customer (TPC-H Q18)                                 7523.30               6892.40               7377.03
+Discounted Revenue (TPC-H Q19)                                     677.57                688.17                676.98
+Potential Part Promotion (TPC-H Q20)                               656.47                645.46                644.87
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                883.21                849.06                852.63
+Global Sales Opportunity Query (TPC-H Q22)                         232.22                224.22                216.33
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-8-1-1           1.0           28.0         1.0       85.0     123.0
+PostgreSQL-BHT-8-2-1           1.0           28.0         1.0       85.0     123.0
+PostgreSQL-BHT-8-2-2           1.0           28.0         1.0       85.0     123.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS                               
+PostgreSQL-BHT-8-1-1           0.87
+PostgreSQL-BHT-8-2-1           0.87
+PostgreSQL-BHT-8-2-2           0.87
+
+### Power@Size
+                      Power@Size [~Q/h]
+DBMS                                   
+PostgreSQL-BHT-8-1-1            4317.92
+PostgreSQL-BHT-8-2-1            4347.65
+PostgreSQL-BHT-8-2-2            4323.04
+
+### Throughput@Size
+                                                 time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS               SF num_experiment num_client                                              
+PostgreSQL-BHT-8-1 1  1              1                 29      1   1                  2731.03
+PostgreSQL-BHT-8-2 1  1              2                 30      2   1                  5280.00
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-8 - Pods [[1, 2]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1, 2]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Workflow as planned

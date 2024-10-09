@@ -21,24 +21,17 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import time
 #import kubernetes.client
 #from kubernetes.client.rest import ApiException
-from pprint import pprint
 #from kubernetes import client, config
 import subprocess
-import re
 import os
 from timeit import default_timer
-import psutil
 import logging
 import socket
 import yaml
-from tqdm import tqdm
 from collections import Counter
-import shutil
 import json
-import ast
 import copy
 from datetime import datetime, timedelta
 import threading
@@ -48,7 +41,7 @@ from math import ceil
 
 from dbmsbenchmarker import *
 
-from bexhoma import clusters, experiments, evaluators
+from bexhoma import experiments
 
 
 
@@ -196,6 +189,7 @@ class default():
         self.benchmark_list = copy.deepcopy(list_clients)
         # this queue will stay as a template for future copies of the configuration
         self.benchmark_list_template = copy.deepcopy(list_clients)
+        self.benchmarking_parameters_list_template = copy.deepcopy(self.benchmarking_parameters_list)
     def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
@@ -376,6 +370,20 @@ class default():
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
     def set_nodes(self, **kwargs):
+        """
+        Sets parameters for nodes for the components of an experiment.
+        Will be used for nodeSelector.
+        Example:
+
+        sut = 'sut',
+        loading = 'auxiliary',
+        monitoring = 'auxiliary',
+        benchmarking = 'auxiliary',
+
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of node infos, example 'sut' => 'sut',
+        """
         self.nodes = kwargs
     def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
         """ Read experiment details from cluster config"""

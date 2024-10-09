@@ -26,28 +26,18 @@ import time
 import kubernetes.client as kubernetes_client
 import kubernetes.config as kubernetes_config
 from kubernetes.client.rest import ApiException
-from pprint import pprint
 #from kubernetes import client, config
 import subprocess
 import os
-from os import makedirs, path
 import time
-from timeit import default_timer
 import psutil
 import logging
 import socket
-import yaml
-from tqdm import tqdm
-from collections import Counter
-import shutil
-import json
 import ast
-import copy
 import urllib.request
 import urllib.parse
 
 from dbmsbenchmarker import *
-from bexhoma import experiments
 
 class testbed():
     """

@@ -1,0 +1,95 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 921s 
+    Code: 1728372434
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 4 and 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [32, 64] threads, split into [4, 8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-32-4-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251145412
+    datadisk:2172140
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-32-8-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251105492
+    datadisk:2138756
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-4-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251129260
+    datadisk:2155988
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:251062676
+    datadisk:2105788
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-32-4-131072               1       32  131072          4                   81569.178833                12610.0             1000000                             2384.50
+PostgreSQL-64-4-131072               1       64  131072          4                  100089.555728                10166.0             1000000                             3845.00
+PostgreSQL-32-8-131072               1       32  131072          8                   84950.617083                12602.0             1000000                             2431.75
+PostgreSQL-64-8-131072               1       64  131072          8                  101721.119844                10182.0             1000000                             4253.25
+
+### Execution
+                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-32-4-131072-1               1       64  131072          1                      114586.91                 8727.0            499976                            1243.0              500024                              1796.0
+PostgreSQL-32-8-131072-1               1       64  131072          1                      115620.30                 8649.0            499505                            1399.0              500495                              2289.0
+PostgreSQL-64-4-131072-1               1       64  131072          1                      116577.29                 8578.0            499190                            1392.0              500810                              2037.0
+PostgreSQL-64-8-131072-1               1       64  131072          1                      114390.30                 8742.0            499702                            1449.0              500298                              2749.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-32-8-131072 - Pods [[1]]
+DBMS PostgreSQL-64-8-131072 - Pods [[1]]
+DBMS PostgreSQL-32-4-131072 - Pods [[1]]
+DBMS PostgreSQL-64-4-131072 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-32-4-131072 - Pods [[1]]
+DBMS PostgreSQL-32-8-131072 - Pods [[1]]
+DBMS PostgreSQL-64-4-131072 - Pods [[1]]
+DBMS PostgreSQL-64-8-131072 - Pods [[1]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

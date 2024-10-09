@@ -14,11 +14,15 @@
     ../README.md
     ./Example-YCSB.md
     ./Example-TPC-H.md
+    ./Example-Result-TPC-H-MonetDB.md
+    ./Example-HammerDB.md
+    ./Example-Benchbase.md
     ./Example-custom.md
     ./Concept.md
     ./Config.md
     ./Monitoring.md
     ./DBMS.md
+    ./TestCases.md
     ./CONTRIBUTING.md
     ./bexhoma
 

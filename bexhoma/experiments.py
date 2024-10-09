@@ -28,21 +28,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from dbmsbenchmarker import parameter, tools, inspector
+from dbmsbenchmarker import parameter, inspector
 import logging
 import urllib3
-import gc
-import shutil # for zipping
 from os import makedirs, path
 import time
 import os
-import subprocess
 from datetime import datetime, timedelta
 import re
 import pandas as pd
-import pickle
 import json
 import ast
+from types import SimpleNamespace
 
 from bexhoma import evaluators
 
@@ -73,11 +70,11 @@ class default():
     This class should be overloaded to define specific experiments.
     """
     def __init__(self,
-            cluster,
-            code=None,
-            num_experiment_to_apply = 1,
-            timeout = 7200,
-            detached=True):
+                 cluster,
+                 code=None,
+                 num_experiment_to_apply = 1,
+                 timeout = 7200,
+                 detached=True):
         """
         Construct a new 'experiment' object.
 
@@ -87,61 +84,303 @@ class default():
         :param timeout: Maximum timeout per query
         :param detached: DEPRECATED - use only True
         """
-        self.cluster = cluster
-        self.code = code
+        self.cluster = cluster                                          # cluster object
+        self.code = code                                                # code of experiment
         if self.code is None:
             self.code = str(round(time.time()))
         else:
             self.code = str(self.code)
-        self.path = self.cluster.resultfolder+"/"+self.code
+        self.path = self.cluster.resultfolder+"/"+self.code             # path to result folder (read from cluster.config)
         if not path.isdir(self.path):
             makedirs(self.path)
-        self.detached = detached
+        self.detached = detached                                        # if orchestrator is living in the cloud (only True is supported)
         self.cluster.set_code(code=self.code)
         self.set_connectionmanagement(
             numProcesses = 1,
             runsPerConnection = 0,
             timeout = timeout,
             singleConnection = True)
-        self.num_experiment_to_apply = num_experiment_to_apply
-        self.max_sut = None
+        self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
+        self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.cluster.add_experiment(self)
-        self.appname = self.cluster.appname
-        self.resources = {}
-        self.ddl_parameters = {}
-        self.eval_parameters = {}
-        self.storage = {}
-        self.nodes = {}
-        self.maintaining_parameters = {}
-        self.loading_parameters = {}
-        self.loading_patch = ""
-        self.benchmarking_patch = ""
-        self.benchmarking_parameters = {}
-        self.jobtemplate_maintaining = ""
-        self.jobtemplate_loading = ""
-        self.querymanagement = {}
-        self.additional_labels = dict()
-        self.workload = {}
-        self.monitoring_active = True
-        self.prometheus_interval = "10s"
-        self.prometheus_timeout = "10s"
-        self.loading_active = False
-        self.num_loading = 0
-        self.num_loading_pods = 0
-        self.maintaining_active = False
-        self.num_maintaining = 0
-        self.num_maintaining_pods = 0
-        self.name_format = None
-        self.script = ""
-        self.initscript = []
-        self.indexing = ""
-        self.indexscript = []
+        self.appname = self.cluster.appname                             # app name for namespacing cluster - default is bexhoma
+        self.resources = {}                                             # dict of resources infos that will be attached to SUT (like requested CPUs)
+        self.ddl_parameters = {}                                        # DDL schema parameter for init scripts (like index type or sharding strategy)
+        self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
+        self.storage = {}                                               # parameters for persistent storage (like type and size)
+        self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
+        self.maintaining_parameters = {}                                # dict of parameters for maintaining component
+        self.loading_parameters = {}                                    # dict of parameters for loading component
+        self.loading_patch = ""                                         # YAML to patch manifest for loading component
+        self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
+        self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
+        self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
+        self.jobtemplate_loading = ""                                   # name of YAML manifest for loading component
+        self.querymanagement = {}                                       # parameters for query.config
+        self.additional_labels = dict()                                 # dict of additional labels for components
+        self.workload = {}                                              # dict containing workload infos - will be written to query.config
+        self.monitoring_active = True                                   # Bool, tells if monitoring is active
+        self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
+        self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
+        self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
+        self.num_loading = 0                                            # number of loading pods in parallel
+        self.num_loading_pods = 0                                       # number of loading pods in total
+        self.maintaining_active = False                                 # Bool, tells if maintaining is active
+        self.num_maintaining = 0                                        # number of maintaining pods in parallel
+        self.num_maintaining_pods = 0                                   # number of maintaining pods in total
+        #self.name_format = None
+        self.script = ""                                                # name of the script collection for creating schema
+        self.initscript = []                                            # list of scripts for creating schema
+        self.indexing = ""                                              # name of the script collection for creating indexes
+        self.indexscript = []                                           # list of scripts for creating indexes
+        # command line parameters
+        self.args = None                                                # command line parameters as an object
+        self.args_dict = dict()                                         # command line parameters as a dict
         # k8s:
-        self.namespace = self.cluster.namespace
-        self.configurations = []
-        self.storage_label = ''
-        self.evaluator = evaluators.base(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
-    def wait(self, sec, silent=False):
+        self.namespace = self.cluster.namespace                         # name of the K8s namespace to use
+        self.configurations = []                                        # list of configurations (i.e., dbms to test)
+        self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
+        self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
+        self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
+            code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+    def get_parameter_as_list(self,
+                              parameter):
+        """
+        Transform comma separated CLI parameters to list.
+        This is for example used to transform num_loading_pods.
+
+        :param parameter: Comma separated list of values
+        :return: Python list of values
+        """
+        if parameter in self.args_dict:
+            value = self.args_dict[parameter]
+        else:
+            return []
+        if len(value) > 0:
+            values = value.split(",")
+            value = [int(x) for x in values]
+        elif value.isdigit():
+            value = list(str(int(value)))
+        return value
+    def prepare_testbed(self,
+                        parameter):
+        """
+        Prepares a testbed.
+        It takes the CLI arguments as a dict.
+        This method for example sets workload['info'].
+        It also sets monitoring, storage, components settings, SUT resources and nodes for components.
+        It makes sure, dashboard, messagequeue, data dir and result dir are ready.
+
+        :param parameter: Comma separated list of values
+        """
+        if (not 'type' in self.workload) or (len(self.workload['type']) == 0):
+            # set default workload type
+            self.workload['type'] = 'dbmsbenchmarker'
+        args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
+        num_experiment_to_apply = int(args.num_config)
+        # configure number of clients per config
+        list_clients = args.num_query_executors.split(",")
+        if len(list_clients) > 0:
+            list_clients = [int(x) for x in list_clients if len(x) > 0]
+        else:
+            list_clients = []
+        monitoring = args.monitoring
+        monitoring_cluster = args.monitoring_cluster
+        # only for dbmsbenchmarker
+        if 'num_run' in parameter:
+            numRun = int(args.num_run)
+        else:
+            numRun = 0
+        if 'datatransfer' in parameter:
+            datatransfer = args.datatransfer
+        else:
+            datatransfer = False
+        num_loading_pods = self.get_parameter_as_list('num_loading_pods')
+        num_loading_threads = self.get_parameter_as_list('num_loading_threads')
+        num_benchmarking_pods = self.get_parameter_as_list('num_benchmarking_pods')
+        num_benchmarking_threads = self.get_parameter_as_list('num_benchmarking_threads')
+        cpu = str(args.request_cpu)
+        memory = str(args.request_ram)
+        cpu_type = str(args.request_cpu_type)
+        gpu_type = str(args.request_gpu_type)
+        gpus = str(args.request_gpu)
+        request_storage_type = args.request_storage_type
+        request_storage_size = args.request_storage_size
+        request_node_name = args.request_node_name
+        request_node_loading = args.request_node_loading
+        request_node_benchmarking = args.request_node_benchmarking
+        self.cluster.start_datadir()
+        self.cluster.start_resultdir()
+        self.cluster.start_dashboard()
+        self.cluster.start_messagequeue()
+        if monitoring_cluster:
+            # monitor all nodes of cluster (for not missing any component)
+            self.monitoring_active = True
+            if numRun > 0:
+                self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+            self.cluster.start_monitoring_cluster()
+            self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
+        elif monitoring:
+            # we want to monitor resource consumption
+            self.monitoring_active = True
+            if numRun > 0:
+                self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
+            self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by sidecar containers."
+        else:
+            # we want to just run the queries
+            self.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
+        # set resources for dbms
+        self.set_resources(
+            requests = {
+                'cpu': cpu,
+                'memory': memory,
+                'gpu': 0
+            },
+            limits = {
+                'cpu': 0,
+                'memory': 0
+            },
+            nodeSelector = {
+                'cpu': cpu_type,
+                'gpu': '',
+            })
+        # persistent storage
+        self.set_storage(
+            storageClassName = request_storage_type,
+            storageSize = request_storage_size,#'100Gi',
+            keep = True
+            )
+        # note more infos about experiment in workload description
+        if len(args.dbms):
+            # import is limited to some DBMS
+            #if "," in args.dbms:
+            #    # list of DBMS
+            #    dbms = ", ".join(args.dbms)
+            #else:
+            #    # single DBMS
+            #    dbms = args.dbms
+            dbms = args.dbms
+            self.workload['info'] = self.workload['info']+"\nBenchmark is limited to DBMS {}.".format(dbms)
+        if len(num_loading_pods):
+            # import uses several processes in pods
+            self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
+        # fix loading
+        if not request_node_loading is None:
+            self.patch_loading(patch="""
+            spec:
+              template:
+                spec:
+                  nodeSelector:
+                    kubernetes.io/hostname: {node}
+            """.format(node=request_node_loading))
+            self.workload['info'] = self.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
+        # fix benchmarking
+        if not request_node_benchmarking is None:
+            self.patch_benchmarking(patch="""
+            spec:
+              template:
+                spec:
+                  nodeSelector:
+                    kubernetes.io/hostname: {node}
+            """.format(node=request_node_benchmarking))
+            self.workload['info'] = self.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
+        # fix SUT
+        if not request_node_name is None:
+            self.set_resources(
+                nodeSelector = {
+                    'cpu': cpu_type,
+                    'gpu': '',
+                    'kubernetes.io/hostname': request_node_name
+                })        
+            self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        if request_storage_type and request_storage_size:
+            self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
+        self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
+        self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+        self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+        if num_experiment_to_apply > 1: 
+            self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
+        else:
+            self.workload['info'] = self.workload['info']+"\nExperiment is run once."
+    def get_dashboard_pod(self,
+                          pod_dashboard=''):
+        """
+        Get name of dashboard pod.
+        This also checks the status. Waits until available.
+        If name of dashboard pod is known: do nothing
+
+        :param pod_dashboard: Optional name of dashboard pod
+        """
+        self.cluster.logger.debug('testbed.get_dashboard_pod()')
+        # download results
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+            if len(pod_dashboard) > 0:
+                #pod_dashboard = pods[0]
+                status = self.cluster.get_pod_status(pod_dashboard)
+                self.cluster.logger.debug(pod_dashboard+status)
+                while status != "Running":
+                    self.wait(10)
+                    status = self.cluster.get_pod_status(pod_dashboard)
+                    self.cluster.logger.debug(pod_dashboard+status)
+        return pod_dashboard
+    def test_results(self):
+        """
+        Run test script locally.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        self.cluster.logger.debug('base.test_results()')
+        self.evaluator.test_results()
+        # not yet implemented in detail for dbmsbenchmarker:
+        #workflow = self.get_workflow_list()
+        #if workflow == self.evaluator.workflow:
+        #    print("Result workflow complete")
+        #else:
+        #    print("Result workflow not complete")
+    def test_results_in_dashboard(self):
+        """
+        DEPRECATED? Not used currently - depends on good test script for dbmsbenchmarker
+        Run test script in dashboard pod.
+        Extract exit code.
+
+        :return: exit code of test script
+        """
+        pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
+        if len(pod_dashboard) > 0:
+            #pod_dashboard = pods[0]
+            status = self.cluster.get_pod_status(pod_dashboard)
+            print(pod_dashboard, status)
+            while status != "Running":
+                self.wait(10)
+                status = self.cluster.get_pod_status(pod_dashboard)
+                print(pod_dashboard, status)
+            cmd = {}
+            # only zip first level
+            #cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
+            # zip complete folder
+            cmd['test_results'] = 'python test-result.py -e {code} -r /results/;echo $?'.format(code=self.code)
+            # include sub directories
+            #cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
+            #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['test_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
+            try:
+                if len(stdout) > 0:
+                    print(stdout)
+                    return int(stdout.splitlines()[-1:][0])
+                else:
+                    return 1
+            except Exception as e:
+                return 1
+            finally:
+                return 1
+        return 1
+    def wait(self,
+             sec,
+             silent=False):
         """
         Function for waiting some time and inform via output about this
 
@@ -153,7 +392,9 @@ class default():
         #time.sleep(intervals)
         #print("done")
         return self.cluster.wait(sec, silent)
-    def delay(self, sec, silent=False):
+    def delay(self,
+              sec,
+              silent=False):
         """
         Function for waiting some time and inform via output about this.
         Synonymous for wait()
@@ -162,7 +403,8 @@ class default():
         :param silent: True means we do not output anything about this waiting
         """
         self.wait(sec, silent)
-    def set_queryfile(self, queryfile):
+    def set_queryfile(self,
+                      queryfile):
         """
         Sets the name of a query file of the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
@@ -170,7 +412,8 @@ class default():
         :param code: Unique identifier of an experiment
         """
         self.queryfile = queryfile
-    def set_experiments_configfolder(self, experiments_configfolder):
+    def set_experiments_configfolder(self,
+                                     experiments_configfolder):
         """
         Sets the configuration folder for the experiment.
         Bexhoma expects subfolders for expeiment types, for example tpch.
@@ -179,7 +422,8 @@ class default():
         :param experiments_configfolder: Relative path to an experiment folder
         """
         self.experiments_configfolder = experiments_configfolder
-    def set_additional_labels(self, **kwargs):
+    def set_additional_labels(self,
+                              **kwargs):
         """
         Sets additional labels, that will be put to K8s objects (and ignored otherwise).
         This is for the SUT component.
@@ -188,14 +432,16 @@ class default():
         :param kwargs: Dict of labels, example 'SF' => 100
         """
         self.additional_labels = {**self.additional_labels, **kwargs}
-    def set_workload(self, **kwargs):
+    def set_workload(self,
+                     **kwargs):
         """
         Sets mata data about the experiment, for example name and description.
 
         :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
         """
         self.workload = kwargs
-    def set_querymanagement(self, **kwargs):
+    def set_querymanagement(self,
+                            **kwargs):
         """
         Sets query management data for the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
@@ -204,7 +450,8 @@ class default():
         """
         self.querymanagement = kwargs
     # the following can be overwritten by configuration
-    def set_connectionmanagement(self, **kwargs):
+    def set_connectionmanagement(self,
+                                 **kwargs):
         """
         Sets connection management data for the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
@@ -213,7 +460,8 @@ class default():
         :param kwargs: Dict of meta data, example 'timout' => 60
         """
         self.connectionmanagement = kwargs
-    def set_resources(self, **kwargs):
+    def set_resources(self,
+                      **kwargs):
         """
         Sets resources for the experiment.
         This is for the SUT component.
@@ -222,7 +470,8 @@ class default():
         :param kwargs: Dict of meta data, example 'requests' => {'cpu' => 4}
         """
         self.resources = {**self.resources, **kwargs}
-    def set_ddl_parameters(self, **kwargs):
+    def set_ddl_parameters(self,
+                           **kwargs):
         """
         Sets DDL parameters for the experiments.
         This substitutes placeholders in DDL script.
@@ -231,7 +480,8 @@ class default():
         :param kwargs: Dict of meta data, example 'index' => 'btree'
         """
         self.ddl_parameters = kwargs
-    def set_eval_parameters(self, **kwargs):
+    def set_eval_parameters(self,
+                            **kwargs):
         """
         Sets some arbitrary parameters that are supposed to be handed over to the benchmarker component.
         Can be overwritten by configuration.
@@ -239,7 +489,8 @@ class default():
         :param kwargs: Dict of meta data, example 'type' => 'noindex'
         """
         self.eval_parameters = kwargs
-    def set_storage(self, **kwargs):
+    def set_storage(self,
+                    **kwargs):
         """
         Sets parameters for the storage that might be attached to components.
         This is in particular for the database of dbms under test.
@@ -254,9 +505,25 @@ class default():
         :param kwargs: Dict of meta data, example 'storageSize' => '100Gi'
         """
         self.storage = kwargs
-    def set_nodes(self, **kwargs):
+    def set_nodes(self,
+                  **kwargs):
+        """
+        Sets parameters for nodes for the components of an experiment.
+        Will be used for nodeSelector.
+        Example:
+
+        sut = 'sut',
+        loading = 'auxiliary',
+        monitoring = 'auxiliary',
+        benchmarking = 'auxiliary',
+
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of node infos, example 'sut' => 'sut',
+        """
         self.nodes = kwargs
-    def set_maintaining_parameters(self, **kwargs):
+    def set_maintaining_parameters(self,
+                                   **kwargs):
         """
         Sets ENV for maintaining components.
         Can be overwritten by configuration.
@@ -264,7 +531,9 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.maintaining_parameters = kwargs
-    def set_maintaining(self, parallel, num_pods=None):
+    def set_maintaining(self,
+                        parallel,
+                        num_pods=None):
         """
         Sets job parameters for maintaining components: Number of parallel pods and optionally (if different) total number of pods.
         By default total number of pods is set to number of parallel pods.
@@ -281,7 +550,8 @@ class default():
         # total number at least number of parallel
         if self.num_maintaining_pods < self.num_maintaining:
             self.num_maintaining_pods = self.num_maintaining
-    def set_loading_parameters(self, **kwargs):
+    def set_loading_parameters(self,
+                               **kwargs):
         """
         Sets ENV for loading components.
         Can be overwritten by configuration.
@@ -289,7 +559,8 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
-    def patch_loading(self, patch):
+    def patch_loading(self,
+                        patch):
         """
         Patches YAML of loading components.
         Can be overwritten by configuration.
@@ -297,7 +568,8 @@ class default():
         :param patch: String in YAML format, overwrites basic YAML file content
         """
         self.loading_patch = patch
-    def patch_benchmarking(self, patch):
+    def patch_benchmarking(self,
+                           patch):
         """
         Patches YAML of loading components.
         Can be set by experiment before creation of configuration.
@@ -305,7 +577,9 @@ class default():
         :param patch: String in YAML format, overwrites basic YAML file content
         """
         self.benchmarking_patch = patch
-    def set_loading(self, parallel, num_pods=None):
+    def set_loading(self,
+                    parallel,
+                    num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
         By default total number of pods is set to number of parallel pods.
@@ -322,7 +596,8 @@ class default():
         # total number at least number of parallel
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
-    def set_benchmarking_parameters(self, **kwargs):
+    def set_benchmarking_parameters(self,
+                                    **kwargs):
         """
         Sets ENV for benchmarking components.
         Can be overwritten by configuration.
@@ -330,7 +605,8 @@ class default():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.benchmarking_parameters = kwargs
-    def add_configuration(self, configuration):
+    def add_configuration(self,
+                          configuration):
         """
         Adds a configuration object to the list of configurations of this experiment.
         When a new configuration object is instanciated, an experiment object has to be provided.
@@ -340,8 +616,8 @@ class default():
         """
         self.configurations.append(configuration)
     def set_querymanagement_quicktest(self,
-            numRun=1,
-            datatransfer=False):
+                                      numRun=1,
+                                      datatransfer=False):
         """
         Sets some parameters that are supposed to be suitable for a quick functional test:
 
@@ -439,43 +715,12 @@ class default():
             #stdout, stderr = proc.communicate()
         # local:
         #shutil.make_archive(self.cluster.resultfolder+"/"+str(self.cluster.code), 'zip', self.cluster.resultfolder, str(self.cluster.code))
-    def test_results(self):
-        """
-        Run test script in dashboard pod.
-        Extract exit code.
-
-        :return: exit code of test script
-        """
-        pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
-        if len(pod_dashboard) > 0:
-            #pod_dashboard = pods[0]
-            status = self.cluster.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
-            while status != "Running":
-                self.wait(10)
-                status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
-            cmd = {}
-            # only zip first level
-            #cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
-            # zip complete folder
-            cmd['test_results'] = 'python test-result.py -e {code} -r /results/;echo $?'.format(code=self.code)
-            # include sub directories
-            #cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
-            #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['test_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            try:
-                if len(stdout) > 0:
-                    print(stdout)
-                    return int(stdout.splitlines()[-1:][0])
-                else:
-                    return 1
-            except Exception as e:
-                return 1
-            finally:
-                return 1
-        return 1
-    def set_experiment(self, instance=None, volume=None, docker=None, script=None, indexing=None):
+    def set_experiment(self,
+                       instance=None,
+                       volume=None,
+                       docker=None,
+                       script=None,
+                       indexing=None):
         """
         Read experiment details from cluster config
 
@@ -499,7 +744,8 @@ class default():
         if indexing is not None:
             self.indexing = indexing
             self.indexscript = self.cluster.volumes[self.volume]['initscripts'][self.indexing]
-    def evaluate_results(self, pod_dashboard=''):
+    def evaluate_results(self,
+                         pod_dashboard=''):
         """
         Let the dashboard pod build the evaluations.
         This is specific to dbmsbenchmarker.
@@ -509,17 +755,24 @@ class default():
         3) All results of all DBMS are joined (merge.py of benchmarker) in dashboard pod
         4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
         """
+        self.cluster.logger.debug('default.evaluate_results()')
+        self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
                 status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
+                self.cluster.logger.debug(pod_dashboard+status)
                 while status != "Running":
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
-                    print(pod_dashboard, status)
+                    self.cluster.logger.debug(pod_dashboard+status)
+            """
         # copy logs and yamls to result folder
+        """
         print("Copy configuration and logs", end="", flush=True)
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
@@ -528,7 +781,9 @@ class default():
                 self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
                 print(".", end="", flush=True)
         print("done!")
+        """
         cmd = {}
+        # specific to dbmsbenchmarker
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
         self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
         print("Join results ", end="", flush=True)
@@ -540,8 +795,17 @@ class default():
         self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
         print("done!")
         # download evaluation cubes
+        print("{:30s}: downloading partial results".format("Experiment"))
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        self.cluster.kubectl(cmd['upload_results'])
         #print("{:30s}: downloading partial results".format("Experiment"))
         #print("{:30s}: uploading full results".format("Experiment"))
+        # single files?
+        """
         filename = 'evaluation.json'
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
         self.cluster.kubectl(cmd['download_results'])
@@ -568,7 +832,8 @@ class default():
             filename = os.fsdecode(file)
             if filename.endswith(".pickle"): 
                 df = pd.read_pickle(self.path+"/"+filename)
-                print(df)
+                print(self.path+"/"+filename, df)
+        """
     def stop_maintaining(self):
         """
         Stop all maintaining jobs of this experiment.
@@ -631,7 +896,8 @@ class default():
             deployments = self.cluster.get_deployments(app=app, component=component, experiment=self.code, configuration=configuration)
             for deployment in deployments:
                 self.cluster.delete_deployment(deployment)
-    def stop_benchmarker(self, configuration=''):
+    def stop_benchmarker(self,
+                         configuration=''):
         """
         Stop all benchmarker jobs of this experiment.
         If a dbms configurations is given, use it.
@@ -660,7 +926,7 @@ class default():
         """
         for config in self.configurations:
             config.start_monitoring()
-    def start_sut(self):#, configuration=None):
+    def start_sut(self):
         """
         Start all dbms configurations of this experiment.
         """
@@ -688,7 +954,8 @@ class default():
         """
         for config in self.configurations:
             config.start_loading()
-    def add_benchmark_list(self, list_clients):
+    def add_benchmark_list(self,
+                           list_clients):
         """
         Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
         Example `[1,2,1]` means sequentially we will have 1, then 2 and then 1 benchmarker instances.
@@ -709,12 +976,71 @@ class default():
 
         :return: Dict of benchmarking workflow
         """
+        # planned workflow is part of the workload
+        if 'workflow_planned' in self.workload:
+            return self.workload['workflow_planned']
+        # planned workflow is given by cli arguments and must be constructed
         workflow = {}
         for configuration in self.configurations:
             workflow[configuration.configuration] = [configuration.benchmark_list_template for i in range(configuration.num_experiment_to_apply)]
         self.cluster.logger.debug('default.get_workflow_list({})'.format(workflow))
         #print(workflow)
         return workflow
+    def store_workflow_results(self):
+        """
+        Constructs a list of runs for the planned workflow.
+        Stores this information in self.workload['workflow_planned'].
+        Updates query.config locally and remotely via update_workload().
+        """
+        workflow = self.get_workflow_list()
+        self.workload['workflow_planned'] = workflow
+        self.update_workload()
+    def test_workflow(self,
+                      workflow_1,
+                      workflow_2):
+        """
+        Compares two workflow dicts.
+        A workflow is a dict (connection is key, lists of lists are values).
+        Ignores the ordering inside the lists of lists.
+        """
+        def compare_lists(list1, list2):
+            if len(list1) != len(list2):
+                return False
+            # sort inner lists to ignore ordering
+            sorted_list1 = sorted([sorted(sublist) for sublist in list1])
+            sorted_list2 = sorted([sorted(sublist) for sublist in list2])
+            return sorted_list1 == sorted_list2
+        if workflow_1.keys() != workflow_2.keys():
+            return False
+        for key in workflow_1:
+            # compare lists, ignoring the ordering
+            if not compare_lists(workflow_1[key], workflow_2[key]):
+                return False
+        return True
+    def update_workload(self):
+        """
+        Updates query.config locally and remotely via dashboard pod.
+        """
+        if len(self.configurations) > 0:
+            # there is a configuration, i.e., also a query.config file
+            if len(self.workload) > 0:
+                #configuration = self.configurations[0]
+                # write appended query config
+                filename = self.path+"/queries.config"
+                with open(filename,'r') as inp:
+                    queryconfig = ast.literal_eval(inp.read())
+                    for k,v in self.workload.items():
+                        queryconfig[k] = v
+                #filename = self.benchmark.path+'/queries.config'
+                with open(filename, 'w') as outp:
+                    outp.write(str(queryconfig))
+        print("{:30s}: uploading workload file".format("Experiment"))
+        pod_dashboard = self.get_dashboard_pod()
+        cmd = {}
+        # single file
+        filename = 'queries.config'
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+        self.cluster.kubectl(cmd['upload_results'])
     def work_benchmark_list(self, intervals=30, stop=True):
         """
         Run typical workflow:
@@ -895,6 +1221,7 @@ class default():
                                         self.wait(30)
                                     print("{:30s}: starts again".format(config.configuration))
                                     config.benchmark_list = config.benchmark_list_template.copy()
+                                    config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
                                     # wait for PV to be gone completely
                                     #self.wait(60)
                                     config.reset_sut()
@@ -1043,16 +1370,43 @@ class default():
                         self.cluster.delete_job(job)
                 if len(pods) == 0 and len(jobs) == 0:
                     break
-    def get_job_timing_benchmarking(self, jobname):
+    def get_job_timing_benchmarking(self,
+                                    jobname):
+        """
+        Extracts start and end times from a benchmarking job.
+        This uses extract_job_timing() and sets container to 'dbmsbenchmarker'
+
+        :param jobname: Name of the job
+        :return: List of pairs (start,end) per pod
+        """
         timing_benchmarker = self.extract_job_timing(jobname, container="dbmsbenchmarker")
         return timing_benchmarker
-    def get_job_timing_loading(self, jobname):
+    def get_job_timing_loading(self,
+                               jobname):
+        """
+        Extracts start and end times from a loading job.
+        This uses extract_job_timing() and sets container to 'datagenerator' and 'sensor'.
+
+        :param jobname: Name of the job
+        :return: List of pairs (start,end) per pod, triple of datagenerator, sensor and total (i.e., sum)
+        """
         timing_datagenerator = self.extract_job_timing(jobname, container="datagenerator")
         timing_sensor = self.extract_job_timing(jobname, container="sensor")
         timing_total = timing_datagenerator + timing_sensor
         return timing_datagenerator, timing_sensor, timing_total
         #return total_time, generator_time, loader_time
-    def extract_job_timing(self, jobname, container):
+    def extract_job_timing(self,
+                           jobname,
+                           container):
+        """
+        Extracts start and end times from a job.
+        Looks for all container logs of the job.
+        Start and end are expected to be noted as BEXHOMA_START and BEXHOMA_END in the logs.
+
+        :param jobname: Name of the job
+        :param container: Name of the container in the pods of the job
+        :return: List of pairs (start,end) per pod
+        """
         def get_job_timing(filename):
             """
             Transforms a log file in text format into list of pairs of timing information.
@@ -1100,7 +1454,9 @@ class default():
             """
         #print(timing)
         return timing
-    def end_benchmarking(self, jobname, config=None):
+    def end_benchmarking(self,
+                         jobname,
+                         config=None):
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
@@ -1171,7 +1527,7 @@ class default():
                         cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
-                # get monitoring for loading
+                # get monitoring for benchmarking
                 if self.monitoring_active:
                     print("{:30s}: collecting execution metrics of SUT".format(connection))
                     cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct stream -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
@@ -1200,7 +1556,8 @@ class default():
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
         self.evaluator.end_benchmarking(jobname)
-    def end_loading(self, jobname):
+    def end_loading(self,
+                    jobname):
         """
         Ends a loading job.
         This is for storing or cleaning measures.
@@ -1210,6 +1567,9 @@ class default():
         self.cluster.logger.debug('default.end_loading({})'.format(jobname))
         self.evaluator.end_loading(jobname)
     def show_summary(self):
+        """
+        Show a summary of an experiment of type dbmsbenchmarker.
+        """
         self.cluster.logger.debug('default.show_summary()')
         print("\n## Show Summary")
         pd.set_option("display.max_rows", None)
@@ -1221,9 +1581,17 @@ class default():
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
+        print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
+                print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -1237,6 +1605,8 @@ class default():
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+        #evaluation = evaluators.base(code=code, path=resultfolder)
+        #####################
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=True)
         query_properties = evaluate.get_experiment_query_properties()
@@ -1251,7 +1621,10 @@ class default():
         df = evaluate.get_total_errors().T
         num_errors = df.sum().sum()
         if num_errors > 0:
+            # set readable names
             df.index = df.index.map(map_index_to_queryname)
+            # remove only False rows
+            df = df[~(df == False).all(axis=1)]
             print(df)
         else:
             print("No errors")
@@ -1260,7 +1633,10 @@ class default():
         df = evaluate.get_total_warnings().T
         num_warnings = df.sum().sum()
         if num_warnings > 0:
+            # set readable names
             df.index = df.index.map(map_index_to_queryname)
+            # remove only False rows
+            df = df[~(df == False).all(axis=1)]
             print(df)
         else:
             print("No warnings")
@@ -1294,6 +1670,7 @@ class default():
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index()
         df.columns = ['Geo Times [s]']
+        df_geo_mean_runtime = df.copy()
         print(df.round(2))
         #####################
         print("\n### Power@Size")
@@ -1301,6 +1678,7 @@ class default():
         df = (df/1000.0).sort_index().astype('float')
         df = float(parameter.defaultParameters['SF'])*3600./df
         df.columns = ['Power@Size [~Q/h]']
+        df_power = df.copy()
         print(df.round(2))
         #####################
         # aggregate time and throughput for parallel pods
@@ -1315,6 +1693,8 @@ class default():
             df_time.index = [connection_name]
             #df_time['SF'] = int(SF)
             #print(c)
+            #print(connection.name)
+            #print(connection.connection)
             df_time['orig_name'] = orig_name
             df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
             df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
@@ -1338,7 +1718,29 @@ class default():
         df_benchmark.rename_axis(index_names, inplace=True)
         print(df_benchmark)
         #####################
-        self.show_summary_monitoring()
+        print("\n### Workflow")
+        workflow_actual = self.evaluator.reconstruct_workflow(df_time)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
+            print("\n#### Actual")
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
+        #####################
+        test_results_monitoring = self.show_summary_monitoring()
+        print("\n### Tests")
+        self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+        self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
+        self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        if len(test_results_monitoring) > 0:
+            print(test_results_monitoring)
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring_table(self, evaluate, component):
         df_monitoring = list()
         ##########
@@ -1375,6 +1777,7 @@ class default():
             df_monitoring.append(df_cleaned.copy())
         return df_monitoring
     def show_summary_monitoring(self):
+        test_results = ""
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         evaluate = inspector.inspector(resultfolder)
@@ -1386,6 +1789,11 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "loader")
@@ -1393,6 +1801,11 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "stream")
@@ -1400,6 +1813,11 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "benchmarker")
@@ -1407,7 +1825,14 @@ class default():
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
+        return test_results.rstrip('\n')
+
 
 
 
@@ -1453,7 +1878,8 @@ class tpcds(default):
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_workload(
             name = 'TPC-DS Queries SF='+str(SF),
-            info = 'This experiment performs some TPC-DS inspired queries.'
+            info = 'This experiment performs some TPC-DS inspired queries.',
+            type = 'tpcds',
             )
         self.storage_label = 'tpcds-'+str(SF)
     def set_queries_full(self):
@@ -1488,6 +1914,7 @@ class tpch(default):
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
         if script is None:
             script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpch')
@@ -1498,13 +1925,87 @@ class tpch(default):
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'TPC-H Queries SF='+str(SF),
-            info = 'This experiment performs some TPC-H inspired queries.'
+            info = 'This experiment performs some TPC-H inspired queries.',
+            type = 'tpch',
             )
         self.storage_label = 'tpch-'+str(SF)
     def set_queries_full(self):
         self.set_queryfile('queries-tpch.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpch-profiling.config')
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        # shuffle ordering and random parameters
+        recreate_parameter = args.recreate_parameter
+        shuffle_queries = args.shuffle_queries
+        # limit to one table
+        limit_import_table = args.limit_import_table
+         # indexes
+        init_indexes = args.init_indexes
+        init_constraints = args.init_constraints
+        init_statistics = args.init_statistics
+        if mode == 'run':
+            # we want all TPC-H queries
+            self.set_queries_full()
+            self.set_workload(
+                name = 'TPC-H Queries SF='+str(SF),
+                info = 'This experiment compares run time and resource consumption of TPC-H queries in different DBMS.',
+                type = 'tpch',
+                defaultParameters = {'SF': SF}
+            )
+        elif mode == 'empty':
+            # set benchmarking queries to dummy - SELECT 1
+            self.set_queryfile('queries-tpch-empty.config')
+            self.set_workload(
+                name = 'TPC-H Data Dummy SF='+str(SF),
+                info = 'This experiment is for testing loading. It just runs a SELECT 1 query.',
+                type = 'tpch',
+                defaultParameters = {'SF': SF}
+            )
+        else:
+            # we want to profile the import
+            self.set_queries_profiling()
+            self.set_workload(
+                name = 'TPC-H Data Profiling SF='+str(SF),
+                info = 'This experiment compares imported TPC-H data sets in different DBMS.',
+                type = 'tpch',
+                defaultParameters = {'SF': SF}
+            )
+            # patch: use short profiling (only keys)
+            self.set_queryfile('queries-tpch-profiling-keys.config')
+        # new loading in cluster
+        self.loading_active = True
+        self.use_distributed_datasource = True
+        self.workload['info'] = self.workload['info']+"\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
+        if shuffle_queries:
+            self.workload['info'] = self.workload['info']+"\nQuery ordering is as required by the TPC."
+        else:
+            self.workload['info'] = self.workload['info']+"\nQuery ordering is Q1 - Q22."
+        if recreate_parameter:
+            self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
+        else:
+            self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        # optionally set some indexes and constraints after import
+        self.set_experiment(script='Schema')
+        if init_indexes or init_constraints or init_statistics:
+            self.set_experiment(indexing='Index')
+            init_scripts = " Import sets indexes after loading."
+            if init_constraints:
+                self.set_experiment(indexing='Index_and_Constraints')
+                init_scripts = "\nImport sets indexes and constraints after loading."
+            if init_statistics:
+                self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
+                init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
+            self.workload['info'] = self.workload['info']+init_scripts
+        #self.set_experiment(script='Schema', indexing='Index')
+        if len(limit_import_table):
+            # import is limited to single table
+            self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
+        default.prepare_testbed(self, parameter)
 
 
 
@@ -1533,6 +2034,7 @@ class tpcc(default):
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
         self.set_experiment(volume='tpcc')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/tpcc')
@@ -1540,11 +2042,36 @@ class tpcc(default):
         self.set_queryfile('queries.config')
         self.set_workload(
             name = 'TPC-C Queries SF='+str(SF),
-            info = 'This experiment performs some TPC-C inspired workloads.'
+            info = 'This experiment performs some TPC-C inspired workloads.',
+            type = 'tpcc',
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'hammerdb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SD = int(args.scaling_duration)
+        if mode == 'run':
+            self.set_workload(
+                name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
+                info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
+                type = 'tpcc',
+                defaultParameters = {'SF': SF}
+            )
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nTPC-C data is generated and loaded using several threads."
+        if SF:
+            self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
+        if SD:
+            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
+        default.prepare_testbed(self, parameter)
     def test_results(self):
         """
         Run test script locally.
@@ -1566,7 +2093,10 @@ class tpcc(default):
         """
         self.cluster.logger.debug('tpcc.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
@@ -1576,6 +2106,7 @@ class tpcc(default):
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
                     print(pod_dashboard, status)
+            """
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -1612,8 +2143,10 @@ class tpcc(default):
         #print("done!")
         # download all results from cluster
         #filename = 'evaluation.json'
+        print("{:30s}: downloading partial results".format("Experiment"))
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
@@ -1629,9 +2162,17 @@ class tpcc(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
+        print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
+                print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -1648,9 +2189,9 @@ class tpcc(default):
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
-        evaluation = evaluators.tpcc(code=code, path=resultfolder)
+        #evaluation = evaluators.tpcc(code=code, path=resultfolder)
         #####################
-        df = evaluation.get_df_loading()
+        df = self.evaluator.get_df_loading()
         if not df.empty:
             print("\n### Loading")
             print(df)
@@ -1664,16 +2205,16 @@ class tpcc(default):
             #df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             #print(df_aggregated)
         #####################
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         warehouses = 0
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
             #print(df)
             warehouses = int(df['sf'].max())
             df.fillna(0, inplace=True)
-            df_plot = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"vusers","client","pod_count"]].copy()
             columns = ["NOPM", "TPM", "duration", "errors"]
@@ -1683,11 +2224,17 @@ class tpcc(default):
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
-        workflow = evaluation.reconstruct_workflow(df)
-        if len(workflow) > 0:
-            print("\n### Workflow")
-            for c in workflow:
-                print("DBMS", c, "- Pods", workflow[c])
+        print("\n### Workflow")
+        workflow_actual = self.evaluator.reconstruct_workflow(df)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
+            print("\n#### Actual")
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         print("\n### Loading")
         #connections_sorted = sorted(connections, key=lambda c: c['name']) 
@@ -1722,40 +2269,71 @@ class tpcc(default):
         df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
         print(df_connections)
         #####################
-        self.show_summary_monitoring()
+        test_results_monitoring = self.show_summary_monitoring()
+        print("\n### Tests")
+        self.evaluator.test_results_column(df_aggregated_reduced, "NOPM")
+        if len(test_results_monitoring) > 0:
+            print(test_results_monitoring)
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        test_results = ""
+        #resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        #code = self.code
+        #evaluation = evaluators.tpcc(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loader")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "stream")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+        return test_results.rstrip('\n')
+
 
 
 
@@ -1793,7 +2371,8 @@ class iot(default):
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'IoT Queries SF='+str(SF),
-            info = 'This experiment performs some IoT inspired queries.'
+            info = 'This experiment performs some IoT inspired queries.',
+            type = 'iot',
             )
         self.storage_label = 'tpch-'+str(SF)
         self.maintaining_active = True
@@ -1849,7 +2428,8 @@ class tsbs(default):
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'TSBS Queries SF='+str(SF),
-            info = 'This experiment performs some TSBS inspired queries.'
+            info = 'This experiment performs some TSBS inspired queries.',
+            type = 'tsdb',
             )
         self.storage_label = 'tsbs-'+str(SF)
         self.maintaining_active = True
@@ -1898,6 +2478,7 @@ class ycsb(default):
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
         self.set_experiment(volume='ycsb')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/ycsb')
@@ -1905,11 +2486,56 @@ class ycsb(default):
         self.set_queryfile('queries.config')
         self.set_workload(
             name = 'YCSB Queries SF='+str(SF),
-            info = 'This experiment performs some YCSB inspired workloads.'
+            info = 'This experiment performs some YCSB inspired workloads.',
+            type = 'ycsb',
             )
         self.storage_label = 'ycsb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SFO = str(args.scaling_factor_operations)
+        if SFO == 'None':
+            SFO = SF
+        ycsb_rows = int(SF)*1000000 # 1kb each, that is SF is size in GB
+        ycsb_operations = int(SFO)*1000000
+        target_base = int(args.target_base)
+        batchsize = args.scaling_batchsize
+        num_loading_target_factors = self.get_parameter_as_list('num_loading_target_factors')
+        num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
+        if mode == 'run':
+            self.set_workload(
+                name = 'YCSB SF='+str(SF),
+                info = 'This experiment compares run time and resource consumption of YCSB queries.',
+                type = 'ycsb',
+                defaultParameters = {'SF': SF}
+            )
+        else:
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'YCSB Data Loading SF='+str(SF),
+                info = 'This imports YCSB data sets.',
+                type = 'ycsb',
+                defaultParameters = {'SF': SF}
+            )
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
+        self.workload['info'] = self.workload['info']+" Number of rows to insert is {}.".format(ycsb_rows)
+        self.workload['info'] = self.workload['info']+" Number of operations is {}.".format(ycsb_operations)
+        self.workload['info'] = self.workload['info']+" Batch size is '{}'.".format(batchsize)
+        self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
+        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
+        self.workload['info'] = self.workload['info']+" Factors for loading are {}.".format(num_loading_target_factors)
+        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        default.prepare_testbed(self, parameter)
     def test_results(self):
         """
         Run test script locally.
@@ -1931,17 +2557,21 @@ class ycsb(default):
         """
         self.cluster.logger.debug('ycsb.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         # download results
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
                 status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
+                self.cluster.logger.debug(pod_dashboard+status)
                 while status != "Running":
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
-                    print(pod_dashboard, status)
+                    self.cluster.logger.debug(pod_dashboard+status)
+            """
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -1980,9 +2610,17 @@ class ycsb(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
+        print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
+                print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -1999,27 +2637,29 @@ class ycsb(default):
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
-        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         #####################
-        df = evaluation.get_df_loading()
+        test_loading = False
+        df = self.evaluator.get_df_loading()
         if not df.empty:
             print("\n### Loading")
             df = df.sort_values(['configuration','experiment_run','client'])
             df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
             #print(df)
             #print(df.columns)
-            df_plot = evaluation.loading_set_datatypes(df)
-            df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.loading_set_datatypes(df)
+            df_aggregated = self.evaluator.loading_aggregate_by_parallel_pods(df_plot)
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
-            df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-            print(df_aggregated)
+            df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            print(df_aggregated_loaded)
+            test_loading = True
         #####################
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
             df.fillna(0, inplace=True)
-            df_plot = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count"]].copy()
             columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
@@ -2029,40 +2669,85 @@ class ycsb(default):
             print(df_aggregated_reduced)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
-        self.show_summary_monitoring()
+        print("\n### Workflow")
+        workflow_actual = self.evaluator.reconstruct_workflow(df)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
+            print("\n#### Actual")
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
+        #####################
+        test_results_monitoring = self.show_summary_monitoring()
+        print("\n### Tests")
+        if test_loading:
+            self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
+        self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
+        if len(test_results_monitoring) > 0:
+            print(test_results_monitoring)
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        test_results = ""
+        #resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        #code = self.code
+        #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loader")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "stream")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+        return test_results.rstrip('\n')
+
 
 
 
@@ -2091,6 +2776,7 @@ class benchbase(default):
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
         self.set_experiment(volume='benchbase')
         self.set_experiment(script='Schema')
         self.cluster.set_experiments_configfolder('experiments/benchbase')
@@ -2098,11 +2784,43 @@ class benchbase(default):
         self.set_queryfile('queries.config')
         self.set_workload(
             name = 'Benchbase Queries SF='+str(SF),
-            info = 'This experiment performs some Benchbase workloads.'
+            info = 'This experiment performs some Benchbase workloads.',
+            type = 'benchbase',
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        SD = int(args.scaling_duration)*60
+        target_base = int(args.target_base)
+        type_of_benchmark = args.benchmark
+        num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
+        if mode == 'run':
+            self.set_workload(
+                name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
+                info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
+                type = 'benchbase',
+                defaultParameters = {'SF': SF}
+            )
+        self.loading_active = True
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
+        self.set_experiment(script='Schema')
+        # note more infos about experiment in workload description
+        self.workload['info'] = self.workload['info']+"\nBenchbase data is generated and loaded using several threads."
+        if len(type_of_benchmark):
+            self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
+        if SF:
+            self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses) is {}.".format(SF)
+        if SD:
+            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
+        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
+        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
@@ -2124,7 +2842,7 @@ class benchbase(default):
         except Exception as e:
             print(e)
             return pd.DataFrame()
-    def get_parts_of_name(self, name):
+    def DEPRECATED_get_parts_of_name(self, name):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
@@ -2149,17 +2867,21 @@ class benchbase(default):
         """
         self.cluster.logger.debug('benchbase.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
         # download results
         if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+            """
             pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
             if len(pod_dashboard) > 0:
                 #pod_dashboard = pods[0]
                 status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
+                self.cluster.logger.debug(pod_dashboard+status)
                 while status != "Running":
                     self.wait(10)
                     status = self.cluster.get_pod_status(pod_dashboard)
-                    print(pod_dashboard, status)
+                    self.cluster.logger.debug(pod_dashboard+status)
+            """
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -2175,8 +2897,10 @@ class benchbase(default):
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
         cmd = {}
+        print("{:30s}: downloading partial results".format("Experiment"))
         cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
         self.cluster.kubectl(cmd['download_results'])
+        print("{:30s}: uploading full results".format("Experiment"))
         cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
         self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
@@ -2191,9 +2915,17 @@ class benchbase(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print("\n### Workload\n    "+workload_properties['name'])
+        print("\n### Workload\n"+workload_properties['name'])
+        print("    Type: "+workload_properties['type'])
+        print("    Duration: {}s ".format(workload_properties['duration']))
+        print("    Code: "+code)
         print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'])
+        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+            for error, messages in workload_properties['workflow_errors'].items():
+                print("    Error: "+error)
+                for message in messages:
+                    print("        "+message)
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2210,7 +2942,7 @@ class benchbase(default):
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
-        evaluation = evaluators.benchbase(code=code, path=resultfolder)
+        #evaluation = evaluators.benchbase(code=code, path=resultfolder)
         #####################
         """
         df = evaluation.get_df_loading()
@@ -2230,13 +2962,13 @@ class benchbase(default):
         """
         #####################
         warehouses = 0
-        df = evaluation.get_df_benchmarking()
+        df = self.evaluator.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
             warehouses = int(df['sf'].max())
             df.fillna(0, inplace=True)
-            df_plot = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             #print(df_aggregated)
             #print(df_aggregated.T)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
@@ -2246,14 +2978,21 @@ class benchbase(default):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
         #####################
-        workflow = evaluation.reconstruct_workflow(df)
-        if len(workflow) > 0:
-            print("\n### Workflow")
-            for c in workflow:
-                print("DBMS", c, "- Pods", workflow[c])
+        print("\n### Workflow")
+        workflow_actual = self.evaluator.reconstruct_workflow(df)
+        workflow_planned = workload_properties['workflow_planned']
+        if len(workflow_actual) > 0:
+            print("\n#### Actual")
+            for c in workflow_actual:
+                print("DBMS", c, "- Pods", workflow_actual[c])
+        if len(workflow_planned) > 0:
+            print("\n#### Planned")
+            for c in workflow_planned:
+                print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         print("\n### Loading")
         #connections_sorted = sorted(connections, key=lambda c: c['name']) 
@@ -2283,43 +3022,75 @@ class benchbase(default):
         #print(df_tpx)
         #df_loading_tpx = df_tpx['time_load']
         df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
         print(df_connections)
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
-        self.show_summary_monitoring()
+        test_results_monitoring = self.show_summary_monitoring()
+        print("\n### Tests")
+        self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
+        if len(test_results_monitoring) > 0:
+            print(test_results_monitoring)
+        if self.test_workflow(workflow_actual, workflow_planned):
+            print("TEST passed: Workflow as planned")
+        else:
+            print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        evaluation = evaluators.benchbase(code=code, path=resultfolder)
+        test_results = ""
+        #resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        #code = self.code
+        #evaluation = evaluators.benchbase(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "loader")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loader")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "stream")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "stream")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluation, "benchmarker")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+        return test_results.rstrip('\n')
+
 
 
 

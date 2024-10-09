@@ -1,10 +1,16 @@
-FROM eclipse-temurin:11
+#FROM eclipse-temurin:11
+FROM debian:stable-20221004-slim
 
-RUN apt-get update
-RUN apt-get install -y make
-RUN apt-get install -y gcc
+RUN apt-get -y update && apt-get clean all
 
-RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
+RUN apt-get install -y build-essential
+RUN apt-get install -y wget
+RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make && cp src/redis-cli /usr/local/bin/ && chmod 755 /usr/local/bin/redis-cli
+
+#RUN apt-get update
+#RUN apt-get install -y make
+#RUN apt-get install -y gcc
+#RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
 
 COPY ./tpc_eula.txt ./tpc_eula.txt
 COPY ./dists.dss /tmp/dists.dss

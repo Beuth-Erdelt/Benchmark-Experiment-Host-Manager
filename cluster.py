@@ -22,11 +22,9 @@ import logging
 import urllib3
 import logging
 import argparse
-import time
 import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
-import multiprocessing as mp
 from prettytable import PrettyTable, ALL
 
 urllib3.disable_warnings()
@@ -74,6 +72,25 @@ if __name__ == '__main__':
             experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
+    elif args.mode == 'summary':
+        if not args.experiment is None:
+            cluster = clusters.kubernetes(clusterconfig, context=args.context)
+            resultfolder = cluster.config['benchmarker']['resultfolder']
+            code = args.experiment
+            with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+                workload_properties = ast.literal_eval(inp.read())
+                match workload_properties['type']:
+                    case 'ycsb':
+                        experiment = experiments.ycsb(cluster=cluster, code=code)
+                    case 'tpcc':
+                        experiment = experiments.tpcc(cluster=cluster, code=code)
+                    case 'tpch':
+                        experiment = experiments.tpch(cluster=cluster, code=code)
+                    case 'benchbase':
+                        experiment = experiments.benchbase(cluster=cluster, code=code)
+                    case _:
+                        experiment = experiments.default(cluster=cluster, code=code)
+                experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         cluster.connect_dashboard()
@@ -142,6 +159,8 @@ if __name__ == '__main__':
         if len(messagequeue_name) > 0:
             status = cluster.get_pod_status(messagequeue_name[0])
             print("Message Queue: {}".format(status))
+        else:
+            print("Message Queue: Not running")
         # get data directory
         pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
         if len(pvcs) > 0:
@@ -194,6 +213,7 @@ if __name__ == '__main__':
             df = pd.DataFrame(volumes).T
             #print(df)
             h = ['Volumes'] + list(df.columns)
+            df = df.reindex(index=evaluators.natural_sort(df.index))
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
         # get all worker volumes
         pvcs = cluster.get_pvc(app=app, component='worker', experiment='', configuration='')
@@ -386,12 +406,14 @@ if __name__ == '__main__':
             h = [df.index.name] + list(df.columns)
             if args.verbose:
                 # this shows all columns even if empty
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
             else:
                 df_empty = df.eq('')
                 df_short = df.drop(df_empty.columns[df_empty.all()].tolist(), axis=1)
                 h_short = [df_short.index.name] + list(df_short.columns)
                 # this shows only columns with not all empty
+                df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
     benchmarker.logger.setLevel(logging.ERROR)
 

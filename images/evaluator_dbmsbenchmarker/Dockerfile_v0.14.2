@@ -1,0 +1,44 @@
+FROM python:3.11.7
+
+# does not compile numpy correctly
+# FROM python:3.13-rc-slim
+
+WORKDIR /usr/src/app
+
+RUN apt update
+RUN apt install default-jre -y
+RUN apt install zip -y
+RUN apt install nano -y
+
+# only needed in slim releases
+# RUN apt install git -y
+# RUN apt install build-essential -y
+
+RUN mkdir /results
+
+SHELL ["/bin/bash", "-c"]
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m pip install --user virtualenv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.2
+
+RUN pip install jupyter
+RUN pip install jupyter_contrib_nbextensions
+#RUN jupyter contrib nbextension install --user
+#RUN jupyter nbextensions_configurator enable --user
+#RUN jupyter nbextension enable toc2/main
+
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch v0.14.2
+
+WORKDIR /usr/src/app/DBMS-Benchmarker
+
+RUN mkdir /usr/src/app/DBMS-Benchmarker/notebooks
+
+COPY ./notebooks /usr/src/app/DBMS-Benchmarker/notebooks
+
+# RUN git pull
+
+CMD git pull; python ./dashboard.py -r /results

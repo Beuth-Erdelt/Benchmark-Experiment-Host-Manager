@@ -3,7 +3,8 @@
 You would like to contribute? Great!
 
 Some things that you can help on include:
-* **New Workloads**: The `example/` folder includes the TPC-H and TPC-DS (reading) queries in various dialects. We are interested in adding other relevant workloads.
+* **New Workloads**: We are interested in adding other relevant workloads, for example more workloads from Benchbase. The `experiments/` folder includes scripts for preparing various databases for various workloads. The `k8s` folder containers YAML manifests for using components. The `images/` folder contains Dockerfiles for implementing tools for components.
+* **New DBMS**: We are interested in adding other relevant DBMS. The `experiments/` folder includes scripts for preparing various databases for various workloads. The `k8s` folder containers YAML manifests for using components. This includes DBMS managed by Bexhoma.
 * **Documentation**: If a point in the documentation is unclear, we look forward to receiving tips and suggestions for improvement.
 * **Testing**: If the behavior is not as expected and you suspect a bug, please report it to our [issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues).
 * **Use Cases**: If you have had any experiences with peculiarities, mistakes, ambiguities or oddities or particularly beautiful cases etc., we are interested in hearing about them and passing them on to others.
@@ -29,7 +30,7 @@ If you are planning to make a pull request, start by creating a new branch with 
 
 ### Coding Conventions
 
-DBMSBenchmarker tries to follow the coding conventions laid out in PEP8 and PEP257
+Bexhoma tries to follow the coding conventions laid out in PEP8 and PEP257
 
 - http://www.python.org/dev/peps/pep-0008/
 - http://www.python.org/dev/peps/pep-0257/
@@ -40,14 +41,5 @@ DBMSBenchmarker tries to follow the coding conventions laid out in PEP8 and PEP2
 New features or functions will not be accepted without testing.
 Likewise for any enhancement or bug fix, we require including an additional test.
 
-#### If the feature or functionality concerns benchmarking
-
-We expect it to be testable with the TPC-H workload.
-Otherwise please add references to data and queries you used to test the functionality.
-They must be publicly accessible.
-
-#### If the feature or functionality concerns evaluation
-
-Please include a zipped result folder, so we can trace the enhancement of evaluations based on the same results you have used.
-(And please be sure to not include secret passwords in the connection information).
-
+The file https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test.sh includes some demo tests.
+For new or important features, we are happy to include a "TEST Passed" or "TEST failed" scenario.

@@ -59,27 +59,38 @@ if __name__ == '__main__':
         logger_bexhoma.setLevel(logging.DEBUG)
         logger_loader = logging.getLogger('load_data_asynch')
         logger_loader.setLevel(logging.DEBUG)
-    # set parameter
-    monitoring = args.monitoring
-    monitoring_cluster = args.monitoring_cluster
-    mode = str(args.mode)
-    timeout = int(args.timeout)
-    numRun = int(args.num_run)
-    num_experiment_to_apply = int(args.num_config)
-    cpu = str(args.request_cpu)
-    memory = str(args.request_ram)
-    cpu_type = str(args.request_cpu_type)
-    gpu_type = str(args.request_gpu_type)
-    gpus = str(args.request_gpu)
-    request_storage_type = args.request_storage_type
-    request_storage_size = args.request_storage_size
-    request_node_name = args.request_node_name
-    datatransfer = args.datatransfer
-    test_result = args.test_result
-    recreate_parameter = args.recreate_parameter
+    ##############
+    ### set parameters
+    ##############
+    command_args = vars(args)
+    ##############
+    ### workflow parameters
+    ##############
     # start with old experiment?
     code = args.experiment
-    # set cluster
+    # only create testbed or also run a benchmark?
+    mode = str(args.mode)
+    # scaling of data
+    SF = str(args.scaling_factor)
+    # timeout of a benchmark
+    timeout = int(args.timeout)
+    # how often to repeat experiment?
+    num_experiment_to_apply = int(args.num_config)
+    # should results be tested for validity?
+    test_result = args.test_result
+    # configure number of clients per config
+    list_clients = args.num_query_executors.split(",")
+    if len(list_clients) > 0:
+        list_clients = [int(x) for x in list_clients if len(x) > 0]
+    else:
+        list_clients = []
+    ##############
+    ### specific to: dbmsbenchmarker
+    ##############
+    recreate_parameter = args.recreate_parameter
+    ##############
+    ### set cluster
+    ##############
     aws = args.aws
     if aws:
         cluster = clusters.aws(context=args.context)
@@ -98,53 +109,21 @@ if __name__ == '__main__':
     # set experiment
     if code is None:
         code = cluster.code
+    ##############
+    ### prepare and configure experiment
+    ##############
     experiment = experiments.example(cluster=cluster, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply, queryfile='queries.config')
     #cluster.set_experiments_configfolder('experiments/example')
     experiment.prometheus_interval = "10s"
     experiment.prometheus_timeout = "10s"
     # remove running dbms
     #experiment.clean()
-    if mode == 'run':
-        pass
-    if monitoring:
-        # we want to monitor resource consumption
-        experiment.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
-    else:
-        # we want to just run the queries
-        experiment.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
-    if monitoring_cluster:
-        # monitor all nodes of cluster (for not missing any component)
-        cluster.start_monitoring_cluster()
-    # set resources for dbms
-    experiment.set_resources(
-        requests = {
-            'cpu': cpu,
-            'memory': memory,
-            'gpu': 0
-        },
-        limits = {
-            'cpu': 0,
-            'memory': 0
-        },
-        nodeSelector = {
-            'cpu': cpu_type,
-            'gpu': '',
-        })
-    if request_node_name is not None:
-        experiment.set_resources(
-            nodeSelector = {
-                'cpu': cpu_type,
-                'gpu': '',
-                'kubernetes.io/hostname': request_node_name
-            })        
-    # persistent storage
-    experiment.set_storage(
-        storageClassName = request_storage_type,
-        storageSize = request_storage_size,#'100Gi',
-        keep = True
-        )
-    cluster.start_dashboard()
-    cluster.start_messagequeue()
+    experiment.prepare_testbed(command_args)
+    num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
+    num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
+    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
+    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
+    # set node groups for components
     if aws:
         # set node labes for components
         experiment.set_nodes(
@@ -154,32 +133,37 @@ if __name__ == '__main__':
             benchmarking = 'auxiliary',
             )
     cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
-    # add configs
+    ##############
+    ### add configs of dbms to be tested
+    ##############
     if args.dbms == "Dummy":
         # Dummy DBMS
         name_format = 'Dummy-{cluster}'
         config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
         config.loading_finished = True
-    # wait for necessary nodegroups to have planned size
+    ##############
+    ### wait for necessary nodegroups to have planned size
+    ##############
     if aws:
         #cluster.wait_for_nodegroups(node_sizes)
         pass
-    # configure number of clients per config
-    list_clients = args.num_query_executors.split(",")
-    if len(list_clients) > 0:
-        list_clients = [int(x) for x in list_clients]
+    ##############
+    ### branch for workflows
+    ##############
     experiment.add_benchmark_list(list_clients)
     # total time of experiment
     start = default_timer()
     start_datetime = str(datetime.datetime.now())
-    print("Experiment starts at {} ({})".format(start_datetime, start))
+    print("{:30s}: has code {}".format("Experiment",experiment.code))
+    print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+    print("{:30s}: {}".format("Experiment",experiment.workload['info']))
     # run workflow
     experiment.work_benchmark_list()
     # total time of experiment
     end = default_timer()
     end_datetime = str(datetime.datetime.now())
     duration_experiment = end - start
-    print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
+    print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
     ##################
     experiment.evaluate_results()
     experiment.stop_benchmarker()
@@ -190,4 +174,5 @@ if __name__ == '__main__':
         if test_result_code == 0:
             print("Test successful!")
     cluster.restart_dashboard()
+    experiment.show_summary()
 exit()

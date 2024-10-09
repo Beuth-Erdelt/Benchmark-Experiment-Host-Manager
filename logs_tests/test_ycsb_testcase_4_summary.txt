@@ -1,0 +1,51 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 232s 
+    Code: 1728374844
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:248973432
+    datadisk:3822840
+    volume_size:100G
+    volume_used:3.7G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)
+PostgreSQL-64-8-131072-1               1       64  131072          8                       25447.87                40124.0               50240                             2653.75            949760                            5053.5
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+
+#### Planned
+DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

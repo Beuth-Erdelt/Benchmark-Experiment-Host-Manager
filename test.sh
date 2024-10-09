@@ -1,109 +1,467 @@
 #!/bin/bash
 
-mkdir -p ./logs/
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
+
+
+#echo "Waiting 12h..."
+#sleep 43200
+#echo "Waiting 24h..."
+#sleep 86400
 
 
 
 
-#### YCSB Loader Test for docs
-# SF = 1
-# PostgreSQL 1 and 8 loader
-# [1,2,3,4,5,6,7,8] times 16384 = target
-nohup python ycsb.py -ms 1 -m --workload a -tr \
-	-dbms PostgreSQL \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	run &>logs/test_ycsb_1.log &
-
-# watch -n 30 tail -n 50 logs/test_ycsb_1.log
+###########################################
+################## TPC-H ##################
+###########################################
 
 
-#### Wait so that experiments receive different codes
-sleep 5
+
+### TPC-H Power Test - only PostgreSQL (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
 
 
-#### YCSB Loader Test for persistency
-# SF = 1
-# PostgreSQL 8 loader
-# 16384 = target
-# run twice
-# [1,2] execute
-# persistent storage of class shared
-nohup python ycsb.py -ms 1 -m --workload a -tr \
-	-nlp 8 \
-	-dbms PostgreSQL \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-ne 1,2 \
-	-nc 2 \
-	-ltf 1 \
-	-rst shared -rss 100Gi \
-	run &>logs/test_ycsb_2.log &
-
-# watch -n 30 tail -n 50 logs/test_ycsb_2.log
+#### Wait so that next experiment receives a different code
+sleep 600
 
 
-#### Wait so that experiments receive different codes
-sleep 5
+### TPC-H Monitoring (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 3 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_2.log
 
 
-#### YCSB Execution Test
-# SF = 1
-# PostgreSQL 1 loader
-# 2x(1,2) benchmarker
-# persistent storage of class shared
-nohup python ycsb.py -ms 1 -m --workload a -tr \
-	-nlp 1 \
-	-dbms PostgreSQL \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-ne 1,2 \
-	-nc 2 \
-	-ltf 2 \
-	-rst shared -rss 100Gi \
-	run &>logs/test_ycsb_3.log &
+#### Wait so that next experiment receives a different code
+sleep 600
 
-# watch -n 30 tail -n 50 logs/test_ycsb_3.log
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+sleep 10
 
 
-#### Wait so that experiments receive different codes
-sleep 5
+### TPC-H Throughput Test (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 3 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_3.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_3.log
 
 
-#### TPC-H Power Test
-# SF = 1
-# PostgreSQL 8 loader
-# MonetDB 8 loader
-# MySQL 8 loader threads
-# 1x(1) benchmarker
-# no persistent storage
-nohup python tpch.py -ms 1 -m -dt -sf 1 -ii -ic -is \
-	-nlp 8 -nlt 8 \
-	-nc 1 -ne 1 \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-t 1200 \
-	run &>logs/test_tpch_1.log &
-
-# watch -n 30 tail -n 50 logs/test_tpch_1.log
+#### Wait so that next experiment receives a different code
+sleep 1200
 
 
-#### Wait so that experiments receive different codes
-sleep 5
 
 
-#### TPC-H Throughput Test
-# SF = 1
-# PostgreSQL 8 loader
-# 2x(1,2) benchmarker
-# persistent storage of class shared
-nohup python tpch.py -ms 1 -m -dt -sf 1 -ii -ic -is \
-	-nlp 8 -nlt 8 \
-	-nc 2 -ne 1,2 \
-	-rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-	-dbms PostgreSQL -t 1200 \
-	-rst shared -rss 100Gi \
-	run &>logs/test_tpch_2.log &
 
-# watch -n 30 tail -n 50 logs/test_tpch_2.log
+
+
+
+
+
+
+###########################################
+################ Benchbase ################
+###########################################
+
+
+
+#### Benchbase Simple (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 600
+
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
+sleep 10
+
+### Benchbase Persistency (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 600
+
+
+### Benchbase Monitoring (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_3.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 600
+
+
+### Benchbase Complex (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1,2 \
+  -nbt 8 \
+  -nbf 8 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_4.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 1800
+
+
+
+
+
+###########################################
+################ HammerDB #################
+###########################################
+
+
+
+
+### HammerDB Simple (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_1.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 900
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
+sleep 10
+
+
+### HammerDB Monitoring (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_2.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 900
+
+
+### HammerDB Complex (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 2 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_3.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 3000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+################## YCSB ###################
+###########################################
+
+
+
+
+
+
+
+### YCSB Loader Test for Scaling the Driver (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 4,8 \
+  -nlt 32,64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_1.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 900
+
+
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-ycsb-1
+sleep 10
+
+### YCSB Loader Test for Persistency (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_2.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 600
+
+
+
+### YCSB Execution for Scaling and Repetition (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_3.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 900
+
+
+
+### YCSB Execution Different Workload (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload e \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_4.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 300
+
+
+
+#### YCSB Execution Monitoring (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 100Gi \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
+
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_5.log
+
+
+#### Wait so that next experiment receives a different code
+sleep 900
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+############## Clean Folder ###############
+###########################################
+
+
+
+export MYDIR=$(pwd)
+cd $LOG_DIR
+# remove connection errors from logs
+grep -rl "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." . | xargs sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
+cd $MYDIR
+
+# Loop over each text file in the source directory
+for file in "$LOG_DIR"/*.log; do
+    # Get the filename without the path and extension
+    echo "Cleaning $file"
+    filename=$(basename "$file" .log)
+    # Extract lines starting from "## Show Summary" and save as <filename>_summary.txt in the destination directory
+    awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
+done
+
+echo "Extraction complete! Files are saved in $LOG_DIR."
 
