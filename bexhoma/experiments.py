@@ -1868,14 +1868,19 @@ class tpcds(default):
             SF = '100',
             num_experiment_to_apply = 1,
             timeout = 7200,
+            script=None
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
+        if script is None:
+            script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpcds')
-        self.set_experiment(script='SF'+str(SF)+'-index')
+        #self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/tpcds')
-        self.set_queryfile(queryfile)
         parameter.defaultParameters = {'SF': str(SF)}
+        self.set_queryfile(queryfile)
+        self.set_additional_labels(SF=SF)
         self.set_workload(
             name = 'TPC-DS Queries SF='+str(SF),
             info = 'This experiment performs some TPC-DS inspired queries.',
@@ -1886,6 +1891,79 @@ class tpcds(default):
         self.set_queryfile('queries-tpcds.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpcds-profiling.config')
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        # shuffle ordering and random parameters
+        recreate_parameter = args.recreate_parameter
+        shuffle_queries = args.shuffle_queries
+        # limit to one table
+        limit_import_table = args.limit_import_table
+         # indexes
+        init_indexes = args.init_indexes
+        init_constraints = args.init_constraints
+        init_statistics = args.init_statistics
+        if mode == 'run':
+            # we want all TPC-H queries
+            self.set_queries_full()
+            self.set_workload(
+                name = 'TPC-DS Queries SF='+str(SF),
+                info = 'This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
+        elif mode == 'empty':
+            # set benchmarking queries to dummy - SELECT 1
+            self.set_queryfile('queries-tpch-empty.config')
+            self.set_workload(
+                name = 'TPC-DS Data Dummy SF='+str(SF),
+                info = 'This experiment is for testing loading. It just runs a SELECT 1 query.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
+        else:
+            # we want to profile the import
+            self.set_queries_profiling()
+            self.set_workload(
+                name = 'TPC-DS Data Profiling SF='+str(SF),
+                info = 'This experiment compares imported TPC-DS data sets in different DBMS.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
+            # patch: use short profiling (only keys)
+            self.set_queryfile('queries-tpcds-profiling-keys.config')
+        # new loading in cluster
+        self.loading_active = True
+        self.use_distributed_datasource = True
+        self.workload['info'] = self.workload['info']+"\nTPC-DS (SF={}) data is loaded and benchmark is executed.".format(SF)
+        if shuffle_queries:
+            self.workload['info'] = self.workload['info']+"\nQuery ordering is as required by the TPC."
+        else:
+            self.workload['info'] = self.workload['info']+"\nQuery ordering is Q1 - Q99."
+        if recreate_parameter:
+            self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
+        else:
+            self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        # optionally set some indexes and constraints after import
+        self.set_experiment(script='Schema')
+        if init_indexes or init_constraints or init_statistics:
+            self.set_experiment(indexing='Index')
+            init_scripts = " Import sets indexes after loading."
+            if init_constraints:
+                self.set_experiment(indexing='Index_and_Constraints')
+                init_scripts = "\nImport sets indexes and constraints after loading."
+            if init_statistics:
+                self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
+                init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
+            self.workload['info'] = self.workload['info']+init_scripts
+        #self.set_experiment(script='Schema', indexing='Index')
+        if len(limit_import_table):
+            # import is limited to single table
+            self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
+        default.prepare_testbed(self, parameter)
 
 
 """
@@ -1918,7 +1996,7 @@ class tpch(default):
         if script is None:
             script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpch')
-        self.set_experiment(script=script)
+        #self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/tpch')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_additional_labels(SF=SF)

@@ -1,10 +1,62 @@
-Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/tpcds.py", line 144, in <module>
-    experiment = experiments.tpcds(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py", line 1875, in __init__
-    self.set_experiment(script='SF'+str(SF)+'-index')
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py", line 743, in set_experiment
-    self.initscript = self.cluster.volumes[self.volume]['initscripts'][self.script]
-                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-KeyError: 'SF3-index'
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1728576882
+Experiment                    : starts at 2024-10-10 18:14:42.380377 (3312822.504358241)
+Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+TPC-DS (SF=3) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q99.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
+Benchmark is limited to DBMS ['MonetDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : 
