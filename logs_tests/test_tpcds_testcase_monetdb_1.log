@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/tpcds.py", line 144, in <module>
+    experiment = experiments.tpcds(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py", line 1875, in __init__
+    self.set_experiment(script='SF'+str(SF)+'-index')
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py", line 743, in set_experiment
+    self.initscript = self.cluster.volumes[self.volume]['initscripts'][self.script]
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'SF3-index'

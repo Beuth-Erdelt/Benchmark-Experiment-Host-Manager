@@ -22,6 +22,36 @@ LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
 
+# Define the wait_process function
+wait_process() {
+    local process_name=$1
+
+    # Wait until the process with the name passed as an argument has terminated
+    while ps aux | grep "[p]ython $process_name.py" > /dev/null; do
+        # Process is still running, wait for 5 seconds
+        echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for process python $process_name.py to terminate..."
+        sleep 60
+    done
+
+    echo "$(date +"%Y-%m-%d %H:%M:%S"): Process python $process_name.py has terminated."
+}
+
+# Example usage
+#wait_process "tpch"
+
+
+#echo "Waiting 12h..."
+#sleep 43200
+#echo "Waiting 24h..."
+#sleep 86400
+
+
+
+
+
+
+
+
 
 
 
@@ -44,7 +74,8 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+#sleep 1200
+wait_process "hammerdb"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -61,7 +92,8 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+#sleep 1200
+wait_process "hammerdb"
 
 
 #### HammerDB Persistent Storage (Example-HammerDB.md)
@@ -78,7 +110,8 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+#sleep 1200
+wait_process "hammerdb"
 
 
 #### YCSB Scale Loading (Example-YCSB.md)
@@ -99,7 +132,8 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+#sleep 1200
+wait_process "ycsb"
 
 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
@@ -120,7 +154,8 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "ycsb"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -142,7 +177,8 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+#sleep 1800
+wait_process "ycsb"
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
@@ -164,7 +200,8 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "ycsb"
 
 
 #### Benchbase Scale (Example-Benchbase.md)
@@ -180,7 +217,8 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+#sleep 1200
+wait_process "benchbase"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -197,7 +235,8 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+#sleep 1200
+wait_process "benchbase"
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
@@ -215,7 +254,8 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "benchbase"
 
 
 #### TCP-H Compare (Example-TPC-H.md)
@@ -228,7 +268,8 @@ nohup python tpch.py -ms 1 -dt -tr \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
 
 #### Wait so that next experiment receives a different code
-sleep 7200
+#sleep 7200
+wait_process "tpch"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
@@ -243,7 +284,8 @@ nohup python tpch.py -ms 1 -dt -tr \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "tpch"
 
 
 #### TCP-H Throughput (Example-TPC-H.md)
@@ -259,7 +301,8 @@ nohup python tpch.py -ms 1 -dt -tr \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "tpch"
 
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
@@ -275,7 +318,8 @@ nohup python tpch.py -ms 1 -dt -tr \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "tpch"
 
 
 
@@ -298,7 +342,8 @@ nohup python tpch.py -ms 1 \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+#sleep 1800
+wait_process "tpch"
 
 nohup python tpch.py -ms 1 \
   -m -mc \
@@ -314,7 +359,8 @@ nohup python tpch.py -ms 1 \
 
 
 #### Wait so that next experiment receives a different code
-sleep 4800
+#sleep 4800
+wait_process "tpch"
 
 
 nohup python tpch.py -ms 1 \
@@ -330,7 +376,8 @@ nohup python tpch.py -ms 1 \
   run &>logs_tests/doc_tpch_monetdb_3.log &
 
 #### Wait so that next experiment receives a different code
-sleep 4800
+#sleep 4800
+wait_process "tpch"
 
 
 

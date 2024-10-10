@@ -223,7 +223,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                if args.dbms == "MySQL":
+                if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
                     name_format = 'MySQL-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
@@ -266,8 +266,8 @@ if __name__ == '__main__':
                                         PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                        BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_DATABASE = 'postgres',
+                                        BENCHBASE_PROFILE = 'mysql',
+                                        BEXHOMA_DATABASE = 'benchbase',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
@@ -275,7 +275,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                if args.dbms == "MariaDB":
+                if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                     # MariaDB
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
@@ -318,8 +318,8 @@ if __name__ == '__main__':
                                         PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                        BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_DATABASE = 'postgres',
+                                        BENCHBASE_PROFILE = 'mariadb',
+                                        BEXHOMA_DATABASE = 'benchbase',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,

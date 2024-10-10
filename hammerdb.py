@@ -32,7 +32,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='start sut, also load data or also run the TPC-C queries', choices=['run', 'start', 'load', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MonetDB', 'SingleStore', 'CockroachDB', 'MySQL', 'MariaDB', 'YugabyteDB', 'Kinetica'])
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[], action='append')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
@@ -166,7 +166,7 @@ if __name__ == '__main__':
     for loading_threads in num_loading_threads:#[8]:#[64]:
         for loading_pods in [1]:#num_loading_pods:#[1,2]:#[1,8]:#range(2,5):
             loading_threads_per_pod = int(loading_threads/loading_pods)
-            if args.dbms == "PostgreSQL":
+            if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
@@ -212,7 +212,7 @@ if __name__ == '__main__':
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
-            if args.dbms == "MySQL":
+            if ("MySQL" in args.dbms or len(args.dbms) == 0):
                 # MySQL
                 name_format = 'MySQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
@@ -265,7 +265,7 @@ if __name__ == '__main__':
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
-            if args.dbms == "MariaDB":
+            if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                 # MariaDB
                 name_format = 'MariaDB-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)

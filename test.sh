@@ -22,11 +22,36 @@ LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
 
+# Define the wait_process function
+wait_process() {
+    local process_name=$1
+
+    # Wait until the process with the name passed as an argument has terminated
+    while ps aux | grep "[p]ython $process_name.py" > /dev/null; do
+        # Process is still running, wait for 5 seconds
+        echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for process python $process_name.py to terminate..."
+        sleep 60
+    done
+
+    echo "$(date +"%Y-%m-%d %H:%M:%S"): Process python $process_name.py has terminated."
+}
+
+# Example usage
+#wait_process "tpch"
+
 
 #echo "Waiting 12h..."
 #sleep 43200
 #echo "Waiting 24h..."
 #sleep 86400
+
+
+
+
+
+
+
+
 
 
 
@@ -55,7 +80,8 @@ nohup python tpch.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
@@ -77,7 +103,8 @@ nohup python tpch.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "tpch"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-postgresql-tpch-1
@@ -104,7 +131,8 @@ nohup python tpch.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1200
+#sleep 1200
+wait_process "tpch"
 
 
 
@@ -140,7 +168,8 @@ nohup python benchbase.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "benchbase"
 
 
 #### Delete persistent storage
@@ -166,7 +195,8 @@ nohup python benchbase.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "benchbase"
 
 
 ### Benchbase Monitoring (TestCases.md)
@@ -188,7 +218,8 @@ nohup python benchbase.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "benchbase"
 
 
 ### Benchbase Complex (TestCases.md)
@@ -211,7 +242,8 @@ nohup python benchbase.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 1800
+#sleep 1800
+wait_process "benchbase"
 
 
 
@@ -240,7 +272,8 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "hammerdb"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
@@ -265,7 +298,8 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "hammerdb"
 
 
 ### HammerDB Complex (TestCases.md)
@@ -287,7 +321,8 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 3000
+#sleep 3000
+wait_process "hammerdb"
 
 
 
@@ -334,7 +369,8 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "ycsb"
 
 
 
@@ -364,7 +400,8 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 600
+#sleep 600
+wait_process "ycsb"
 
 
 
@@ -390,7 +427,8 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "ycsb"
 
 
 
@@ -416,7 +454,8 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 300
+#sleep 300
+wait_process "ycsb"
 
 
 
@@ -443,7 +482,8 @@ nohup python ycsb.py -ms 1 -tr \
 
 
 #### Wait so that next experiment receives a different code
-sleep 900
+#sleep 900
+wait_process "ycsb"
 
 
 

@@ -22,14 +22,6 @@ LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
 
-
-#echo "Waiting 12h..."
-#sleep 43200
-#echo "Waiting 24h..."
-#sleep 86400
-
-
-
 # Define the wait_process function
 wait_process() {
     local process_name=$1
@@ -46,6 +38,74 @@ wait_process() {
 
 # Example usage
 #wait_process "tpch"
+
+
+#echo "Waiting 12h..."
+#sleep 43200
+#echo "Waiting 24h..."
+#sleep 86400
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+################## TPC-DS #################
+###########################################
+
+
+
+### TPC-DS Power Test - only PostgreSQL (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 3 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+
+### TPC-DS Power Test - only MonetDB (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 3 \
+  -dt \
+  -t 1200 \
+  -dbms MonetDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_monetdb_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
 
 
 
@@ -751,62 +811,6 @@ wait_process "ycsb"
 
 
 
-
-
-
-
-
-
-
-###########################################
-################## TPC-DS #################
-###########################################
-
-
-
-### TPC-DS Power Test - only PostgreSQL (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 1 \
-  -dt \
-  -t 1200 \
-  -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_1.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
-
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-
-### TPC-DS Power Test - only MonetDB (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 1 \
-  -dt \
-  -t 1200 \
-  -dbms MonetDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_monetdb_1.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
-
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
 
 
 
