@@ -3,7 +3,7 @@
 :Version: 1.0
 :Authors: Patrick K. Erdelt
 
-Performs a TPC-H experiment.
+Performs a TPC-DS experiment.
 Data is generated and stored in a distributed filesystem (Ceph).
 Last character in each line of generated data is removed.
 Data is then loaded from filesystem.
@@ -32,10 +32,10 @@ urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
-    description = """Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk)."""
+    description = """Performs a TPC-DS experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk)."""
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
+    parser.add_argument('mode', help='profile the import or run the TPC-DS queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
     parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB'], default=[], action='append')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     else:
         list_clients = []
     ##############
-    ### specific to: dbmsbenchmarker TPC-H
+    ### specific to: dbmsbenchmarker TPC-DS
     ##############
     # shuffle ordering and random parameters
     recreate_parameter = args.recreate_parameter
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     ##############
     ### prepare and configure experiment
     ##############
-    experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = experiments.tpcds(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
     # remove running dbms
@@ -163,7 +163,7 @@ if __name__ == '__main__':
             )
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="tpc-h",
+        usecase="tpc-ds",
         experiment_design="parallel-loading"
     )
     ##############
@@ -184,7 +184,7 @@ if __name__ == '__main__':
                 config.set_storage(
                     storageConfiguration = 'postgresql'
                     )
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                config.jobtemplate_loading = "jobtemplate-loading-tpcds-PostgreSQL.yml"
                 config.set_loading_parameters(
                     SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
@@ -194,7 +194,7 @@ if __name__ == '__main__':
                     BEXHOMA_SYNCH_LOAD = 1,
                     BEXHOMA_SYNCH_GENERATE = 1,
                     TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
+                    TPCDS_TABLE = limit_import_table,
                     )
                 config.set_benchmarking_parameters(
                     SF = SF,
@@ -210,7 +210,7 @@ if __name__ == '__main__':
                 config.set_storage(
                     storageConfiguration = 'monetdb'
                     )
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-MonetDB.yml"
+                config.jobtemplate_loading = "jobtemplate-loading-tpcds-MonetDB.yml"
                 config.set_loading_parameters(
                     SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
@@ -220,7 +220,7 @@ if __name__ == '__main__':
                     BEXHOMA_SYNCH_LOAD = 1,
                     BEXHOMA_SYNCH_GENERATE = 1,
                     TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
+                    TPCDS_TABLE = limit_import_table,
                     )
                 config.set_benchmarking_parameters(
                     SF = SF,
@@ -236,7 +236,7 @@ if __name__ == '__main__':
                 config.set_storage(
                     storageConfiguration = 'mariadb'
                     )
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
+                config.jobtemplate_loading = "jobtemplate-loading-tpcds-MariaDB.yml"
                 config.set_loading_parameters(
                     SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
@@ -246,7 +246,7 @@ if __name__ == '__main__':
                     BEXHOMA_SYNCH_LOAD = 1,
                     BEXHOMA_SYNCH_GENERATE = 1,
                     TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
+                    TPCDS_TABLE = limit_import_table,
                     MYSQL_LOADING_FROM = "LOCAL",
                     )
                 config.set_benchmarking_parameters(
@@ -264,7 +264,7 @@ if __name__ == '__main__':
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
-                    config.jobtemplate_loading = "jobtemplate-loading-tpch-MySQL.yml"
+                    config.jobtemplate_loading = "jobtemplate-loading-tpcds-MySQL.yml"
                     config.set_loading_parameters(
                         SF = SF,
                         PODS_TOTAL = str(loading_pods_total),
@@ -276,7 +276,7 @@ if __name__ == '__main__':
                         TRANSFORM_RAW_DATA = 1,
                         MYSQL_LOADING_THREADS = int(threads),#int(num_loading_threads),#int(loading_pods_total),
                         MYSQL_LOADING_PARALLEL = 1, # not possible from RAM disk, only filesystem
-                        TPCH_TABLE = limit_import_table,
+                        TPCDS_TABLE = limit_import_table,
                         )
                     config.set_benchmarking_parameters(
                         SF = SF,
