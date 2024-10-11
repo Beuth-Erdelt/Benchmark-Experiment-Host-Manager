@@ -17,7 +17,6 @@ Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 MySQL-BHT-8-1                 : will start now
 - waiting 30s -               : done
@@ -50,8 +49,6 @@ MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:
 - waiting 30s -               : done
 MySQL-BHT-8-1                 : is not loaded yet
 MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 MySQL-BHT-8-1                 : is not loaded yet
 MySQL-BHT-8-1                 : start asynch loading scripts of type loaded
@@ -80,20 +77,6 @@ MySQL-BHT-8-1                 : is loading
 MySQL-BHT-8-1                 : is loading
 - waiting 30s -               : done
 MySQL-BHT-8-1                 : is loading
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 MySQL-BHT-8-1                 : showing loader times
 MySQL-BHT-8-1                 : loader timespan (first to last [s]) = 385
@@ -137,24 +120,12 @@ MySQL-BHT-8-1                 : has running benchmarks
 MySQL-BHT-8-1                 : has running benchmarks
 - waiting 30s -               : done
 MySQL-BHT-8-1                 : has running benchmarks
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 MySQL-BHT-8-1                 : has running benchmarks
 MySQL-BHT-8-1-1               : showing benchmarker times
 MySQL-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 553
 MySQL-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1728551861, 1728552381)]
 MySQL-BHT-8-1-1               : found and updated times {'benchmarker': [(1728551861, 1728552381)]}
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 MySQL-BHT-8-1                 : can be stopped
 Experiment ends at 2024-10-10 11:27:23.268328 (3288383.392307665): 1342.015185074415s total

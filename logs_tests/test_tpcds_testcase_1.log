@@ -1,10 +1,14 @@
-Data Directory                : is running
+done
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1728574110
-Experiment                    : starts at 2024-10-10 17:28:30.237505 (3310050.361486683)
-Experiment                    : This experiment performs some TPC-DS inspired queries.
+Experiment                    : has code 1728631685
+Experiment                    : starts at 2024-10-11 09:28:05.514549 (3367625.638529116)
+Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+TPC-DS (SF=3) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q99.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
 Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
@@ -14,58 +18,593 @@ Loading is tested with [1] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
-Cluster monitoring            : is running
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 PostgreSQL-BHT-8              : will start now
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-10-10 15:30:30 (that is in 60 secs)
+PostgreSQL-BHT-8              : will start loading but not before 2024-10-11 07:30:05 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-10-10 15:30:30
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+PostgreSQL-BHT-8              : will start loading but not before 2024-10-11 07:30:05
 done
 PostgreSQL-BHT-8              : is not loaded yet
 PostgreSQL-BHT-8              : start asynch loading scripts of type loaded
 PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : is loading
+done
+PostgreSQL-BHT-8              : showing loader times
+PostgreSQL-BHT-8              : generator timespan (first to last [s]) = 434
+PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 324
+PostgreSQL-BHT-8              : total timespan (first to last [s]) = 760
+PostgreSQL-BHT-8              : start asynch loading scripts of type indexed
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : is loading
 done
 PostgreSQL-BHT-8              : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-8-1            : start benchmarking
-PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1728574110
+PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1728631685
 - waiting 10s -               : done
-PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1728574110-1-1-qg29v: found
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1728631685-1-1-5dsdt: found
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
 done
 PostgreSQL-BHT-8              : has running benchmarks
 PostgreSQL-BHT-8-1            : showing benchmarker times
-PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 41
-PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1728574272, 1728574276)]
-PostgreSQL-BHT-8-1            : found and updated times {'benchmarker': [(1728574272, 1728574276)]}
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 7504
+PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1728632738, 1728640211)]
+PostgreSQL-BHT-8-1            : found and updated times {'benchmarker': [(1728632738, 1728640211)]}
 done
 PostgreSQL-BHT-8              : can be stopped
-Experiment                    : ends at 2024-10-10 17:32:20.190989 (3310280.314967922) - 229.95s total
+Experiment                    : ends at 2024-10-11 11:51:08.338988 (3376208.462966382) - 8582.82s total
 Join results done!
-Build evaluation cube Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
@@ -74,12 +613,16 @@ Experiment                    : uploading workload file
 ## Show Summary
 
 ### Workload
-TPC-DS Queries SF=1
+TPC-DS Queries SF=3
     Type: tpcds
-    Duration: 230s 
-    Code: 1728574110
+    Duration: 8583s 
+    Code: 1728631685
     This includes the reading queries of TPC-DS.
-    This experiment performs some TPC-DS inspired queries.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=3) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -97,134 +640,134 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:249758016
-    datadisk:39772
+    disk:262796124
+    datadisk:13075148
     requests_cpu:4
     requests_memory:16Gi
 
 ### Errors (failed queries)
             PostgreSQL-BHT-8-1-1
-TPC-DS Q90                  True
+TPC-DS Q4                   True
+TPC-DS Q35                  True
+TPC-DS Q74                  True
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS           PostgreSQL-BHT-8-1-1
-TPC-DS Q1                     54.80
-TPC-DS Q2                      4.04
-TPC-DS Q3                      2.08
-TPC-DS Q4                      8.62
-TPC-DS Q5                      6.57
-TPC-DS Q6                      2.54
-TPC-DS Q7                      2.29
-TPC-DS Q8                      3.48
-TPC-DS Q9                      2.79
-TPC-DS Q10                     2.93
-TPC-DS Q11                     2.83
-TPC-DS Q12                     1.72
-TPC-DS Q13                     3.20
-TPC-DS Q14a+b                 11.67
-TPC-DS Q15                     1.42
-TPC-DS Q16                     3.26
-TPC-DS Q17                    15.12
-TPC-DS Q18                     3.64
-TPC-DS Q19                     2.75
-TPC-DS Q20                     1.39
-TPC-DS Q21                     2.56
-TPC-DS Q22                     1.17
-TPC-DS Q23a+b                  7.43
-TPC-DS Q24a+b                  6.83
-TPC-DS Q25                    32.08
-TPC-DS Q26                     2.15
-TPC-DS Q27                     2.23
-TPC-DS Q28                     3.41
-TPC-DS Q29                    18.59
-TPC-DS Q30                     2.13
-TPC-DS Q31                     5.00
-TPC-DS Q32                     1.67
-TPC-DS Q33                     4.05
-TPC-DS Q34                     2.33
-TPC-DS Q35                     2.89
-TPC-DS Q37                     1.84
-TPC-DS Q38                     1.97
-TPC-DS Q39a+b                  4.00
-TPC-DS Q40                     2.52
-TPC-DS Q41                     1.80
-TPC-DS Q42                     1.22
-TPC-DS Q43                     1.56
-TPC-DS Q44                     2.05
-TPC-DS Q45                     2.02
-TPC-DS Q46                     2.09
-TPC-DS Q47                     2.58
-TPC-DS Q48                     1.96
-TPC-DS Q49                     3.57
-TPC-DS Q50                     2.28
-TPC-DS Q51                     2.02
-TPC-DS Q52                     1.30
-TPC-DS Q53                     1.78
-TPC-DS Q54                     3.08
-TPC-DS Q55                     1.36
-TPC-DS Q56                     3.36
-TPC-DS Q57                     2.33
-TPC-DS Q58                     3.26
-TPC-DS Q59                     3.23
-TPC-DS Q60                     3.39
-TPC-DS Q61                     4.58
-TPC-DS Q62                     2.51
-TPC-DS Q63                     1.94
-TPC-DS Q64                   108.62
-TPC-DS Q65                     2.02
-TPC-DS Q66                     7.58
-TPC-DS Q67                     2.16
-TPC-DS Q68                     2.06
-TPC-DS Q69                     2.62
-TPC-DS Q71                     1.81
-TPC-DS Q72                    16.57
-TPC-DS Q73                     1.85
-TPC-DS Q74                     2.37
-TPC-DS Q75                     3.73
-TPC-DS Q76                     1.93
-TPC-DS Q77                     3.70
-TPC-DS Q78                     3.01
-TPC-DS Q79                     1.54
-TPC-DS Q80                     6.07
-TPC-DS Q81                     1.75
-TPC-DS Q82                     1.82
-TPC-DS Q83                     3.16
-TPC-DS Q84                     2.54
-TPC-DS Q85                     8.95
-TPC-DS Q87                     1.98
-TPC-DS Q88                     6.40
-TPC-DS Q89                     2.83
-TPC-DS Q91                     2.65
-TPC-DS Q92                     1.58
-TPC-DS Q93                     1.41
-TPC-DS Q94                     3.00
-TPC-DS Q95                     3.08
-TPC-DS Q96                     1.53
-TPC-DS Q97                     1.63
-TPC-DS Q98                     1.47
-TPC-DS Q99                     2.14
+TPC-DS Q1                    877.33
+TPC-DS Q2                   2135.33
+TPC-DS Q3                   2048.42
+TPC-DS Q5                   6320.38
+TPC-DS Q6                 928428.73
+TPC-DS Q7                   2332.84
+TPC-DS Q8                   1752.40
+TPC-DS Q9                   8181.72
+TPC-DS Q10                 15548.60
+TPC-DS Q11                540206.08
+TPC-DS Q12                   240.51
+TPC-DS Q13                  1268.54
+TPC-DS Q14a+b              78413.49
+TPC-DS Q15                   572.88
+TPC-DS Q16                   170.48
+TPC-DS Q17                  1748.85
+TPC-DS Q18                  1802.53
+TPC-DS Q19                   810.01
+TPC-DS Q20                   425.80
+TPC-DS Q21                  1241.34
+TPC-DS Q22                 23538.98
+TPC-DS Q23a+b              30290.16
+TPC-DS Q24a+b               1521.75
+TPC-DS Q25                  1464.19
+TPC-DS Q26                  1340.93
+TPC-DS Q27                   165.42
+TPC-DS Q28                  6257.51
+TPC-DS Q29                   990.14
+TPC-DS Q30                256676.59
+TPC-DS Q31                 39301.23
+TPC-DS Q32                 77521.13
+TPC-DS Q33                  1712.49
+TPC-DS Q34                   101.79
+TPC-DS Q37                  2993.09
+TPC-DS Q38                  8216.96
+TPC-DS Q39a+b              17010.49
+TPC-DS Q40                   441.05
+TPC-DS Q41                  1902.61
+TPC-DS Q42                   758.06
+TPC-DS Q43                   167.69
+TPC-DS Q44                  4958.00
+TPC-DS Q45                   393.29
+TPC-DS Q46                   164.27
+TPC-DS Q47                  8592.02
+TPC-DS Q48                  1730.28
+TPC-DS Q49                  2347.73
+TPC-DS Q50                   202.01
+TPC-DS Q51                  7409.80
+TPC-DS Q52                   742.50
+TPC-DS Q53                   945.42
+TPC-DS Q54                   692.66
+TPC-DS Q55                   730.64
+TPC-DS Q56                480821.20
+TPC-DS Q57                  4951.30
+TPC-DS Q58                  1319.07
+TPC-DS Q59                  2547.46
+TPC-DS Q60                  9085.60
+TPC-DS Q61                   881.38
+TPC-DS Q62                   567.92
+TPC-DS Q63                   990.22
+TPC-DS Q64                  2185.41
+TPC-DS Q65                  4025.72
+TPC-DS Q66                  1689.03
+TPC-DS Q67                  8140.76
+TPC-DS Q68                   164.30
+TPC-DS Q69                  2847.24
+TPC-DS Q71                 31146.85
+TPC-DS Q72                  3770.53
+TPC-DS Q73                   100.27
+TPC-DS Q75                  9638.30
+TPC-DS Q76                  1195.45
+TPC-DS Q77                  1427.79
+TPC-DS Q78                  6050.23
+TPC-DS Q79                  1544.60
+TPC-DS Q80                  9107.80
+TPC-DS Q81               1028436.42
+TPC-DS Q82                  2199.86
+TPC-DS Q83                   367.33
+TPC-DS Q84                    72.41
+TPC-DS Q85                   289.88
+TPC-DS Q87                  8406.47
+TPC-DS Q88                  9515.97
+TPC-DS Q89                   692.52
+TPC-DS Q90                   588.95
+TPC-DS Q91                   120.26
+TPC-DS Q92                 24616.23
+TPC-DS Q93                   254.51
+TPC-DS Q94                  1270.26
+TPC-DS Q95                 99397.35
+TPC-DS Q96                   639.93
+TPC-DS Q97                  2387.46
+TPC-DS Q98                   677.05
+TPC-DS Q99                   914.98
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           0.0            0.0         1.0        0.0       1.0
+PostgreSQL-BHT-8-1-1         434.0          324.0         1.0      113.0     874.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-8-1-1            0.0
+PostgreSQL-BHT-8-1-1           2.49
 
 ### Power@Size
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1         1171883.92
+PostgreSQL-BHT-8-1-1            4381.93
 
 ### Throughput@Size
                                                  time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS               SF num_experiment num_client                                              
-PostgreSQL-BHT-8-1 1  1              1                  4      1   1                  19800.0
+PostgreSQL-BHT-8-1 3  1              1               7473      1   3                    31.79
 
 ### Workflow
 

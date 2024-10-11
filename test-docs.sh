@@ -56,6 +56,7 @@ wait_process() {
 
 
 
+
 ###########################################
 ############# Generate Docs ###############
 ###########################################
@@ -338,7 +339,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs_tests/doc_tpch_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_1.log &
 
 
 #### Wait so that next experiment receives a different code
@@ -355,7 +356,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs_tests/doc_tpch_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_2.log &
 
 
 #### Wait so that next experiment receives a different code
@@ -373,7 +374,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs_tests/doc_tpch_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_3.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 4800
