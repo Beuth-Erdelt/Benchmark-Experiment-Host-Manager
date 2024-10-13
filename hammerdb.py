@@ -318,6 +318,59 @@ if __name__ == '__main__':
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
+            if args.dbms == "SQLServer":
+                # MariaDB
+                name_format = 'SQLServer-{cluster}-{users}-{pods}'
+                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
+                config = configurations.hammerdb(experiment=experiment, docker='SQLServer', configuration=config_name, dialect='SQLServer', alias='DBMS D')
+                config.set_storage(
+                    storageConfiguration = 'sqlserver'
+                )
+                #config.num_loading = 1
+                config.set_loading_parameters(
+                    PARALLEL = 1,
+                    SF = SF,
+                    HAMMERDB_DURATION = str(SD),
+                    HAMMERDB_RAMPUP = str(num_rampup),
+                    HAMMERDB_TYPE = "sqlserver",
+                    HAMMERDB_VUSERS = loading_threads_per_pod,
+                    #HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
+                    USER = "sa",
+                    PASSWORD = "<YourStrong@Passw0rd>",
+                )
+                config.set_loading(parallel=1, num_pods=1)
+                executor_list = []
+                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
+                    for benchmarking_threads in num_benchmarking_threads:
+                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                            for num_executor in list_clients:
+                                benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                """
+                                print("benchmarking_target", benchmarking_target)
+                                print("benchmarking_pods", benchmarking_pods)
+                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                print("benchmarking_threads", benchmarking_threads)
+                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                """
+                                executor_list.append(benchmarking_pods_scaled)
+                                config.add_benchmarking_parameters(
+                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    SF = SF,
+                                    BEXHOMA_SYNCH_LOAD = 1,
+                                    HAMMERDB_DURATION = str(SD),
+                                    HAMMERDB_RAMPUP = str(num_rampup),
+                                    HAMMERDB_TYPE = "mariadb",
+                                    #HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
+                                    USER = "sa",
+                                    PASSWORD = "<YourStrong@Passw0rd>",
+                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                    )
+                #print(executor_list)
+                config.add_benchmark_list(executor_list)
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

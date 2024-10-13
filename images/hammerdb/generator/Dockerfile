@@ -23,8 +23,15 @@ ENV HAMMERDB_RAMPUP 2
 ENV HAMMERDB_DURATION 5
 # Number of transactions before logging off
 ENV HAMMERDB_ITERATIONS 10000000
-ENV HAMMERDB_MYSQL_ENGINE innodb
+# Number of virtual users (threads) for loading
 ENV HAMMERDB_VUSERS 1
+# MySQL specific
+ENV HAMMERDB_MYSQL_ENGINE innodb
+# should be true starting at 10 (200?) warehouses
+ENV HAMMERDB_MYSQL_PARTITION True
+# MariaDB specific
+# should be true starting at 10 (200?) warehouses
+ENV HAMMERDB_MARIADB_PARTITION True
 
 # set async_client $pg_async_client;# Number of asynchronous clients per Vuser
 # set async_verbose $pg_async_verbose;# Report activity of asynchronous clients

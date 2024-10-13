@@ -252,6 +252,55 @@ after 5000
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
 fi
 
+######################## Generate workflow file ########################
+######################## Workflow: MS SQL Server ###################
+
+if [ "$HAMMERDB_TYPE" = "sqlserver" ]; then
+    echo "#!/bin/tclsh
+proc runtimer { seconds } {
+set x 0
+set timerstop 0
+while {!\$timerstop} {
+incr x
+after 1000
+  if { ![ expr {\$x % 60} ] } {
+          set y [ expr \$x / 60 ]
+          puts \"Timer: \$y minutes elapsed\"
+  }
+update
+if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
+    }
+return
+}
+puts \"SETTING CONFIGURATION\"
+dbset db mssqls
+diset connection mssqls_linux_server $BEXHOMA_HOST
+diset connection mssqls_tcp True
+diset connection mssqls_port $BEXHOMA_PORT
+diset tpcc mssqls_count_ware $SF
+diset tpcc mssqls_num_vu $PARALLEL
+diset tpcc mssqls_uid $USER
+diset tpcc mssqls_pass $PASSWORD
+diset tpcc mssqls_dbase tpcc
+diset tpcc mssqls_driver timed
+diset tpcc mssqls_rampup $HAMMERDB_RAMPUP
+diset tpcc mssqls_duration $HAMMERDB_DURATION
+diset tpcc mssqls_total_iterations $HAMMERDB_ITERATIONS
+vuset logtotemp 1
+loadscript
+puts \"SEQUENCE STARTED\"
+foreach z { $HAMMERDB_VUSERS } {
+puts \"\$z VU TEST\"
+vuset vu \$z
+vucreate
+vurun
+runtimer 600
+vudestroy
+after 5000
+        }
+puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
+fi
+
 ######################## Show workflow file ########################
 cat benchmark.tcl
 

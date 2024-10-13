@@ -4,6 +4,8 @@ COPY ./benchmarker.sh ./benchmarker.sh
 RUN ["chmod", "+x", "./benchmarker.sh"]
 
 ENV BEXHOMA_CLIENT 1
+ENV DBMSBENCHMARKER_START 1
+ENV DBMSBENCHMARKER_NOW 1
 ENV SF=1
 ENV CHILD=1
 ENV PARALLEL=4
@@ -24,10 +26,10 @@ ENV HAMMERDB_RAMPUP 2
 ENV HAMMERDB_DURATION 5
 # Number of transactions before logging off
 ENV HAMMERDB_ITERATIONS 10000000
+# List of numbers of virtual users
 ENV HAMMERDB_VUSERS 1 2 4 8
+# MySQL specific
 ENV HAMMERDB_MYSQL_ENGINE innodb
-ENV DBMSBENCHMARKER_START 1
-ENV DBMSBENCHMARKER_NOW 1
 
 # set async_client $pg_async_client;# Number of asynchronous clients per Vuser
 # set async_verbose $pg_async_verbose;# Report activity of asynchronous clients

@@ -39,10 +39,10 @@ diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
 diset tpcc mysql_user $USER
 diset tpcc mysql_pass $PASSWORD
-diset tpcc mysql_partition true
-diset tpcc mysql_storage_engine $HAMMERDB_MYSQL_ENGINE
 diset tpcc mysql_count_ware $SF
 diset tpcc mysql_num_vu $HAMMERDB_VUSERS
+diset tpcc mysql_storage_engine $HAMMERDB_MYSQL_ENGINE
+diset tpcc mysql_partition $HAMMERDB_MYSQL_PARTITION
 print dict
 buildschema
 wait_to_complete
@@ -67,10 +67,10 @@ diset connection maria_host $BEXHOMA_HOST
 diset connection maria_port $BEXHOMA_PORT
 diset tpcc maria_user $USER
 diset tpcc maria_pass $PASSWORD
-diset tpcc maria_partition true
-diset tpcc maria_storage_engine $HAMMERDB_MYSQL_ENGINE
 diset tpcc maria_count_ware $SF
 diset tpcc maria_num_vu $HAMMERDB_VUSERS
+diset tpcc maria_storage_engine $HAMMERDB_MYSQL_ENGINE
+diset tpcc maria_partition $HAMMERDB_MARIADB_PARTITION
 print dict
 buildschema
 wait_to_complete
@@ -91,14 +91,39 @@ if {!\$complete} { after 5000 wait_to_complete } else { exit }
 dbset db pg
 diset connection pg_host $BEXHOMA_HOST
 diset connection pg_port $BEXHOMA_PORT
-diset tpcc pg_count_ware $SF
-diset tpcc pg_num_vu $HAMMERDB_VUSERS
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
+diset tpcc pg_dbase tpcc
 diset tpcc pg_user $USER
 diset tpcc pg_pass $PASSWORD
-diset tpcc pg_dbase tpcc
+diset tpcc pg_count_ware $SF
+diset tpcc pg_num_vu $HAMMERDB_VUSERS
+print dict
+buildschema
+wait_to_complete
+vwait forever" > load.tcl
+fi
+
+######################## Generate workflow file ########################
+######################## Workflow: MS SQL Server ###################
+
+if [ "$HAMMERDB_TYPE" = "sqlserver" ]; then
+    echo "puts \"SETTING CONFIGURATION\"
+global complete
+proc wait_to_complete {} {
+global complete
+set complete [vucomplete]
+if {!\$complete} { after 5000 wait_to_complete } else { exit }
+}
+dbset db mssqls
+diset connection mssqls_linux_server $BEXHOMA_HOST
+diset connection mssqls_tcp True
+diset connection mssqls_port $BEXHOMA_PORT
+diset tpcc mssqls_uid sa
+diset tpcc mssqls_pass admin
+diset tpcc mssqls_count_ware $SF
+diset tpcc mssqls_num_vu $HAMMERDB_VUSERS
 print dict
 buildschema
 wait_to_complete
