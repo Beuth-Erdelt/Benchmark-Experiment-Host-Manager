@@ -1735,6 +1735,14 @@ class default():
         self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
         self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
         self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        if num_errors == 0:
+            print("TEST passed: No SQL errors")
+        else:
+            print("TEST failed: SQL errors")
+        if num_warnings == 0:
+            print("TEST passed: No SQL warnings")
+        else:
+            print("TEST failed: SQL warnings (result mismatch)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.test_workflow(workflow_actual, workflow_planned):
