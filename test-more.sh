@@ -245,6 +245,37 @@ wait_process "tpcds"
 
 
 
+###########################################
+############# TPC-DS MariaDB###############
+###########################################
+
+
+### TPC-DS Power Test - only MySQL (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpcds_testcase_mariadb_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+
+
+
+
 
 
 ###########################################

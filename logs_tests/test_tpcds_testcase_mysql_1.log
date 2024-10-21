@@ -1,0 +1,91 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1729521477
+Experiment                    : starts at 2024-10-21 16:37:56.919562 (4257417.043543008)
+Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+TPC-DS (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q99.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
+Benchmark is limited to DBMS ['MySQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+MySQL-BHT-8-1                 : will start now
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57 (that is in 300 secs)
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+ERROR:hiyapyco:[Errno 2] No such file or directory: '/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/k8s/jobtemplate-loading-tpcds-MySQL.yml'
+ERROR:hiyapyco:file not found: k8s/jobtemplate-loading-tpcds-MySQL.yml (/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/k8s/jobtemplate-loading-tpcds-MySQL.yml)
+done
+MySQL-BHT-8-1                 : is not loaded yet
+MySQL-BHT-8-1                 : start asynch loading scripts of type loaded
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/hiyapyco/__init__.py", line 202, in __init__
+    with io.open(fn, 'r', encoding=self.encoding) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/k8s/jobtemplate-loading-tpcds-MySQL.yml'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/tpcds.py", line 325, in <module>
+    experiment.work_benchmark_list()
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py", line 1125, in work_benchmark_list
+    config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/configurations.py", line 606, in start_loading_pod
+    job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/configurations.py", line 2935, in create_manifest_loading
+    return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/configurations.py", line 2733, in create_manifest_job
+    result = self.get_patched_yaml(self.experiment.cluster.yamlfolder+template, patch_yaml)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/configurations.py", line 2620, in get_patched_yaml
+    merged = hiyapyco.load([file, patch], method=hiyapyco.METHOD_MERGE)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/hiyapyco/__init__.py", line 524, in load
+    hiyapyco = HiYaPyCo(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/hiyapyco/__init__.py", line 214, in __init__
+    raise HiYaPyCoInvocationException(
+hiyapyco.HiYaPyCoInvocationException: yaml file not found: 'k8s/jobtemplate-loading-tpcds-MySQL.yml'
