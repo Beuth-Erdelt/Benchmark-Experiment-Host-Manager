@@ -1,6 +1,6 @@
 # Test Cases
 
-There is a variety of combination of options to be tested.
+There is a variety of combinations of options to be tested.
 
 We here list some more basic use cases to test the functionality of bexhoma.
 
@@ -12,6 +12,10 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 ```
 
+See also [more test cases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test-more.sh) for more and longer running test cases.
+
+See the [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) for some demo test logs.
+The folder also contains `*_summary.txt` files containing only the result summary.
 
 ## TPC-H
 

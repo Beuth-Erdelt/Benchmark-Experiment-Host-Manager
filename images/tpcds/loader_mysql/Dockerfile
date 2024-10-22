@@ -42,7 +42,7 @@ ENV BEXHOMA_HOST="www.example.com"
 ENV BEXHOMA_PORT 50000
 ENV BEXHOMA_CONNECTION="monetdb"
 ENV BEXHOMA_EXPERIMENT="12345"
-ENV DATABASE tpch
+ENV DATABASE tpcds
 ENV STORE_RAW_DATA=0
 ENV BEXHOMA_SYNCH_LOAD 0
 ENV MYSQL_LOADING_THREADS 8
@@ -51,7 +51,9 @@ ENV MYSQL_LOADING_FROM "LOCAL"
 
 WORKDIR /tmp
 
-RUN mkdir -p /tmp/tpch
+RUN mkdir -p /tmp/tpcds
+
+#COPY ./*.dat /tmp/
 
 #COPY ./loader-parallel.sh /tmp/loader.sh
 COPY ./loader.sh /tmp/loader.sh
@@ -60,5 +62,3 @@ RUN ["chmod", "+x", "/tmp/loader.sh"]
 
 CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
 #CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
-
-

@@ -1,0 +1,172 @@
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 3490s 
+    Code: 1729601826
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [8] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MySQL-BHT-8-1-1-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250540988
+    datadisk:11662779
+    volume_size:30G
+    volume_used:12G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-1-1-2 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250540988
+    datadisk:12037972
+    volume_size:30G
+    volume_used:12G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-1-1-3 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250541160
+    datadisk:12787230
+    volume_size:30G
+    volume_used:12G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-1-1-4 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250541160
+    datadisk:13271054
+    volume_size:30G
+    volume_used:13G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-1-2-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250541160
+    datadisk:13875869
+    volume_size:30G
+    volume_used:14G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-1-2-2 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250541160
+    datadisk:14505056
+    volume_size:30G
+    volume_used:14G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-1-2-3 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250541160
+    datadisk:15095337
+    volume_size:30G
+    volume_used:15G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-8-1-2-4 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250541160
+    datadisk:15683884
+    volume_size:30G
+    volume_used:15G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                   experiment_run  vusers  client  pod_count      NOPM       TPM  duration  errors
+MySQL-BHT-8-1-1-1               1      16       1          1   6723.00  15643.00         2       0
+MySQL-BHT-8-1-1-2               1      32       2          2  11297.50  26190.00         2       0
+MySQL-BHT-8-1-1-3               1      16       3          2   6769.50  15507.50         2       0
+MySQL-BHT-8-1-1-4               1      32       4          4   9152.75  21112.75         2       0
+MySQL-BHT-8-1-2-1               2      16       1          1   9676.00  22665.00         2       0
+MySQL-BHT-8-1-2-2               2      32       2          2   8227.50  19165.00         2       0
+MySQL-BHT-8-1-2-3               2      16       3          2   8007.50  18717.00         2       0
+MySQL-BHT-8-1-2-4               2      32       4          4   8291.25  19166.00         2       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MySQL-BHT-8-1 - Pods [[4, 2, 2, 1], [2, 4, 2, 1]]
+
+#### Planned
+DBMS MySQL-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
+
+### Loading
+                   time_load  terminals  pods  Imported warehouses [1/h]
+MySQL-BHT-8-1-1-1     2790.0        1.0   1.0                  20.645161
+MySQL-BHT-8-1-1-2     2790.0        1.0   2.0                  20.645161
+MySQL-BHT-8-1-1-3     2790.0        1.0   2.0                  20.645161
+MySQL-BHT-8-1-1-4     2790.0        1.0   4.0                  20.645161
+MySQL-BHT-8-1-2-1     2790.0        1.0   1.0                  20.645161
+MySQL-BHT-8-1-2-2     2790.0        1.0   2.0                  20.645161
+MySQL-BHT-8-1-2-3     2790.0        1.0   2.0                  20.645161
+MySQL-BHT-8-1-2-4     2790.0        1.0   4.0                  20.645161
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-8-1-1-1      457.14     2.73         38.73                46.82
+MySQL-BHT-8-1-1-2      852.95     3.75         38.95                47.75
+MySQL-BHT-8-1-1-3      706.33     2.40         38.99                47.83
+MySQL-BHT-8-1-1-4      710.77     3.16         39.06                47.82
+MySQL-BHT-8-1-2-1      754.75     2.55         39.13                47.60
+MySQL-BHT-8-1-2-2      638.56     3.34         39.19                48.09
+MySQL-BHT-8-1-2-3      694.00     2.65         39.20                47.66
+MySQL-BHT-8-1-2-4      754.95     3.12         39.22                48.29
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-8-1-1-1       25.63     0.11          0.06                 0.06
+MySQL-BHT-8-1-1-2       43.92     0.14          0.17                 0.17
+MySQL-BHT-8-1-1-3       60.66     0.08          0.18                 0.18
+MySQL-BHT-8-1-1-4       33.14     0.18          0.20                 0.20
+MySQL-BHT-8-1-2-1       47.05     0.19          0.06                 0.06
+MySQL-BHT-8-1-2-2       47.05     0.14          0.17                 0.17
+MySQL-BHT-8-1-2-3       37.01     0.16          0.18                 0.18
+MySQL-BHT-8-1-2-4       41.41     0.17          0.20                 0.20
+
+### Tests
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
