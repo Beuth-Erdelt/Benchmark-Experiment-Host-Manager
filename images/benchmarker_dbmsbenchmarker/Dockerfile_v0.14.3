@@ -1,4 +1,4 @@
-FROM python:3.11.9
+FROM python:3.12.5
 
 # does not compile numpy correctly
 # FROM python:3.13-rc-slim
@@ -79,6 +79,11 @@ RUN cp kinetica-client-jdbc-7.1.8.7/kinetica-jdbc-7.1.8.7-jar-with-dependencies.
 RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
 RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
 
+######### Specific version of SQLServer JDBC #########
+RUN wget https://go.microsoft.com/fwlink/?linkid=2283744
+RUN mv 'index.html?linkid=2283744' sqlserver.zip
+RUN unzip sqlserver.zip
+RUN mv sqljdbc_12.8/enu/jars/mssql-jdbc-12.8.1.jre8.jar jars/mssql-jdbc-12.8.1.jre8.jar
 
 
 ######### Redis Client - Download and compile #########

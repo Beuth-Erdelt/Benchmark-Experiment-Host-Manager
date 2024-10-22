@@ -37,7 +37,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB'], default=[], action='append')
+    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'SQLServer'], default=[], action='append')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -265,6 +265,35 @@ if __name__ == '__main__':
                         storageConfiguration = 'mysql'
                         )
                     config.jobtemplate_loading = "jobtemplate-loading-tpch-MySQL.yml"
+                    config.set_loading_parameters(
+                        SF = SF,
+                        PODS_TOTAL = str(loading_pods_total),
+                        PODS_PARALLEL = str(split_portion),
+                        STORE_RAW_DATA = 1,
+                        STORE_RAW_DATA_RECREATE = 0,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        BEXHOMA_SYNCH_GENERATE = 1,
+                        TRANSFORM_RAW_DATA = 1,
+                        MYSQL_LOADING_THREADS = int(threads),#int(num_loading_threads),#int(loading_pods_total),
+                        MYSQL_LOADING_PARALLEL = 1, # not possible from RAM disk, only filesystem
+                        TPCH_TABLE = limit_import_table,
+                        )
+                    config.set_benchmarking_parameters(
+                        SF = SF,
+                        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                        DBMSBENCHMARKER_DEV = debugging,
+                        )
+                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("SQLServer" in args.dbms):
+                # SQLServer
+                for threads in num_loading_threads:
+                    name_format = 'SQLServer-{cluster}-{pods}-{threads}'
+                    config = configurations.default(experiment=experiment, docker='SQLServer', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='SQLServer', alias='DBMS A1')
+                    config.set_storage(
+                        storageConfiguration = 'mysql'
+                        )
+                    config.jobtemplate_loading = "jobtemplate-loading-tpch-SQLServer.yml"
                     config.set_loading_parameters(
                         SF = SF,
                         PODS_TOTAL = str(loading_pods_total),
