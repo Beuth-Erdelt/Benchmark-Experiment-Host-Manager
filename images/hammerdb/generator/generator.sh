@@ -20,6 +20,7 @@ echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
 echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
 echo "HAMMERDB_VUSERS $HAMMERDB_VUSERS"
+echo "HAMMERDB_TYPE $HAMMERDB_TYPE"
 
 ######################## Generate workflow file ########################
 ######################## Workflow: MySQL ###################

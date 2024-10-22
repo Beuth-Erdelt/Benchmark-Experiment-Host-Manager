@@ -19,6 +19,7 @@ echo "PARALLEL $PARALLEL"
 echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
 echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
+echo "HAMMERDB_TYPE $HAMMERDB_TYPE"
 
 ######################## Wait for synched starting time ########################
 echo "benchmark started at $DBMSBENCHMARKER_NOW"
