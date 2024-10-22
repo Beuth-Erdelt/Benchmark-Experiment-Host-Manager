@@ -150,7 +150,7 @@ wait_process "tpcds"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-monetdb-tpcds-1
-sleep 10
+sleep 30
 
 
 ### TPC-DS Throughput Test (TestCases.md)
@@ -307,7 +307,7 @@ wait_process "benchbase"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mysql-benchbase-16
-sleep 10
+sleep 30
 
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
@@ -415,7 +415,7 @@ wait_process "benchbase"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mariadb-benchbase-16
-sleep 10
+sleep 30
 
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
@@ -521,7 +521,7 @@ wait_process "hammerdb"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mysql-hammerdb-16
-sleep 10
+sleep 30
 
 
 ### HammerDB Monitoring (TestCases.md)
@@ -603,7 +603,7 @@ wait_process "hammerdb"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mariadb-hammerdb-16
-sleep 10
+sleep 30
 
 
 ### HammerDB Monitoring (TestCases.md)
@@ -702,7 +702,7 @@ wait_process "ycsb"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mysql-ycsb-1
-sleep 10
+sleep 30
 
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
@@ -861,7 +861,7 @@ wait_process "ycsb"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mariadb-ycsb-1
-sleep 10
+sleep 30
 
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \

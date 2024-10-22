@@ -3,12 +3,13 @@
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 800s 
-    Code: 1729530658
+    Duration: 832s 
+    Code: 1729532348
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -26,14 +27,14 @@ MariaDB-1-1-1024-1 uses docker image mariadb:11.4.2
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:252259184
-    datadisk:1935700
+    disk:252267376
+    datadisk:1943892
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                     experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MariaDB-1-1-1024-1               1         16    8192          1  300.0                        157.86                                                      30764.0                                              79907.0
+MariaDB-1-1-1024-1               1         16    8192          1  300.0                         161.6                                                      29804.0                                              98910.0
 
 Warehouses: 16
 
@@ -47,8 +48,28 @@ DBMS MariaDB-1-1-1024 - Pods [[1]]
 
 ### Loading
                     time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-1-1-1024-1      285.0        1.0   1.0                 202.105263
+MariaDB-1-1-1024-1      326.0        1.0   1.0                 176.687117
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      404.02     1.18          2.65                 2.66
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      977.98     2.67          1.29                 1.29
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      287.47     1.24           2.8                 2.81
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      126.82     0.61          1.34                 1.34
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned

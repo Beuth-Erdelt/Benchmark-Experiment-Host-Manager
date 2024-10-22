@@ -109,7 +109,7 @@ wait_process "tpch"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-sleep 10
+sleep 30
 
 
 ### TPC-H Throughput Test (TestCases.md)
@@ -175,7 +175,7 @@ wait_process "benchbase"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
-sleep 10
+sleep 30
 
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
@@ -278,7 +278,7 @@ wait_process "hammerdb"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
-sleep 10
+sleep 30
 
 
 ### HammerDB Monitoring (TestCases.md)
@@ -377,7 +377,7 @@ wait_process "ycsb"
 
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-postgresql-ycsb-1
-sleep 10
+sleep 30
 
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \

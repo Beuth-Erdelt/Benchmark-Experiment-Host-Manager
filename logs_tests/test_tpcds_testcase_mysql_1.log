@@ -19,7 +19,6 @@ Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 MySQL-BHT-8-1                 : will start now
 - waiting 30s -               : done
@@ -52,7 +51,6 @@ MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:
 - waiting 30s -               : done
 MySQL-BHT-8-1                 : is not loaded yet
 MySQL-BHT-8-1                 : will start loading but not before 2024-10-21 14:43:57
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 ERROR:hiyapyco:[Errno 2] No such file or directory: '/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/k8s/jobtemplate-loading-tpcds-MySQL.yml'
 ERROR:hiyapyco:file not found: k8s/jobtemplate-loading-tpcds-MySQL.yml (/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/k8s/jobtemplate-loading-tpcds-MySQL.yml)
 done

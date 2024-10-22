@@ -2,11 +2,12 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1729530658
-Experiment                    : starts at 2024-10-21 19:10:57.837122 (4266597.961103178)
+Experiment                    : has code 1729532348
+Experiment                    : starts at 2024-10-21 19:39:08.652748 (4268288.776723102)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['MariaDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
@@ -21,10 +22,10 @@ done
 MariaDB-1-1-1024              : will start now
 - waiting 30s -               : done
 MariaDB-1-1-1024              : is not loaded yet
-MariaDB-1-1-1024              : will start loading but not before 2024-10-21 17:12:58 (that is in 60 secs)
+MariaDB-1-1-1024              : will start loading but not before 2024-10-21 17:41:09 (that is in 60 secs)
 - waiting 30s -               : done
 MariaDB-1-1-1024              : is not loaded yet
-MariaDB-1-1-1024              : will start loading but not before 2024-10-21 17:12:58
+MariaDB-1-1-1024              : will start loading but not before 2024-10-21 17:41:09
 done
 MariaDB-1-1-1024              : is not loaded yet
 MariaDB-1-1-1024              : start asynch loading scripts of type loaded
@@ -47,17 +48,20 @@ MariaDB-1-1-1024              : is loading
 MariaDB-1-1-1024              : is loading
 - waiting 30s -               : done
 MariaDB-1-1-1024              : is loading
+- waiting 30s -               : done
+MariaDB-1-1-1024              : is loading
 done
 MariaDB-1-1-1024              : showing loader times
-MariaDB-1-1-1024              : loader timespan (first to last [s]) = 285
+MariaDB-1-1-1024              : loader timespan (first to last [s]) = 326
 MariaDB-1-1-1024              : benchmarks done 0 of 1. This will be client 1
 MariaDB-1-1-1024              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
 MariaDB-1-1-1024-1            : start benchmarking
-MariaDB-1-1-1024              : benchmarking results in folder /home/perdelt/benchmarks/1729530658
+MariaDB-1-1-1024              : benchmarking results in folder /home/perdelt/benchmarks/1729532348
 - waiting 10s -               : done
-MariaDB-1-1-1024              : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1-1024-1729530658-1-1-zx9zz: found
-- waiting 30s -               : done
-MariaDB-1-1-1024              : has running benchmarks
+found
+MariaDB-1-1-1024-1            : collecting loading metrics of SUT
+MariaDB-1-1-1024-1            : collecting metrics of data generator
+MariaDB-1-1-1024-1            : collecting metrics of data injector
 - waiting 30s -               : done
 MariaDB-1-1-1024              : has running benchmarks
 - waiting 30s -               : done
@@ -79,18 +83,20 @@ MariaDB-1-1-1024              : has running benchmarks
 done
 MariaDB-1-1-1024              : has running benchmarks
 MariaDB-1-1-1024-1            : showing benchmarker times
-MariaDB-1-1-1024-1            : benchmarker timespan (start to end single container [s]) = 342
-MariaDB-1-1-1024-1            : benchmarker times (start/end per pod and container) = [(1729531086, 1729531394)]
-MariaDB-1-1-1024-1            : found and updated times {'benchmarker': [(1729531086, 1729531394)]}
+MariaDB-1-1-1024-1            : benchmarker timespan (start to end single container [s]) = 330
+MariaDB-1-1-1024-1            : benchmarker times (start/end per pod and container) = [(1729532807, 1729533111)]
+MariaDB-1-1-1024-1            : found and updated times {'benchmarker': [(1729532807, 1729533111)]}
+MariaDB-1-1-1024-1            : collecting execution metrics of SUT
+MariaDB-1-1-1024-1            : collecting metrics of benchmarker
 done
 MariaDB-1-1-1024              : can be stopped
-Experiment ends at 2024-10-21 19:24:17.313984 (4267397.437962507): 799.4768593292683s total
+Experiment ends at 2024-10-21 19:53:00.549943 (4269120.673922727): 831.8971996251494s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
 Benchmarking                               connection  ... Latency Distribution.Average Latency (microseconds)
 connection_pod                            ...                                                    
-MariaDB-1-1-1024-1-1  MariaDB-1-1-1024-1  ...                                               79907
+MariaDB-1-1-1024-1-1  MariaDB-1-1-1024-1  ...                                               98910
 
 [1 rows x 36 columns]
 Workflow {'MariaDB-1-1-1024': [[1]]}
@@ -101,12 +107,13 @@ Result workflow complete
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 800s 
-    Code: 1729530658
+    Duration: 832s 
+    Code: 1729532348
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -124,14 +131,14 @@ MariaDB-1-1-1024-1 uses docker image mariadb:11.4.2
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:252259184
-    datadisk:1935700
+    disk:252267376
+    datadisk:1943892
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                     experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MariaDB-1-1-1024-1               1         16    8192          1  300.0                        157.86                                                      30764.0                                              79907.0
+MariaDB-1-1-1024-1               1         16    8192          1  300.0                         161.6                                                      29804.0                                              98910.0
 
 Warehouses: 16
 
@@ -145,8 +152,28 @@ DBMS MariaDB-1-1-1024 - Pods [[1]]
 
 ### Loading
                     time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-1-1-1024-1      285.0        1.0   1.0                 202.105263
+MariaDB-1-1-1024-1      326.0        1.0   1.0                 176.687117
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      404.02     1.18          2.65                 2.66
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      977.98     2.67          1.29                 1.29
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      287.47     1.24           2.8                 2.81
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1      126.82     0.61          1.34                 1.34
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned

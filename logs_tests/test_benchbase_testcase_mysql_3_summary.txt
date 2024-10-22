@@ -3,12 +3,13 @@
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 1494s 
-    Code: 1729525486
+    Duration: 1525s 
+    Code: 1729527897
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -25,14 +26,14 @@ MySQL-1-1-1024-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261717968
-    datadisk:11394812
+    disk:261714008
+    datadisk:11390680
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
                   experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MySQL-1-1-1024-1               1         16    8192          1  300.0                        135.24                                                     394555.0                                             118159.0
+MySQL-1-1-1024-1               1         16    8192          1  300.0                        146.06                                                     371401.0                                             109422.0
 
 Warehouses: 16
 
@@ -46,8 +47,28 @@ DBMS MySQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                   time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-1-1-1024-1      756.0        1.0   1.0                  76.190476
+MySQL-1-1-1024-1      775.0        1.0   1.0                  74.322581
+
+### Ingestion - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1     2010.76      3.0         37.43                37.47
+
+### Ingestion - Loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1     1263.59     3.87          1.34                 1.34
+
+### Execution - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1      588.34     2.21         23.42                27.31
+
+### Execution - Benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1      201.01     0.67          1.34                 1.34
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
