@@ -75,9 +75,9 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_1.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_1.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_postgresql_1.log
 
 
 #### Wait so that next experiment receives a different code
@@ -98,9 +98,9 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_2.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_postgresql_2.log
 
 
 #### Wait so that next experiment receives a different code
@@ -126,9 +126,9 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_3.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_postgresql_3.log
 
 
 #### Wait so that next experiment receives a different code
@@ -163,9 +163,9 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_postgresql_1.log
 
 
 #### Wait so that next experiment receives a different code
@@ -190,9 +190,9 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_1.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_postgresql_1.log
 
 
 #### Wait so that next experiment receives a different code
@@ -213,9 +213,9 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_3.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_postgresql_3.log
 
 
 #### Wait so that next experiment receives a different code
@@ -237,9 +237,9 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_4.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_postgresql_4.log
 
 
 #### Wait so that next experiment receives a different code
@@ -267,9 +267,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_1.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_postgresql_1.log
 
 
 #### Wait so that next experiment receives a different code
@@ -293,9 +293,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_2.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_postgresql_2.log
 
 
 #### Wait so that next experiment receives a different code
@@ -316,9 +316,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_3.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_postgresql_3.log
 
 
 #### Wait so that next experiment receives a different code
@@ -364,9 +364,9 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_1.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_postgresql_1.log
 
 
 #### Wait so that next experiment receives a different code
@@ -395,9 +395,9 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_2.log
+#watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_postgresql_2.log
 
 
 #### Wait so that next experiment receives a different code
@@ -422,9 +422,9 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_3.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_postgresql_3.log
 
 
 #### Wait so that next experiment receives a different code
@@ -449,9 +449,9 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_4.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_postgresql_4.log
 
 
 #### Wait so that next experiment receives a different code
@@ -477,9 +477,9 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -rst shared -rss 100Gi \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_5.log &
 
-# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_5.log
+# watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_postgresql_5.log
 
 
 #### Wait so that next experiment receives a different code
