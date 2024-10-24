@@ -668,9 +668,10 @@ class ycsb(logger):
                     result.append(line.split(", "))
             #print(result)
             #return
-            list_columns = [value[0]+"."+value[1] for value in result]
+            # test len of values, because of [ WARN]
+            list_columns = [value[0]+"."+value[1] for value in result if len(value) > 1]
             list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize]
-            list_measures = [value[2] for value in result]
+            list_measures = [value[2] for value in result if len(value) > 1]
             #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
             #print(list_columns)
             #print(list_values)
@@ -691,6 +692,7 @@ class ycsb(logger):
             return df
         except Exception as e:
             print(e)
+            #print(list_columns)
             return pd.DataFrame()
     def benchmarking_set_datatypes(self, df):
         """
