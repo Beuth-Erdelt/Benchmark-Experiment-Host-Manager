@@ -3,8 +3,8 @@
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 2232s 
-    Code: 1729592737
+    Duration: 2192s 
+    Code: 1729636792
     This includes no queries. Benchbase runs the benchmark
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -27,8 +27,8 @@ MySQL-1-1-1024-1-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:11500108
+    disk:252506644
+    datadisk:11472030
     volume_size:50G
     volume_used:11G
     requests_cpu:4
@@ -38,8 +38,8 @@ MySQL-1-1-1024-1-2 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:11602901
+    disk:252506644
+    datadisk:11532602
     volume_size:50G
     volume_used:11G
     requests_cpu:4
@@ -49,8 +49,8 @@ MySQL-1-1-1024-1-3 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:11759476
+    disk:252506644
+    datadisk:11674473
     volume_size:50G
     volume_used:11G
     requests_cpu:4
@@ -60,8 +60,8 @@ MySQL-1-1-1024-1-4 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:11851711
+    disk:252506644
+    datadisk:11757445
     volume_size:50G
     volume_used:11G
     requests_cpu:4
@@ -71,8 +71,8 @@ MySQL-1-1-1024-2-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:11962633
+    disk:252506644
+    datadisk:11914175
     volume_size:50G
     volume_used:12G
     requests_cpu:4
@@ -82,8 +82,8 @@ MySQL-1-1-1024-2-2 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:12029283
+    disk:252506624
+    datadisk:11981192
     volume_size:50G
     volume_used:12G
     requests_cpu:4
@@ -93,8 +93,8 @@ MySQL-1-1-1024-2-3 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:12203883
+    disk:252506644
+    datadisk:12089860
     volume_size:50G
     volume_used:12G
     requests_cpu:4
@@ -104,8 +104,8 @@ MySQL-1-1-1024-2-4 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:250326380
-    datadisk:12323576
+    disk:252506816
+    datadisk:12224802
     volume_size:50G
     volume_used:12G
     requests_cpu:4
@@ -113,14 +113,14 @@ MySQL-1-1-1024-2-4 uses docker image mysql:8.4.0
 
 ### Execution
                     experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MySQL-1-1-1024-1-1               1          8    8192          1  120.0                        126.90                                                     225238.0                                             62908.00
-MySQL-1-1-1024-1-2               1         16   16384          2  120.0                        191.01                                                     183551.0                                             83593.50
-MySQL-1-1-1024-1-3               1          8    8192          2  120.0                        121.27                                                     271232.0                                             65905.50
-MySQL-1-1-1024-1-4               1         16   16384          4  120.0                        144.72                                                     166414.0                                            104878.25
-MySQL-1-1-1024-2-1               2          8    8192          1  120.0                         81.89                                                     268466.0                                             97664.00
-MySQL-1-1-1024-2-2               2         16   16384          2  120.0                        218.47                                                     205215.0                                             73191.50
-MySQL-1-1-1024-2-3               2          8    8192          2  120.0                        158.48                                                     172309.0                                             50441.50
-MySQL-1-1-1024-2-4               2         16   16384          4  120.0                        213.33                                                     247673.0                                             73234.50
+MySQL-1-1-1024-1-1               1          8    8192          1  120.0                         74.06                                                     340728.0                                             107142.0
+MySQL-1-1-1024-1-2               1         16   16384          2  120.0                        177.27                                                     292382.0                                              89552.5
+MySQL-1-1-1024-1-3               1          8    8192          2  120.0                        104.87                                                     295564.0                                              76239.0
+MySQL-1-1-1024-1-4               1         16   16384          4  120.0                        203.79                                                     229870.0                                              78386.5
+MySQL-1-1-1024-2-1               2          8    8192          1  120.0                         82.36                                                     268844.0                                              97072.0
+MySQL-1-1-1024-2-2               2         16   16384          2  120.0                        144.63                                                     227714.0                                             110578.0
+MySQL-1-1-1024-2-3               2          8    8192          2  120.0                        169.87                                                     149899.0                                              47030.0
+MySQL-1-1-1024-2-4               2         16   16384          4  120.0                        154.12                                                     261527.0                                             103783.5
 
 Warehouses: 16
 
@@ -134,36 +134,36 @@ DBMS MySQL-1-1-1024 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                     time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-1-1-1024-1-1     2890.0        1.0   1.0                  19.930796
-MySQL-1-1-1024-1-2     2890.0        1.0   2.0                  19.930796
-MySQL-1-1-1024-1-3     2890.0        1.0   2.0                  19.930796
-MySQL-1-1-1024-1-4     2890.0        1.0   4.0                  19.930796
-MySQL-1-1-1024-2-1     2890.0        1.0   1.0                  19.930796
-MySQL-1-1-1024-2-2     2890.0        1.0   2.0                  19.930796
-MySQL-1-1-1024-2-3     2890.0        1.0   2.0                  19.930796
-MySQL-1-1-1024-2-4     2890.0        1.0   4.0                  19.930796
+MySQL-1-1-1024-1-1     3572.0        1.0   1.0                   16.12542
+MySQL-1-1-1024-1-2     3572.0        1.0   2.0                   16.12542
+MySQL-1-1-1024-1-3     3572.0        1.0   2.0                   16.12542
+MySQL-1-1-1024-1-4     3572.0        1.0   4.0                   16.12542
+MySQL-1-1-1024-2-1     3572.0        1.0   1.0                   16.12542
+MySQL-1-1-1024-2-2     3572.0        1.0   2.0                   16.12542
+MySQL-1-1-1024-2-3     3572.0        1.0   2.0                   16.12542
+MySQL-1-1-1024-2-4     3572.0        1.0   4.0                   16.12542
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-1-1-1024-1-1      131.33     0.00         38.16                46.12
-MySQL-1-1-1024-1-2      156.13     0.56         38.37                46.44
-MySQL-1-1-1024-1-3      156.49     0.00         38.44                46.60
-MySQL-1-1-1024-1-4      200.56     1.75         38.50                46.80
-MySQL-1-1-1024-2-1      112.87     1.71         38.05                45.96
-MySQL-1-1-1024-2-2      224.18     2.59         38.28                46.40
-MySQL-1-1-1024-2-3      228.72     1.35         38.37                46.69
-MySQL-1-1-1024-2-4      334.54     1.86         38.45                46.98
+MySQL-1-1-1024-1-1      187.57     0.00         38.14                46.05
+MySQL-1-1-1024-1-2      207.84     2.04         38.33                46.34
+MySQL-1-1-1024-1-3      162.11     1.70         38.39                46.48
+MySQL-1-1-1024-1-4      228.22     2.36         38.46                46.68
+MySQL-1-1-1024-2-1       92.52     0.02         38.03                45.92
+MySQL-1-1-1024-2-2       90.81     0.21         38.20                46.15
+MySQL-1-1-1024-2-3      162.61     0.49         38.32                46.40
+MySQL-1-1-1024-2-4      187.65     0.32         38.39                46.59
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-1-1-1024-1-1       43.15     0.59          0.97                 0.97
-MySQL-1-1-1024-1-2       94.15     0.44          3.24                 3.24
-MySQL-1-1-1024-1-3       56.48     0.36          3.25                 3.25
-MySQL-1-1-1024-1-4       86.42     0.47          3.04                 3.04
-MySQL-1-1-1024-2-1       50.30     0.56          1.17                 1.17
-MySQL-1-1-1024-2-2      126.17     0.00          3.81                 3.81
-MySQL-1-1-1024-2-3       68.88     0.81          4.89                 4.89
-MySQL-1-1-1024-2-4       86.93     0.56          5.12                 5.12
+MySQL-1-1-1024-1-1       51.48     0.49          1.18                 1.18
+MySQL-1-1-1024-1-2      110.71     0.42          3.79                 3.79
+MySQL-1-1-1024-1-3       78.29     0.00          4.20                 4.20
+MySQL-1-1-1024-1-4      119.81     0.69          4.53                 4.53
+MySQL-1-1-1024-2-1       42.49     0.00          0.94                 0.94
+MySQL-1-1-1024-2-2       63.99     0.00          1.85                 1.85
+MySQL-1-1-1024-2-3       89.49     0.00          3.16                 3.16
+MySQL-1-1-1024-2-4      119.80     1.07          3.88                 3.88
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
