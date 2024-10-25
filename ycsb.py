@@ -354,6 +354,7 @@ if __name__ == '__main__':
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
                     #config.loading_finished = True
                     config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
+                    config.sut_container_name = "yb-tserver"            # fix container name of SUT
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
                         Generate a name for the monitoring component.
@@ -385,6 +386,22 @@ if __name__ == '__main__':
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
                     config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
+                    def set_metric_of_config(self, metric, host, gpuid):
+                        """
+                        Returns a promql query.
+                        Parameters in this query are substituted, so that prometheus finds the correct metric.
+                        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
+                        configuration and experiment are placeholders and will be replaced by concrete values.
+                        Here: We do not have a SUT that is specific to the experiment or configuration.
+
+                        :param metric: Parametrized promql query
+                        :param host: Name of the host the metrics should be collected from
+                        :param gpuid: GPU that the metrics should watch
+                        :return: promql query without parameters
+                        """
+                        metric = metric.replace(', container="dbms"', '')
+                        return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
+                    config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,

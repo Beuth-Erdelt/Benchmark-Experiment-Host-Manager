@@ -163,6 +163,7 @@ class default():
         self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
         self.servicename_sut = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
+        self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
     def reset_sut(self):
@@ -2145,7 +2146,8 @@ scrape_configs:
                 cmd = {}
                 print("{:30s}: collecting loading metrics of SUT".format(connection))
                 #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                    self.sut_container_name,
                     connection, 
                     c['name']+'.config', 
                     '/results/'+self.code, 
