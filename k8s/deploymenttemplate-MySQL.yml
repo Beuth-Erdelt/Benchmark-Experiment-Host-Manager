@@ -42,6 +42,7 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
         image: mysql:8.4.0                            # latest image, default InnoDB settigns have changed
@@ -88,6 +89,23 @@ spec:
         env:
           - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
           - {name: MYSQL_ROOT_HOST, value: '%'}
+        lifecycle:
+          preStop:
+            exec:
+              #command: ["mysqladmin shutdown"] # no such file or directory: unknown
+              command: ["/bin/sh", "-c", "mysqladmin shutdown"]
+              #command: ["/bin/sh", "-c", "mysqladmin shutdown -uroot -proot"]
+              #command: ["/bin/sh", "-c", "mysqladmin shutdown -uroot"]
+        readinessProbe: #mysqladmin ping > /dev/null 2>&1 && echo "MySQL server is running." || echo "MySQL server is not running."
+          exec:
+            #command: ["mysqladmin ping > /dev/null 2>&1"] # no such file or directory: unknown
+            command: ["/bin/sh", "-c", "mysqladmin ping > /dev/null 2>&1"]
+            #command:
+            #- mysqladmin
+            #- ping
+            #- > /dev/null 2>&1
+          initialDelaySeconds: 15
+          periodSeconds: 60
         ports:
         - {containerPort: 3306}
         resources:
