@@ -1,0 +1,30 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1729863369
+Experiment                    : starts at 2024-10-25 15:36:08.966886 (4599309.090867487)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+Benchmark is limited to DBMS ['MySQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 100Gi.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is run as [1, 2] times the number of benchmarking pods.
+Experiment is run 2 times.
+Cluster monitoring            : is running
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+MySQL-64-8-1024               : will start now
+MySQL-64-8-1024               : storage exists bexhoma-storage-mysql-ycsb-1
+MySQL-64-8-1024               : loading is set to finished
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09 (that is in 900 secs)
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : 

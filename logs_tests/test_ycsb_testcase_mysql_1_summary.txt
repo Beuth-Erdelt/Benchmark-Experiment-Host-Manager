@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 19627s 
-    Code: 1728553691
+    Duration: 24657s 
+    Code: 1729789153
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -25,8 +25,8 @@ MySQL-32-4-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261413380
-    datadisk:11696024
+    disk:265919812
+    datadisk:11704204
     requests_cpu:4
     requests_memory:16Gi
 MySQL-32-8-131072-1 uses docker image mysql:8.4.0
@@ -34,8 +34,8 @@ MySQL-32-8-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261385044
-    datadisk:11667348
+    disk:265883304
+    datadisk:11667352
     requests_cpu:4
     requests_memory:16Gi
 MySQL-64-4-131072-1 uses docker image mysql:8.4.0
@@ -43,8 +43,8 @@ MySQL-64-4-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261413880
-    datadisk:11696012
+    disk:265908208
+    datadisk:11691916
     requests_cpu:4
     requests_memory:16Gi
 MySQL-64-8-131072-1 uses docker image mysql:8.4.0
@@ -52,24 +52,24 @@ MySQL-64-8-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261389472
-    datadisk:11671436
+    disk:265883808
+    datadisk:11667348
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                    experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MySQL-32-4-131072               1       32  131072          4                     282.068871              3545726.0             1000000                            442687.0
-MySQL-64-4-131072               1       64  131072          4                     648.267569              1543010.0             1000000                            507583.0
-MySQL-32-8-131072               1       32  131072          8                     290.094660              3448199.0             1000000                            467519.0
-MySQL-64-8-131072               1       64  131072          8                     642.338770              1557474.0             1000000                            504831.0
+MySQL-32-4-131072               1       32  131072          4                     279.535769              3577679.0             1000000                            447103.0
+MySQL-64-4-131072               1       64  131072          4                     515.360850              1940611.0             1000000                            573055.0
+MySQL-32-8-131072               1       32  131072          8                     292.402915              3420677.0             1000000                            435071.0
+MySQL-64-8-131072               1       64  131072          8                     527.711701              1896030.0             1000000                            526015.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MySQL-32-4-131072-1               1       64  131072          1                         450.94              2217568.0            499770                            1221.0              500230                           4636671.0
-MySQL-32-8-131072-1               1       64  131072          1                         494.14              2023708.0            500477                            1291.0              499523                           4198399.0
-MySQL-64-4-131072-1               1       64  131072          1                         589.70              1695770.0            499371                            1222.0              500629                           3575807.0
-MySQL-64-8-131072-1               1       64  131072          1                         570.77              1752028.0            500488                            1184.0              499512                           3749887.0
+MySQL-32-4-131072-1               1       64  131072          1                         441.39              2265572.0            500764                            1224.0              499236                           4771839.0
+MySQL-32-8-131072-1               1       64  131072          1                         452.42              2210330.0            499025                            1191.0              500975                           4616191.0
+MySQL-64-4-131072-1               1       64  131072          1                         416.63              2400183.0            500586                            1217.0              499414                           4993023.0
+MySQL-64-8-131072-1               1       64  131072          1                         440.68              2269211.0            499339                            1238.0              500661                           4751359.0
 
 ### Workflow
 

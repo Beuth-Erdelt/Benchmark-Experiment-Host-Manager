@@ -680,7 +680,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 4,8 \
   -nlt 32,64 \
   -nlf 1 \
@@ -710,7 +710,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
@@ -737,7 +737,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
@@ -764,7 +764,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload e \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
@@ -787,11 +787,11 @@ wait_process "ycsb"
 
 #### YCSB Execution Monitoring (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-  -sf 10 \
+  -sf 1 \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
@@ -839,7 +839,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 4,8 \
   -nlt 32,64 \
   -nlf 1 \
@@ -869,7 +869,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
@@ -896,7 +896,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
@@ -923,7 +923,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload e \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
@@ -946,11 +946,11 @@ wait_process "ycsb"
 
 #### YCSB Execution Monitoring (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-  -sf 10 \
+  -sf 1 \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -tb 1024 \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \

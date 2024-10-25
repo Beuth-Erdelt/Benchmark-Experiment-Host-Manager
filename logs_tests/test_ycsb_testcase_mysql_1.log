@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1728553691
-Experiment                    : starts at 2024-10-10 11:48:10.923133 (3289631.04711387)
+Experiment                    : has code 1729789153
+Experiment                    : starts at 2024-10-24 18:59:12.924081 (4525093.048062257)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
 YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
@@ -24,61 +24,181 @@ MySQL-64-4-131072             : has to wait - 0 running and 1 pending pods: max 
 MySQL-64-8-131072             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11 (that is in 300 secs)
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13 (that is in 900 secs)
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-4-131072             : is not loaded yet
-MySQL-32-4-131072             : will start loading but not before 2024-10-10 09:54:11
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is not loaded yet
+MySQL-32-4-131072             : will start loading but not before 2024-10-24 17:15:13
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -674,15 +794,30 @@ MySQL-32-4-131072             : is loading
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : is loading
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MySQL-32-4-131072             : showing loader times
-MySQL-32-4-131072             : loader timespan (first to last [s]) = 3546
+MySQL-32-4-131072             : loader timespan (first to last [s]) = 3578
 MySQL-32-4-131072             : benchmarks done 0 of 1. This will be client 1
 MySQL-32-4-131072             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
 MySQL-32-4-131072-1           : start benchmarking
-MySQL-32-4-131072             : benchmarking results in folder /home/perdelt/benchmarks/1728553691
+MySQL-32-4-131072             : benchmarking results in folder /home/perdelt/benchmarks/1729789153
 - waiting 10s -               : done
-MySQL-32-4-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-32-4-131072-1728553691-1-1-89bjq: found
+MySQL-32-4-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-32-4-131072-1729789153-1-1-528hx: found
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : has running benchmarks
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : has running benchmarks
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -1057,9 +1192,29 @@ MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max 
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-32-4-131072-1           : showing benchmarker times
-MySQL-32-4-131072-1           : benchmarker timespan (start to end single container [s]) = 2239
-MySQL-32-4-131072-1           : benchmarker times (start/end per pod and container) = [(1728557622, 1728559840)]
+MySQL-32-4-131072-1           : benchmarker timespan (start to end single container [s]) = 2299
+MySQL-32-4-131072-1           : benchmarker times (start/end per pod and container) = [(1729793716, 1729795982)]
 done
+MySQL-32-4-131072             : can be stopped
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : can be stopped
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : can be stopped
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-4-131072             : can be stopped
+MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 MySQL-32-4-131072             : can be stopped
 MySQL-32-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -1075,52 +1230,152 @@ MySQL-64-4-131072             : has to wait - 0 running and 1 pending pods: max 
 MySQL-64-8-131072             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01 (that is in 300 secs)
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35 (that is in 900 secs)
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-32-8-131072             : is not loaded yet
-MySQL-32-8-131072             : will start loading but not before 2024-10-10 11:38:01
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : is not loaded yet
+MySQL-32-8-131072             : will start loading but not before 2024-10-24 19:12:35
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
@@ -1581,19 +1836,43 @@ MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max 
 MySQL-32-8-131072             : is loading
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-MySQL-32-8-131072             : is loading
-MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MySQL-32-8-131072             : showing loader times
-MySQL-32-8-131072             : loader timespan (first to last [s]) = 3449
+MySQL-32-8-131072             : loader timespan (first to last [s]) = 3422
 MySQL-32-8-131072             : benchmarks done 0 of 1. This will be client 1
 MySQL-32-8-131072             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
 MySQL-32-8-131072-1           : start benchmarking
-MySQL-32-8-131072             : benchmarking results in folder /home/perdelt/benchmarks/1728553691
+MySQL-32-8-131072             : benchmarking results in folder /home/perdelt/benchmarks/1729789153
 - waiting 10s -               : done
-MySQL-32-8-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-32-8-131072-1728553691-1-1-znbh2: found
+MySQL-32-8-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-32-8-131072-1729789153-1-1-xfhfq: found
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : has running benchmarks
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : has running benchmarks
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : has running benchmarks
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : has running benchmarks
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : has running benchmarks
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : has running benchmarks
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : has running benchmarks
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
@@ -1865,9 +2144,25 @@ MySQL-32-8-131072             : has running benchmarks
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-32-8-131072-1           : showing benchmarker times
-MySQL-32-8-131072-1           : benchmarker timespan (start to end single container [s]) = 2028
-MySQL-32-8-131072-1           : benchmarker times (start/end per pod and container) = [(1728563774, 1728565798)]
+MySQL-32-8-131072-1           : benchmarker timespan (start to end single container [s]) = 2239
+MySQL-32-8-131072-1           : benchmarker times (start/end per pod and container) = [(1729800620, 1729802831)]
 done
+MySQL-32-8-131072             : can be stopped
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : can be stopped
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : can be stopped
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-32-8-131072             : can be stopped
+MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 MySQL-32-8-131072             : can be stopped
 MySQL-64-4-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -1880,43 +2175,123 @@ MySQL-64-4-131072             : will start now
 MySQL-64-8-131072             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02 (that is in 300 secs)
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38 (that is in 900 secs)
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : is not loaded yet
-MySQL-64-4-131072             : will start loading but not before 2024-10-10 13:17:02
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is not loaded yet
+MySQL-64-4-131072             : will start loading but not before 2024-10-24 21:06:38
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MySQL-64-4-131072             : is not loaded yet
@@ -2076,15 +2451,123 @@ MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max 
 - waiting 30s -               : done
 MySQL-64-4-131072             : is loading
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : is loading
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MySQL-64-4-131072             : showing loader times
-MySQL-64-4-131072             : loader timespan (first to last [s]) = 1543
+MySQL-64-4-131072             : loader timespan (first to last [s]) = 1941
 MySQL-64-4-131072             : benchmarks done 0 of 1. This will be client 1
 MySQL-64-4-131072             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
 MySQL-64-4-131072-1           : start benchmarking
-MySQL-64-4-131072             : benchmarking results in folder /home/perdelt/benchmarks/1728553691
+MySQL-64-4-131072             : benchmarking results in folder /home/perdelt/benchmarks/1729789153
 - waiting 10s -               : done
-MySQL-64-4-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-4-131072-1728553691-1-1-2ldf7: found
+MySQL-64-4-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-4-131072-1729789153-1-1-nd4rl: found
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : has running benchmarks
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MySQL-64-4-131072             : has running benchmarks
@@ -2258,9 +2741,21 @@ done
 MySQL-64-4-131072             : has running benchmarks
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 MySQL-64-4-131072-1           : showing benchmarker times
-MySQL-64-4-131072-1           : benchmarker timespan (start to end single container [s]) = 1727
-MySQL-64-4-131072-1           : benchmarker times (start/end per pod and container) = [(1728567800, 1728569496)]
+MySQL-64-4-131072-1           : benchmarker timespan (start to end single container [s]) = 2419
+MySQL-64-4-131072-1           : benchmarker times (start/end per pod and container) = [(1729805971, 1729808372)]
 done
+MySQL-64-4-131072             : can be stopped
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : can be stopped
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : can be stopped
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-64-4-131072             : can be stopped
+MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 MySQL-64-4-131072             : can be stopped
 MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
@@ -2270,34 +2765,94 @@ done
 MySQL-64-8-131072             : will start now
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06 (that is in 300 secs)
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50 (that is in 900 secs)
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 - waiting 30s -               : done
 MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-10 14:19:06
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
+- waiting 30s -               : done
+MySQL-64-8-131072             : is not loaded yet
+MySQL-64-8-131072             : will start loading but not before 2024-10-24 22:38:50
 done
 MySQL-64-8-131072             : is not loaded yet
 MySQL-64-8-131072             : start asynch loading scripts of type loaded
@@ -2404,15 +2959,75 @@ MySQL-64-8-131072             : is loading
 MySQL-64-8-131072             : is loading
 - waiting 30s -               : done
 MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+- waiting 30s -               : done
+MySQL-64-8-131072             : is loading
+done
+MySQL-64-8-131072             : is loading
 done
 MySQL-64-8-131072             : showing loader times
-MySQL-64-8-131072             : loader timespan (first to last [s]) = 1559
+MySQL-64-8-131072             : loader timespan (first to last [s]) = 1896
 MySQL-64-8-131072             : benchmarks done 0 of 1. This will be client 1
 MySQL-64-8-131072             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
 MySQL-64-8-131072-1           : start benchmarking
-MySQL-64-8-131072             : benchmarking results in folder /home/perdelt/benchmarks/1728553691
+MySQL-64-8-131072             : benchmarking results in folder /home/perdelt/benchmarks/1729789153
 - waiting 10s -               : done
-MySQL-64-8-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-131072-1728553691-1-1-9vzwq: found
+MySQL-64-8-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-131072-1729789153-1-1-27bsz: found
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-131072             : has running benchmarks
 - waiting 30s -               : done
 MySQL-64-8-131072             : has running benchmarks
 - waiting 30s -               : done
@@ -2530,50 +3145,50 @@ MySQL-64-8-131072             : has running benchmarks
 done
 MySQL-64-8-131072             : has running benchmarks
 MySQL-64-8-131072-1           : showing benchmarker times
-MySQL-64-8-131072-1           : benchmarker timespan (start to end single container [s]) = 1756
-MySQL-64-8-131072-1           : benchmarker times (start/end per pod and container) = [(1728571531, 1728573284)]
-MySQL-64-8-131072-1           : found and updated times {'benchmarker': [(1728571531, 1728573284)]}
+MySQL-64-8-131072-1           : benchmarker timespan (start to end single container [s]) = 2298
+MySQL-64-8-131072-1           : benchmarker times (start/end per pod and container) = [(1729811481, 1729813751)]
+MySQL-64-8-131072-1           : found and updated times {'benchmarker': [(1729811481, 1729813751)]}
 done
 MySQL-64-8-131072             : can be stopped
-Experiment                    : ends at 2024-10-10 17:15:17.356627 (3309257.480606953) - 19626.43s total
+Experiment                    : ends at 2024-10-25 01:50:08.989551 (4549749.11353108) - 24656.07s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
 Benchmarking                                 connection  ... [UPDATE].Return=OK
 connection_pod                              ...                   
-MySQL-32-4-131072-1-1  MySQL-32-4-131072-1  ...             500230
-MySQL-32-8-131072-1-1  MySQL-32-8-131072-1  ...             499523
-MySQL-64-8-131072-1-1  MySQL-64-8-131072-1  ...             499512
-MySQL-64-4-131072-1-1  MySQL-64-4-131072-1  ...             500629
+MySQL-32-4-131072-1-1  MySQL-32-4-131072-1  ...             499236
+MySQL-32-8-131072-1-1  MySQL-32-8-131072-1  ...             500975
+MySQL-64-8-131072-1-1  MySQL-64-8-131072-1  ...             500661
+MySQL-64-4-131072-1-1  MySQL-64-4-131072-1  ...             499414
 
 [4 rows x 43 columns]
 Workflow {'MySQL-32-4-131072': [[1]], 'MySQL-32-8-131072': [[1]], 'MySQL-64-8-131072': [[1]], 'MySQL-64-4-131072': [[1]]}
 Loading                             connection  ... [INSERT].Return=OK
 connection_pod                          ...                   
+MySQL-64-4-131072-1  MySQL-64-4-131072  ...             250000
 MySQL-64-8-131072-1  MySQL-64-8-131072  ...             125000
 MySQL-32-4-131072-1  MySQL-32-4-131072  ...             250000
 MySQL-32-8-131072-1  MySQL-32-8-131072  ...             125000
-MySQL-64-8-131072-2  MySQL-64-8-131072  ...             125000
-MySQL-64-4-131072-1  MySQL-64-4-131072  ...             250000
 MySQL-32-4-131072-2  MySQL-32-4-131072  ...             250000
-MySQL-64-8-131072-3  MySQL-64-8-131072  ...             125000
 MySQL-32-8-131072-2  MySQL-32-8-131072  ...             125000
 MySQL-32-4-131072-3  MySQL-32-4-131072  ...             250000
 MySQL-64-4-131072-2  MySQL-64-4-131072  ...             250000
-MySQL-64-8-131072-4  MySQL-64-8-131072  ...             125000
+MySQL-64-8-131072-2  MySQL-64-8-131072  ...             125000
+MySQL-64-4-131072-3  MySQL-64-4-131072  ...             250000
 MySQL-32-8-131072-3  MySQL-32-8-131072  ...             125000
 MySQL-32-8-131072-4  MySQL-32-8-131072  ...             125000
-MySQL-64-8-131072-5  MySQL-64-8-131072  ...             125000
 MySQL-32-8-131072-5  MySQL-32-8-131072  ...             125000
-MySQL-64-8-131072-6  MySQL-64-8-131072  ...             125000
-MySQL-64-4-131072-3  MySQL-64-4-131072  ...             250000
+MySQL-32-4-131072-4  MySQL-32-4-131072  ...             250000
 MySQL-32-8-131072-6  MySQL-32-8-131072  ...             125000
 MySQL-32-8-131072-7  MySQL-32-8-131072  ...             125000
-MySQL-64-8-131072-7  MySQL-64-8-131072  ...             125000
+MySQL-64-8-131072-3  MySQL-64-8-131072  ...             125000
+MySQL-64-8-131072-4  MySQL-64-8-131072  ...             125000
+MySQL-64-8-131072-5  MySQL-64-8-131072  ...             125000
+MySQL-64-8-131072-6  MySQL-64-8-131072  ...             125000
 MySQL-32-8-131072-8  MySQL-32-8-131072  ...             125000
-MySQL-64-8-131072-8  MySQL-64-8-131072  ...             125000
-MySQL-32-4-131072-4  MySQL-32-4-131072  ...             250000
 MySQL-64-4-131072-4  MySQL-64-4-131072  ...             250000
+MySQL-64-8-131072-7  MySQL-64-8-131072  ...             125000
+MySQL-64-8-131072-8  MySQL-64-8-131072  ...             125000
 
 [24 rows x 36 columns]
 Result workflow complete
@@ -2583,8 +3198,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 19627s 
-    Code: 1728553691
+    Duration: 24657s 
+    Code: 1729789153
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -2605,8 +3220,8 @@ MySQL-32-4-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261413380
-    datadisk:11696024
+    disk:265919812
+    datadisk:11704204
     requests_cpu:4
     requests_memory:16Gi
 MySQL-32-8-131072-1 uses docker image mysql:8.4.0
@@ -2614,8 +3229,8 @@ MySQL-32-8-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261385044
-    datadisk:11667348
+    disk:265883304
+    datadisk:11667352
     requests_cpu:4
     requests_memory:16Gi
 MySQL-64-4-131072-1 uses docker image mysql:8.4.0
@@ -2623,8 +3238,8 @@ MySQL-64-4-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261413880
-    datadisk:11696012
+    disk:265908208
+    datadisk:11691916
     requests_cpu:4
     requests_memory:16Gi
 MySQL-64-8-131072-1 uses docker image mysql:8.4.0
@@ -2632,24 +3247,24 @@ MySQL-64-8-131072-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:261389472
-    datadisk:11671436
+    disk:265883808
+    datadisk:11667348
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                    experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MySQL-32-4-131072               1       32  131072          4                     282.068871              3545726.0             1000000                            442687.0
-MySQL-64-4-131072               1       64  131072          4                     648.267569              1543010.0             1000000                            507583.0
-MySQL-32-8-131072               1       32  131072          8                     290.094660              3448199.0             1000000                            467519.0
-MySQL-64-8-131072               1       64  131072          8                     642.338770              1557474.0             1000000                            504831.0
+MySQL-32-4-131072               1       32  131072          4                     279.535769              3577679.0             1000000                            447103.0
+MySQL-64-4-131072               1       64  131072          4                     515.360850              1940611.0             1000000                            573055.0
+MySQL-32-8-131072               1       32  131072          8                     292.402915              3420677.0             1000000                            435071.0
+MySQL-64-8-131072               1       64  131072          8                     527.711701              1896030.0             1000000                            526015.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MySQL-32-4-131072-1               1       64  131072          1                         450.94              2217568.0            499770                            1221.0              500230                           4636671.0
-MySQL-32-8-131072-1               1       64  131072          1                         494.14              2023708.0            500477                            1291.0              499523                           4198399.0
-MySQL-64-4-131072-1               1       64  131072          1                         589.70              1695770.0            499371                            1222.0              500629                           3575807.0
-MySQL-64-8-131072-1               1       64  131072          1                         570.77              1752028.0            500488                            1184.0              499512                           3749887.0
+MySQL-32-4-131072-1               1       64  131072          1                         441.39              2265572.0            500764                            1224.0              499236                           4771839.0
+MySQL-32-8-131072-1               1       64  131072          1                         452.42              2210330.0            499025                            1191.0              500975                           4616191.0
+MySQL-64-4-131072-1               1       64  131072          1                         416.63              2400183.0            500586                            1217.0              499414                           4993023.0
+MySQL-64-8-131072-1               1       64  131072          1                         440.68              2269211.0            499339                            1238.0              500661                           4751359.0
 
 ### Workflow
 
