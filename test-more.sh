@@ -55,6 +55,175 @@ wait_process() {
 
 
 
+###########################################
+############### TPC-H MySQL ###############
+###########################################
+
+
+
+### TPC-H Power Test - only MySQL (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MySQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpch"
+
+
+### TPC-H Monitoring (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MySQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_2.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpch"
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-mysql-tpch-1
+sleep 30
+
+
+### TPC-H Throughput Test (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MySQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_3.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_3.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "tpch"
+
+
+
+
+
+
+
+
+
+###########################################
+############## TPC-H MariaDB ##############
+###########################################
+
+
+
+### TPC-H Power Test - only MariaDB (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpch"
+
+
+### TPC-H Monitoring (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_2.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpch"
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-mariadb-tpch-1
+sleep 30
+
+
+### TPC-H Throughput Test (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_3.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "tpch"
+
+
+
+
+
+
 
 
 ###########################################
