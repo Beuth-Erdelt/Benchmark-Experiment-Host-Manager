@@ -99,7 +99,8 @@ spec:
         readinessProbe: #mysqladmin ping > /dev/null 2>&1 && echo "MySQL server is running." || echo "MySQL server is not running."
           exec:
             #command: ["mysqladmin ping > /dev/null 2>&1"] # no such file or directory: unknown
-            command: ["/bin/sh", "-c", "mysqladmin ping > /dev/null 2>&1"]
+            command: ["/bin/sh", "-c", "if mysqladmin ping > /dev/null 2>&1; then exit 0; else exit 1; fi"]
+            #command: ["/bin/sh", "-c", "mysqladmin ping > /dev/null 2>&1"]
             #command:
             #- mysqladmin
             #- ping
