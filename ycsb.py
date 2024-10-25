@@ -352,6 +352,7 @@ if __name__ == '__main__':
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    #config.loading_finished = True
                     config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
@@ -383,6 +384,7 @@ if __name__ == '__main__':
                         endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
+                    config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,

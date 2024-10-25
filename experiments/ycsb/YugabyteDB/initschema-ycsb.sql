@@ -1,12 +1,15 @@
-DROP TABLE IF EXISTS public.usertable CASCADE;
+SELECT 'DROP old usertable' as message;
+-- DROP TABLE IF EXISTS public.usertable CASCADE;
 
--- wait 10 seconds
-select (pg_sleep(10.0::double precision)::text = '')::text;
+-- wait 60 seconds
+SELECT 'Wait 60 s';
+-- select (pg_sleep(60.0::double precision)::text = '')::text;
 
 alter database yugabyte SET temp_file_limit=-1;
 
 
-CREATE TABLE public.usertable (
+SELECT 'CREATE new usertable';
+CREATE TABLE usertable (
   YCSB_KEY varchar(255),
   FIELD0 text,
   FIELD1 text,
@@ -26,4 +29,16 @@ CREATE TABLE public.usertable (
   ('user82'),('user86'),('user90'),('user94'),('user98')
 );
 
-  -- https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc
+SELECT 'Time after creation';
+select current_timestamp;
+
+-- wait 300 seconds
+SELECT 'Wait 300 s';
+-- select (pg_sleep(300.0::double precision)::text = '')::text;
+
+SELECT 'Time after waiting';
+select current_timestamp;
+
+SELECT COUNT(*) AS "number of rows in usertable" FROM usertable;
+
+-- https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc
