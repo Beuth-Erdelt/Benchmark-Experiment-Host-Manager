@@ -146,5 +146,8 @@ If you use Bexhoma in work contributing to a scientific publication, we kindly a
 > https://doi.org/10.21105/joss.04628
 
 [4] [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](https://doi.org/10.1007/978-3-031-68031-1_9)
-> Erdelt P.K. (2024)
+> Erdelt, P.K. (2024).
+> A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools.
+> In: Nambiar, R., Poess, M. (eds) Performance Evaluation and Benchmarking. TPCTC 2023.
+> Lecture Notes in Computer Science, vol 14247. Springer, Cham.
 > https://doi.org/10.1007/978-3-031-68031-1_9
