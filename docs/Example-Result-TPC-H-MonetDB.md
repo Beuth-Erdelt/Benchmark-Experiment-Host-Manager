@@ -71,7 +71,7 @@ In total the data set has a size of 106G.
 
 ### Status Database and Benchmark
 
-You can watch the status of experiments via `bexperiments status`
+You can watch the status of experiments via `bexperiments status`.
 
 In the following example output we see all components of bexhoma are up and running.
 The cluster stores a MonetDB database corresponding to TPC-H of SF=100.
@@ -213,7 +213,7 @@ TEST passed: Workflow as planned
 
 To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
-### Status Data Disk
+## List local results
 
 You can inspect a preview list of results via `bexperiments localresults`.
 
