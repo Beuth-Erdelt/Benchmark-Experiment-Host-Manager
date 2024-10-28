@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 314s 
-    Code: 1729850453
+    Duration: 319s 
+    Code: 1729871951
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -27,18 +27,18 @@ YugabyteDB-64-8-131072-1 uses docker image postgres:15.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254257756
+    disk:254258780
     datadisk:39428
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-YugabyteDB-64-8-131072               1       64  131072          8                   17849.644514                56293.0             1000000                             53683.0
+YugabyteDB-64-8-131072               1       64  131072          8                   17594.774222                57094.0             1000000                             60199.0
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-131072-1               1       64  131072          1                       21467.52                46582.0            499970                           59807.0              500030                             61791.0
+YugabyteDB-64-8-131072-1               1       64  131072          1                       21829.29                45810.0            500024                           60575.0              499976                             62303.0
 
 ### Workflow
 
@@ -50,19 +50,19 @@ DBMS YugabyteDB-64-8-131072 - Pods [[1]]
 
 ### Ingestion - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1        0.14      0.0          0.03                 0.06
+YugabyteDB-64-8-131072-1     1983.77     4.66          5.19                 9.06
 
 ### Ingestion - Loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1        0.09        0          0.01                 0.01
+YugabyteDB-64-8-131072-1     1983.77     4.66          5.19                 9.06
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1         0.2        0          0.03                 0.06
+YugabyteDB-64-8-131072-1     1083.11     5.53          5.76                 10.8
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1       56.11        0          0.53                 0.53
+YugabyteDB-64-8-131072-1     1781.08     6.15          5.96                11.23
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

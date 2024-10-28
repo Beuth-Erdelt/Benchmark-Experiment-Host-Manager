@@ -3,12 +3,12 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 6337s 
-    Code: 1729821592
+    Duration: 8487s 
+    Code: 1729863369
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
     Benchmark is limited to DBMS ['MySQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -21,114 +21,114 @@ YCSB SF=1
     Experiment is run 2 times.
 
 ### Connections
-MySQL-64-8-131072-1-1 uses docker image mysql:8.4.0
+MySQL-64-8-1024-1-1 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254216964
-    datadisk:14018716
+    disk:254219012
+    datadisk:22532972
     volume_size:100G
-    volume_used:14G
+    volume_used:20G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-1-2 uses docker image mysql:8.4.0
+MySQL-64-8-1024-1-2 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254217136
-    datadisk:15194337
+    disk:254219012
+    datadisk:23708326
     volume_size:100G
-    volume_used:15G
+    volume_used:20G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-1-3 uses docker image mysql:8.4.0
+MySQL-64-8-1024-1-3 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254217136
-    datadisk:16370986
+    disk:254219012
+    datadisk:24883066
     volume_size:100G
-    volume_used:16G
+    volume_used:24G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-1-4 uses docker image mysql:8.4.0
+MySQL-64-8-1024-1-4 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254217136
-    datadisk:17545746
+    disk:254219180
+    datadisk:26057108
     volume_size:100G
-    volume_used:17G
+    volume_used:25G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-2-1 uses docker image mysql:8.4.0
+MySQL-64-8-1024-2-1 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254217136
-    datadisk:18719917
+    disk:254219180
+    datadisk:27235128
     volume_size:100G
-    volume_used:18G
+    volume_used:26G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-2-2 uses docker image mysql:8.4.0
+MySQL-64-8-1024-2-2 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254217340
-    datadisk:15561047
+    disk:254219180
+    datadisk:28411111
     volume_size:100G
-    volume_used:12G
+    volume_used:28G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-2-3 uses docker image mysql:8.4.0
+MySQL-64-8-1024-2-3 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254217340
-    datadisk:20017495
+    disk:254219352
+    datadisk:29586690
     volume_size:100G
-    volume_used:18G
+    volume_used:29G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-2-4 uses docker image mysql:8.4.0
+MySQL-64-8-1024-2-4 uses docker image mysql:8.4.0
     RAM:541008605184
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254217340
-    datadisk:20017495
+    disk:254219352
+    datadisk:30761322
     volume_size:100G
-    volume_used:18G
+    volume_used:29G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MySQL-64-8-131072-1-1               1       64  131072          1                        1659.49               602595.0            499607                          32255.00              500393                           1011199.0
-MySQL-64-8-131072-1-3               1       64  131072          8                        1633.09               617975.0            499974                           1115.50              500026                           1008511.0
-MySQL-64-8-131072-1-2               1      128  262144          2                        1448.34               694045.0            499169                           1041.00              500831                           3230719.0
-MySQL-64-8-131072-1-4               1      128  262144         16                        1842.59               547914.0            500225                           1291.19              499775                           2552447.0
-MySQL-64-8-131072-2-1               2       64  131072          1                         816.03              1225447.0            468943                          40671.00              468618                            998911.0
-MySQL-64-8-131072-2-3               2       64  131072          8                           0.00                15726.0                 0                              0.00                   0                                 0.0
-MySQL-64-8-131072-2-2               2      128  262144          2                           0.00               130933.0                 0                              0.00                   0                                 0.0
-MySQL-64-8-131072-2-4               2      128  262144         16                           0.00                31816.0                 0                              0.00                   0                                 0.0
+                     experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MySQL-64-8-1024-1-1               1       64    1024          1                        1021.63               978826.0            499721                          33887.00              500279                            451327.0
+MySQL-64-8-1024-1-3               1       64    1024          8                        1022.74               977879.0            500279                           1231.88              499721                            410591.0
+MySQL-64-8-1024-1-2               1      128    2048          2                        2034.40               491694.0            499982                           1151.50              500018                           1913855.0
+MySQL-64-8-1024-1-4               1      128    2048         16                        1901.25               533281.0            498589                           1426.06              501411                           2050815.0
+MySQL-64-8-1024-2-1               2       64    1024          1                        1021.56               978893.0            499453                          31535.00              500547                            473087.0
+MySQL-64-8-1024-2-3               2       64    1024          8                        1019.19               981840.0            500028                           1249.50              499972                            480383.0
+MySQL-64-8-1024-2-2               2      128    2048          2                        1948.12               513400.0            499625                           1229.50              500375                           1860095.0
+MySQL-64-8-1024-2-4               2      128    2048         16                        2040.92               490178.0            499890                           1524.56              500110                           1754559.0
 
 ### Workflow
 
 #### Actual
-DBMS MySQL-64-8-131072 - Pods [[2, 16, 8, 1], [1, 16, 8, 2]]
+DBMS MySQL-64-8-1024 - Pods [[8, 16, 2, 1], [8, 16, 2, 1]]
 
 #### Planned
-DBMS MySQL-64-8-131072 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+DBMS MySQL-64-8-1024 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
 
 ### Tests
-TEST failed: [OVERALL].Throughput(ops/sec) contains 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned

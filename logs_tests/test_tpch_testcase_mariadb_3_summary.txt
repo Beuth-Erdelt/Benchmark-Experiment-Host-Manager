@@ -1,0 +1,210 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 6874s 
+    Code: 1729950003
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MariaDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MariaDB-BHT-8-1-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254223276
+    datadisk:2148325
+    volume_size:100G
+    volume_used:2.1G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-2-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254223276
+    datadisk:2148325
+    volume_size:100G
+    volume_used:2.1G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-2-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254223276
+    datadisk:2148325
+    volume_size:100G
+    volume_used:2.1G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-2-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254223260
+    datadisk:2152777
+    volume_size:100G
+    volume_used:2.1G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-2-2-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254223260
+    datadisk:2152777
+    volume_size:100G
+    volume_used:2.1G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-2-2-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254223260
+    datadisk:2152777
+    volume_size:100G
+    volume_used:2.1G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 MariaDB-BHT-8-1-1-1  MariaDB-BHT-8-1-2-1  MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-2-1-1  MariaDB-BHT-8-2-2-1  MariaDB-BHT-8-2-2-2
+Pricing Summary Report (TPC-H Q1)                               28532.26             27951.85             27645.66             28537.50             27396.02             27633.59
+Minimum Cost Supplier Query (TPC-H Q2)                           1270.02              1514.46              1503.39              1610.50              1489.09              1400.43
+Shipping Priority (TPC-H Q3)                                     5623.90              5868.13              5728.37              6071.85              6512.10              6523.89
+Order Priority Checking Query (TPC-H Q4)                         1243.18              1247.31              1270.45              1313.68              1366.09              1366.99
+Local Supplier Volume (TPC-H Q5)                                 3493.74              3782.52              3720.03              3459.54              3602.17              3600.33
+Forecasting Revenue Change (TPC-H Q6)                            3533.45              3399.12              3582.73              3520.58              3366.29              3376.36
+Forecasting Revenue Change (TPC-H Q7)                            3743.50              3805.28              3786.99              3815.30              3742.43              3735.43
+National Market Share (TPC-H Q8)                                 6477.36              7486.86              7266.01              6501.88              6969.15              6965.56
+Product Type Profit Measure (TPC-H Q9)                           6128.39              6591.97              6181.76              5829.31              5972.10              5973.85
+Forecasting Revenue Change (TPC-H Q10)                           3074.56              3204.57              3201.26              3192.93              3102.62              3100.40
+Important Stock Identification (TPC-H Q11)                        446.18               405.04               416.86               420.18               470.72               468.50
+Shipping Modes and Order Priority (TPC-H Q12)                   11690.80             12845.77             13182.44             12097.56             13537.52             13533.48
+Customer Distribution (TPC-H Q13)                                9683.49             11459.83             11530.21              9713.39             10975.29             10979.96
+Forecasting Revenue Change (TPC-H Q14)                          32370.14             39841.85             38843.04             28671.34             33355.61             33353.56
+Top Supplier Query (TPC-H Q15)                                   7382.23              8039.77              7956.23              8075.54              7931.11              7908.12
+Parts/Supplier Relationship (TPC-H Q16)                           766.04               713.25               719.04               741.22               726.79               721.87
+Small-Quantity-Order Revenue (TPC-H Q17)                          163.93               164.18               162.59               165.33               178.97               162.84
+Large Volume Customer (TPC-H Q18)                               10293.01             11869.76             11836.87             10088.16             11766.82             11593.94
+Discounted Revenue (TPC-H Q19)                                    387.51               323.49               304.75               296.97               301.88               323.88
+Potential Part Promotion (TPC-H Q20)                              689.49               590.11               575.17               517.21               579.64               604.38
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)            205486.01            225949.60            227415.01            201609.54            216331.01            216350.22
+Global Sales Opportunity Query (TPC-H Q22)                        423.08               442.41               423.24               420.31               452.00               440.65
+
+### Loading [s]
+                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MariaDB-BHT-8-1-1-1           1.0          873.0         2.0     2228.0    3111.0
+MariaDB-BHT-8-1-2-1           1.0          873.0         2.0     2228.0    3111.0
+MariaDB-BHT-8-1-2-2           1.0          873.0         2.0     2228.0    3111.0
+MariaDB-BHT-8-2-1-1           1.0          873.0         2.0     2228.0    3111.0
+MariaDB-BHT-8-2-2-1           1.0          873.0         2.0     2228.0    3111.0
+MariaDB-BHT-8-2-2-2           1.0          873.0         2.0     2228.0    3111.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                     Geo Times [s]
+DBMS                              
+MariaDB-BHT-8-1-1-1           3.55
+MariaDB-BHT-8-1-2-1           3.67
+MariaDB-BHT-8-1-2-2           3.67
+MariaDB-BHT-8-2-1-1           3.50
+MariaDB-BHT-8-2-2-1           3.64
+MariaDB-BHT-8-2-2-2           3.65
+
+### Power@Size
+                     Power@Size [~Q/h]
+DBMS                                  
+MariaDB-BHT-8-1-1-1            1056.43
+MariaDB-BHT-8-1-2-1            1016.27
+MariaDB-BHT-8-1-2-2            1025.13
+MariaDB-BHT-8-2-1-1            1071.49
+MariaDB-BHT-8-2-2-1            1023.90
+MariaDB-BHT-8-2-2-2            1027.97
+
+### Throughput@Size
+                                                time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS              SF num_experiment num_client                                              
+MariaDB-BHT-8-1-1 1  1              1                347      1   1                   228.24
+MariaDB-BHT-8-1-2 1  1              2                381      2   1                   415.75
+MariaDB-BHT-8-2-1 1  2              1                343      1   1                   230.90
+MariaDB-BHT-8-2-2 1  2              2                363      2   1                   436.36
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-BHT-8 - Pods [[1, 2], [1, 2]]
+
+#### Planned
+DBMS MariaDB-BHT-8 - Pods [[1, 2], [1, 2]]
+
+### Ingestion - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1     1961.64     1.34         10.03                10.05
+MariaDB-BHT-8-1-2     1961.64     1.34         10.03                10.05
+
+### Ingestion - Loader
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1        7.91     0.01           0.5                 1.15
+MariaDB-BHT-8-1-2        7.91     0.01           0.5                 1.15
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1      341.40      1.0         10.11                10.13
+MariaDB-BHT-8-1-2      754.70      2.0         10.14                10.17
+MariaDB-BHT-8-2-1      325.03      1.0          2.48                 2.73
+MariaDB-BHT-8-2-2      652.58      2.0          2.51                 2.77
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1       15.74     0.05          0.24                 0.25
+MariaDB-BHT-8-1-2       30.42     0.03          0.71                 0.72
+MariaDB-BHT-8-2-1       16.13     0.01          0.25                 0.26
+MariaDB-BHT-8-2-2       31.38     0.00          0.73                 0.76
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

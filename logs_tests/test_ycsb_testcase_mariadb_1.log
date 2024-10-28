@@ -2,11 +2,11 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1729843706
-Experiment                    : starts at 2024-10-25 10:08:25.770339 (4579645.894319651)
+Experiment                    : has code 1729872311
+Experiment                    : starts at 2024-10-25 18:05:11.468469 (4608251.592450098)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
 Benchmark is limited to DBMS ['MariaDB'].
 Import is handled by 4 and 8 processes (pods).
 Loading is fixed to cl-worker19.
@@ -17,4 +17,2165 @@ Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : 
+done
+MariaDB-32-4-1024             : will start now
+MariaDB-32-8-1024             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12 (that is in 900 secs)
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : will start loading but not before 2024-10-25 16:21:12
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-32-4-1024             : is not loaded yet
+MariaDB-32-4-1024             : start asynch loading scripts of type loaded
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : is loading
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-32-4-1024             : showing loader times
+MariaDB-32-4-1024             : loader timespan (first to last [s]) = 2033
+MariaDB-32-4-1024             : benchmarks done 0 of 1. This will be client 1
+MariaDB-32-4-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MariaDB-32-4-1024-1           : start benchmarking
+MariaDB-32-4-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729872311
+- waiting 10s -               : done
+MariaDB-32-4-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-32-4-1024-1729872311-1-1-srbdp: found
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-32-4-1024             : has running benchmarks
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-32-4-1024-1           : showing benchmarker times
+MariaDB-32-4-1024-1           : benchmarker timespan (start to end single container [s]) = 1006
+MariaDB-32-4-1024-1           : benchmarker times (start/end per pod and container) = [(1729875345, 1729876322)]
+done
+MariaDB-32-4-1024             : can be stopped
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-4-1024             : can be stopped
+MariaDB-32-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-32-8-1024             : will start now
+MariaDB-64-4-1024             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31 (that is in 900 secs)
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : will start loading but not before 2024-10-25 17:29:31
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-32-8-1024             : is not loaded yet
+MariaDB-32-8-1024             : start asynch loading scripts of type loaded
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : is loading
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-32-8-1024             : showing loader times
+MariaDB-32-8-1024             : loader timespan (first to last [s]) = 1909
+MariaDB-32-8-1024             : benchmarks done 0 of 1. This will be client 1
+MariaDB-32-8-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MariaDB-32-8-1024-1           : start benchmarking
+MariaDB-32-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729872311
+- waiting 10s -               : done
+MariaDB-32-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-32-8-1024-1729872311-1-1-2zbwr: found
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-32-8-1024             : has running benchmarks
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-32-8-1024-1           : showing benchmarker times
+MariaDB-32-8-1024-1           : benchmarker timespan (start to end single container [s]) = 1006
+MariaDB-32-8-1024-1           : benchmarker times (start/end per pod and container) = [(1729879334, 1729880312)]
+done
+MariaDB-32-8-1024             : can be stopped
+MariaDB-64-4-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-64-4-1024             : will start now
+MariaDB-64-8-1024             : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30 (that is in 900 secs)
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : will start loading but not before 2024-10-25 18:35:30
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-64-4-1024             : is not loaded yet
+MariaDB-64-4-1024             : start asynch loading scripts of type loaded
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : is loading
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-64-4-1024             : showing loader times
+MariaDB-64-4-1024             : loader timespan (first to last [s]) = 1971
+MariaDB-64-4-1024             : benchmarks done 0 of 1. This will be client 1
+MariaDB-64-4-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-4-1024-1           : start benchmarking
+MariaDB-64-4-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729872311
+- waiting 10s -               : done
+MariaDB-64-4-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-4-1024-1729872311-1-1-pk4s4: found
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-64-4-1024             : has running benchmarks
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-64-4-1024-1           : showing benchmarker times
+MariaDB-64-4-1024-1           : benchmarker timespan (start to end single container [s]) = 1006
+MariaDB-64-4-1024-1           : benchmarker times (start/end per pod and container) = [(1729883341, 1729884320)]
+done
+MariaDB-64-4-1024             : can be stopped
+MariaDB-64-8-1024             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-64-8-1024             : will start now
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16 (that is in 900 secs)
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2024-10-25 19:42:16
+done
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : start asynch loading scripts of type loaded
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+- waiting 30s -               : done
+MariaDB-64-8-1024             : is loading
+done
+MariaDB-64-8-1024             : is loading
+done
+MariaDB-64-8-1024             : showing loader times
+MariaDB-64-8-1024             : loader timespan (first to last [s]) = 1963
+MariaDB-64-8-1024             : benchmarks done 0 of 1. This will be client 1
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-1           : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729872311
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729872311-1-1-g4ms2: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-1           : showing benchmarker times
+MariaDB-64-8-1024-1           : benchmarker timespan (start to end single container [s]) = 1006
+MariaDB-64-8-1024-1           : benchmarker times (start/end per pod and container) = [(1729887361, 1729888338)]
+MariaDB-64-8-1024-1           : found and updated times {'benchmarker': [(1729887361, 1729888338)]}
+done
+MariaDB-64-8-1024             : can be stopped
+Experiment                    : ends at 2024-10-25 22:33:15.800605 (4624335.924584605) - 16084.33s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Benchmarking                                 connection  ... [UPDATE].Return=ERROR
+connection_pod                              ...                      
+MariaDB-32-8-1024-1-1  MariaDB-32-8-1024-1  ...                   NaN
+MariaDB-32-4-1024-1-1  MariaDB-32-4-1024-1  ...                     1
+MariaDB-64-4-1024-1-1  MariaDB-64-4-1024-1  ...                   NaN
+MariaDB-64-8-1024-1-1  MariaDB-64-8-1024-1  ...                   NaN
+
+[4 rows x 50 columns]
+Workflow {'MariaDB-32-8-1024': [[1]], 'MariaDB-32-4-1024': [[1]], 'MariaDB-64-4-1024': [[1]], 'MariaDB-64-8-1024': [[1]]}
+Loading                             connection  ... [INSERT].Return=OK
+connection_pod                          ...                   
+MariaDB-64-8-1024-1  MariaDB-64-8-1024  ...             125000
+MariaDB-64-8-1024-2  MariaDB-64-8-1024  ...             125000
+MariaDB-32-8-1024-1  MariaDB-32-8-1024  ...             125000
+MariaDB-32-4-1024-1  MariaDB-32-4-1024  ...             250000
+MariaDB-64-4-1024-1  MariaDB-64-4-1024  ...             250000
+MariaDB-64-8-1024-3  MariaDB-64-8-1024  ...             125000
+MariaDB-64-8-1024-4  MariaDB-64-8-1024  ...             125000
+MariaDB-32-8-1024-2  MariaDB-32-8-1024  ...             125000
+MariaDB-32-8-1024-3  MariaDB-32-8-1024  ...             125000
+MariaDB-64-4-1024-2  MariaDB-64-4-1024  ...             250000
+MariaDB-32-4-1024-2  MariaDB-32-4-1024  ...             250000
+MariaDB-32-4-1024-3  MariaDB-32-4-1024  ...             250000
+MariaDB-32-8-1024-4  MariaDB-32-8-1024  ...             125000
+MariaDB-64-8-1024-5  MariaDB-64-8-1024  ...             125000
+MariaDB-32-8-1024-5  MariaDB-32-8-1024  ...             125000
+MariaDB-32-8-1024-6  MariaDB-32-8-1024  ...             125000
+MariaDB-64-8-1024-6  MariaDB-64-8-1024  ...             125000
+MariaDB-64-8-1024-7  MariaDB-64-8-1024  ...             125000
+MariaDB-32-8-1024-7  MariaDB-32-8-1024  ...             125000
+MariaDB-32-4-1024-4  MariaDB-32-4-1024  ...             250000
+MariaDB-64-4-1024-3  MariaDB-64-4-1024  ...             250000
+MariaDB-32-8-1024-8  MariaDB-32-8-1024  ...             125000
+MariaDB-64-4-1024-4  MariaDB-64-4-1024  ...             250000
+MariaDB-64-8-1024-8  MariaDB-64-8-1024  ...             125000
+
+[24 rows x 36 columns]
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 16085s 
+    Code: 1729872311
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['MariaDB'].
+    Import is handled by 4 and 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [32, 64] threads, split into [4, 8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MariaDB-32-4-1024-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:256254320
+    datadisk:2034804
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-32-8-1024-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:256225820
+    datadisk:2006132
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-4-1024-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:256275144
+    datadisk:2055284
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:256242544
+    datadisk:2022516
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                   experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+MariaDB-32-4-1024               1       32    1024          4                     492.044508              2032627.0             1000000                            189727.0
+MariaDB-64-4-1024               1       64    1024          4                     507.531779              1970600.0             1000000                            322175.0
+MariaDB-32-8-1024               1       32    1024          8                     524.125953              1908284.0             1000000                            229183.0
+MariaDB-64-8-1024               1       64    1024          8                     509.684853              1962444.0             1000000                            509183.0
+
+### Execution
+                     experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MariaDB-32-4-1024-1               1       64    1024          1                        1023.57               976969.0            500264                            1307.0              499735                              3325.0
+MariaDB-32-8-1024-1               1       64    1024          1                        1023.09               977428.0            500394                            1476.0              499606                             14447.0
+MariaDB-64-4-1024-1               1       64    1024          1                        1022.60               977897.0            499337                            1511.0              500663                              3109.0
+MariaDB-64-8-1024-1               1       64    1024          1                        1023.41               977129.0            500312                            1862.0              499688                            121215.0
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-32-8-1024 - Pods [[1]]
+DBMS MariaDB-32-4-1024 - Pods [[1]]
+DBMS MariaDB-64-4-1024 - Pods [[1]]
+DBMS MariaDB-64-8-1024 - Pods [[1]]
+
+#### Planned
+DBMS MariaDB-32-4-1024 - Pods [[1]]
+DBMS MariaDB-32-8-1024 - Pods [[1]]
+DBMS MariaDB-64-4-1024 - Pods [[1]]
+DBMS MariaDB-64-8-1024 - Pods [[1]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned
