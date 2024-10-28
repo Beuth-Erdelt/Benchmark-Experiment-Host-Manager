@@ -34,6 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
     parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[], action='append')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
     #parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
@@ -104,6 +105,8 @@ if __name__ == '__main__':
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
+    # do not ingest, start benchmarking immediately
+    skip_loading = args.skip_loading
     ##############
     ### specific to: Benchbase
     ##############

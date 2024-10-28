@@ -45,6 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
     parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB'], default=[], action='append')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
     parser.add_argument('-m',   '--monitoring', help='activates monitoring for sut', action='store_true')
@@ -113,6 +114,8 @@ if __name__ == '__main__':
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
+    # do not ingest, start benchmarking immediately
+    skip_loading = args.skip_loading
     ##############
     ### specific to: YCSB
     ##############
@@ -352,8 +355,8 @@ if __name__ == '__main__':
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
-                    #config.loading_finished = True
-                    config.loading_deactivated = True
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
                     config.sut_container_name = "yb-tserver"            # fix container name of SUT
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):

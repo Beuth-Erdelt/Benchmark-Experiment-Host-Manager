@@ -40,6 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB'], default=[], action='append')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
     parser.add_argument('-m',   '--monitoring', help='activates monitoring', action='store_true')
@@ -108,6 +109,8 @@ if __name__ == '__main__':
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
+    # do not ingest, start benchmarking immediately
+    skip_loading = args.skip_loading
     ##############
     ### specific to: dbmsbenchmarker TPC-DS
     ##############
@@ -259,7 +262,8 @@ if __name__ == '__main__':
             if ("MySQL" in args.dbms or len(args.dbms) == 0):
                 # MySQL
                 for threads in num_loading_threads:
-                    name_format = 'MySQL-{cluster}-{pods}-{threads}'
+                    pods_times_threads=int(pods)*int(threads)
+                    name_format = 'MySQL-{cluster}-{pods_times_threads}'
                     config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='MySQL', alias='DBMS A1')
                     config.set_storage(
                         storageConfiguration = 'mysql'
