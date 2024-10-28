@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1730133803
-Experiment                    : starts at 2024-10-28 17:43:22.845012 (4869742.968988925)
+Experiment                    : has code 1730137438
+Experiment                    : starts at 2024-10-28 18:43:58.667439 (4873378.791415489)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 10000000. Number of operations is 10000000. Batch size is ''.
 YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
@@ -21,77 +21,16 @@ Cluster monitoring            : is running
 done
 YugabyteDB-64-8-131072        : will start now
 - waiting 30s -               : done
-YugabyteDB-64-8-131072        : is not loaded yet
-YugabyteDB-64-8-131072        : will start loading but not before 2024-10-28 16:45:23 (that is in 60 secs)
+YugabyteDB-64-8-131072        : will start benchmarking but not before 2024-10-28 17:45:59 (that is in 60 secs)
 - waiting 30s -               : done
-YugabyteDB-64-8-131072        : is not loaded yet
-YugabyteDB-64-8-131072        : will start loading but not before 2024-10-28 16:45:23
+YugabyteDB-64-8-131072        : will start benchmarking but not before 2024-10-28 17:45:59
 done
-YugabyteDB-64-8-131072        : is not loaded yet
-YugabyteDB-64-8-131072        : start asynch loading scripts of type loaded
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : is loading
-done
-YugabyteDB-64-8-131072        : is loading
-done
-YugabyteDB-64-8-131072        : showing loader times
-YugabyteDB-64-8-131072        : loader timespan (first to last [s]) = 629
 YugabyteDB-64-8-131072        : benchmarks done 0 of 1. This will be client 1
 YugabyteDB-64-8-131072        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '10', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 10000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': ''}
 YugabyteDB-64-8-131072-1      : start benchmarking
-YugabyteDB-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1730133803
+YugabyteDB-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1730137438
 - waiting 10s -               : done
-found
-YugabyteDB-64-8-131072-1      : collecting loading metrics of SUT
-YugabyteDB-64-8-131072-1      : collecting metrics of data generator
-YugabyteDB-64-8-131072-1      : collecting metrics of data injector
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-131072        : has running benchmarks
+YugabyteDB-64-8-131072        : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-64-8-131072-1730137438-1-1-6vqj9: found
 - waiting 30s -               : done
 YugabyteDB-64-8-131072        : has running benchmarks
 - waiting 30s -               : done
@@ -127,35 +66,23 @@ YugabyteDB-64-8-131072        : has running benchmarks
 done
 YugabyteDB-64-8-131072        : has running benchmarks
 YugabyteDB-64-8-131072-1      : showing benchmarker times
-YugabyteDB-64-8-131072-1      : benchmarker timespan (start to end single container [s]) = 658
-YugabyteDB-64-8-131072-1      : benchmarker times (start/end per pod and container) = [(1730134599, 1730135226)]
-YugabyteDB-64-8-131072-1      : found and updated times {'benchmarker': [(1730134599, 1730135226)]}
+YugabyteDB-64-8-131072-1      : benchmarker timespan (start to end single container [s]) = 522
+YugabyteDB-64-8-131072-1      : benchmarker times (start/end per pod and container) = [(1730137564, 1730138071)]
+YugabyteDB-64-8-131072-1      : found and updated times {'benchmarker': [(1730137564, 1730138071)]}
 YugabyteDB-64-8-131072-1      : collecting execution metrics of SUT
 YugabyteDB-64-8-131072-1      : collecting metrics of benchmarker
 done
 YugabyteDB-64-8-131072        : can be stopped
-Experiment                    : ends at 2024-10-28 18:08:17.264255 (4871237.388234635) - 1494.42s total
+Experiment                    : ends at 2024-10-28 18:55:26.016424 (4874066.140402911) - 687.35s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
 Benchmarking                                           connection  ... [UPDATE].Return=OK
 connection_pod                                        ...                   
-YugabyteDB-64-8-131072-1-1  YugabyteDB-64-8-131072-1  ...            4999821
+YugabyteDB-64-8-131072-1-1  YugabyteDB-64-8-131072-1  ...            5000004
 
 [1 rows x 43 columns]
 Workflow {'YugabyteDB-64-8-131072': [[1]]}
-Loading                                       connection  ... [INSERT].Return=OK
-connection_pod                                    ...                   
-YugabyteDB-64-8-131072-1  YugabyteDB-64-8-131072  ...            1250000
-YugabyteDB-64-8-131072-2  YugabyteDB-64-8-131072  ...            1250000
-YugabyteDB-64-8-131072-3  YugabyteDB-64-8-131072  ...            1250000
-YugabyteDB-64-8-131072-4  YugabyteDB-64-8-131072  ...            1250000
-YugabyteDB-64-8-131072-5  YugabyteDB-64-8-131072  ...            1250000
-YugabyteDB-64-8-131072-6  YugabyteDB-64-8-131072  ...            1250000
-YugabyteDB-64-8-131072-7  YugabyteDB-64-8-131072  ...            1250000
-YugabyteDB-64-8-131072-8  YugabyteDB-64-8-131072  ...            1250000
-
-[8 rows x 36 columns]
 Result workflow complete
 
 ## Show Summary
@@ -163,8 +90,8 @@ Result workflow complete
 ### Workload
 YCSB SF=10
     Type: ycsb
-    Duration: 1495s 
-    Code: 1730133803
+    Duration: 688s 
+    Code: 1730137438
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 10000000. Number of operations is 10000000. Batch size is ''.
@@ -187,18 +114,14 @@ YugabyteDB-64-8-131072-1 uses docker image postgres:15.0
     Cores:64
     host:5.15.0-116-generic
     node:cl-worker11
-    disk:254315324
-    datadisk:39428
+    disk:254315156
+    datadisk:39268
     requests_cpu:4
     requests_memory:16Gi
 
-### Loading
-                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-YugabyteDB-64-8-131072               1       64  131072          8                   15974.538188               628780.0            10000000                             56699.0
-
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-131072-1               1       64  131072          1                       15960.37               626552.0           5000179                           60031.0             4999821                             63231.0
+YugabyteDB-64-8-131072-1               1       64  131072          1                       19735.97               506689.0           4999996                           53823.0             5000004                             59679.0
 
 ### Workflow
 
@@ -208,27 +131,16 @@ DBMS YugabyteDB-64-8-131072 - Pods [[1]]
 #### Planned
 DBMS YugabyteDB-64-8-131072 - Pods [[1]]
 
-### Ingestion - SUT
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1    27027.86    15.59         17.41                24.05
-
-### Ingestion - Loader
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1     1504.53     1.38          4.63                 4.65
-
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1    21956.83    22.12         18.72                24.05
+YugabyteDB-64-8-131072-1    21313.77    21.88          19.5                24.05
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-131072-1     1057.01     2.12          0.61                 0.61
+YugabyteDB-64-8-131072-1      957.17      2.0          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned

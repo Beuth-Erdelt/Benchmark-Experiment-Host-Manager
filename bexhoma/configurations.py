@@ -140,6 +140,7 @@ class default():
         self.prometheus_timeout = experiment.prometheus_timeout
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
+        self.loading_deactivated = False # Do not load at all and do not test for loading
         self.monitor_loading = True #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
@@ -1791,12 +1792,14 @@ scrape_configs:
         server['volume_used'] = used
         server['cuda'] = self.get_host_cuda()
         return server
-    def set_metric_of_config(self, metric, host, gpuid):
+    def set_metric_of_config_default(self, metric, host, gpuid):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
         Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
         configuration and experiment are placeholders and will be replaced by concrete values.
+        This method contains the default behaviour for all components managed by bexhoma.
+        For specific behaviour of other components not managed by bexhoma (e.g., a cloud dbms), overwrite set_metric_of_config().
 
         :param metric: Parametrized promql query
         :param host: Name of the host the metrics should be collected from
@@ -1804,6 +1807,21 @@ scrape_configs:
         :return: promql query without parameters
         """
         return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+    def set_metric_of_config(self, metric, host, gpuid):
+        """
+        Returns a promql query.
+        Parameters in this query are substituted, so that prometheus finds the correct metric.
+        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
+        configuration and experiment are placeholders and will be replaced by concrete values.
+        For specific behaviour of other components not managed by bexhoma (e.g., a cloud dbms), overwrite this method.
+        The method set_metric_of_config_default() contains the default behaviour for all components managed by bexhoma.
+
+        :param metric: Parametrized promql query
+        :param host: Name of the host the metrics should be collected from
+        :param gpuid: GPU that the metrics should watch
+        :return: promql query without parameters
+        """
+        return self.set_metric_of_config_default(metric, host, gpuid)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.
@@ -1884,7 +1902,8 @@ scrape_configs:
             if 'service_monitoring' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
             #c['monitoring']['grafanaextend'] = 1
-            c['monitoring']['metrics'] = {}
+            c['monitoring']['metrics'] = {}             # default components (managed by bexhoma)
+            c['monitoring']['metrics_special'] = {}     # other components (not managed by bexhoma)
             if 'metrics' in config_K8s['monitor']:
                 # instance="bexhoma-sut-mysql-1615839517:9300"
                 # instance=~"bexhoma-sut-mysql-1615839517.*"
@@ -1893,10 +1912,15 @@ scrape_configs:
                 else:
                     gpuid = ""
                 node = c['hostsystem']['node']
+                # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                    # default components (managed by bexhoma)
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
+                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
+                    # other components (not managed by bexhoma)
+                    c['monitoring']['metrics_special'][metricname] = metricdata.copy()
+                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(
             serverip=serverip,
             dbname=self.experiment.volume,
@@ -2303,6 +2327,12 @@ scrape_configs:
         If there is a loading job: check if all pods are completed. Copy the logs of the containers in the pods and remove the pods. 
         If there is no loading job: Read the labels. If loaded is True, store the timings in this object as attributes.
         """
+        if self.loading_deactivated:
+            self.loading_started = True
+            self.loading_finished = True
+            self.loading_active = False
+            self.monitor_loading = False
+            return
         loading_pods_active = True
         # check if asynch loading inside cluster is done
         if self.loading_active:
