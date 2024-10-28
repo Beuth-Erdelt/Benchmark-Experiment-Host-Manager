@@ -196,7 +196,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 2,3 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
 
@@ -250,7 +250,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 
@@ -314,7 +314,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -sf 1 \
   -ii -ic -is \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
 
