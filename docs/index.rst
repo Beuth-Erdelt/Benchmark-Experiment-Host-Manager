@@ -18,6 +18,7 @@
     ./Example-HammerDB.md
     ./Example-Benchbase.md
     ./Example-custom.md
+    ./Tool.md
     ./Concept.md
     ./Config.md
     ./Monitoring.md
