@@ -10,6 +10,13 @@ alter database yugabyte SET temp_file_limit=-1;
 
 SELECT 'CREATE new usertable';
 CREATE TABLE usertable (
+           YCSB_KEY VARCHAR(255) PRIMARY KEY,
+           FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT,
+           FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT,
+           FIELD8 TEXT, FIELD9 TEXT);
+
+/*
+CREATE TABLE usertable (
   YCSB_KEY varchar(255),
   FIELD0 text,
   FIELD1 text,
@@ -28,6 +35,7 @@ CREATE TABLE usertable (
   ('user62'),('user66'),('user70'),('user74'),('user78'),
   ('user82'),('user86'),('user90'),('user94'),('user98')
 );
+*/
 
 SELECT 'Time after creation';
 select current_timestamp;

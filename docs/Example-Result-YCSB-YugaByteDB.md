@@ -14,11 +14,18 @@ Important implications of this:
 * Bexhoma does not know what resides inside of the database.
 * Bexhoma still can monitor all components of the experiment, including the DBMS itself.
 
+In order to be fully functional, bexhoma installs an instance of PostgreSQL, that does nothing (a container with psql would be enough).
+Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the dbms.
+Moreover the container is used to install a schema to YugabyteDB via psql.
+
+All metrics in monitoring are summed across all matching components.
+In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
 
 References:
 1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
 1. YugabyteDB YCSB: https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc/
+1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
 ## Install YugabyteDB
@@ -296,8 +303,8 @@ TEST passed: Workflow as planned
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
-All metrics are summed over all matching components.
-This means in the example at hand, used memory, CPU time etc. are summed over all 3 nodes of the YugabyteDB cluster.
+All metrics in monitoring are summed across all matching components.
+In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
 
 ## Use Persistent Storage
 
