@@ -1,8 +1,6 @@
-# Example: YCSB
+# Example: YCSB in YugabyteDB
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
-
-This example shows how to run YCSB in YugabyteDB.
 
 **The results are not official benchmark results. The exact performance depends on a collection of parameters.
 The purpose of this example is to illustrate the usage of bexhoma and to show how to evaluate results.**
@@ -11,6 +9,7 @@ This experiment differs from the default behaviour of bexhoma, since we benchmar
 
 Important implications of this:
 * Bexhoma does neither start nor stop the DBMS.
+* There can only be one DBMS in the cluster at the same time.
 * Bexhoma does not know what resides inside of the database.
 * Bexhoma still can monitor all components of the experiment, including the DBMS itself.
 
@@ -309,3 +308,66 @@ In this example, this means that used memory, CPU time, etc. are summed across a
 ## Use Persistent Storage
 
 Persistent Storage is not managed by bexhoma, but by YugabyteDB.
+
+## Example Explained
+
+### Configuration of Bexhoma
+
+In `cluster.config` there is a section:
+
+```
+'YugabyteDB': {
+    'loadData': 'psql -U yugabyte --host yb-tserver-service.perdelt.svc.cluster.local --port 5433 < {scriptname}',
+    'template': {
+        'version': '2.17.1',
+        'alias': 'Cloud-Native-1',
+        'docker_alias': 'CN1',
+         'JDBC': {
+            'driver': "com.yugabyte.Driver",
+            'auth': ["yugabyte", ""],
+            'url': 'jdbc:yugabytedb://yb-tserver-service.perdelt.svc.cluster.local:5433/yugabyte?load-balance=true',#/{dbname}',
+            'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar'
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+},
+```
+
+where
+* `loadData`: This command is used to create the schema
+* `JDBC`: These infos are used to configure YCSB
+
+### Preparation of YCSB
+
+In the Docker files for YCSB
+* https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/generator/Dockerfile
+* https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/Dockerfile
+
+there is a section about including the needed JDBC driver:
+```
+######### Specific version of YugabyteDB JDBC #########
+RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
+RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
+```
+
+### Dummy SUT
+
+Bexhoma deploys a pod to carry status informations.
+Here it is an instance of PostgreSQL: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-YugabyteDB.yml
+
+### Schema SQL File
+
+If data should be loaded, bexhoma at first creates a schema according to: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB
+
+### Workflow of YCSB
+
+In `ycsb.py` there is a section about YugabyteDB.
+
+Watch for
+* `config.sut_service_name`: Fixed name for the service of the SUT (="yb-tserver-service")
+* `config.sut_container_name`: Fixed name for the container of the SUT (="yb-tserver")
+* `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-")
+* `config.get_worker_endpoints()`: ?
+* `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name)
