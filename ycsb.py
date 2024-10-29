@@ -363,7 +363,7 @@ if __name__ == '__main__':
                         """
                         Generate a name for the monitoring component.
                         Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
-                        For Kinetica, the service to be monitored is named 'bexhoma-service-kinetica'.
+                        For YugabyteDB, the service to be monitored is named like 'yb-tserver-'.
 
                         :param app: app the component belongs to
                         :param component: Component, for example sut or monitoring
@@ -382,7 +382,7 @@ if __name__ == '__main__':
                         Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
                         These are IPs of cAdvisor instances.
                         The endpoint list is to be filled in a config of an instance of Prometheus.
-                        For Kinetica the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
+                        For YugabyteDB the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
 
                         :return: list of endpoints
                         """
@@ -406,6 +406,109 @@ if __name__ == '__main__':
                         metric = metric.replace(', container="dbms"', '')
                         return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
+                    config.set_loading_parameters(
+                        PARALLEL = str(loading_pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        )
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(num_executor*benchmarking_pods),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
+                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
+                    # CockroachDB
+                    name_format = 'CockroachDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    if skip_loading:
+                        config.loading_deactivated = True
+                    #config.sut_service_name = "cockroachdb-public"      # fix service name of SUT, because it is not managed by bexhoma
+                    #config.sut_container_name = "dbms"                  # fix container name of SUT
+                    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+                        """
+                        Generate a name for the monitoring component.
+                        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
+                        For CockroachDB, the service to be monitored is named like 'cockroachdb-'.
+
+                        :param app: app the component belongs to
+                        :param component: Component, for example sut or monitoring
+                        :param experiment: Unique identifier of the experiment
+                        :param configuration: Name of the dbms configuration
+                        """
+                        if component == 'sut':
+                            name = 'cockroachdb-'
+                        else:
+                            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+                        self.logger.debug("cockroachdb.create_monitoring({})".format(name))
+                        return name
+                    #config.create_monitoring = types.MethodType(create_monitoring, config)
+                    def get_worker_endpoints(self):
+                        """
+                        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
+                        These are IPs of cAdvisor instances.
+                        The endpoint list is to be filled in a config of an instance of Prometheus.
+                        For CockroachDB the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
+
+                        :return: list of endpoints
+                        """
+                        endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
+                        self.logger.debug("cockroachdb.get_worker_endpoints({})".format(endpoints))
+                        return endpoints
+                    #config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
+                    def set_metric_of_config(self, metric, host, gpuid):
+                        """
+                        Returns a promql query.
+                        Parameters in this query are substituted, so that prometheus finds the correct metric.
+                        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
+                        configuration and experiment are placeholders and will be replaced by concrete values.
+                        Here: We do not have a SUT that is specific to the experiment or configuration.
+
+                        :param metric: Parametrized promql query
+                        :param host: Name of the host the metrics should be collected from
+                        :param gpuid: GPU that the metrics should watch
+                        :return: promql query without parameters
+                        """
+                        metric = metric.replace(', container="dbms"', '')
+                        return metric.format(host=host, gpuid=gpuid, configuration='cockroachdb', experiment='')
+                    #config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
