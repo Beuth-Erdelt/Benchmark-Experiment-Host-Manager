@@ -163,7 +163,7 @@ class default():
         self.timeLoadingEnd = 0
         self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
-        self.servicename_sut = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
+        self.sut_service_name = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
@@ -2675,8 +2675,8 @@ scrape_configs:
         """
         app = self.appname
         experiment = str(int(self.code))
-        if len(self.servicename_sut) > 0:
-            servicename = self.servicename_sut
+        if len(self.sut_service_name) > 0:
+            servicename = self.sut_service_name
         else:
             servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         return servicename

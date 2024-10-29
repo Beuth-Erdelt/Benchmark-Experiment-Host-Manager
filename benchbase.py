@@ -336,7 +336,7 @@ if __name__ == '__main__':
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
                     if skip_loading:
                         config.loading_deactivated = True
-                    config.servicename_sut = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
+                    config.sut_service_name = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
                     config.sut_container_name = "yb-tserver"            # fix container name of SUT
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
