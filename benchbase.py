@@ -18,6 +18,7 @@ import time
 from timeit import default_timer
 import datetime
 import math
+import types
 
 
 urllib3.disable_warnings()
@@ -333,7 +334,7 @@ if __name__ == '__main__':
                 if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    config = configurations.benchbase(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
                     if skip_loading:
                         config.loading_deactivated = True
                     config.sut_service_name = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
@@ -389,14 +390,15 @@ if __name__ == '__main__':
                         PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                        BENCHBASE_PROFILE = 'yugabytedb',
-                        BEXHOMA_DATABASE = 'benchbase',
+                        BENCHBASE_PROFILE = 'postgres',
+                        BEXHOMA_DATABASE = 'yugabyte',
                         #BENCHBASE_TARGET = int(target),
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "yugabyte",
                         BEXHOMA_PASSWORD = "",
+                        BEXHOMA_PORT = 5433,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -421,12 +423,13 @@ if __name__ == '__main__':
                                         PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                        BENCHBASE_PROFILE = 'yugabytedb',
-                                        BEXHOMA_DATABASE = 'benchbase',
+                                        BENCHBASE_PROFILE = 'postgres',
+                                        BEXHOMA_DATABASE = 'yugabyte',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BEXHOMA_PORT = 5433,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

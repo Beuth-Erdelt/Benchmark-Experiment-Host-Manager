@@ -1,11 +1,12 @@
-# Example: YCSB in YugabyteDB
+# Example: Benchmark YugabyteDB
+
+This differs from the default behaviour of bexhoma, since we benchmark **a DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 **The results are not official benchmark results. The exact performance depends on a collection of parameters.
 The purpose of this example is to illustrate the usage of bexhoma and to show how to evaluate results.**
 
-This experiment differs from the default behaviour of bexhoma, since we benchmark a DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace.
 
 Important implications of this:
 * Bexhoma does neither start nor stop the DBMS.
@@ -32,7 +33,53 @@ References:
 Get the helm chart and follow the instructions: https://docs.yugabyte.com/stable/deploy/kubernetes/single-zone/oss/helm-chart/
 
 
-## Perform Benchmark
+```bash
+helm install bexhoma yugabytedb/yugabyte \
+--version 2.23.0 \
+--set \
+gflags.tserver.ysql_enable_packed_row=true,\
+resource.master.limits.cpu=2,\
+resource.master.limits.memory=8Gi,\
+resource.master.requests.cpu=2,\
+resource.master.requests.memory=8Gi,\
+resource.tserver.limits.cpu=8,\
+resource.tserver.limits.memory=8Gi,\
+resource.tserver.requests.cpu=8,\
+resource.tserver.requests.memory=8Gi,\
+storage.master.size=100Gi,\
+storage.tserver.size=100Gi,\
+storage.ephemeral=true,\
+tserver.tolerations[0].effect=NoSchedule,\
+tserver.tolerations[0].key=nvidia.com/gpu,\
+enableLoadBalancer=True
+```
+
+> enable_automatic_tablet_splitting=true,\
+> tablet_split_low_phase_size_threshold_bytes=30000000,\
+> memstore_size_mb=10
+> gflags.tserver.enable_automatic_tablet_splitting=true,gflags.tserver.tablet_split_low_phase_size_threshold_bytes=30000000,gflags.tserver.memstore_size_mb=10,\
+> gflags.tserver.enable_ysql_conn_mgr=true,gflags.tserver.allowed_preview_flags_csv={enable_ysql_conn_mgr}
+
+
+
+Test the installation
+```bash
+helm status bexhoma
+```
+
+
+Remove the installation:
+```bash
+helm delete bexhoma
+kubectl delete pvc -l app=yb-tserver
+kubectl delete pvc -l app=yb-master
+```
+
+Connecting to DBMS: `kubectl port-forward service/yb-tserver-service 5433:5433`
+Connecting to GUI: `kubectl port-forward service/yb-master-ui 8080:7000`
+
+
+## Perform YCSB Benchmark - Ingestion of Data Included
 
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
@@ -61,11 +108,11 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_yugabytedb_1.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_1.log &
 ```
 
 This
-* loops over `n` in [1,8] and `t` in [1,4]
+* loops over `n` in [8] and `t` in [4]
   * starts a clean instance of PostgreSQL (`-dbms`)
     * data directory inside a Docker container
   * creates YCSB schema in each database
@@ -96,11 +143,11 @@ Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+-----------------------+--------------+--------------+------------+-------------+
-| 1730133803            | sut          |   loaded [s] | use case   | loading     |
-+=======================+==============+==============+============+=============+
-| PostgreSQL-64-1-16384 | (1. Running) |            1 | ycsb       | (1 Running) |
-+-----------------------+--------------+--------------+------------+-------------+
++-----------------------+--------------+--------------+------------+---------------+
+| 1730133803            | sut          |   loaded [s] | use case   | benchmarker   |
++=======================+==============+==============+============+===============+
+| YugabyteDB-64-8-65536 | (1. Running) |           41 | ycsb       | (1. Running)  |
++-----------------------+--------------+--------------+------------+---------------+
 ```
 
 The code `1730133803` is the unique identifier of the experiment.
@@ -111,7 +158,7 @@ You can find the number also in the output of `ycsb.py`.
 The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
 If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1730133803` (removes everything that is related to experiment `1730133803`).
 
-## Evaluate Results
+### Evaluate Results
 
 At the end of a benchmark you will see a summary like
 
@@ -205,10 +252,7 @@ This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 
 
-## Perform Execution Benchmark
-
-The default behaviour of bexhoma is that several different settings of the loading component are compared.
-We might only want to benchmark the workloads of YCSB in different configurations and have a fixed loading phase.
+## Perform YCSB Benchmark - Execution only
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
@@ -224,14 +268,14 @@ nohup python ycsb.py -ms 1 -tr \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -nbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_yugabytedb_2.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_2.log &
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
@@ -298,6 +342,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+
 ## Monitoring
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
@@ -305,11 +350,16 @@ TEST passed: Workflow as planned
 All metrics in monitoring are summed across all matching components.
 In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
 
+The `-mc` option is mandatory here: The sidecar container approach is not working (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
+For further explanation see the monitoring section of this documentation.
+
 ## Use Persistent Storage
 
 Persistent Storage is not managed by bexhoma, but by YugabyteDB.
 
-## Example Explained
+
+## YCSB Example Explained
+
 
 ### Configuration of Bexhoma
 
@@ -325,7 +375,7 @@ In `cluster.config` there is a section:
          'JDBC': {
             'driver': "com.yugabyte.Driver",
             'auth': ["yugabyte", ""],
-            'url': 'jdbc:yugabytedb://yb-tserver-service.perdelt.svc.cluster.local:5433/yugabyte?load-balance=true',#/{dbname}',
+            'url': 'jdbc:yugabytedb://yb-tserver-service.perdelt.svc.cluster.local:5433/yugabyte?load-balance=true',
             'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar'
         }
     },
@@ -371,3 +421,105 @@ Watch for
 * `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-")
 * `config.get_worker_endpoints()`: ?
 * `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name)
+
+
+
+## Benchbase's TPC-C
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms YugabyteDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_yugabytedb_1.log
+```
+
+yields
+
+```bash
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1057s 
+    Code: 1730217712
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['YugabyteDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254319236
+    datadisk:39428
+    requests_cpu:4
+    requests_memory:16Gi
+YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254319236
+    datadisk:39428
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+YugabyteDB-1-1-1024-1               1         16   16384          1  300.0                        358.58                                                     109022.0                                              44598.0
+YugabyteDB-1-1-1024-2               1         16   16384          2  300.0                        339.21                                                     118336.0                                              47155.0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS YugabyteDB-1-1-1024 - Pods [[2, 1]]
+
+#### Planned
+DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+YugabyteDB-1-1-1024-1      220.0        1.0   1.0                 261.818182
+YugabyteDB-1-1-1024-2      220.0        1.0   2.0                 261.818182
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+
+## Benchbase Example Explained
+
+The setup is the same as for YCSB (see above).
+
+However the connection string this time is not read from `cluster.config`, but instead constructed from parameters that are set explicitly in the workflow file `benchbase.py`:
+
+```
+BENCHBASE_PROFILE = 'postgres',
+BEXHOMA_DATABASE = 'yugabyte',
+BEXHOMA_USER = "yugabyte",
+BEXHOMA_PASSWORD = "",
+BEXHOMA_PORT = 5433,
+```
