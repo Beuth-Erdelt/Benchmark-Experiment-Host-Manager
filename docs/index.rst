@@ -17,6 +17,7 @@
     ./Example-Result-TPC-H-MonetDB.md
     ./Example-HammerDB.md
     ./Example-Benchbase.md
+    ./Example-YugaByteDB.md
     ./Example-custom.md
     ./Tool.md
     ./Concept.md
