@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='start sut, also load data or also run the TPC-C queries', choices=['run', 'start', 'load'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB'], default=[], action='append')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB'], default=[], action='append')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -47,6 +47,7 @@ if __name__ == '__main__':
     #parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
     parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
+    parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=1)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
     #parser.add_argument('-nlf', '--num-loading-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
@@ -111,6 +112,8 @@ if __name__ == '__main__':
         list_clients = []
     # do not ingest, start benchmarking immediately
     skip_loading = args.skip_loading
+    # how many workers (for distributed dbms)
+    num_worker = int(args.num_worker)
     ##############
     ### specific to: Benchbase
     ##############
@@ -337,7 +340,7 @@ if __name__ == '__main__':
                     config = configurations.benchbase(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
                     if skip_loading:
                         config.loading_deactivated = True
-                    config.sut_service_name = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
+                    config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
                     config.sut_container_name = "yb-tserver"            # fix container name of SUT
                     def get_worker_pods(self):
                         """
@@ -380,7 +383,7 @@ if __name__ == '__main__':
                         endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
-                    config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
+                    #config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
                     def set_metric_of_config(self, metric, host, gpuid):
                         """
                         Returns a promql query.
@@ -452,58 +455,9 @@ if __name__ == '__main__':
                 if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # CockroachDB
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    config = configurations.benchbase(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
                     if skip_loading:
                         config.loading_deactivated = True
-                    #config.sut_service_name = "cockroachdb-public"      # fix service name of SUT, because it is not managed by bexhoma
-                    #config.sut_container_name = "dbms"                  # fix container name of SUT
-                    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-                        """
-                        Generate a name for the monitoring component.
-                        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
-                        For CockroachDB, the service to be monitored is named like 'cockroachdb-'.
-
-                        :param app: app the component belongs to
-                        :param component: Component, for example sut or monitoring
-                        :param experiment: Unique identifier of the experiment
-                        :param configuration: Name of the dbms configuration
-                        """
-                        if component == 'sut':
-                            name = 'cockroachdb-'
-                        else:
-                            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-                        self.logger.debug("cockroachdb.create_monitoring({})".format(name))
-                        return name
-                    #config.create_monitoring = types.MethodType(create_monitoring, config)
-                    def get_worker_endpoints(self):
-                        """
-                        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
-                        These are IPs of cAdvisor instances.
-                        The endpoint list is to be filled in a config of an instance of Prometheus.
-                        For CockroachDB the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
-
-                        :return: list of endpoints
-                        """
-                        endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                        self.logger.debug("cockroachdb.get_worker_endpoints({})".format(endpoints))
-                        return endpoints
-                    #config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
-                    def set_metric_of_config(self, metric, host, gpuid):
-                        """
-                        Returns a promql query.
-                        Parameters in this query are substituted, so that prometheus finds the correct metric.
-                        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
-                        configuration and experiment are placeholders and will be replaced by concrete values.
-                        Here: We do not have a SUT that is specific to the experiment or configuration.
-
-                        :param metric: Parametrized promql query
-                        :param host: Name of the host the metrics should be collected from
-                        :param gpuid: GPU that the metrics should watch
-                        :return: promql query without parameters
-                        """
-                        metric = metric.replace(', container="dbms"', '')
-                        return metric.format(host=host, gpuid=gpuid, configuration='cockroachdb', experiment='')
-                    #config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods), # =1
                         SF = SF,
