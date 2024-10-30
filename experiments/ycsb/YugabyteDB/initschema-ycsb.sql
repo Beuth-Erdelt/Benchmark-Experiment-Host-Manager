@@ -14,7 +14,7 @@
 ALTER DATABASE yugabyte SET temp_file_limit=-1;
 
 
-SELECT "CREATE new usertable";
+-- SELECT "CREATE new usertable";
 CREATE TABLE IF NOT EXISTS usertable (
            YCSB_KEY VARCHAR(255) PRIMARY KEY,
            FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT,

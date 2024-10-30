@@ -352,7 +352,7 @@ if __name__ == '__main__':
                         """
                         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                         return pods_worker
-                    config.get_worker_pods = types.MethodType(get_worker_pods, config)
+                    #config.get_worker_pods = types.MethodType(get_worker_pods, config)
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
                         Generate a name for the monitoring component.
