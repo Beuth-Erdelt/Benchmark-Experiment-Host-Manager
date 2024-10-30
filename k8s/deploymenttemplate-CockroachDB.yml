@@ -263,10 +263,13 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: cluster-init
-  labels:
-    app: cockroachdb
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  #labels:
+  #  app: cockroachdb
 spec:
   template:
+    metadata:
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       containers:
       - name: cluster-init
@@ -289,6 +292,7 @@ spec:
             --insecure
             --host=$(expr $BEXHOMA_WORKER_FIRST)
       restartPolicy: OnFailure
+  ttlSecondsAfterFinished: 30  # Deletes the job and pods 30 seconds after completion
 ---
 apiVersion: apps/v1
 kind: Deployment

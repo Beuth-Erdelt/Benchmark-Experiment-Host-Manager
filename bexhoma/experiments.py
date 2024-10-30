@@ -1213,6 +1213,10 @@ class default():
                                 if len(pods) > 0:
                                     pod_sut = pods[0]
                                     self.cluster.store_pod_log(pod_sut, 'dbms')
+                                component = 'worker'
+                                pods = self.cluster.get_pods(app, component, self.code, config.configuration)
+                                for pod_worker in pods:
+                                    self.cluster.store_pod_log(pod_worker, 'dbms')
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
@@ -2726,6 +2730,12 @@ class ycsb(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items()]
+                    for info in infos:
+                        print(info)                
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)

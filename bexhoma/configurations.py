@@ -1200,6 +1200,7 @@ scrape_configs:
                 dep['metadata']['labels']['volume'] = self.volume
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
+                dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     self.logger.debug('configuration.add_env({})'.format(env))
@@ -1450,6 +1451,9 @@ scrape_configs:
         stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
             self.experiment.cluster.delete_stateful_set(stateful_set)
+        jobs = self.experiment.cluster.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration)
+        for job in jobs:
+            self.experiment.cluster.delete_job(job)
         services = self.experiment.cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.delete_service(service)
@@ -1749,10 +1753,7 @@ scrape_configs:
         return 0
     def check_volumes(self):
         """
-        Calls all `get_host_x()` methods.
-        Returns information about the sut's host as a dict.
-
-        :return: Dict of informations about the host
+        Tests for mounted volume in SUT container and writes size and used info as label to pvc.
         """
         # add volume labels to PV
         app = self.appname
@@ -1762,18 +1763,26 @@ scrape_configs:
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
             else:
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            # for worker pods: bexhoma-workers-
             volume = name_pvc
+            volume_worker = "bexhoma-workers-{}".format(self.pod_sut)
         else:
             volume = ''
         if volume:
             size, used = self.get_host_volume()
+            # write infos to SUT's PVC (if exists)
             fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
+            #print(fullcommand)
+            self.experiment.cluster.kubectl(fullcommand)
+            # write infos to worker's PVC (if exists)
+            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
             #print(fullcommand)
             self.experiment.cluster.kubectl(fullcommand)
     def get_host_all(self):
         """
         Calls all `get_host_x()` methods.
         Returns information about the sut's host as a dict.
+        This requires self.pod_sut to carry the name of the SUTs pod.
 
         :return: Dict of informations about the host
         """
