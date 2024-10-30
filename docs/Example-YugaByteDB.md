@@ -15,7 +15,7 @@ Important implications of this:
 * Bexhoma still can monitor all components of the experiment, including the DBMS itself.
 
 In order to be fully functional, bexhoma installs an instance of PostgreSQL, that does nothing (a container with psql would be enough).
-Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the dbms.
+Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the DBMS.
 Moreover the container is used to install a schema to YugabyteDB via psql.
 
 All metrics in monitoring are summed across all matching components.
@@ -86,6 +86,9 @@ You will have to change the node selectors there (to names of nodes, that exist 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 ```
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
