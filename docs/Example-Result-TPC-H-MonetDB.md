@@ -1,4 +1,4 @@
-# Example Result: MonetDB running TPC-H at SF=100
+# Example: TPC-H SF=100 MonetDB
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -29,11 +29,12 @@ Monitoring is activated (`-m`) for all components (`-mc`).
 The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
 
 ```bash
-mkdir -p ./logs_tests/
-
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 
 nohup python tpch.py -ms 1 \
   -m -mc \
@@ -234,7 +235,7 @@ You can inspect a preview list of results via `bexperiments localresults`.
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
-This is repeated 3 times (`-nc`).
+This is repeated 2 times (`-nc`).
 
 
 ```bash
@@ -433,8 +434,7 @@ TEST passed: Workflow as planned
 ## Perform Benchmark - Throughput Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other, and then a throughput test with 5 parallel driver (`-ne 1,1,5`). and shut down the DBMS.
-This is repeated 3 times (`-nc`).
+We then run two power tests, one after the other, and then a throughput test with 3 parallel driver (`-ne 1,1,3`). and shut down the DBMS.
 
 
 ```bash
@@ -449,7 +449,7 @@ nohup python tpch.py -ms 1 \
   -sf 100 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
-  -nc 1 -ne 1,1,5,5 \
+  -nc 1 -ne 1,1,3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \

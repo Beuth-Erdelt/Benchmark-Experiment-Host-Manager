@@ -151,7 +151,7 @@ spec:
           mountPath: /dev/disk
           readOnly: true
       - name: dbms
-        image: cockroachdb/cockroach:v22.1.11
+        image: cockroachdb/cockroach:v24.2.4
         imagePullPolicy: IfNotPresent
         # TODO: Change these to appropriate values for the hardware that you're running. You can see
         # the resources that can be allocated on each of your Kubernetes nodes by running:
@@ -270,7 +270,7 @@ spec:
     spec:
       containers:
       - name: cluster-init
-        image: cockroachdb/cockroach:v22.1.11
+        image: cockroachdb/cockroach:v24.2.4
         imagePullPolicy: IfNotPresent
         env:
         - name: BEXHOMA_WORKER_LIST
@@ -312,7 +312,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbms
-        image: cockroachdb/cockroach:v22.1.11
+        image: cockroachdb/cockroach:v24.2.4
         env:
         ports:
         - containerPort: 26257

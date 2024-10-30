@@ -1914,6 +1914,8 @@ class tpcds(default):
         init_indexes = args.init_indexes
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
+        # timeout of a benchmark
+        timeout = int(args.timeout)
         if mode == 'run':
             # we want all TPC-H queries
             self.set_queries_full()
@@ -1955,6 +1957,7 @@ class tpcds(default):
             self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
         else:
             self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
         # optionally set some indexes and constraints after import
         self.set_experiment(script='Schema')
         if init_indexes or init_constraints or init_statistics:
@@ -2034,6 +2037,8 @@ class tpch(default):
         init_indexes = args.init_indexes
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
+        # timeout of a benchmark
+        timeout = int(args.timeout)
         if mode == 'run':
             # we want all TPC-H queries
             self.set_queries_full()
@@ -2075,6 +2080,7 @@ class tpch(default):
             self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
         else:
             self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
         # optionally set some indexes and constraints after import
         self.set_experiment(script='Schema')
         if init_indexes or init_constraints or init_statistics:

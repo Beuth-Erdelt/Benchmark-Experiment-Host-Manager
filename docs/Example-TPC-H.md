@@ -5,7 +5,7 @@
 TPC-H does allow scaling data generation and ingestion, and scaling the benchmarking driver.
 Scale-out can simulate distributed clients for the loading test and the throughput test [2].
 
-This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MonetDB and PostgreSQL.
+This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in PostgreSQL, MonetDB, MySQL and MariaDB.
 
 > The query file is derived from the TPC-H and as such is not comparable to published TPC-H results, as the query file results do not comply with the TPC-H Specification.
 
@@ -19,6 +19,9 @@ You will have to change the node selectors there (to names of nodes, that exist 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 ```
 
 For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).

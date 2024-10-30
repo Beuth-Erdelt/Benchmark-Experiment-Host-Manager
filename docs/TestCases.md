@@ -1,23 +1,29 @@
 # Test Cases
 
-There is a variety of combinations of options to be tested.
+There is a variety of combinations of options that can be tested.
 
 We here list some more basic use cases to test the functionality of bexhoma.
 
 See [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test.sh) for implementations.
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
-```
+
+```bash
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 ```
 
-See also [more test cases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test-more.sh) for more and longer running test cases.
+See also [more test cases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test-more.sh) for more and longer running test cases and other DBMS.
 
 See the [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) for some demo test logs.
 The folder also contains `*_summary.txt` files containing only the result summary.
 
+
 ## TPC-H
+
 
 ### TPC-H Simple
 
@@ -33,7 +39,7 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -155,7 +161,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -298,7 +304,7 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -535,7 +541,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -620,7 +626,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -715,7 +721,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -814,7 +820,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
 ```
 
 yields (after ca. 30 minutes) something like
@@ -1031,7 +1037,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 10 minutes)
@@ -1108,7 +1114,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 15 minutes)
@@ -1209,7 +1215,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
     -m -mc \
     -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 60 minutes)
@@ -1430,7 +1436,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1551,7 +1557,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -1647,7 +1653,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1816,7 +1822,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log &
 ```
 
 yields (after ca. 5 minutes) something like

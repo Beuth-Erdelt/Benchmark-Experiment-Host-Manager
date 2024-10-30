@@ -191,6 +191,7 @@ nohup python tpch.py -ms 1 -tr \
 #sleep 600
 wait_process "tpch"
 
+
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mariadb-tpch-1
 sleep 30
@@ -260,129 +261,6 @@ wait_process "tpcds"
 
 
 
-
-
-###########################################
-############ TPC-DS MonetDB ###############
-###########################################
-
-
-### TPC-DS Power Test - only MonetDB (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 3 \
-  -dt \
-  -t 1200 \
-  -dbms MonetDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_monetdb_1.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpcds_testcase_monetdb_1.log
-
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-### TPC-DS Monitoring (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 3 \
-  -dt \
-  -t 1200 \
-  -dbms MonetDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_monetdb_2.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpcds_testcase_monetdb_2.log
-
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-
-###########################################
-######### TPC-DS MonetDB Tests ############
-###########################################
-
-#### Delete persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-1
-sleep 30
-
-
-### TPC-DS Throughput Test (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 3 \
-  -dt \
-  -t 1200 \
-  -dbms MonetDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1,2 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_monetdb_3.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpcds_testcase_monetdb_3.log
-
-
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "tpcds"
-
-
-nohup python tpcds.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -t 1200 -dt \
-  -rst shared -rss 300Gi \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_4.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 1800
-wait_process "tpcds"
-
-
-nohup python tpcds.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1,1,5,5 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -t 1200 -dt \
-  -rst shared -rss 300Gi \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_5.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpcds"
-
-
-
-
 ###########################################
 ############## TPC-DS MySQL ###############
 ###########################################
@@ -415,7 +293,7 @@ wait_process "tpcds"
 
 
 ###########################################
-############# TPC-DS MariaDB###############
+############# TPC-DS MariaDB ##############
 ###########################################
 
 
@@ -474,9 +352,11 @@ nohup python benchbase.py -ms 1 -tr \
 #sleep 600
 wait_process "benchbase"
 
+
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mysql-benchbase-16
 sleep 30
+
 
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
@@ -582,9 +462,11 @@ nohup python benchbase.py -ms 1 -tr \
 #sleep 600
 wait_process "benchbase"
 
+
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mariadb-benchbase-16
 sleep 30
+
 
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
@@ -688,6 +570,7 @@ nohup python hammerdb.py -ms 1 -tr \
 #sleep 900
 wait_process "hammerdb"
 
+
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mysql-hammerdb-16
 sleep 30
@@ -770,6 +653,7 @@ nohup python hammerdb.py -ms 1 -tr \
 #sleep 900
 wait_process "hammerdb"
 
+
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mariadb-hammerdb-16
 sleep 30
@@ -838,11 +722,6 @@ wait_process "hammerdb"
 ###########################################
 
 
-
-
-
-
-
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -872,6 +751,7 @@ wait_process "ycsb"
 #### Delete persistent storage
 kubectl delete pvc bexhoma-storage-mysql-ycsb-1
 sleep 30
+
 
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
@@ -998,10 +878,6 @@ wait_process "ycsb"
 
 
 
-
-
-
-
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -1032,6 +908,7 @@ wait_process "ycsb"
 kubectl delete pvc bexhoma-storage-mariadb-ycsb-1
 sleep 30
 
+
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -1056,7 +933,6 @@ nohup python ycsb.py -ms 1 -tr \
 #### Wait so that next experiment receives a different code
 #sleep 600
 wait_process "ycsb"
-
 
 
 ### YCSB Execution for Scaling and Repetition (TestCases.md)
@@ -1085,7 +961,6 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-
 ### YCSB Execution Different Workload (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -1110,7 +985,6 @@ nohup python ycsb.py -ms 1 -tr \
 #### Wait so that next experiment receives a different code
 #sleep 300
 wait_process "ycsb"
-
 
 
 #### YCSB Execution Monitoring (TestCases.md)

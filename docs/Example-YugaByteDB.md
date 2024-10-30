@@ -15,7 +15,7 @@ Important implications of this:
 * Bexhoma still can monitor all components of the experiment, including the DBMS itself.
 
 In order to be fully functional, bexhoma installs an instance of PostgreSQL, that does nothing (a container with psql would be enough).
-Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the dbms.
+Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the DBMS.
 Moreover the container is used to install a schema to YugabyteDB via psql.
 
 All metrics in monitoring are summed across all matching components.
@@ -86,6 +86,9 @@ You will have to change the node selectors there (to names of nodes, that exist 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 ```
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
@@ -384,6 +387,7 @@ In this example, this means that used memory, CPU time, etc. are summed across a
 The `-mc` option is mandatory here: The sidecar container approach is not working (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
 For further explanation see the monitoring section of this documentation.
 
+
 ## Use Persistent Storage
 
 Persistent Storage is not managed by bexhoma, but by YugabyteDB.
@@ -398,7 +402,7 @@ In `cluster.config` there is a section:
 
 ```
 'YugabyteDB': {
-    'loadData': 'psql -U yugabyte --host yb-tserver-service.perdelt.svc.cluster.local --port 5433 < {scriptname}',
+    'loadData': 'psql -U yugabyte --host yb-tserver-service.{namespace}.svc.cluster.local --port 5433 < {scriptname}',
     'template': {
         'version': '2.17.1',
         'alias': 'Cloud-Native-1',
@@ -406,7 +410,7 @@ In `cluster.config` there is a section:
          'JDBC': {
             'driver': "com.yugabyte.Driver",
             'auth': ["yugabyte", ""],
-            'url': 'jdbc:yugabytedb://yb-tserver-service.perdelt.svc.cluster.local:5433/yugabyte?load-balance=true',
+            'url': 'jdbc:yugabytedb://yb-tserver-service.{namespace}.svc.cluster.local:5433/yugabyte?load-balance=true',
             'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar'
         }
     },
@@ -419,6 +423,7 @@ In `cluster.config` there is a section:
 where
 * `loadData`: This command is used to create the schema
 * `JDBC`: These infos are used to configure YCSB
+
 
 ### Preparation of YCSB
 
@@ -433,14 +438,17 @@ RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-
 RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
 ```
 
+
 ### Dummy SUT
 
 Bexhoma deploys a pod to carry status informations.
 Here it is an instance of PostgreSQL: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-YugabyteDB.yml
 
+
 ### Schema SQL File
 
 If data should be loaded, bexhoma at first creates a schema according to: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB
+
 
 ### Workflow of YCSB
 
