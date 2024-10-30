@@ -1860,7 +1860,7 @@ scrape_configs:
         c['hostsystem'] = self.get_host_all()
         # get worker information
         c['worker'] = []
-        pods = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         for pod in pods:
             self.pod_sut = pod
             c['worker'].append(self.get_host_all())
@@ -2298,14 +2298,14 @@ scrape_configs:
                 while num_worker < self.num_worker:
                     self.wait(5)
                     num_worker = 0
-                    pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                    pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                     for pod in pods_worker:
                         #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                         status = self.experiment.cluster.get_pod_status(pod)
                         if status == "Running":
                             num_worker = num_worker+1
                     print(self.configuration, "Workers", num_worker, "of", self.num_worker)
-                pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
@@ -2966,6 +2966,12 @@ scrape_configs:
             template = self.jobtemplate_loading
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
     def get_worker_pods(self):
+        """
+        Returns a list of all pod names of workers for the current SUT.
+        Default is component name is 'worker' for a bexhoma managed DBMS.
+
+        :return: list of endpoints
+        """
         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         return pods_worker
     def get_worker_endpoints(self):

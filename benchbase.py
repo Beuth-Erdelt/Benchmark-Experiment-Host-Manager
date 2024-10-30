@@ -339,6 +339,17 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.sut_service_name = "yb-tserver-service"       # fix service name of SUT, because it is not managed by bexhoma
                     config.sut_container_name = "yb-tserver"            # fix container name of SUT
+                    def get_worker_pods(self):
+                        """
+                        Returns a list of all pod names of workers for the current SUT.
+                        Default is component name is 'worker' for a bexhoma managed DBMS.
+                        YugabyteDB: This is yb-tserver-0, -1 etc.
+
+                        :return: list of endpoints
+                        """
+                        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                        return pods_worker
+                    config.get_worker_pods = types.MethodType(get_worker_pods, config)
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
                         Generate a name for the monitoring component.
