@@ -225,7 +225,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
 ```
 
 yields
@@ -254,13 +254,13 @@ BEXHOMA_PORT = 5433,
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
-  -dbms YugabyteDB \
+  -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 64 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
 ```
 
 

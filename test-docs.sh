@@ -40,10 +40,13 @@ wait_process() {
 #wait_process "tpch"
 
 
-#echo "Waiting 12h..."
-#sleep 43200
-#echo "Waiting 24h..."
-#sleep 86400
+# Wait for all previous jobs to complete
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"
+
 
 
 
@@ -459,7 +462,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 
 #### Wait so that next experiment receives a different code
 #sleep 7200
-wait_process "tpch"
+wait_process "tpcds"
 
 
 #### TCP-H Monitoring (Example-TPC-DS.md)
@@ -514,7 +517,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 
 #### Wait so that next experiment receives a different code
 #sleep 600
-wait_process "tpch"
+wait_process "tpcds"
 
 
 

@@ -40,10 +40,12 @@ wait_process() {
 #wait_process "tpch"
 
 
-#echo "Waiting 12h..."
-#sleep 43200
-#echo "Waiting 24h..."
-#sleep 86400
+# Wait for all previous jobs to complete
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"
 
 
 

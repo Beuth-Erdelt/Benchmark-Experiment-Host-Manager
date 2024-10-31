@@ -54,13 +54,6 @@ tserver.tolerations[0].key=nvidia.com/gpu,\
 enableLoadBalancer=True
 ```
 
-> enable_automatic_tablet_splitting=true,\
-> tablet_split_low_phase_size_threshold_bytes=30000000,\
-> memstore_size_mb=10
-> gflags.tserver.enable_automatic_tablet_splitting=true,gflags.tserver.tablet_split_low_phase_size_threshold_bytes=30000000,gflags.tserver.memstore_size_mb=10,\
-> gflags.tserver.enable_ysql_conn_mgr=true,gflags.tserver.allowed_preview_flags_csv={enable_ysql_conn_mgr}
-
-
 
 Test the installation
 ```bash
