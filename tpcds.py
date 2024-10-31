@@ -264,7 +264,7 @@ if __name__ == '__main__':
                 for threads in num_loading_threads:
                     pods_times_threads=int(loading_pods_total)*int(threads)
                     name_format = 'MySQL-{cluster}-{pods_times_threads}'
-                    config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads), dialect='MySQL', alias='DBMS A1')
+                    config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads), dialect='MySQL', alias='DBMS A1')
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )

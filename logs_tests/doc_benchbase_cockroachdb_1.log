@@ -1,0 +1,199 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1730373213
+Experiment                    : starts at 2024-10-31 12:13:32.687550 (58014.094684341)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+Benchmark is limited to DBMS ['CockroachDB'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1, 2] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+Warning: spec.template.spec.containers[1].env[4]: hides previous definition of "BEXHOMA_WORKER_LIST"
+Warning: spec.template.spec.containers[0].env[2]: hides previous definition of "BEXHOMA_WORKER_FIRST"
+done
+CockroachDB-1-1-1024          : will start now
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is not loaded yet
+CockroachDB-1-1-1024          : will start loading but not before 2024-10-31 11:16:33 (that is in 120 secs)
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is not loaded yet
+CockroachDB-1-1-1024          : will start loading but not before 2024-10-31 11:16:33
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is not loaded yet
+CockroachDB-1-1-1024          : will start loading but not before 2024-10-31 11:16:33
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is not loaded yet
+CockroachDB-1-1-1024          : will start loading but not before 2024-10-31 11:16:33
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is not loaded yet
+done
+CockroachDB-1-1-1024 Workers 1 of 1
+CockroachDB-1-1-1024          : start asynch loading scripts of type loaded
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+done
+CockroachDB-1-1-1024          : is loading
+done
+CockroachDB-1-1-1024          : showing loader times
+CockroachDB-1-1-1024          : loader timespan (first to last [s]) = 236
+CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 1
+CockroachDB-1-1-1024          : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': ''}
+CockroachDB-1-1-1024-1        : start benchmarking
+CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1730373213
+- waiting 10s -               : done
+CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1730373213-1-1-q92s6: found
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+done
+CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1-1-1024-1        : showing benchmarker times
+CockroachDB-1-1-1024-1        : benchmarker timespan (start to end single container [s]) = 312
+CockroachDB-1-1-1024-1        : benchmarker times (start/end per pod and container) = [(1730373678, 1730373983)]
+CockroachDB-1-1-1024-1        : found and updated times {'benchmarker': [(1730373678, 1730373983)]}
+done
+CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 2
+CockroachDB-1-1-1024          : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': ''}
+CockroachDB-1-1-1024-2        : start benchmarking
+CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1730373213
+- waiting 10s -               : done
+CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1730373213-1-2-5458b: found
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+done
+CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1-1-1024-2        : showing benchmarker times
+CockroachDB-1-1-1024-2        : benchmarker timespan (start to end single container [s]) = 313
+CockroachDB-1-1-1024-2        : benchmarker times (start/end per pod and container) = [(1730374029, 1730374333), (1730374028, 1730374332)]
+CockroachDB-1-1-1024-2        : found and updated times {'benchmarker': [(1730374029, 1730374333), (1730374028, 1730374332)]}
+done
+CockroachDB-1-1-1024          : can be stopped
+Experiment ends at 2024-10-31 12:32:50.563815 (59171.970949174): 1157.8762648330012s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Benchmarking                                       connection  ... Latency Distribution.Average Latency (microseconds)
+connection_pod                                    ...                                                    
+CockroachDB-1-1-1024-2-1  CockroachDB-1-1-1024-2  ...                                               25042
+CockroachDB-1-1-1024-2-2  CockroachDB-1-1-1024-2  ...                                               25093
+CockroachDB-1-1-1024-1-1  CockroachDB-1-1-1024-1  ...                                               22911
+
+[3 rows x 36 columns]
+Workflow {'CockroachDB-1-1-1024': [[2, 1]]}
+Result workflow not complete
+
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1158s 
+    Code: 1730373213
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['CockroachDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-1-1-1024-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912048
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-2 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912048
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+CockroachDB-1-1-1024-1               1         16   16384          1  300.0                        697.93                                                      55073.0                                              22911.0
+CockroachDB-1-1-1024-2               1         16   16384          2  300.0                        637.91                                                      62856.0                                              25067.5
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-1-1-1024 - Pods [[2, 1]]
+
+#### Planned
+DBMS CockroachDB-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                        time_load  terminals  pods  Imported warehouses [1/h]
+CockroachDB-1-1-1024-1      236.0        1.0   1.0                 244.067797
+CockroachDB-1-1-1024-2      236.0        1.0   2.0                 244.067797
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

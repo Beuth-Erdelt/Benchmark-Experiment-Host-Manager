@@ -91,11 +91,11 @@ Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+-----------------------+--------------+--------------+------------+---------------+
-| 1730133803            | sut          |   loaded [s] | use case   | benchmarker   |
-+=======================+==============+==============+============+===============+
-| YugabyteDB-64-8-65536 | (1. Running) |           41 | ycsb       | (1. Running)  |
-+-----------------------+--------------+--------------+------------+---------------+
++------------------------+--------------+--------------+------------+---------------+
+| 1730133803             | sut          |   loaded [s] | use case   | benchmarker   |
++========================+==============+==============+============+===============+
+| CockroachDB-64-8-65536 | (1. Running) |           41 | ycsb       | (1. Running)  |
++------------------------+--------------+--------------+------------+---------------+
 ```
 
 The code `1730133803` is the unique identifier of the experiment.
@@ -112,6 +112,117 @@ At the end of a benchmark you will see a summary like
 
 ```bash
 ## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 1912s 
+    Code: 1730301195
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['CockroachDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254908644
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:1081965535232
+        CPU:
+        GPU:
+        GPUIDs:[]
+        Cores:256
+        host:5.15.0-1060-nvidia
+        node:cl-worker27
+        disk:726928680
+        datadisk:107393516
+        volume_size:30G
+        volume_used:1.5G
+        cuda:
+    worker 1
+        RAM:1081750962176
+        CPU:
+        GPU:
+        GPUIDs:[]
+        Cores:128
+        host:5.15.0-122-generic
+        node:cl-worker29
+        disk:391582960
+        datadisk:107344022
+        volume_size:30G
+        volume_used:1.6G
+        cuda:
+    worker 2
+        RAM:1081966493696
+        CPU:
+        GPU:
+        GPUIDs:[]
+        Cores:256
+        host:5.15.0-1060-nvidia
+        node:cl-worker28
+        disk:676774188
+        datadisk:107343598
+        volume_size:30G
+        volume_used:1.6G
+        cuda:
+
+### Loading
+                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+CockroachDB-64-8-65536               1       64   65536          8                     1185.98666               845744.0             1000000                            255295.0
+
+### Execution
+                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+CockroachDB-64-8-65536-1               1       64   65536          1                        1337.57               747625.0            499547                           71359.0              500453                           1549311.0
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS CockroachDB-64-8-65536 - Pods [[1]]
+
+### Ingestion - SUT
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1     2363.41     2.54          4.95                 9.51
+
+### Ingestion - Loader
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1      227.61     0.15          4.56                 4.58
+
+### Execution - SUT
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1     3054.28     2.11          7.28                12.92
+
+### Execution - Benchmarker
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1      138.39     0.21          0.58                 0.58
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
 ```
 
 To see the summary again you can simply call `bexperiments summary -e 1730133803` with the experiment code.
@@ -232,7 +343,171 @@ yields
 
 ```bash
 ## Show Summary
+
+### Workload
+Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1158s 
+    Code: 1730373213
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['CockroachDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-1-1-1024-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912048
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-2 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912048
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+CockroachDB-1-1-1024-1               1         16   16384          1  300.0                        697.93                                                      55073.0                                              22911.0
+CockroachDB-1-1-1024-2               1         16   16384          2  300.0                        637.91                                                      62856.0                                              25067.5
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-1-1-1024 - Pods [[2, 1]]
+
+#### Planned
+DBMS CockroachDB-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                        time_load  terminals  pods  Imported warehouses [1/h]
+CockroachDB-1-1-1024-1      236.0        1.0   1.0                 244.067797
+CockroachDB-1-1-1024-2      236.0        1.0   2.0                 244.067797
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
+
+### Benchbase More Complex
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 128 \
+  -sd 60 \
+  -dbms CockroachDB \
+  -nbp 1,2,4,8 \
+  -nbt 64 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
+```
+
+yields
+
+```bash
+## Show Summary
+
+### Workload
+Benchbase Workload SF=128 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 15418s 
+    Code: 1730374413
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['CockroachDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-1-1-1024-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912048
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-2 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912216
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-3 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912388
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-4 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912556
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                        experiment_run  terminals  target  pod_count    time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+CockroachDB-1-1-1024-1               1         64   16384          1  3600.0                        696.70                                                     233544.0                                             91853.00
+CockroachDB-1-1-1024-2               1         64   16384          2  3600.0                        653.01                                                     247449.0                                             97998.00
+CockroachDB-1-1-1024-3               1         64   16384          4  3600.0                        599.12                                                     258276.0                                            106813.50
+CockroachDB-1-1-1024-4               1         64   16384          8  3600.0                        538.01                                                     262975.0                                            118944.88
+
+Warehouses: 128
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-1-1-1024 - Pods [[8, 4, 2, 1]]
+
+#### Planned
+DBMS CockroachDB-1-1-1024 - Pods [[1, 2, 4, 8]]
+
+### Loading
+                        time_load  terminals  pods  Imported warehouses [1/h]
+CockroachDB-1-1-1024-1      531.0        1.0   1.0                  867.79661
+CockroachDB-1-1-1024-2      531.0        1.0   2.0                  867.79661
+CockroachDB-1-1-1024-3      531.0        1.0   4.0                  867.79661
+CockroachDB-1-1-1024-4      531.0        1.0   8.0                  867.79661
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+
 
 ## Benchbase Example Explained
 
@@ -248,19 +523,5 @@ BEXHOMA_PASSWORD = "",
 BEXHOMA_PORT = 5433,
 ```
 
-
-
-```bash
-nohup python benchbase.py -ms 1 -tr \
-  -sf 128 \
-  -sd 60 \
-  -dbms CockroachDB \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
-```
 
 
