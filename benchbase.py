@@ -470,7 +470,6 @@ if __name__ == '__main__':
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "",
-                        BEXHOMA_PORT = 5433,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -503,7 +502,6 @@ if __name__ == '__main__':
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BEXHOMA_USER = "root",
                                         BEXHOMA_PASSWORD = "",
-                                        BEXHOMA_PORT = 5433,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
