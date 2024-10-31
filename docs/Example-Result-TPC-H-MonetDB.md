@@ -1,4 +1,4 @@
-# Example: TPC-H SF=100 MonetDB
+## Example: TPC-H SF=100 MonetDB
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -15,7 +15,7 @@ The purpose of this example is to illustrate the usage of bexhoma and to show ho
 
 
 
-## Generate and Load Data
+### Generate and Load Data
 
 At first we generate TPC-H data at SF=100 (`-sf`) with 8 parallel generators (`-nlp`).
 The generated data is stored at the shared disk `data`.
@@ -214,7 +214,7 @@ TEST passed: Workflow as planned
 
 To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
-## List local results
+### List local results
 
 You can inspect a preview list of results via `bexperiments localresults`.
 
