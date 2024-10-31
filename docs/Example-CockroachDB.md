@@ -280,6 +280,7 @@ In this example, this means that used memory, CPU time, etc. are summed across a
 
 ## Use Persistent Storage
 
+To be described: Persistent storage is per experiment here
 
 ## YCSB Example Explained
 
@@ -326,6 +327,9 @@ If data should be loaded, bexhoma at first creates a schema according to: https:
 
 ## Benchbase's TPC-C
 
+TPC-C is performed at 16 warehouses.
+The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
+
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
@@ -339,7 +343,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
 ```
 
-yields
+### Evaluate Results
 
 ```bash
 ## Show Summary
@@ -408,6 +412,9 @@ TEST passed: Workflow as planned
 
 ### Benchbase More Complex
 
+TPC-C is performed at 128 warehouses.
+The 64 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
+
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
@@ -421,7 +428,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
 ```
 
-yields
+### Evaluate Results
 
 ```bash
 ## Show Summary

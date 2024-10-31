@@ -28,7 +28,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-nohup python tpch.py -ms 1 -dt -tr \
+nohup python tpch.py -ms 4 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -38,7 +38,7 @@ nohup python tpch.py -ms 1 -dt -tr \
 ```
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB
+* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB (at the same time, `-ms`)
   * data directory inside a Docker container
   * with a maximum of 1 DBMS per time (`-ms`)
 * creates TPC-H schema in each database
@@ -55,6 +55,9 @@ This
   * all DBMS use the same parameters
   * data transfer is also measured (`-dt`)
 * shows a summary
+
+Make sure your cluster can handle 4 DBMS at the same time.
+Otherwise adjust die parameter `-ms`.
 
 ### Status
 

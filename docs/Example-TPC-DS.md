@@ -28,7 +28,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr \
+nohup python tpcds.py -ms 4 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -38,7 +38,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 ```
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB
+* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB (at the same time, `-ms`)
   * data directory inside a Docker container
   * with a maximum of 1 DBMS per time (`-ms`)
 * creates TPC-DS schema in each database
@@ -55,6 +55,9 @@ This
   * all DBMS use the same parameters
   * data transfer is also measured (`-dt`)
 * shows a summary
+
+Make sure your cluster can handle 4 DBMS at the same time.
+Otherwise adjust die parameter `-ms`.
 
 ### Status
 
@@ -927,9 +930,9 @@ TEST passed: Workflow as planned
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 
-## TPC-DS SF=100 MonetDB
+# Example: MonetDB TPC-DS@100
 
-### First Test Run
+## First Test Run
 
 This also sets up the database:
 
@@ -947,7 +950,7 @@ nohup python tpcds.py -ms 1 \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log &
 ```
 
-### Perform Benchmark - Power Test
+## Perform Benchmark - Power Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
@@ -967,7 +970,7 @@ nohup python tpcds.py -ms 1 \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log &
 ```
 
-### Perform Benchmark - Throughput Test
+## Perform Benchmark - Throughput Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other, and then a throughput test with 3 parallel driver (`-ne 1,1,3`). and shut down the DBMS.

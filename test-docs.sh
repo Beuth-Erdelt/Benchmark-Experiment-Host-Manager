@@ -303,7 +303,7 @@ wait_process "benchbase"
 
 
 #### TCP-H Compare (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+nohup python tpch.py -ms 4 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
