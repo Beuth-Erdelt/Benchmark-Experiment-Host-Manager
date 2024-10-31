@@ -5,7 +5,7 @@
 
 
 -- SELECT 'DROP old usertable' as message;
--- DROP TABLE IF EXISTS public.usertable CASCADE;
+DROP TABLE IF EXISTS public.usertable CASCADE;
 
 -- wait 60 seconds
 -- SELECT 'Wait 60 s';

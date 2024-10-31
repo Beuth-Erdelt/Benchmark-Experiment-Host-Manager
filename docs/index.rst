@@ -13,11 +13,13 @@
 
     ../README.md
     ./Example-YCSB.md
-    ./Example-TPC-H.md
-    ./Example-Result-TPC-H-MonetDB.md
     ./Example-HammerDB.md
     ./Example-Benchbase.md
+    ./Example-TPC-H.md
+    ./Example-TPC-DS.md
+    ./Example-Result-TPC-H-MonetDB.md
     ./Example-YugaByteDB.md
+    ./Example-CockroachDB.md
     ./Example-custom.md
     ./Tool.md
     ./Concept.md

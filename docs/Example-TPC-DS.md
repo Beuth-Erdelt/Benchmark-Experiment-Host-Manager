@@ -1,4 +1,4 @@
-# Example: TPC-DS
+# Benchmark: TPC-DS
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -7,9 +7,9 @@ Scale-out can simulate distributed clients for the loading test and the throughp
 
 This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-DS in MonetDB and PostgreSQL.
 
-> The query file is derived from the TPC-H and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-H Specification.
+> The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS Specification.
 
-1. Official TPC-H benchmark - http://www.tpc.org/tpcds
+1. Official TPC-DS benchmark - http://www.tpc.org/tpcds
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
 ## Perform Benchmark - Power Test
@@ -24,7 +24,7 @@ LOG_DIR="./logs_tests"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 Example:
 ```bash
@@ -41,7 +41,7 @@ This
 * starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB
   * data directory inside a Docker container
   * with a maximum of 1 DBMS per time (`-ms`)
-* creates TPC-H schema in each database
+* creates TPC-DS schema in each database
 * starts 8 loader pods per DBMS (`-nlp`)
   * with a data generator (init) container each
     * each generating a portion of TPC-DS data of scaling factor 1 (`-sf`)
@@ -257,7 +257,7 @@ PostgreSQL is fast, so we cannot see a lot (metrics are fetched every 30 seconds
 
 ## Perform Benchmark - Throughput Test
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 Example:
 ```bash
@@ -284,7 +284,7 @@ All executions use the same database, so loading times are the same.
 Per default, all 3 streams use the same random parameters (like YEAR in Q1) and run in ordering Q1-Q99.
 You can change this via
 * `-rcp`: Each stream has it's own random parameters
-* `-shq`: Use the ordering per stream as required by the TPC-H specification
+* `-shq`: Use the ordering per stream as required by the TPC-DS specification
 
 ## Use Persistent Storage
 
@@ -311,27 +311,15 @@ The first instance of MonetDB mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
 ```
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| Volumes                            | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
-+====================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
-| bexhoma-storage-monetdb-tpch-10    | monetdb         | tpch-10      | True         |               576 | MonetDB    | shared               | 100Gi     | Bound    | 100G   | 21G    |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-monetdb-tpch-100   | monetdb         | tpch-100     | True         |              7061 | MonetDB    | shared               | 300Gi     | Bound    | 300G   | 210G   |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-monetdb-tpch-3     | monetdb         | tpch-3       | True         |               215 | MonetDB    | shared               | 100Gi     | Bound    | 100G   | 6.2G   |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-monetdb-tpch-30    | monetdb         | tpch-30      | True         |              1734 | MonetDB    | shared               | 150Gi     | Bound    | 150G   | 63G    |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-mysql-tpch-1       | mysql           | tpch-1       | True         |              2178 | MySQL      | shared               | 30Gi      | Bound    | 30G    | 11G    |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-mysql-tpch-10      | mysql           | tpch-10      | True         |             33932 | MySQL      | shared               | 150Gi     | Bound    | 150G   | 36G    |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-postgresql-tpch-1  | postgresql      | tpch-1       | True         |               148 | PostgreSQL | shared               | 100Gi     | Bound    | 50G    | 2.7G   |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-postgresql-tpch-10 | postgresql      | tpch-10      | True         |              2581 | PostgreSQL | shared               | 100Gi     | Bound    | 100G   | 26G    |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-postgresql-tpch-30 | postgresql      | tpch-30      | True         |             10073 | PostgreSQL | shared               | 150Gi     | Bound    | 150G   | 76G    |
-+------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| Volumes                                 | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
++=========================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
+| bexhoma-storage-monetdb-tpcds-1         | monetdb         | tpcds-1      | True         |               151 | MonetDB    | shared               | 30Gi      | Bound    | 30G    | 2.0G   |
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-monetdb-tpcds-3         | monetdb         | tpcds-3      | True         |               393 | MonetDB    | shared               | 100Gi     | Bound    | 100G   | 5.4G   |
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-storage-monetdb-tpcds-100       | monetdb         | tpcds-100    | True         |              4019 | MonetDB    | shared               | 300Gi     | Bound    | 300G   | 156G   |
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 
 +------------------+--------------+--------------+---------------+
 | 1707740320       | sut          |   loaded [s] | benchmarker   |

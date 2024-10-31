@@ -1,4 +1,4 @@
-# Example: YCSB
+# Benchmark: YCSB
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
