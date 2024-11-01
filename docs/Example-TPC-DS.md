@@ -28,7 +28,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr \
+nohup python tpcds.py -ms 4 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -38,7 +38,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 ```
 
 This
-* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB
+* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB (at the same time, `-ms`)
   * data directory inside a Docker container
   * with a maximum of 1 DBMS per time (`-ms`)
 * creates TPC-DS schema in each database
@@ -55,6 +55,9 @@ This
   * all DBMS use the same parameters
   * data transfer is also measured (`-dt`)
 * shows a summary
+
+Make sure your cluster can handle 4 DBMS at the same time.
+Otherwise adjust die parameter `-ms`.
 
 ### Status
 
@@ -1225,9 +1228,9 @@ TEST passed: Workflow as planned
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 
-## TPC-DS SF=100 MonetDB
+# Example: MonetDB TPC-DS@100
 
-### First Test Run
+## First Test Run
 
 This also sets up the database:
 
