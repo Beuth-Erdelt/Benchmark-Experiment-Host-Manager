@@ -352,7 +352,54 @@ For further explanation see the monitoring section of this documentation.
 
 ## Use Persistent Storage
 
+### Bexhoma Status Volume
+
 Persistent Storage is not managed by bexhoma, but by YugabyteDB.
+We can add the request for a PVC to the experiment setup:
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 10 \
+  --workload a \
+  -dbms YugabyteDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 1Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_3.log &
+```
+This will add a PVC to the Dummy DBMS.
+Nothing will be stored there, but it maintains status information about previous loading processes.
+
+```
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| Volumes                                 | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
++=========================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
+| bexhoma-storage-yugabytedb-ycsb-1       | yugabytedb      | ycsb-1       | True         |               300 | YugabyteDB | shared               | 1Gi       | Bound    | 1.0G   | 36M    |
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+```
+
+The above means there has been a YCSB loading process (managed by bexhoma) of size SF=1, that has been completed.
+All following calls of such an experiment will skip loading, since the PVC tells it has been finished.
+This thus helps to spare the `-sl` parameter.
+
+However bexhoma cannot verify such information.
+If YugabyteDB is restarted or data is delete somehow, this PVC information will be outdated and wrong.
+
+This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
+
+
+### Persist YugabyteDB
+
+If you want YugabyteDB to have real persistent storage, remove the line `storage.ephemeral=true,\` from the installation.
 
 
 ## YCSB Example Explained
