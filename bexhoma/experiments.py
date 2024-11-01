@@ -1609,6 +1609,12 @@ class default():
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)                
         #evaluation = evaluators.base(code=code, path=resultfolder)
         #####################
         evaluate = inspector.inspector(resultfolder)
@@ -2282,6 +2288,12 @@ class tpcc(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)                
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
@@ -2733,7 +2745,7 @@ class ycsb(default):
             if 'worker' in c and len(c['worker']) > 0:
                 for i, worker in enumerate(c['worker']):
                     print("    worker {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in worker.items()]
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
                         print(info)                
         #print("found", len(connections), "connections")
@@ -3041,6 +3053,12 @@ class benchbase(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)                
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
