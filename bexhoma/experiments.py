@@ -1631,11 +1631,24 @@ class default():
         df = evaluate.get_total_errors().T
         num_errors = df.sum().sum()
         if num_errors > 0:
+            df_errors = df.copy()
+            df_errors = df_errors[~(df_errors == False).all(axis=1)]
+            list_error_queries = list(df_errors.index)
             # set readable names
             df.index = df.index.map(map_index_to_queryname)
             # remove only False rows
             df = df[~(df == False).all(axis=1)]
             print(df)
+            for error in list_error_queries:
+                numQuery = error[1:]        # remove the leading "Q""
+                list_errors = evaluate.get_error(numQuery)
+                list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
+                #print(list_errors)
+                print(map_index_to_queryname(error))
+                #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
+                #print(df_error)
+                for k,v in list_errors.items():
+                    print("{}: {}".format(k,v))
         else:
             print("No errors")
         #####################
