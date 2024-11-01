@@ -304,6 +304,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
+        if self.max_sut is not None:
+            self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
     def get_dashboard_pod(self,
                           pod_dashboard=''):
         """
