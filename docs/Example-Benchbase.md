@@ -9,6 +9,11 @@ It uses quite some resources, so that for simulating a lot of users, scale-out o
 
 <img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/tpcc.png" alt="drawing" width="600"/>
 
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
 References:
 1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
 1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
@@ -197,7 +202,7 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 
 ### Command line
 
-You maybe want to adjust some of the parameters that are set in the file: `python hammerdb.py -h`
+You maybe want to adjust some of the parameters that are set in the file: `python benchbase.py -h`
 
 ```bash
 usage: benchbase.py [-h] [-aws] [-dbms {PostgreSQL,MySQL,MariaDB,YugabyteDB}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nlp NUM_LOADING_PODS]
@@ -415,7 +420,8 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 ```
 
-The following status shows we have two volumes of type `shared`. Every experiment running Benchbase's TPC-C of SF=16 (warehouses) will take the databases from these volumes and skip loading.
+The following status shows we have two volumes of type `shared`.
+Every PostgreSQL experiment running Benchbase's TPC-C of SF=16 (warehouses) will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of PostgreSQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.

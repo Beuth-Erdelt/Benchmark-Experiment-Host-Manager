@@ -1,24 +1,29 @@
 # Example: Benchmark CockroachDB
 
-This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS**, that can be managed by bexhoma and exists in the Kubernetes cluster in the same namespace.
+This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 CockroachDB offers several installation methods [1].
 We here rely on *CockroachDB insecure test cluster in a single Kubernetes cluster* [2].
-The benefit of this approach is we can use a manifest for a stateful set provided by CockroachDB: https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/cockroachdb-statefulset.yaml
+The benefit of this approach is we can use a [manifest](https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/cockroachdb-statefulset.yaml) for a stateful set provided by CockroachDB.
+See [dummy deployment](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-CockroachDB.yml) for a version that is suitable for bexhoma.
 
 This can be managed by bexhoma.
 
 
-**The results are not official benchmark results. The exact performance depends on a collection of parameters.
-The purpose of this example is to illustrate the usage of bexhoma and to show how to evaluate results.**
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 References:
 1. Install CockroachDB:  https://www.cockroachlabs.com/docs/v24.2/install-cockroachdb-linux.html
 1. Deploy CockroachDB in a Single Kubernetes Cluster (Insecure): https://www.cockroachlabs.com/docs/v24.2/deploy-cockroachdb-with-kubernetes-insecure
 1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
+1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
 1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
@@ -629,16 +634,4 @@ TEST passed: Workflow as planned
 ## Benchbase Example Explained
 
 The setup is the same as for YCSB (see above).
-
-However the connection string this time is not read from `cluster.config`, but instead constructed from parameters that are set explicitly in the workflow file `benchbase.py`:
-
-```
-BENCHBASE_PROFILE = 'postgres',
-BEXHOMA_DATABASE = 'yugabyte',
-BEXHOMA_USER = "yugabyte",
-BEXHOMA_PASSWORD = "",
-BEXHOMA_PORT = 5433,
-```
-
-
 

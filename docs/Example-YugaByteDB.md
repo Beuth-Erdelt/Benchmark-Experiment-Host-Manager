@@ -1,12 +1,8 @@
 # Example: Benchmark YugabyteDB
 
-This differs from the default behaviour of bexhoma, since we benchmark **a DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
+This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
-
-**The results are not official benchmark results. The exact performance depends on a collection of parameters.
-The purpose of this example is to illustrate the usage of bexhoma and to show how to evaluate results.**
-
 
 Important implications of this:
 * Bexhoma does neither start nor stop the DBMS.
@@ -21,10 +17,17 @@ Moreover the container is used to install a schema to YugabyteDB via psql.
 All metrics in monitoring are summed across all matching components.
 In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
 
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
 References:
+1. YugabyteDB YCSB: https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc/
 1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
-1. YugabyteDB YCSB: https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc/
+1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
 1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
@@ -68,8 +71,9 @@ kubectl delete pvc -l app=yb-tserver
 kubectl delete pvc -l app=yb-master
 ```
 
-Connecting to DBMS: `kubectl port-forward service/yb-tserver-service 5433:5433`
-Connecting to GUI: `kubectl port-forward service/yb-master-ui 8080:7000`
+Connecting
+* to DBMS: `kubectl port-forward service/yb-tserver-service 5433:5433`
+* to GUI: `kubectl port-forward service/yb-master-ui 8080:7000`
 
 
 ## Perform YCSB Benchmark - Ingestion of Data Included

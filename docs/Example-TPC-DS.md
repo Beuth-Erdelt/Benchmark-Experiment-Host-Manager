@@ -5,9 +5,20 @@
 TPC-DS does allow scaling data generation and ingestion, and scaling the benchmarking driver.
 Scale-out can simulate distributed clients for the loading test and the throughput test [2].
 
-This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-DS in MonetDB and PostgreSQL.
+This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-DS in MonetDB, PostgreSQL, MySQL and MariaDB.
 
 > The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS Specification.
+
+In particular we had to apply changes, because
+* MySQL and MariaDB do not have a FULL OUTER JOIN
+* MySQL and MariaDB do CASTing to INTEGER differently
+
+See [query file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpcds/queries-tpcds.config) for all details.
+
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 1. Official TPC-DS benchmark - http://www.tpc.org/tpcds
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9

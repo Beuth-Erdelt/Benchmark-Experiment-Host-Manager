@@ -13,6 +13,11 @@ About the benchmark [1]:
 About the metrics [2]:
 > HammerDB workloads produce 2 statistics to compare systems called **TPM** and NOPM respectively. NOPM value is based on a metric captured from within the test schema itself. As such **NOPM (New Orders per minute)** as a performance metric independent of any particular database implementation is the recommended primary metric to use.
 
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
 References
 1. HammerDB Docs: https://www.hammerdb.com/docs/ch03s05.html
 1. HammerDB Docs: https://www.hammerdb.com/docs/ch03s04.html
