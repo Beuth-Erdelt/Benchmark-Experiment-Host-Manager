@@ -43,6 +43,7 @@ nohup python tpcds.py -ms 4 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
+  -t 1200 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &

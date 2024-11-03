@@ -450,11 +450,12 @@ wait_process "tpch"
 ###########################################
 
 
-#### TCP-H Compare (Example-TPC-DS.md)
+#### TCP-DS Compare (Example-TPC-DS.md)
 nohup python tpcds.py -ms 4 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
+  -t 1200 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
@@ -465,7 +466,7 @@ nohup python tpcds.py -ms 4 -dt -tr \
 wait_process "tpcds"
 
 
-#### TCP-H Monitoring (Example-TPC-DS.md)
+#### TCP-DS Monitoring (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
@@ -481,7 +482,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 wait_process "tpcds"
 
 
-#### TCP-H Throughput (Example-TPC-DS.md)
+#### TCP-DS Throughput (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
@@ -503,7 +504,7 @@ kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
 sleep 30
 
 
-#### TCP-H Persistent Storage (Example-TPC-DS.md)
+#### TCP-DS Persistent Storage (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
