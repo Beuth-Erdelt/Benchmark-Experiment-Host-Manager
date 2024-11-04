@@ -475,6 +475,9 @@ if __name__ == '__main__':
                     # CockroachDB
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    config.set_storage(
+                        storageConfiguration = 'cockroachdb'
+                        )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(
