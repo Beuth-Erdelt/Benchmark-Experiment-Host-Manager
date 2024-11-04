@@ -211,6 +211,7 @@ class default():
         request_node_name = args.request_node_name
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
+        skip_loading = args.skip_loading
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
@@ -295,6 +296,8 @@ class default():
                     'kubernetes.io/hostname': request_node_name
                 })        
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        if skip_loading:
+            self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
         self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
