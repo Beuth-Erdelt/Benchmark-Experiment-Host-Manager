@@ -1773,11 +1773,12 @@ scrape_configs:
             # write infos to SUT's PVC (if exists)
             fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
             #print(fullcommand)
-            self.experiment.cluster.kubectl(fullcommand)
-            # write infos to worker's PVC (if exists)
-            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
-            #print(fullcommand)
-            self.experiment.cluster.kubectl(fullcommand)
+            #self.experiment.cluster.kubectl(fullcommand)
+            ## write infos to worker's PVC (if exists)
+            ## TODO: check if exists, test if it writes per worker size infos
+            #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
+            ##print(fullcommand)
+            #self.experiment.cluster.kubectl(fullcommand)
     def get_host_all(self):
         """
         Calls all `get_host_x()` methods.
