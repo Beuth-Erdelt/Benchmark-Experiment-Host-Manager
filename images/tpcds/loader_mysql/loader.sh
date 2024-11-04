@@ -1,16 +1,9 @@
 #!/bin/bash
 
-######################## Fix missing locale ########################
-export LC_ALL="en_US.UTF-8"
+# Reference for tool
+# https://dev.mysql.com/doc/mysql-shell/8.3/en/mysql-shell-utilities-parallel-table.html
+# , 'bytesPerChunk': '50M' #  Util.import_table: The 'bytesPerChunk' option cannot be used when loading from multiple files.
 
-######################## Parallel loading (several scripts at once) only makes sense for more than 1 pod ########################
-if test $NUM_PODS -gt 1
-then
-    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
-else
-    MYSQL_LOADING_PARALLEL=0
-    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
-fi
 
 ######################## Start timing ########################
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
@@ -79,6 +72,19 @@ fi
 bexhoma_start_epoch=$(date -u +%s)
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
+
+######################## Fix missing locale - in Dockerfile ########################
+#export LC_ALL="en_US.UTF-8"
+#export LANG="en_US.utf8"
+
+######################## Parallel loading (several scripts at once) only makes sense for more than 1 pod ########################
+if test $NUM_PODS -gt 1
+then
+    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
+else
+    MYSQL_LOADING_PARALLEL=0
+    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
+fi
 
 ######################## Only first loader pod should be active ########################
 # this holds for parallel loading, i.e. one client writes all files to host
