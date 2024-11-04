@@ -14,6 +14,11 @@ Each operation against the data store is randomly chosen to be one of:
 > * Read: Read a record, either one randomly chosen field or all fields.
 > * Scan: Scan records in order, starting at a randomly chosen record key. The number of records to scan is randomly chosen. [1,2]
 
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
 References:
 1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
@@ -614,21 +619,15 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
 ```
 The following status shows we have one volume of type `shared`.
-Every experiment running YCSB of SF=1, if it's MySQL or PostgreSQL, will take the databases from these volumes and skip loading.
+Every PostgreSQL experiment running YCSB of SF=1 will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
-The first instance of MySQL mounts the volume and generates the data.
+The first instance of PostgreSQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
 ```
 +------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                  | configuration   | experiment    | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
 +==========================================+=================+===============+==============+===================+============+======================+===========+==========+========+========+
-| bexhoma-storage-postgresql-tpch-3        | postgresql      | tpch-3        | True         |               300 | PostgreSQL | shared               | 100Gi     | Bound    | 100G   | 8.0G   |
-+------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-postgresql-tpch-10       | postgresql      | tpch-10       | True         |              2581 | PostgreSQL | shared               | 100Gi     | Bound    | 100G   | 17G    |
-+------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| bexhoma-storage-postgresql-tpch-30       | postgresql      | tpch-30       | True         |             10073 | PostgreSQL | shared               | 150Gi     | Bound    | 150G   | 76G    |
-+------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 | bexhoma-storage-postgresql-ycsb-1        | postgresql      | ycsb-1        | True         |                16 | PostgreSQL | shared               | 100Gi     | Bound    | 100G   | 3.7G   |
 +------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 | bexhoma-storage-postgresql-ycsb-10       | postgresql      | ycsb-10       | True         |               217 | PostgreSQL | shared               | 100Gi     | Bound    | 100G   | 33G    |

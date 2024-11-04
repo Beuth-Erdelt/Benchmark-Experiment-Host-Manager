@@ -5,9 +5,20 @@
 TPC-DS does allow scaling data generation and ingestion, and scaling the benchmarking driver.
 Scale-out can simulate distributed clients for the loading test and the throughput test [2].
 
-This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-DS in MonetDB and PostgreSQL.
+This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-DS in MonetDB, PostgreSQL, MySQL and MariaDB.
 
 > The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS Specification.
+
+In particular we had to apply changes, because
+* MySQL and MariaDB do not have a FULL OUTER JOIN
+* MySQL and MariaDB do CASTing to INTEGER differently
+
+See [query file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpcds/queries-tpcds.config) for all details.
+
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 1. Official TPC-DS benchmark - http://www.tpc.org/tpcds
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
@@ -32,6 +43,7 @@ nohup python tpcds.py -ms 4 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
+  -t 1200 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
@@ -1230,11 +1242,44 @@ Note the added section about `volume_size` and `volume_used` in the connections 
 
 # Example: MonetDB TPC-DS@100
 
-## First Test Run
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-This also sets up the database:
+This example shows how to run Q1-Q99 derived from TPC-DS in MonetDB at SF=100.
+It covers the power and the throughput test.
+The refresh stream is not included.
+
+> The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS specification.
+
+Official TPC-DS benchmark - http://www.tpc.org/tpcds
+
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
+
+
+## Generate and Load Data
+
+At first we generate TPC-DS data at SF=100 (`-sf`) with 8 parallel generators (`-nlp`).
+The generated data is stored at the shared disk `data`.
+Moreover the data is loaded into an instance of MonetDB using again 8 parallel loaders.
+Afterwards the script creates contraints (`-ic`) and indexes (`-ii`) and updates table statistics (`-is`).
+The database is located in another shared disk of storageClass shared (`-rst`) and of size 300Gi (`-rss`).
+
+The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-dt`) once (`-nc` set to 1).
+To avoid conflicts with other experiments we set a maximum of 1 DBMS per time (`-ms`).
+Monitoring is activated (`-m`) for all components (`-mc`).
+The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
 
 ```bash
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
+
 nohup python tpcds.py -ms 1 \
   -m -mc \
   -sf 100 \
@@ -1248,7 +1293,33 @@ nohup python tpcds.py -ms 1 \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log &
 ```
 
-### Evaluate Results
+
+## Status Database and Benchmark
+
+You can watch the status of experiments via `bexperiments status`.
+
+In the following example output we see all components of bexhoma are up and running.
+The cluster stores a MonetDB database corresponding to TPC-DS of SF=100.
+The disk is of storageClass shared and of size 300Gi and 156G of that space is used.
+It took about 4000s to build this database.
+Currently no DBMS is running.
+
+```
+Dashboard: Running
+Message Queue: Running
+Data directory: Running
+Result directory: Running
+Cluster Prometheus: Running
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+| Volumes                                 | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
++=========================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
+| bexhoma-storage-monetdb-tpcds-100       | monetdb         | tpcds-100    | True         |              4019 | MonetDB    | shared               | 300Gi     | Bound    | 300G   | 156G   |
++-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
+```
+
+## Summary of Results
+
+At the end of a benchmark you will see a summary like
 
 ```bash
 ## Show Summary

@@ -17,7 +17,6 @@
     ./Example-Benchbase.md
     ./Example-TPC-H.md
     ./Example-TPC-DS.md
-    ./Example-Result-TPC-H-MonetDB.md
     ./Example-YugaByteDB.md
     ./Example-CockroachDB.md
     ./Example-custom.md
