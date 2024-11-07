@@ -10,8 +10,17 @@ This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-D
 > The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS Specification.
 
 In particular we had to apply changes, because
-* MySQL and MariaDB do not have a FULL OUTER JOIN
+* MySQL and MariaDB do not have a FULL OUTER JOIN (Q51, Q97)
 * MySQL and MariaDB do CASTing to INTEGER differently
+* column names may differ if AS is not used explicitly
+* MariaDB does not know GROUPING
+
+The schema of
+* MonetDB: sets primary keys and foreign key constraints after import and no other indexes
+* MySQL: sets primary keys before import, all foreign key constraints and indexes on foreign keys of fact tables and customer table after import
+* MariaDB: sets primary keys before import, all foreign key constraints and indexes on foreign keys of fact tables and customer table after import
+* PostgreSQL: sets primary keys before import, all foreign key constraints and indexes on foreign keys of fact tables and customer table after import
+
 
 See [query file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpcds/queries-tpcds.config) for all details.
 
