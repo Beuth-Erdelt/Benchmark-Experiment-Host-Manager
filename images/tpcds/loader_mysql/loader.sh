@@ -147,9 +147,9 @@ for i in *.dat; do
         for ((j=1;j<=$NUM_PODS;j++)); 
         do 
            #echo $j
-           if [ -f "$destination_raw/../$j/$basename.tbl.$j" ]
+           if [ -f "$destination_raw/../$j/$basename_$j_$NUM_PODS.dat" ]
            then
-               file="'$destination_raw/../$j/$basename.tbl.$j',"
+               file="'$destination_raw/../$j/$basename_$j_$NUM_PODS.dat',"
                COMMAND=$COMMAND$file
            fi
         done
