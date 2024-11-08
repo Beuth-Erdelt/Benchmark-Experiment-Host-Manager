@@ -515,7 +515,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -t 1200 \
   -ii -ic -is \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst shared -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_storage.log &
 
