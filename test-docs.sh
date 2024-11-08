@@ -451,7 +451,7 @@ wait_process "tpch"
 
 
 #### TCP-DS Compare (Example-TPC-DS.md)
-nohup python tpcds.py -ms 4 -dt -tr \
+nohup python tpcds.py -ms 3 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \

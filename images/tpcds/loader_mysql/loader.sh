@@ -147,9 +147,10 @@ for i in *.dat; do
         for ((j=1;j<=$NUM_PODS;j++)); 
         do 
            #echo $j
-           if [ -f "$destination_raw/../$j/$basename_$j_$NUM_PODS.dat" ]
+           echo "Looking for $destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat"
+           if [ -f "$destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat" ]
            then
-               file="'$destination_raw/../$j/$basename_$j_$NUM_PODS.dat',"
+               file="'$destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat',"
                COMMAND=$COMMAND$file
            fi
         done

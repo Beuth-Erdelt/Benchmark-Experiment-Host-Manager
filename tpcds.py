@@ -259,7 +259,8 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("MySQL" in args.dbms or len(args.dbms) == 0):
+            #if ("MySQL" in args.dbms or len(args.dbms) == 0):
+            if ("MySQL" in args.dbms): # must be chosen explicitly
                 # MySQL
                 for threads in num_loading_threads:
                     pods_times_threads=int(loading_pods_total)*int(threads)
