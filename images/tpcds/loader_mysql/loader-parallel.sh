@@ -1,7 +1,9 @@
 #!/bin/bash
 
-######################## Fix missing locale ########################
-export LC_ALL="en_US.UTF-8"
+# Reference for tool
+# https://dev.mysql.com/doc/mysql-shell/8.3/en/mysql-shell-utilities-parallel-table.html
+# , 'bytesPerChunk': '50M' #  Util.import_table: The 'bytesPerChunk' option cannot be used when loading from multiple files.
+
 
 ######################## Start timing ########################
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
@@ -15,7 +17,7 @@ echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 
 ######################## Show more parameters ########################
-CHILD=$(cat /tmp/tpch/CHILD )
+CHILD=$(cat /tmp/tpcds/CHILD )
 echo "CHILD $CHILD"
 echo "NUM_PODS $NUM_PODS"
 echo "SF $SF"
@@ -26,21 +28,20 @@ then
     # store in (distributed) file system
     if test $NUM_PODS -gt 1
     then
-        destination_raw=/data/tpch/SF$SF/$NUM_PODS/$CHILD
+        destination_raw=/data/tpcds/SF$SF/$NUM_PODS/$CHILD/
     else
-        destination_raw=/data/tpch/SF$SF
+        destination_raw=/data/tpcds/SF$SF/
     fi
 else
     # only store locally
-    destination_raw=/tmp/tpch/SF$SF/$NUM_PODS/$CHILD
-    mkdir -p $destination_raw
+    destination_raw=/tmp/tpcds/SF$SF/$NUM_PODS/$CHILD
 fi
 echo "destination_raw $destination_raw"
 cd $destination_raw
 
 ######################## Show generated files ########################
 echo "Found these files:"
-ls $destination_raw/*tbl* -lh
+ls $destination_raw/*.dat -lh
 
 ######################## Wait until all pods of job are ready ########################
 if test $BEXHOMA_SYNCH_LOAD -gt 0
@@ -56,6 +57,10 @@ then
         then
             echo "OK"
             break
+        elif test "$PODS_RUNNING" -gt $NUM_PODS
+        then
+            echo "Too many pods! Restart occured?"
+            exit 0
         else
             echo "We have to wait"
             sleep 1
@@ -67,6 +72,19 @@ fi
 bexhoma_start_epoch=$(date -u +%s)
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
+
+######################## Fix missing locale - in Dockerfile ########################
+#export LC_ALL="en_US.UTF-8"
+#export LANG="en_US.utf8"
+
+######################## Parallel loading (several scripts at once) only makes sense for more than 1 pod ########################
+if test $NUM_PODS -gt 1
+then
+    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
+else
+    MYSQL_LOADING_PARALLEL=0
+    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
+fi
 
 ######################## Only first loader pod should be active ########################
 # this holds for parallel loading, i.e. one client writes all files to host
@@ -99,42 +117,51 @@ then
 fi
 
 ######################## Execute loading ###################
-# ordered
-#for i in *tbl*; do
 # shuffled
-for i in `ls *tbl* | shuf`; do
-    basename=${i%.tbl*}
+#for i in `ls *.dat | shuf`; do
+# ordered
+for i in *.dat; do
+    if test $NUM_PODS -gt 1
+    then
+        basename=${i%_"$CHILD"_"$NUM_PODS"*}
+    else
+        basename=${i%.dat*}
+    fi
     wordcount=($(wc -l $i))
     lines=${wordcount[0]}
-    if [[ $basename == "nation" ]]
+    # skip table if limit to other table is set
+    if [ -z "${TPCDS_TABLE}" ]
     then
-        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $THREADS})"
-        #if test $CHILD -gt 1
-        #then
-        #    continue
-        #fi
-    elif [[ $basename == "region" ]]
+        echo "table limit not set"
+    elif [ "${TPCDS_TABLE}" == "$basename" ]
     then
-        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $THREADS})"
-        #if test $CHILD -gt 1
-        #then
-        #    continue
-        #fi
+        echo "limit import to this table $TPCDS_TABLE"
     else
+        echo "skipping $basename, import is limited to other table ($TPCDS_TABLE)"
+        continue
+    fi
+    if test $MYSQL_LOADING_PARALLEL -gt 0
+    then
+        # first pod: table nation or region will be imported olny one, others: we will import all parts at once
         COMMAND="util.import_table(["
         for ((j=1;j<=$NUM_PODS;j++)); 
         do 
            #echo $j
-           file="'$destination_raw/../$j/$basename.tbl.$j',"
-           COMMAND=$COMMAND$file
+           echo "Looking for $destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat"
+           if [ -f "$destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat" ]
+           then
+               file="'$destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat',"
+               COMMAND=$COMMAND$file
+           fi
         done
-        COMMAND_END="], {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
+        COMMAND_END="], {'schema': 'tpcds', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
         COMMAND=${COMMAND::-1}$COMMAND_END
+    else
+        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpcds', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
     fi
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''"
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''"
     echo "============================"
-    #COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $THREADS})"
     echo "$COMMAND"
     #OUTPUT="$(mclient --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -s \"COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''\" - < $i)"
 
@@ -148,7 +175,7 @@ for i in `ls *tbl* | shuf`; do
         SECONDS_START=$SECONDS
         echo "=========="
         #time mysqlsh --sql --password=root --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &>OUTPUT.txt
-        time mysqlsh --python --password=root --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &>OUTPUT.txt
+        time mysqlsh --python --password=root --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS
         echo "End $SECONDS_END seconds"
@@ -157,11 +184,11 @@ for i in `ls *tbl* | shuf`; do
         #mclient --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -E UTF-8 -L import.log -s "$COMMAND" - < $i &>OUTPUT.txt
         #mclient --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -s "COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''" - < $i &>OUTPUT.txt
         #cat import.log
-        OUTPUT=$(cat OUTPUT.txt )
+        OUTPUT=$(cat /tmp/OUTPUT.txt )
         echo "$OUTPUT"
         FAILED=0
         # everything worked well ("row" and "rows" string checked)
-        if [[ $OUTPUT == *"$lines affected row"* ]]; then echo "Import ok"; FAILED=0; fi
+        if [[ $OUTPUT == *"Total rows affected in tpch.$basename: Records: $lines"* ]]; then echo "Import ok"; FAILED=0; fi
         # rollback, we have to do it again (?)
         if [[ $OUTPUT == *"ROLLBACK"* ]]; then echo "ROLLBACK occured"; FAILED=1; fi
         # no thread left, we have to do it again (?)
