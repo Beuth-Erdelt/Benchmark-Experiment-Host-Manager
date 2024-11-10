@@ -50,3 +50,32 @@ CREATE INDEX idx_web_returns_customer_id ON tpcds.web_returns (wr_returning_cust
 CREATE INDEX idx_web_returns_item_id ON tpcds.web_returns (wr_item_sk);
 CREATE INDEX idx_web_returns_date_id ON tpcds.web_returns (wr_returned_date_sk);
 CREATE INDEX idx_web_returns_order_number ON tpcds.web_returns (wr_order_number);
+
+
+
+
+
+
+
+-- Indexes for the catalog_sales table
+CREATE INDEX idx_catalog_sales_order_ship_date ON tpcds.catalog_sales (cs_order_number, cs_ship_date_sk);
+CREATE INDEX idx_catalog_sales_ship_addr ON tpcds.catalog_sales (cs_ship_addr_sk);
+CREATE INDEX idx_catalog_sales_warehouse ON tpcds.catalog_sales (cs_warehouse_sk);
+CREATE INDEX idx_catalog_sales_call_center ON tpcds.catalog_sales (cs_call_center_sk);
+
+-- Index for catalog_returns table to speed up the NOT EXISTS subquery
+CREATE INDEX idx_catalog_returns_order ON tpcds.catalog_returns (cr_order_number);
+
+-- Indexes for the date_dim table
+CREATE INDEX idx_date_dim_date_sk_date ON tpcds.date_dim (d_date_sk, d_date);
+
+-- Indexes for customer_address table to filter by ca_address_sk and ca_state
+CREATE INDEX idx_customer_address_sk_state ON tpcds.customer_address (ca_address_sk, ca_state);
+
+-- Indexes for call_center table to filter by call_center_sk and county
+CREATE INDEX idx_call_center_county ON tpcds.call_center (cc_call_center_sk, cc_county);
+
+
+CREATE INDEX idx_customer_current_cdemo_sk ON tpcds.customer (c_current_cdemo_sk);
+CREATE INDEX idx_customer_address_county ON tpcds.customer_address (ca_county);
+CREATE INDEX idx_date_dim_year_moy ON tpcds.date_dim (d_year, d_moy, d_date_sk);

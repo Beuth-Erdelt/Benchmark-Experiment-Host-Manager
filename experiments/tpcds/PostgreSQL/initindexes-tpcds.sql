@@ -50,3 +50,44 @@ CREATE INDEX idx_web_returns_customer_id ON web_returns (wr_returning_customer_s
 CREATE INDEX idx_web_returns_item_id ON web_returns (wr_item_sk);
 CREATE INDEX idx_web_returns_date_id ON web_returns (wr_returned_date_sk);
 CREATE INDEX idx_web_returns_order_number ON web_returns (wr_order_number);
+
+
+
+
+
+
+
+-- Indexes for the catalog_sales table
+CREATE INDEX idx_catalog_sales_order_ship_date ON catalog_sales (cs_order_number, cs_ship_date_sk);
+CREATE INDEX idx_catalog_sales_ship_addr ON catalog_sales (cs_ship_addr_sk);
+CREATE INDEX idx_catalog_sales_warehouse ON catalog_sales (cs_warehouse_sk);
+CREATE INDEX idx_catalog_sales_call_center ON catalog_sales (cs_call_center_sk);
+
+-- Index for catalog_returns table to speed up the NOT EXISTS subquery
+CREATE INDEX idx_catalog_returns_order ON catalog_returns (cr_order_number);
+
+-- Indexes for the date_dim table
+CREATE INDEX idx_date_dim_date_sk_date ON date_dim (d_date_sk, d_date);
+
+-- Indexes for customer_address table to filter by ca_address_sk and ca_state
+CREATE INDEX idx_customer_address_sk_state ON customer_address (ca_address_sk, ca_state);
+
+-- Indexes for call_center table to filter by call_center_sk and county
+CREATE INDEX idx_call_center_county ON call_center (cc_call_center_sk, cc_county);
+
+
+
+
+-- Indexes for web_sales table
+CREATE INDEX idx_web_sales_order_number ON web_sales (ws_order_number);
+CREATE INDEX idx_web_sales_ship_date ON web_sales (ws_ship_date_sk);
+CREATE INDEX idx_web_sales_addr ON web_sales (ws_ship_addr_sk);
+CREATE INDEX idx_web_sales_web_site ON web_sales (ws_web_site_sk);
+
+-- Indexes for web_site table
+CREATE INDEX idx_web_site_company ON web_site (web_site_sk, web_company_name);
+
+
+CREATE INDEX idx_customer_current_cdemo_sk ON customer (c_current_cdemo_sk);
+CREATE INDEX idx_customer_address_county ON customer_address (ca_county);
+CREATE INDEX idx_date_dim_year_moy ON date_dim (d_year, d_moy, d_date_sk);

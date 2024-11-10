@@ -5,16 +5,18 @@
 TPC-DS does allow scaling data generation and ingestion, and scaling the benchmarking driver.
 Scale-out can simulate distributed clients for the loading test and the throughput test [2].
 
-This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-DS in MonetDB, PostgreSQL, MySQL and MariaDB.
+This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-DS in MonetDB, PostgreSQL and MariaDB.
 
 > The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS Specification.
 
-In particular we had to apply changes, because
+In particular we had to apply changes to the queries, because
 * MySQL and MariaDB do not have a FULL OUTER JOIN (Q51, Q97, ...)
 * MySQL and MariaDB do CASTing to INTEGER differently
 * column names may differ if AS is not used
 * MariaDB does not know GROUPING
 * the DBMS do not sort in the same way when NULL comes into play
+
+See [query file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpcds/queries-tpcds.config) for all details.
 
 The schema of
 * MonetDB: sets primary keys and foreign key constraints after import and no other indexes
@@ -25,7 +27,6 @@ The schema of
 **MySQL is excluded currently because the treatment of NULL during INSERT is complicated.**
 
 
-See [query file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpcds/queries-tpcds.config) for all details.
 
 **The results are not official benchmark results.
 Exact performance depends on a number of parameters.
