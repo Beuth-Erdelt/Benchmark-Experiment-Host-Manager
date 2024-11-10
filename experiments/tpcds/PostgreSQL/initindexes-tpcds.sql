@@ -91,3 +91,4 @@ CREATE INDEX idx_web_site_company ON web_site (web_site_sk, web_company_name);
 CREATE INDEX idx_customer_current_cdemo_sk ON customer (c_current_cdemo_sk);
 CREATE INDEX idx_customer_address_county ON customer_address (ca_county);
 CREATE INDEX idx_date_dim_year_moy ON date_dim (d_year, d_moy, d_date_sk);
+CREATE INDEX idx_date_dim_d_year ON date_dim (d_year);

@@ -1343,7 +1343,7 @@ mkdir -p $LOG_DIR
 nohup python tpcds.py -ms 1 \
   -m -mc \
   -sf 100 \
-  -t 3600 \
+  -t 7200 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1 \
@@ -1594,7 +1594,7 @@ This is repeated 2 times (`-nc`).
 nohup python tpcds.py -ms 1 \
   -m -mc \
   -sf 100 \
-  -t 3600 \
+  -t 7200 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 2 -ne 1,1 \
@@ -1863,7 +1863,7 @@ We then run two power tests, one after the other, and then a throughput test wit
 nohup python tpcds.py -ms 1 \
   -m -mc \
   -sf 100 \
-  -t 3600 \
+  -t 7200 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1,1,3 \

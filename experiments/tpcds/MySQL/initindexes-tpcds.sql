@@ -79,3 +79,4 @@ CREATE INDEX idx_call_center_county ON tpcds.call_center (cc_call_center_sk, cc_
 CREATE INDEX idx_customer_current_cdemo_sk ON tpcds.customer (c_current_cdemo_sk);
 CREATE INDEX idx_customer_address_county ON tpcds.customer_address (ca_county);
 CREATE INDEX idx_date_dim_year_moy ON tpcds.date_dim (d_year, d_moy, d_date_sk);
+CREATE INDEX idx_date_dim_d_year ON tpcds.date_dim (d_year);
