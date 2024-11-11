@@ -27,6 +27,10 @@ SET GLOBAL sql_mode='';
 -- Defines the amount of disk space occupied by redo log files.
 -- SET GLOBAL innodb_redo_log_capacity=1024*1024*1024;
 
+
+SET GLOBAL tmp_table_size = 1024 * 1024 * 1024;  -- 1 GB
+SET GLOBAL max_heap_table_size = 1024 * 1024 * 1024;  -- 1 GB
+
 SHOW GLOBAL STATUS;
 
 SELECT @@innodb_buffer_pool_size/1024/1024/1024, @@innodb_buffer_pool_chunk_size/1024/1024/1024, @@innodb_buffer_pool_instances;
