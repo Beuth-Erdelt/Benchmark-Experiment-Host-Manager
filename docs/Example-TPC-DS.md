@@ -1300,6 +1300,26 @@ TEST passed: Workflow as planned
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Example: MonetDB TPC-DS@100
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
@@ -1343,13 +1363,12 @@ mkdir -p $LOG_DIR
 nohup python tpcds.py -ms 1 \
   -m -mc \
   -sf 100 \
-  -t 7200 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 7200 -dt \
   -rst shared -rss 300Gi \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log &
 ```
@@ -1594,13 +1613,12 @@ This is repeated 2 times (`-nc`).
 nohup python tpcds.py -ms 1 \
   -m -mc \
   -sf 100 \
-  -t 7200 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 2 -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 7200 -dt \
   -rst shared -rss 300Gi \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log &
 ```
@@ -1863,13 +1881,12 @@ We then run two power tests, one after the other, and then a throughput test wit
 nohup python tpcds.py -ms 1 \
   -m -mc \
   -sf 100 \
-  -t 7200 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1,1,3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 7200 -dt \
   -rst shared -rss 300Gi \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log &
 ```
