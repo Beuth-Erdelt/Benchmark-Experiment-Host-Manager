@@ -53,7 +53,7 @@ WORKDIR /tmp
 
 RUN mkdir -p /tmp/tpch
 
-#COPY ./loader-parallel.sh /tmp/loader.sh
+COPY ./loader-parallel.sh /tmp/loader-parallel.sh
 COPY ./loader.sh /tmp/loader.sh
 RUN ["chmod", "+x", "/tmp/loader.sh"]
 

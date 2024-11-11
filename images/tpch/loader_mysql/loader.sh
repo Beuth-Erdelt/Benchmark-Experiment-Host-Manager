@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Reference for tool
-# https://dev.mysql.com/doc/mysql-shell/8.3/en/mysql-shell-utilities-parallel-table.html
-# , 'bytesPerChunk': '50M' #  Util.import_table: The 'bytesPerChunk' option cannot be used when loading from multiple files.
-
-
 ######################## Start timing ########################
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
 echo "NOW: $DATEANDTIME"
@@ -73,49 +68,6 @@ bexhoma_start_epoch=$(date -u +%s)
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
-######################## Fix missing locale - in Dockerfile ########################
-#export LC_ALL="en_US.UTF-8"
-#export LANG="en_US.utf8"
-
-######################## Parallel loading (several scripts at once) only makes sense for more than 1 pod ########################
-if test $NUM_PODS -gt 1
-then
-    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
-else
-    MYSQL_LOADING_PARALLEL=0
-    echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
-fi
-
-######################## Only first loader pod should be active ########################
-# this holds for parallel loading, i.e. one client writes all files to host
-if test $MYSQL_LOADING_PARALLEL -gt 0
-then
-    if test $CHILD -gt 1
-    then
-        echo "Only first loader pod should be active"
-        bexhoma_end_epoch=$(date -u +%s)
-        SECONDS_END=$SECONDS
-        echo "End $SECONDS_END seconds"
-
-        DURATION=$((SECONDS_END-SECONDS_START))
-        echo "Duration $DURATION seconds"
-
-        ######################## Show timing information ###################
-        echo "Loading done"
-
-        DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
-        echo "NOW: $DATEANDTIME"
-
-        SECONDS_END_SCRIPT=$SECONDS
-        DURATION_SCRIPT=$((SECONDS_END_SCRIPT-SECONDS_START_SCRIPT))
-        echo "Duration $DURATION_SCRIPT seconds (script total)"
-        echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
-        echo "BEXHOMA_START:$bexhoma_start_epoch"
-        echo "BEXHOMA_END:$bexhoma_end_epoch"
-        exit 0
-    fi
-fi
-
 ######################## Execute loading ###################
 # shuffled
 #for i in `ls *tbl* | shuf`; do
@@ -135,51 +87,59 @@ for i in *tbl*; do
         echo "skipping $basename, import is limited to other table ($TPCH_TABLE)"
         continue
     fi
-    if test $MYSQL_LOADING_PARALLEL -gt 0
+    if [[ $basename == "nation" ]]
     then
-        # first pod: table nation or region will be imported olny one, others: we will import all parts at once
-        if [[ $basename == "nation" ]]
+        if test $CHILD -gt 1
         then
-            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
-            #if test $CHILD -gt 1
-            #then
-            #    continue
-            #fi
-        elif [[ $basename == "region" ]]
-        then
-            COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
-            #if test $CHILD -gt 1
-            #then
-            #    continue
-            #fi
-        else
-            COMMAND="util.import_table(["
-            for ((j=1;j<=$NUM_PODS;j++)); 
-            do 
-               #echo $j
-               file="'$destination_raw/../$j/$basename.tbl.$j',"
-               COMMAND=$COMMAND$file
-            done
-            COMMAND_END="], {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
-            COMMAND=${COMMAND::-1}$COMMAND_END
+            continue
         fi
-    else
-        # first pod or not table nation or region: we will import single part
-        if [[ $basename == "nation" ]]
+    fi
+    if [[ $basename == "region" ]]
+    then
+        if test $CHILD -gt 1
         then
-            if test $CHILD -gt 1
-            then
-                continue
-            fi
+            continue
         fi
-        if [[ $basename == "region" ]]
-        then
-            if test $CHILD -gt 1
-            then
-                continue
-            fi
-        fi
-        COMMAND="util.import_table('$destination_raw/$i', {'schema': 'tpch', 'table': '$basename', 'dialect': 'csv-unix', 'skipRows': 0, 'showProgress': True, 'fieldsTerminatedBy': '|', 'threads': $MYSQL_LOADING_THREADS})"
+    fi
+    if [[ $basename == "customer" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@c_custkey, @c_name, @c_address, @c_nationkey, @c_phone, @c_acctbal, @c_mktsegment, @c_comment) SET c_custkey=NULLIF(@c_custkey,''), c_name=NULLIF(@c_name,''), c_address=NULLIF(@c_address,''), c_nationkey=NULLIF(@c_nationkey,''), c_phone=NULLIF(@c_phone,''), c_acctbal=NULLIF(@c_acctbal,''), c_mktsegment=NULLIF(@c_mktsegment,''), c_comment=NULLIF(@c_comment,'')"
+    fi
+    if [[ $basename == "lineitem" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@l_orderkey, @l_partkey, @l_suppkey, @l_linenumber, @l_quantity, @l_extendedprice, @l_discount, @l_tax, @l_returnflag, @l_linestatus, @l_shipdate, @l_commitdate, @l_receiptdate, @l_shipinstruct, @l_shipmode, @l_comment) SET l_orderkey=NULLIF(@l_orderkey,''), l_partkey=NULLIF(@l_partkey,''), l_suppkey=NULLIF(@l_suppkey,''), l_linenumber=NULLIF(@l_linenumber,''), l_quantity=NULLIF(@l_quantity,''), l_extendedprice=NULLIF(@l_extendedprice,''), l_discount=NULLIF(@l_discount,''), l_tax=NULLIF(@l_tax,''), l_returnflag=NULLIF(@l_returnflag,''), l_linestatus=NULLIF(@l_linestatus,''), l_shipdate=NULLIF(@l_shipdate,''), l_commitdate=NULLIF(@l_commitdate,''), l_receiptdate=NULLIF(@l_receiptdate,''), l_shipinstruct=NULLIF(@l_shipinstruct,''), l_shipmode=NULLIF(@l_shipmode,''), l_comment=NULLIF(@l_comment,'')"
+    fi
+    if [[ $basename == "nation" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@n_nationkey, @n_name, @n_regionkey, @n_comment) SET n_nationkey=NULLIF(@n_nationkey,''), n_name=NULLIF(@n_name,''), n_regionkey=NULLIF(@n_regionkey,''), n_comment=NULLIF(@n_comment,'')"
+    fi
+    if [[ $basename == "orders" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@o_orderkey, @o_custkey, @o_orderstatus, @o_totalprice, @o_orderdate, @o_orderpriority, @o_clerk, @o_shippriority, @o_comment) SET o_orderkey=NULLIF(@o_orderkey,''), o_custkey=NULLIF(@o_custkey,''), o_orderstatus=NULLIF(@o_orderstatus,''), o_totalprice=NULLIF(@o_totalprice,''), o_orderdate=NULLIF(@o_orderdate,''), o_orderpriority=NULLIF(@o_orderpriority,''), o_clerk=NULLIF(@o_clerk,''), o_shippriority=NULLIF(@o_shippriority,''), o_comment=NULLIF(@o_comment,'')"
+    fi
+    if [[ $basename == "part" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@p_partkey, @p_name, @p_mfgr, @p_brand, @p_type, @p_size, @p_container, @p_retailprice, @p_comment) SET p_partkey=NULLIF(@p_partkey,''), p_name=NULLIF(@p_name,''), p_mfgr=NULLIF(@p_mfgr,''), p_brand=NULLIF(@p_brand,''), p_type=NULLIF(@p_type,''), p_size=NULLIF(@p_size,''), p_container=NULLIF(@p_container,''), p_retailprice=NULLIF(@p_retailprice,''), p_comment=NULLIF(@p_comment,'')"
+    fi
+    if [[ $basename == "partsupp" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@ps_partkey, @ps_suppkey, @ps_availqty, @ps_supplycost, @ps_comment) SET ps_partkey=NULLIF(@ps_partkey,''), ps_suppkey=NULLIF(@ps_suppkey,''), ps_availqty=NULLIF(@ps_availqty,''), ps_supplycost=NULLIF(@ps_supplycost,''), ps_comment=NULLIF(@ps_comment,'')"
+    fi
+    if [[ $basename == "region" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@r_regionkey, @r_name, @r_comment) SET r_regionkey=NULLIF(@r_regionkey,''), r_name=NULLIF(@r_name,''), r_comment=NULLIF(@r_comment,'')"
+    fi
+    if [[ $basename == "supplier" ]]
+    then
+        COMMAND="LOAD DATA $MYSQL_LOADING_FROM INFILE '$i' INTO TABLE tpch.$basename FIELDS TERMINATED BY '|'
+        (@s_suppkey, @s_name, @s_address, @s_nationkey, @s_phone, @s_acctbal, @s_comment) SET s_suppkey=NULLIF(@s_suppkey,''), s_name=NULLIF(@s_name,''), s_address=NULLIF(@s_address,''), s_nationkey=NULLIF(@s_nationkey,''), s_phone=NULLIF(@s_phone,''), s_acctbal=NULLIF(@s_acctbal,''), s_comment=NULLIF(@s_comment,'')"
     fi
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''"
     #COMMAND="COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''"
@@ -196,8 +156,7 @@ for i in *tbl*; do
         FAILED=2
         SECONDS_START=$SECONDS
         echo "=========="
-        #time mysqlsh --sql --password=root --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &>OUTPUT.txt
-        time mysqlsh --python --password=root --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
+        time mysqlsh --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS
         echo "End $SECONDS_END seconds"
@@ -210,7 +169,7 @@ for i in *tbl*; do
         echo "$OUTPUT"
         FAILED=0
         # everything worked well ("row" and "rows" string checked)
-        if [[ $OUTPUT == *"Total rows affected in tpch.$basename: Records: $lines"* ]]; then echo "Import ok"; FAILED=0; fi
+        if [[ $OUTPUT == *"$lines affected row"* ]]; then echo "Import ok"; FAILED=0; fi
         # rollback, we have to do it again (?)
         if [[ $OUTPUT == *"ROLLBACK"* ]]; then echo "ROLLBACK occured"; FAILED=1; fi
         # no thread left, we have to do it again (?)
