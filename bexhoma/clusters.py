@@ -36,6 +36,7 @@ import socket
 import ast
 import urllib.request
 import urllib.parse
+from pprint import pprint
 
 from dbmsbenchmarker import *
 
@@ -466,6 +467,26 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_pod_status(pod=pod, app=app)
+    def is_pod_ready(self, pod):
+        self.logger.debug('testbed.is_pod_ready()')
+        try:
+            api_response = self.v1core.read_namespaced_pod(name=pod, namespace=self.namespace) # not available, label_selector='app='+app)
+            #pprint(api_response)
+            # Find the "Ready" condition
+            #if len(api_response.status) > 0:
+            for condition in api_response.status.conditions:
+                if condition.type == "Ready":
+                    #print("We found", pod, "is healthy =", condition.status == "True")
+                    return condition.status == "True"
+            return False  # If there's no "Ready" condition
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->read_namespaced_pod for is_pod_ready: %s\n" % e)
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.is_pod_ready(pod=pod, app=app)
+            #print(f"Error fetching pod status: {e}")
+            #return False
     def get_pods_labels(self, app='', component='', experiment='', configuration=''):
         """
         Return all labels of pods matching a set of labels (component/ experiment/ configuration)

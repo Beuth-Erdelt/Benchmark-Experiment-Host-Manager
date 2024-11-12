@@ -496,6 +496,32 @@ class default():
             status = self.experiment.cluster.get_pod_status(pod_sut)
             if status == "Running":
                 return True
+                #ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                #if ready:
+                #    return True
+                #else:
+                #     print("{:30s}: is not healthy yet".format(self.configuration))
+        return False
+    def sut_is_healthy(self):
+        """
+        Returns True, iff system-under-test (dbms) is running and healthy.
+
+        :return: True, if dbms is running
+        """
+        app = self.appname
+        component = 'sut'
+        configuration = self.configuration
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.get_pod_status(pod_sut)
+            if status == "Running":
+                ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                if ready:
+                    return True
+                else:
+                    #print("{:30s}: is not healthy yet".format(self.configuration))
+                    return False
         return False
     def sut_is_existing(self):
         """

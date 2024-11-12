@@ -98,8 +98,15 @@ spec:
               #command: ["/bin/sh", "-c", "mysqladmin shutdown -uroot"]
         readinessProbe: #mysqladmin ping > /dev/null 2>&1 && echo "MySQL server is running." || echo "MySQL server is not running."
           exec:
+            command: [
+              "/bin/sh", 
+              "-c", 
+              "if mysqladmin ping | grep -q 'mysqld is alive'; then echo 'MySQL is up'; exit 0; else echo 'MySQL is down'; exit 1; fi"
+            ]
+            #command: ["/bin/sh", "-c", "if mysqladmin ping | grep -q 'mysqld is alive'; then exit 0; else exit 1; fi"]
+            #command: ["/bin/sh", "-c", "mysqladmin ping > /dev/null 2>&1"]
             #command: ["mysqladmin ping > /dev/null 2>&1"] # no such file or directory: unknown
-            command: ["/bin/sh", "-c", "if mysqladmin ping > /dev/null 2>&1; then exit 0; else exit 1; fi"]
+            #command: ["/bin/sh", "-c", "'if mysqladmin ping > /dev/null 2>&1; then exit 0; else exit 1; fi'"]
             #command: ["/bin/sh", "-c", "mysqladmin ping > /dev/null 2>&1"]
             #command:
             #- mysqladmin
@@ -107,6 +114,7 @@ spec:
             #- > /dev/null 2>&1
           initialDelaySeconds: 15
           periodSeconds: 60
+          successThreshold: 1
         ports:
         - {containerPort: 3306}
         resources:
