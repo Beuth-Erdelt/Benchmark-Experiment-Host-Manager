@@ -1,0 +1,316 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1731423217
+Experiment                    : starts at 2024-11-12 15:53:37.382932 (1108018.790066531)
+Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+TPC-DS (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q99.
+All instances use the same query parameters.
+Timeout per query is 1200.
+Import sets indexes and constraints after loading and recomputes statistics.
+Benchmark is limited to DBMS ['MySQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 30Gi.
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run 2 times.
+Cluster monitoring            : is running
+done
+MySQL-BHT-64                  : will start now
+MySQL-BHT-64                  : storage exists bexhoma-storage-mysql-tpcds-1
+MySQL-BHT-64                  : loading is set to finished
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : will start benchmarking but not before 2024-11-12 15:01:09 (that is in 60 secs)
+- waiting 30s -               : done
+MySQL-BHT-64                  : will start benchmarking but not before 2024-11-12 15:01:09
+done
+MySQL-BHT-64                  : benchmarks done 0 of 2. This will be client 1
+MySQL-BHT-64-1-1              : start benchmarking
+MySQL-BHT-64                  : benchmarking results in folder /home/perdelt/benchmarks/1731423217
+- waiting 10s -               : done
+MySQL-BHT-64                  : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-64-1731423217-1-1-gssnn: found
+done
+MySQL-BHT-64                  : has running benchmarks
+MySQL-BHT-64-1-1              : showing benchmarker times
+MySQL-BHT-64-1-1              : benchmarker timespan (start to end single container [s]) = 41
+MySQL-BHT-64-1-1              : benchmarker times (start/end per pod and container) = [(1731423678, 1731423693)]
+MySQL-BHT-64-1-1              : found and updated times {'benchmarker': [(1731423678, 1731423693)]}
+done
+MySQL-BHT-64                  : can be stopped
+MySQL-BHT-64                  : still being removed
+done
+MySQL-BHT-64                  : starts again
+MySQL-BHT-64                  : storage exists bexhoma-storage-mysql-tpcds-1
+MySQL-BHT-64                  : loading is set to finished
+- waiting 10s -               : done
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : will start benchmarking but not before 2024-11-12 15:09:40 (that is in 60 secs)
+- waiting 30s -               : done
+MySQL-BHT-64                  : will start benchmarking but not before 2024-11-12 15:09:40
+done
+MySQL-BHT-64                  : benchmarks done 1 of 2. This will be client 1
+MySQL-BHT-64-2-1              : start benchmarking
+MySQL-BHT-64                  : benchmarking results in folder /home/perdelt/benchmarks/1731423217
+- waiting 10s -               : done
+MySQL-BHT-64                  : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-64-1731423217-2-1-nwk9g: found
+done
+MySQL-BHT-64                  : has running benchmarks
+MySQL-BHT-64-2-1              : showing benchmarker times
+MySQL-BHT-64-2-1              : benchmarker timespan (start to end single container [s]) = 41
+MySQL-BHT-64-2-1              : benchmarker times (start/end per pod and container) = [(1731424189, 1731424206)]
+MySQL-BHT-64-2-1              : found and updated times {'benchmarker': [(1731424189, 1731424206)]}
+done
+MySQL-BHT-64                  : can be stopped
+Experiment                    : ends at 2024-11-12 16:10:59.526602 (1109060.933735737) - 1042.14s total
+Join results done!
+done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=1
+    Type: tpcds
+    Duration: 1043s 
+    Code: 1731423217
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Timeout per query is 1200.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['MySQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MySQL-BHT-64-1-1-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:352154400
+    datadisk:8487723
+    volume_size:30G
+    volume_used:8.1G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-BHT-64-2-1-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:352154316
+    datadisk:8487723
+    volume_size:30G
+    volume_used:8.1G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+            MySQL-BHT-64-1-1-1  MySQL-BHT-64-2-1-1
+TPC-DS Q44                True               False
+TPC-DS Q64                True               False
+TPC-DS Q75                True               False
+
+### Latency of Timer Execution [ms]
+DBMS           MySQL-BHT-64-1-1-1  MySQL-BHT-64-2-1-1
+TPC-DS Q1                  191.32              202.19
+TPC-DS Q2                   27.19               15.50
+TPC-DS Q3                   30.29               15.02
+TPC-DS Q4                   42.39               20.59
+TPC-DS Q5                   16.10               17.05
+TPC-DS Q6                   19.70               21.96
+TPC-DS Q7                   21.06               19.41
+TPC-DS Q8                    6.03                5.48
+TPC-DS Q9                   14.67                8.53
+TPC-DS Q10                   9.72                5.88
+TPC-DS Q11                  15.69               10.27
+TPC-DS Q12                   3.96                2.85
+TPC-DS Q13                  21.30               18.59
+TPC-DS Q14a+b               28.22               18.62
+TPC-DS Q15                   2.93                2.37
+TPC-DS Q16                   4.87                3.64
+TPC-DS Q17                   4.36                2.82
+TPC-DS Q18                   4.41                3.01
+TPC-DS Q19                   3.29                2.18
+TPC-DS Q20                   3.17                2.39
+TPC-DS Q21                  10.65                9.93
+TPC-DS Q22                   3.06                1.96
+TPC-DS Q23a+b               13.17               13.76
+TPC-DS Q24a+b               10.14                8.41
+TPC-DS Q25                   3.81                2.65
+TPC-DS Q26                   3.17                2.35
+TPC-DS Q27                   2.90                2.21
+TPC-DS Q28                   4.52                3.97
+TPC-DS Q29                   3.87                3.10
+TPC-DS Q30                   5.47                6.16
+TPC-DS Q31                   8.82                7.32
+TPC-DS Q32                   2.07                2.29
+TPC-DS Q33                   5.94                8.06
+TPC-DS Q34                   3.26                3.21
+TPC-DS Q35                   3.67                3.24
+TPC-DS Q36                   3.58                2.78
+TPC-DS Q37                   2.07                2.06
+TPC-DS Q38                   3.30                2.36
+TPC-DS Q39a+b                8.63                8.04
+TPC-DS Q40                   3.42                2.41
+TPC-DS Q41                   3.72                2.98
+TPC-DS Q42                   3.39                1.74
+TPC-DS Q43                   3.04                2.61
+TPC-DS Q44                   4.97                3.99
+TPC-DS Q45                   2.97                2.63
+TPC-DS Q46                   3.65                2.84
+TPC-DS Q47                   7.13                6.44
+TPC-DS Q48                   3.64                3.75
+TPC-DS Q49                   5.48                4.12
+TPC-DS Q50                   3.52                2.44
+TPC-DS Q51                   5.63                4.77
+TPC-DS Q52                   2.81                2.51
+TPC-DS Q53                   3.77                2.60
+TPC-DS Q54                   4.62                3.82
+TPC-DS Q55                   2.23                2.23
+TPC-DS Q56                   4.79                3.79
+TPC-DS Q57                   4.82                6.12
+TPC-DS Q58                   4.79                5.01
+TPC-DS Q59                   4.16                4.26
+TPC-DS Q60                   5.66                4.31
+TPC-DS Q61                   2.96                2.45
+TPC-DS Q62                   8.92                7.54
+TPC-DS Q63                   3.43                2.60
+TPC-DS Q64                  10.09                8.31
+TPC-DS Q65                   2.67                1.72
+TPC-DS Q66                  15.95               15.03
+TPC-DS Q67                   3.61                2.84
+TPC-DS Q68                   3.34                2.30
+TPC-DS Q69                   2.01                2.75
+TPC-DS Q70                   2.28                2.79
+TPC-DS Q71                   3.09                2.43
+TPC-DS Q72                   4.50                2.70
+TPC-DS Q73                   2.56                2.23
+TPC-DS Q74                   6.19                4.84
+TPC-DS Q75                   5.33                4.75
+TPC-DS Q76                   3.98                2.17
+TPC-DS Q77                   6.25                5.44
+TPC-DS Q78                   3.85                5.58
+TPC-DS Q79                   2.90                2.24
+TPC-DS Q80                   4.69                3.92
+TPC-DS Q81                   4.00                3.67
+TPC-DS Q82                   3.43                1.79
+TPC-DS Q83                   4.47                5.73
+TPC-DS Q84                   2.93                2.04
+TPC-DS Q85                   3.83                2.90
+TPC-DS Q86                   2.91                1.93
+TPC-DS Q87                   6.45                2.60
+TPC-DS Q88                   6.52                5.44
+TPC-DS Q89                   3.03                2.96
+TPC-DS Q90                   3.08                2.07
+TPC-DS Q91                   4.77                2.58
+TPC-DS Q92                   2.99                1.87
+TPC-DS Q93                   1.84                1.97
+TPC-DS Q94                   2.52                2.35
+TPC-DS Q95                   4.06                3.24
+TPC-DS Q96                   2.47                1.98
+TPC-DS Q97                   3.70                2.75
+TPC-DS Q98                   3.18                2.04
+TPC-DS Q99                   4.89                2.39
+
+### Loading [s]
+                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MySQL-BHT-64-1-1-1           1.0           20.0         9.0      149.0     185.0
+MySQL-BHT-64-2-1-1           1.0           20.0         9.0      149.0     185.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                    Geo Times [s]
+DBMS                             
+MySQL-BHT-64-1-1-1           0.01
+MySQL-BHT-64-2-1-1           0.00
+
+### Power@Size
+                    Power@Size [~Q/h]
+DBMS                                 
+MySQL-BHT-64-1-1-1          707283.96
+MySQL-BHT-64-2-1-1          883224.17
+
+### Throughput@Size
+                                               time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS             SF num_experiment num_client                                              
+MySQL-BHT-64-1-1 1  1              1                 15      1   1                  5280.00
+MySQL-BHT-64-2-1 1  2              1                 17      1   1                  4658.82
+
+### Workflow
+
+#### Actual
+DBMS MySQL-BHT-64 - Pods [[1], [1]]
+
+#### Planned
+DBMS MySQL-BHT-64 - Pods [[1], [1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST failed: SQL warnings (result mismatch)
+TEST passed: Workflow as planned
