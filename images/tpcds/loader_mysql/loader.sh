@@ -232,7 +232,7 @@ for i in *.dat; do
         FAILED=2
         SECONDS_START=$SECONDS
         echo "=========="
-        time mysqlsh --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
+        time mysqlsh --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS
         echo "End $SECONDS_END seconds"

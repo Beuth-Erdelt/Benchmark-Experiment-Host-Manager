@@ -31,6 +31,9 @@ SET GLOBAL sql_mode='';
 SET GLOBAL tmp_table_size = 1024 * 1024 * 1024;  -- 1 GB
 SET GLOBAL max_heap_table_size = 1024 * 1024 * 1024;  -- 1 GB
 
+set global local_infile=true;
+show global variables like 'local_infile';
+
 SHOW GLOBAL STATUS;
 
 SELECT @@innodb_buffer_pool_size/1024/1024/1024, @@innodb_buffer_pool_chunk_size/1024/1024/1024, @@innodb_buffer_pool_instances;
