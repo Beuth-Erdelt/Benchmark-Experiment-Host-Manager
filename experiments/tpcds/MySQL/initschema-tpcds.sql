@@ -10,7 +10,8 @@ GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
 -- allow load local in file
-SET GLOBAL local_infile = 1;
+SET GLOBAL local_infile=true;
+SHOW GLOBAL variables like 'local_infile';
 
 -- allow zero date
 SET sql_mode='';
@@ -28,12 +29,13 @@ SET GLOBAL sql_mode='';
 -- SET GLOBAL innodb_redo_log_capacity=1024*1024*1024;
 
 
+SHOW GLOBAL VARIABLES LIKE '%tmp_table_size%';
+SHOW GLOBAL VARIABLES LIKE '%max_heap_table_size%';
+
 SET GLOBAL tmp_table_size = 1024 * 1024 * 1024;  -- 1 GB
 SET GLOBAL max_heap_table_size = 1024 * 1024 * 1024;  -- 1 GB
 
-set global local_infile=true;
-show global variables like 'local_infile';
-
+SHOW GLOBAL VARIABLES;
 SHOW GLOBAL STATUS;
 
 SELECT @@innodb_buffer_pool_size/1024/1024/1024, @@innodb_buffer_pool_chunk_size/1024/1024/1024, @@innodb_buffer_pool_instances;

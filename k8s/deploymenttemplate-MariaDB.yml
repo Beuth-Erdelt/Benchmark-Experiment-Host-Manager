@@ -83,6 +83,10 @@ spec:
           "--innodb-doublewrite=0",
           ##"--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
           "--innodb_log_buffer_size=4294967295",        # MariaDB max value https://mariadb.com/kb/en/innodb-system-variables/#innodb_log_buffer_size
+          "--join_buffer_size=64MB",
+          "--sort_buffer_size=64MB",
+          "--optimizer_switch='mrr=on,mrr_cost_based=off'",
+          "--read_rnd_buffer_size=64MB",
         ]
         env:
           - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
