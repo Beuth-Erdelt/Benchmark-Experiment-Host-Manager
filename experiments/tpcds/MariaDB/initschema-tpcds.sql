@@ -11,7 +11,7 @@ SET SESSION optimizer_switch = 'mrr=on,mrr_cost_based=off';
 SET GLOBAL read_rnd_buffer_size = 128 * 1024 * 1024;  -- 128 MB
 SET SESSION read_rnd_buffer_size = 128 * 1024 * 1024;  -- 128 MB
 SET GLOBAL innodb_buffer_pool_size = 8 * 1024 * 1024 * 1024;  -- 8 GB
-SET SESSION innodb_buffer_pool_size = 8 * 1024 * 1024 * 1024;  -- 8 GB
+-- not possible: SET SESSION innodb_buffer_pool_size = 8 * 1024 * 1024 * 1024;  -- 8 GB
 
 SHOW VARIABLES LIKE 'join_buffer_size';
 SHOW VARIABLES LIKE 'sort_buffer_size';
