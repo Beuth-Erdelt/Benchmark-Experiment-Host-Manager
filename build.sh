@@ -15,7 +15,8 @@ python create_Dockerfiles.py
 #docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.2 &
 #docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.3 &
 #docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.4 &
-docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.5 &
+#docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.5 &
+docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.6 &
 cd ..
 
 cd benchmarker_dbmsbenchmarker
@@ -29,7 +30,8 @@ python create_Dockerfiles.py
 #docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.2 &
 #docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.3 &
 #docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.4 &
-docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.5 &
+#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.5 &
+docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.6 &
 cd ..
 
 ###########
