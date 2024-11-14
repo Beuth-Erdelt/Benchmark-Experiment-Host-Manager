@@ -14,13 +14,25 @@ RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.t
 RUN apt --fix-missing --fix-broken -y install
 RUN apt-get install --fix-missing -y libcurl4
 RUN apt-get install -y libssh-4
+
+RUN apt-get install -y lsb-release gnupg apt-transport-https
+
+### install mysqlsh
 RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.3-1debian12_amd64.deb
 RUN dpkg -i mysql-shell_8.4.3-1debian12_amd64.deb
+RUN apt-get install mysql-shell -y
+
 #RUN wget https://cdn.mysql.com//Downloads/MySQL-Shell/mysql-shell_8.0.36-1debian12_amd64.deb
 #RUN dpkg -i mysql-shell_8.0.36-1debian12_amd64.deb
 #RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.3.0-1debian12_amd64.deb
 #RUN dpkg -i mysql-shell_8.3.0-1debian12_amd64.deb
-RUN apt-get install mysql-shell -y
+
+### install mysql
+RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.33-1_all.deb
+RUN dpkg -i mysql-apt-config_0.8.33-1_all.deb || (echo "dpkg failed, checking logs..." && tail -n 10 /var/log/dpkg.log && apt-get install -y -f)
+RUN DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.33-1_all.deb  || apt-get install -y -f
+RUN apt-get update
+RUN apt-get install mysql-client -y
 RUN apt-get update
 
 RUN apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
