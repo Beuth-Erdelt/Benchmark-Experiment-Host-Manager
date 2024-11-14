@@ -74,11 +74,22 @@ spec:
         readinessProbe:
           exec:
             command:
-            - pg_isready
-            - -U
-            - postgres
+              - /bin/sh
+              - "-c"
+              - >
+                if pg_isready -h localhost -p 5432 > /dev/null; then
+                  recovery_status=$(psql -h localhost -p 5432 -U postgres -t -c "SELECT pg_is_in_recovery();" | xargs);
+                  [ "$recovery_status" = "f" ] && exit 0 || exit 1;
+                else
+                  exit 1;
+                fi
+            #command:
+            #- pg_isready
+            #- -U
+            #- postgres
           initialDelaySeconds: 15
           periodSeconds: 60
+          successThreshold: 3
         ports:
         - {containerPort: 5432}
         securityContext:

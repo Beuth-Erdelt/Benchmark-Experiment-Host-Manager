@@ -112,9 +112,10 @@ spec:
             #- mysqladmin
             #- ping
             #- > /dev/null 2>&1
-          initialDelaySeconds: 15
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
           periodSeconds: 60
-          successThreshold: 1
+          successThreshold: 3
         ports:
         - {containerPort: 3306}
         resources:
