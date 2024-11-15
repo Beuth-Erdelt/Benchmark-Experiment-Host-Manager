@@ -1,0 +1,236 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1729635171
+Experiment                    : starts at 2024-10-23 00:12:51.687293 (4371111.811270264)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['MySQL'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+done
+MySQL-1-1-1024                : will start now
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52 (that is in 300 secs)
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : will start loading but not before 2024-10-22 22:18:52
+done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : start asynch loading scripts of type loaded
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+done
+MySQL-1-1-1024                : showing loader times
+MySQL-1-1-1024                : loader timespan (first to last [s]) = 813
+MySQL-1-1-1024                : benchmarks done 0 of 1. This will be client 1
+MySQL-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mysql', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
+MySQL-1-1-1024-1              : start benchmarking
+MySQL-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1729635171
+- waiting 10s -               : done
+found
+MySQL-1-1-1024-1              : collecting loading metrics of SUT
+MySQL-1-1-1024-1              : collecting metrics of data generator
+MySQL-1-1-1024-1              : collecting metrics of data injector
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+done
+MySQL-1-1-1024                : has running benchmarks
+MySQL-1-1-1024-1              : showing benchmarker times
+MySQL-1-1-1024-1              : benchmarker timespan (start to end single container [s]) = 332
+MySQL-1-1-1024-1              : benchmarker times (start/end per pod and container) = [(1729636383, 1729636685)]
+MySQL-1-1-1024-1              : found and updated times {'benchmarker': [(1729636383, 1729636685)]}
+MySQL-1-1-1024-1              : collecting execution metrics of SUT
+MySQL-1-1-1024-1              : collecting metrics of benchmarker
+done
+MySQL-1-1-1024                : can be stopped
+Experiment ends at 2024-10-23 00:39:17.817171 (4372697.941150003): 1586.1298797391355s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Benchmarking                           connection  ... Latency Distribution.Average Latency (microseconds)
+connection_pod                        ...                                                    
+MySQL-1-1-1024-1-1  MySQL-1-1-1024-1  ...                                              112860
+
+[1 rows x 36 columns]
+Workflow {'MySQL-1-1-1024': [[1]]}
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1587s 
+    Code: 1729635171
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-1-1-1024-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:263905528
+    datadisk:11398876
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                  experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MySQL-1-1-1024-1               1         16    8192          1  300.0                        141.73                                                     375789.0                                             112860.0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MySQL-1-1-1024 - Pods [[1]]
+
+#### Planned
+DBMS MySQL-1-1-1024 - Pods [[1]]
+
+### Loading
+                  time_load  terminals  pods  Imported warehouses [1/h]
+MySQL-1-1-1024-1      813.0        1.0   1.0                  70.848708
+
+### Ingestion - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1     2093.31     2.93         37.43                37.47
+
+### Ingestion - Loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1     1362.99      3.6          1.34                 1.34
+
+### Execution - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1      631.27      2.3         23.43                27.33
+
+### Execution - Benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1      205.67     0.66          1.35                 1.35
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

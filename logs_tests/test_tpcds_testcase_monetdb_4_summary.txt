@@ -1,0 +1,186 @@
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=100
+    Type: tpcds
+    Duration: 6331s 
+    Code: 1728676629
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=100) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 300Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:162530732
+    volume_size:300G
+    volume_used:155G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS           MonetDB-BHT-8-1-1
+TPC-DS Q1               21540.10
+TPC-DS Q2              234536.17
+TPC-DS Q3               52161.56
+TPC-DS Q4              383862.53
+TPC-DS Q5              130445.75
+TPC-DS Q6               12467.55
+TPC-DS Q7               73421.64
+TPC-DS Q8               47626.63
+TPC-DS Q9               35999.02
+TPC-DS Q10              13875.78
+TPC-DS Q11              87521.23
+TPC-DS Q12               2813.57
+TPC-DS Q13               7253.94
+TPC-DS Q14a+b          410993.67
+TPC-DS Q15              11345.34
+TPC-DS Q16              20444.94
+TPC-DS Q17             112165.36
+TPC-DS Q18              24168.99
+TPC-DS Q19               5743.73
+TPC-DS Q20               1023.79
+TPC-DS Q21              91704.61
+TPC-DS Q22              86337.22
+TPC-DS Q23a+b         2736895.84
+TPC-DS Q24a+b            6107.79
+TPC-DS Q25              20943.89
+TPC-DS Q26               1762.98
+TPC-DS Q27              28616.77
+TPC-DS Q28              24479.10
+TPC-DS Q29              14225.98
+TPC-DS Q30               2905.96
+TPC-DS Q31              22703.53
+TPC-DS Q32                535.63
+TPC-DS Q33              14858.80
+TPC-DS Q34               2961.26
+TPC-DS Q35               7629.06
+TPC-DS Q37              34972.06
+TPC-DS Q38              29446.64
+TPC-DS Q39a+b           79446.39
+TPC-DS Q40               5005.79
+TPC-DS Q41                340.97
+TPC-DS Q42               2261.78
+TPC-DS Q43               2160.14
+TPC-DS Q44               3335.84
+TPC-DS Q45               1007.63
+TPC-DS Q46               2493.34
+TPC-DS Q47               5878.41
+TPC-DS Q48               1175.38
+TPC-DS Q49              38294.50
+TPC-DS Q50               3741.81
+TPC-DS Q51              50318.14
+TPC-DS Q52               1265.41
+TPC-DS Q53               2107.47
+TPC-DS Q54               7608.31
+TPC-DS Q55               2060.64
+TPC-DS Q56              12970.61
+TPC-DS Q57               2303.47
+TPC-DS Q58               5467.10
+TPC-DS Q59              11463.27
+TPC-DS Q60               3737.78
+TPC-DS Q61               4874.03
+TPC-DS Q62               3992.80
+TPC-DS Q63                950.49
+TPC-DS Q64              45759.04
+TPC-DS Q65              25361.62
+TPC-DS Q66              21174.82
+TPC-DS Q67             112971.25
+TPC-DS Q68               9680.79
+TPC-DS Q69               3257.94
+TPC-DS Q71               4878.81
+TPC-DS Q72              32102.01
+TPC-DS Q73                322.64
+TPC-DS Q74              24826.16
+TPC-DS Q75             187073.16
+TPC-DS Q76              14043.38
+TPC-DS Q77               8627.66
+TPC-DS Q78             191797.32
+TPC-DS Q79               5074.40
+TPC-DS Q80             117303.11
+TPC-DS Q81               2790.04
+TPC-DS Q82              28911.03
+TPC-DS Q83               1952.11
+TPC-DS Q84                879.36
+TPC-DS Q85               3602.37
+TPC-DS Q87              59126.34
+TPC-DS Q88               3332.16
+TPC-DS Q89               3645.28
+TPC-DS Q90               1185.67
+TPC-DS Q91               1299.77
+TPC-DS Q92               2001.95
+TPC-DS Q93              28101.76
+TPC-DS Q94               2069.09
+TPC-DS Q95              18037.05
+TPC-DS Q96                119.80
+TPC-DS Q97              42468.49
+TPC-DS Q98               3413.94
+TPC-DS Q99               1930.03
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1        4023.0         1362.0         6.0     2703.0    8096.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MonetDB-BHT-8-1-1          10.34
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MonetDB-BHT-8-1-1           35243.87
+
+### Throughput@Size
+                                               time [s]  count   SF  Throughput@Size [~GB/h]
+DBMS            SF  num_experiment num_client                                               
+MonetDB-BHT-8-1 100 1              1               6117      1  100                  1294.75
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1    20233.87     16.8        133.36               245.14
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1       42.02     0.06          0.39                  0.4
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

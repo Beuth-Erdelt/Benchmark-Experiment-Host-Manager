@@ -1,6 +1,9 @@
 FROM debian:stable-20240110-slim
 
-RUN apt-get -y update && apt-get dist-upgrade && apt-get clean all
+RUN apt-get clean
+RUN apt-get -y update 
+#RUN apt-get dist-upgrade
+RUN apt-get clean all
 
 RUN apt-get install -y build-essential
 RUN apt-get install -y wget
@@ -11,8 +14,10 @@ RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.t
 RUN apt --fix-missing --fix-broken -y install
 RUN apt-get install --fix-missing -y libcurl4
 RUN apt-get install -y libssh-4
-RUN wget https://cdn.mysql.com//Downloads/MySQL-Shell/mysql-shell_8.0.36-1debian12_amd64.deb
-RUN dpkg -i mysql-shell_8.0.36-1debian12_amd64.deb
+RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.3-1debian12_amd64.deb
+RUN dpkg -i mysql-shell_8.4.3-1debian12_amd64.deb
+#RUN wget https://cdn.mysql.com//Downloads/MySQL-Shell/mysql-shell_8.0.36-1debian12_amd64.deb
+#RUN dpkg -i mysql-shell_8.0.36-1debian12_amd64.deb
 #RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.3.0-1debian12_amd64.deb
 #RUN dpkg -i mysql-shell_8.3.0-1debian12_amd64.deb
 RUN apt-get install mysql-shell -y
@@ -48,7 +53,7 @@ WORKDIR /tmp
 
 RUN mkdir -p /tmp/tpch
 
-#COPY ./loader-parallel.sh /tmp/loader.sh
+COPY ./loader-parallel.sh /tmp/loader-parallel.sh
 COPY ./loader.sh /tmp/loader.sh
 RUN ["chmod", "+x", "/tmp/loader.sh"]
 

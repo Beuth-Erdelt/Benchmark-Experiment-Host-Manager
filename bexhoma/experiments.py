@@ -211,6 +211,7 @@ class default():
         request_node_name = args.request_node_name
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
+        skip_loading = args.skip_loading
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
@@ -295,6 +296,8 @@ class default():
                     'kubernetes.io/hostname': request_node_name
                 })        
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        if skip_loading:
+            self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
         self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
@@ -304,6 +307,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
+        if self.max_sut is not None:
+            self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
     def get_dashboard_pod(self,
                           pod_dashboard=''):
         """
@@ -1109,7 +1114,12 @@ class default():
                 config.check_load_data()
                 # start loading
                 if not config.loading_started:
+                    # check if SUT is healthy
                     if config.sut_is_running():
+                        if not config.sut_is_healthy():
+                            # we wait for health check
+                            print("{:30s}: waits for health check to succeed".format(config.configuration))
+                            continue
                         print("{:30s}: is not loaded yet".format(config.configuration))
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():
@@ -1213,6 +1223,10 @@ class default():
                                 if len(pods) > 0:
                                     pod_sut = pods[0]
                                     self.cluster.store_pod_log(pod_sut, 'dbms')
+                                component = 'worker'
+                                pods = self.cluster.get_pods(app, component, self.code, config.configuration)
+                                for pod_worker in pods:
+                                    self.cluster.store_pod_log(pod_worker, 'dbms')
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
@@ -1605,6 +1619,12 @@ class default():
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)                
         #evaluation = evaluators.base(code=code, path=resultfolder)
         #####################
         evaluate = inspector.inspector(resultfolder)
@@ -1621,11 +1641,24 @@ class default():
         df = evaluate.get_total_errors().T
         num_errors = df.sum().sum()
         if num_errors > 0:
+            df_errors = df.copy()
+            df_errors = df_errors[~(df_errors == False).all(axis=1)]
+            list_error_queries = list(df_errors.index)
             # set readable names
             df.index = df.index.map(map_index_to_queryname)
             # remove only False rows
             df = df[~(df == False).all(axis=1)]
             print(df)
+            for error in list_error_queries:
+                numQuery = error[1:]        # remove the leading "Q""
+                list_errors = evaluate.get_error(numQuery)
+                list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
+                #print(list_errors)
+                print(map_index_to_queryname(error))
+                #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
+                #print(df_error)
+                for k,v in list_errors.items():
+                    print("{}: {}".format(k,v))
         else:
             print("No errors")
         #####################
@@ -1735,6 +1768,14 @@ class default():
         self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
         self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
         self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        if num_errors == 0:
+            print("TEST passed: No SQL errors")
+        else:
+            print("TEST failed: SQL errors")
+        if num_warnings == 0:
+            print("TEST passed: No SQL warnings")
+        else:
+            print("TEST failed: SQL warnings (result mismatch)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.test_workflow(workflow_actual, workflow_planned):
@@ -1868,14 +1909,19 @@ class tpcds(default):
             SF = '100',
             num_experiment_to_apply = 1,
             timeout = 7200,
+            script=None
             #detached=False
             ):
         default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.SF = SF
+        if script is None:
+            script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpcds')
-        self.set_experiment(script='SF'+str(SF)+'-index')
+        #self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/tpcds')
-        self.set_queryfile(queryfile)
         parameter.defaultParameters = {'SF': str(SF)}
+        self.set_queryfile(queryfile)
+        self.set_additional_labels(SF=SF)
         self.set_workload(
             name = 'TPC-DS Queries SF='+str(SF),
             info = 'This experiment performs some TPC-DS inspired queries.',
@@ -1886,6 +1932,82 @@ class tpcds(default):
         self.set_queryfile('queries-tpcds.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpcds-profiling.config')
+    def prepare_testbed(self, parameter):
+        args = SimpleNamespace(**parameter)
+        self.args = args
+        self.args_dict = parameter
+        mode = str(parameter['mode'])
+        SF = str(self.SF)
+        # shuffle ordering and random parameters
+        recreate_parameter = args.recreate_parameter
+        shuffle_queries = args.shuffle_queries
+        # limit to one table
+        limit_import_table = args.limit_import_table
+         # indexes
+        init_indexes = args.init_indexes
+        init_constraints = args.init_constraints
+        init_statistics = args.init_statistics
+        # timeout of a benchmark
+        timeout = int(args.timeout)
+        if mode == 'run':
+            # we want all TPC-H queries
+            self.set_queries_full()
+            self.set_workload(
+                name = 'TPC-DS Queries SF='+str(SF),
+                info = 'This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
+        elif mode == 'empty':
+            # set benchmarking queries to dummy - SELECT 1
+            self.set_queryfile('queries-tpch-empty.config')
+            self.set_workload(
+                name = 'TPC-DS Data Dummy SF='+str(SF),
+                info = 'This experiment is for testing loading. It just runs a SELECT 1 query.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
+        else:
+            # we want to profile the import
+            self.set_queries_profiling()
+            self.set_workload(
+                name = 'TPC-DS Data Profiling SF='+str(SF),
+                info = 'This experiment compares imported TPC-DS data sets in different DBMS.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
+            # patch: use short profiling (only keys)
+            self.set_queryfile('queries-tpcds-profiling-keys.config')
+        # new loading in cluster
+        self.loading_active = True
+        self.use_distributed_datasource = True
+        self.workload['info'] = self.workload['info']+"\nTPC-DS (SF={}) data is loaded and benchmark is executed.".format(SF)
+        if shuffle_queries:
+            self.workload['info'] = self.workload['info']+"\nQuery ordering is as required by the TPC."
+        else:
+            self.workload['info'] = self.workload['info']+"\nQuery ordering is Q1 - Q99."
+        if recreate_parameter:
+            self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
+        else:
+            self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
+        # optionally set some indexes and constraints after import
+        self.set_experiment(script='Schema')
+        if init_indexes or init_constraints or init_statistics:
+            self.set_experiment(indexing='Index')
+            init_scripts = " Import sets indexes after loading."
+            if init_constraints:
+                self.set_experiment(indexing='Index_and_Constraints')
+                init_scripts = "\nImport sets indexes and constraints after loading."
+            if init_statistics:
+                self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
+                init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
+            self.workload['info'] = self.workload['info']+init_scripts
+        #self.set_experiment(script='Schema', indexing='Index')
+        if len(limit_import_table):
+            # import is limited to single table
+            self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
+        default.prepare_testbed(self, parameter)
 
 
 """
@@ -1918,7 +2040,7 @@ class tpch(default):
         if script is None:
             script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpch')
-        self.set_experiment(script=script)
+        #self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/tpch')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_additional_labels(SF=SF)
@@ -1948,6 +2070,8 @@ class tpch(default):
         init_indexes = args.init_indexes
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
+        # timeout of a benchmark
+        timeout = int(args.timeout)
         if mode == 'run':
             # we want all TPC-H queries
             self.set_queries_full()
@@ -1989,6 +2113,7 @@ class tpch(default):
             self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
         else:
             self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
         # optionally set some indexes and constraints after import
         self.set_experiment(script='Schema')
         if init_indexes or init_constraints or init_statistics:
@@ -2186,6 +2311,12 @@ class tpcc(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)                
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
@@ -2634,6 +2765,12 @@ class ycsb(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)                
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
@@ -2939,6 +3076,12 @@ class benchbase(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for i, worker in enumerate(c['worker']):
+                    print("    worker {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)                
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)

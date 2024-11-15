@@ -1,0 +1,99 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 3861s 
+    Code: 1729907151
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['MySQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-BHT-8-1-1-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:265596368
+    datadisk:11375116
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 MySQL-BHT-8-1-1-1
+Pricing Summary Report (TPC-H Q1)                             29247.40
+Minimum Cost Supplier Query (TPC-H Q2)                          368.14
+Shipping Priority (TPC-H Q3)                                   4457.74
+Order Priority Checking Query (TPC-H Q4)                       1581.28
+Local Supplier Volume (TPC-H Q5)                               3714.25
+Forecasting Revenue Change (TPC-H Q6)                          3972.60
+Forecasting Revenue Change (TPC-H Q7)                          6102.93
+National Market Share (TPC-H Q8)                               9495.63
+Product Type Profit Measure (TPC-H Q9)                         7106.28
+Forecasting Revenue Change (TPC-H Q10)                         3135.35
+Important Stock Identification (TPC-H Q11)                      502.76
+Shipping Modes and Order Priority (TPC-H Q12)                  7028.86
+Customer Distribution (TPC-H Q13)                             13126.12
+Forecasting Revenue Change (TPC-H Q14)                         5047.49
+Top Supplier Query (TPC-H Q15)                                44024.37
+Parts/Supplier Relationship (TPC-H Q16)                         909.18
+Small-Quantity-Order Revenue (TPC-H Q17)                       1247.41
+Large Volume Customer (TPC-H Q18)                              6186.88
+Discounted Revenue (TPC-H Q19)                                  428.11
+Potential Part Promotion (TPC-H Q20)                            815.93
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           18969.87
+Global Sales Opportunity Query (TPC-H Q22)                      476.89
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MySQL-BHT-8-1-1-1          19.0          340.0         3.0     2256.0    2627.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MySQL-BHT-8-1-1-1           3.46
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MySQL-BHT-8-1-1-1            1078.22
+
+### Throughput@Size
+                                              time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS            SF num_experiment num_client                                              
+MySQL-BHT-8-1-1 1  1              1                172      1   1                   460.47
+
+### Workflow
+
+#### Actual
+DBMS MySQL-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MySQL-BHT-8-1 - Pods [[1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST failed: Workflow not as planned

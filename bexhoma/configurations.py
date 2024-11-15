@@ -140,6 +140,7 @@ class default():
         self.prometheus_timeout = experiment.prometheus_timeout
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
+        self.loading_deactivated = False # Do not load at all and do not test for loading
         self.monitor_loading = True #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
@@ -162,7 +163,8 @@ class default():
         self.timeLoadingEnd = 0
         self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
-        self.servicename_sut = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
+        self.sut_service_name = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
+        self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
     def reset_sut(self):
@@ -494,6 +496,32 @@ class default():
             status = self.experiment.cluster.get_pod_status(pod_sut)
             if status == "Running":
                 return True
+                #ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                #if ready:
+                #    return True
+                #else:
+                #     print("{:30s}: is not healthy yet".format(self.configuration))
+        return False
+    def sut_is_healthy(self):
+        """
+        Returns True, iff system-under-test (dbms) is running and healthy.
+
+        :return: True, if dbms is running
+        """
+        app = self.appname
+        component = 'sut'
+        configuration = self.configuration
+        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        if len(pods) > 0:
+            pod_sut = pods[0]
+            status = self.experiment.cluster.get_pod_status(pod_sut)
+            if status == "Running":
+                ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                if ready:
+                    return True
+                else:
+                    #print("{:30s}: is not healthy yet".format(self.configuration))
+                    return False
         return False
     def sut_is_existing(self):
         """
@@ -1198,6 +1226,7 @@ scrape_configs:
                 dep['metadata']['labels']['volume'] = self.volume
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
+                dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     self.logger.debug('configuration.add_env({})'.format(env))
@@ -1448,6 +1477,9 @@ scrape_configs:
         stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
             self.experiment.cluster.delete_stateful_set(stateful_set)
+        jobs = self.experiment.cluster.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration)
+        for job in jobs:
+            self.experiment.cluster.delete_job(job)
         services = self.experiment.cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             self.experiment.cluster.delete_service(service)
@@ -1747,10 +1779,7 @@ scrape_configs:
         return 0
     def check_volumes(self):
         """
-        Calls all `get_host_x()` methods.
-        Returns information about the sut's host as a dict.
-
-        :return: Dict of informations about the host
+        Tests for mounted volume in SUT container and writes size and used info as label to pvc.
         """
         # add volume labels to PV
         app = self.appname
@@ -1760,18 +1789,27 @@ scrape_configs:
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
             else:
                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            # for worker pods: bexhoma-workers-
             volume = name_pvc
+            volume_worker = "bexhoma-workers-{}".format(self.pod_sut)
         else:
             volume = ''
         if volume:
             size, used = self.get_host_volume()
+            # write infos to SUT's PVC (if exists)
             fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
             #print(fullcommand)
             self.experiment.cluster.kubectl(fullcommand)
+            ## write infos to worker's PVC (if exists)
+            ## TODO: check if exists, test if it writes per worker size infos
+            #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
+            ##print(fullcommand)
+            #self.experiment.cluster.kubectl(fullcommand)
     def get_host_all(self):
         """
         Calls all `get_host_x()` methods.
         Returns information about the sut's host as a dict.
+        This requires self.pod_sut to carry the name of the SUTs pod.
 
         :return: Dict of informations about the host
         """
@@ -1790,12 +1828,14 @@ scrape_configs:
         server['volume_used'] = used
         server['cuda'] = self.get_host_cuda()
         return server
-    def set_metric_of_config(self, metric, host, gpuid):
+    def set_metric_of_config_default(self, metric, host, gpuid):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
         Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
         configuration and experiment are placeholders and will be replaced by concrete values.
+        This method contains the default behaviour for all components managed by bexhoma.
+        For specific behaviour of other components not managed by bexhoma (e.g., a cloud dbms), overwrite set_metric_of_config().
 
         :param metric: Parametrized promql query
         :param host: Name of the host the metrics should be collected from
@@ -1803,6 +1843,21 @@ scrape_configs:
         :return: promql query without parameters
         """
         return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+    def set_metric_of_config(self, metric, host, gpuid):
+        """
+        Returns a promql query.
+        Parameters in this query are substituted, so that prometheus finds the correct metric.
+        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
+        configuration and experiment are placeholders and will be replaced by concrete values.
+        For specific behaviour of other components not managed by bexhoma (e.g., a cloud dbms), overwrite this method.
+        The method set_metric_of_config_default() contains the default behaviour for all components managed by bexhoma.
+
+        :param metric: Parametrized promql query
+        :param host: Name of the host the metrics should be collected from
+        :param gpuid: GPU that the metrics should watch
+        :return: promql query without parameters
+        """
+        return self.set_metric_of_config_default(metric, host, gpuid)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.
@@ -1841,7 +1896,7 @@ scrape_configs:
         c['hostsystem'] = self.get_host_all()
         # get worker information
         c['worker'] = []
-        pods = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         for pod in pods:
             self.pod_sut = pod
             c['worker'].append(self.get_host_all())
@@ -1883,7 +1938,8 @@ scrape_configs:
             if 'service_monitoring' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
             #c['monitoring']['grafanaextend'] = 1
-            c['monitoring']['metrics'] = {}
+            c['monitoring']['metrics'] = {}             # default components (managed by bexhoma)
+            c['monitoring']['metrics_special'] = {}     # other components (not managed by bexhoma)
             if 'metrics' in config_K8s['monitor']:
                 # instance="bexhoma-sut-mysql-1615839517:9300"
                 # instance=~"bexhoma-sut-mysql-1615839517.*"
@@ -1892,10 +1948,15 @@ scrape_configs:
                 else:
                     gpuid = ""
                 node = c['hostsystem']['node']
+                # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                    # default components (managed by bexhoma)
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
+                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
+                    # other components (not managed by bexhoma)
+                    c['monitoring']['metrics_special'][metricname] = metricdata.copy()
+                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
         c['JDBC']['url'] = c['JDBC']['url'].format(
             serverip=serverip,
             dbname=self.experiment.volume,
@@ -2145,7 +2206,8 @@ scrape_configs:
                 cmd = {}
                 print("{:30s}: collecting loading metrics of SUT".format(connection))
                 #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                    self.sut_container_name,
                     connection, 
                     c['name']+'.config', 
                     '/results/'+self.code, 
@@ -2272,14 +2334,14 @@ scrape_configs:
                 while num_worker < self.num_worker:
                     self.wait(5)
                     num_worker = 0
-                    pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                    pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                     for pod in pods_worker:
                         #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                         status = self.experiment.cluster.get_pod_status(pod)
                         if status == "Running":
                             num_worker = num_worker+1
                     print(self.configuration, "Workers", num_worker, "of", self.num_worker)
-                pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
@@ -2301,6 +2363,12 @@ scrape_configs:
         If there is a loading job: check if all pods are completed. Copy the logs of the containers in the pods and remove the pods. 
         If there is no loading job: Read the labels. If loaded is True, store the timings in this object as attributes.
         """
+        if self.loading_deactivated:
+            self.loading_started = True
+            self.loading_finished = True
+            self.loading_active = False
+            self.monitor_loading = False
+            return
         loading_pods_active = True
         # check if asynch loading inside cluster is done
         if self.loading_active:
@@ -2643,8 +2711,8 @@ scrape_configs:
         """
         app = self.appname
         experiment = str(int(self.code))
-        if len(self.servicename_sut) > 0:
-            servicename = self.servicename_sut
+        if len(self.sut_service_name) > 0:
+            servicename = self.sut_service_name
         else:
             servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
         return servicename
@@ -2934,6 +3002,12 @@ scrape_configs:
             template = self.jobtemplate_loading
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
     def get_worker_pods(self):
+        """
+        Returns a list of all pod names of workers for the current SUT.
+        Default is component name is 'worker' for a bexhoma managed DBMS.
+
+        :return: list of endpoints
+        """
         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         return pods_worker
     def get_worker_endpoints(self):

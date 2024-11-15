@@ -1,3 +1,18 @@
+ALTER SYSTEM SET enable_nestloop = 'off';
+ALTER SYSTEM SET parallel_tuple_cost = '0.05';
+ALTER SYSTEM SET parallel_setup_cost = '500';
+
+RESET enable_nestloop;
+RESET parallel_tuple_cost;
+RESET parallel_setup_cost;
+
+SELECT pg_reload_conf();
+
+SHOW enable_nestloop;
+SHOW parallel_tuple_cost;
+SHOW parallel_setup_cost;
+
+
 create table public.dbgen_version
 (
     dv_version                varchar(16)                   ,

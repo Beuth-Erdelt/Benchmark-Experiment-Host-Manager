@@ -60,7 +60,7 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
   This installs PostgreSQL and runs YCSB workload A with varying target. The driver is monolithic with 64 threads. The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
-  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+  For further inspecting, you can use a Python interface.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
 
@@ -70,7 +70,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
   This installs PostgreSQL and runs HammerDB's TPC-C with 16 warehouses. The driver is monolithic with 16 threads. The experiments runs a second time with the driver scaled out to 2 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
-  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+  For further inspecting, you can use a Python interface.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.html
 
@@ -80,7 +80,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.ht
   This installs PostgreSQL and runs Benchbase's TPC-C with 16 warehouses. The driver is monolithic with 16 threads. The experiments runs a second time with the driver scaled out to 2 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
-  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open dashboard in browser at `http://localhost:8050`. Alternatively you can open a Jupyter notebook at `http://localhost:8888`.
+  For further inspecting, you can use a Python interface.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.html
 
@@ -90,9 +90,19 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.ht
   This installs PostgreSQL and runs TPC-H at scale factor 1. The driver is monolithic.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
-  For further inspections, run `bexperiments dashboard` to connect to a dashboard. You can open a Jupyter notebook at `http://localhost:8888`.
+  For further inspecting, you can use a Python interface.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html
+
+### TPC-DS
+
+1. Run `python tpcds.py -ms 1 -dbms PostgreSQL run`.  
+  This installs PostgreSQL and runs TPC-DS at scale factor 1. The driver is monolithic.
+1. You can watch status using `bexperiments status` while running.
+1. After benchmarking has finished, you will see a summary.  
+  For further inspecting, you can use a dashboard or a Python interface.
+
+See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-DS.html
 
 
 
@@ -146,5 +156,8 @@ If you use Bexhoma in work contributing to a scientific publication, we kindly a
 > https://doi.org/10.21105/joss.04628
 
 [4] [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](https://doi.org/10.1007/978-3-031-68031-1_9)
-> Erdelt P.K. (2024)
+> Erdelt, P.K. (2024).
+> A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools.
+> In: Nambiar, R., Poess, M. (eds) Performance Evaluation and Benchmarking. TPCTC 2023.
+> Lecture Notes in Computer Science, vol 14247. Springer, Cham.
 > https://doi.org/10.1007/978-3-031-68031-1_9

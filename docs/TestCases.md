@@ -1,19 +1,29 @@
 # Test Cases
 
-There is a variety of combination of options to be tested.
+There is a variety of combinations of options that can be tested.
 
 We here list some more basic use cases to test the functionality of bexhoma.
 
 See [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test.sh) for implementations.
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
-```
+
+```bash
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 ```
+
+See also [more test cases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test-more.sh) for more and longer running test cases and other DBMS.
+
+See the [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) for some demo test logs.
+The folder also contains `*_summary.txt` files containing only the result summary.
 
 
 ## TPC-H
+
 
 ### TPC-H Simple
 
@@ -29,7 +39,7 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -151,7 +161,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -294,7 +304,7 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -531,7 +541,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -616,7 +626,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -711,7 +721,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -810,7 +820,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_4.log &
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
 ```
 
 yields (after ca. 30 minutes) something like
@@ -1027,7 +1037,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 10 minutes)
@@ -1104,7 +1114,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 15 minutes)
@@ -1205,7 +1215,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
     -m -mc \
     -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 60 minutes)
@@ -1426,7 +1436,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_1.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1547,7 +1557,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_2.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log &
 ```
 
 yields (after ca. 10 minutes) something like
@@ -1643,7 +1653,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_3.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log &
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1812,7 +1822,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_4.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log &
 ```
 
 yields (after ca. 5 minutes) something like
@@ -1976,120 +1986,3 @@ TEST passed: Workflow as planned
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Preinstalled YugabyteDB
-
-### YCSB Execution
-
-`python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms YugabyteDB -wl a run`
-
-* 1 million rows and operations
-* workload A
-* 64 loader threads, split into 8 parallel pods
-* 64 execution threads, split into 8 parallel pods
-* target is 16384 ops
-
-yields (after ca. 10 minutes) something like
-
-```
-## Show Summary
-
-### Workload
-    YCSB SF=1
-    This includes no queries. YCSB runs the benchmark
-    This experiment compares run time and resource consumption of YCSB queries. YCSB is performed using several threads and processes. Benchmark is limited to DBMS ['YugabyteDB']. YCSB data is loaded using several processes. Benchmark is limited to DBMS YugabyteDB.
-
-### Connections
-YugabyteDB-64-8-16384-1 uses docker image postgres:15.0
-    RAM:540695855104
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
-    host:5.4.0-72-generic
-    node:cl-worker25
-    disk:938296156
-    datadisk:39268
-    requests_cpu:4
-    requests_memory:16Gi
-
-### Loading
-                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-YugabyteDB-64-8-16384               1       64   16384          8                   11738.352404                 8986.0              100000                             71511.0
-
-### Execution
-                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-16384-1               1       64   16384          8                       15604.18                64635.0            499732                           68327.0              500268                             69399.0
-```
-
-### YCSB Execution Monitoring
-
-`python ycsb.py -ltf 1 -nlp 8 -su 64 -sf 1 -dbms YugabyteDB -wl a -m -mc run`
-
-* 1 million rows and operations
-* workload A
-* 64 loader threads, split into 8 parallel pods
-* 64 execution threads, split into 8 parallel pods
-* target is 16384 ops
-* monitoring of all components activated
-
-yields (after ca. 10 minutes) something like
-
-```
-## Show Summary
-
-### Workload
-    YCSB SF=1
-    This includes no queries. YCSB runs the benchmark
-    This experiment compares run time and resource consumption of YCSB queries. YCSB is performed using several threads and processes. Benchmark is limited to DBMS ['YugabyteDB']. YCSB data is loaded using several processes. Benchmark is limited to DBMS YugabyteDB.
-
-### Connections
-YugabyteDB-64-8-16384-1 uses docker image postgres:15.0
-    RAM:540695855104
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
-    host:5.4.0-72-generic
-    node:cl-worker25
-    disk:938298856
-    datadisk:39428
-    requests_cpu:4
-    requests_memory:16Gi
-
-### Loading
-                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-YugabyteDB-64-8-16384               1       64   16384          8                    12924.07433                 8054.0              100000                             70599.0
-
-### Execution
-                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-16384-1               1       64   16384          8                       15514.99                65317.0            500826                           68119.0              499174                             69303.0
-
-### Ingestion - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-16384-1        0.07      0.0          0.05                 0.08
-
-### Ingestion - Loader
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-16384-1        0.13        0          0.01                 0.01
-
-### Execution - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-16384-1        0.02      0.0          0.05                 0.08
-
-### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-16384-1       65.64        0          1.18                 1.21
-```

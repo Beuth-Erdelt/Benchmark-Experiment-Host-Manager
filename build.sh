@@ -13,7 +13,10 @@ python create_Dockerfiles.py
 #docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.0 &
 #docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.1 &
 #docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.2 &
-docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.3 &
+#docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.3 &
+#docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.4 &
+#docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.5 &
+docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.6 &
 cd ..
 
 cd benchmarker_dbmsbenchmarker
@@ -25,8 +28,40 @@ python create_Dockerfiles.py
 #docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.0 &
 #docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.1 &
 #docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.2 &
-docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.3 &
+#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.3 &
+#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.4 &
+#docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.5 &
+docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.6 &
 cd ..
+
+###########
+cd tpcds
+cd generator
+docker build -f Dockerfile -t bexhoma/generator_tpcds:latest .
+docker push bexhoma/generator_tpcds:latest &
+cd ..
+
+cd loader_postgresql
+docker build -f Dockerfile -t bexhoma/loader_tpcds_postgresql:latest .
+docker push bexhoma/loader_tpcds_postgresql:latest &
+cd ..
+
+cd loader_mysql
+docker build -f Dockerfile -t bexhoma/loader_tpcds_mysql:latest .
+docker push bexhoma/loader_tpcds_mysql:latest &
+cd ..
+
+cd loader_mariadb
+docker build -f Dockerfile -t bexhoma/loader_tpcds_mariadb:latest .
+docker push bexhoma/loader_tpcds_mariadb:latest &
+cd ..
+
+cd loader_monetdb
+docker build -f Dockerfile -t bexhoma/loader_tpcds_monetdb:latest .
+docker push bexhoma/loader_tpcds_monetdb:latest &
+cd ..
+cd ..
+
 
 ###########
 cd tpch

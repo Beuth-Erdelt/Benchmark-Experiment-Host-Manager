@@ -33,14 +33,15 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dashboard
-        image: bexhoma/evaluator_dbmsbenchmarker:v0.14.3
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.14.6
+        #image: bexhoma/evaluator_dbmsbenchmarker:dev
         imagePullPolicy: IfNotPresent
         #imagePullPolicy: Always
         env:
         - {name: MPLCONFIGDIR, value: '/tmp/'} # matplotlib
         ports:
         - containerPort: 8050 # Web
-        - containerPort: 8888 # Jupyter
+        #- containerPort: 8888 # Jupyter
         resources:
           requests: {cpu: 1000m, memory: 1Gi}
           limits: {cpu: 16000m, memory: 128Gi}
@@ -59,7 +60,8 @@ spec:
         - name: benchmark-data-volume
           mountPath: /data
       - name: jupyter
-        image: bexhoma/evaluator_dbmsbenchmarker:v0.14.3
+        image: bexhoma/evaluator_dbmsbenchmarker:v0.14.6
+        #image: bexhoma/evaluator_dbmsbenchmarker:dev
         imagePullPolicy: IfNotPresent
         env:
         - {name: MPLCONFIGDIR, value: '/tmp/'}
@@ -67,7 +69,7 @@ spec:
         #command: ["jupyter","notebook","--no-browser", "--NotebookApp.password=\"$(echo 'admin' | python -c 'from notebook.auth import passwd;print(passwd(input()))')\"", "--allow-root"]
         command: ["jupyter","notebook","--notebook-dir", "/usr/src/app/DBMS-Benchmarker/notebooks", "--no-browser", "--NotebookApp.ip='0.0.0.0'", "--NotebookApp.allow_origin='*'", "--NotebookApp.password=\"argon2:$argon2id$v=19$m=10240,t=10,p=8$s7W4uEDFJby2YDWK2UiS1Q$sGz9qoU/LRoUtzGkbQCcLQ\"", "--allow-root"]
         ports:
-        - containerPort: 8050 # Web
+        #- containerPort: 8050 # Web
         - containerPort: 8888 # Jupyter
         resources:
           requests: {cpu: 1000m, memory: 1Gi}

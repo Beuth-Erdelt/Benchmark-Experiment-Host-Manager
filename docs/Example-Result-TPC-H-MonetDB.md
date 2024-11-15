@@ -1,4 +1,4 @@
-# Example Result: MonetDB running TPC-H at SF=100
+# Example: MonetDB TPC-H@100
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -29,11 +29,12 @@ Monitoring is activated (`-m`) for all components (`-mc`).
 The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
 
 ```bash
-mkdir -p ./logs_tests/
-
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 
 nohup python tpch.py -ms 1 \
   -m -mc \
@@ -45,10 +46,10 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs_tests/test_tpch_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_1.log &
 ```
 
-### Status Data Disk
+## Status Data Disk
 
 You can watch the status of the data disk via `bexperiments data`.
 
@@ -69,9 +70,9 @@ In total the data set has a size of 106G.
 106G    /data/tpch/SF100
 ```
 
-### Status Database and Benchmark
+## Status Database and Benchmark
 
-You can watch the status of experiments via `bexperiments status`
+You can watch the status of experiments via `bexperiments status`.
 
 In the following example output we see all components of bexhoma are up and running.
 The cluster stores a MonetDB database corresponding to TPC-H of SF=100.
@@ -92,7 +93,7 @@ Cluster Prometheus: Running
 +------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 ```
 
-### Summary of Results
+## Summary of Results
 
 At the end of a benchmark you will see a summary like
 
@@ -213,7 +214,7 @@ TEST passed: Workflow as planned
 
 To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
 
-### Status Data Disk
+## List local results
 
 You can inspect a preview list of results via `bexperiments localresults`.
 
@@ -234,7 +235,7 @@ You can inspect a preview list of results via `bexperiments localresults`.
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
-This is repeated 3 times (`-nc`).
+This is repeated 2 times (`-nc`).
 
 
 ```bash
@@ -249,12 +250,12 @@ nohup python tpch.py -ms 1 \
   -sf 100 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
-  -nc 3 -ne 1,1 \
+  -nc 2 -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs_tests/test_tpch_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_2.log &
 ```
 
 yields
@@ -433,8 +434,7 @@ TEST passed: Workflow as planned
 ## Perform Benchmark - Throughput Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other, and then a throughput test with 5 parallel driver (`-ne 1,1,5`). and shut down the DBMS.
-This is repeated 3 times (`-nc`).
+We then run two power tests, one after the other, and then a throughput test with 3 parallel driver (`-ne 1,1,3`). and shut down the DBMS.
 
 
 ```bash
@@ -449,12 +449,12 @@ nohup python tpch.py -ms 1 \
   -sf 100 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
-  -nc 3 -ne 1,1,5 \
+  -nc 1 -ne 1,1,3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>logs_tests/test_tpch_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_3.log &
 ```
 
 yields something like

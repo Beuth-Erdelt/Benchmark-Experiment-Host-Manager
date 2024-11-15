@@ -1,0 +1,78 @@
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 1759s 
+    Code: 1729852730
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MariaDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [8] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218492
+    datadisk:1680428
+    volume_size:30G
+    volume_used:1.6G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                   experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1  10432.0  24265.0         5       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-BHT-8-1 - Pods [[1]]
+
+#### Planned
+DBMS MariaDB-BHT-8-1 - Pods [[1]]
+
+### Loading
+                   time_load  terminals  pods  Imported warehouses [1/h]
+MariaDB-BHT-8-1-1      250.0        1.0   1.0                      230.4
+
+### Ingestion - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1      306.54     2.06          2.57                  2.6
+
+### Ingestion - Loader
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1      437.68     2.06          0.09                 0.09
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1      725.75     2.44          2.82                 2.85
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1       61.18     0.15          0.06                 0.06
+
+### Tests
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

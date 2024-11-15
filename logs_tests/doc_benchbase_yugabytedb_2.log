@@ -1,0 +1,1241 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1730226312
+Experiment                    : starts at 2024-10-29 19:25:12.301464 (4962252.425445554)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+Benchmark is limited to DBMS ['YugabyteDB'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+done
+YugabyteDB-1-1-1024           : will start now
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is not loaded yet
+YugabyteDB-1-1-1024           : will start loading but not before 2024-10-29 18:27:12 (that is in 60 secs)
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is not loaded yet
+YugabyteDB-1-1-1024           : will start loading but not before 2024-10-29 18:27:12
+done
+YugabyteDB-1-1-1024           : is not loaded yet
+YugabyteDB-1-1-1024           : start asynch loading scripts of type loaded
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : is loading
+done
+YugabyteDB-1-1-1024           : showing loader times
+YugabyteDB-1-1-1024           : loader timespan (first to last [s]) = 1151
+YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 1
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 64, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_PORT': 5433}
+YugabyteDB-1-1-1024-1         : start benchmarking
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1730226312
+- waiting 10s -               : done
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1730226312-1-1-dk9sr: found
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+YugabyteDB-1-1-1024-1         : showing benchmarker times
+YugabyteDB-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 3621
+YugabyteDB-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1730227613, 1730231226)]
+YugabyteDB-1-1-1024-1         : found and updated times {'benchmarker': [(1730227613, 1730231226)]}
+done
+YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 2
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 32, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_PORT': 5433}
+YugabyteDB-1-1-1024-2         : start benchmarking
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1730226312
+- waiting 10s -               : done
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1730226312-1-2-7h7d6: found
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+YugabyteDB-1-1-1024-2         : showing benchmarker times
+YugabyteDB-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 3623
+YugabyteDB-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1730231269, 1730234878), (1730231269, 1730234880)]
+YugabyteDB-1-1-1024-2         : found and updated times {'benchmarker': [(1730231269, 1730234878), (1730231269, 1730234880)]}
+done
+YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 3
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '4', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_PORT': 5433}
+YugabyteDB-1-1-1024-3         : start benchmarking
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1730226312
+- waiting 10s -               : done
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1730226312-1-3-5j5rn: found
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+YugabyteDB-1-1-1024-3         : showing benchmarker times
+YugabyteDB-1-1-1024-3         : benchmarker timespan (start to end single container [s]) = 3628
+YugabyteDB-1-1-1024-3         : benchmarker times (start/end per pod and container) = [(1730234929, 1730238537), (1730234928, 1730238536), (1730234929, 1730238537), (1730234929, 1730238538)]
+YugabyteDB-1-1-1024-3         : found and updated times {'benchmarker': [(1730234929, 1730238537), (1730234928, 1730238536), (1730234929, 1730238537), (1730234929, 1730238538)]}
+done
+YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 4
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 2048, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_PORT': 5433}
+YugabyteDB-1-1-1024-4         : start benchmarking
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1730226312
+- waiting 10s -               : done
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1730226312-1-4-4gqxz: found
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+done
+YugabyteDB-1-1-1024           : has running benchmarks
+YugabyteDB-1-1-1024-4         : showing benchmarker times
+YugabyteDB-1-1-1024-4         : benchmarker timespan (start to end single container [s]) = 3791
+YugabyteDB-1-1-1024-4         : benchmarker times (start/end per pod and container) = [(1730238595, 1730242235), (1730238595, 1730242255), (1730238595, 1730242231), (1730238595, 1730242224), (1730238595, 1730242245), (1730238595, 1730242322), (1730238595, 1730242213), (1730238596, 1730242350)]
+YugabyteDB-1-1-1024-4         : found and updated times {'benchmarker': [(1730238595, 1730242235), (1730238595, 1730242255), (1730238595, 1730242231), (1730238595, 1730242224), (1730238595, 1730242245), (1730238595, 1730242322), (1730238595, 1730242213), (1730238596, 1730242350)]}
+done
+YugabyteDB-1-1-1024           : can be stopped
+Experiment ends at 2024-10-29 23:53:30.141071 (4978350.265050158): 16097.839604604058s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Benchmarking                                     connection  ... Latency Distribution.Average Latency (microseconds)
+connection_pod                                  ...                                                    
+YugabyteDB-1-1-1024-1-1  YugabyteDB-1-1-1024-1  ...                                              136271
+YugabyteDB-1-1-1024-3-1  YugabyteDB-1-1-1024-3  ...                                              151569
+YugabyteDB-1-1-1024-2-1  YugabyteDB-1-1-1024-2  ...                                              142319
+YugabyteDB-1-1-1024-4-1  YugabyteDB-1-1-1024-4  ...                                              240528
+YugabyteDB-1-1-1024-4-2  YugabyteDB-1-1-1024-4  ...                                              251836
+YugabyteDB-1-1-1024-4-3  YugabyteDB-1-1-1024-4  ...                                              295401
+YugabyteDB-1-1-1024-4-4  YugabyteDB-1-1-1024-4  ...                                              246889
+YugabyteDB-1-1-1024-3-2  YugabyteDB-1-1-1024-3  ...                                              164894
+YugabyteDB-1-1-1024-4-5  YugabyteDB-1-1-1024-4  ...                                              225020
+YugabyteDB-1-1-1024-3-3  YugabyteDB-1-1-1024-3  ...                                              157392
+YugabyteDB-1-1-1024-4-6  YugabyteDB-1-1-1024-4  ...                                              272495
+YugabyteDB-1-1-1024-4-7  YugabyteDB-1-1-1024-4  ...                                              268149
+YugabyteDB-1-1-1024-2-2  YugabyteDB-1-1-1024-2  ...                                              141678
+YugabyteDB-1-1-1024-4-8  YugabyteDB-1-1-1024-4  ...                                              268839
+YugabyteDB-1-1-1024-3-4  YugabyteDB-1-1-1024-3  ...                                              162663
+
+[15 rows x 36 columns]
+Workflow {'YugabyteDB-1-1-1024': [[1, 4, 2, 8]]}
+Result workflow not complete
+
+## Show Summary
+
+### Workload
+Benchbase Workload SF=128 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 16098s 
+    Code: 1730226312
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['YugabyteDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254319580
+    datadisk:39428
+    requests_cpu:4
+    requests_memory:16Gi
+YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254319748
+    datadisk:39428
+    requests_cpu:4
+    requests_memory:16Gi
+YugabyteDB-1-1-1024-3 uses docker image postgres:15.0
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254319920
+    datadisk:39428
+    requests_cpu:4
+    requests_memory:16Gi
+YugabyteDB-1-1-1024-4 uses docker image postgres:15.0
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254320088
+    datadisk:39428
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                       experiment_run  terminals  target  pod_count    time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+YugabyteDB-1-1-1024-1               1         64   16384          1  3600.0                        469.61                                                     327056.0                                            136271.00
+YugabyteDB-1-1-1024-2               1         64   16384          2  3600.0                        450.66                                                     357886.0                                            141998.50
+YugabyteDB-1-1-1024-3               1         64   16384          4  3600.0                        402.57                                                     409184.0                                            159129.50
+YugabyteDB-1-1-1024-4               1         64   16384          8  3600.0                        247.49                                                     896527.0                                            258644.62
+
+Warehouses: 128
+
+### Workflow
+
+#### Actual
+DBMS YugabyteDB-1-1-1024 - Pods [[1, 4, 2, 8]]
+
+#### Planned
+DBMS YugabyteDB-1-1-1024 - Pods [[1, 2, 4, 8]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+YugabyteDB-1-1-1024-1     1151.0        1.0   1.0                 400.347524
+YugabyteDB-1-1-1024-2     1151.0        1.0   2.0                 400.347524
+YugabyteDB-1-1-1024-3     1151.0        1.0   4.0                 400.347524
+YugabyteDB-1-1-1024-4     1151.0        1.0   8.0                 400.347524
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

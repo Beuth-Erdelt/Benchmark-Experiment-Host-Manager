@@ -1,0 +1,411 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1728675428
+Experiment                    : starts at 2024-10-11 21:37:08.442498 (3411368.566473532)
+Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+TPC-DS (SF=3) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q99.
+All instances use the same query parameters.
+Import sets indexes and constraints after loading and recomputes statistics.
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['MonetDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 30Gi.
+Loading is tested with [1] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 2] times the number of benchmarking pods.
+Experiment is run 2 times.
+Cluster monitoring            : is running
+done
+MonetDB-BHT-8                 : will start now
+MonetDB-BHT-8                 : storage exists bexhoma-storage-monetdb-tpcds-3
+MonetDB-BHT-8                 : loading is set to finished
+- waiting 30s -               : done
+MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-11 19:39:08 (that is in 60 secs)
+- waiting 30s -               : done
+MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-11 19:39:08
+done
+MonetDB-BHT-8                 : benchmarks done 0 of 2. This will be client 1
+MonetDB-BHT-8-1-1             : start benchmarking
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1728675428
+- waiting 10s -               : done
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1728675428-1-1-dn8t7: found
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+done
+MonetDB-BHT-8                 : has running benchmarks
+MonetDB-BHT-8-1-1             : showing benchmarker times
+MonetDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 161
+MonetDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1728675562, 1728675691)]
+MonetDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1728675562, 1728675691)]}
+MonetDB-BHT-8-1-1             : collecting execution metrics of SUT
+MonetDB-BHT-8-1-1             : collecting metrics of benchmarker
+done
+MonetDB-BHT-8                 : benchmarks done 0 of 2. This will be client 2
+MonetDB-BHT-8-1-2             : start benchmarking
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1728675428
+- waiting 10s -               : done
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1728675428-1-2-7dr26: .found
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+done
+MonetDB-BHT-8                 : has running benchmarks
+MonetDB-BHT-8-1-2             : showing benchmarker times
+MonetDB-BHT-8-1-2             : benchmarker timespan (start to end single container [s]) = 112
+MonetDB-BHT-8-1-2             : benchmarker times (start/end per pod and container) = [(1728675778, 1728675846), (1728675778, 1728675846)]
+MonetDB-BHT-8-1-2             : found and updated times {'benchmarker': [(1728675778, 1728675846), (1728675778, 1728675846)]}
+MonetDB-BHT-8-1-2             : collecting execution metrics of SUT
+MonetDB-BHT-8-1-2             : collecting metrics of benchmarker
+done
+MonetDB-BHT-8                 : can be stopped
+MonetDB-BHT-8                 : still being removed
+- waiting 30s -               : done
+MonetDB-BHT-8                 : still being removed
+done
+MonetDB-BHT-8                 : starts again
+MonetDB-BHT-8                 : storage exists bexhoma-storage-monetdb-tpcds-3
+MonetDB-BHT-8                 : loading is set to finished
+- waiting 10s -               : done
+- waiting 30s -               : done
+MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-11 19:48:00 (that is in 60 secs)
+- waiting 30s -               : done
+MonetDB-BHT-8                 : will start benchmarking but not before 2024-10-11 19:48:00
+done
+MonetDB-BHT-8                 : benchmarks done 1 of 2. This will be client 1
+MonetDB-BHT-8-2-1             : start benchmarking
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1728675428
+- waiting 10s -               : done
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1728675428-2-1-v5cwb: found
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+done
+MonetDB-BHT-8                 : has running benchmarks
+MonetDB-BHT-8-2-1             : showing benchmarker times
+MonetDB-BHT-8-2-1             : benchmarker timespan (start to end single container [s]) = 131
+MonetDB-BHT-8-2-1             : benchmarker times (start/end per pod and container) = [(1728676094, 1728676208)]
+MonetDB-BHT-8-2-1             : found and updated times {'benchmarker': [(1728676094, 1728676208)]}
+MonetDB-BHT-8-2-1             : collecting execution metrics of SUT
+MonetDB-BHT-8-2-1             : collecting metrics of benchmarker
+done
+MonetDB-BHT-8                 : benchmarks done 1 of 2. This will be client 2
+MonetDB-BHT-8-2-2             : start benchmarking
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1728675428
+- waiting 10s -               : done
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1728675428-2-2-7phbl: .found
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+done
+MonetDB-BHT-8                 : has running benchmarks
+done
+MonetDB-BHT-8                 : has running benchmarks
+MonetDB-BHT-8-2-2             : showing benchmarker times
+MonetDB-BHT-8-2-2             : benchmarker timespan (start to end single container [s]) = 111
+MonetDB-BHT-8-2-2             : benchmarker times (start/end per pod and container) = [(1728676278, 1728676342), (1728676278, 1728676343)]
+MonetDB-BHT-8-2-2             : found and updated times {'benchmarker': [(1728676278, 1728676342), (1728676278, 1728676343)]}
+MonetDB-BHT-8-2-2             : collecting execution metrics of SUT
+MonetDB-BHT-8-2-2             : collecting metrics of benchmarker
+done
+MonetDB-BHT-8                 : can be stopped
+Experiment                    : ends at 2024-10-11 21:53:43.249069 (3412363.373049047) - 994.81s total
+Join results done!
+done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=3
+    Type: tpcds
+    Duration: 995s 
+    Code: 1728675428
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=3) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5486698
+    volume_size:100G
+    volume_used:5.3G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558770
+    volume_size:100G
+    volume_used:5.3G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-1-2-2 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558770
+    volume_size:100G
+    volume_used:5.3G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558771
+    volume_size:100G
+    volume_used:5.4G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558197
+    volume_size:100G
+    volume_used:5.4G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-2-2 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558197
+    volume_size:100G
+    volume_used:5.4G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+            MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-1-2-2  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1  MonetDB-BHT-8-2-2-2
+TPC-DS Q1                  True                 True                 True                 True                 True                False
+TPC-DS Q25                 True                 True                 True                 True                 True                False
+TPC-DS Q34                 True                 True                 True                 True                 True                False
+TPC-DS Q43                 True                 True                 True                 True                 True                False
+TPC-DS Q44                 True                 True                 True                 True                 True                False
+TPC-DS Q46                 True                 True                 True                 True                 True                False
+TPC-DS Q54                 True                 True                 True                 True                 True                False
+TPC-DS Q68                 True                 True                 True                 True                 True                False
+TPC-DS Q73                 True                 True                 True                 True                 True                False
+
+### Latency of Timer Execution [ms]
+DBMS           MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-1-2-2  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1  MonetDB-BHT-8-2-2-2
+TPC-DS Q1                  1457.90                55.71                52.77              1036.26                53.04                64.40
+TPC-DS Q2                  8897.17               433.92               417.83              6701.04               416.75               425.14
+TPC-DS Q3                  2492.94                43.05                33.73              1810.61                40.69                38.67
+TPC-DS Q4                 12439.46              3795.57              3938.42             10047.81              4018.64              3859.93
+TPC-DS Q5                  6301.59               740.40               634.56              3798.51               689.95               622.01
+TPC-DS Q6                   582.82               217.37               175.64               486.61               155.69               150.46
+TPC-DS Q7                  2761.20                96.81                82.15              2552.40                86.28               122.09
+TPC-DS Q8                  1220.89               128.82               120.85              1012.07                95.54               119.90
+TPC-DS Q9                   635.23               230.87               222.55               513.18               195.19               176.37
+TPC-DS Q10                 1944.22                66.97                74.34              1442.27                64.76               115.25
+TPC-DS Q11                 1995.57              1960.02              1840.68              1973.40              1940.35              1893.88
+TPC-DS Q12                  901.53                37.77                39.34               811.98                32.13                36.08
+TPC-DS Q13                  298.44               184.98               173.74               196.24               136.51               151.76
+TPC-DS Q14a+b              7875.23              7310.76              6835.78              6959.55              6064.90              5986.83
+TPC-DS Q15                  317.83                40.80                36.44               183.75                33.21                57.51
+TPC-DS Q16                 1582.59               280.60               283.50              1249.30               284.59               274.86
+TPC-DS Q17                 1246.26               329.36               365.05              1072.00               312.44               437.02
+TPC-DS Q18                  949.22               220.84               266.57              1394.53               223.82               229.80
+TPC-DS Q19                  163.75                82.94                77.59               125.20                81.99                86.57
+TPC-DS Q20                   58.07                52.46                51.33                52.19                48.89                50.37
+TPC-DS Q21                 7896.30                66.97                93.68              5718.54                93.54               103.29
+TPC-DS Q22                 2789.12              2970.36              2736.95              2785.88              2820.73              2821.87
+TPC-DS Q23a+b              6467.52              6817.87              7425.04              6773.74              6912.46              6692.53
+TPC-DS Q24a+b               786.52               360.59               328.72               930.28               354.57               310.32
+TPC-DS Q25                  390.95               382.50               379.47               832.69               378.67               372.53
+TPC-DS Q26                  414.53                62.61               113.07               230.80                60.97               153.19
+TPC-DS Q27                  391.67               336.29               388.75               485.71               368.16               340.48
+TPC-DS Q28                  810.17               195.01               184.20               651.45               175.24               175.50
+TPC-DS Q29                  348.06               408.32               421.04               349.08               362.12               466.38
+TPC-DS Q30                  256.94                51.04                48.23               135.65                65.69                32.77
+TPC-DS Q31                  853.96               411.53               457.30               899.25               449.57               464.16
+TPC-DS Q32                   39.75                39.67                40.41                64.72                34.82                34.99
+TPC-DS Q33                  158.07                56.13                49.50                92.59                53.07                53.46
+TPC-DS Q34                  667.98                44.71                44.78               439.87                45.05                51.55
+TPC-DS Q35                  193.79               227.84               208.86               223.47               218.79               191.00
+TPC-DS Q37                  183.74                66.45               108.31               363.26                65.78                62.99
+TPC-DS Q38                  559.49               612.53               612.32               649.48               577.21               605.82
+TPC-DS Q39a+b              2795.62              2621.09              2604.48              2728.80              2441.65              2736.29
+TPC-DS Q40                  454.41                84.46                95.53               672.49                81.85                82.76
+TPC-DS Q41                    8.78                12.81                 8.59                 9.38                 9.06                 8.77
+TPC-DS Q42                   36.26                38.52                89.67                37.75                50.32                46.54
+TPC-DS Q43                   99.81               105.60                94.91               101.64               105.66               116.34
+TPC-DS Q44                   67.60                65.70                80.38                70.85                78.03                63.74
+TPC-DS Q45                   36.77                48.37                41.96                39.58                41.19                41.62
+TPC-DS Q46                  293.60               112.61                80.49               126.50                72.92               107.04
+TPC-DS Q47                  652.86               629.48               689.78               665.06               646.98               666.18
+TPC-DS Q48                  129.64               126.69               134.31               453.37               129.62               150.58
+TPC-DS Q49                  994.84               254.84               265.41               631.35               224.06               234.91
+TPC-DS Q50                  411.80               257.95               239.26               331.69               232.09               340.69
+TPC-DS Q51                 1810.95              1761.45              1819.17              1792.25              1836.54              1803.62
+TPC-DS Q52                   38.61                37.25                37.28                73.31                36.40                38.77
+TPC-DS Q53                   63.88                57.65                57.54                66.58                56.20                70.13
+TPC-DS Q54                  295.37                36.98                43.54               232.27                41.14                46.92
+TPC-DS Q55                   36.21                29.34                29.12                30.14                29.58                34.00
+TPC-DS Q56                   65.69                45.06                46.22                42.60                57.03                43.49
+TPC-DS Q57                  258.10               182.61               187.59               196.75               187.37               228.58
+TPC-DS Q58                  120.90               118.55               131.27               118.36               118.08               142.61
+TPC-DS Q59                  279.80               517.06               524.65               249.02               256.63               260.00
+TPC-DS Q60                  173.97                58.92                58.14               182.61                62.58                60.17
+TPC-DS Q61                  132.04                67.16                66.30                91.42               167.82                64.46
+TPC-DS Q62                  729.19               283.22               281.48               559.81                52.02                46.38
+TPC-DS Q63                   54.77                76.32                74.40                53.21                50.57                62.17
+TPC-DS Q64                 1324.58               643.39               614.00              1151.97               582.28               597.60
+TPC-DS Q65                  411.61               419.52               409.04               397.73               425.15               440.10
+TPC-DS Q66                 1267.26               538.76               627.83               716.93               306.93               279.70
+TPC-DS Q67                 2420.32              2473.85              2260.13              2270.07              2176.51              2418.12
+TPC-DS Q68                  733.11                79.67                72.15               235.31                76.59                73.66
+TPC-DS Q69                  286.03                71.44                76.99                80.09                76.24                83.76
+TPC-DS Q71                  493.94                60.72                72.69               104.31                64.92               420.97
+TPC-DS Q72                 2568.27              3801.24              3849.62              2638.45              3913.62              2981.85
+TPC-DS Q73                   52.42                42.56                42.55                42.67                44.51                44.01
+TPC-DS Q74                  553.73               613.68               598.28               553.55               564.35               579.13
+TPC-DS Q75                 4278.21              2325.02              2354.85              3556.34              2403.58              2328.77
+TPC-DS Q76                   72.60                76.63                73.81                67.52                83.05                72.04
+TPC-DS Q77                  413.48               173.82               180.13               350.36               180.41               188.84
+TPC-DS Q78                 3199.09              3134.83              3575.71              3106.40              2970.40              3732.60
+TPC-DS Q79                  211.67                88.75                85.18               174.57                78.34                83.01
+TPC-DS Q80                 2100.88              2233.29              2029.86              2173.84              2227.43              2372.94
+TPC-DS Q81                  192.89                33.27                60.99                99.19                34.15                32.81
+TPC-DS Q82                  544.84                69.25                72.32               437.80                76.63                67.48
+TPC-DS Q83                  133.69                21.77                21.10               176.84                21.54                22.19
+TPC-DS Q84                  335.91                16.58                14.86               364.21                16.59                15.92
+TPC-DS Q85                  198.42                70.18                74.61                86.76                95.47                82.30
+TPC-DS Q87                  750.08               777.95               754.70               755.24               754.57               751.73
+TPC-DS Q88                  789.86               191.05               199.44               504.00               180.22               205.46
+TPC-DS Q89                   83.55                81.68                75.47                77.83                80.40                75.74
+TPC-DS Q90                  746.61                22.87                20.18               423.59                20.78                32.37
+TPC-DS Q91                  189.19                26.79                25.40                69.64                27.00                27.08
+TPC-DS Q92                   27.13                25.20                24.32                24.93                25.59                26.29
+TPC-DS Q93                  353.73               446.38               438.20               335.19               328.46               317.22
+TPC-DS Q94                  441.25                63.27                65.71               295.77                67.04                62.92
+TPC-DS Q95                  200.01               255.47               252.36               193.54               186.92               208.63
+TPC-DS Q96                   25.11                25.25                24.40                24.63                24.59                25.76
+TPC-DS Q97                  888.44               955.01               970.64               865.66              1030.15               947.86
+TPC-DS Q98                   85.35                83.53                86.75                86.76                87.75                89.26
+TPC-DS Q99                   91.98               101.54                94.49                94.38                97.89                90.17
+
+### Loading [s]
+                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-1-2-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-1-2-2           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-2-1-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-2-2-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-2-2-2           1.0          275.0         5.0      105.0     393.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                     Geo Times [s]
+DBMS                              
+MonetDB-BHT-8-1-1-1           0.43
+MonetDB-BHT-8-1-2-1           0.18
+MonetDB-BHT-8-1-2-2           0.18
+MonetDB-BHT-8-2-1-1           0.38
+MonetDB-BHT-8-2-2-1           0.17
+MonetDB-BHT-8-2-2-2           0.18
+
+### Power@Size
+                     Power@Size [~Q/h]
+DBMS                                  
+MonetDB-BHT-8-1-1-1           25917.90
+MonetDB-BHT-8-1-2-1           64333.08
+MonetDB-BHT-8-1-2-2           63407.94
+MonetDB-BHT-8-2-1-1           30183.86
+MonetDB-BHT-8-2-2-1           67882.00
+MonetDB-BHT-8-2-2-2           64231.37
+
+### Throughput@Size
+                                                time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS              SF num_experiment num_client                                              
+MonetDB-BHT-8-1-1 3  1              1                129      1   3                  1841.86
+MonetDB-BHT-8-1-2 3  1              2                 68      2   3                  6988.24
+MonetDB-BHT-8-2-1 3  2              1                114      1   3                  2084.21
+MonetDB-BHT-8-2-2 3  2              2                 65      2   3                  7310.77
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1, 2], [1, 2]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1, 2], [1, 2]]
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1-1      238.66     0.00          3.32                 8.23
+MonetDB-BHT-8-1-2      565.72     9.99         16.86                22.39
+MonetDB-BHT-8-2-1     1154.98     0.00          7.93                16.96
+MonetDB-BHT-8-2-2      334.40     0.00          5.01                10.34
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1-1       14.10     0.05          0.25                 0.26
+MonetDB-BHT-8-1-2       34.05     0.33          0.75                 0.78
+MonetDB-BHT-8-2-1       34.05     0.00          0.74                 0.77
+MonetDB-BHT-8-2-2       27.37     0.00          0.73                 0.76
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

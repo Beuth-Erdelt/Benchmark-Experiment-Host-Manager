@@ -1,0 +1,82 @@
+## Show Summary
+
+### Workload
+Benchbase Workload SF=128 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 15418s 
+    Code: 1730374413
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['CockroachDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-1-1-1024-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912048
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-2 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912216
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-3 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912388
+    requests_cpu:4
+    requests_memory:16Gi
+CockroachDB-1-1-1024-4 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254912556
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                        experiment_run  terminals  target  pod_count    time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+CockroachDB-1-1-1024-1               1         64   16384          1  3600.0                        696.70                                                     233544.0                                             91853.00
+CockroachDB-1-1-1024-2               1         64   16384          2  3600.0                        653.01                                                     247449.0                                             97998.00
+CockroachDB-1-1-1024-3               1         64   16384          4  3600.0                        599.12                                                     258276.0                                            106813.50
+CockroachDB-1-1-1024-4               1         64   16384          8  3600.0                        538.01                                                     262975.0                                            118944.88
+
+Warehouses: 128
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-1-1-1024 - Pods [[8, 4, 2, 1]]
+
+#### Planned
+DBMS CockroachDB-1-1-1024 - Pods [[1, 2, 4, 8]]
+
+### Loading
+                        time_load  terminals  pods  Imported warehouses [1/h]
+CockroachDB-1-1-1024-1      531.0        1.0   1.0                  867.79661
+CockroachDB-1-1-1024-2      531.0        1.0   2.0                  867.79661
+CockroachDB-1-1-1024-3      531.0        1.0   4.0                  867.79661
+CockroachDB-1-1-1024-4      531.0        1.0   8.0                  867.79661
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

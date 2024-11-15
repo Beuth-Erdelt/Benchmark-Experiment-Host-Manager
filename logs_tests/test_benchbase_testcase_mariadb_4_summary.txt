@@ -1,0 +1,180 @@
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1808s 
+    Code: 1729596079
+    This includes no queries. Benchbase runs the benchmark
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 2 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MariaDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [8] threads, split into [1, 2] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MariaDB-1-1-1024-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250326540
+    datadisk:2083668
+    volume_size:50G
+    volume_used:2.0G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-1-1-1024-1-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250326540
+    datadisk:2124628
+    volume_size:50G
+    volume_used:2.0G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-1-1-1024-1-3 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250326540
+    datadisk:2157396
+    volume_size:50G
+    volume_used:2.0G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-1-1-1024-1-4 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250326540
+    datadisk:2198356
+    volume_size:50G
+    volume_used:2.1G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-1-1-1024-2-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250326540
+    datadisk:2252730
+    volume_size:50G
+    volume_used:2.2G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-1-1-1024-2-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250326540
+    datadisk:2285498
+    volume_size:50G
+    volume_used:2.2G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-1-1-1024-2-3 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250540812
+    datadisk:2330554
+    volume_size:50G
+    volume_used:2.2G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-1-1-1024-2-4 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250540816
+    datadisk:2371514
+    volume_size:50G
+    volume_used:2.2G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                      experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MariaDB-1-1-1024-1-1               1          8    8192          1  120.0                        383.50                                                      24664.0                                              20505.0
+MariaDB-1-1-1024-1-2               1         16   16384          2  120.0                        447.16                                                      27494.0                                              30705.0
+MariaDB-1-1-1024-1-3               1          8    8192          2  120.0                        555.82                                                      19230.0                                              14020.0
+MariaDB-1-1-1024-1-4               1         16   16384          4  120.0                        619.69                                                      29077.0                                              24730.5
+MariaDB-1-1-1024-2-1               2          8    8192          1  120.0                        411.00                                                      16517.0                                              19290.0
+MariaDB-1-1-1024-2-2               2         16   16384          2  120.0                        556.75                                                      28385.0                                              28244.5
+MariaDB-1-1-1024-2-3               2          8    8192          2  120.0                        543.98                                                      17922.0                                              13476.5
+MariaDB-1-1-1024-2-4               2         16   16384          4  120.0                        645.28                                                      29609.0                                              24730.0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-1-1-1024 - Pods [[2, 4, 2, 1], [2, 1, 4, 2]]
+
+#### Planned
+DBMS MariaDB-1-1-1024 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
+
+### Loading
+                      time_load  terminals  pods  Imported warehouses [1/h]
+MariaDB-1-1-1024-1-1      325.0        1.0   1.0                 177.230769
+MariaDB-1-1-1024-1-2      325.0        1.0   2.0                 177.230769
+MariaDB-1-1-1024-1-3      325.0        1.0   2.0                 177.230769
+MariaDB-1-1-1024-1-4      325.0        1.0   4.0                 177.230769
+MariaDB-1-1-1024-2-1      325.0        1.0   1.0                 177.230769
+MariaDB-1-1-1024-2-2      325.0        1.0   2.0                 177.230769
+MariaDB-1-1-1024-2-3      325.0        1.0   2.0                 177.230769
+MariaDB-1-1-1024-2-4      325.0        1.0   4.0                 177.230769
+
+### Execution - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1-1      219.58     0.79          2.77                 3.10
+MariaDB-1-1-1024-1-2      177.36     0.00          2.79                 3.12
+MariaDB-1-1-1024-1-3      284.12     2.02          2.87                 3.20
+MariaDB-1-1-1024-1-4      283.12     2.57          2.92                 3.25
+MariaDB-1-1-1024-2-1     1148.04     1.88          5.60                 6.23
+MariaDB-1-1-1024-2-2      270.23     2.48          2.71                 3.02
+MariaDB-1-1-1024-2-3      169.40     0.72          2.77                 3.07
+MariaDB-1-1-1024-2-4      220.33     2.74          2.86                 3.16
+
+### Execution - Benchmarker
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-1-1-1024-1-1       83.52     0.00          1.20                 1.20
+MariaDB-1-1-1024-1-2       92.56     0.00          2.37                 2.37
+MariaDB-1-1-1024-1-3      102.26     1.05          2.77                 2.77
+MariaDB-1-1-1024-1-4      189.98     0.39          3.77                 3.77
+MariaDB-1-1-1024-2-1      126.75     0.79          2.30                 2.30
+MariaDB-1-1-1024-2-2      144.48     0.75          3.57                 3.57
+MariaDB-1-1-1024-2-3      103.04     0.64          3.79                 3.79
+MariaDB-1-1-1024-2-4       87.38     0.71          3.79                 3.79
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

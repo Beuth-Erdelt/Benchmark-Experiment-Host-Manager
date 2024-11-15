@@ -1,0 +1,845 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1729893587
+Experiment                    : starts at 2024-10-25 23:59:47.225394 (4629527.349375033)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+Benchmark is limited to DBMS ['MariaDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 100Gi.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is run as [1, 2] times the number of benchmarking pods.
+Experiment is run 2 times.
+Cluster monitoring            : is running
+done
+MariaDB-64-8-1024             : will start now
+MariaDB-64-8-1024             : storage exists bexhoma-storage-mariadb-ycsb-1
+MariaDB-64-8-1024             : loading is set to finished
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47 (that is in 900 secs)
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 22:15:47
+done
+MariaDB-64-8-1024             : benchmarks done 0 of 2. This will be client 1
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-1-1         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-1-1-z9hcm: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-1-1         : showing benchmarker times
+MariaDB-64-8-1024-1-1         : benchmarker timespan (start to end single container [s]) = 1004
+MariaDB-64-8-1024-1-1         : benchmarker times (start/end per pod and container) = [(1729894555, 1729895533)]
+MariaDB-64-8-1024-1-1         : found and updated times {'benchmarker': [(1729894555, 1729895533)]}
+done
+MariaDB-64-8-1024             : benchmarks done 0 of 2. This will be client 2
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 500000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-1-2         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-1-2-drclj: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-1-2         : showing benchmarker times
+MariaDB-64-8-1024-1-2         : benchmarker timespan (start to end single container [s]) = 523
+MariaDB-64-8-1024-1-2         : benchmarker times (start/end per pod and container) = [(1729895595, 1729896084), (1729895595, 1729896084)]
+MariaDB-64-8-1024-1-2         : found and updated times {'benchmarker': [(1729895595, 1729896084), (1729895595, 1729896084)]}
+done
+MariaDB-64-8-1024             : benchmarks done 0 of 2. This will be client 3
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-1-3         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-1-3-46dcp: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-1-3         : showing benchmarker times
+MariaDB-64-8-1024-1-3         : benchmarker timespan (start to end single container [s]) = 1015
+MariaDB-64-8-1024-1-3         : benchmarker times (start/end per pod and container) = [(1729896158, 1729897135), (1729896158, 1729897136), (1729896158, 1729897136), (1729896159, 1729897136), (1729896159, 1729897136), (1729896158, 1729897135), (1729896158, 1729897136), (1729896159, 1729897136)]
+MariaDB-64-8-1024-1-3         : found and updated times {'benchmarker': [(1729896158, 1729897135), (1729896158, 1729897136), (1729896158, 1729897136), (1729896159, 1729897136), (1729896159, 1729897136), (1729896158, 1729897135), (1729896158, 1729897136), (1729896159, 1729897136)]}
+done
+MariaDB-64-8-1024             : benchmarks done 0 of 2. This will be client 4
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 62500, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-1-4         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-1-4-2jmkh: .found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-1-4         : showing benchmarker times
+MariaDB-64-8-1024-1-4         : benchmarker timespan (start to end single container [s]) = 521
+MariaDB-64-8-1024-1-4         : benchmarker times (start/end per pod and container) = [(1729897218, 1729897707), (1729897217, 1729897706), (1729897217, 1729897706), (1729897218, 1729897707), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897218, 1729897707), (1729897217, 1729897706)]
+MariaDB-64-8-1024-1-4         : found and updated times {'benchmarker': [(1729897218, 1729897707), (1729897217, 1729897706), (1729897217, 1729897706), (1729897218, 1729897707), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897217, 1729897706), (1729897218, 1729897707), (1729897218, 1729897707), (1729897217, 1729897706)]}
+done
+MariaDB-64-8-1024             : can be stopped
+MariaDB-64-8-1024             : still being removed
+done
+MariaDB-64-8-1024             : starts again
+MariaDB-64-8-1024             : storage exists bexhoma-storage-mariadb-ycsb-1
+MariaDB-64-8-1024             : loading is set to finished
+- waiting 10s -               : done
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25 (that is in 900 secs)
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+- waiting 30s -               : done
+MariaDB-64-8-1024             : will start benchmarking but not before 2024-10-25 23:25:25
+done
+MariaDB-64-8-1024             : benchmarks done 1 of 2. This will be client 1
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-2-1         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-2-1-h2nt9: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-2-1         : showing benchmarker times
+MariaDB-64-8-1024-2-1         : benchmarker timespan (start to end single container [s]) = 1004
+MariaDB-64-8-1024-2-1         : benchmarker times (start/end per pod and container) = [(1729898733, 1729899711)]
+MariaDB-64-8-1024-2-1         : found and updated times {'benchmarker': [(1729898733, 1729899711)]}
+done
+MariaDB-64-8-1024             : benchmarks done 1 of 2. This will be client 2
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 500000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-2-2         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-2-2-6nmwn: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-2-2         : showing benchmarker times
+MariaDB-64-8-1024-2-2         : benchmarker timespan (start to end single container [s]) = 524
+MariaDB-64-8-1024-2-2         : benchmarker times (start/end per pod and container) = [(1729899773, 1729900262), (1729899772, 1729900262)]
+MariaDB-64-8-1024-2-2         : found and updated times {'benchmarker': [(1729899773, 1729900262), (1729899772, 1729900262)]}
+done
+MariaDB-64-8-1024             : benchmarks done 1 of 2. This will be client 3
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-2-3         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-2-3-2tw7s: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-2-3         : showing benchmarker times
+MariaDB-64-8-1024-2-3         : benchmarker timespan (start to end single container [s]) = 1014
+MariaDB-64-8-1024-2-3         : benchmarker times (start/end per pod and container) = [(1729900336, 1729901314), (1729900336, 1729901313), (1729900336, 1729901314), (1729900336, 1729901314), (1729900337, 1729901314), (1729900336, 1729901313), (1729900336, 1729901313), (1729900337, 1729901314)]
+MariaDB-64-8-1024-2-3         : found and updated times {'benchmarker': [(1729900336, 1729901314), (1729900336, 1729901313), (1729900336, 1729901314), (1729900336, 1729901314), (1729900337, 1729901314), (1729900336, 1729901313), (1729900336, 1729901313), (1729900337, 1729901314)]}
+done
+MariaDB-64-8-1024             : benchmarks done 1 of 2. This will be client 4
+MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 62500, 'YCSB_BATCHSIZE': ''}
+MariaDB-64-8-1024-2-4         : start benchmarking
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1729893587
+- waiting 10s -               : done
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1729893587-2-4-44nmr: .found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
+done
+MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024-2-4         : showing benchmarker times
+MariaDB-64-8-1024-2-4         : benchmarker timespan (start to end single container [s]) = 520
+MariaDB-64-8-1024-2-4         : benchmarker times (start/end per pod and container) = [(1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883), (1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883)]
+MariaDB-64-8-1024-2-4         : found and updated times {'benchmarker': [(1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883), (1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883), (1729901395, 1729901884), (1729901395, 1729901884), (1729901395, 1729901884), (1729901394, 1729901883)]}
+done
+MariaDB-64-8-1024             : can be stopped
+Experiment                    : ends at 2024-10-26 02:18:52.700725 (4637872.82470379) - 8345.48s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Benchmarking                                      connection  ... [UPDATE].Return=OK
+connection_pod                                   ...                   
+MariaDB-64-8-1024-1-4-1   MariaDB-64-8-1024-1-4  ...              31225
+MariaDB-64-8-1024-1-4-2   MariaDB-64-8-1024-1-4  ...              31325
+MariaDB-64-8-1024-2-3-1   MariaDB-64-8-1024-2-3  ...              62619
+MariaDB-64-8-1024-2-4-1   MariaDB-64-8-1024-2-4  ...              31235
+MariaDB-64-8-1024-2-1-1   MariaDB-64-8-1024-2-1  ...             499571
+MariaDB-64-8-1024-2-3-2   MariaDB-64-8-1024-2-3  ...              62515
+MariaDB-64-8-1024-2-3-3   MariaDB-64-8-1024-2-3  ...              62577
+MariaDB-64-8-1024-1-3-1   MariaDB-64-8-1024-1-3  ...              62804
+MariaDB-64-8-1024-1-4-3   MariaDB-64-8-1024-1-4  ...              31249
+MariaDB-64-8-1024-1-4-4   MariaDB-64-8-1024-1-4  ...              31383
+MariaDB-64-8-1024-2-4-2   MariaDB-64-8-1024-2-4  ...              31186
+MariaDB-64-8-1024-2-4-3   MariaDB-64-8-1024-2-4  ...              31154
+MariaDB-64-8-1024-1-3-2   MariaDB-64-8-1024-1-3  ...              62259
+MariaDB-64-8-1024-1-4-5   MariaDB-64-8-1024-1-4  ...              31266
+MariaDB-64-8-1024-2-4-4   MariaDB-64-8-1024-2-4  ...              31081
+MariaDB-64-8-1024-1-3-3   MariaDB-64-8-1024-1-3  ...              62921
+MariaDB-64-8-1024-1-3-4   MariaDB-64-8-1024-1-3  ...              62642
+MariaDB-64-8-1024-1-4-6   MariaDB-64-8-1024-1-4  ...              31360
+MariaDB-64-8-1024-1-3-5   MariaDB-64-8-1024-1-3  ...              62496
+MariaDB-64-8-1024-2-4-5   MariaDB-64-8-1024-2-4  ...              31160
+MariaDB-64-8-1024-2-4-6   MariaDB-64-8-1024-2-4  ...              31448
+MariaDB-64-8-1024-2-3-4   MariaDB-64-8-1024-2-3  ...              62599
+MariaDB-64-8-1024-1-3-6   MariaDB-64-8-1024-1-3  ...              62570
+MariaDB-64-8-1024-2-4-7   MariaDB-64-8-1024-2-4  ...              31160
+MariaDB-64-8-1024-2-3-5   MariaDB-64-8-1024-2-3  ...              62195
+MariaDB-64-8-1024-1-4-7   MariaDB-64-8-1024-1-4  ...              31315
+MariaDB-64-8-1024-2-4-8   MariaDB-64-8-1024-2-4  ...              31232
+MariaDB-64-8-1024-2-3-6   MariaDB-64-8-1024-2-3  ...              62795
+MariaDB-64-8-1024-2-2-1   MariaDB-64-8-1024-2-2  ...             249897
+MariaDB-64-8-1024-1-4-8   MariaDB-64-8-1024-1-4  ...              31079
+MariaDB-64-8-1024-2-4-9   MariaDB-64-8-1024-2-4  ...              31160
+MariaDB-64-8-1024-2-4-10  MariaDB-64-8-1024-2-4  ...              31270
+MariaDB-64-8-1024-1-3-7   MariaDB-64-8-1024-1-3  ...              62093
+MariaDB-64-8-1024-1-4-9   MariaDB-64-8-1024-1-4  ...              31410
+MariaDB-64-8-1024-2-2-2   MariaDB-64-8-1024-2-2  ...             249938
+MariaDB-64-8-1024-1-4-10  MariaDB-64-8-1024-1-4  ...              31182
+MariaDB-64-8-1024-2-4-11  MariaDB-64-8-1024-2-4  ...              31308
+MariaDB-64-8-1024-1-4-11  MariaDB-64-8-1024-1-4  ...              31272
+MariaDB-64-8-1024-1-4-12  MariaDB-64-8-1024-1-4  ...              31275
+MariaDB-64-8-1024-1-4-13  MariaDB-64-8-1024-1-4  ...              31191
+MariaDB-64-8-1024-2-4-12  MariaDB-64-8-1024-2-4  ...              31180
+MariaDB-64-8-1024-1-1-1   MariaDB-64-8-1024-1-1  ...             500658
+MariaDB-64-8-1024-1-2-1   MariaDB-64-8-1024-1-2  ...             249579
+MariaDB-64-8-1024-1-3-8   MariaDB-64-8-1024-1-3  ...              62673
+MariaDB-64-8-1024-1-4-14  MariaDB-64-8-1024-1-4  ...              31315
+MariaDB-64-8-1024-2-4-13  MariaDB-64-8-1024-2-4  ...              31507
+MariaDB-64-8-1024-2-3-7   MariaDB-64-8-1024-2-3  ...              62647
+MariaDB-64-8-1024-2-4-14  MariaDB-64-8-1024-2-4  ...              31313
+MariaDB-64-8-1024-1-4-15  MariaDB-64-8-1024-1-4  ...              31211
+MariaDB-64-8-1024-2-4-15  MariaDB-64-8-1024-2-4  ...              31273
+MariaDB-64-8-1024-1-4-16  MariaDB-64-8-1024-1-4  ...              31101
+MariaDB-64-8-1024-1-2-2   MariaDB-64-8-1024-1-2  ...             250211
+MariaDB-64-8-1024-2-4-16  MariaDB-64-8-1024-2-4  ...              31076
+MariaDB-64-8-1024-2-3-8   MariaDB-64-8-1024-2-3  ...              62570
+
+[54 rows x 43 columns]
+Workflow {'MariaDB-64-8-1024': [[16, 8, 1, 2], [8, 16, 1, 2]]}
+Result workflow not complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 8346s 
+    Code: 1729893587
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['MariaDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MariaDB-64-8-1024-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220360
+    datadisk:1812012
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-1-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220532
+    datadisk:1812012
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-1-3 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220532
+    datadisk:1818156
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-1-4 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220532
+    datadisk:1818156
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-2-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220532
+    datadisk:1818156
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-2-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220704
+    datadisk:1818156
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-2-3 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220704
+    datadisk:1819180
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-64-8-1024-2-4 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254220704
+    datadisk:1819180
+    volume_size:100G
+    volume_used:1.8G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MariaDB-64-8-1024-1-1               1       64    1024          1                        1023.47               977068.0            499342                            892.00              500658                             1127.00
+MariaDB-64-8-1024-1-3               1       64    1024          8                        1023.66               976908.0            499542                            913.00              500458                             1093.38
+MariaDB-64-8-1024-1-2               1      128    2048          2                        2045.94               488788.0            500210                           1685.00              499790                            55055.00
+MariaDB-64-8-1024-1-4               1      128    2048         16                        2046.35               488715.0            499841                           2752.38              500159                           139155.00
+MariaDB-64-8-1024-2-1               2       64    1024          1                        1023.54               977002.0            500429                            883.00              499571                             1138.00
+MariaDB-64-8-1024-2-3               2       64    1024          8                        1023.65               976925.0            499483                            986.25              500517                             1163.38
+MariaDB-64-8-1024-2-2               2      128    2048          2                        2045.99               488780.0            500165                           1590.00              499835                            38479.00
+MariaDB-64-8-1024-2-4               2      128    2048         16                        2046.31               488750.0            500257                           2888.50              499743                           121771.00
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-64-8-1024 - Pods [[16, 8, 1, 2], [8, 16, 1, 2]]
+
+#### Planned
+DBMS MariaDB-64-8-1024 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

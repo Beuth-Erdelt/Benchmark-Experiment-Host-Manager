@@ -1,0 +1,75 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 3076s 
+    Code: 1729859212
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MySQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-64-8-1024-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218840
+    datadisk:20181427
+    volume_size:100G
+    volume_used:20G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-2 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218840
+    datadisk:21356299
+    volume_size:100G
+    volume_used:21G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                   experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MySQL-64-8-1024-1               1       64    1024          1                        1021.01               979427.0            499926                           32223.0              500074                            400383.0
+MySQL-64-8-1024-2               1       64    1024          8                        1022.78               977837.0            499161                            1260.5              500839                            418047.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-64-8-1024 - Pods [[8, 1]]
+
+#### Planned
+DBMS MySQL-64-8-1024 - Pods [[1, 8]]
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-1024-1     1470.52     1.61         39.26                48.23
+MySQL-64-8-1024-2     1548.48     1.64         39.29                48.19
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-1024-1      274.34     1.16          0.62                 0.62
+MySQL-64-8-1024-2      274.34     0.39          4.72                 4.75
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

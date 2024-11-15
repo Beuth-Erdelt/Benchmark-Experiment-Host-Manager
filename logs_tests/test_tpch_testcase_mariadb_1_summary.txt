@@ -1,0 +1,100 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 3305s 
+    Code: 1729943251
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['MariaDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:256365304
+    datadisk:2142536
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 MariaDB-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                             27842.58
+Minimum Cost Supplier Query (TPC-H Q2)                         1357.46
+Shipping Priority (TPC-H Q3)                                   5543.11
+Order Priority Checking Query (TPC-H Q4)                       1162.41
+Local Supplier Volume (TPC-H Q5)                               3470.18
+Forecasting Revenue Change (TPC-H Q6)                          3597.27
+Forecasting Revenue Change (TPC-H Q7)                          3901.13
+National Market Share (TPC-H Q8)                               7032.88
+Product Type Profit Measure (TPC-H Q9)                         5693.17
+Forecasting Revenue Change (TPC-H Q10)                         3006.14
+Important Stock Identification (TPC-H Q11)                      371.17
+Shipping Modes and Order Priority (TPC-H Q12)                 11802.27
+Customer Distribution (TPC-H Q13)                              9932.29
+Forecasting Revenue Change (TPC-H Q14)                        29582.39
+Top Supplier Query (TPC-H Q15)                                 7391.13
+Parts/Supplier Relationship (TPC-H Q16)                         750.04
+Small-Quantity-Order Revenue (TPC-H Q17)                        156.35
+Large Volume Customer (TPC-H Q18)                             10396.81
+Discounted Revenue (TPC-H Q19)                                  342.90
+Potential Part Promotion (TPC-H Q20)                            653.10
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          204175.44
+Global Sales Opportunity Query (TPC-H Q22)                      420.78
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MariaDB-BHT-8-1-1           1.0          322.0         2.0     1562.0    1894.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MariaDB-BHT-8-1-1           3.47
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MariaDB-BHT-8-1-1            1080.02
+
+### Throughput@Size
+                                              time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS            SF num_experiment num_client                                              
+MariaDB-BHT-8-1 1  1              1                343      1   1                    230.9
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MariaDB-BHT-8 - Pods [[1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned

@@ -1,0 +1,180 @@
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 4605s 
+    Code: 1729854531
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MariaDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [8] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MariaDB-BHT-8-1-1-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218488
+    datadisk:1769233
+    volume_size:30G
+    volume_used:1.7G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-1-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218656
+    datadisk:1838865
+    volume_size:30G
+    volume_used:1.7G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-1-3 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218656
+    datadisk:1903377
+    volume_size:30G
+    volume_used:1.7G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-1-4 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218656
+    datadisk:1948433
+    volume_size:30G
+    volume_used:1.7G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-2-1 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218656
+    datadisk:2011008
+    volume_size:30G
+    volume_used:2.0G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-2-2 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218656
+    datadisk:2064256
+    volume_size:30G
+    volume_used:2.0G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-2-3 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218656
+    datadisk:2117504
+    volume_size:30G
+    volume_used:2.0G
+    requests_cpu:4
+    requests_memory:16Gi
+MariaDB-BHT-8-1-2-4 uses docker image mariadb:11.4.2
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254218656
+    datadisk:2174848
+    volume_size:30G
+    volume_used:2.0G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                     experiment_run  vusers  client  pod_count      NOPM       TPM  duration  errors
+MariaDB-BHT-8-1-1-1               1      16       1          1  13566.00  31408.00         2       0
+MariaDB-BHT-8-1-1-2               1      32       2          2   9805.00  22887.50         2       0
+MariaDB-BHT-8-1-1-3               1      16       3          2  10214.00  23669.00         2       0
+MariaDB-BHT-8-1-1-4               1      32       4          4  11801.75  27502.50         2       0
+MariaDB-BHT-8-1-2-1               2      16       1          1  12505.00  28812.00         2       0
+MariaDB-BHT-8-1-2-2               2      32       2          2  10851.00  25443.00         2       0
+MariaDB-BHT-8-1-2-3               2      16       3          2  12703.50  29398.00         2       0
+MariaDB-BHT-8-1-2-4               2      32       4          4  14606.75  33859.25         2       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-BHT-8-1 - Pods [[2, 4, 2, 1], [1, 2, 4, 2]]
+
+#### Planned
+DBMS MariaDB-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
+
+### Loading
+                     time_load  terminals  pods  Imported warehouses [1/h]
+MariaDB-BHT-8-1-1-1      250.0        1.0   1.0                      230.4
+MariaDB-BHT-8-1-1-2      250.0        1.0   2.0                      230.4
+MariaDB-BHT-8-1-1-3      250.0        1.0   2.0                      230.4
+MariaDB-BHT-8-1-1-4      250.0        1.0   4.0                      230.4
+MariaDB-BHT-8-1-2-1      250.0        1.0   1.0                      230.4
+MariaDB-BHT-8-1-2-2      250.0        1.0   2.0                      230.4
+MariaDB-BHT-8-1-2-3      250.0        1.0   2.0                      230.4
+MariaDB-BHT-8-1-2-4      250.0        1.0   4.0                      230.4
+
+### Execution - SUT
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1-1      522.21     2.77          2.57                 2.85
+MariaDB-BHT-8-1-1-2      534.85     2.43          2.78                 3.06
+MariaDB-BHT-8-1-1-3      387.83     1.70          2.84                 3.12
+MariaDB-BHT-8-1-1-4      411.44     1.89          2.99                 3.27
+MariaDB-BHT-8-1-2-1      452.64     2.03          2.66                 2.98
+MariaDB-BHT-8-1-2-2      513.54     2.14          2.92                 3.24
+MariaDB-BHT-8-1-2-3      537.82     2.12          3.02                 3.34
+MariaDB-BHT-8-1-2-4      581.47     2.51          3.16                 3.48
+
+### Execution - Benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1-1-1       45.33     0.25          0.06                 0.06
+MariaDB-BHT-8-1-1-2       45.33     0.08          0.16                 0.16
+MariaDB-BHT-8-1-1-3       31.96     0.10          0.17                 0.18
+MariaDB-BHT-8-1-1-4       33.10     0.06          0.20                 0.20
+MariaDB-BHT-8-1-2-1       39.93     0.19          0.06                 0.06
+MariaDB-BHT-8-1-2-2       39.93     0.06          0.16                 0.16
+MariaDB-BHT-8-1-2-3       31.17     0.12          0.17                 0.17
+MariaDB-BHT-8-1-2-4       42.64     0.14          0.20                 0.20
+
+### Tests
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

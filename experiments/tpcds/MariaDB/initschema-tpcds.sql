@@ -1,8 +1,23 @@
 -- speed up import
-SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
 -- ARG: SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
 SET GLOBAL innodb_flush_log_at_trx_commit =0;
 
+SET GLOBAL join_buffer_size = 128 * 1024 * 1024;  -- 128 MB
+SET SESSION join_buffer_size = 128 * 1024 * 1024;  -- 128 MB
+SET GLOBAL sort_buffer_size = 128 * 1024 * 1024;  -- 128 MB
+SET SESSION sort_buffer_size = 128 * 1024 * 1024;  -- 128 MB
+SET GLOBAL optimizer_switch = 'mrr=on,mrr_cost_based=off';
+SET SESSION optimizer_switch = 'mrr=on,mrr_cost_based=off';
+SET GLOBAL read_rnd_buffer_size = 128 * 1024 * 1024;  -- 128 MB
+SET SESSION read_rnd_buffer_size = 128 * 1024 * 1024;  -- 128 MB
+SET GLOBAL innodb_buffer_pool_size = 8 * 1024 * 1024 * 1024;  -- 8 GB
+-- not possible: SET SESSION innodb_buffer_pool_size = 8 * 1024 * 1024 * 1024;  -- 8 GB
+
+SHOW VARIABLES LIKE 'join_buffer_size';
+SHOW VARIABLES LIKE 'sort_buffer_size';
+SHOW VARIABLES LIKE 'optimizer_switch';
+SHOW VARIABLES LIKE 'read_rnd_buffer_size';
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
 
 CREATE DATABASE tpcds;
 

@@ -1,0 +1,112 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 1912s 
+    Code: 1730301195
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['CockroachDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254908644
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:1081965535232
+        CPU:
+        GPU:
+        GPUIDs:[]
+        Cores:256
+        host:5.15.0-1060-nvidia
+        node:cl-worker27
+        disk:726928680
+        datadisk:107393516
+        volume_size:30G
+        volume_used:1.5G
+        cuda:
+    worker 1
+        RAM:1081750962176
+        CPU:
+        GPU:
+        GPUIDs:[]
+        Cores:128
+        host:5.15.0-122-generic
+        node:cl-worker29
+        disk:391582960
+        datadisk:107344022
+        volume_size:30G
+        volume_used:1.6G
+        cuda:
+    worker 2
+        RAM:1081966493696
+        CPU:
+        GPU:
+        GPUIDs:[]
+        Cores:256
+        host:5.15.0-1060-nvidia
+        node:cl-worker28
+        disk:676774188
+        datadisk:107343598
+        volume_size:30G
+        volume_used:1.6G
+        cuda:
+
+### Loading
+                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+CockroachDB-64-8-65536               1       64   65536          8                     1185.98666               845744.0             1000000                            255295.0
+
+### Execution
+                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+CockroachDB-64-8-65536-1               1       64   65536          1                        1337.57               747625.0            499547                           71359.0              500453                           1549311.0
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS CockroachDB-64-8-65536 - Pods [[1]]
+
+### Ingestion - SUT
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1     2363.41     2.54          4.95                 9.51
+
+### Ingestion - Loader
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1      227.61     0.15          4.56                 4.58
+
+### Execution - SUT
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1     3054.28     2.11          7.28                12.92
+
+### Execution - Benchmarker
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1      138.39     0.21          0.58                 0.58
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

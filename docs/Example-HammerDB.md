@@ -1,4 +1,4 @@
-# Example: HammerDB
+# Benchmark: HammerDB's TPC-C
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -13,6 +13,11 @@ About the benchmark [1]:
 About the metrics [2]:
 > HammerDB workloads produce 2 statistics to compare systems called **TPM** and NOPM respectively. NOPM value is based on a metric captured from within the test schema itself. As such **NOPM (New Orders per minute)** as a performance metric independent of any particular database implementation is the recommended primary metric to use.
 
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
 References
 1. HammerDB Docs: https://www.hammerdb.com/docs/ch03s05.html
 1. HammerDB Docs: https://www.hammerdb.com/docs/ch03s04.html
@@ -26,6 +31,9 @@ You will have to change the node selectors there (to names of nodes, that exist 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+mkdir -p $LOG_DIR
 ```
 
 For performing the experiment we can run the [hammerdb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/hammerdb.py).
@@ -500,5 +508,5 @@ TEST passed: Workflow as planned
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
-Also note the size descreases from first to second run (PostgreSQL does smoe cleaning?).
+Also note the size descreases from first to second run (PostgreSQL does some cleaning?).
 

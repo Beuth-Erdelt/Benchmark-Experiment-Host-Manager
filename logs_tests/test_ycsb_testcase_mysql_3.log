@@ -1,0 +1,845 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1729863369
+Experiment                    : starts at 2024-10-25 15:36:08.966886 (4599309.090867487)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+Benchmark is limited to DBMS ['MySQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 100Gi.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is run as [1, 2] times the number of benchmarking pods.
+Experiment is run 2 times.
+Cluster monitoring            : is running
+done
+MySQL-64-8-1024               : will start now
+MySQL-64-8-1024               : storage exists bexhoma-storage-mysql-ycsb-1
+MySQL-64-8-1024               : loading is set to finished
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09 (that is in 900 secs)
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 13:52:09
+done
+MySQL-64-8-1024               : benchmarks done 0 of 2. This will be client 1
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-1-1           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-1-1-prljm: found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-1-1           : showing benchmarker times
+MySQL-64-8-1024-1-1           : benchmarker timespan (start to end single container [s]) = 1005
+MySQL-64-8-1024-1-1           : benchmarker times (start/end per pod and container) = [(1729864337, 1729865316)]
+MySQL-64-8-1024-1-1           : found and updated times {'benchmarker': [(1729864337, 1729865316)]}
+done
+MySQL-64-8-1024               : benchmarks done 0 of 2. This will be client 2
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 500000, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-1-2           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-1-2-j48x4: found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-1-2           : showing benchmarker times
+MySQL-64-8-1024-1-2           : benchmarker timespan (start to end single container [s]) = 523
+MySQL-64-8-1024-1-2           : benchmarker times (start/end per pod and container) = [(1729865376, 1729865868), (1729865376, 1729865868)]
+MySQL-64-8-1024-1-2           : found and updated times {'benchmarker': [(1729865376, 1729865868), (1729865376, 1729865868)]}
+done
+MySQL-64-8-1024               : benchmarks done 0 of 2. This will be client 3
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-1-3           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-1-3-6gqhc: .found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-1-3           : showing benchmarker times
+MySQL-64-8-1024-1-3           : benchmarker timespan (start to end single container [s]) = 1025
+MySQL-64-8-1024-1-3           : benchmarker times (start/end per pod and container) = [(1729865940, 1729866919), (1729865940, 1729866918), (1729865940, 1729866918), (1729865941, 1729866919), (1729865941, 1729866919), (1729865940, 1729866918), (1729865940, 1729866919), (1729865940, 1729866918)]
+MySQL-64-8-1024-1-3           : found and updated times {'benchmarker': [(1729865940, 1729866919), (1729865940, 1729866918), (1729865940, 1729866918), (1729865941, 1729866919), (1729865941, 1729866919), (1729865940, 1729866918), (1729865940, 1729866919), (1729865940, 1729866918)]}
+done
+MySQL-64-8-1024               : benchmarks done 0 of 2. This will be client 4
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 62500, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-1-4           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-1-4-56btv: ..found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-1-4           : showing benchmarker times
+MySQL-64-8-1024-1-4           : benchmarker timespan (start to end single container [s]) = 562
+MySQL-64-8-1024-1-4           : benchmarker times (start/end per pod and container) = [(1729867009, 1729867527), (1729867009, 1729867538), (1729867009, 1729867535), (1729867009, 1729867538), (1729867009, 1729867538), (1729867009, 1729867538), (1729867009, 1729867539), (1729867008, 1729867537), (1729867009, 1729867542), (1729867009, 1729867529), (1729867009, 1729867534), (1729867009, 1729867529), (1729867009, 1729867540), (1729867009, 1729867531), (1729867009, 1729867532), (1729867009, 1729867539)]
+MySQL-64-8-1024-1-4           : found and updated times {'benchmarker': [(1729867009, 1729867527), (1729867009, 1729867538), (1729867009, 1729867535), (1729867009, 1729867538), (1729867009, 1729867538), (1729867009, 1729867538), (1729867009, 1729867539), (1729867008, 1729867537), (1729867009, 1729867542), (1729867009, 1729867529), (1729867009, 1729867534), (1729867009, 1729867529), (1729867009, 1729867540), (1729867009, 1729867531), (1729867009, 1729867532), (1729867009, 1729867539)]}
+done
+MySQL-64-8-1024               : can be stopped
+MySQL-64-8-1024               : still being removed
+- waiting 30s -               : done
+MySQL-64-8-1024               : still being removed
+- waiting 30s -               : done
+MySQL-64-8-1024               : still being removed
+- waiting 30s -               : done
+MySQL-64-8-1024               : still being removed
+done
+MySQL-64-8-1024               : starts again
+MySQL-64-8-1024               : storage exists bexhoma-storage-mysql-ycsb-1
+MySQL-64-8-1024               : loading is set to finished
+- waiting 10s -               : done
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08 (that is in 900 secs)
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+- waiting 30s -               : done
+MySQL-64-8-1024               : will start benchmarking but not before 2024-10-25 15:04:08
+done
+MySQL-64-8-1024               : benchmarks done 1 of 2. This will be client 1
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-2-1           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-2-1-dl5ch: found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-2-1           : showing benchmarker times
+MySQL-64-8-1024-2-1           : benchmarker timespan (start to end single container [s]) = 1004
+MySQL-64-8-1024-2-1           : benchmarker times (start/end per pod and container) = [(1729868656, 1729869635)]
+MySQL-64-8-1024-2-1           : found and updated times {'benchmarker': [(1729868656, 1729869635)]}
+done
+MySQL-64-8-1024               : benchmarks done 1 of 2. This will be client 2
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 500000, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-2-2           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-2-2-54dbd: found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-2-2           : showing benchmarker times
+MySQL-64-8-1024-2-2           : benchmarker timespan (start to end single container [s]) = 524
+MySQL-64-8-1024-2-2           : benchmarker times (start/end per pod and container) = [(1729869696, 1729870209), (1729869696, 1729870209)]
+MySQL-64-8-1024-2-2           : found and updated times {'benchmarker': [(1729869696, 1729870209), (1729869696, 1729870209)]}
+done
+MySQL-64-8-1024               : benchmarks done 1 of 2. This will be client 3
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 125000, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-2-3           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-2-3-9l99r: found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-2-3           : showing benchmarker times
+MySQL-64-8-1024-2-3           : benchmarker timespan (start to end single container [s]) = 1015
+MySQL-64-8-1024-2-3           : benchmarker times (start/end per pod and container) = [(1729870259, 1729871240), (1729870260, 1729871241), (1729870259, 1729871240), (1729870259, 1729871242), (1729870259, 1729871241), (1729870260, 1729871241), (1729870259, 1729871240), (1729870259, 1729871241)]
+MySQL-64-8-1024-2-3           : found and updated times {'benchmarker': [(1729870259, 1729871240), (1729870260, 1729871241), (1729870259, 1729871240), (1729870259, 1729871242), (1729870259, 1729871241), (1729870260, 1729871241), (1729870259, 1729871240), (1729870259, 1729871241)]}
+done
+MySQL-64-8-1024               : benchmarks done 1 of 2. This will be client 4
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 128, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 62500, 'YCSB_BATCHSIZE': ''}
+MySQL-64-8-1024-2-4           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1729863369
+- waiting 10s -               : done
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1729863369-2-4-2n8t8: .found
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+done
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-2-4           : showing benchmarker times
+MySQL-64-8-1024-2-4           : benchmarker timespan (start to end single container [s]) = 520
+MySQL-64-8-1024-2-4           : benchmarker times (start/end per pod and container) = [(1729871319, 1729871809), (1729871318, 1729871809), (1729871318, 1729871808), (1729871319, 1729871809), (1729871318, 1729871808), (1729871318, 1729871809), (1729871318, 1729871808), (1729871318, 1729871809), (1729871319, 1729871809), (1729871319, 1729871810), (1729871318, 1729871809), (1729871319, 1729871810), (1729871318, 1729871808), (1729871318, 1729871809), (1729871318, 1729871809), (1729871319, 1729871810)]
+MySQL-64-8-1024-2-4           : found and updated times {'benchmarker': [(1729871319, 1729871809), (1729871318, 1729871809), (1729871318, 1729871808), (1729871319, 1729871809), (1729871318, 1729871808), (1729871318, 1729871809), (1729871318, 1729871808), (1729871318, 1729871809), (1729871319, 1729871809), (1729871319, 1729871810), (1729871318, 1729871809), (1729871319, 1729871810), (1729871318, 1729871808), (1729871318, 1729871809), (1729871318, 1729871809), (1729871319, 1729871810)]}
+done
+MySQL-64-8-1024               : can be stopped
+Experiment                    : ends at 2024-10-25 17:57:35.595956 (4607795.719935723) - 8486.63s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Benchmarking                                  connection  ... [UPDATE].Return=OK
+connection_pod                               ...                   
+MySQL-64-8-1024-1-3-1   MySQL-64-8-1024-1-3  ...              62481
+MySQL-64-8-1024-2-3-1   MySQL-64-8-1024-2-3  ...              62806
+MySQL-64-8-1024-1-3-2   MySQL-64-8-1024-1-3  ...              62373
+MySQL-64-8-1024-1-4-1   MySQL-64-8-1024-1-4  ...              31354
+MySQL-64-8-1024-2-4-1   MySQL-64-8-1024-2-4  ...              31400
+MySQL-64-8-1024-2-4-2   MySQL-64-8-1024-2-4  ...              31121
+MySQL-64-8-1024-2-4-3   MySQL-64-8-1024-2-4  ...              31295
+MySQL-64-8-1024-2-4-4   MySQL-64-8-1024-2-4  ...              31110
+MySQL-64-8-1024-2-4-5   MySQL-64-8-1024-2-4  ...              31296
+MySQL-64-8-1024-1-4-2   MySQL-64-8-1024-1-4  ...              31223
+MySQL-64-8-1024-1-4-3   MySQL-64-8-1024-1-4  ...              31394
+MySQL-64-8-1024-2-3-2   MySQL-64-8-1024-2-3  ...              62553
+MySQL-64-8-1024-2-4-6   MySQL-64-8-1024-2-4  ...              31270
+MySQL-64-8-1024-1-3-3   MySQL-64-8-1024-1-3  ...              62602
+MySQL-64-8-1024-2-3-3   MySQL-64-8-1024-2-3  ...              62695
+MySQL-64-8-1024-2-4-7   MySQL-64-8-1024-2-4  ...              31172
+MySQL-64-8-1024-2-3-4   MySQL-64-8-1024-2-3  ...              62422
+MySQL-64-8-1024-1-3-4   MySQL-64-8-1024-1-3  ...              62494
+MySQL-64-8-1024-1-3-5   MySQL-64-8-1024-1-3  ...              62555
+MySQL-64-8-1024-1-2-1   MySQL-64-8-1024-1-2  ...             249683
+MySQL-64-8-1024-2-4-8   MySQL-64-8-1024-2-4  ...              31293
+MySQL-64-8-1024-2-3-5   MySQL-64-8-1024-2-3  ...              62357
+MySQL-64-8-1024-1-2-2   MySQL-64-8-1024-1-2  ...             250335
+MySQL-64-8-1024-2-4-9   MySQL-64-8-1024-2-4  ...              31281
+MySQL-64-8-1024-1-4-4   MySQL-64-8-1024-1-4  ...              31178
+MySQL-64-8-1024-1-4-5   MySQL-64-8-1024-1-4  ...              31280
+MySQL-64-8-1024-1-4-6   MySQL-64-8-1024-1-4  ...              31284
+MySQL-64-8-1024-2-2-1   MySQL-64-8-1024-2-2  ...             250157
+MySQL-64-8-1024-1-4-7   MySQL-64-8-1024-1-4  ...              31186
+MySQL-64-8-1024-1-3-6   MySQL-64-8-1024-1-3  ...              62785
+MySQL-64-8-1024-1-4-8   MySQL-64-8-1024-1-4  ...              31320
+MySQL-64-8-1024-1-4-9   MySQL-64-8-1024-1-4  ...              31338
+MySQL-64-8-1024-2-4-10  MySQL-64-8-1024-2-4  ...              31152
+MySQL-64-8-1024-2-4-11  MySQL-64-8-1024-2-4  ...              31173
+MySQL-64-8-1024-2-4-12  MySQL-64-8-1024-2-4  ...              31408
+MySQL-64-8-1024-2-3-6   MySQL-64-8-1024-2-3  ...              62549
+MySQL-64-8-1024-1-3-7   MySQL-64-8-1024-1-3  ...              62366
+MySQL-64-8-1024-1-4-10  MySQL-64-8-1024-1-4  ...              31488
+MySQL-64-8-1024-2-1-1   MySQL-64-8-1024-2-1  ...             500547
+MySQL-64-8-1024-2-3-7   MySQL-64-8-1024-2-3  ...              62441
+MySQL-64-8-1024-2-4-13  MySQL-64-8-1024-2-4  ...              31366
+MySQL-64-8-1024-1-1-1   MySQL-64-8-1024-1-1  ...             500279
+MySQL-64-8-1024-2-4-14  MySQL-64-8-1024-2-4  ...              31142
+MySQL-64-8-1024-1-3-8   MySQL-64-8-1024-1-3  ...              62065
+MySQL-64-8-1024-1-4-11  MySQL-64-8-1024-1-4  ...              31414
+MySQL-64-8-1024-1-4-12  MySQL-64-8-1024-1-4  ...              31487
+MySQL-64-8-1024-2-3-8   MySQL-64-8-1024-2-3  ...              62149
+MySQL-64-8-1024-2-2-2   MySQL-64-8-1024-2-2  ...             250218
+MySQL-64-8-1024-1-4-13  MySQL-64-8-1024-1-4  ...              31478
+MySQL-64-8-1024-1-4-14  MySQL-64-8-1024-1-4  ...              31374
+MySQL-64-8-1024-2-4-15  MySQL-64-8-1024-2-4  ...              31205
+MySQL-64-8-1024-1-4-15  MySQL-64-8-1024-1-4  ...              31308
+MySQL-64-8-1024-1-4-16  MySQL-64-8-1024-1-4  ...              31305
+MySQL-64-8-1024-2-4-16  MySQL-64-8-1024-2-4  ...              31426
+
+[54 rows x 43 columns]
+Workflow {'MySQL-64-8-1024': [[8, 16, 2, 1], [8, 16, 2, 1]]}
+Result workflow not complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 8487s 
+    Code: 1729863369
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Benchmark is limited to DBMS ['MySQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MySQL-64-8-1024-1-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219012
+    datadisk:22532972
+    volume_size:100G
+    volume_used:20G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-1-2 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219012
+    datadisk:23708326
+    volume_size:100G
+    volume_used:20G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-1-3 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219012
+    datadisk:24883066
+    volume_size:100G
+    volume_used:24G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-1-4 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219180
+    datadisk:26057108
+    volume_size:100G
+    volume_used:25G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-2-1 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219180
+    datadisk:27235128
+    volume_size:100G
+    volume_used:26G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-2-2 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219180
+    datadisk:28411111
+    volume_size:100G
+    volume_used:28G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-2-3 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219352
+    datadisk:29586690
+    volume_size:100G
+    volume_used:29G
+    requests_cpu:4
+    requests_memory:16Gi
+MySQL-64-8-1024-2-4 uses docker image mysql:8.4.0
+    RAM:541008605184
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254219352
+    datadisk:30761322
+    volume_size:100G
+    volume_used:29G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                     experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MySQL-64-8-1024-1-1               1       64    1024          1                        1021.63               978826.0            499721                          33887.00              500279                            451327.0
+MySQL-64-8-1024-1-3               1       64    1024          8                        1022.74               977879.0            500279                           1231.88              499721                            410591.0
+MySQL-64-8-1024-1-2               1      128    2048          2                        2034.40               491694.0            499982                           1151.50              500018                           1913855.0
+MySQL-64-8-1024-1-4               1      128    2048         16                        1901.25               533281.0            498589                           1426.06              501411                           2050815.0
+MySQL-64-8-1024-2-1               2       64    1024          1                        1021.56               978893.0            499453                          31535.00              500547                            473087.0
+MySQL-64-8-1024-2-3               2       64    1024          8                        1019.19               981840.0            500028                           1249.50              499972                            480383.0
+MySQL-64-8-1024-2-2               2      128    2048          2                        1948.12               513400.0            499625                           1229.50              500375                           1860095.0
+MySQL-64-8-1024-2-4               2      128    2048         16                        2040.92               490178.0            499890                           1524.56              500110                           1754559.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-64-8-1024 - Pods [[8, 16, 2, 1], [8, 16, 2, 1]]
+
+#### Planned
+DBMS MySQL-64-8-1024 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

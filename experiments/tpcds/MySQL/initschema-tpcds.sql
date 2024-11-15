@@ -1,17 +1,48 @@
+DROP USER 'root'@'%';
+FLUSH PRIVILEGES;
+
 CREATE USER 'root'@'%';
+ALTER USER 'root'@'%' IDENTIFIED BY 'root';
+
+ -- SET PASSWORD FOR root@'172.17.0.3' = PASSWORD('root');
+
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
 
 -- allow load local in file
-SET GLOBAL local_infile = 1;
+SET GLOBAL local_infile=true;
+SHOW GLOBAL variables like 'local_infile';
 
 -- allow zero date
 SET sql_mode='';
 SET GLOBAL sql_mode='';
 
 -- speed up import
-SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
-SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
-SET GLOBAL innodb_flush_log_at_trx_commit =0;
+-- SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
+-- SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
+-- SET GLOBAL innodb_flush_log_at_trx_commit =0;
+
+-- the server performs a DNS lookup every time a client connects, not tested
+-- SET GLOBAL host_cache_size=0
+
+-- Defines the amount of disk space occupied by redo log files.
+-- SET GLOBAL innodb_redo_log_capacity=1024*1024*1024;
+
+
+SHOW GLOBAL VARIABLES LIKE '%tmp_table_size%';
+SHOW GLOBAL VARIABLES LIKE '%max_heap_table_size%';
+
+SET GLOBAL tmp_table_size = 1024 * 1024 * 1024;  -- 1 GB
+SET GLOBAL max_heap_table_size = 1024 * 1024 * 1024;  -- 1 GB
+
+SHOW GLOBAL VARIABLES;
+SHOW GLOBAL STATUS;
+
+SELECT @@innodb_buffer_pool_size/1024/1024/1024, @@innodb_buffer_pool_chunk_size/1024/1024/1024, @@innodb_buffer_pool_instances;
+
+SELECT @@innodb_redo_log_capacity/1024/1024, @@innodb_log_buffer_size/1024/1024;
+
+SELECT @@innodb_ddl_threads, @@innodb_ddl_buffer_size/1024/1024;
 
 
 CREATE DATABASE tpcds;
