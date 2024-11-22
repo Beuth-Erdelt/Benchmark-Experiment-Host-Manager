@@ -839,25 +839,26 @@ scrape_configs:
       - targets: ['{endpoint}:9300']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             i = i + 1
                         # services of workers
-                        endpoints_worker = self.get_worker_endpoints()
-                        #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
-                        #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-                        i = 0
-                        #for pod in pods_worker:
-                        for endpoint in endpoints_worker:
-                            if endpoint in endpoints_cluster:
-                                # we already monitor this endpoint
-                                print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (already monitored by cluster)".format(configuration, endpoint))
-                                continue
-                            print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
-                            #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
-                            prometheus_config += """
+                        if len(endpoints_cluster) == 0:
+                            endpoints_worker = self.get_worker_endpoints()
+                            #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+                            #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                            i = 0
+                            #for pod in pods_worker:
+                            for endpoint in endpoints_worker:
+                                if endpoint in endpoints_cluster:
+                                    # we already monitor this endpoint
+                                    print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (already monitored by cluster)".format(configuration, endpoint))
+                                    continue
+                                print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
+                                #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                                prometheus_config += """
   - job_name: '{endpoint}'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
       - targets: ['{endpoint}:9300']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                            i = i + 1
+                                i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
