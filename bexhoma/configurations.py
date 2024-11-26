@@ -1904,7 +1904,7 @@ scrape_configs:
         pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         for pod in pods:
             self.pod_sut = pod
-            print("{:30s}: get host info for worker {}".format(self.configuration, pod))            
+            print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))            
             c['worker'].append(self.get_host_all())
         self.pod_sut = pod_sut
         # take latest resources
@@ -2214,6 +2214,11 @@ scrape_configs:
                 #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                 # with container name? should better be part of the metric query
                 #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                #metric_example = self.benchmark.dbms[self.configuration].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
+                #metric_example = c['name']['monitoring']['metrics_special']['total_cpu_memory']
+                #print("{:30s}: example mtric {}".format(connection, metric_example))
+                metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
+                print("{:30s}: example metric {}".format(connection, metric_example))
                 cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                     #self.sut_container_name,
                     connection, 
@@ -2236,6 +2241,14 @@ scrape_configs:
                 if len(endpoints_cluster)>0 or self.experiment.cluster.monitor_cluster_exists:
                     # data generator container
                     print("{:30s}: collecting metrics of data generator".format(connection))
+                    metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                    container = "datagenerator"
+                    if container is not None:
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                    print("{:30s}: example metric {}".format(connection, metric_example))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
@@ -2253,6 +2266,14 @@ scrape_configs:
                     self.logger.debug(stdout)
                     # data injector container "sensor"
                     print("{:30s}: collecting metrics of data injector".format(connection))
+                    metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                    container = "sensor"
+                    if container is not None:
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                    print("{:30s}: example metric {}".format(connection, metric_example))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 

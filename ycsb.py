@@ -375,7 +375,7 @@ if __name__ == '__main__':
                         """
                         pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
                         #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
-                        print("****************", pods_worker)
+                        #print("****************", pods_worker)
                         return pods_worker
                     config.get_worker_pods = types.MethodType(get_worker_pods, config)
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
