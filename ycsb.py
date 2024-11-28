@@ -555,9 +555,12 @@ if __name__ == '__main__':
                     # CockroachDB
                     name_format = 'DatabaseService-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='DatabaseService', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DatabaseService')
+                    config.set_storage(
+                        storageConfiguration = 'databaseservice'
+                        )
                     # YCSB needs these 2 fixed
-                    config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
-                    config.sut_container_name = "yb-tserver"            # fix container name of SUT
+                    #config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
+                    #config.sut_container_name = "yb-tserver"            # fix container name of SUT
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(

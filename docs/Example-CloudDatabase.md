@@ -14,7 +14,7 @@ Advantages
 
 Disadvantages
 * This is only implemented for some examples
-* This cannot be applied to Cloud services (or other databases outside of the Kubernetes cluster)
+* This cannot be applied to Cloud services (or any other database outside of the Kubernetes cluster)
 
 ### Not Managed by Bexhoma
 
@@ -26,14 +26,14 @@ Advantages
 
 Disadvantages
 * Bexhoma not necessarily knows about loaded databases, their status and timings - they might be affected by outside services
-* This cannot be applied to Cloud services (or other databases outside of the Kubernetes cluster)
+* This cannot be applied to Cloud services (or any other database outside of the Kubernetes cluster)
 
 ### Outside of Kubernetes
 
 Here we present an example for a DBMS, that is not managed by bexhoma and might be running outside of the Kubernetes cluster.
 
 Advantages
-* This can be applied to all Cloud services (or other databases outside of the Kubernetes cluster) with a JDBC interface
+* This can be applied to all Cloud services (or any other database outside of the Kubernetes cluster) with a JDBC interface
 
 Disadvantages
 * The SUT cannot be monitored by Bexhoma
@@ -49,7 +49,10 @@ Disadvantages
 
 ## PostgreSQL-compatible Cloud Service
 
-* loading - example PostgreSQL compatible (or sandbox?)
+The following example treats **a cloud database that is compatible to PostgreSQL**.
+
+Important implications of this:
+* Bexhoma can do the ingestion - example PostgreSQL compatible (or sandbox?)
 * skip loading should be possible
 * PVC useful to skip loading in future?
 
@@ -63,10 +66,9 @@ Important implications of this:
 
 In order to be fully functional, bexhoma installs an instance of PostgreSQL, that does nothing (a container with psql would be enough).
 Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the DBMS.
-Moreover the container is used to install a schema to YugabyteDB via psql.
+Moreover the container is used to install a schema to the database via psql.
 
 All metrics in monitoring are summed across all matching components.
-In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
 
 **The results are not official benchmark results.
 Exact performance depends on a number of parameters.
@@ -100,9 +102,9 @@ Example:
 ```bash
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
-  -sfo 10 \
+  -sfo 1 \
   --workload a \
-  -dbms YugabyteDB \
+  -dbms DatabaseService \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -114,7 +116,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_1.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp1.log &
 ```
 
 This
@@ -149,11 +151,11 @@ Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+-----------------------+--------------+--------------+------------+---------------+
-| 1730133803            | sut          |   loaded [s] | use case   | benchmarker   |
-+=======================+==============+==============+============+===============+
-| YugabyteDB-64-8-65536 | (1. Running) |           41 | ycsb       | (1. Running)  |
-+-----------------------+--------------+--------------+------------+---------------+
++----------------------------+--------------+--------------+------------+---------------+
+| 1730133803                 | sut          |   loaded [s] | use case   | benchmarker   |
++============================+==============+==============+============+===============+
+| DatabaseService-64-8-65536 | (1. Running) |           41 | ycsb       | (1. Running)  |
++----------------------------+--------------+--------------+------------+---------------+
 ```
 
 The code `1730133803` is the unique identifier of the experiment.
@@ -174,14 +176,14 @@ At the end of a benchmark you will see a summary like
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 773s 
-    Code: 1730133803
+    Duration: 378s 
+    Code: 1732808631
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
     YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['YugabyteDB'].
+    Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -192,48 +194,42 @@ YCSB SF=1
     Experiment is run once.
 
 ### Connections
-YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
+DatabaseService-64-8-65536-1 uses docker image postgres:16.1
     node:cl-worker11
-    disk:254319416
-    datadisk:39428
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
-                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-YugabyteDB-64-8-65536               1       64   65536          8                   16556.163255                60725.0             1000000                             61163.0
+                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+DatabaseService-64-8-65536               1       64   65536          8                   24211.574786                41517.0             1000000                             21027.0
 
 ### Execution
-                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1                       20041.33               498969.0           5001600                           63903.0             4998400                             65599.0
+                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1                       30987.57                32271.0            499597                           39007.0              500403                             44095.0
 
 ### Workflow
 
 #### Actual
-DBMS YugabyteDB-64-8-65536 - Pods [[1]]
+DBMS DatabaseService-64-8-65536 - Pods [[1]]
 
 #### Planned
-DBMS YugabyteDB-64-8-65536 - Pods [[1]]
+DBMS DatabaseService-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1     2423.24    13.34         12.39                16.56
+                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-64-8-65536-1        0.24        0          2.35                 2.38
 
 ### Ingestion - Loader
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1       52.99        0          2.83                 2.87
+                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-64-8-65536-1       82.45        0           4.2                 4.23
 
 ### Execution - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1    19524.15    26.08         14.07                24.03
+                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-64-8-65536-1        0.15        0          2.35                 2.38
 
 ### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1      934.46     2.07          0.61                 0.61
+                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-64-8-65536-1       58.46        0          0.53                 0.53
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -267,9 +263,8 @@ Example:
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
-  -sl \
   --workload a \
-  -dbms YugabyteDB \
+  -dbms DatabaseService \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -281,7 +276,8 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_2.log &
+  -sl \
+  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp2.log &
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
@@ -364,14 +360,14 @@ For further explanation see the monitoring section of this documentation.
 
 ### Bexhoma Status Volume
 
-Persistent Storage is not managed by bexhoma, but by YugabyteDB.
+Persistent Storage is not managed by bexhoma, but by the Cloud service.
 We can add the request for a PVC to the experiment setup:
 ```bash
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
-  -sfo 10 \
+  -sfo 1 \
   --workload a \
-  -dbms YugabyteDB \
+  -dbms DatabaseService \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -384,17 +380,17 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_3.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp3.log &
 ```
 This will add a PVC to the Dummy DBMS.
 Nothing will be stored there, but it maintains status information about previous loading processes.
 
 ```
-+-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| Volumes                                 | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
-+=========================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
-| bexhoma-storage-yugabytedb-ycsb-1       | yugabytedb      | ycsb-1       | True         |               300 | YugabyteDB | shared               | 1Gi       | Bound    | 1.0G   | 36M    |
-+-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
++----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
+| Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
++========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
+| bexhoma-storage-databaseservice-ycsb-1 | databaseservice | ycsb-1       | True         |                65 | DatabaseService | shared               | 1Gi       | Bound    | 1.0G   | 36M    |
++----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 ```
 
 The above means there has been a YCSB loading process (managed by bexhoma) of size SF=1, that has been completed.
@@ -402,14 +398,10 @@ All following calls of such an experiment will skip loading, since the PVC tells
 This thus helps to spare the `-sl` parameter.
 
 However bexhoma cannot verify such information.
-If YugabyteDB is restarted or data is delete somehow, this PVC information will be outdated and wrong.
+If data is delete somehow, this PVC information will be outdated and wrong.
 
-This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
+This approach helps bexhoma to persist status information, but it does not persist data inside the Cloud database.
 
-
-### Persist YugabyteDB
-
-If you want YugabyteDB to have real persistent storage, remove the line `storage.ephemeral=true,\` from the installation.
 
 
 ## YCSB Example Explained
@@ -420,17 +412,17 @@ If you want YugabyteDB to have real persistent storage, remove the line `storage
 In `cluster.config` there is a section:
 
 ```
-'YugabyteDB': {
-    'loadData': 'psql -U yugabyte --host yb-tserver-service.{namespace}.svc.cluster.local --port 5433 < {scriptname}',
+'DatabaseService': {
+    'loadData': 'psql -U postgres --host mydatabase.example.com --port 5432 < {scriptname}',
     'template': {
-        'version': '2.17.1',
-        'alias': 'Cloud-Native-1',
-        'docker_alias': 'CN1',
+        'version': 'v1234',
+        'alias': 'Cloud-A',
+        'docker_alias': 'CL-A',
          'JDBC': {
-            'driver': "com.yugabyte.Driver",
-            'auth': ["yugabyte", ""],
-            'url': 'jdbc:yugabytedb://yb-tserver-service.{namespace}.svc.cluster.local:5433/yugabyte?load-balance=true',
-            'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar'
+            'driver': "org.postgresql.Driver",
+            'auth': ["postgres", ""],
+            'url': 'jdbc:postgresql://mydatabase.example.com:5432/postgres?reWriteBatchedInserts=true',
+            'jar': 'postgresql-42.5.0.jar'
         }
     },
     'logfile': '/usr/local/data/logfile',
@@ -452,21 +444,21 @@ In the Docker files for YCSB
 
 there is a section about including the needed JDBC driver:
 ```
-######### Specific version of YugabyteDB JDBC #########
-RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
-RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
+######### Specific version of PostgreSQL JDBC #########
+RUN wget https://jdbc.postgresql.org/download/postgresql-42.5.0.jar --no-check-certificate
+RUN cp postgresql-42.5.0.jar jars/postgresql-42.5.0.jar
 ```
 
 
 ### Dummy SUT
 
 Bexhoma deploys a pod to carry status informations.
-Here it is an instance of PostgreSQL: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-YugabyteDB.yml
+Here it is an instance of PostgreSQL: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DatabaseService.yml
 
 
 ### Schema SQL File
 
-If data should be loaded, bexhoma at first creates a schema according to: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB
+If data should be loaded, bexhoma at first creates a schema according to: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/DatabaseService
 
 
 ### Workflow of YCSB
@@ -479,6 +471,19 @@ Watch for
 * `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-")
 * `config.get_worker_endpoints()`: ?
 * `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
