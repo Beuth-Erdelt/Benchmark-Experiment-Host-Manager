@@ -121,7 +121,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 This
 * loops over `n` in [8] and `t` in [4]
-  * starts a clean instance of a dummy container as a placeholder for YugabyteDB (`-dbms`)
+  * starts a clean instance of a dummy container as a placeholder for the DatabaseService (`-dbms`)
     * data directory inside a Docker container
   * creates YCSB schema in each database
   * starts `n` loader pods per DBMS
@@ -349,10 +349,8 @@ TEST passed: Workflow as planned
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
-All metrics in monitoring are summed across all matching components.
-In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
-
 The `-mc` option is mandatory here: The sidecar container approach is not working (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
+Moreover the SUT itself cannot be monitored, since it is outside of the cluster.
 For further explanation see the monitoring section of this documentation.
 
 
@@ -463,7 +461,7 @@ If data should be loaded, bexhoma at first creates a schema according to: https:
 
 ### Workflow of YCSB
 
-In `ycsb.py` there is a section about YugabyteDB.
+In `ycsb.py` there is a section about DatabaseService.
 
 Watch for
 * `config.sut_service_name`: Fixed name for the service of the SUT (="yb-tserver-service")
