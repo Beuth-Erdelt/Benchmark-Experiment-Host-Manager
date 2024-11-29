@@ -555,6 +555,7 @@ if __name__ == '__main__':
                     # CockroachDB
                     name_format = 'DatabaseService-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='DatabaseService', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DatabaseService')
+                    config.monitoring_sut = False # cannot be monitored since outside of K8s
                     config.set_storage(
                         storageConfiguration = 'databaseservice'
                         )
