@@ -142,6 +142,7 @@ class default():
         self.loading_active = experiment.loading_active
         self.loading_deactivated = False # Do not load at all and do not test for loading
         self.monitor_loading = True #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
+        self.monitoring_sut = True #: Fetch metrics of SUT, if monítoring is active - this is set to False when a service outside of K8s is benchmarked
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         #self.parallelism = 1
@@ -2210,31 +2211,33 @@ scrape_configs:
             # get monitoring for loading
             if self.monitoring_active and self.monitor_loading:
                 cmd = {}
-                print("{:30s}: collecting loading metrics of SUT".format(connection))
-                #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-                # with container name? should better be part of the metric query
-                #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
-                #metric_example = self.benchmark.dbms[self.configuration].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
-                #metric_example = c['name']['monitoring']['metrics_special']['total_cpu_memory']
-                #print("{:30s}: example mtric {}".format(connection, metric_example))
-                metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
-                print("{:30s}: example metric {}".format(connection, metric_example))
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
-                    #self.sut_container_name,
-                    connection, 
-                    c['name']+'.config', 
-                    '/results/'+self.code, 
-                    self.code, 
-                    self.timeLoadingStart, 
-                    self.timeLoadingEnd)
-                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-                self.logger.debug(stdout)
-                self.logger.debug(stderr)
-                # upload connections infos again, metrics has overwritten it
-                filename = 'connections.config'
-                cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
-                self.logger.debug(stdout)
+                self.monitoring_sut = True
+                if self.monitoring_sut:
+                    print("{:30s}: collecting loading metrics of SUT".format(connection))
+                    #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                    # with container name? should better be part of the metric query
+                    #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                    #metric_example = self.benchmark.dbms[self.configuration].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
+                    #metric_example = c['name']['monitoring']['metrics_special']['total_cpu_memory']
+                    #print("{:30s}: example mtric {}".format(connection, metric_example))
+                    metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
+                    print("{:30s}: example metric {}".format(connection, metric_example))
+                    cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                        #self.sut_container_name,
+                        connection, 
+                        c['name']+'.config', 
+                        '/results/'+self.code, 
+                        self.code, 
+                        self.timeLoadingStart, 
+                        self.timeLoadingEnd)
+                    stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+                    self.logger.debug(stdout)
+                    self.logger.debug(stderr)
+                    # upload connections infos again, metrics has overwritten it
+                    filename = 'connections.config'
+                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    self.logger.debug(stdout)
                 # get metrics of loader components
                 # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
