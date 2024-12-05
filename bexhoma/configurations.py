@@ -2211,7 +2211,7 @@ scrape_configs:
             # get monitoring for loading
             if self.monitoring_active and self.monitor_loading:
                 cmd = {}
-                self.monitoring_sut = True
+                #self.monitoring_sut = True
                 if self.monitoring_sut:
                     print("{:30s}: collecting loading metrics of SUT".format(connection))
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
