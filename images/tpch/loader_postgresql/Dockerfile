@@ -1,12 +1,17 @@
-FROM debian:stable-20221004-slim
+#FROM debian:stable-20221004-slim
+FROM alpine:3.15
 
-RUN apt-get -y update && apt-get clean all
+RUN apk update
 
-RUN apt-get install -y build-essential
-RUN apt-get install -y wget
-RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make && cp src/redis-cli /usr/local/bin/ && chmod 755 /usr/local/bin/redis-cli
+RUN apk add --no-cache bash
 
-RUN apt-get update && apt-get -y install postgresql-client
+RUN apk add --no-cache nano
+
+RUN apk add --no-cache make cmake gcc libc-dev
+
+RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
+
+RUN apk update && apk --update add postgresql-client
 
 ENV NUM_PODS=4
 ENV CHILD=1
