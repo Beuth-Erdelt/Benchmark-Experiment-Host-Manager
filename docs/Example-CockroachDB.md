@@ -250,6 +250,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 Example: 
 ```bash
 nohup python ycsb.py -ms 1 -tr \
+  -sl \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
