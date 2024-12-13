@@ -1349,13 +1349,13 @@ class testbed():
                 cmd = {}
                 query_url = "{url}query_range?query={safe_query}&start={start}&end={end}&step=60".format(url=url, safe_query=safe_query, start=int(start.timestamp()), end=int(end.timestamp()))
                 self.logger.debug('Test URL {}'.format(query_url))
-                command = "curl --max-time 10 -is '{}' | head -n 1|cut -d$' ' -f2".format(query_url)
+                command = "curl -L --max-time 10 -is '{}' | head -n 1|cut -d$' ' -f2".format(query_url)
                 #command = "curl -is '{}' | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
                 self.logger.debug('Command {}'.format(command))
                 #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
                 #cores = os.popen(fullcommand).read()
                 stdin, stdout, stderr = self.execute_command_in_pod(pod=pod_dashboard, command=command, container="dashboard")
-                print("Return", stdout, stderr)
+                #print("Return", stdout, stderr)
                 status = stdout#os.popen(fullcommand).read()
                 if len(status)>0:
                     #return int(status)
