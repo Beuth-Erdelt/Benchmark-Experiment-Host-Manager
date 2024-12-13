@@ -5,7 +5,7 @@ FROM alpine:3.15
 # FROM python:3.13-rc-slim
 
 # Set environment variables for Python installation
-ENV PYTHON_VERSION=3.12.5
+ENV PYTHON_VERSION=3.12.8
 ENV PYTHON_SRC=https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
 
 # Install necessary packages
@@ -57,8 +57,6 @@ RUN mkdir /results
 
 RUN apk add --no-cache bash
 
-RUN apk add --no-cache git
-
 SHELL ["/bin/bash", "-c"]
 
 ENV VIRTUAL_ENV=/opt/venv
@@ -69,6 +67,7 @@ RUN python -m pip install virtualenv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
+RUN apk add --no-cache git
 RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.6
 
 RUN pip install jupyter
