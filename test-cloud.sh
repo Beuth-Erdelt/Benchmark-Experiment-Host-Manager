@@ -677,23 +677,23 @@ wait_process "tpcds"
 
 
 
-
-
-
+#######################################################
+############# YCSB Monitoring PostgreSQL ##############
+#######################################################
 
 
 
 #PostgreSQL
 ##################################### sidecar
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  run </dev/null &>$LOG_DIR/test_ycsb_postgresql_sidecar.log &
+#nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  run </dev/null &>$LOG_DIR/test_ycsb_postgresql_sidecar.log &
 #-) ok
 
 ##################################### daemonset
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  -mc -db run </dev/null &>$LOG_DIR/test_ycsb_postgresql_daemonset.log &
+#nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  -mc -db run </dev/null &>$LOG_DIR/test_ycsb_postgresql_daemonset.log &
 #-) ok
 
 ##################################### cluster preinstalled
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  -mc -db run </dev/null &>$LOG_DIR/test_ycsb_postgresql_cluster.log &
+#nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  -mc -db run </dev/null &>$LOG_DIR/test_ycsb_postgresql_cluster.log &
 #-) ok
 
 
@@ -899,6 +899,8 @@ sleep 30
 # start database service
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
+# login into database service
+# kubectl port-forward svc/bexhoma-service 9091:9091
 
 #### TCP-H Monitoring (Example-TPC-H.md)
 nohup python tpch.py -ms 2 -dt -tr \
