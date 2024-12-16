@@ -1357,6 +1357,7 @@ class testbed():
                 stdin, stdout, stderr = self.execute_command_in_pod(pod=pod_dashboard, command=command, container="dashboard")
                 #print("Return", stdout, stderr)
                 status = stdout#os.popen(fullcommand).read()
+                self.logger.debug('Status {}'.format(status))
                 if len(status)>0:
                     #return int(status)
                     #print(int(status))
