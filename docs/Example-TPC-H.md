@@ -45,7 +45,6 @@ nohup python tpch.py -ms 4 -dt -tr \
 This
 * starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB (at the same time, `-ms`)
   * data directory inside a Docker container
-  * with a maximum of 1 DBMS per time (`-ms`)
 * creates TPC-H schema in each database
 * starts 8 loader pods per DBMS (`-nlp`)
   * with a data generator (init) container each
