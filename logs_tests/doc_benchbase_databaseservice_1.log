@@ -1,0 +1,191 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1734425508
+Experiment                    : starts at 2024-12-17 09:51:48.528178 (4110309.935312608)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+Benchmark is limited to DBMS ['DatabaseService'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1, 2] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+done
+DatabaseService-1-1-1024      : will start now
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : is not loaded yet
+DatabaseService-1-1-1024      : will start loading but not before 2024-12-17 08:56:19 (that is in 60 secs)
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : is not loaded yet
+DatabaseService-1-1-1024      : will start loading but not before 2024-12-17 08:56:19
+done
+DatabaseService-1-1-1024      : is not loaded yet
+DatabaseService-1-1-1024      : start asynch loading scripts of type loaded
+DatabaseService-1-1-1024      : is loading
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : is loading
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : is loading
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : is loading
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : is loading
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : is loading
+done
+DatabaseService-1-1-1024      : showing loader times
+DatabaseService-1-1-1024      : loader timespan (first to last [s]) = 149
+DatabaseService-1-1-1024      : benchmarks done 0 of 1. This will be client 1
+DatabaseService-1-1-1024      : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_HOST': 'bexhoma-service.perdelt.svc.cluster.local', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
+DatabaseService-1-1-1024-1    : start benchmarking
+Worker pods found:  []
+DatabaseService-1-1-1024      : benchmarking results in folder /home/perdelt/benchmarks/1734425508
+- waiting 10s -               : done
+DatabaseService-1-1-1024      : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-1-1-1024-1734425508-1-pm9s9: found
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+done
+DatabaseService-1-1-1024      : has running benchmarks
+DatabaseService-1-1-1024-1    : showing benchmarker times
+DatabaseService-1-1-1024-1    : benchmarker timespan (start to end single container [s]) = 313
+DatabaseService-1-1-1024-1    : benchmarker times (start/end per pod and container) = []
+DatabaseService-1-1-1024-1    : found and updated times {'benchmarker': []}
+done
+DatabaseService-1-1-1024      : benchmarks done 0 of 1. This will be client 2
+DatabaseService-1-1-1024      : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_HOST': 'bexhoma-service.perdelt.svc.cluster.local', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
+DatabaseService-1-1-1024-2    : start benchmarking
+Worker pods found:  []
+DatabaseService-1-1-1024      : benchmarking results in folder /home/perdelt/benchmarks/1734425508
+- waiting 10s -               : done
+DatabaseService-1-1-1024      : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-1-1-1024-1734425508-1-9c47d: found
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-1-1-1024      : has running benchmarks
+done
+DatabaseService-1-1-1024      : has running benchmarks
+DatabaseService-1-1-1024-2    : showing benchmarker times
+DatabaseService-1-1-1024-2    : benchmarker timespan (start to end single container [s]) = 313
+DatabaseService-1-1-1024-2    : benchmarker times (start/end per pod and container) = []
+DatabaseService-1-1-1024-2    : found and updated times {'benchmarker': []}
+done
+DatabaseService-1-1-1024      : can be stopped
+Experiment ends at 2024-12-17 10:10:55.597707 (4111457.004836019): 1147.0695234113373s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow not complete
+
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1148s 
+    Code: 1734425508
+    Benchbase runs the benchmark.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['DatabaseService'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+DatabaseService-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
+    node:cl-worker11
+    disk:236005104
+    datadisk:39348
+    requests_cpu:4
+    requests_memory:16Gi
+DatabaseService-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
+    node:cl-worker11
+    disk:236005108
+    datadisk:39348
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                            experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DatabaseService-1-1-1024-1               1         16   16384          1  300.0                       1922.22                                                      18733.0                                               8317.0
+DatabaseService-1-1-1024-2               1         16   16384          2  300.0                       1742.44                                                      21860.0                                               9174.5
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS DatabaseService-1-1-1024 - Pods [[2, 1]]
+
+#### Planned
+DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                            time_load  terminals  pods  Imported warehouses [1/h]
+DatabaseService-1-1-1024-1      149.0        1.0   1.0                 386.577181
+DatabaseService-1-1-1024-2      149.0        1.0   2.0                 386.577181
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

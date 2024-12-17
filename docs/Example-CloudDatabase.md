@@ -39,10 +39,26 @@ Disadvantages
 * The SUT cannot be monitored by Bexhoma
 * Bexhoma not necessarily knows about loaded databases, their status and timings - they might be affected by outside services
 
+#### Test Environment
 
+In order to have a test environment, we install a Dummy instance PostgreSQL and treat it like an external service.
 
+Create the test dummy
+```bash
+# start database service
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+```
 
+This starts a deployment `bexhoma-deployment-postgres` with a service `bexhoma-service`.
 
+We can delete these after the experiment has finished by
+```bash
+# delete database service
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+```
+
+All demonstration and test runs in the following are run against this dummy.
 
 
 
@@ -50,11 +66,6 @@ Disadvantages
 ## PostgreSQL-compatible Cloud Service
 
 The following example treats **a cloud database that is compatible to PostgreSQL**.
-
-Important implications of this:
-* Bexhoma can do the ingestion - example PostgreSQL compatible (or sandbox?)
-* skip loading should be possible
-* PVC useful to skip loading in future?
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma and does not exist in the Kubernetes cluster in the same namespace**.
 
@@ -115,7 +126,6 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  -m -mc \
   run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_1.log &
 ```
 
@@ -138,7 +148,6 @@ This
       * threads = 64/`m` (`-nbt`)
     * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
-* monitors (`-m`) all components (`-mc`)
 * shows a summary
 
 ### Status
@@ -277,71 +286,13 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -sl \
-  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp2.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_2.log &
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
 
 ```bash
 ## Show Summary
-
-### Workload
-YCSB SF=1
-    Type: ycsb
-    Duration: 690s 
-    Code: 1730223222
-    This includes no queries. YCSB runs the benchmark
-    This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
-    System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['YugabyteDB'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [64] threads, split into [8] pods.
-    Benchmarking is tested with [64] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
-
-### Connections
-YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:254319248
-    datadisk:39268
-    requests_cpu:4
-    requests_memory:16Gi
-
-### Execution
-                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1                       19547.36               511578.0           4998778                           64703.0             5001222                             66239.0
-
-### Workflow
-
-#### Actual
-DBMS YugabyteDB-64-8-65536 - Pods [[1]]
-
-#### Planned
-DBMS YugabyteDB-64-8-65536 - Pods [[1]]
-
-### Execution - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1     19802.0    26.15         14.21                24.03
-
-### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1     1039.41     2.13          0.61                 0.61
-
-### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
 ```
 
 
@@ -360,6 +311,7 @@ For further explanation see the monitoring section of this documentation.
 
 Persistent Storage is not managed by bexhoma, but by the Cloud service.
 We can add the request for a PVC to the experiment setup:
+
 ```bash
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -378,8 +330,9 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp3.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_3.log &
 ```
+
 This will add a PVC to the Dummy DBMS.
 Nothing will be stored there, but it maintains status information about previous loading processes.
 
@@ -433,6 +386,8 @@ where
 * `loadData`: This command is used to create the schema
 * `JDBC`: These infos are used to configure YCSB
 
+Please make sure to adjust this to the cloud service you want to benchmark.
+
 
 ### Preparation of YCSB
 
@@ -464,11 +419,7 @@ If data should be loaded, bexhoma at first creates a schema according to: https:
 In `ycsb.py` there is a section about DatabaseService.
 
 Watch for
-* `config.sut_service_name`: Fixed name for the service of the SUT (="yb-tserver-service")
-* `config.sut_container_name`: Fixed name for the container of the SUT (="yb-tserver")
-* `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-")
-* `config.get_worker_endpoints()`: ?
-* `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name)
+* `config.monitoring_sut = False`: SUT cannot be monitored since it is outside of K8s
 
 
 
@@ -508,13 +459,13 @@ yields
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 1026s 
-    Code: 1730223936
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 1148s 
+    Code: 1734425508
+    Benchbase runs the benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Benchmark is limited to DBMS ['YugabyteDB'].
+    Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -525,46 +476,46 @@ Benchbase Workload SF=16 (warehouses for TPC-C)
     Experiment is run once.
 
 ### Connections
-YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
-    RAM:541008605184
+DatabaseService-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008576512
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254319408
-    datadisk:39428
+    disk:236005104
+    datadisk:39348
     requests_cpu:4
     requests_memory:16Gi
-YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
-    RAM:541008605184
+DatabaseService-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008576512
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254319580
-    datadisk:39428
+    disk:236005108
+    datadisk:39348
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-YugabyteDB-1-1-1024-1               1         16   16384          1  300.0                        395.54                                                     100821.0                                              40433.0
-YugabyteDB-1-1-1024-2               1         16   16384          2  300.0                        346.81                                                     112470.0                                              46113.5
+                            experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DatabaseService-1-1-1024-1               1         16   16384          1  300.0                       1922.22                                                      18733.0                                               8317.0
+DatabaseService-1-1-1024-2               1         16   16384          2  300.0                       1742.44                                                      21860.0                                               9174.5
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
+DBMS DatabaseService-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
+DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-YugabyteDB-1-1-1024-1      200.0        1.0   1.0                      288.0
-YugabyteDB-1-1-1024-2      200.0        1.0   2.0                      288.0
+                            time_load  terminals  pods  Imported warehouses [1/h]
+DatabaseService-1-1-1024-1      149.0        1.0   1.0                 386.577181
+DatabaseService-1-1-1024-2      149.0        1.0   2.0                 386.577181
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -575,30 +526,29 @@ TEST passed: Workflow as planned
 
 The setup is the same as for YCSB (see above).
 
-However the connection string this time is not read from `cluster.config`, but instead constructed from parameters that are set explicitly in the workflow file `benchbase.py`:
+However the connection string this time is not only read from `cluster.config`, but are also constructed from parameters that are set explicitly in the workflow file `benchbase.py`:
 
 ```
 BENCHBASE_PROFILE = 'postgres',
-BEXHOMA_DATABASE = 'yugabyte',
-BEXHOMA_USER = "yugabyte",
-BEXHOMA_PASSWORD = "",
-BEXHOMA_PORT = 5433,
+BEXHOMA_DATABASE = 'postgres',
 ```
 
-### More Complex Example 
+### Only Execution
 
+This time we skip loading (`-sl`), since the database is already present.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
-  -sf 128 \
-  -sd 60 \
-  -dbms YugabyteDB \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
+nohup python benchbase.py -ms 2 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms DatabaseService \
+  -nbp 1,2 \
+  -nbt 16 \
   -nbf 16 \
   -tb 1024 \
+  -sl \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_2.log &
 ```
 
 yields
@@ -607,92 +557,146 @@ yields
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=128 (warehouses for TPC-C)
+Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 16098s 
-    Code: 1730226312
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 817s 
+    Code: 1734426709
+    Benchbase runs the benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Benchmark is limited to DBMS ['YugabyteDB'].
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
+    Loading is skipped.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
-    RAM:541008605184
+DatabaseService-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008576512
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254319580
-    datadisk:39428
+    disk:236005112
+    datadisk:39348
     requests_cpu:4
     requests_memory:16Gi
-YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
-    RAM:541008605184
+DatabaseService-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008576512
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254319748
-    datadisk:39428
-    requests_cpu:4
-    requests_memory:16Gi
-YugabyteDB-1-1-1024-3 uses docker image postgres:15.0
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:254319920
-    datadisk:39428
-    requests_cpu:4
-    requests_memory:16Gi
-YugabyteDB-1-1-1024-4 uses docker image postgres:15.0
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:254320088
-    datadisk:39428
+    disk:236005116
+    datadisk:39348
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                       experiment_run  terminals  target  pod_count    time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-YugabyteDB-1-1-1024-1               1         64   16384          1  3600.0                        469.61                                                     327056.0                                            136271.00
-YugabyteDB-1-1-1024-2               1         64   16384          2  3600.0                        450.66                                                     357886.0                                            141998.50
-YugabyteDB-1-1-1024-3               1         64   16384          4  3600.0                        402.57                                                     409184.0                                            159129.50
-YugabyteDB-1-1-1024-4               1         64   16384          8  3600.0                        247.49                                                     896527.0                                            258644.62
+                            experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DatabaseService-1-1-1024-1               1         16   16384          1  300.0                       1934.14                                                      18523.0                                               8265.0
+DatabaseService-1-1-1024-2               1         16   16384          2  300.0                       1805.90                                                      21119.0                                               8852.0
 
-Warehouses: 128
+Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 4, 2, 8]]
+DBMS DatabaseService-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 2, 4, 8]]
+DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-YugabyteDB-1-1-1024-1     1151.0        1.0   1.0                 400.347524
-YugabyteDB-1-1-1024-2     1151.0        1.0   2.0                 400.347524
-YugabyteDB-1-1-1024-3     1151.0        1.0   4.0                 400.347524
-YugabyteDB-1-1-1024-4     1151.0        1.0   8.0                 400.347524
+                            time_load  terminals  pods  Imported warehouses [1/h]
+DatabaseService-1-1-1024-1          0          1     1                        inf
+DatabaseService-1-1-1024-2          0          1     2                        inf
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
+
+
+
+## TPC-H
+
+
+
+
+
+### Simple Run
+
+```bash
+nohup python tpch.py -ms 2 -dt -tr \
+  -dbms DatabaseService \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -ii -ic -is \
+  -t 1200 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log &
+```
+
+### Execution Only
+
+```bash
+nohup python tpch.py -ms 2 -dt -tr \
+  -dbms DatabaseService \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -ii -ic -is \
+  -t 1200 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sl \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log &
+```
+
+
+### Persistent Storage
+
+
+
+### Ingestion with Persistent Storage
+
+```bash
+nohup python tpch.py -ms 2 -dt -tr \
+  -dbms DatabaseService \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -ii -ic -is \
+  -t 1200 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 1Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log &
+```
+
+
+### Execution Only with Persistent Storage
+
+```bash
+nohup python tpch.py -ms 2 -dt -tr \
+  -dbms DatabaseService \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -ii -ic -is \
+  -t 1200 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 1Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log &
+```

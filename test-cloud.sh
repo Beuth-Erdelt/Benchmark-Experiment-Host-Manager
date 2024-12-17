@@ -703,13 +703,13 @@ wait_process "tpcds"
 ##################################### cluster preinstalled
 
 #########################  With loading
-nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseService   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc     run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp1.log &
+#nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseService   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc     run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp1.log &
 #-) k8s: Dummy deployment - für loading z.B. PostgreSQL kompatibel: PostgreSQL Container wegen psql
 #-) Metrics
 #--) Execution quatsch (?)
 
 #########################  No loading
-nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseService   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc   -sl   run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp2.log &
+#nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseService   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc   -sl   run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp2.log &
 #-) cluster.config: Infos und JDBC Verbindungsdaten
 #-) OK
 
@@ -718,7 +718,21 @@ nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseS
 ################### YCSB Database Service #####################
 ###############################################################
 
-nohup python ycsb.py -ms 1 -tr \
+
+# delete database service
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
+sleep 30
+
+# start database service
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+
+sleep 10
+
+
+#### YCSB Ingestion (Example-CloudDatabase.md)
+nohup python ycsb.py -ms 2 -tr \
   -sf 1 \
   -sfo 1 \
   --workload a \
@@ -733,62 +747,18 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  -m -mc \
   run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_1.log &
 
 
 #### Wait so that next experiment receives a different code
 #sleep 600
-wait_process "benchbase"
+wait_process "ycsb"
 
 
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Execution (Example-CloudDatabase.md)
+nohup python ycsb.py -ms 2 -tr \
   -sf 1 \
-  -sfo 1 \
-  --workload a \
-  -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp3.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "benchbase"
-
-nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 1 \
-  --workload a \
-  -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp4.log &
-
-
-
-  nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 100 \
+  -sfo 10 \
   --workload a \
   -dbms DatabaseService \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -803,7 +773,58 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -sl \
-  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp5.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_2.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "ycsb"
+
+# delete database service
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
+sleep 30
+
+# start database service
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+
+sleep 10
+
+# delete pvc
+kubectl delete pvc bexhoma-storage-databaseservice-ycsb-1
+
+sleep 10
+
+
+#### YCSB Persistent Storage (Example-CloudDatabase.md)
+nohup python ycsb.py -ms 2 -tr \
+  -sf 5 \
+  -sfo 10 \
+  --workload a \
+  -dbms DatabaseService \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 1Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_3.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "ycsb"
+
+
+
+
 
 
 
@@ -872,6 +893,19 @@ nohup python benchbase.py -ms 1 -tr \
 ################# Benchbase Database Service ##################
 ###############################################################
 
+
+# delete database service
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
+sleep 30
+
+# start database service
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+
+sleep 10
+
+
 # no PVC
 nohup python benchbase.py -ms 2 -tr \
   -sf 16 \
@@ -919,8 +953,6 @@ wait_process "benchbase"
 ###############################################################
 
 
-
-
 # delete database service
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
@@ -933,7 +965,7 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 sleep 10
 
 
-#### TCP-H Monitoring (Example-TPC-H.md)
+#### TCP-H Monitoring (Example-CloudDatabase.md)
 # no PVC
 nohup python tpch.py -ms 2 -dt -tr \
   -dbms DatabaseService \

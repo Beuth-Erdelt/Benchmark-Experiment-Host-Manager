@@ -452,8 +452,6 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
                     cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # CockroachDB
@@ -508,9 +506,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # DatabaseService
                     name_format = 'DatabaseService-{threads}-{pods}-{target}'
@@ -523,15 +519,12 @@ if __name__ == '__main__':
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
-                        BEXHOMA_DATABASE = 'yugabyte',
+                        BEXHOMA_DATABASE = 'postgres',
+                        BEXHOMA_HOST = 'bexhoma-service.perdelt.svc.cluster.local',
                         #BENCHBASE_TARGET = int(target),
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BEXHOMA_USER = "yugabyte",
-                        BEXHOMA_PASSWORD = "",
-                        BEXHOMA_PORT = 5433,
-                        BEXHOMA_HOST = 'yb-tserver-service.perdelt.svc.cluster.local',
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -557,21 +550,16 @@ if __name__ == '__main__':
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_DATABASE = 'yugabyte',
+                                        BEXHOMA_DATABASE = 'postgres',
+                                        BEXHOMA_HOST = 'bexhoma-service.perdelt.svc.cluster.local',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BEXHOMA_USER = "yugabyte",
-                                        BEXHOMA_PASSWORD = "",
-                                        BEXHOMA_PORT = 5433,
-                                        BEXHOMA_HOST = 'yb-tserver-service.perdelt.svc.cluster.local',
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

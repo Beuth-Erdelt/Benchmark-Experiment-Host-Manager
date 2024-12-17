@@ -1,0 +1,116 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1734449783
+Experiment                    : starts at 2024-12-17 16:36:22.990276 (4134584.397405118)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['DatabaseService'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is skipped.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+done
+DatabaseService-64-8-65536    : will start now
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : will start benchmarking but not before 2024-12-17 15:38:23 (that is in 60 secs)
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : will start benchmarking but not before 2024-12-17 15:38:23
+done
+DatabaseService-64-8-65536    : benchmarks done 0 of 1. This will be client 1
+DatabaseService-64-8-65536    : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': ''}
+DatabaseService-64-8-65536-1  : start benchmarking
+Worker pods found:  []
+DatabaseService-64-8-65536    : benchmarking results in folder /home/perdelt/benchmarks/1734449783
+- waiting 10s -               : done
+DatabaseService-64-8-65536    : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-64-8-65536-1734449783-7hp2c: found
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+done
+DatabaseService-64-8-65536    : has running benchmarks
+DatabaseService-64-8-65536-1  : showing benchmarker times
+DatabaseService-64-8-65536-1  : benchmarker timespan (start to end single container [s]) = 192
+DatabaseService-64-8-65536-1  : benchmarker times (start/end per pod and container) = []
+DatabaseService-64-8-65536-1  : found and updated times {'benchmarker': []}
+DatabaseService-64-8-65536-1  : collecting metrics of benchmarker
+DatabaseService-64-8-65536-1  : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-64-8-65536-1734449783(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+DatabaseService-64-8-65536    : can be stopped
+Experiment                    : ends at 2024-12-17 16:42:14.194525 (4134935.601658705) - 351.20s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 352s 
+    Code: 1734449783
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['DatabaseService'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is skipped.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+DatabaseService-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
+    node:cl-worker11
+    disk:236006372
+    datadisk:39348
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1                       62695.14               159502.0           5000594                            2147.0             4999406                             31087.0
+
+### Workflow
+
+#### Actual
+DBMS DatabaseService-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS DatabaseService-64-8-65536 - Pods [[1]]
+
+### Execution - Benchmarker
+                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-64-8-65536-1      992.25     7.14           0.6                 0.61
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
