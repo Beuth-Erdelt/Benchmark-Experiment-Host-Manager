@@ -116,7 +116,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp1.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_1.log &
 ```
 
 This
@@ -491,13 +491,13 @@ Watch for
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
-  -dbms YugabyteDB \
+  -dbms DatabaseService \
   -nbp 1,2 \
   -nbt 16 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_1.log &
 ```
 
 yields

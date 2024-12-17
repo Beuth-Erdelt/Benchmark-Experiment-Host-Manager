@@ -713,6 +713,35 @@ nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseS
 #-) cluster.config: Infos und JDBC Verbindungsdaten
 #-) OK
 
+
+###############################################################
+################### YCSB Database Service #####################
+###############################################################
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 1 \
+  --workload a \
+  -dbms DatabaseService \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_1.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "benchbase"
+
+
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 1 \
@@ -732,7 +761,11 @@ nohup python ycsb.py -ms 1 -tr \
   -rst shared -rss 1Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp3.log &
 
-  nohup python ycsb.py -ms 1 -tr \
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "benchbase"
+
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 1 \
   --workload a \
@@ -835,7 +868,28 @@ nohup python benchbase.py -ms 1 -tr \
 
 
 
-nohup python benchbase.py -ms 1 -tr \
+###############################################################
+################# Benchbase Database Service ##################
+###############################################################
+
+# no PVC
+nohup python benchbase.py -ms 2 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms DatabaseService \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "benchbase"
+
+# no PVC, skip loading
+nohup python benchbase.py -ms 2 -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -845,12 +899,42 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -sl \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_1.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_2.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "benchbase"
 
 
+
+
+
+
+
+
+
+
+###############################################################
+################### TPC-H Database Service ####################
+###############################################################
+
+
+
+
+# delete database service
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
+sleep 30
+
+# start database service
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+
+sleep 10
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
+# no PVC
 nohup python tpch.py -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
@@ -868,6 +952,7 @@ wait_process "tpch"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
+# no PVC, skip loading
 nohup python tpch.py -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
@@ -899,10 +984,13 @@ sleep 30
 # start database service
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
+sleep 10
+
 # login into database service
 # kubectl port-forward svc/bexhoma-service 9091:9091
 
 #### TCP-H Monitoring (Example-TPC-H.md)
+# with PVC, ingestion
 nohup python tpch.py -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
@@ -913,7 +1001,7 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.db.log &
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 600
@@ -921,6 +1009,7 @@ wait_process "tpch"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
+# with PVC, execution only
 nohup python tpch.py -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
@@ -931,7 +1020,7 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.db.log &
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 600
