@@ -64,14 +64,14 @@ helm status bexhoma
 ```
 
 
-Remove the installation:
+After the experiment: Remove the installation
 ```bash
 helm delete bexhoma
 kubectl delete pvc -l app=yb-tserver
 kubectl delete pvc -l app=yb-master
 ```
 
-Connecting
+Optionally: Connect to the installation
 * to DBMS: `kubectl port-forward service/yb-tserver-service 5433:5433`
 * to GUI: `kubectl port-forward service/yb-master-ui 8080:7000`
 

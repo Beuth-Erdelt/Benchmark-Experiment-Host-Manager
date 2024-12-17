@@ -809,7 +809,7 @@ TEST passed: Workflow as planned
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
-PostgreSQL is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
+MonetDB is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
 
 
 ## Perform Benchmark - Throughput Test
