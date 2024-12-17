@@ -16,7 +16,7 @@ Probably you won't have to change much.
 If there is a Prometheus server running in your cluster, make sure to adjust `service_monitoring`.
 If there is no Prometheus server running in your cluster, make sure to leave the template in `service_monitoring` as is.
 Bexhoma checks at the beginning of an experiment if the URL provided is reachable;
-it uses cURL inside the dashboard pod to test if `query_range?query=sum(node_memory_MemTotal_bytes)&start={start}&end={end}&step=60` has a return status of 200 (where `start`is 5 min ago and `end` is 4 min ago).
+it uses cURL inside the dashboard pod to test if `query_range?query=sum(node_memory_MemTotal_bytes)&start={start}&end={end}&step=60` has a return status of 200 (where `start` is 5 min ago and `end` is 4 min ago).
 
 If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
 * Monitor only the system-under-test (SUT) with `-m`
