@@ -2,6 +2,36 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
+
+The following example treats **a cloud database that is compatible to PostgreSQL**.
+
+This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma and does not exist in the Kubernetes cluster in the same namespace**.
+
+Important implications of this:
+* Bexhoma does neither start nor stop the DBMS.
+* There can only be one DBMS in the cluster at the same time.
+* Bexhoma does not know what resides inside of the database.
+* Bexhoma still can only monitor the components of the experiment other than the SUT.
+
+In order to be fully functional, bexhoma installs an instance of PostgreSQL, that does nothing (a container with psql would be enough).
+Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the DBMS.
+Moreover the container is used to install a schema to the database via psql.
+
+All metrics in monitoring are summed across all matching components.
+
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters.
+You may get different results.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
+References:
+1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
+1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
+1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
+
+
 ## Types of DBMS
 
 ### Managed by Bexhoma
@@ -39,7 +69,7 @@ Disadvantages
 * The SUT cannot be monitored by Bexhoma
 * Bexhoma not necessarily knows about loaded databases, their status and timings - they might be affected by outside services
 
-#### Test Environment Placeholder
+#### PostgreSQL-compatible Cloud Service - Test Environment Placeholder
 
 In order to have a test environment, we install a placeholder instance PostgreSQL and treat it like an external service.
 
@@ -62,36 +92,6 @@ All demonstration and test runs in the following are run against this placeholde
 
 
 
-
-## PostgreSQL-compatible Cloud Service
-
-The following example treats **a cloud database that is compatible to PostgreSQL**.
-
-This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma and does not exist in the Kubernetes cluster in the same namespace**.
-
-Important implications of this:
-* Bexhoma does neither start nor stop the DBMS.
-* There can only be one DBMS in the cluster at the same time.
-* Bexhoma does not know what resides inside of the database.
-* Bexhoma still can only monitor the components of the experiment other than the SUT.
-
-In order to be fully functional, bexhoma installs an instance of PostgreSQL, that does nothing (a container with psql would be enough).
-Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the DBMS.
-Moreover the container is used to install a schema to the database via psql.
-
-All metrics in monitoring are summed across all matching components.
-
-**The results are not official benchmark results.
-Exact performance depends on a number of parameters.
-You may get different results.
-These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
-
-References:
-1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
-1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
-1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
-1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
-1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
 
 
