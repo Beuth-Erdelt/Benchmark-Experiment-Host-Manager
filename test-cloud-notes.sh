@@ -59,248 +59,98 @@ wait_process "ycsb"
 
 
 
-################################################
-################## YugaByteDB ##################
-################################################
+
+###############################################################
+################## TPC-DS Persistent Storage ##################
+###############################################################
 
 
-install_yugabytedb() {
-  helm install bexhoma yugabytedb/yugabyte \
-  --version 2.23.0 \
-  --set \
-  gflags.tserver.ysql_enable_packed_row=true,\
-  resource.master.limits.cpu=2,\
-  resource.master.limits.memory=8Gi,\
-  resource.master.requests.cpu=2,\
-  resource.master.requests.memory=8Gi,\
-  resource.tserver.limits.cpu=8,\
-  resource.tserver.limits.memory=8Gi,\
-  resource.tserver.requests.cpu=8,\
-  resource.tserver.requests.memory=8Gi,\
-  storage.master.size=100Gi,\
-  storage.tserver.size=100Gi,\
-  storage.ephemeral=true,\
-  tserver.tolerations[0].effect=NoSchedule,\
-  tserver.tolerations[0].key=nvidia.com/gpu,\
-  enableLoadBalancer=True
-  sleep 60
-}
 
-remove_yugabytedb() {
-  helm delete bexhoma
-  kubectl delete pvc -l app=yb-tserver
-  kubectl delete pvc -l app=yb-master
-  sleep 60
-}
 
-# install YugabyteDB
-install_yugabytedb
-
-#### YCSB Ingestion (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 10 \
-  --workload a \
-  -dbms YugabyteDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+#### TCP-DS Persistent Storage (Example-TPC-DS.md)
+nohup python tpcds.py -ms 4 -dt -tr \
+  -dbms MySQL \
   -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_1.log &
-
-
-wait_process "ycsb"
-
-
-#### YCSB Execution (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+  -nlt 8 \
   -sf 1 \
-  -sfo 10 \
-  --workload a \
-  -dbms YugabyteDB \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_mysql_storage.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+
+
+#### TCP-DS Persistent Storage (Example-TPC-DS.md)
+nohup python tpcds.py -ms 4 -dt -tr \
+  -dbms PostgreSQL \
   -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -sl \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_2.log &
-
-
-wait_process "ycsb"
-
-
-# remove YugabyteDB installation
-remove_yugabytedb
-
-# install YugabyteDB
-install_yugabytedb
-
-
-#### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+  -nlt 8 \
   -sf 1 \
-  -sfo 10 \
-  --workload a \
-  -dbms YugabyteDB \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_postgresql_storage.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+
+
+#### TCP-DS Persistent Storage (Example-TPC-DS.md)
+nohup python tpcds.py -ms 4 -dt -tr \
+  -dbms MariaDB \
   -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_3.log &
-
-
-wait_process "ycsb"
-
-
-# remove YugabyteDB installation
-remove_yugabytedb
-
-# install YugabyteDB
-install_yugabytedb
-
-
-#### Benchbase Simple (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
-  -sf 16 \
-  -sd 5 \
-  -dbms YugabyteDB \
-  -nbp 1,2 \
-  -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
-
-
-wait_process "benchbase"
-
-
-# remove YugabyteDB installation
-remove_yugabytedb
-
-# install YugabyteDB
-install_yugabytedb
-
-
-#### Benchbase More Complex (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
-  -sf 128 \
-  -sd 60 \
-  -dbms YugabyteDB \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
-
-
-wait_process "benchbase"
-
-
-# remove YugabyteDB installation
-remove_yugabytedb
-
-
-
-
-
-
-
-#################################################
-################## CockroachDB ##################
-#################################################
-
-
-#### YCSB Ingestion (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
+  -nlt 8 \
   -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  --workload a \
-  -dbms CockroachDB \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_mariadb_storage.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+
+
+#### TCP-DS Persistent Storage (Example-TPC-DS.md)
+nohup python tpcds.py -ms 4 -dt -tr \
+  -dbms MonetDB \
   -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_1.log &
-
-
-#### YCSB Execution (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
-  -sl \
+  -nlt 8 \
   -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  --workload a \
-  -dbms CockroachDB \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monetdb_storage.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
 
 
-#### Benchbase Simple (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
-  -sf 16 \
-  -sd 5 \
-  -dbms CockroachDB \
-  -nbp 1,2 \
-  -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
 
 
-#### Benchbase Complex (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
-  -sf 128 \
-  -sd 60 \
-  -dbms CockroachDB \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
+
+
+
+
 
 
 

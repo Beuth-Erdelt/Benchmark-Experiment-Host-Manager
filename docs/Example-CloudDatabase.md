@@ -185,13 +185,12 @@ At the end of a benchmark you will see a summary like
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 378s 
-    Code: 1732808631
-    This includes no queries. YCSB runs the benchmark
+    Duration: 354s 
+    Code: 1734449423
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
     YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
-    System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -204,17 +203,23 @@ YCSB SF=1
 
 ### Connections
 DatabaseService-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
     node:cl-worker11
+    disk:236006380
+    datadisk:39348
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8                   24211.574786                41517.0             1000000                             21027.0
+DatabaseService-64-8-65536               1       64   65536          8                   50279.137219                20168.0             1000000                             25355.0
 
 ### Execution
                               experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                       30987.57                32271.0            499597                           39007.0              500403                             44095.0
+DatabaseService-64-8-65536-1               1       64   65536          1                       55263.89                18095.0            499843                            2201.0              500157                             39103.0
 
 ### Workflow
 
@@ -224,29 +229,9 @@ DBMS DatabaseService-64-8-65536 - Pods [[1]]
 #### Planned
 DBMS DatabaseService-64-8-65536 - Pods [[1]]
 
-### Ingestion - SUT
-                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1        0.24        0          2.35                 2.38
-
-### Ingestion - Loader
-                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1       82.45        0           4.2                 4.23
-
-### Execution - SUT
-                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1        0.15        0          2.35                 2.38
-
-### Execution - Benchmarker
-                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1       58.46        0          0.53                 0.53
-
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 

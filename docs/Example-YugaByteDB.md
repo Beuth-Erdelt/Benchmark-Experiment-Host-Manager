@@ -169,7 +169,7 @@ At the end of a benchmark you will see a summary like
 YCSB SF=1
     Type: ycsb
     Duration: 773s 
-    Code: 1730133803
+    Code: 1730222076
     This includes no queries. YCSB runs the benchmark
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
@@ -261,7 +261,6 @@ Example:
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
-  -sl \
   --workload a \
   -dbms YugabyteDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -275,6 +274,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
+  -sl \
   run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_2.log &
 ```
 
@@ -359,7 +359,8 @@ For further explanation see the monitoring section of this documentation.
 ### Bexhoma Status Volume
 
 Persistent Storage is not managed by bexhoma, but by YugabyteDB.
-We can add the request for a PVC to the experiment setup:
+We can add the request for a PVC to the experiment setup.
+Make sure to reset the database before this test as it should not contain data from previous test runs.
 ```bash
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -400,6 +401,85 @@ If YugabyteDB is restarted or data is delete somehow, this PVC information will 
 
 This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
 
+```bash
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 3072s 
+    Code: 1730457505
+    This includes no queries. YCSB runs the benchmark
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['YugabyteDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 1Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:254915992
+    datadisk:39222
+    volume_size:1.0G
+    volume_used:36M
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+YugabyteDB-64-8-65536               1       64   65536          8                    3390.978244               295234.0             1000000                             77023.0
+
+### Execution
+                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+YugabyteDB-64-8-65536-1               1       64   65536          1                         3939.8              2538203.0           4999619                           73599.0             5000381                             76287.0
+
+### Workflow
+
+#### Actual
+DBMS YugabyteDB-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS YugabyteDB-64-8-65536 - Pods [[1]]
+
+### Ingestion - SUT
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+YugabyteDB-64-8-65536-1    10050.64    11.96          3.23                13.17
+
+### Ingestion - Loader
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+YugabyteDB-64-8-65536-1      202.36     0.38          4.55                 4.58
+
+### Execution - SUT
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+YugabyteDB-64-8-65536-1    106669.7    16.01          7.99                24.02
+
+### Execution - Benchmarker
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+YugabyteDB-64-8-65536-1     1290.17     0.62          0.61                 0.61
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
 
 ### Persist YugabyteDB
 
@@ -473,6 +553,12 @@ Watch for
 * `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-")
 * `config.get_worker_endpoints()`: ?
 * `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name)
+
+
+
+
+
+
 
 
 
