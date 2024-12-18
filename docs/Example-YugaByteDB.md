@@ -664,6 +664,9 @@ BEXHOMA_PORT = 5433,
 
 ### More Complex Example 
 
+We now run Benchbase's TPC-C variant with more data, for a longer period of time and with a varying number of pods for execution.
+Make sure to reset the database before this test as it should not contain data from previous test runs.
+
 
 ```bash
 nohup python benchbase.py -ms 1 -tr \
