@@ -396,7 +396,7 @@ In this example, this means that used memory, CPU time, etc. are summed across a
 
 ## Use Persistent Storage
 
-To be described: Persistent storage is per experiment here
+To be described: Persistent storage is per experiment here, because K8s statefulsets derive their pvc names directly from pod names.
 
 ## YCSB Example Explained
 
@@ -438,6 +438,12 @@ CockroachDB uses the PostgreSQL JDBC driver.
 ### Schema SQL File
 
 If data should be loaded, bexhoma at first creates a schema according to: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/CockroachDB
+
+
+
+
+
+
 
 
 

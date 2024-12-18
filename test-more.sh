@@ -325,6 +325,46 @@ wait_process "tpcds"
 
 
 
+###########################################
+######### TPC-DS Compare Storage ##########
+###########################################
+
+
+#### TCP-DS Compare with Persistent Storage
+nohup python tpcds.py -ms 4 -dt -tr \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -t 3600 \
+  -ii -ic -is \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_storage.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpcds"
+
+
+###########################################
+######### TPC-DS Compare at SF=10 #########
+###########################################
+
+
+#### TCP-DS Compare at SF=10
+nohup python tpcds.py -ms 6 -dt -tr \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -t 3600 \
+  -ii -ic -is \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_10.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpcds"
+
 
 
 

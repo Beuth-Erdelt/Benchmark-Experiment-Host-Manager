@@ -255,6 +255,9 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_1.log &
 
 
+wait_process "ycsb"
+
+
 #### YCSB Execution (Example-CockroachDB.md)
 nohup python ycsb.py -ms 1 -tr \
   -sl \
@@ -277,6 +280,9 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
 
 
+wait_process "ycsb"
+
+
 #### Benchbase Simple (Example-CockroachDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
@@ -288,6 +294,9 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
+
+
+wait_process "benchbase"
 
 
 #### Benchbase Complex (Example-CockroachDB.md)
@@ -303,389 +312,21 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
 
 
+wait_process "benchbase"
 
 
 
 
 
-nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 10 \
-  --workload a \
-  -dbms YugabyteDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_tmp1.log &
 
-wait_process "ycsb"
 
-nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 10 \
-  --workload a \
-  -dbms YugabyteDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -db \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_tmp2.log &
 
-wait_process "ycsb"
 
 
 
-nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 1 \
-  --workload a \
-  -dbms YugabyteDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_tmp3.log &
 
 
-wait_process "ycsb"
 
-
-
-nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  --workload a \
-  -dbms CockroachDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_tmp.log &
-
-
-wait_process "ycsb"
-
-
-
-nohup python tpcds.py -ms 4 -dt -tr \
-  -t 3600 \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -ii -ic -is \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_tmp.log &
-
-
-wait_process "tpcds"
-
-
-
-
-
-nohup python ycsb.py -ms 5 -tr \
-  -sf 1 \
-  -sfo 1 \
-  --workload a \
-  -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -sl \
-  run </dev/null &>$LOG_DIR/test_database_service.log &
-
-
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-################# TPC-DS ##################
-###########################################
-
-
-#### TCP-DS Compare (Example-TPC-DS.md)
-nohup python tpcds.py -ms 4 -dt -tr \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -t 3600 \
-  -ii -ic -is \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_storage.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 7200
-wait_process "tpcds"
-
-
-#### TCP-DS Compare (Example-TPC-DS.md)
-nohup python tpcds.py -ms 6 -dt -tr \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -t 3600 \
-  -ii -ic -is \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 7200
-wait_process "tpcds"
-
-#### TCP-DS Compare (Example-TPC-DS.md)
-nohup python tpcds.py -ms 6 -dt -tr \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 10 \
-  -t 3600 \
-  -ii -ic -is \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_10.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 7200
-wait_process "tpcds"
-
-
-#### TCP-DS Monitoring (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
-  -dbms MonetDB \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 3 \
-  -t 1200 \
-  -ii -ic -is \
-  -m -mc \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monitoring.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-#### TCP-DS Throughput (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
-  -dbms MonetDB \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -t 1200 \
-  -ii -ic -is \
-  -nc 1 \
-  -ne 1,2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_throughput.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-1
-sleep 30
-
-
-#### TCP-DS Persistent Storage (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
-  -dbms MonetDB \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -t 1200 \
-  -ii -ic -is \
-  -nc 2 \
-  -rst shared -rss 30Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_storage.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-
-###########################################
-############# TPC-DS MonetDB ##############
-###########################################
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-100
-sleep 30
-
-
-#### TCP-DS Power 100 (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -t 7200 -dt \
-  -rst shared -rss 500Gi \
-  run &>$LOG_DIR/doc_tpcds_monetdb_1.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 1800
-wait_process "tpcds"
-
-
-#### TCP-DS Power 100 (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 2 -ne 1,1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -t 7200 -dt \
-  -rst shared -rss 500Gi \
-  run &>$LOG_DIR/doc_tpcds_monetdb_2.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpcds"
-
-
-#### TCP-DS Throughput 100 (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1,1,3 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -t 7200 -dt \
-  -rst shared -rss 500Gi \
-  run &>$LOG_DIR/doc_tpcds_monetdb_3.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpcds"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#######################################################
-############# YCSB Monitoring PostgreSQL ##############
-#######################################################
-
-
-
-#PostgreSQL
-##################################### sidecar
-#nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  run </dev/null &>$LOG_DIR/test_ycsb_postgresql_sidecar.log &
-#-) ok
-
-##################################### daemonset
-#nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  -mc -db run </dev/null &>$LOG_DIR/test_ycsb_postgresql_daemonset.log &
-#-) ok
-
-##################################### cluster preinstalled
-#nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms PostgreSQL   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m  -mc -db run </dev/null &>$LOG_DIR/test_ycsb_postgresql_cluster.log &
-#-) ok
-
-
-
-
-#DatabaseService
-##################################### cluster preinstalled
-
-#########################  With loading
-#nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseService   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc     run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp1.log &
-#-) k8s: Dummy deployment - für loading z.B. PostgreSQL kompatibel: PostgreSQL Container wegen psql
-#-) Metrics
-#--) Execution quatsch (?)
-
-#########################  No loading
-#nohup python ycsb.py -ms 5 -tr   -sf 1   -sfo 1   --workload a   -dbms DatabaseService   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc   -sl   run </dev/null &>$LOG_DIR/test_ycsb_databaseservice_tmp2.log &
-#-) cluster.config: Infos und JDBC Verbindungsdaten
-#-) OK
 
 
 ###############################################################
@@ -693,13 +334,13 @@ wait_process "tpcds"
 ###############################################################
 
 
-# delete database service
+# delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
 
 sleep 30
 
-# start database service
+# start database service placeholder
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
 sleep 10
@@ -754,18 +395,18 @@ nohup python ycsb.py -ms 2 -tr \
 #sleep 600
 wait_process "ycsb"
 
-# delete database service
+# delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
 
 sleep 30
 
-# start database service
+# start database service placeholder
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
 sleep 10
 
-# delete pvc
+# delete pvc of placeholder
 kubectl delete pvc bexhoma-storage-databaseservice-ycsb-1
 
 sleep 10
@@ -803,61 +444,6 @@ wait_process "ycsb"
 
 
 
-#YugabyteDB
-##################################### daemonset
-#########################  With loading
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc  run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp1.log &
-#-) OK, after retries (usertable, host name)
-
-#########################  No loading
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc -sl  run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp2.log &
-#-) OK
-
-#########################  No loading, with debug
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc -sl -db run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp2db.log &
-#-) without loading: ok
-
-
-##################################### cluster preinstalled
-#########################  With loading
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc  run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp3.log &
-
-#########################  No loading
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc -sl  run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp4.log &
-#-) OK
-
-#########################  No loading, with debug
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -mc -sl -db run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp4db.log &
-#-) OK
-
-
-##################################### sidecar
-
-#########################  No loading
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -sl  run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp6.log &
-
-#########################  No loading, with debug
-nohup python ycsb.py -ms 1 -tr   -sf 1   -sfo 1   --workload a   -dbms YugabyteDB   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -tb 16384   -nlp 8   -nlt 64   -nlf 4   -nbp 1   -nbt 64   -nbf 4   -ne 1   -nc 1   -m -sl -db run </dev/null &>$LOG_DIR/test_ycsb_yugabytedb_tmp6db.log &
-
-
-
-
-
-
-
-
-
-
-nohup python benchbase.py -ms 1 -tr \
-  -sf 16 \
-  -sd 5 \
-  -dbms YugabyteDB \
-  -nbp 1,2 \
-  -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
 
 
 
@@ -868,13 +454,13 @@ nohup python benchbase.py -ms 1 -tr \
 ###############################################################
 
 
-# delete database service
+# delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
 
 sleep 30
 
-# start database service
+# start database service placeholder
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
 sleep 10
@@ -927,13 +513,13 @@ wait_process "benchbase"
 ###############################################################
 
 
-# delete database service
+# delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
 
 sleep 30
 
-# start database service
+# start database service placeholder
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
 sleep 10
@@ -976,23 +562,23 @@ nohup python tpch.py -ms 2 -dt -tr \
 wait_process "tpch"
 
 
-# delete pvc
+# delete pvc of placeholder
 kubectl delete pvc bexhoma-storage-databaseservice-tpch-3
 
 sleep 10
 
-# delete database service
+# delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
 
 sleep 30
 
-# start database service
+# start database service placeholder
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
 sleep 10
 
-# login into database service
+# login into database service placeholder
 # kubectl port-forward svc/bexhoma-service 9091:9091
 
 #### TCP-H Monitoring (Example-TPC-H.md)
@@ -1031,6 +617,11 @@ nohup python tpch.py -ms 2 -dt -tr \
 #### Wait so that next experiment receives a different code
 #sleep 600
 wait_process "tpch"
+
+
+
+
+
 
 
 
