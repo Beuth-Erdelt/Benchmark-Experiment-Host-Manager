@@ -866,9 +866,9 @@ class testbed():
             #pod = self.activepod
         command_clean = command.replace('"','\\"')
         if len(container) > 0:
-            fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
+            fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- sh -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
         else:
-            fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
+            fullcommand = 'kubectl --context {context} exec {pod} -- sh -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
             #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
         #print(fullcommand)
         self.logger.debug('testbed.execute_command_in_pod({})'.format(fullcommand))
