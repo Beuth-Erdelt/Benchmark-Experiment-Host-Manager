@@ -344,7 +344,7 @@ if __name__ == '__main__':
                     if skip_loading:
                         config.loading_deactivated = True
                     config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
-                    config.sut_container_name = "yb-tserver"            # fix container name of SUT
+                    config.sut_container_name = ''                      # fix container name of SUT
                     def get_worker_pods(self):
                         """
                         Returns a list of all pod names of workers for the current SUT.
@@ -353,9 +353,11 @@ if __name__ == '__main__':
 
                         :return: list of endpoints
                         """
-                        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                        pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
+                        #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
+                        #print("****************", pods_worker)
                         return pods_worker
-                    #config.get_worker_pods = types.MethodType(get_worker_pods, config)
+                    config.get_worker_pods = types.MethodType(get_worker_pods, config)
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
                         Generate a name for the monitoring component.
@@ -379,12 +381,32 @@ if __name__ == '__main__':
                         Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
                         These are IPs of cAdvisor instances.
                         The endpoint list is to be filled in a config of an instance of Prometheus.
+                        By default, the workers can be found by the name of their component (worker-0 etc).
+
+                        :return: list of endpoints
+                        """
+                        endpoints = []
+                        #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+                        pods_worker = self.get_worker_pods()
+                        for pod in pods_worker:
+                            #endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
+                            endpoint = '{worker}'.format(worker=pod)
+                            endpoints.append(endpoint)
+                            print('Worker Endpoint: {endpoint}'.format(endpoint = endpoint))
+                        self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
+                        return endpoints
+                    config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
+                    def get_worker_endpoints_tmp(self):
+                        """
+                        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
+                        These are IPs of cAdvisor instances.
+                        The endpoint list is to be filled in a config of an instance of Prometheus.
                         For YugabyteDB the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
 
                         :return: list of endpoints
                         """
                         endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                        self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
+                        self.logger.debug("yugabytedb.get_worker_endpoints_tmp({})".format(endpoints))
                         return endpoints
                     #config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
                     def set_metric_of_config(self, metric, host, gpuid):
@@ -401,6 +423,7 @@ if __name__ == '__main__':
                         :return: promql query without parameters
                         """
                         metric = metric.replace(', container="dbms"', '')
+                        metric = metric.replace(', container_label_io_kubernetes_container_name="dbms"', '')
                         return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(

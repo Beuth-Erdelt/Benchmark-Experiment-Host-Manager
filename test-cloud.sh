@@ -68,21 +68,21 @@ install_yugabytedb() {
   helm install bexhoma yugabytedb/yugabyte \
   --version 2.23.0 \
   --set \
-  gflags.tserver.ysql_enable_packed_row=true,\
-  resource.master.limits.cpu=2,\
-  resource.master.limits.memory=8Gi,\
-  resource.master.requests.cpu=2,\
-  resource.master.requests.memory=8Gi,\
-  resource.tserver.limits.cpu=8,\
-  resource.tserver.limits.memory=8Gi,\
-  resource.tserver.requests.cpu=8,\
-  resource.tserver.requests.memory=8Gi,\
-  storage.master.size=100Gi,\
-  storage.tserver.size=100Gi,\
-  storage.ephemeral=true,\
-  tserver.tolerations[0].effect=NoSchedule,\
-  tserver.tolerations[0].key=nvidia.com/gpu,\
-  enableLoadBalancer=True
+gflags.tserver.ysql_enable_packed_row=true,\
+resource.master.limits.cpu=2,\
+resource.master.limits.memory=8Gi,\
+resource.master.requests.cpu=2,\
+resource.master.requests.memory=8Gi,\
+resource.tserver.limits.cpu=8,\
+resource.tserver.limits.memory=8Gi,\
+resource.tserver.requests.cpu=8,\
+resource.tserver.requests.memory=8Gi,\
+storage.master.size=100Gi,\
+storage.tserver.size=100Gi,\
+storage.ephemeral=true,\
+tserver.tolerations[0].effect=NoSchedule,\
+tserver.tolerations[0].key=nvidia.com/gpu,\
+enableLoadBalancer=True
   sleep 60
 }
 
@@ -148,6 +148,8 @@ remove_yugabytedb
 
 # install YugabyteDB
 install_yugabytedb
+
+kubectl delete pvc bexhoma-storage-yugabytedb-ycsb-1
 
 
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
@@ -258,35 +260,11 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-#### YCSB Execution (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
-  -sl \
-  -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  --workload a \
-  -dbms CockroachDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
-
-
-wait_process "ycsb"
-
-
 #### Benchbase Simple (Example-CockroachDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
+  -nw 3 \
   -dbms CockroachDB \
   -nbp 1,2 \
   -nbt 16 \
@@ -303,6 +281,7 @@ wait_process "benchbase"
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
+  -nw 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 64 \

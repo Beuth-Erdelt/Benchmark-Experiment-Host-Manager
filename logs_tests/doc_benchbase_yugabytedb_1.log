@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1730223936
-Experiment                    : starts at 2024-10-29 18:45:36.513869 (4959876.637850233)
+Experiment                    : has code 1734601765
+Experiment                    : starts at 2024-12-19 10:49:24.690293 (4286566.097427178)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
@@ -17,14 +17,16 @@ Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 YugabyteDB-1-1-1024           : will start now
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : is not loaded yet
-YugabyteDB-1-1-1024           : will start loading but not before 2024-10-29 17:47:37 (that is in 60 secs)
+YugabyteDB-1-1-1024           : will start loading but not before 2024-12-19 09:51:25 (that is in 60 secs)
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : is not loaded yet
-YugabyteDB-1-1-1024           : will start loading but not before 2024-10-29 17:47:37
+YugabyteDB-1-1-1024           : will start loading but not before 2024-12-19 09:51:25
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 YugabyteDB-1-1-1024           : is not loaded yet
 YugabyteDB-1-1-1024           : start asynch loading scripts of type loaded
@@ -41,15 +43,35 @@ YugabyteDB-1-1-1024           : is loading
 YugabyteDB-1-1-1024           : is loading
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : is loading
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 YugabyteDB-1-1-1024           : showing loader times
-YugabyteDB-1-1-1024           : loader timespan (first to last [s]) = 200
+YugabyteDB-1-1-1024           : loader timespan (first to last [s]) = 204
 YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 1
-YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_PORT': 5433}
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'yugabyte', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_PORT': 5433}
 YugabyteDB-1-1-1024-1         : start benchmarking
-YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1730223936
+YugabyteDB-1-1-1024           : distributed system - get host info for worker yb-tserver-0
+YugabyteDB-1-1-1024           : distributed system - get host info for worker yb-tserver-1
+YugabyteDB-1-1-1024           : distributed system - get host info for worker yb-tserver-2
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1734601765
 - waiting 10s -               : done
-YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1730223936-1-1-wfs2w: found
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1734601765-1-1-qjs5z: found
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -68,19 +90,39 @@ YugabyteDB-1-1-1024           : has running benchmarks
 YugabyteDB-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 YugabyteDB-1-1-1024           : has running benchmarks
 YugabyteDB-1-1-1024-1         : showing benchmarker times
 YugabyteDB-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 312
-YugabyteDB-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1730224273, 1730224578)]
-YugabyteDB-1-1-1024-1         : found and updated times {'benchmarker': [(1730224273, 1730224578)]}
+YugabyteDB-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1734602106, 1734602411)]
+YugabyteDB-1-1-1024-1         : found and updated times {'benchmarker': [(1734602106, 1734602411)]}
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 2
-YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_PORT': 5433}
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'yugabyte', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_PORT': 5433}
 YugabyteDB-1-1-1024-2         : start benchmarking
-YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1730223936
+YugabyteDB-1-1-1024           : distributed system - get host info for worker yb-tserver-0
+YugabyteDB-1-1-1024           : distributed system - get host info for worker yb-tserver-1
+YugabyteDB-1-1-1024           : distributed system - get host info for worker yb-tserver-2
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1734601765
 - waiting 10s -               : done
-YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1730223936-1-2-jmmx8: found
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1734601765-1-2-rpdmw: found
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -99,36 +141,46 @@ YugabyteDB-1-1-1024           : has running benchmarks
 YugabyteDB-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 YugabyteDB-1-1-1024           : has running benchmarks
 YugabyteDB-1-1-1024-2         : showing benchmarker times
 YugabyteDB-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 313
-YugabyteDB-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1730224620, 1730224925), (1730224620, 1730224925)]
-YugabyteDB-1-1-1024-2         : found and updated times {'benchmarker': [(1730224620, 1730224925), (1730224620, 1730224925)]}
+YugabyteDB-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1734602457, 1734602761), (1734602457, 1734602761)]
+YugabyteDB-1-1-1024-2         : found and updated times {'benchmarker': [(1734602457, 1734602761), (1734602457, 1734602761)]}
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 YugabyteDB-1-1-1024           : can be stopped
-Experiment ends at 2024-10-29 19:02:42.007475 (4960902.131454072): 1025.4936038386077s total
+Experiment ends at 2024-12-19 11:06:38.251655 (4287599.65878731): 1033.5613601319492s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Benchmarking                                     connection  ... Latency Distribution.Average Latency (microseconds)
-connection_pod                                  ...                                                    
-YugabyteDB-1-1-1024-1-1  YugabyteDB-1-1-1024-1  ...                                               40433
-YugabyteDB-1-1-1024-2-1  YugabyteDB-1-1-1024-2  ...                                               45980
-YugabyteDB-1-1-1024-2-2  YugabyteDB-1-1-1024-2  ...                                               46247
-
-[3 rows x 36 columns]
-Workflow {'YugabyteDB-1-1-1024': [[1, 2]]}
-Result workflow complete
+Result workflow not complete
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 1026s 
-    Code: 1730223936
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 1034s 
+    Code: 1734601765
+    Benchbase runs the benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
@@ -144,45 +196,87 @@ Benchbase Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
-    RAM:541008605184
+    RAM:541008576512
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254319408
+    disk:248621648
     datadisk:39428
     requests_cpu:4
     requests_memory:16Gi
+    worker 0
+        RAM:1081966526464
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker28
+        disk:443073852
+    worker 1
+        RAM:540587499520
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-126-generic
+        node:cl-worker22
+        disk:124173692
+    worker 2
+        RAM:1081965555712
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker27
+        disk:560979688
 YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
-    RAM:541008605184
+    RAM:541008576512
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254319580
+    disk:248621648
     datadisk:39428
     requests_cpu:4
     requests_memory:16Gi
+    worker 0
+        RAM:1081966526464
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker28
+        disk:443885248
+    worker 1
+        RAM:540587499520
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-126-generic
+        node:cl-worker22
+        disk:124976104
+    worker 2
+        RAM:1081965555712
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker27
+        disk:561773616
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-YugabyteDB-1-1-1024-1               1         16   16384          1  300.0                        395.54                                                     100821.0                                              40433.0
-YugabyteDB-1-1-1024-2               1         16   16384          2  300.0                        346.81                                                     112470.0                                              46113.5
+YugabyteDB-1-1-1024-1               1         16   16384          1  300.0                        364.30                                                     107743.0                                              43901.0
+YugabyteDB-1-1-1024-2               1         16   16384          2  300.0                        381.44                                                     105259.0                                              41945.5
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
+DBMS YugabyteDB-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
 DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-YugabyteDB-1-1-1024-1      200.0        1.0   1.0                      288.0
-YugabyteDB-1-1-1024-2      200.0        1.0   2.0                      288.0
+YugabyteDB-1-1-1024-1      204.0        1.0   1.0                 282.352941
+YugabyteDB-1-1-1024-2      204.0        1.0   2.0                 282.352941
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

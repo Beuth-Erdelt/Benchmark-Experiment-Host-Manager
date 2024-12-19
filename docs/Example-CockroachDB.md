@@ -121,11 +121,11 @@ At the end of a benchmark you will see a summary like
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1912s 
-    Code: 1730301195
-    This includes no queries. YCSB runs the benchmark
+    Duration: 1055s 
+    Code: 1734604175
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
     YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['CockroachDB'].
@@ -133,7 +133,6 @@ YCSB SF=1
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 30Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -141,60 +140,48 @@ YCSB SF=1
 
 ### Connections
 CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
-    RAM:541008605184
+    RAM:541008576512
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254908644
+    disk:249207160
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:1081965535232
-        CPU:
-        GPU:
-        GPUIDs:[]
+        RAM:1081965555712
         Cores:256
-        host:5.15.0-1060-nvidia
+        host:5.15.0-1067-nvidia
         node:cl-worker27
-        disk:726928680
-        datadisk:107393516
-        volume_size:30G
-        volume_used:1.5G
-        cuda:
+        disk:560813152
+        datadisk:116276744
+        volume_size:1000G
+        volume_used:109G
     worker 1
-        RAM:1081750962176
-        CPU:
-        GPU:
-        GPUIDs:[]
-        Cores:128
-        host:5.15.0-122-generic
-        node:cl-worker29
-        disk:391582960
-        datadisk:107344022
-        volume_size:30G
-        volume_used:1.6G
-        cuda:
-    worker 2
-        RAM:1081966493696
-        CPU:
-        GPU:
-        GPUIDs:[]
+        RAM:1081966526464
         Cores:256
-        host:5.15.0-1060-nvidia
+        host:5.15.0-1067-nvidia
         node:cl-worker28
-        disk:676774188
-        datadisk:107343598
-        volume_size:30G
-        volume_used:1.6G
-        cuda:
+        disk:442719496
+        datadisk:116066508
+        volume_size:1000G
+        volume_used:109G
+    worker 2
+        RAM:1081751019520
+        Cores:128
+        host:5.15.0-126-generic
+        node:cl-worker29
+        disk:153230928
+        datadisk:116065692
+        volume_size:1000G
+        volume_used:109G
 
 ### Loading
                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8                     1185.98666               845744.0             1000000                            255295.0
+CockroachDB-64-8-65536               1       64   65536          8                   17071.978081                58791.0             1000000                              7190.0
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-CockroachDB-64-8-65536-1               1       64   65536          1                        1337.57               747625.0            499547                           71359.0              500453                           1549311.0
+CockroachDB-64-8-65536-1               1       64   65536          1                       14391.04               694877.0           5000111                            5691.0             4999889                            126207.0
 
 ### Workflow
 
@@ -206,19 +193,19 @@ DBMS CockroachDB-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     2363.41     2.54          4.95                 9.51
+CockroachDB-64-8-65536-1     1295.39     6.78          3.68                 6.88
 
 ### Ingestion - Loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1      227.61     0.15          4.56                 4.58
+CockroachDB-64-8-65536-1       22.52     0.41          0.58                 0.59
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     3054.28     2.11          7.28                12.92
+CockroachDB-64-8-65536-1    21640.62    21.35         12.76                28.74
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1      138.39     0.21          0.58                 0.58
+CockroachDB-64-8-65536-1     1181.64     1.78           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -310,11 +297,13 @@ If data should be loaded, bexhoma at first creates a schema according to: https:
 
 TPC-C is performed at 16 warehouses.
 The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
+CockroachDB has 3 workers.
 
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
+  -nw 3 \
   -dbms CockroachDB \
   -nbp 1,2 \
   -nbt 16 \
@@ -400,6 +389,7 @@ The 64 threads of the client are split into a cascading sequence of 1,2,4 and 8 
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
+  -nw 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 64 \
