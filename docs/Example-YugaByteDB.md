@@ -619,10 +619,11 @@ In `ycsb.py` there is a section about YugabyteDB.
 
 Watch for
 * `config.sut_service_name`: Fixed name for the service of the SUT (="yb-tserver-service")
-* `config.sut_container_name`: Fixed name for the container of the SUT (="yb-tserver")
-* `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-")
-* `config.get_worker_endpoints()`: ?
-* `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name)
+* `config.sut_container_name`: Fixed name for the container of the SUT (="")
+* `config.get_worker_pods()`: Method to find the pods of worker nodes (['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']). This allows getting host infos like CPU, RAM, node name, ...
+* `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-"). This avoids the SUT dummy contributing to the monitoring.
+* `config.get_worker_endpoints()`: This is neccessary, when we have sidecar containers attached to workers of a distributed dbms. Monitoring needs to find these containers.
+* `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name, for our SUT)
 
 
 

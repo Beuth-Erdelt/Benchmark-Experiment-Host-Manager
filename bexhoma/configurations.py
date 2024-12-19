@@ -747,6 +747,7 @@ class default():
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         """
         Generate a name for the monitoring component.
+        This is used in a pattern for promql.
         Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`
 
         :param app: app the component belongs to
@@ -3042,6 +3043,7 @@ scrape_configs:
         """
         Returns a list of all pod names of workers for the current SUT.
         Default is component name is 'worker' for a bexhoma managed DBMS.
+        This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
 
         :return: list of endpoints
         """
@@ -3054,6 +3056,7 @@ scrape_configs:
         These are IPs of cAdvisor instances.
         The endpoint list is to be filled in a config of an instance of Prometheus.
         By default, the workers can be found by the name of their component (worker-0 etc).
+        This is neccessary, when we have sidecar containers attached to workers of a distributed dbms.
 
         :return: list of endpoints
         """

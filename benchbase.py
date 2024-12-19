@@ -349,6 +349,7 @@ if __name__ == '__main__':
                         """
                         Returns a list of all pod names of workers for the current SUT.
                         Default is component name is 'worker' for a bexhoma managed DBMS.
+                        This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
                         YugabyteDB: This is yb-tserver-0, -1 etc.
 
                         :return: list of endpoints
@@ -361,8 +362,9 @@ if __name__ == '__main__':
                     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
                         """
                         Generate a name for the monitoring component.
+                        This is used in a pattern for promql.
                         Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
-                        For YugabyteDB, the service to be monitored is named like 'yb-tserver-'.
+                        For YugabyteDB, the service of the SUT to be monitored is named like 'yb-tserver-'.
 
                         :param app: app the component belongs to
                         :param component: Component, for example sut or monitoring
@@ -382,6 +384,7 @@ if __name__ == '__main__':
                         These are IPs of cAdvisor instances.
                         The endpoint list is to be filled in a config of an instance of Prometheus.
                         By default, the workers can be found by the name of their component (worker-0 etc).
+                        This is neccessary, when we have sidecar containers attached to workers of a distributed dbms.
 
                         :return: list of endpoints
                         """
@@ -396,26 +399,13 @@ if __name__ == '__main__':
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
                     config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
-                    def get_worker_endpoints_tmp(self):
-                        """
-                        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
-                        These are IPs of cAdvisor instances.
-                        The endpoint list is to be filled in a config of an instance of Prometheus.
-                        For YugabyteDB the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
-
-                        :return: list of endpoints
-                        """
-                        endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                        self.logger.debug("yugabytedb.get_worker_endpoints_tmp({})".format(endpoints))
-                        return endpoints
-                    #config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
                     def set_metric_of_config(self, metric, host, gpuid):
                         """
                         Returns a promql query.
                         Parameters in this query are substituted, so that prometheus finds the correct metric.
                         Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
                         configuration and experiment are placeholders and will be replaced by concrete values.
-                        Here: We do not have a SUT that is specific to the experiment or configuration.
+                        YugabyteDB: We do not have a SUT that is specific to the experiment or configuration. The pod names follow a pattern like yb-tserver and there is no container name.
 
                         :param metric: Parametrized promql query
                         :param host: Name of the host the metrics should be collected from
