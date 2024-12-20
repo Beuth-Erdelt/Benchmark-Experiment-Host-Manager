@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1055s 
-    Code: 1734604175
+    Duration: 1056s 
+    Code: 1734645173
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
@@ -26,25 +26,25 @@ CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
     Cores:64
     host:5.15.0-126-generic
     node:cl-worker11
-    disk:249207160
+    disk:249215592
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:1081965555712
-        Cores:256
-        host:5.15.0-1067-nvidia
-        node:cl-worker27
-        disk:560813152
-        datadisk:116276744
-        volume_size:1000G
-        volume_used:109G
-    worker 1
         RAM:1081966526464
         Cores:256
         host:5.15.0-1067-nvidia
         node:cl-worker28
-        disk:442719496
-        datadisk:116066508
+        disk:446476124
+        datadisk:116276640
+        volume_size:1000G
+        volume_used:109G
+    worker 1
+        RAM:1081965555712
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker27
+        disk:634371096
+        datadisk:116064760
         volume_size:1000G
         volume_used:109G
     worker 2
@@ -52,18 +52,18 @@ CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
         Cores:128
         host:5.15.0-126-generic
         node:cl-worker29
-        disk:153230928
-        datadisk:116065692
+        disk:153231576
+        datadisk:116065120
         volume_size:1000G
         volume_used:109G
 
 ### Loading
                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8                   17071.978081                58791.0             1000000                              7190.0
+CockroachDB-64-8-65536               1       64   65536          8                   16211.343884                61937.0             1000000                              7579.5
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-CockroachDB-64-8-65536-1               1       64   65536          1                       14391.04               694877.0           5000111                            5691.0             4999889                            126207.0
+CockroachDB-64-8-65536-1               1       64   65536          1                       14106.68               708884.0           5000094                            5851.0             4999906                            130879.0
 
 ### Workflow
 
@@ -75,19 +75,19 @@ DBMS CockroachDB-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     1295.39     6.78          3.68                 6.88
+CockroachDB-64-8-65536-1      888.04     0.03          3.05                 5.76
 
 ### Ingestion - Loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1       22.52     0.41          0.58                 0.59
+CockroachDB-64-8-65536-1       103.7        0          4.34                 4.37
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1    21640.62    21.35         12.76                28.74
+CockroachDB-64-8-65536-1    20657.12    20.74         12.51                26.94
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     1181.64     1.78           0.6                 0.61
+CockroachDB-64-8-65536-1     1024.62     1.56           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

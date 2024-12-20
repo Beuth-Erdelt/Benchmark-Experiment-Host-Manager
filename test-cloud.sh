@@ -383,10 +383,11 @@ sleep 30
 # start database service placeholder
 kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
-sleep 10
+# we have to be sure the "cloud service" is ready - bexhoma does not check this in case dbms is not managed by bexhoma
+sleep 300
 
 # delete pvc of placeholder
-kubectl delete pvc bexhoma-storage-databaseservice-ycsb-1
+kubectl delete pvc bexhoma-storage-databaseservice-ycsb-5
 
 sleep 10
 
@@ -598,6 +599,9 @@ nohup python tpch.py -ms 2 -dt -tr \
 wait_process "tpch"
 
 
+# delete database service placeholder
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
 
 
 

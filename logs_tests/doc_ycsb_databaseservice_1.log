@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1734449423
-Experiment                    : starts at 2024-12-17 16:30:22.808199 (4134224.215333348)
+Experiment                    : has code 1734663459
+Experiment                    : starts at 2024-12-20 03:57:38.591399 (4348259.998533409)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
 YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
@@ -27,26 +27,26 @@ DatabaseService-64-8-65536    : waits for health check to succeed
 DatabaseService-64-8-65536    : waits for health check to succeed
 - waiting 30s -               : done
 DatabaseService-64-8-65536    : is not loaded yet
-DatabaseService-64-8-65536    : will start loading but not before 2024-12-17 15:33:54 (that is in 60 secs)
+DatabaseService-64-8-65536    : will start loading but not before 2024-12-20 03:01:10 (that is in 60 secs)
 - waiting 30s -               : done
 DatabaseService-64-8-65536    : is not loaded yet
-DatabaseService-64-8-65536    : will start loading but not before 2024-12-17 15:33:54
+DatabaseService-64-8-65536    : will start loading but not before 2024-12-20 03:01:10
 done
 DatabaseService-64-8-65536    : is not loaded yet
 DatabaseService-64-8-65536    : start asynch loading scripts of type loaded
 DatabaseService-64-8-65536    : is loading
-done
+- waiting 30s -               : done
 DatabaseService-64-8-65536    : is loading
 done
 DatabaseService-64-8-65536    : showing loader times
-DatabaseService-64-8-65536    : loader timespan (first to last [s]) = 20
+DatabaseService-64-8-65536    : loader timespan (first to last [s]) = 21
 DatabaseService-64-8-65536    : benchmarks done 0 of 1. This will be client 1
 DatabaseService-64-8-65536    : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
 DatabaseService-64-8-65536-1  : start benchmarking
 Worker pods found:  []
-DatabaseService-64-8-65536    : benchmarking results in folder /home/perdelt/benchmarks/1734449423
+DatabaseService-64-8-65536    : benchmarking results in folder /home/perdelt/benchmarks/1734663459
 - waiting 10s -               : done
-DatabaseService-64-8-65536    : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-64-8-65536-1734449423-xkbcb: found
+DatabaseService-64-8-65536    : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-64-8-65536-1734663459-dhjg4: found
 done
 DatabaseService-64-8-65536    : has running benchmarks
 DatabaseService-64-8-65536-1  : showing benchmarker times
@@ -55,7 +55,7 @@ DatabaseService-64-8-65536-1  : benchmarker times (start/end per pod and contain
 DatabaseService-64-8-65536-1  : found and updated times {'benchmarker': []}
 done
 DatabaseService-64-8-65536    : can be stopped
-Experiment                    : ends at 2024-12-17 16:36:15.869726 (4134577.276859674) - 353.06s total
+Experiment                    : ends at 2024-12-20 04:03:32.296496 (4348613.703629796) - 353.71s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -67,7 +67,7 @@ Result workflow complete
 YCSB SF=1
     Type: ycsb
     Duration: 354s 
-    Code: 1734449423
+    Code: 1734663459
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -89,18 +89,18 @@ DatabaseService-64-8-65536-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-126-generic
     node:cl-worker11
-    disk:236006380
+    disk:249256012
     datadisk:39348
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8                   50279.137219                20168.0             1000000                             25355.0
+DatabaseService-64-8-65536               1       64   65536          8                   49973.150502                20251.0             1000000                             25397.0
 
 ### Execution
                               experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                       55263.89                18095.0            499843                            2201.0              500157                             39103.0
+DatabaseService-64-8-65536-1               1       64   65536          1                       55202.87                18115.0            499487                            2095.0              500513                             42239.0
 
 ### Workflow
 

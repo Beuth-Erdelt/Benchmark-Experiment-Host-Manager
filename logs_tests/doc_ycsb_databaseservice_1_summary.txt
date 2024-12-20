@@ -4,7 +4,7 @@
 YCSB SF=1
     Type: ycsb
     Duration: 354s 
-    Code: 1734449423
+    Code: 1734663459
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
@@ -26,18 +26,18 @@ DatabaseService-64-8-65536-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-126-generic
     node:cl-worker11
-    disk:236006380
+    disk:249256012
     datadisk:39348
     requests_cpu:4
     requests_memory:16Gi
 
 ### Loading
                             experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8                   50279.137219                20168.0             1000000                             25355.0
+DatabaseService-64-8-65536               1       64   65536          8                   49973.150502                20251.0             1000000                             25397.0
 
 ### Execution
                               experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                       55263.89                18095.0            499843                            2201.0              500157                             39103.0
+DatabaseService-64-8-65536-1               1       64   65536          1                       55202.87                18115.0            499487                            2095.0              500513                             42239.0
 
 ### Workflow
 
