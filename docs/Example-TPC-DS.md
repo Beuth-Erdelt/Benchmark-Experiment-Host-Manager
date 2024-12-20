@@ -809,7 +809,7 @@ TEST passed: Workflow as planned
 ```
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
-PostgreSQL is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
+MonetDB is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
 
 
 ## Perform Benchmark - Throughput Test
@@ -1081,11 +1081,11 @@ All other instances just use the database without generating and loading data.
 | bexhoma-storage-monetdb-tpcds-100       | monetdb         | tpcds-100    | True         |              4019 | MonetDB    | shared               | 300Gi     | Bound    | 300G   | 156G   |
 +-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 
-+------------------+--------------+--------------+---------------+
-| 1707740320       | sut          |   loaded [s] | benchmarker   |
-+==================+==============+==============+===============+
-| PostgreSQL-BHT-8 | (1. Running) |       185.41 | (1. Running)  |
-+------------------+--------------+--------------+---------------+
++---------------+--------------+--------------+---------------+
+| 1707740320    | sut          |   loaded [s] | benchmarker   |
++===============+==============+==============+===============+
+| MonetDB-BHT-8 | (1. Running) |       185.41 | (1. Running)  |
++---------------+--------------+--------------+---------------+
 ```
 
 The result looks something like

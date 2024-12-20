@@ -12,6 +12,17 @@ echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 
+######################## Test Run ########################
+# This runs TPC-DS against MonetDB at localhost
+# usage: docker run --rm --network host -e DBMSBENCHMARKER_TESTRUN=1 bexhoma/benchmarker_dbmsbenchmarker:v0.14.6
+if test "$DBMSBENCHMARKER_TESTRUN" != "0"
+then
+	#ls -lh ./jars/
+	#python ./benchmark.py --help
+	python ./benchmark.py -f tpc-ds -e yes -b run
+	exit 0
+fi
+
 ######################## Wait for synched starting time ########################
 echo "benchmark started at $DBMSBENCHMARKER_NOW"
 echo "benchmark should wait until $DBMSBENCHMARKER_START"

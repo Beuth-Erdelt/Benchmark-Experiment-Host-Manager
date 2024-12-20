@@ -527,14 +527,17 @@ class logger(base):
             if self.include_benchmarking:
                 df = self.get_df_benchmarking()
                 if not df.empty:
-                    print("Benchmarking", df)
+                    #print("Benchmarking", df)
+                    pass
                 self.workflow = self.reconstruct_workflow(df)
                 if not len(self.workflow) == 0:
-                    print("Workflow", self.workflow)
+                    #print("Workflow", self.workflow)
+                    pass
             if self.include_loading:
                 df = self.get_df_loading()
                 if not df.empty:
-                    print("Loading", df)
+                    #print("Loading", df)
+                    pass
             return 0
         except Exception as e:
             print(e)
@@ -1263,11 +1266,11 @@ class tpcc(logger):
                 filename = os.fsdecode(file)
                 if filename.endswith(".pickle"): 
                     df = pd.read_pickle(self.path+"/"+filename)
-                    print(df)
-                    print(df.index.name)
+                    #print(df)
+                    #print(df.index.name)
                     list_vusers = list(df['vusers'])
-                    print(list_vusers)
-                    print("vusers", " ".join(list_vusers))
+                    #print(list_vusers)
+                    #print("vusers", " ".join(list_vusers))
             return super().test_results()
         except Exception as e:
             print(e)

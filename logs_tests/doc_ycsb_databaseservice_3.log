@@ -1,0 +1,360 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1734700853
+Experiment                    : starts at 2024-12-20 14:20:53.019251 (4385654.426380379)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'. Number of rows to insert is 5000000. Number of operations is 10000000. Batch size is ''.
+YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['DatabaseService'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 1Gi.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has to wait - 2 running and 0 pending pods: max is 2 pods per cluster
+done
+DatabaseService-64-8-65536    : will start now
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : is not loaded yet
+DatabaseService-64-8-65536    : will start loading but not before 2024-12-20 14:16:07 (that is in 60 secs)
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : is not loaded yet
+DatabaseService-64-8-65536    : will start loading but not before 2024-12-20 14:16:07
+done
+DatabaseService-64-8-65536    : is not loaded yet
+DatabaseService-64-8-65536    : start asynch loading scripts of type loaded
+DatabaseService-64-8-65536    : is loading
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : is loading
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : is loading
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : is loading
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : is loading
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : is loading
+done
+DatabaseService-64-8-65536    : showing loader times
+DatabaseService-64-8-65536    : loader timespan (first to last [s]) = 145
+DatabaseService-64-8-65536    : benchmarks done 0 of 1. This will be client 1
+DatabaseService-64-8-65536    : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '5', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 5000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': ''}
+DatabaseService-64-8-65536-1  : start benchmarking
+Worker pods found:  []
+DatabaseService-64-8-65536    : benchmarking results in folder /home/perdelt/benchmarks/1734700853
+- waiting 10s -               : done
+found
+DatabaseService-64-8-65536-1  : collecting metrics of data generator
+DatabaseService-64-8-65536-1  : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-64-8-65536-1734700853(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+DatabaseService-64-8-65536-1  : collecting metrics of data injector
+DatabaseService-64-8-65536-1  : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-64-8-65536-1734700853(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : has running benchmarks
+done
+DatabaseService-64-8-65536    : has running benchmarks
+DatabaseService-64-8-65536-1  : showing benchmarker times
+DatabaseService-64-8-65536-1  : benchmarker timespan (start to end single container [s]) = 171
+DatabaseService-64-8-65536-1  : benchmarker times (start/end per pod and container) = []
+DatabaseService-64-8-65536-1  : found and updated times {'benchmarker': []}
+DatabaseService-64-8-65536-1  : collecting metrics of benchmarker
+DatabaseService-64-8-65536-1  : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-64-8-65536-1734700853(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+DatabaseService-64-8-65536    : can be stopped
+Experiment                    : ends at 2024-12-20 15:22:50.227514 (4389371.634647944) - 3717.21s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=5
+    Type: ycsb
+    Duration: 3718s 
+    Code: 1734700853
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'. Number of rows to insert is 5000000. Number of operations is 10000000. Batch size is ''.
+    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['DatabaseService'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 1Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+DatabaseService-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
+    node:cl-worker11
+    disk:250060572
+    datadisk:39192
+    volume_size:1.0G
+    volume_used:36M
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+DatabaseService-64-8-65536               1       64   65536          8                   34656.857878               145263.0             5000000                              6815.5
+
+### Execution
+                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1                        65353.5               153014.0           4997965                             653.0             5002035                              1296.0
+
+### Workflow
+
+#### Actual
+DBMS DatabaseService-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS DatabaseService-64-8-65536 - Pods [[1]]
+
+### Ingestion - Loader
+                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-64-8-65536-1      397.12     0.88           4.6                 4.62
+
+### Execution - Benchmarker
+                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-64-8-65536-1      743.75     5.11           0.6                 0.61
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

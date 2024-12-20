@@ -1,0 +1,66 @@
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 1091s 
+    Code: 1734664810
+    Benchbase runs the benchmark.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is limited to DBMS ['DatabaseService'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+DatabaseService-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
+    node:cl-worker11
+    disk:249256016
+    datadisk:39348
+    requests_cpu:4
+    requests_memory:16Gi
+DatabaseService-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
+    node:cl-worker11
+    disk:249256020
+    datadisk:39348
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                            experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DatabaseService-1-1-1024-1               1         16   16384          1  300.0                       1873.16                                                      19246.0                                               8535.0
+DatabaseService-1-1-1024-2               1         16   16384          2  300.0                       1820.81                                                      21236.0                                               8782.5
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
+
+#### Planned
+DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                            time_load  terminals  pods  Imported warehouses [1/h]
+DatabaseService-1-1-1024-1      150.0        1.0   1.0                      384.0
+DatabaseService-1-1-1024-2      150.0        1.0   2.0                      384.0
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

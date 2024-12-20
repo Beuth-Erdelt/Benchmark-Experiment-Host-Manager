@@ -1,0 +1,170 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1734668861
+Experiment                    : starts at 2024-12-20 05:27:41.707337 (4353663.114466471)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=3) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 1200.
+Import sets indexes and constraints after loading and recomputes statistics.
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['DatabaseService'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 1Gi.
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+done
+DatabaseService-BHT-8         : will start now
+DatabaseService-BHT-8         : storage exists bexhoma-storage-databaseservice-tpch-3
+DatabaseService-BHT-8         : loading is set to finished
+- waiting 30s -               : done
+DatabaseService-BHT-8         : will start benchmarking but not before 2024-12-20 04:29:42 (that is in 60 secs)
+- waiting 30s -               : done
+DatabaseService-BHT-8         : will start benchmarking but not before 2024-12-20 04:29:42
+done
+DatabaseService-BHT-8         : benchmarks done 0 of 1. This will be client 1
+DatabaseService-BHT-8-1       : start benchmarking
+Worker pods found:  []
+DatabaseService-BHT-8         : benchmarking results in folder /home/perdelt/benchmarks/1734668861
+- waiting 10s -               : done
+DatabaseService-BHT-8         : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-bht-8-1734668861-1-1-8l88l: .found
+- waiting 30s -               : done
+DatabaseService-BHT-8         : has running benchmarks
+- waiting 30s -               : done
+DatabaseService-BHT-8         : has running benchmarks
+done
+DatabaseService-BHT-8         : has running benchmarks
+DatabaseService-BHT-8-1       : showing benchmarker times
+DatabaseService-BHT-8-1       : benchmarker timespan (start to end single container [s]) = 112
+DatabaseService-BHT-8-1       : benchmarker times (start/end per pod and container) = [(1734668997, 1734669068)]
+DatabaseService-BHT-8-1       : found and updated times {'benchmarker': [(1734668997, 1734669068)]}
+DatabaseService-BHT-8-1       : collecting metrics of benchmarker
+DatabaseService-BHT-8-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-bht-8-1734668861(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+DatabaseService-BHT-8         : can be stopped
+Experiment                    : ends at 2024-12-20 05:32:13.728204 (4353935.135337864) - 272.02s total
+Join results done!
+done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=3
+    Type: tpch
+    Duration: 273s 
+    Code: 1734668861
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=3) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 1200.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['DatabaseService'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 1Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+DatabaseService-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008576512
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-126-generic
+    node:cl-worker11
+    disk:249216876
+    datadisk:39192
+    volume_size:1.0G
+    volume_used:36M
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 DatabaseService-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                                      5785.36
+Minimum Cost Supplier Query (TPC-H Q2)                                 1938.19
+Shipping Priority (TPC-H Q3)                                           2255.59
+Order Priority Checking Query (TPC-H Q4)                               2827.21
+Local Supplier Volume (TPC-H Q5)                                       2018.18
+Forecasting Revenue Change (TPC-H Q6)                                  1062.37
+Forecasting Revenue Change (TPC-H Q7)                                  2075.73
+National Market Share (TPC-H Q8)                                       1336.07
+Product Type Profit Measure (TPC-H Q9)                                 2808.84
+Forecasting Revenue Change (TPC-H Q10)                                 2804.71
+Important Stock Identification (TPC-H Q11)                              583.68
+Shipping Modes and Order Priority (TPC-H Q12)                          2137.04
+Customer Distribution (TPC-H Q13)                                      5569.93
+Forecasting Revenue Change (TPC-H Q14)                                 1130.83
+Top Supplier Query (TPC-H Q15)                                         1321.32
+Parts/Supplier Relationship (TPC-H Q16)                                1239.32
+Small-Quantity-Order Revenue (TPC-H Q17)                               5228.78
+Large Volume Customer (TPC-H Q18)                                     17602.90
+Discounted Revenue (TPC-H Q19)                                         1735.06
+Potential Part Promotion (TPC-H Q20)                                   1018.27
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                    2464.08
+Global Sales Opportunity Query (TPC-H Q22)                              451.76
+
+### Loading [s]
+                           timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+DatabaseService-BHT-8-1-1           1.0          123.0         1.0      196.0     326.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                           Geo Times [s]
+DBMS                                    
+DatabaseService-BHT-8-1-1           2.11
+
+### Power@Size
+                           Power@Size [~Q/h]
+DBMS                                        
+DatabaseService-BHT-8-1-1            5249.82
+
+### Throughput@Size
+                                                      time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS                    SF num_experiment num_client                                              
+DatabaseService-BHT-8-1 3  1              1                 71      1   3                  3346.48
+
+### Workflow
+
+#### Actual
+DBMS DatabaseService-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS DatabaseService-BHT-8 - Pods [[1]]
+
+### Execution - Benchmarker
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DatabaseService-BHT-8-1        16.0        0          0.25                 0.27
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

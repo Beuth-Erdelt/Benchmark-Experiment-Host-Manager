@@ -2,10 +2,10 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1730301195
-Experiment                    : starts at 2024-10-30 16:13:14.978661 (5037135.102640003)
+Experiment                    : has code 1734645173
+Experiment                    : starts at 2024-12-19 22:52:53.295133 (4329974.702264299)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
 YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['CockroachDB'].
@@ -13,105 +13,58 @@ Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 30Gi.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-Warning: spec.template.spec.containers[1].env[4]: hides previous definition of "BEXHOMA_WORKER_LIST"
-Warning: spec.template.spec.containers[0].env[2]: hides previous definition of "BEXHOMA_WORKER_FIRST"
+Warning: spec.template.spec.containers[1].env[4]: hides previous definition of "BEXHOMA_WORKER_LIST", which may be dropped when using apply
+Warning: spec.template.spec.containers[0].env[2]: hides previous definition of "BEXHOMA_WORKER_FIRST", which may be dropped when using apply
 done
 CockroachDB-64-8-65536        : will start now
-[{'metadata': {'name': 'bexhoma-workers', 'labels': {'app': 'bexhoma', 'component': 'worker', 'configuration': 'default', 'experiment': 'default'}}, 'spec': {'accessModes': ['ReadWriteOnce'], 'resources': {'requests': {'storage': '100Gi'}}, 'storageClassName': 'shared'}}]
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-30 15:16:15 (that is in 120 secs)
+CockroachDB-64-8-65536        : will start loading but not before 2024-12-19 21:55:54 (that is in 120 secs)
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-30 15:16:15
+CockroachDB-64-8-65536        : will start loading but not before 2024-12-19 21:55:54
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-30 15:16:15
+CockroachDB-64-8-65536        : will start loading but not before 2024-12-19 21:55:54
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-30 15:16:15
+CockroachDB-64-8-65536        : will start loading but not before 2024-12-19 21:55:54
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
 done
+Worker pods found:  ['bexhoma-worker-cockroachdb-64-8-65536-1734645173-0', 'bexhoma-worker-cockroachdb-64-8-65536-1734645173-1', 'bexhoma-worker-cockroachdb-64-8-65536-1734645173-2']
 CockroachDB-64-8-65536 Workers 3 of 3
+Worker pods found:  ['bexhoma-worker-cockroachdb-64-8-65536-1734645173-0', 'bexhoma-worker-cockroachdb-64-8-65536-1734645173-1', 'bexhoma-worker-cockroachdb-64-8-65536-1734645173-2']
 CockroachDB-64-8-65536        : start asynch loading scripts of type loaded
 CockroachDB-64-8-65536        : is loading
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is loading
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is loading
-done
-CockroachDB-64-8-65536        : is loading
-Error from server (NotFound): persistentvolumeclaims "bexhoma-storage-cockroachdb-64-8-65536-ycsb-1" not found
-Error from server (NotFound): persistentvolumeclaims "bexhoma-storage-cockroachdb-64-8-65536-ycsb-1" not found
 done
 CockroachDB-64-8-65536        : showing loader times
-CockroachDB-64-8-65536        : loader timespan (first to last [s]) = 847
+CockroachDB-64-8-65536        : loader timespan (first to last [s]) = 63
 CockroachDB-64-8-65536        : benchmarks done 0 of 1. This will be client 1
-CockroachDB-64-8-65536        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
+CockroachDB-64-8-65536        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': ''}
 CockroachDB-64-8-65536-1      : start benchmarking
-CockroachDB-64-8-65536        : benchmarking results in folder /home/perdelt/benchmarks/1730301195
+Worker pods found:  ['bexhoma-worker-cockroachdb-64-8-65536-1734645173-0', 'bexhoma-worker-cockroachdb-64-8-65536-1734645173-1', 'bexhoma-worker-cockroachdb-64-8-65536-1734645173-2']
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-64-8-65536-1734645173-0
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-64-8-65536-1734645173-1
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-64-8-65536-1734645173-2
+CockroachDB-64-8-65536        : benchmarking results in folder /home/perdelt/benchmarks/1734645173
 - waiting 10s -               : done
 found
 CockroachDB-64-8-65536-1      : collecting loading metrics of SUT
+CockroachDB-64-8-65536-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1734645173(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 CockroachDB-64-8-65536-1      : collecting metrics of data generator
+CockroachDB-64-8-65536-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1734645173(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 CockroachDB-64-8-65536-1      : collecting metrics of data injector
+CockroachDB-64-8-65536-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1734645173(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : has running benchmarks
 - waiting 30s -               : done
@@ -156,43 +109,22 @@ CockroachDB-64-8-65536        : has running benchmarks
 CockroachDB-64-8-65536        : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : has running benchmarks
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : has running benchmarks
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : has running benchmarks
-Error from server (NotFound): persistentvolumeclaims "bexhoma-storage-cockroachdb-64-8-65536-ycsb-1" not found
 done
 CockroachDB-64-8-65536        : has running benchmarks
 CockroachDB-64-8-65536-1      : showing benchmarker times
-CockroachDB-64-8-65536-1      : benchmarker timespan (start to end single container [s]) = 781
-CockroachDB-64-8-65536-1      : benchmarker times (start/end per pod and container) = [(1730302281, 1730303029)]
-CockroachDB-64-8-65536-1      : found and updated times {'benchmarker': [(1730302281, 1730303029)]}
+CockroachDB-64-8-65536-1      : benchmarker timespan (start to end single container [s]) = 720
+CockroachDB-64-8-65536-1      : benchmarker times (start/end per pod and container) = [(1734645467, 1734646176)]
+CockroachDB-64-8-65536-1      : found and updated times {'benchmarker': [(1734645467, 1734646176)]}
 CockroachDB-64-8-65536-1      : collecting execution metrics of SUT
+CockroachDB-64-8-65536-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1734645173(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 CockroachDB-64-8-65536-1      : collecting metrics of benchmarker
+CockroachDB-64-8-65536-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1734645173(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 CockroachDB-64-8-65536        : can be stopped
-Experiment                    : ends at 2024-10-30 16:45:06.419442 (5039046.543422923) - 1911.44s total
+Experiment                    : ends at 2024-12-19 23:10:29.231723 (4331030.638857118) - 1055.94s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Benchmarking                                           connection  ... [UPDATE].Return=OK
-connection_pod                                        ...                   
-CockroachDB-64-8-65536-1-1  CockroachDB-64-8-65536-1  ...             500453
-
-[1 rows x 43 columns]
-Workflow {'CockroachDB-64-8-65536': [[1]]}
-Loading                                       connection  ... [INSERT].Return=OK
-connection_pod                                    ...                   
-CockroachDB-64-8-65536-1  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-2  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-3  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-4  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-5  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-6  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-7  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-8  CockroachDB-64-8-65536  ...             125000
-
-[8 rows x 36 columns]
 Result workflow complete
 
 ## Show Summary
@@ -200,11 +132,11 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1912s 
-    Code: 1730301195
-    This includes no queries. YCSB runs the benchmark
+    Duration: 1056s 
+    Code: 1734645173
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
+    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
     YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['CockroachDB'].
@@ -212,7 +144,6 @@ YCSB SF=1
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 30Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -220,60 +151,48 @@ YCSB SF=1
 
 ### Connections
 CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
-    RAM:541008605184
+    RAM:541008576512
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254908644
+    disk:249215592
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:1081965535232
-        CPU:
-        GPU:
-        GPUIDs:[]
+        RAM:1081966526464
         Cores:256
-        host:5.15.0-1060-nvidia
-        node:cl-worker27
-        disk:726928680
-        datadisk:107393516
-        volume_size:30G
-        volume_used:1.5G
-        cuda:
-    worker 1
-        RAM:1081750962176
-        CPU:
-        GPU:
-        GPUIDs:[]
-        Cores:128
-        host:5.15.0-122-generic
-        node:cl-worker29
-        disk:391582960
-        datadisk:107344022
-        volume_size:30G
-        volume_used:1.6G
-        cuda:
-    worker 2
-        RAM:1081966493696
-        CPU:
-        GPU:
-        GPUIDs:[]
-        Cores:256
-        host:5.15.0-1060-nvidia
+        host:5.15.0-1067-nvidia
         node:cl-worker28
-        disk:676774188
-        datadisk:107343598
-        volume_size:30G
-        volume_used:1.6G
-        cuda:
+        disk:446476124
+        datadisk:116276640
+        volume_size:1000G
+        volume_used:109G
+    worker 1
+        RAM:1081965555712
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker27
+        disk:634371096
+        datadisk:116064760
+        volume_size:1000G
+        volume_used:109G
+    worker 2
+        RAM:1081751019520
+        Cores:128
+        host:5.15.0-126-generic
+        node:cl-worker29
+        disk:153231576
+        datadisk:116065120
+        volume_size:1000G
+        volume_used:109G
 
 ### Loading
                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8                     1185.98666               845744.0             1000000                            255295.0
+CockroachDB-64-8-65536               1       64   65536          8                   16211.343884                61937.0             1000000                              7579.5
 
 ### Execution
                           experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-CockroachDB-64-8-65536-1               1       64   65536          1                        1337.57               747625.0            499547                           71359.0              500453                           1549311.0
+CockroachDB-64-8-65536-1               1       64   65536          1                       14106.68               708884.0           5000094                            5851.0             4999906                            130879.0
 
 ### Workflow
 
@@ -285,19 +204,19 @@ DBMS CockroachDB-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     2363.41     2.54          4.95                 9.51
+CockroachDB-64-8-65536-1      888.04     0.03          3.05                 5.76
 
 ### Ingestion - Loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1      227.61     0.15          4.56                 4.58
+CockroachDB-64-8-65536-1       103.7        0          4.34                 4.37
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     3054.28     2.11          7.28                12.92
+CockroachDB-64-8-65536-1    20657.12    20.74         12.51                26.94
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1      138.39     0.21          0.58                 0.58
+CockroachDB-64-8-65536-1     1024.62     1.56           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

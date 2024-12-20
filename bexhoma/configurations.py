@@ -142,6 +142,7 @@ class default():
         self.loading_active = experiment.loading_active
         self.loading_deactivated = False # Do not load at all and do not test for loading
         self.monitor_loading = True #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
+        self.monitoring_sut = True #: Fetch metrics of SUT, if monítoring is active - this is set to False when a service outside of K8s is benchmarked
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
         #self.parallelism = 1
@@ -164,7 +165,7 @@ class default():
         self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
         self.sut_service_name = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
-        self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored
+        self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
     def reset_sut(self):
@@ -746,6 +747,7 @@ class default():
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         """
         Generate a name for the monitoring component.
+        This is used in a pattern for promql.
         Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`
 
         :param app: app the component belongs to
@@ -829,6 +831,7 @@ scrape_configs:
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
                         for endpoint in endpoints_cluster:
+                            print("{:30s}: found monitoring endpoint (cAdvisor) for monitoring {} (added to Prometheus) of daemonset".format(configuration, endpoint))
                             #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
   - job_name: '{endpoint}'
@@ -838,23 +841,26 @@ scrape_configs:
       - targets: ['{endpoint}:9300']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             i = i + 1
                         # services of workers
-                        endpoints_worker = self.get_worker_endpoints()
-                        #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
-                        #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-                        i = 0
-                        #for pod in pods_worker:
-                        for endpoint in endpoints_worker:
-                            if endpoint in endpoints_cluster:
-                                # we already monitor this endpoint
-                                continue
-                            #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
-                            prometheus_config += """
+                        if len(endpoints_cluster) == 0:
+                            endpoints_worker = self.get_worker_endpoints()
+                            #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+                            #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                            i = 0
+                            #for pod in pods_worker:
+                            for endpoint in endpoints_worker:
+                                if endpoint in endpoints_cluster:
+                                    # we already monitor this endpoint
+                                    print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (already monitored by cluster)".format(configuration, endpoint))
+                                    continue
+                                print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
+                                #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                                prometheus_config += """
   - job_name: '{endpoint}'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
       - targets: ['{endpoint}:9300']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                            i = i + 1
+                                i = i + 1
                         for i,e in enumerate(envs):
                             if e['name'] == 'BEXHOMA_SERVICE':
                                 dep['spec']['template']['spec']['containers'][0]['env'][i]['value'] = name_sut
@@ -1639,10 +1645,11 @@ scrape_configs:
         try:
             datastore = json.loads(result)
             #print(datastore)
-            if self.appname == datastore['metadata']['labels']['app']:
-                if self.pod_sut == datastore['metadata']['name']:
-                    node = datastore['spec']['nodeName']
-                    return node
+            # why check app? if not managed by bexhoma, this will be completely different
+            #if self.appname == datastore['metadata']['labels']['app']:
+            if self.pod_sut == datastore['metadata']['name']:
+                node = datastore['spec']['nodeName']
+                return node
         except Exception as e:
             return ""
         return ""
@@ -1899,6 +1906,7 @@ scrape_configs:
         pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         for pod in pods:
             self.pod_sut = pod
+            print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))            
             c['worker'].append(self.get_host_all())
         self.pod_sut = pod_sut
         # take latest resources
@@ -2204,30 +2212,47 @@ scrape_configs:
             # get monitoring for loading
             if self.monitoring_active and self.monitor_loading:
                 cmd = {}
-                print("{:30s}: collecting loading metrics of SUT".format(connection))
-                #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-                cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
-                    self.sut_container_name,
-                    connection, 
-                    c['name']+'.config', 
-                    '/results/'+self.code, 
-                    self.code, 
-                    self.timeLoadingStart, 
-                    self.timeLoadingEnd)
-                stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
-                self.logger.debug(stdout)
-                self.logger.debug(stderr)
-                # upload connections infos again, metrics has overwritten it
-                filename = 'connections.config'
-                cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
-                self.logger.debug(stdout)
+                #self.monitoring_sut = True
+                if self.monitoring_sut:
+                    print("{:30s}: collecting loading metrics of SUT".format(connection))
+                    #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                    # with container name? should better be part of the metric query
+                    #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                    #metric_example = self.benchmark.dbms[self.configuration].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
+                    #metric_example = c['name']['monitoring']['metrics_special']['total_cpu_memory']
+                    #print("{:30s}: example mtric {}".format(connection, metric_example))
+                    metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
+                    print("{:30s}: example metric {}".format(connection, metric_example))
+                    cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                        #self.sut_container_name,
+                        connection, 
+                        c['name']+'.config', 
+                        '/results/'+self.code, 
+                        self.code, 
+                        self.timeLoadingStart, 
+                        self.timeLoadingEnd)
+                    stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+                    self.logger.debug(stdout)
+                    self.logger.debug(stderr)
+                    # upload connections infos again, metrics has overwritten it
+                    filename = 'connections.config'
+                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    self.logger.debug(stdout)
                 # get metrics of loader components
                 # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0 or self.experiment.cluster.monitor_cluster_exists:
                     # data generator container
                     print("{:30s}: collecting metrics of data generator".format(connection))
+                    metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                    container = "datagenerator"
+                    if container is not None:
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                    print("{:30s}: example metric {}".format(connection, metric_example))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
@@ -2245,6 +2270,14 @@ scrape_configs:
                     self.logger.debug(stdout)
                     # data injector container "sensor"
                     print("{:30s}: collecting metrics of data injector".format(connection))
+                    metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                    container = "sensor"
+                    if container is not None:
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                        metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                    print("{:30s}: example metric {}".format(connection, metric_example))
                     cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct loader -cn sensor -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                         connection, 
                         c['name']+'.config', 
@@ -2260,7 +2293,7 @@ scrape_configs:
                     cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
-    def execute_command_in_pod_sut(self, command, pod='', container='dbms', params=''):
+    def execute_command_in_pod_sut(self, command, pod='', container='', params=''):
         """
         Runs an shell command remotely inside a container of a pod.
         This defaults to the current sut's pod and the container "dbms"
@@ -2275,7 +2308,12 @@ scrape_configs:
             pod=self.pod_sut
             #pod = self.activepod
         if len(container) == 0:
-            container='dbms'
+            container = self.sut_container_name
+            #if self.sut_container_name is not None:
+            #    container = self.sut_container_name
+            #else:
+            #    container = ''
+            #    #container = 'dbms'
         if self.pod_sut == '':
             self.check_sut()
         return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
@@ -3005,10 +3043,12 @@ scrape_configs:
         """
         Returns a list of all pod names of workers for the current SUT.
         Default is component name is 'worker' for a bexhoma managed DBMS.
+        This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
 
         :return: list of endpoints
         """
         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):
         """
@@ -3016,6 +3056,7 @@ scrape_configs:
         These are IPs of cAdvisor instances.
         The endpoint list is to be filled in a config of an instance of Prometheus.
         By default, the workers can be found by the name of their component (worker-0 etc).
+        This is neccessary, when we have sidecar containers attached to workers of a distributed dbms.
 
         :return: list of endpoints
         """
@@ -3025,7 +3066,7 @@ scrape_configs:
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
             endpoints.append(endpoint)
-            print('Worker: {endpoint}'.format(endpoint = endpoint))
+            print('Worker endpoint: {endpoint}'.format(endpoint = endpoint))
         return endpoints
 
 

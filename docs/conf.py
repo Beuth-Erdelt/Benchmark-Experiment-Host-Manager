@@ -6,8 +6,13 @@ project = 'Bexhoma'
 copyright = '2021, Patrick K. Erdelt'
 author = 'Patrick K. Erdelt'
 
-release = '0.6'
-version = '0.6.1'
+import importlib.metadata
+
+release = importlib.metadata.version('bexhoma')
+version = release
+
+#release = '0.6'
+#version = '0.6.1'
 language = 'en'
 
 # -- General configuration

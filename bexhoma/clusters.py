@@ -37,6 +37,7 @@ import ast
 import urllib.request
 import urllib.parse
 from pprint import pprint
+from datetime import datetime, timedelta
 
 from dbmsbenchmarker import *
 
@@ -865,9 +866,9 @@ class testbed():
             #pod = self.activepod
         command_clean = command.replace('"','\\"')
         if len(container) > 0:
-            fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- bash -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
+            fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- sh -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
         else:
-            fullcommand = 'kubectl --context {context} exec {pod} -- bash -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
+            fullcommand = 'kubectl --context {context} exec {pod} -- sh -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
             #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
         #print(fullcommand)
         self.logger.debug('testbed.execute_command_in_pod({})'.format(fullcommand))
@@ -1335,22 +1336,28 @@ class testbed():
         config_K8s = self.config['credentials']['k8s']
         if 'service_monitoring' in config_K8s['monitor']:
             url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'], service="monitoring")
-            query = "node_memory_MemTotal_bytes"
+            query = "sum(node_memory_MemTotal_bytes)"
             safe_query = urllib.parse.quote_plus(query)
             try:
-                self.logger.debug('Test URL {}'.format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1"))
                 #code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
                 # curl -ILs www.welt.de | head -n 1|cut -d$' ' -f2
                 pod_dashboard = self.get_dashboard_pod_name()
                 self.logger.debug('Inside pod {}'.format(pod_dashboard))
+                now = datetime.utcnow()
+                start = now - timedelta(seconds=300) # 5 minutes ago
+                end = now - timedelta(seconds=240) # 4 minutes ago
                 cmd = {}
-                command = "curl -is '{}' | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
+                query_url = "{url}query_range?query={safe_query}&start={start}&end={end}&step=60".format(url=url, safe_query=safe_query, start=int(start.timestamp()), end=int(end.timestamp()))
+                self.logger.debug('Test URL {}'.format(query_url))
+                command = "curl -L --max-time 10 -is '{}' | head -n 1|cut -d$' ' -f2".format(query_url)
+                #command = "curl -is '{}' | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
                 self.logger.debug('Command {}'.format(command))
                 #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
                 #cores = os.popen(fullcommand).read()
                 stdin, stdout, stderr = self.execute_command_in_pod(pod=pod_dashboard, command=command, container="dashboard")
                 #print("Return", stdout, stderr)
                 status = stdout#os.popen(fullcommand).read()
+                self.logger.debug('Status {}'.format(status))
                 if len(status)>0:
                     #return int(status)
                     #print(int(status))

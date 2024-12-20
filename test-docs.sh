@@ -502,7 +502,7 @@ wait_process "tpcds"
 
 
 #### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-1
 sleep 30
 
 

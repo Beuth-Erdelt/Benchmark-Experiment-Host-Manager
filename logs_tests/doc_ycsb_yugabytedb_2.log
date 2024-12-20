@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1730223222
-Experiment                    : starts at 2024-10-29 18:33:42.187131 (4959162.311106925)
+Experiment                    : has code 1734626144
+Experiment                    : starts at 2024-12-19 17:35:44.158663 (4310945.565792602)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
 YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
@@ -13,6 +13,7 @@ Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
+Loading is skipped.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
@@ -21,28 +22,19 @@ Cluster monitoring            : is running
 done
 YugabyteDB-64-8-65536         : will start now
 - waiting 30s -               : done
-YugabyteDB-64-8-65536         : will start benchmarking but not before 2024-10-29 17:35:42 (that is in 60 secs)
+YugabyteDB-64-8-65536         : will start benchmarking but not before 2024-12-19 16:37:44 (that is in 60 secs)
 - waiting 30s -               : done
-YugabyteDB-64-8-65536         : will start benchmarking but not before 2024-10-29 17:35:42
+YugabyteDB-64-8-65536         : will start benchmarking but not before 2024-12-19 16:37:44
 done
 YugabyteDB-64-8-65536         : benchmarks done 0 of 1. This will be client 1
 YugabyteDB-64-8-65536         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': ''}
 YugabyteDB-64-8-65536-1       : start benchmarking
-YugabyteDB-64-8-65536         : benchmarking results in folder /home/perdelt/benchmarks/1730223222
+YugabyteDB-64-8-65536         : distributed system - get host info for worker yb-tserver-0
+YugabyteDB-64-8-65536         : distributed system - get host info for worker yb-tserver-1
+YugabyteDB-64-8-65536         : distributed system - get host info for worker yb-tserver-2
+YugabyteDB-64-8-65536         : benchmarking results in folder /home/perdelt/benchmarks/1734626144
 - waiting 10s -               : done
-YugabyteDB-64-8-65536         : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-64-8-65536-1730223222-1-1-h9krw: found
-- waiting 30s -               : done
-YugabyteDB-64-8-65536         : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-65536         : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-65536         : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-65536         : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-65536         : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-64-8-65536         : has running benchmarks
+YugabyteDB-64-8-65536         : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-64-8-65536-1734626144-1-1-5r565: found
 - waiting 30s -               : done
 YugabyteDB-64-8-65536         : has running benchmarks
 - waiting 30s -               : done
@@ -66,23 +58,19 @@ YugabyteDB-64-8-65536         : has running benchmarks
 done
 YugabyteDB-64-8-65536         : has running benchmarks
 YugabyteDB-64-8-65536-1       : showing benchmarker times
-YugabyteDB-64-8-65536-1       : benchmarker timespan (start to end single container [s]) = 523
-YugabyteDB-64-8-65536-1       : benchmarker times (start/end per pod and container) = [(1730223347, 1730223859)]
-YugabyteDB-64-8-65536-1       : found and updated times {'benchmarker': [(1730223347, 1730223859)]}
+YugabyteDB-64-8-65536-1       : benchmarker timespan (start to end single container [s]) = 342
+YugabyteDB-64-8-65536-1       : benchmarker times (start/end per pod and container) = [(1734626273, 1734626593)]
+YugabyteDB-64-8-65536-1       : found and updated times {'benchmarker': [(1734626273, 1734626593)]}
 YugabyteDB-64-8-65536-1       : collecting execution metrics of SUT
+YugabyteDB-64-8-65536-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 YugabyteDB-64-8-65536-1       : collecting metrics of benchmarker
+YugabyteDB-64-8-65536-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-64-8-65536-1734626144(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 YugabyteDB-64-8-65536         : can be stopped
-Experiment                    : ends at 2024-10-29 18:45:12.049630 (4959852.173609247) - 689.86s total
+Experiment                    : ends at 2024-12-19 17:44:14.966144 (4311456.373277081) - 510.81s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Benchmarking                                         connection  ... [UPDATE].Return=OK
-connection_pod                                      ...                   
-YugabyteDB-64-8-65536-1-1  YugabyteDB-64-8-65536-1  ...            5001222
-
-[1 rows x 43 columns]
-Workflow {'YugabyteDB-64-8-65536': [[1]]}
 Result workflow complete
 
 ## Show Summary
@@ -90,9 +78,9 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 690s 
-    Code: 1730223222
-    This includes no queries. YCSB runs the benchmark
+    Duration: 511s 
+    Code: 1734626144
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
     YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
@@ -102,6 +90,7 @@ YCSB SF=1
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
+    Loading is skipped.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -109,19 +98,40 @@ YCSB SF=1
 
 ### Connections
 YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
-    RAM:541008605184
+    RAM:541008576512
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-126-generic
     node:cl-worker11
-    disk:254319248
+    disk:249253676
     datadisk:39268
     requests_cpu:4
     requests_memory:16Gi
+    worker 0
+        RAM:1081966526464
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker28
+        disk:441407636
+    worker 1
+        RAM:540587499520
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-126-generic
+        node:cl-worker22
+        disk:125219072
+    worker 2
+        RAM:1081965555712
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker27
+        disk:586475888
 
 ### Execution
                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1                       19547.36               511578.0           4998778                           64703.0             5001222                             66239.0
+YugabyteDB-64-8-65536-1               1       64   65536          1                       31287.55               319616.0           4999554                           39551.0             5000446                             43999.0
 
 ### Workflow
 
@@ -133,11 +143,11 @@ DBMS YugabyteDB-64-8-65536 - Pods [[1]]
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1     19802.0    26.15         14.21                24.03
+YugabyteDB-64-8-65536-1    13772.52     16.0          7.23                23.99
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1     1039.41     2.13          0.61                 0.61
+YugabyteDB-64-8-65536-1      982.63      3.4          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
