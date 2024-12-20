@@ -180,7 +180,6 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 ```bash
-
 ## Show Summary
 
 ### Workload
@@ -278,7 +277,6 @@ nohup python ycsb.py -ms 2 -tr \
 This skips loading (`-sl`), as data is already present in the database.
 
 ```bash
-## Show Summary
 ## Show Summary
 
 ### Workload
