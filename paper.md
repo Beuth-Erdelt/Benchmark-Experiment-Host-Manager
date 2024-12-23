@@ -28,7 +28,7 @@ It serves as the orchestrator [@10.1007/978-3-030-94437-7_6] for distributed par
 
 See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager) and the [documentation](https://bexhoma.readthedocs.io/en/latest/) for more details.
 
-Used by [@Erdelt2022DBMSBenchmarker; @10.1007/978-3-030-84924-5_6]
+Used by [@Erdelt2022DBMSBenchmarker; @10.1007/978-3-030-84924-5_6; 10.1007/978-3-031-68031-1_9]
 
 # Statement of Need
 
