@@ -24,12 +24,12 @@ bibliography: paper.bib
 
 Bexhoma (Benchmark Experiment Host Manager) is a Python tool that helps with managing benchmark experiments of Database Management Systems (DBMS) in a Kubernetes-based High-Performance-Computing (HPC) cluster environment. It enables users to configure hardware / software setups for easily repeating tests over varying configurations.
 
-The basic workflow is [@10.1007/978-3-030-94437-7_6; @10.1007/978-3-030-84924-5_6]: start a containerized version of the DBMS, install monitoring software, import data, run benchmarks and shut down everything with a single command. A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison. It is also possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments. Benchmarks included are YCSB, TPC-H, TPC-DS and TPC-C (HammerDB and Benchbase version).
+The basic workflow is [@10.1007/978-3-030-84924-5_6;@10.1007/978-3-030-94437-7_6]: start a containerized version of the DBMS, install monitoring software, import data, run benchmarks and shut down everything with a single command. A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison. It is possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments. Benchmarks included are YCSB, TPC-H, TPC-DS and TPC-C (HammerDB and Benchbase version).
 
-![components of a benchmark.\label{fig:workflow}](docs/dashboardworkflow-sketch-simple.png){ width=1440}
+![components of a benchmark.\label{fig:workflow}](docs/workflow-sketch-simple.png){ width=1440}
 
 Bexhoma serves as the orchestrator [@10.1007/978-3-030-94437-7_6] for distributed parallel benchmarking experiments in a Kubernetes Cloud. It starts a monitoring container of Prometheus and metrics collector containers of cAdvisor.
-For analytical use cases, the Python package dbmsbenchmarker, [@Erdelt2022DBMSBenchmarker], is used as query executor and evaluator as in [@10.1007/978-3-030-84924-5_6; @10.1007/978-3-031-68031-1_9]. For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [@10.1007/978-3-031-68031-1_9].
+For analytical use cases, the Python package dbmsbenchmarker, [@Erdelt2022DBMSBenchmarker], is used as query executor and evaluator as in [@10.1007/978-3-030-84924-5_6;@10.1007/978-3-030-94437-7_6]. For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [@10.1007/978-3-031-68031-1_9].
 
 Bexhoma has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations, running with Clickhouse, Exasol, Citus Data (Hyperscale), IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, and Vertica.
 
