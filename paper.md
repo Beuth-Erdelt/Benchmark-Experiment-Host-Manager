@@ -58,7 +58,9 @@ python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   run
 ```
+
 This
+
 * starts a clean instance of PostgreSQL (`-dbms`)
   * data directory inside a Docker container
 * starts 1 loader pod (per DBMS) that
@@ -83,11 +85,11 @@ Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+---------------------+--------------+--------------+---------------+-------------+
-| 1726578005          | sut          |   loaded [s] | use case      | loading     |
-+=====================+==============+==============+===============+=============+
-| PostgreSQL-BHT-16-1 | (1. Running) |            1 | hammerdb_tpcc | (1 Running) |
-+---------------------+--------------+--------------+---------------+-------------+
++---------------------+--------------+-------------+---------------+-------------+
+| 1726578005          | sut          |  loaded [s] | use case      | loading     |
++=====================+==============+=============+===============+=============+
+| PostgreSQL-BHT-16-1 | (1. Running) |           1 | hammerdb_tpcc | (1 Running) |
++---------------------+--------------+-------------+---------------+-------------+
 ```
 
 The code `1726578005` is the unique identifier of the experiment.
@@ -97,7 +99,7 @@ You can find the number also in the output of `hammerdb.py`.
 
 At the end of a benchmark you will see a summary like
 
-```bash
+```
 ## Show Summary
 
 ### Workload
