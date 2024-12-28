@@ -99,7 +99,7 @@ Bexhoma is now ready to use.
 
 ## Configuration
 
-We here give more details about the configuration and files included in bexhoma.
+Here we provide more background information on the configuration and files included in bexhoma. In most cases the default settings will be sufficient.
 
 ### Cluster-Config
 
@@ -135,6 +135,7 @@ The rest probably can stay as is.
                 'port': 9091,
             },
 ```
+
 * `my_context`: Context (name) of the cluster. Repeat this section for every K8s cluster you want to use. This also allows to use and compare several clouds.
 * `my_namespace`: Namespace in the cluster. Make sure you have access to that namespace.
 * `clustername`: Customize the cluster name for your convenience.
@@ -150,6 +151,7 @@ The host is found using the service of the DBMS.
 Monitoring refers to automatical observation of resource consumption of components.
 
 Bexhoma basically offers two variants
+
 * Monitor only the system-under-test (SUT) with `-m`
 * Monitor all components with `-mc`
 
@@ -166,6 +168,7 @@ Bexhoma checks at the beginning of an experiment if the URL provided is reachabl
 it uses cURL inside the dashboard pod to test if `query_range?query=sum(node_memory_MemTotal_bytes)&start={start}&end={end}&step=60` has a return status of 200 (where `start` is 5 min ago and `end` is 4 min ago).
 
 If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
+
 * Monitor only the system-under-test (SUT) with `-m`
   * install a cAdvisor sidecar container per SUT
   * install a Prometheus server per experiment
@@ -176,6 +179,7 @@ If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
 Bexhoma will also make sure all components know of eachother.
 
 Configuration takes place in `cluster.config`:
+
 * `service_monitoring`: a DNS name of the Prometheus server  
   the placeholders `service` and `namespace` are replaced by the service of the monitoring component of the experiment and the namespace inside the cluster config resp.
 * `extend`: number of seconds each interval of observations should be extended  
@@ -195,25 +199,18 @@ Example metric, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Exp
 ```
 
 This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for the collection of the metrics.
-
-
-#### Explanation
-
-There is a placeholder `{gpuid}` that is substituted automatically by a list of GPUs present in the pod.
-There is a placeholder `{configuration}` that is substituted automatically by the name of the current configuration of the SUT.
-There is a placeholder `{experiment}` that is substituted automatically by the name (identifier) of the current experiment. 
-
-Moreover the is an automatical substituion of `container_label_io_kubernetes_container_name="dbms"`; the `dbms` refers to the sut. For other containers it is replaced by `datagenerator`, `sensor` and `dbmsbenchmarker`.
-
+Some placeholders are substituted automatically.
 Note that the metrics make a summation over all matching components (containers, CPU cores etc).
 
 #### Installation Templates
 
 cAdvisor runs as a container `cadvisor` and a service with `port-monitoring` 9300
+
 * example per SUT (sidecar container): `k8s/deploymenttemplate-PostgreSQL.yml`
 * example per node (daemonset): `k8s/daemonsettemplate-monitoring.yml`
 
 Prometheus runs as a container with a service with `port-prometheus` 9090
+
 * `k8s/deploymenttemplate-bexhoma-prometheus.yml`
 
 ### Data Sources
@@ -263,6 +260,7 @@ It is organized as follows:
 The scripts must be present in a [config folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch), say `experiments/tpch/`.
 
 Example: For TPC-H the script `tpch.py` may run (depending on the CLI parameters)
+
 * `Schema` before ingestion - this runs the script `initschema-tpch.sql`
 * `Index_and_Constraints` after ingestion - this runs the script `initindexes-tpch.sql` and `initconstraints-tpch.sql`
 
@@ -275,6 +273,7 @@ Database systems are described in the `docker` section.
 Please see [DBMS section](https://bexhoma.readthedocs.io/en/latest/DBMS.html) for more informations.
 
 To include a DBMS in a Kubernetes-based experiment you will need
+
 * a Docker Image
 * a JDBC Driver
 * a Kubernetes Deployment Template
@@ -307,6 +306,7 @@ We have to define some data per key, for example for the key `PostgreSQL` we use
 },
 ```
 This has
+
 * a base name for the DBMS
 * a `delay_prepare` in seconds to wait before system is considered ready
 * a placeholder `template` for the [benchmark tool DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file)  
