@@ -65,7 +65,7 @@ Key concepts are
 
 * Virtualization with Docker containers
 * Orchestration with Kubernetes
-* Monitoring with cAdvisor / Prometheus, since it is a common practise in cluster management
+* Monitoring with cAdvisor / Prometheus
 
 This is implemented as [@10.1007/978-3-030-84924-5_6;@10.1007/978-3-030-94437-7_6;@10.1007/978-3-031-68031-1_9]
 
@@ -101,6 +101,139 @@ This is implemented as [@10.1007/978-3-030-84924-5_6;@10.1007/978-3-030-94437-7_
       * `storage`: size of the directory
 
 Bexhoma is now ready to use.
+
+
+# A Basic Example
+
+The [documentation](https://bexhoma.readthedocs.io/en/latest/) contains a lot of examples.
+We here show some basic examples for basic use cases.
+
+## HammerDB's TPC-C at PostgreSQL
+
+```
+python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  run
+```
+
+This
+
+* starts a clean instance of PostgreSQL (`-dbms`)
+  * data directory inside a Docker container
+* starts 1 loader pod (per DBMS) that
+  * creates TPC-C schema in the database
+  * imports data for 16 (`-sf`) warehouses into the DBMS
+  * using 16 (`-nlt`) threads
+* runs streams of TPC-C queries (per DBMS)
+    * running for 5 (`-sd`) minutes
+    * each stream having 16 threads to simulate 16 users (`-nbt`)
+    * `-nbp`: first stream 1 pods, second stream 2 pods (8 threads each)
+* with a maximum of 1 DBMS per time (`-ms`)
+* tests if results match workflow (`-tr`)
+* shows a summary
+
+### Experiment Status
+
+You can watch the status while benchmark is running via `bexperiments status`
+
+```
+Dashboard: Running
+Cluster Prometheus: Running
+Message Queue: Running
+Data directory: Running
+Result directory: Running
++---------------------+--------------+------------+---------------+-------------+
+| 1726578005          | sut          | loaded [s] | use case      | loading     |
++=====================+==============+============+===============+=============+
+| PostgreSQL-BHT-16-1 | (1. Running) |          1 | hammerdb_tpcc | (1 Running) |
++---------------------+--------------+------------+---------------+-------------+
+```
+
+The code `1726578005` is the unique identifier of the experiment.
+You can find the number also in the output of `hammerdb.py`.
+
+### Experiment Results
+
+At the end of a benchmark you will see a summary like
+
+```
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 1205s 
+    Code: 1726578005
+    This includes no queries. HammerDB runs the benchmark
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Benchmark is limited to DBMS PostgreSQL.
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [16] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:252347764
+    datadisk:3377044
+    requests_cpu:4
+    requests_memory:16Gi
+PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:253279924
+    datadisk:4309204
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Execution
+                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1  12247.0  37509.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2  10391.0  31969.5         5       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
+
+#### Planned
+DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
+PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
+
+### Tests
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+
+We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
+
+To see the summary again you can simply call `bexperiments summary -e 1726578005` with the experiment code.
+
 
 # Configuration
 
@@ -315,136 +448,6 @@ Another section that might be interesting is
       tolerations:
 ```
 
-# A Basic Example
-
-The [documentation](https://bexhoma.readthedocs.io/en/latest/) contains a lot of examples.
-We here show some basic examples for basic use cases.
-
-## HammerDB's TPC-C at PostgreSQL
-
-```
-python hammerdb.py -ms 1 -tr \
-  -sf 16 \
-  -sd 5 \
-  -dbms PostgreSQL \
-  -nlt 16 \
-  -nbp 1,2 \
-  -nbt 16 \
-  run
-```
-
-This
-
-* starts a clean instance of PostgreSQL (`-dbms`)
-  * data directory inside a Docker container
-* starts 1 loader pod (per DBMS) that
-  * creates TPC-C schema in the database
-  * imports data for 16 (`-sf`) warehouses into the DBMS
-  * using 16 (`-nlt`) threads
-* runs streams of TPC-C queries (per DBMS)
-    * running for 5 (`-sd`) minutes
-    * each stream having 16 threads to simulate 16 users (`-nbt`)
-    * `-nbp`: first stream 1 pods, second stream 2 pods (8 threads each)
-* with a maximum of 1 DBMS per time (`-ms`)
-* tests if results match workflow (`-tr`)
-* shows a summary
-
-### Experiment Status
-
-You can watch the status while benchmark is running via `bexperiments status`
-
-```
-Dashboard: Running
-Cluster Prometheus: Running
-Message Queue: Running
-Data directory: Running
-Result directory: Running
-+---------------------+--------------+-------------+---------------+-------------+
-| 1726578005          | sut          |  loaded [s] | use case      | loading     |
-+=====================+==============+=============+===============+=============+
-| PostgreSQL-BHT-16-1 | (1. Running) |           1 | hammerdb_tpcc | (1 Running) |
-+---------------------+--------------+-------------+---------------+-------------+
-```
-
-The code `1726578005` is the unique identifier of the experiment.
-You can find the number also in the output of `hammerdb.py`.
-
-### Experiment Results
-
-At the end of a benchmark you will see a summary like
-
-```
-## Show Summary
-
-### Workload
-HammerDB Workload SF=16 (warehouses for TPC-C)
-    Type: tpcc
-    Duration: 1205s 
-    Code: 1726578005
-    This includes no queries. HammerDB runs the benchmark
-    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
-    TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Benchmark is limited to DBMS PostgreSQL.
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [16] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1, 2] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
-
-### Connections
-PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:252347764
-    datadisk:3377044
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:253279924
-    datadisk:4309204
-    requests_cpu:4
-    requests_memory:16Gi
-
-### Execution
-                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1  12247.0  37509.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2  10391.0  31969.5         5       0
-
-Warehouses: 16
-
-### Workflow
-
-#### Actual
-DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
-
-#### Planned
-DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
-
-### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
-PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
-
-### Tests
-TEST passed: NOPM contains no 0 or NaN
-TEST passed: Workflow as planned
-```
-
-We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
-
-To see the summary again you can simply call `bexperiments summary -e 1726578005` with the experiment code.
 
 # Acknowledgements
 
