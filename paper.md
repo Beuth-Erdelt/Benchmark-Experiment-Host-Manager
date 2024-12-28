@@ -132,7 +132,7 @@ The rest probably can stay as is.
                 'namespace': 'my_namespace',
                 'clustername': 'My Cluster',
                 'service_sut': '{service}.{namespace}.svc.cluster.local',
-                'port': 9091, # K8s: Local port for connecting via JDBC after port forwarding
+                'port': 9091,
             },
 ```
 * `my_context`: Context (name) of the cluster. Repeat this section for every K8s cluster you want to use. This also allows to use and compare several clouds.
@@ -146,7 +146,75 @@ It follows a dict of hardware metrics that should be collected per DBMS.
 This probably can stay as is.
 The attributes are set by bexhoms automatically so that corresponding pods can be identified.
 The host is found using the service of the DBMS.
-See [monitoring section](https://bexhoma.readthedocs.io/en/latest/Monitoring.html) for more details.
+
+Monitoring refers to automatical observation of resource consumption of components.
+
+Bexhoma basically offers two variants
+* Monitor only the system-under-test (SUT) with `-m`
+* Monitor all components with `-mc`
+
+Moreover bexhoma expects the cluster to be prepared, i.e. a daemonset of cAdvisors (exporters) is running and there is a Prometheus server (collector) we can connect to.
+However bexhoma can optionally install these components if missing.
+
+#### Configuration and Options
+
+Monitoring can be configured.
+Probably you won't have to change much.
+If there is a Prometheus server running in your cluster, make sure to adjust `service_monitoring`.
+If there is no Prometheus server running in your cluster, make sure to leave the template in `service_monitoring` as is.
+Bexhoma checks at the beginning of an experiment if the URL provided is reachable;
+it uses cURL inside the dashboard pod to test if `query_range?query=sum(node_memory_MemTotal_bytes)&start={start}&end={end}&step=60` has a return status of 200 (where `start` is 5 min ago and `end` is 4 min ago).
+
+If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
+* Monitor only the system-under-test (SUT) with `-m`
+  * install a cAdvisor sidecar container per SUT
+  * install a Prometheus server per experiment
+* Monitor all components with `-mc`
+  * install a cAdvisor per node as a daemonset
+  * install a Prometheus server per experiment
+
+Bexhoma will also make sure all components know of eachother.
+
+Configuration takes place in `cluster.config`:
+* `service_monitoring`: a DNS name of the Prometheus server  
+  the placeholders `service` and `namespace` are replaced by the service of the monitoring component of the experiment and the namespace inside the cluster config resp.
+* `extend`: number of seconds each interval of observations should be extended  
+  i.g., an interval [t,t'] will be extended to [t-e, t'+e]
+* `shift`: number of seconds each interval of observations should be shifted  
+  i.g., an interval [t,t'] will be shifted to [t+s, t'+s]
+* `metrics`: a dict of informations about metrics to be collected, see below
+
+
+Example metric, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
+
+```
+'total_cpu_memory': {
+  'query': '(sum(max(container_memory_working_set_bytes{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}) by (instance)))/1024/1024',
+  'title': 'CPU Memory [MiB]'
+}
+```
+
+This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for the collection of the metrics.
+
+
+#### Explanation
+
+There is a placeholder `{gpuid}` that is substituted automatically by a list of GPUs present in the pod.
+There is a placeholder `{configuration}` that is substituted automatically by the name of the current configuration of the SUT.
+There is a placeholder `{experiment}` that is substituted automatically by the name (identifier) of the current experiment. 
+
+Moreover the is an automatical substituion of `container_label_io_kubernetes_container_name="dbms"`; the `dbms` refers to the sut. For other containers it is replaced by `datagenerator`, `sensor` and `dbmsbenchmarker`.
+
+Note that the metrics make a summation over all matching components (containers, CPU cores etc).
+
+#### Installation Templates
+
+cAdvisor runs as a container `cadvisor` and a service with `port-monitoring` 9300
+* example per SUT (sidecar container): `k8s/deploymenttemplate-PostgreSQL.yml`
+* example per node (daemonset): `k8s/daemonsettemplate-monitoring.yml`
+
+Prometheus runs as a container with a service with `port-prometheus` 9090
+* `k8s/deploymenttemplate-bexhoma-prometheus.yml`
 
 ### Data Sources
 
@@ -206,7 +274,66 @@ The examples scripts above (like `initdata-tpch-SF1.sql` for example) refer to `
 Database systems are described in the `docker` section.
 Please see [DBMS section](https://bexhoma.readthedocs.io/en/latest/DBMS.html) for more informations.
 
+To include a DBMS in a Kubernetes-based experiment you will need
+* a Docker Image
+* a JDBC Driver
+* a Kubernetes Deployment Template
+* some configuration
+  * How to load data (DDL command)
+  * DDL scripts
+  * How to connect via JDBC
 
+DBMS can be adressed using a key.
+We have to define some data per key, for example for the key `PostgreSQL` we use:
+
+```
+'PostgreSQL': {
+    'loadData': 'psql -U postgres < {scriptname}',
+    'delay_prepare': 60,
+    'template': {
+        'version': 'v11.4',
+        'alias': 'General-B',
+        'docker_alias': 'GP-B',
+         'JDBC': {
+            'driver': "org.postgresql.Driver",
+            'auth': ["postgres", ""],
+            'url': 'jdbc:postgresql://{serverip}:9091/postgres?reWriteBatchedInserts=true',
+            'jar': 'postgresql-42.5.0.jar'
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+},
+```
+This has
+* a base name for the DBMS
+* a `delay_prepare` in seconds to wait before system is considered ready
+* a placeholder `template` for the [benchmark tool DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file)  
+  Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.  
+* assumed to have the JDBC driver jar locally available inside the benchmarking tool
+* a command `loadData` for running the init scripts  
+  Some placeholders in the URL are: `serverip` (set automatically to match the corresponding pod), `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
+* `{serverip}` as a placeholder for the host address
+* `{dbname}` as a placeholder for the db name
+* an optional `priceperhourdollar` (currently ignored)
+* an optional name of a `logfile` that is downloaded after the benchmark
+* name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
+
+#### Deployment Manifests
+
+Every DBMS that is deployed by bexhoma needs a YAML manifest.
+See for example https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
+
+You may want to pay attention to name of the secret:
+```
+      imagePullSecrets:
+      - {name: dockerhub}
+```
+Another section that might be interesting is
+```
+      tolerations:
+```
 
 # A Basic Example
 
