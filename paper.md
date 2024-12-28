@@ -76,7 +76,7 @@ KOBE [@10.1007/978-3-030-77385-4_40] for benchmarking federated query processors
 * **Ingestion**: *job* of pods for data generation and for ingestion of data into the DBMS, synchronized using a Redis queue
 * **Benchmarking**: *job* of pods for running the driver, synchronized using a Redis queue
 
-## Installation
+# Installation
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Install the package `pip install bexhoma`
@@ -97,16 +97,16 @@ KOBE [@10.1007/978-3-030-77385-4_40] for benchmarking federated query processors
 
 Bexhoma is now ready to use.
 
-## Configuration
+# Configuration
 
 Here we provide more background information on the configuration and files included in bexhoma. In most cases the default settings will be sufficient.
 
-### Cluster-Config
+## Cluster-Config
 
 The configuration of the cluster, that is the possible host and experiment settings, is set in a file `cluster.config` and consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):
 
 
-### Basic settings
+## Basic settings
 
 ```
 'benchmarker': {
@@ -118,7 +118,7 @@ The configuration of the cluster, that is the possible host and experiment setti
 * `resultfolder`: Where the benchmarker puts it's result folders. Make sure this is an existing folder bexhoma can write to.
 * `jarfolder`: Where the benchmarker expects the JDBC jar files. You probably should leave this as is.
 
-### Credentials of the Cluster
+## Credentials of the Cluster
 
 You will have to adjust the name of the namespace `my_namespace`.
 The rest probably can stay as is.
@@ -141,7 +141,7 @@ The rest probably can stay as is.
 * `clustername`: Customize the cluster name for your convenience.
 
 
-### (Hardware) Monitoring
+## (Hardware) Monitoring
 
 It follows a dict of hardware metrics that should be collected per DBMS.
 This probably can stay as is.
@@ -158,10 +158,6 @@ Bexhoma basically offers two variants
 Moreover bexhoma expects the cluster to be prepared, i.e. a daemonset of cAdvisors (exporters) is running and there is a Prometheus server (collector) we can connect to.
 However bexhoma can optionally install these components if missing.
 
-#### Configuration and Options
-
-Monitoring can be configured.
-Probably you won't have to change much.
 If there is a Prometheus server running in your cluster, make sure to adjust `service_monitoring`.
 If there is no Prometheus server running in your cluster, make sure to leave the template in `service_monitoring` as is.
 Bexhoma checks at the beginning of an experiment if the URL provided is reachable;
@@ -178,31 +174,11 @@ If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
 
 Bexhoma will also make sure all components know of eachother.
 
-Configuration takes place in `cluster.config`:
+For example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config).
 
-* `service_monitoring`: a DNS name of the Prometheus server  
-  the placeholders `service` and `namespace` are replaced by the service of the monitoring component of the experiment and the namespace inside the cluster config resp.
-* `extend`: number of seconds each interval of observations should be extended  
-  i.g., an interval [t,t'] will be extended to [t-e, t'+e]
-* `shift`: number of seconds each interval of observations should be shifted  
-  i.g., an interval [t,t'] will be shifted to [t+s, t'+s]
-* `metrics`: a dict of informations about metrics to be collected, see below
-
-
-Example metric, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
-
-```
-'total_cpu_memory': {
-  'query': '(sum(max(container_memory_working_set_bytes{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}) by (instance)))/1024/1024',
-  'title': 'CPU Memory [MiB]'
-}
-```
-
-This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for the collection of the metrics.
-Some placeholders are substituted automatically.
 Note that the metrics make a summation over all matching components (containers, CPU cores etc).
 
-#### Installation Templates
+### Installation Templates
 
 cAdvisor runs as a container `cadvisor` and a service with `port-monitoring` 9300
 
@@ -213,7 +189,7 @@ Prometheus runs as a container with a service with `port-prometheus` 9090
 
 * `k8s/deploymenttemplate-bexhoma-prometheus.yml`
 
-### Data Sources
+## Data Sources
 
 Data sources and imports can be adressed using a key.
 This probably can stay as is.
@@ -267,7 +243,7 @@ Example: For TPC-H the script `tpch.py` may run (depending on the CLI parameters
 The data itself is expected to be stored in a shared disk, that will be mounted into the DBMS container as `/data/`.
 The examples scripts above (like `initdata-tpch-SF1.sql` for example) refer to `/data/tpch/SF1/` for example.
 
-### DBMS
+## DBMS
 
 Database systems are described in the `docker` section.
 Please see [DBMS section](https://bexhoma.readthedocs.io/en/latest/DBMS.html) for more informations.
@@ -320,7 +296,7 @@ This has
 * an optional name of a `logfile` that is downloaded after the benchmark
 * name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
 
-#### Deployment Manifests
+### Deployment Manifests
 
 Every DBMS that is deployed by bexhoma needs a YAML manifest.
 See for example https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
