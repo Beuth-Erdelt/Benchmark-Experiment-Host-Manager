@@ -37,9 +37,26 @@ See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Man
 
 # Statement of Need
 
+In [@10.1007/978-3-030-84924-5_6] we introduced the package.
+
+In [@10.1007/978-3-319-67162-8_12] the authors present a cloud-centric analysis of eight evaluation frameworks.
+In [@10.1007/978-3-030-12079-5_4] the authors inspect several frameworks and collect requirements for a DBMS benchmarking framework in an interview based method and per interest group.
+
+* Help with time-consuming initial setup and configuration
+* Metadata collection
+* Generality and versatility
+* Extensibility and abstraction
+* Usability and configurability
+* Track everything
+* Repeatability/ reproducibility
+
+In [@10.1007/978-3-319-15350-6_6] the authors list important components for benchmarking, like Benchmark Coordinator, Measurement Manager, Workload Executor. They plead for a benchmarking middleware to support the process, to "*take care of the hassle of distributed benchmarking and managing the measurement infrastructure*". This is supposed to help the benchmark designer to concentrate on the core competences: specifying workload profiles and analyzing obtained measurements
 
 ## Summary of Solution
 
+* Virtualization with Docker containers
+* Orchestration with Kubernetes
+* Monitoring with cAdvisor / Prometheus, since it is a common practise in cluster management
 
 # A Basic Example
 
