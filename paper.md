@@ -26,7 +26,7 @@ Bexhoma (Benchmark Experiment Host Manager) is a Python tool that helps with man
 
 The basic workflow is [@10.1007/978-3-030-84924-5_6;@10.1007/978-3-030-94437-7_6]: start a containerized version of the DBMS, install monitoring software, import data, run benchmarks and shut down everything with a single command. A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison. It is possible to scale-out drivers for generating and loading data and for benchmarking to simulate cloud-native environments. Benchmarks included are YCSB, TPC-H, TPC-DS and TPC-C (HammerDB and Benchbase version).
 
-![components of a benchmark.\label{fig:workflow}](docs/workflow-sketch-simple.png){ width=1440}
+![workflow in bexhoma.\label{fig:workflow}](docs/workflow-sketch-simple.png){ width=1440}
 
 Bexhoma serves as the orchestrator [@10.1007/978-3-030-94437-7_6] for distributed parallel benchmarking experiments in a Kubernetes Cloud. It starts a monitoring container of Prometheus and metrics collector containers of cAdvisor.
 For analytical use cases, the Python package dbmsbenchmarker, [@Erdelt2022DBMSBenchmarker], is used as query executor and evaluator as in [@10.1007/978-3-030-84924-5_6;@10.1007/978-3-030-94437-7_6]. For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [@10.1007/978-3-031-68031-1_9].
@@ -37,26 +37,35 @@ See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Man
 
 # Statement of Need
 
-In [@10.1007/978-3-030-84924-5_6] we introduced the package.
-
+The first aspect of Bexhoma is the need for a framework to support all aspects of a benchmarking experiment.
 In [@10.1007/978-3-319-67162-8_12] the authors present a cloud-centric analysis of eight evaluation frameworks.
 In [@10.1007/978-3-030-12079-5_4] the authors inspect several frameworks and collect requirements for a DBMS benchmarking framework in an interview based method and per interest group.
+In [@10.1007/978-3-319-15350-6_6] the authors list important components for benchmarking, like Benchmark Coordinator, Measurement Manager, Workload Executor. They plead for a benchmarking middleware to support the process, to "*take care of the hassle of distributed benchmarking and managing the measurement infrastructure*". This is supposed to help the benchmark designer to concentrate on the core competences: specifying workload profiles and analyzing obtained measurements. In [@10.1007/978-3-030-84924-5_6] we extract the following requirements and introduce the package:
 
 * Help with time-consuming initial setup and configuration
-* Metadata collection
-* Generality and versatility
-* Extensibility and abstraction
-* Usability and configurability
-* Track everything
-* Repeatability/ reproducibility
+* Metadata collection / Track everything
+* Generality / Versatility
+* Extensibility / Abstraction
+* Usability / Configurability
+* Repeatability / Reproducibility
 
-In [@10.1007/978-3-319-15350-6_6] the authors list important components for benchmarking, like Benchmark Coordinator, Measurement Manager, Workload Executor. They plead for a benchmarking middleware to support the process, to "*take care of the hassle of distributed benchmarking and managing the measurement infrastructure*". This is supposed to help the benchmark designer to concentrate on the core competences: specifying workload profiles and analyzing obtained measurements
 
 ## Summary of Solution
 
 * Virtualization with Docker containers
 * Orchestration with Kubernetes
 * Monitoring with cAdvisor / Prometheus, since it is a common practise in cluster management
+
+
+![components of bexhoma.\label{fig:components}](docs/Experiment-Setup-Microservices.png){ width=1440}
+
+* **SUT (DBMS)**: *deployment*, container `dbms`, container for cAdvisor for sidecar monitoring, PVC for persistent storage, service for connection, port 9091
+* **Multi-host DBMS**: *statefulset* for worker, job for initialization
+* **Monitoring**: *deployment* of Prometheus
+* **Metrics collectors**: either sidecar of single-host DBMS or *daemonset* for all nodes of cluster.
+* **Loader (schema and index creation)**: fire-and-forget thread in the orchestrator
+* **Ingestion**: job of pods for data generation and for ingestion of data into the DBMS, synchronized using a Redis queue
+* **Benchmarking**: job of pods for running the driver, synchronized using a Redis queue
 
 # A Basic Example
 
@@ -86,8 +95,8 @@ This
   * using 16 (`-nlt`) threads
 * runs streams of TPC-C queries (per DBMS)
     * running for 5 (`-sd`) minutes
-    * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
-    * `-nbp`: first stream 1 pos, second stream 2 pods (8 threads each)
+    * each stream having 16 threads to simulate 16 users (`-nbt`)
+    * `-nbp`: first stream 1 pods, second stream 2 pods (8 threads each)
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
