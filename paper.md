@@ -61,12 +61,13 @@ KOBE [@10.1007/978-3-030-77385-4_40] for benchmarking federated query processors
 
 ## Summary of Solution
 
+Key concepts are
+
 * Virtualization with Docker containers
 * Orchestration with Kubernetes
 * Monitoring with cAdvisor / Prometheus, since it is a common practise in cluster management
 
-
-![components of bexhoma.\label{fig:components}](docs/Experiment-Setup-Microservices.png){ width=1440}
+This is implemented as [@10.1007/978-3-030-84924-5_6;@10.1007/978-3-030-94437-7_6;@10.1007/978-3-031-68031-1_9]
 
 * **SUT (DBMS)**: *deployment*, container `dbms`, container for cAdvisor for sidecar monitoring, *pvc* for persistent storage, *service* for connection, port 9091
 * **Multi-host DBMS**: *statefulset* for worker, *job* for initialization
@@ -75,6 +76,10 @@ KOBE [@10.1007/978-3-030-77385-4_40] for benchmarking federated query processors
 * **Loader (schema and index creation)**: fire-and-forget thread in the orchestrator
 * **Ingestion**: *job* of pods for data generation and for ingestion of data into the DBMS, synchronized using a Redis queue
 * **Benchmarking**: *job* of pods for running the driver, synchronized using a Redis queue
+
+
+![components of bexhoma.\label{fig:components}](docs/Experiment-Setup-Microservices.png){ width=1440}
+
 
 # Installation
 
@@ -110,8 +115,8 @@ The configuration of the cluster, that is the possible host and experiment setti
 
 ```
 'benchmarker': {
-    'resultfolder': './',                               # Local path to results folder of benchmark tool
-    'jarfolder': './jars/'                              # Optional: Local path to JDBC drivers
+    'resultfolder': './',
+    'jarfolder': './jars/'
 },
 ```
 
@@ -143,13 +148,12 @@ The rest probably can stay as is.
 
 ## (Hardware) Monitoring
 
+Monitoring refers to automatical observation of resource consumption of components.
+
 It follows a dict of hardware metrics that should be collected per DBMS.
 This probably can stay as is.
 The attributes are set by bexhoms automatically so that corresponding pods can be identified.
 The host is found using the service of the DBMS.
-
-Monitoring refers to automatical observation of resource consumption of components.
-
 Bexhoma basically offers two variants
 
 * Monitor only the system-under-test (SUT) with `-m`
@@ -286,7 +290,7 @@ This has
 * a base name for the DBMS
 * a `delay_prepare` in seconds to wait before system is considered ready
 * a placeholder `template` for the [benchmark tool DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file)  
-  Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.  
+  Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.
 * assumed to have the JDBC driver jar locally available inside the benchmarking tool
 * a command `loadData` for running the init scripts  
   Some placeholders in the URL are: `serverip` (set automatically to match the corresponding pod), `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
@@ -299,7 +303,7 @@ This has
 ### Deployment Manifests
 
 Every DBMS that is deployed by bexhoma needs a YAML manifest.
-See for example https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
+See for example the [PostgreSQL manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml).
 
 You may want to pay attention to name of the secret:
 ```
