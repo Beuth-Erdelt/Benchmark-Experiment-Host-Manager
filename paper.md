@@ -37,10 +37,10 @@ See the [homepage](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Man
 
 # Statement of Need
 
-The first aspect of Bexhoma is the need for a framework to support all aspects of a benchmarking experiment.
+The first purpose of Bexhoma responds to the need for a framework to support all aspects of a benchmarking experiment.
 In [@10.1007/978-3-319-67162-8_12] the authors present a cloud-centric analysis of eight evaluation frameworks.
 In [@10.1007/978-3-030-12079-5_4] the authors inspect several frameworks and collect requirements for a DBMS benchmarking framework in an interview based method and per interest group.
-In [@10.1007/978-3-319-15350-6_6] the authors list important components for benchmarking, like Benchmark Coordinator, Measurement Manager, Workload Executor. They plead for a benchmarking middleware to support the process, to "*take care of the hassle of distributed benchmarking and managing the measurement infrastructure*". This is supposed to help the benchmark designer to concentrate on the core competences: specifying workload profiles and analyzing obtained measurements. In [@10.1007/978-3-030-84924-5_6] we extract the following requirements and introduce the package:
+In [@10.1007/978-3-319-15350-6_6] the authors list important components for benchmarking, like Benchmark Coordinator, Measurement Manager, Workload Executor. They plead for a benchmarking middleware to support the process, to "*take care of the hassle of distributed benchmarking and managing the measurement infrastructure*". This is supposed to help the benchmark designer to concentrate on the core competences: specifying workload profiles and analyzing obtained measurements. In [@10.1007/978-3-030-84924-5_6] we introduce the package based on the following extracted requirements:
 
 * Help with time-consuming initial setup and configuration
 * Metadata collection / Track everything
@@ -48,6 +48,15 @@ In [@10.1007/978-3-319-15350-6_6] the authors list important components for benc
 * Extensibility / Abstraction
 * Usability / Configurability
 * Repeatability / Reproducibility
+
+The second purpose of Bexhoma targets the specific situation of cloud-native benchmarking.
+
+## Similar approaches
+
+Theodolite [@HENNING2021100209] for benchmarking stream processing engines.
+Mowgli [@10.1145/3297663.3310303] aims at establishing Benchmarking-as-a-service.
+Frisbee [@nikolaidis2021frisbeeautomatedtestingcloudnative] for declarative end-to-end system testing of containerized application.
+KOBE [@10.1007/978-3-030-77385-4_40] for benchmarking federated query processors.
 
 
 ## Summary of Solution
@@ -59,13 +68,13 @@ In [@10.1007/978-3-319-15350-6_6] the authors list important components for benc
 
 ![components of bexhoma.\label{fig:components}](docs/Experiment-Setup-Microservices.png){ width=1440}
 
-* **SUT (DBMS)**: *deployment*, container `dbms`, container for cAdvisor for sidecar monitoring, PVC for persistent storage, service for connection, port 9091
-* **Multi-host DBMS**: *statefulset* for worker, job for initialization
+* **SUT (DBMS)**: *deployment*, container `dbms`, container for cAdvisor for sidecar monitoring, *pvc* for persistent storage, *service* for connection, port 9091
+* **Multi-host DBMS**: *statefulset* for worker, *job* for initialization
 * **Monitoring**: *deployment* of Prometheus
 * **Metrics collectors**: either sidecar of single-host DBMS or *daemonset* for all nodes of cluster.
 * **Loader (schema and index creation)**: fire-and-forget thread in the orchestrator
-* **Ingestion**: job of pods for data generation and for ingestion of data into the DBMS, synchronized using a Redis queue
-* **Benchmarking**: job of pods for running the driver, synchronized using a Redis queue
+* **Ingestion**: *job* of pods for data generation and for ingestion of data into the DBMS, synchronized using a Redis queue
+* **Benchmarking**: *job* of pods for running the driver, synchronized using a Redis queue
 
 # A Basic Example
 

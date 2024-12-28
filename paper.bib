@@ -358,6 +358,72 @@ abstract="Today's database benchmarks are designed to evaluate a particular type
 isbn="978-3-319-15350-6"
 }
 
+@article{HENNING2021100209,
+title = {Theodolite: Scalability Benchmarking of Distributed Stream Processing Engines in Microservice Architectures},
+journal = {Big Data Research},
+volume = {25},
+pages = {100209},
+year = {2021},
+issn = {2214-5796},
+doi = {https://doi.org/10.1016/j.bdr.2021.100209},
+nourl = {https://www.sciencedirect.com/science/article/pii/S2214579621000265},
+author = {Sören Henning and Wilhelm Hasselbring},
+keywords = {Stream processing, Microservices, Benchmarking, Scalability},
+abstract = {Distributed stream processing engines are designed with a focus on scalability to process big data volumes in a continuous manner. We present the Theodolite method for benchmarking the scalability of distributed stream processing engines. Core of this method is the definition of use cases that microservices implementing stream processing have to fulfill. For each use case, our method identifies relevant workload dimensions that might affect the scalability of a use case. We propose to design one benchmark per use case and relevant workload dimension. We present a general benchmarking framework, which can be applied to execute the individual benchmarks for a given use case and workload dimension. Our framework executes an implementation of the use case's dataflow architecture for different workloads of the given dimension and various numbers of processing instances. This way, it identifies how resources demand evolves with increasing workloads. Within the scope of this paper, we present 4 identified use cases, derived from processing Industrial Internet of Things data, and 7 corresponding workload dimensions. We provide implementations of 4 benchmarks with Kafka Streams and Apache Flink as well as an implementation of our benchmarking framework to execute scalability benchmarks in cloud environments. We use both for evaluating the Theodolite method and for benchmarking Kafka Streams' and Flink's scalability for different deployment options.}
+}
+
+@inproceedings{10.1145/3297663.3310303,
+author = {Seybold, Daniel and Keppler, Moritz and Gr\"{u}ndler, Daniel and Domaschka, J\"{o}rg},
+title = {Mowgli: Finding Your Way in the DBMS Jungle},
+year = {2019},
+isbn = {9781450362399},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3297663.3310303},
+doi = {10.1145/3297663.3310303},
+abstract = {Big Data and IoT applications require highly-scalable database management system (DBMS), preferably operated in the cloud to ensure scalability also on the resource level. As the number of existing distributed DBMS is extensive, the selection and operation of a distributed DBMS in the cloud is a challenging task. While DBMS benchmarking is a supportive approach, existing frameworks do not cope with the runtime constraints of distributed DBMS and the volatility of cloud environments. Hence, DBMS evaluation frameworks need to consider DBMS runtime and cloud resource constraints to enable portable and reproducible results. In this paper we present Mowgli, a novel evaluation framework that enables the evaluation of non-functional DBMS features in correlation with DBMS runtime and cloud resource constraints. Mowgli fully automates the execution of cloud and DBMS agnostic evaluation scenarios, including DBMS cluster adaptations. The evaluation of Mowgli is based on two IoT-driven scenarios, comprising the DBMSs Apache Cassandra and Couchbase, nine DBMS runtime configurations, two cloud providers with two different storage backends. Mowgli automates the execution of the resulting 102 evaluation scenarios, verifying its support for portable and reproducible DBMS evaluations. The results provide extensive insights into the DBMS scalability and the impact of different cloud resources. The significance of the results is validated by the correlation with existing DBMS evaluation results.},
+booktitle = {Proceedings of the 2019 ACM/SPEC International Conference on Performance Engineering},
+pages = {321–332},
+numpages = {12},
+keywords = {scalability, nosql, distributed database, cloud, benchmarking},
+location = {Mumbai, India},
+series = {ICPE '19}
+}
+
+@misc{nikolaidis2021frisbeeautomatedtestingcloudnative,
+      title={Frisbee: automated testing of Cloud-native applications in Kubernetes}, 
+      author={Fotis Nikolaidis and Antony Chazapis and Manolis Marazakis and Angelos Bilas},
+      year={2021},
+      eprint={2109.10727},
+      archivePrefix={arXiv},
+      primaryClass={cs.DC},
+      url={https://arxiv.org/abs/2109.10727}, 
+}
+
+@InProceedings{10.1007/978-3-030-77385-4_40,
+author="Kostopoulos, Charalampos
+and Mouchakis, Giannis
+and Troumpoukis, Antonis
+and Prokopaki-Kostopoulou, Nefeli
+and Charalambidis, Angelos
+and Konstantopoulos, Stasinos",
+editor="Verborgh, Ruben
+and Hose, Katja
+and Paulheim, Heiko
+and Champin, Pierre-Antoine
+and Maleshkova, Maria
+and Corcho, Oscar
+and Ristoski, Petar
+and Alam, Mehwish",
+title="KOBE: Cloud-Native Open Benchmarking Engine for Federated Query Processors",
+booktitle="The Semantic Web",
+year="2021",
+publisher="Springer International Publishing",
+address="Cham",
+pages="664--679",
+abstract="In the SPARQL query processing community, as well as in the wider databases community, benchmark reproducibility is based on releasing datasets and query workloads. However, this paradigm breaks down for federated query processors, as these systems do not manage the data they serve to their clients but provide a data-integration abstraction over the actual query processors that are in direct contact with the data. As a consequence, benchmark results can be greatly affected by the performance and characteristics of the underlying data services. This is further aggravated when one considers benchmarking in more realistic conditions, where internet latency and throughput between the federator and the federated data sources is also a key factor. In this paper we present KOBE, a benchmarking system that leverages modern containerization and Cloud computing technologies in order to reproduce collections of data sources. In KOBE, data sources are formally described in more detail than what is conventionally provided, covering not only the data served but also the specific software that serves it and its configuration as well as the characteristics of the network that connects them. KOBE provides a specification formalism and a command-line interface that completely hides from the user the mechanics of provisioning and orchestrating the benchmarking process on Kubernetes-based infrastructures; and of simulating network latency. Finally, KOBE automates the process of collecting and comprehending logs, and extracting and visualizing evaluation metrics from these logs.",
+isbn="978-3-030-77385-4"
+}
 
 
 
