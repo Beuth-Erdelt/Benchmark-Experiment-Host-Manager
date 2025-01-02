@@ -46,7 +46,7 @@ spec:
       containers:
       - name: pool
         image: edoburu/pgbouncer
-        env:
+        env: # https://github.com/edoburu/docker-pgbouncer/blob/master/entrypoint.sh
         - name: DB_USER
           value: postgres
         - name: DB_PASSWORD
@@ -54,23 +54,37 @@ spec:
         - name: DB_HOST
           value: localhost
         - name: DB_PORT
-          value: 5433
+          value: "5433"
         - name: AUTH_TYPE
           value: scram-sha-256 # remove/comment this line if using postgres:13 and lower
         - name: POOL_MODE
-          value: transaction
+          value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
           value: postgres,dbuser
-        readinessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -U
-            - postgres
-          initialDelaySeconds: 15
-          periodSeconds: 60
+        #- name: POOL_SIZE
+        #  value: "256"
+        - name: DEFAULT_POOL_SIZE
+          value: "256"
+        - name: MIN_POOL_SIZE
+          value: "32"
+        - name: MAX_CLIENT_CONN
+          value: "256"
+        #- name: RESERVE_POOL_SIZE
+        #  value: "256"
+        #readinessProbe:
+        #  exec:
+        #    command:
+        #    - pg_isready
+        #    - -U
+        #    - postgres
+        #  initialDelaySeconds: 15
+        #  periodSeconds: 60
         ports:
         - {containerPort: 5432}
+        resources:
+          limits: {cpu: 4000m, memory: 4Gi}
+          requests: {cpu: 1000m, memory: 4Gi}
+          #, ephemeral-storage: "1536Gi"}
       - name: dbms
         image: postgres:16.1
         env:
@@ -79,12 +93,12 @@ spec:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         - name: PGPORT
-          value: 5433 # remove/comment this line for default ports
+          value: "5433" # remove/comment this line for default ports
         # pg_ctl: cannot be run as root
         lifecycle:
-          postStart:
-            exec:
-              command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
+          #postStart:
+          #  exec:
+          #    command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
               #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -D /var/lib/postgresql/data -m fast"]
@@ -106,6 +120,8 @@ spec:
             - pg_isready
             - -U
             - postgres
+            - -p
+            - "5433"
           initialDelaySeconds: 15
           periodSeconds: 60
         ports:

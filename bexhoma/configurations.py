@@ -149,6 +149,7 @@ class default():
         self.storage_label = experiment.storage_label
         self.experiment_done = False #: True, iff the SUT has performed the experiment completely
         self.dockerimage = dockerimage #: Name of the Docker image of the SUT
+        self.path_experiment_docker = self.docker #: Name of the correspond folder in the experiment path. Default = Name of Docker image (e.g., PostgreSQL for experiment/ycsb/PostgreSQL)
         self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
         self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
         self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
@@ -2341,19 +2342,19 @@ scrape_configs:
         if len(self.ddl_parameters):
             #for script in self.initscript:
             for script in scripts:
-                filename_template = self.docker+'/'+script
+                filename_template = self.path_experiment_docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
                     with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
                         data = initscript_template.read()
                         data = data.format(**self.ddl_parameters)
-                        filename_filled = self.docker+'/filled_'+script
+                        filename_filled = self.path_experiment_docker+'/filled_'+script
                         with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
                         self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
         else:
             #for script in self.initscript:
             for script in scripts:
-                filename = self.docker+'/'+script
+                filename = self.path_experiment_docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename):
                     self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script))
