@@ -1736,13 +1736,13 @@ scrape_configs:
         else:
             return 0
         try:
-            command = "du "+datadir+" | awk 'END{print \\$1}'"
+            command = "du --block-size=1M -Ls "+datadir+" | awk 'END{print \\$1}'"
             cmd['disk_space_used'] = command
             stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
             return int(stdout.replace('\n',''))
         except Exception as e:
             # Windows
-            command = "du "+datadir+" | awk 'END{print $1}'"
+            command = "du --block-size=1M -Ls "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
             try:
                 stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])

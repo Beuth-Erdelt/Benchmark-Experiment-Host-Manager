@@ -967,7 +967,7 @@ class testbed():
     def OLD_runReporting(self):
         evaluator.evaluator(self.benchmark, load=False, force=True)
         self.benchmark.generateReportsAll()
-    def copyLog(self):
+    def OLD_copyLog(self):
         print("copyLog")
         if len(self.docker['logfile']):
             cmd = {}
@@ -975,7 +975,7 @@ class testbed():
             stdin, stdout, stderr = self.execute_command_in_pod(cmd['prepare_log'], container='dbms')
             cmd['save_log'] = 'cp '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
             stdin, stdout, stderr = self.execute_command_in_pod(cmd['save_log'], container='dbms')
-    def copyInits(self):
+    def OLD_copyInits(self):
         print("copyInits")
         cmd = {}
         cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
@@ -1017,7 +1017,7 @@ class testbed():
         initContainers = output.split(" ")
         self.logger.debug("Pod {} has container {}".format(pod, containers + initContainers))
         return containers + initContainers
-    def downloadLog(self):
+    def OLD_downloadLog(self):
         print("downloadLog")
         self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
     def get_jobs(self, app='', component='', experiment='', configuration='', client=''):
