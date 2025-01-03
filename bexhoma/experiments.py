@@ -1281,8 +1281,9 @@ class default():
                         if status == 'Succeeded' or status == 'Failed':
                             containers = self.cluster.get_pod_containers(p)
                             for container in containers:
-                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                self.cluster.store_pod_log(p, container)
+                                if len(container) > 0:
+                                    self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                    self.cluster.store_pod_log(p, container)
                         #if status == 'Succeeded':
                         #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
                         #    #if status != 'Running':
@@ -1304,8 +1305,9 @@ class default():
                         if status == 'Succeeded' or status == 'Failed':
                             containers = self.cluster.get_pod_containers(p)
                             for container in containers:
-                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                self.cluster.store_pod_log(p, container)
+                                if len(container) > 0:
+                                    self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                    self.cluster.store_pod_log(p, container)
                             self.cluster.delete_pod(p)
                         #print(p,status)
                         #if status == 'Succeeded':
