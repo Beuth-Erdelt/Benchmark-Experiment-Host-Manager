@@ -1257,74 +1257,75 @@ class default():
                                 print("{} can be stopped, but we leave it running".format(config.configuration))
                 else:
                     print("{:30s}: is loading".format(config.configuration))
-            # all jobs of configuration - benchmarker
-            #app = self.cluster.appname
-            #component = 'benchmarker'
-            #configuration = ''
-            #jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-            # success of job
-            app = self.cluster.appname
-            component = 'benchmarker'
-            configuration = ''
-            #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
-            jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-            # all pods to these jobs
-            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
-            # status per job
-            for job in jobs:
-                # status per pod
-                for p in pods:
-                    if not self.cluster.pod_log_exists(p):
-                        status = self.cluster.get_pod_status(p)
-                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                        #print(p,status)
-                        if status == 'Succeeded' or status == 'Failed':
-                            containers = self.cluster.get_pod_containers(p)
-                            for container in containers:
-                                if len(container) > 0:
-                                    self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                    self.cluster.store_pod_log(p, container)
-                        #if status == 'Succeeded':
-                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #    #if status != 'Running':
-                        #    self.cluster.store_pod_log(p)
-                        #    #self.cluster.delete_pod(p)
-                        #if status == 'Failed':
-                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #    #if status != 'Running':
-                        #    self.cluster.store_pod_log(p)
-                        #    #self.cluster.delete_pod(p)
-                success = self.cluster.get_job_status(job)
-                self.cluster.logger.debug('job {} has success status {}'.format(job, success))
-                #print(job, success)
-                if success:
+            for config in self.configurations:
+                # all jobs of configuration - benchmarker
+                #app = self.cluster.appname
+                #component = 'benchmarker'
+                #configuration = ''
+                #jobs = self.cluster.get_jobs(app, component, self.code, configuration)
+                # success of job
+                app = self.cluster.appname
+                component = 'benchmarker'
+                configuration = config.configuration#''
+                #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
+                jobs = self.cluster.get_jobs(app, component, self.code, configuration)
+                # all pods to these jobs
+                pods = self.cluster.get_job_pods(app, component, self.code, configuration)
+                # status per job
+                for job in jobs:
                     # status per pod
                     for p in pods:
-                        status = self.cluster.get_pod_status(p)
-                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                        if status == 'Succeeded' or status == 'Failed':
-                            containers = self.cluster.get_pod_containers(p)
-                            for container in containers:
-                                if len(container) > 0:
-                                    self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                    self.cluster.store_pod_log(p, container)
-                            self.cluster.delete_pod(p)
-                        #print(p,status)
-                        #if status == 'Succeeded':
-                        #    #if status != 'Running':
-                        #    if not self.cluster.pod_log_exists(p):
-                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #        self.cluster.store_pod_log(p)
-                        #    self.cluster.delete_pod(p)
-                        #if status == 'Failed':
-                        #    #if status != 'Running':
-                        #    if not self.cluster.pod_log_exists(p):
-                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #        self.cluster.store_pod_log(p)
-                        #    self.cluster.delete_pod(p)
-                    self.end_benchmarking(job, config)
-                    self.cluster.delete_job(job)
-                    config.check_volumes()
+                        if not self.cluster.pod_log_exists(p):
+                            status = self.cluster.get_pod_status(p)
+                            self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                            #print(p,status)
+                            if status == 'Succeeded' or status == 'Failed':
+                                containers = self.cluster.get_pod_containers(p)
+                                for container in containers:
+                                    if len(container) > 0:
+                                        self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                        self.cluster.store_pod_log(p, container)
+                            #if status == 'Succeeded':
+                            #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #    #if status != 'Running':
+                            #    self.cluster.store_pod_log(p)
+                            #    #self.cluster.delete_pod(p)
+                            #if status == 'Failed':
+                            #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #    #if status != 'Running':
+                            #    self.cluster.store_pod_log(p)
+                            #    #self.cluster.delete_pod(p)
+                    success = self.cluster.get_job_status(job)
+                    self.cluster.logger.debug('job {} has success status {}'.format(job, success))
+                    #print(job, success)
+                    if success:
+                        # status per pod
+                        for p in pods:
+                            status = self.cluster.get_pod_status(p)
+                            self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                            if status == 'Succeeded' or status == 'Failed':
+                                containers = self.cluster.get_pod_containers(p)
+                                for container in containers:
+                                    if len(container) > 0:
+                                        self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                        self.cluster.store_pod_log(p, container)
+                                self.cluster.delete_pod(p)
+                            #print(p,status)
+                            #if status == 'Succeeded':
+                            #    #if status != 'Running':
+                            #    if not self.cluster.pod_log_exists(p):
+                            #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #        self.cluster.store_pod_log(p)
+                            #    self.cluster.delete_pod(p)
+                            #if status == 'Failed':
+                            #    #if status != 'Running':
+                            #    if not self.cluster.pod_log_exists(p):
+                            #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #        self.cluster.store_pod_log(p)
+                            #    self.cluster.delete_pod(p)
+                        self.end_benchmarking(job, config)
+                        self.cluster.delete_job(job)
+                        config.check_volumes()
             if len(pods) == 0 and len(jobs) == 0:
                 do = False
                 for config in self.configurations:
