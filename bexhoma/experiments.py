@@ -1163,6 +1163,12 @@ class default():
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
+                    # check if SUT is healthy
+                    if config.sut_is_running():
+                        if not config.sut_is_healthy():
+                            # we wait for health check
+                            print("{:30s}: waits for health check to succeed".format(config.configuration))
+                            continue
                     # when loaded from PVC, system may not be ready yet
                     if config.loading_after_time is None:
                         # we have started from PVC
@@ -2672,13 +2678,13 @@ class ycsb(default):
         self.set_experiment(script='Schema')
         # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
-        self.workload['info'] = self.workload['info']+" Number of rows to insert is {}.".format(ycsb_rows)
-        self.workload['info'] = self.workload['info']+" Number of operations is {}.".format(ycsb_operations)
-        self.workload['info'] = self.workload['info']+" Batch size is '{}'.".format(batchsize)
-        self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
-        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
-        self.workload['info'] = self.workload['info']+" Factors for loading are {}.".format(num_loading_target_factors)
-        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
+        self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
+        self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
+        #self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
+        self.workload['info'] = self.workload['info']+"\nTarget is based on multiples of '{}'.".format(target_base)
+        self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
+        self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
         default.prepare_testbed(self, parameter)
     def test_results(self):
         """
