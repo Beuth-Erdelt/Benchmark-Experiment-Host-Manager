@@ -167,6 +167,8 @@ class default():
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
         self.sut_service_name = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.sut_containers_deployed = [] # Name of the containers of the SUT deployment
+        self.worker_containers_deployed = [] # Name of the containers of the SUT statefulset
         self.sut_envs = {} # parameters sent to container via ENV
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
@@ -1181,7 +1183,9 @@ scrape_configs:
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                self.worker_containers_deployed = []
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    self.worker_containers_deployed.append(container['name'])
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
@@ -1305,7 +1309,10 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
+                self.sut_containers_deployed = []
+                self.worker_containers_deployed = []
                 for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
+                    self.sut_containers_deployed.append(container['name'])
                     self.logger.debug('configuration.create_manifest_deployment({})'.format(env))
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []

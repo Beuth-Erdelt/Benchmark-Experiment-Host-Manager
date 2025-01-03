@@ -1228,11 +1228,15 @@ class default():
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 if len(pods) > 0:
                                     pod_sut = pods[0]
-                                    self.cluster.store_pod_log(pod_sut, 'dbms')
+                                    for container in config.sut_containers_deployed:
+                                        self.cluster.store_pod_log(pod_sut, container)
+                                    #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_worker in pods:
-                                    self.cluster.store_pod_log(pod_worker, 'dbms')
+                                    for container in config.worker_containers_deployed:
+                                        self.cluster.store_pod_log(pod_worker, container)
+                                    #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
@@ -1550,7 +1554,7 @@ class default():
                 # get monitoring for benchmarking
                 if self.monitoring_active:
                     if config.monitoring_sut:
-                        print("{:30s}: collecting execution metrics of SUT".format(connection))
+                        print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
                         #print(config.current_benchmark_connection)
                         #print(config.benchmark.dbms.keys())
                         metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory'].copy()
@@ -1569,7 +1573,7 @@ class default():
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
-                        print("{:30s}: collecting metrics of benchmarker".format(connection))
+                        print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, config.current_benchmark_connection))
                         metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                         container = "dbmsbenchmarker"
                         if container is not None:
