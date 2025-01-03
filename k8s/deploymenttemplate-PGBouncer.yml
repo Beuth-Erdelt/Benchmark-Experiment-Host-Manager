@@ -60,7 +60,7 @@ spec:
         - name: POOL_MODE
           value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
-          value: postgres,dbuser
+          value: postgres
         #- name: POOL_SIZE
         #  value: "256"
         - name: DEFAULT_POOL_SIZE
@@ -82,8 +82,8 @@ spec:
         ports:
         - {containerPort: 5432}
         resources:
-          limits: {cpu: 4000m, memory: 4Gi}
-          requests: {cpu: 1000m, memory: 4Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 4000m, memory: 4Gi}
           #, ephemeral-storage: "1536Gi"}
       - name: dbms
         image: postgres:16.1

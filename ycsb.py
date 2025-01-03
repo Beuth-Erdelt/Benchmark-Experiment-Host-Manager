@@ -252,9 +252,9 @@ if __name__ == '__main__':
                     config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
                     config.path_experiment_docker = 'PostgreSQL' # take init scripts of PostgreSQL
                     config.sut_envs = {
-                        'DEFAULT_POOL_SIZE': loading_threads,
+                        'DEFAULT_POOL_SIZE': loading_threads,                 # max connections to PostgreSQL
                         'MIN_POOL_SIZE': loading_threads,
-                        'MAX_CLIENT_CONN': loading_threads,
+                        'MAX_CLIENT_CONN': int(loading_threads*2),            # max connections to PGBouncer
                     }
                     config.set_storage(
                         storageConfiguration = 'postgresql'
