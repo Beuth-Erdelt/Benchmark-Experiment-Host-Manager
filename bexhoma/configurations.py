@@ -1582,6 +1582,40 @@ scrape_configs:
         except Exception as e:
             logging.error(e)
             return "", ""
+    def get_host_hugepages_total(self):
+        """
+        Returns information about the sut's huge pages setting.
+        Basically this calls `cat /proc/meminfo | grep HugePages_Total` on the host.
+
+        :return: HugePages_Total setting of the host
+        """
+        self.logger.debug('configuration.get_host_memory()')
+        try:
+            command = "cat /proc/meminfo | grep HugePages_Total"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            result = stdout
+            mem =  int(result.replace(" ","").replace("HugePages_Total:",""))
+            return mem
+        except Exception as e:
+            logging.error(e)
+            return 0
+    def get_host_hugepages_free(self):
+        """
+        Returns information about the sut's huge pages setting.
+        Basically this calls `cat /proc/meminfo | grep HugePages_Free` on the host.
+
+        :return: HugePages_Free setting of the host
+        """
+        self.logger.debug('configuration.get_host_memory()')
+        try:
+            command = "cat /proc/meminfo | grep HugePages_Free"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            result = stdout
+            mem =  int(result.replace(" ","").replace("HugePages_Free:",""))
+            return mem
+        except Exception as e:
+            logging.error(e)
+            return 0
     def get_host_memory(self):
         """
         Returns information about the sut's host RAM.
@@ -1856,6 +1890,9 @@ scrape_configs:
         size, used = self.get_host_volume()
         server['volume_size'] = size
         server['volume_used'] = used
+        server['cuda'] = self.get_host_cuda()
+        server['hugepages_total'] = self.get_host_hugepages_total()
+        server['hugepages_free'] = self.get_host_hugepages_free()
         server['cuda'] = self.get_host_cuda()
         return server
     def set_metric_of_config_default(self, metric, host, gpuid):
