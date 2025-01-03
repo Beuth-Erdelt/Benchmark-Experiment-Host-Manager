@@ -167,8 +167,10 @@ class default():
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
         self.sut_service_name = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.sut_envs = {} # parameters sent to container via ENV
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
+        self.current_benchmark_connection = "" # Name of the current connection - for metrics collection
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
@@ -1073,7 +1075,8 @@ scrape_configs:
             return False
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         # ENV
-        env = {}
+        # default empty: env = {}
+        env = self.sut_envs.copy()
         # generate list of worker names
         list_of_workers = []
         for worker in range(self.num_worker):
@@ -1302,7 +1305,19 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
-                for i, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
+                for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
+                    self.logger.debug('configuration.create_manifest_deployment({})'.format(env))
+                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                        dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i_env,e in env.items():
+                        index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['containers'][i_container]['env']) if d.get('name') == i_env), -1)
+                        if index_of_env >= 0:
+                            # update value of existing env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'][index_of_env]['value'] = str(e)
+                        else:
+                            # append new env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
@@ -1312,21 +1327,21 @@ scrape_configs:
                                 if vol['name'] == 'benchmark-storage-volume':
                                     #print(vol['mountPath'])
                                     if not use_storage:
-                                        del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                                        del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                                 if vol['name'] == 'benchmark-data-volume':
                                     #print(vol['mountPath'])
                                     if not use_data:
-                                        del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                                        del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                         if self.dockerimage:
-                            result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
+                            result[key]['spec']['template']['spec']['containers'][i_container]['image'] = self.dockerimage
                         else:
-                            self.dockerimage = result[key]['spec']['template']['spec']['containers'][i]['image']
+                            self.dockerimage = result[key]['spec']['template']['spec']['containers'][i_container]['image']
                     elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
-                            del result[key]['spec']['template']['spec']['containers'][i]
+                            del result[key]['spec']['template']['spec']['containers'][i_container]
                         if container['name'] == 'dcgm-exporter':
-                            del result[key]['spec']['template']['spec']['containers'][i]
+                            del result[key]['spec']['template']['spec']['containers'][i_container]
                 if 'volumes' in dep['spec']['template']['spec']:
                     for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
                         if vol['name'] == 'benchmark-storage-volume':
@@ -2025,6 +2040,7 @@ scrape_configs:
         tools.query.template = self.experiment.querymanagement
         # store information about current benchmark
         self.current_benchmark_connection = connection
+        self.logger.debug('configuration.run_benchmarker_pod(current_benchmark_connection = {})'.format(self.current_benchmark_connection))
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         time_now = str(datetime.now())
@@ -2215,7 +2231,7 @@ scrape_configs:
                 cmd = {}
                 #self.monitoring_sut = True
                 if self.monitoring_sut:
-                    print("{:30s}: collecting loading metrics of SUT".format(connection))
+                    print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, self.current_benchmark_connection))
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     # with container name? should better be part of the metric query
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
@@ -2245,7 +2261,7 @@ scrape_configs:
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0 or self.experiment.cluster.monitor_cluster_exists:
                     # data generator container
-                    print("{:30s}: collecting metrics of data generator".format(connection))
+                    print("{:30s}: collecting metrics of data generator at connection {}".format(connection, self.current_benchmark_connection))
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                     container = "datagenerator"
                     if container is not None:
@@ -2270,7 +2286,7 @@ scrape_configs:
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # data injector container "sensor"
-                    print("{:30s}: collecting metrics of data injector".format(connection))
+                    print("{:30s}: collecting metrics of data injector at connection {}".format(connection, self.current_benchmark_connection))
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                     container = "sensor"
                     if container is not None:
