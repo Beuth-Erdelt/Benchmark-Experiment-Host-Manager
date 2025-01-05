@@ -61,6 +61,8 @@ if __name__ == '__main__':
     parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
     parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
     parser.add_argument('-nbf', '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
+    parser.add_argument('-nci', '--num-connections-in', help='comma separated list of max connections into a connection pooler', default="")
+    parser.add_argument('-nco', '--num-connections-out', help='comma separated list of max connections out of a connection pooler', default="")
     parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'e', 'f'], default='a')
     parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
     parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor = number of operations in millions (=SF if not set)', default=None)
@@ -165,6 +167,8 @@ if __name__ == '__main__':
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
     num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
+    num_connections_in = experiment.get_parameter_as_list('num_connections_in')
+    num_connections_out = experiment.get_parameter_as_list('num_connections_out')
     # set node labes for components
     if aws:
         # set node labes for components
@@ -248,55 +252,61 @@ if __name__ == '__main__':
                     config.add_benchmark_list(executor_list)
                 if ("PGBouncer" in args.dbms or len(args.dbms) == 0):
                     # PGBouncer
-                    name_format = 'PGBouncer-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
-                    config.path_experiment_docker = 'PostgreSQL' # take init scripts of PostgreSQL
-                    config.sut_envs = {
-                        'DEFAULT_POOL_SIZE': loading_threads,                 # max connections to PostgreSQL
-                        'MIN_POOL_SIZE': loading_threads,
-                        'MAX_CLIENT_CONN': int(loading_threads*2),            # max connections to PGBouncer
-                    }
-                    config.set_storage(
-                        storageConfiguration = 'postgresql'
-                        )
-                    config.set_loading_parameters(
-                        PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        YCSB_THREADCOUNT = loading_threads_per_pod,
-                        YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
-                        YCSB_ROWS = ycsb_rows,
-                        YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
-                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
-                                        YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
-                                        YCSB_ROWS = ycsb_rows,
-                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
+                    if len(num_connections_in) == 0:
+                        num_connections_in = [int(loading_threads)]
+                    if len(num_connections_out) == 0:
+                        num_connections_out = [int(loading_threads)]
+                    for num_c_in in num_connections_in:
+                        for num_c_out in num_connections_out:
+                            name_format = 'PGBouncer-{threads}-{pods}-{target}-{in}-{out}'
+                            config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, in=num_c_in, out=num_c_out), alias='DBMS A')
+                            config.path_experiment_docker = 'PostgreSQL' # take init scripts of PostgreSQL
+                            config.sut_envs = {
+                                'DEFAULT_POOL_SIZE': int(num_c_out),                 # max connections to PostgreSQL
+                                'MIN_POOL_SIZE': int(num_c_out),                     # min connections to PostgreSQL
+                                'MAX_CLIENT_CONN': int(num_c_in),                    # max connections to PGBouncer
+                            }
+                            config.set_storage(
+                                storageConfiguration = 'postgresql'
+                                )
+                            config.set_loading_parameters(
+                                PARALLEL = str(loading_pods),
+                                SF = SF,
+                                BEXHOMA_SYNCH_LOAD = 1,
+                                YCSB_THREADCOUNT = loading_threads_per_pod,
+                                YCSB_TARGET = loading_target_per_pod,
+                                YCSB_STATUS = 1,
+                                YCSB_WORKLOAD = args.workload,
+                                YCSB_ROWS = ycsb_rows,
+                                YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                YCSB_BATCHSIZE = batchsize,
+                                )
+                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                            executor_list = []
+                            for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                                benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                                for benchmarking_threads in num_benchmarking_threads:
+                                    for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                        for num_executor in list_clients:
+                                            benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                            benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                            ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                            benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                            executor_list.append(benchmarking_pods_scaled)
+                                            config.add_benchmarking_parameters(
+                                                PARALLEL = str(benchmarking_pods_scaled),
+                                                SF = SF,
+                                                BEXHOMA_SYNCH_LOAD = 1,
+                                                YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                                YCSB_TARGET = benchmarking_target_per_pod,
+                                                YCSB_STATUS = 1,
+                                                YCSB_WORKLOAD = args.workload,
+                                                YCSB_ROWS = ycsb_rows,
+                                                YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                                YCSB_BATCHSIZE = batchsize,
+                                                )
+                            #print(executor_list)
+                            config.add_benchmark_list(executor_list)
                 if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
                     name_format = 'MySQL-{threads}-{pods}-{target}'
