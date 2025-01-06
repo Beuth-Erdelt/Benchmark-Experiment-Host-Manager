@@ -201,8 +201,8 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 1 \
   -ne 1 \
   -nc 1 \
-  -nci 32,48,64 \
-  -nco 4,8,16,32 \
+  -nci 16,32,64,128,256 \
+  -nco 16,32,64,128,256 \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_7.log &
 
