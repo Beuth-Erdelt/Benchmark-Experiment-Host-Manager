@@ -336,6 +336,7 @@ class logger(base):
                     filename_df = path+"/"+filename+".df.pickle"
                     f = open(filename_df, "wb")
                     pickle.dump(df, f)
+                    #print("WRITTEN", filename_df, df.T)
                     f.close()
     def end_loading(self, jobname):
         """
@@ -392,8 +393,9 @@ class logger(base):
             #print(df_collected)
             df_collected.drop('index', axis=1, inplace=True)
             df_collected.set_index('connection_pod', inplace=True)
-            #print(df_collected)
             filename_df = path+"/"+filename_result
+            #print(filename_df)
+            #print(df_collected.info())
             f = open(filename_df, "wb")
             pickle.dump(df_collected, f)
             f.close()
@@ -638,6 +640,7 @@ class ycsb(logger):
         """
         # test for known errors
         base.log_to_df(self, filename)
+        #print("Exceptions", filename)
         # extract status and result fields
         try:
             with open(filename) as f:
@@ -659,6 +662,12 @@ class ycsb(logger):
                 batchsize = int(batchsize[0])
             else:
                 batchsize = -1
+            exceptions = re.findall('site.ycsb.DBException:(.+?)\n', stdout)
+            if len(exceptions)>0:
+                # information found
+                exceptions = len(exceptions)
+            else:
+                exceptions = 0
             #workload = "A"
             pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
             result = []
@@ -673,7 +682,7 @@ class ycsb(logger):
             #return
             # test len of values, because of [ WARN]
             list_columns = [value[0]+"."+value[1] for value in result if len(value) > 1]
-            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize]
+            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize, exceptions]
             list_measures = [value[2] for value in result if len(value) > 1]
             #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
             #print(list_columns)
@@ -684,7 +693,7 @@ class ycsb(logger):
             #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
-            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize']
+            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize', 'exceptions']
             columns.extend(list_columns)
             #print(columns)
             df.columns = columns
@@ -692,6 +701,8 @@ class ycsb(logger):
             # number of inserts must be integer - otherwise conversion will fail
             #if '[INSERT].Return=OK' in columns and df['[INSERT].Return=OK'] == 'NaN':
             #    df['[INSERT].Return=OK'] = 0
+            #print(df.T)
+            #exit()
             return df
         except Exception as e:
             print(e)
@@ -717,6 +728,7 @@ class ycsb(logger):
             'sf':'int',
             'workload':'str',
             'operations':'int',
+            'exceptions':'int',
             '[OVERALL].RunTime(ms)':'float',
             '[OVERALL].Throughput(ops/sec)':'float',
             #'[TOTAL_GCS_PS_Scavenge].Count':'int',
@@ -798,6 +810,7 @@ class ycsb(logger):
                 'sf':'max',
                 'workload':'max',
                 'operations':'sum',
+                'exceptions':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
                 #'[TOTAL_GCS_PS_Scavenge].Count':'sum',
@@ -891,6 +904,7 @@ class ycsb(logger):
             'sf':'int',
             'workload':'str',
             'operations':'int',
+            'exceptions':'int',
             '[OVERALL].RunTime(ms)':'float',
             '[OVERALL].Throughput(ops/sec)':'float',
             #'[TOTAL_GCS_PS_Scavenge].Count':'int',
@@ -939,6 +953,7 @@ class ycsb(logger):
                 'sf':'max',
                 'workload':'max',
                 'operations':'sum',
+                'exceptions':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
                 #'[TOTAL_GCS_PS_Scavenge].Count':'sum',

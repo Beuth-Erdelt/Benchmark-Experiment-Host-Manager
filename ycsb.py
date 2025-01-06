@@ -258,8 +258,9 @@ if __name__ == '__main__':
                         num_connections_out = [int(loading_threads)]
                     for num_c_in in num_connections_in:
                         for num_c_out in num_connections_out:
-                            name_format = 'PGBouncer-{threads}-{pods}-{target}-{in}-{out}'
-                            config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, in=num_c_in, out=num_c_out), alias='DBMS A')
+                            name_format = 'pgb-{threads}-{pods}-{c_in}-{c_out}'
+                            #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
+                            config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
                             config.path_experiment_docker = 'PostgreSQL' # take init scripts of PostgreSQL
                             config.sut_envs = {
                                 'DEFAULT_POOL_SIZE': int(num_c_out),                 # max connections to PostgreSQL
@@ -678,6 +679,8 @@ if __name__ == '__main__':
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
     elif args.mode == 'summary':
+        #experiment.evaluate_results()
+        #experiment.store_workflow_results()
         experiment.show_summary()
     else:
         # total time of experiment

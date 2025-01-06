@@ -73,7 +73,7 @@ wait_process "ycsb"
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 1 \
+  -sfo 16 \
   --workload c \
   -dbms PGBouncer PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -115,7 +115,7 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-### YCSB Execution Test for Scaling the Driver (TestCases.md)
+### YCSB Execution Test for Scaling the Driver with PVC (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
   -sfo 16 \
@@ -138,88 +138,34 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-
-
-
-### YCSB Execution Test for Scaling the Driver (TestCases.md)
-nohup python ycsb.py -ms 1 -tr -db \
-  -sf 16 \
-  -sfo 16 \
-  --workload c \
-  -dbms PGBouncer PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 1 \
-  -nbp 8 \
-  -nbt 64 \
-  -nbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -rst shared -rss 50Gi \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp.log &
-
-wait_process "ycsb"
-
-
-
-nohup python ycsb.py -ms 1 -tr -db \
-  -sf 16 \
-  -sfo 16 \
-  --workload c \
-  -dbms PGBouncer PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 1 \
-  -nbp 8 \
-  -nbt 64 \
-  -nbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp2.log &
-
-wait_process "ycsb"
-
-
-
-
-nohup python ycsb.py -ms 1 -tr -db \
-  -sf 16 \
-  -sfo 16 \
-  --workload c \
-  -dbms PGBouncer PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 1 \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
-  -nbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp3.log &
-
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-### YCSB Loader Test for Scaling the Driver (TestCases.md)
+### YCSB Loader Test for Scaling the Pooler with 64 connections (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 1 \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -nci 64 \
+  -nco 1,2,4,8,16 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_4.log &
+
+wait_process "ycsb"
+
+
+### YCSB Loader Test for Scaling the Pooler with 128 connections (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
   --workload c \
   -dbms PGBouncer PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -227,13 +173,38 @@ nohup python ycsb.py -ms 1 -tr \
   -nlp 8 \
   -nlt 64 \
   -nlf 1 \
-  -nbp 4,16,32 \
+  -nbp 8 \
   -nbt 64 \
   -nbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp.log &
+  -nci 128 \
+  -nco 4,8,16,32 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_6.log &
+
+wait_process "ycsb"
+
+### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -nci 32,48,64 \
+  -nco 4,8,16,32 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_7.log &
 
 wait_process "ycsb"
 
