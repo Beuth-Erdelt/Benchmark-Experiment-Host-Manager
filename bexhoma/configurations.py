@@ -1070,6 +1070,7 @@ scrape_configs:
             storageConfiguration = configuration
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+        name_pool = self.generate_component_name(app=app, component='pool', experiment=experiment, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
@@ -1086,6 +1087,7 @@ scrape_configs:
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
+        env['BEXHOMA_SUT_NAME'] = name
         if self.num_worker > 0:
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
@@ -1248,7 +1250,7 @@ scrape_configs:
                     for i_env,e in env.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
             if dep['kind'] == 'Service':
-                if dep['metadata']['name'] != 'bexhoma-service':
+                if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
                     if self.num_worker == 0:
                         del result[key]
                         continue
@@ -1272,6 +1274,22 @@ scrape_configs:
                             if 'name' in ports and ports['name'] != 'port-dbms':
                                 del result[key]['spec']['ports'][i]
                     continue
+                if dep['metadata']['name'] == 'bexhoma-pool': #!= 'bexhoma-service':
+                    dep['metadata']['name'] = name_pool
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'pool'
+                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['experiment'] = experiment
+                    dep['metadata']['labels']['dbms'] = self.docker
+                    dep['metadata']['labels']['volume'] = self.volume
+                    for label_key, label_value in self.additional_labels.items():
+                        dep['metadata']['labels'][label_key] = str(label_value)
+                    #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
+                    continue
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
@@ -1294,14 +1312,20 @@ scrape_configs:
                             del result[key]['spec']['ports'][i]
                 #print(pvc)
             if dep['kind'] == 'Deployment':
-                yaml_deployment = result[key]
-                dep['metadata']['name'] = name
+                if dep['metadata']['name'] == 'bexhoma-pool':
+                    dep['metadata']['name'] = name_pool
+                    dep['metadata']['labels']['component'] = 'pool'
+                else:
+                    yaml_deployment = result[key]       # this will be marked 'loaded' iff pvc exists
+                    dep['metadata']['name'] = name
+                    dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
+                dep['metadata']['labels']['sut'] = name
+                dep['metadata']['labels']['pool'] = name_pool
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
                 dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
@@ -1309,10 +1333,11 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 deployment = dep['metadata']['name']
                 appname = dep['spec']['template']['metadata']['labels']['app']
-                self.sut_containers_deployed = []
-                self.worker_containers_deployed = []
+                if dep['metadata']['name'] != 'bexhoma-pool':
+                    self.sut_containers_deployed = []
                 for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
-                    self.sut_containers_deployed.append(container['name'])
+                    if dep['metadata']['name'] != name_pool:
+                        self.sut_containers_deployed.append(container['name'])
                     self.logger.debug('configuration.create_manifest_deployment({})'.format(env))
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []
@@ -1522,6 +1547,7 @@ scrape_configs:
             self.stop_loading()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
+            self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def get_host_gpus(self):
         """
         Returns information about the sut's host GPUs.

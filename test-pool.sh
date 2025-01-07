@@ -17,7 +17,8 @@
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker11"
+#BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
@@ -205,6 +206,31 @@ nohup python ycsb.py -ms 1 -tr \
   -nco 16,32,64,128,256 \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_7.log &
+
+wait_process "ycsb"
+
+
+
+### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 131072 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -nci 64 \
+  -nco 64 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_8.log &
 
 wait_process "ycsb"
 

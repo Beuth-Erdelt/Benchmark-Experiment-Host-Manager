@@ -15,27 +15,34 @@ apiVersion: v1
 kind: Service
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-sut
+  name: bexhoma-service
 spec:
-  type: ClusterIP
-  clusterIP: None
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
-  selector: {app: bexhoma, component: pool, configuration: default, experiment: default}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bexhoma-pool
-  labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-postgres
 spec:
-  replicas: 3
+  replicas: 1
   selector:
-    matchLabels: {app: bexhoma, component: pool, configuration: default, experiment: default}
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   template:
     metadata:
-      labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
     spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
       containers:
       - name: pool
         image: edoburu/pgbouncer
@@ -50,16 +57,13 @@ spec:
         - name: DB_PASSWORD
           value: postgres
         - name: DB_HOST
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['pool']
-              #value: $(expr $BEXHOMA_SUT_NAME)
+          value: localhost
         - name: DB_PORT
-          value: "5432"
+          value: "5433"
         - name: AUTH_TYPE
-          value: md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
+          value: scram-sha-256 # remove/comment this line if using postgres:13 and lower
         - name: POOL_MODE
-          value: transaction # session # mode = transaction not working for YCSB
+          value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
           value: postgres
         - name: DEFAULT_POOL_SIZE
@@ -94,40 +98,6 @@ spec:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 4000m, memory: 4Gi}
           #, ephemeral-storage: "1536Gi"}
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
-  name: bexhoma-pool
-spec:
-  ports:
-  - {port: 5432, protocol: TCP, name: port-dbms, targetPort: 5432}
-  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-deployment-postgres
-spec:
-  replicas: 1
-  selector:
-    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  template:
-    metadata:
-      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-    spec:
-      automountServiceAccountToken: false
-      imagePullSecrets:
-      - {name: dockerhub}
-      nodeSelector:
-      tolerations:
-      #- key: "nvidia.com/gpu"
-      #  effect: "NoSchedule"
-      terminationGracePeriodSeconds: 180
-      containers:
       - name: dbms
         image: postgres:16.1
         env:
@@ -136,7 +106,7 @@ spec:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         - name: PGPORT
-          value: "5432" # remove/comment this line for default ports
+          value: "5433" # remove/comment this line for default ports
         # pg_ctl: cannot be run as root
         lifecycle:
           #postStart:
@@ -164,11 +134,11 @@ spec:
             - -U
             - postgres
             - -p
-            - "5432"
+            - "5433"
           initialDelaySeconds: 15
           periodSeconds: 60
         ports:
-        - {containerPort: 5432}
+        - {containerPort: 5433}
         securityContext:
           allowPrivilegeEscalation: false
           #runAsNonRoot: true
