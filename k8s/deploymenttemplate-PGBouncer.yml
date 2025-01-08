@@ -29,7 +29,7 @@ metadata:
   name: bexhoma-pool
   labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels: {app: bexhoma, component: pool, configuration: default, experiment: default}
   template:

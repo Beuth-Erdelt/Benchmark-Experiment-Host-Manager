@@ -15,7 +15,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-pool
+  name: bexhoma-sut
 spec:
   type: ClusterIP
   clusterIP: None
@@ -29,7 +29,7 @@ metadata:
   name: bexhoma-pool
   labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels: {app: bexhoma, component: pool, configuration: default, experiment: default}
   template:
@@ -50,7 +50,10 @@ spec:
         - name: DB_PASSWORD
           value: postgres
         - name: DB_HOST
-          value: $(expr $BEXHOMA_SUT_NAME)
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['pool']
+              #value: $(expr $BEXHOMA_SUT_NAME)
         - name: DB_PORT
           value: "5432"
         - name: AUTH_TYPE
@@ -95,11 +98,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {app: bexhoma, component: database, configuration: default, experiment: default}
-  name: bexhoma-service
+  labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
+  name: bexhoma-pool
 spec:
   ports:
-  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  - {port: 5432, protocol: TCP, name: port-dbms, targetPort: 5432}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
