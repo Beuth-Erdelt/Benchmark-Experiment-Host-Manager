@@ -295,6 +295,91 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+### Fixed nodes
+### Test workload C with uniform distribution
+### repeat for 1 driver and 8 drivers
+### TODO: Set target and threads
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c2 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 10 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_2.log &
+
+
+wait_process "ycsb"
+
+
+BEXHOMA_YCSB_SF_DATA=1
+BEXHOMA_YCSB_SF_OPS=16
+
+### Fixed nodes
+### Try small amount of data
+### repeat for 1 driver and 8 drivers
+### TODO: Set target and threads
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 10 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_3.log &
+
+
+wait_process "ycsb"
+
+
+BEXHOMA_YCSB_SF_DATA=64
+BEXHOMA_YCSB_SF_OPS=16
+
+### Fixed nodes
+### Try big amount of data
+### repeat for 1 driver and 8 drivers
+### TODO: Set target and threads
+### TODO: Size possible?
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 10 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_4.log &
+
+
+wait_process "ycsb"
+
+
 
 
 
