@@ -1332,8 +1332,8 @@ scrape_configs:
                 dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
-                deployment = dep['metadata']['name']
-                appname = dep['spec']['template']['metadata']['labels']['app']
+                #deployment = dep['metadata']['name']
+                #appname = dep['spec']['template']['metadata']['labels']['app']
                 if dep['metadata']['name'] != name_pool:
                     self.sut_containers_deployed = []
                 else:
@@ -1401,94 +1401,96 @@ scrape_configs:
                 #print(appname)
                 # parameter from instance name
                 # request = limit
-                req_cpu = cpu
-                limit_cpu = cpu
-                req_mem = mem
-                limit_mem = mem
-                req_gpu = gpu
-                node_cpu = ''
-                node_gpu = node
-                # should be overwritten by resources dict?
-                if 'requests' in self.resources and 'cpu' in self.resources['requests']:
-                   req_cpu = self.resources['requests']['cpu']
-                if 'requests' in self.resources and 'memory' in self.resources['requests']:
-                   req_mem = self.resources['requests']['memory']
-                if 'limits' in self.resources and 'cpu' in self.resources['limits']:
-                    limit_cpu = self.resources['limits']['cpu']
-                if 'limits' in self.resources and 'memory' in self.resources['limits']:
-                    limit_mem = self.resources['limits']['memory']
-                #nodeSelector: {cpu: epyc-7542}
-                if 'nodeSelector' in self.resources and 'cpu' in self.resources['nodeSelector']:
-                    node_cpu = self.resources['nodeSelector']['cpu']
-                if 'nodeSelector' in self.resources and 'gpu' in self.resources['nodeSelector']:
-                    node_gpu = self.resources['nodeSelector']['gpu']
-                if 'nodeSelector' in self.resources:
-                    nodeSelectors = self.resources['nodeSelector'].copy()
-                else:
-                    nodeSelectors = {}
-                #print(nodeSelectors)
-                # we want to have a resource dict anyway!
-                self.resources = {}
-                self.resources['requests'] = {}
-                self.resources['requests']['cpu'] = req_cpu
-                self.resources['requests']['memory'] = req_mem
-                self.resources['requests']['gpu'] = req_gpu
-                self.resources['limits'] = {}
-                self.resources['limits']['cpu'] = limit_cpu
-                self.resources['limits']['memory'] = limit_mem
-                self.resources['nodeSelector'] = {}
-                self.resources['nodeSelector']['cpu'] = node_cpu
-                self.resources['nodeSelector']['gpu'] = node_gpu
-                #print(self.resources)
-                # put resources to yaml file
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = req_cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = limit_cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = req_mem
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = limit_mem
-                # remove limits if = 0
-                if limit_cpu == 0:
-                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu']
-                if limit_mem == 0:
-                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory']
-                # add resource gpu
-                #if len(specs) > 2:
-                if node_gpu:
-                    if not 'nodeSelector' in dep['spec']['template']['spec']:
-                        dep['spec']['template']['spec']['nodeSelector'] = {}
-                    if dep['spec']['template']['spec']['nodeSelector'] is None:
-                        dep['spec']['template']['spec']['nodeSelector'] = {}
-                    dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
-                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
-                else:
-                    if 'nvidia.com/gpu' in dep['spec']['template']['spec']['containers'][0]['resources']['limits']:
-                        del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu']
-                # add resource cpu
-                #if node_cpu:
-                if not 'nodeSelector' in dep['spec']['template']['spec']:
-                    dep['spec']['template']['spec']['nodeSelector'] = {}
-                if dep['spec']['template']['spec']['nodeSelector'] is None:
-                    dep['spec']['template']['spec']['nodeSelector'] = {}
-                dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
-                if node_cpu == '':
-                    del dep['spec']['template']['spec']['nodeSelector']['cpu']
-                # nodeSelector that is not cpu or gpu is copied to yaml
-                for nodeSelector, value in nodeSelectors.items():
-                    if nodeSelector == 'cpu' or nodeSelector == 'gpu':
-                        continue
+                # we only want to manipulate resources for dbms container in SUT
+                if dep['metadata']['name'] == name:
+                    req_cpu = cpu
+                    limit_cpu = cpu
+                    req_mem = mem
+                    limit_mem = mem
+                    req_gpu = gpu
+                    node_cpu = ''
+                    node_gpu = node
+                    # should be overwritten by resources dict?
+                    if 'requests' in self.resources and 'cpu' in self.resources['requests']:
+                    req_cpu = self.resources['requests']['cpu']
+                    if 'requests' in self.resources and 'memory' in self.resources['requests']:
+                    req_mem = self.resources['requests']['memory']
+                    if 'limits' in self.resources and 'cpu' in self.resources['limits']:
+                        limit_cpu = self.resources['limits']['cpu']
+                    if 'limits' in self.resources and 'memory' in self.resources['limits']:
+                        limit_mem = self.resources['limits']['memory']
+                    #nodeSelector: {cpu: epyc-7542}
+                    if 'nodeSelector' in self.resources and 'cpu' in self.resources['nodeSelector']:
+                        node_cpu = self.resources['nodeSelector']['cpu']
+                    if 'nodeSelector' in self.resources and 'gpu' in self.resources['nodeSelector']:
+                        node_gpu = self.resources['nodeSelector']['gpu']
+                    if 'nodeSelector' in self.resources:
+                        nodeSelectors = self.resources['nodeSelector'].copy()
                     else:
-                        dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
-                        self.resources['nodeSelector'][nodeSelector] = value
-                # set nodeSelector
-                if 'sut' in self.nodes:
+                        nodeSelectors = {}
+                    #print(nodeSelectors)
+                    # we want to have a resource dict anyway!
+                    self.resources = {}
+                    self.resources['requests'] = {}
+                    self.resources['requests']['cpu'] = req_cpu
+                    self.resources['requests']['memory'] = req_mem
+                    self.resources['requests']['gpu'] = req_gpu
+                    self.resources['limits'] = {}
+                    self.resources['limits']['cpu'] = limit_cpu
+                    self.resources['limits']['memory'] = limit_mem
+                    self.resources['nodeSelector'] = {}
+                    self.resources['nodeSelector']['cpu'] = node_cpu
+                    self.resources['nodeSelector']['gpu'] = node_gpu
+                    #print(self.resources)
+                    # put resources to yaml file
+                    dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = req_cpu
+                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = limit_cpu
+                    dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = req_mem
+                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = limit_mem
+                    # remove limits if = 0
+                    if limit_cpu == 0:
+                        del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu']
+                    if limit_mem == 0:
+                        del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory']
+                    # add resource gpu
+                    #if len(specs) > 2:
+                    if node_gpu:
+                        if not 'nodeSelector' in dep['spec']['template']['spec']:
+                            dep['spec']['template']['spec']['nodeSelector'] = {}
+                        if dep['spec']['template']['spec']['nodeSelector'] is None:
+                            dep['spec']['template']['spec']['nodeSelector'] = {}
+                        dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
+                        dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
+                    else:
+                        if 'nvidia.com/gpu' in dep['spec']['template']['spec']['containers'][0]['resources']['limits']:
+                            del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu']
+                    # add resource cpu
+                    #if node_cpu:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
-                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                        dep['spec']['template']['spec']['nodeSelector'] = {}
                     if dep['spec']['template']['spec']['nodeSelector'] is None:
-                        dep['spec']['template']['spec']['nodeSelector'] = dict()
-                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['sut']
-                #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
-            if dep['kind'] == 'Service':
-                service = dep['metadata']['name']
-                #print(service)
+                        dep['spec']['template']['spec']['nodeSelector'] = {}
+                    dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
+                    if node_cpu == '':
+                        del dep['spec']['template']['spec']['nodeSelector']['cpu']
+                    # nodeSelector that is not cpu or gpu is copied to yaml
+                    for nodeSelector, value in nodeSelectors.items():
+                        if nodeSelector == 'cpu' or nodeSelector == 'gpu':
+                            continue
+                        else:
+                            dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
+                            self.resources['nodeSelector'][nodeSelector] = value
+                    # set nodeSelector
+                    if 'sut' in self.nodes:
+                        if not 'nodeSelector' in dep['spec']['template']['spec']:
+                            dep['spec']['template']['spec']['nodeSelector'] = dict()
+                        if dep['spec']['template']['spec']['nodeSelector'] is None:
+                            dep['spec']['template']['spec']['nodeSelector'] = dict()
+                        dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['sut']
+                    #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
+            #if dep['kind'] == 'Service':
+            #    service = dep['metadata']['name']
+            #    #print(service)
         #with open(self.yamlfolder+"deployment-"+self.d+"-"+instance+".yml","w+") as stream:
         with open(deployment_experiment,"w+") as stream:
             try:

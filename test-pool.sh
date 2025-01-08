@@ -263,6 +263,9 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker11"
 
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=16
+
 
 
 ### Fixed nodes
@@ -271,8 +274,8 @@ BEXHOMA_NODE_BENCHMARK="cl-worker11"
 ### threads range from 48 to 96 in steps of 8
 ### repeat for 1 driver and 8 drivers
 nohup python ycsb.py -ms 1 -tr \
-  -sf 16 \
-  -sfo 16 \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
