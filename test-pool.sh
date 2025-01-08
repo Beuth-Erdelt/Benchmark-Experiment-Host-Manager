@@ -273,6 +273,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### base is 16384 - scan from 98304 to 163840
 ### threads range from 48 to 96 in steps of 8
 ### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -sfo $BEXHOMA_YCSB_SF_OPS \
