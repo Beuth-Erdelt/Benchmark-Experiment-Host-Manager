@@ -113,6 +113,7 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log &
 
+
 wait_process "ycsb"
 
 
@@ -135,6 +136,7 @@ nohup python ycsb.py -ms 1 -tr \
   -rst shared -rss 50Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_3.log &
+
 
 wait_process "ycsb"
 
@@ -160,6 +162,7 @@ nohup python ycsb.py -ms 1 -tr \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_4.log &
 
+
 wait_process "ycsb"
 
 
@@ -184,7 +187,9 @@ nohup python ycsb.py -ms 1 -tr \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_6.log &
 
+
 wait_process "ycsb"
+
 
 ### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
@@ -207,8 +212,8 @@ nohup python ycsb.py -ms 1 -tr \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_7.log &
 
-wait_process "ycsb"
 
+wait_process "ycsb"
 
 
 ### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
@@ -232,7 +237,61 @@ nohup python ycsb.py -ms 1 -tr \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_8.log &
 
+
 wait_process "ycsb"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################
+################### Cloud-native ###################
+####################################################
+
+
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker11"
+
+
+
+### Fixed nodes
+### Scan for peak performance
+### base is 16384 - scan from 98304 to 163840
+### threads range from 48 to 96 in steps of 8
+### repeat for 1 driver and 8 drivers
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 10 \
+  -nbp 1,8 \
+  -nbt 48,56,64,72,80,88,96 \
+  -nbf 6,7,8,9,10 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_1.log &
+
+
+wait_process "ycsb"
+
+
 
 
 

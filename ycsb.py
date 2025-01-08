@@ -260,7 +260,7 @@ if __name__ == '__main__':
                         for num_c_out in num_connections_out:
                             name_format = 'pgb-{threads}-{pods}-{c_in}-{c_out}'
                             #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
-                            config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
+                            config = configurations.ycsb(experiment=experiment, docker='PGBouncerSidecar', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
                             config.path_experiment_docker = 'PostgreSQL' # take init scripts of PostgreSQL
                             config.sut_envs = {
                                 'DEFAULT_POOL_SIZE': int(num_c_out),                 # max connections to PostgreSQL

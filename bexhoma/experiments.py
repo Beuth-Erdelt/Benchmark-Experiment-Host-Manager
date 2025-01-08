@@ -1237,6 +1237,12 @@ class default():
                                     for container in config.worker_containers_deployed:
                                         self.cluster.store_pod_log(pod_worker, container)
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
+                                component = 'pool'
+                                pods = self.cluster.get_pods(app, component, self.code, config.configuration)
+                                for pod_pool in pods:
+                                    for container in config.pool_containers_deployed:
+                                        self.cluster.store_pod_log(pod_pool, container)
+                                    #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
