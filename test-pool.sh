@@ -15,9 +15,9 @@
 ######################################################################################
 
 
-BEXHOMA_NODE_SUT="cl-worker11"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
+BEXHOMA_NODE_SUT="cl-worker20"
+BEXHOMA_NODE_LOAD="cl-worker13"
+BEXHOMA_NODE_BENCHMARK="cl-worker13"
 #BEXHOMA_NODE_BENCHMARK="cl-worker11"
 LOG_DIR="./logs_tests"
 
@@ -278,7 +278,7 @@ nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -sfo $BEXHOMA_YCSB_SF_OPS \
   --workload c \
-  -dbms PostgreSQL \
+  -dbms PostgreSQL PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
