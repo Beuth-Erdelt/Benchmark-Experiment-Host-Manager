@@ -1614,6 +1614,7 @@ class testbed():
             self.delete_stateful_set(stateful_set)
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
+            self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def stop_benchmarker(self, experiment='', configuration=''):
         """
         Stops all benchmarking components (jobs and their pods) in the cluster.
