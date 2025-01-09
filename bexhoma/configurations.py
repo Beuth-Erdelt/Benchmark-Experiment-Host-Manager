@@ -1401,6 +1401,18 @@ scrape_configs:
                 #print(appname)
                 # parameter from instance name
                 # request = limit
+                # we only want to manipulate nodeSelector for pool container in pooler
+                """ if dep['metadata']['name'] == name_pool:
+                    if 'nodeSelector' in self.resources:
+                        nodeSelectors = self.resources['nodeSelector'].copy()
+                    else:
+                        nodeSelectors = {}
+                    for nodeSelector, value in nodeSelectors.items():
+                        if nodeSelector == 'cpu' or nodeSelector == 'gpu':
+                            continue
+                        else:
+                            dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
+                            #self.resources['nodeSelector'][nodeSelector] = value """
                 # we only want to manipulate resources for dbms container in SUT
                 if dep['metadata']['name'] == name:
                     for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
