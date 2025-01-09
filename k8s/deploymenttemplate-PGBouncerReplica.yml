@@ -123,6 +123,7 @@ spec:
       imagePullSecrets:
       - {name: dockerhub}
       nodeSelector:
+        kubernetes.io/hostname: {cl-worker11}
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"

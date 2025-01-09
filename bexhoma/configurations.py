@@ -1403,6 +1403,9 @@ scrape_configs:
                 # request = limit
                 # we only want to manipulate resources for dbms container in SUT
                 if dep['metadata']['name'] == name:
+                    for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
+                        if container['name'] == 'dbms':
+                            break
                     req_cpu = cpu
                     limit_cpu = cpu
                     req_mem = mem
@@ -1412,9 +1415,9 @@ scrape_configs:
                     node_gpu = node
                     # should be overwritten by resources dict?
                     if 'requests' in self.resources and 'cpu' in self.resources['requests']:
-                    req_cpu = self.resources['requests']['cpu']
+                        req_cpu = self.resources['requests']['cpu']
                     if 'requests' in self.resources and 'memory' in self.resources['requests']:
-                    req_mem = self.resources['requests']['memory']
+                        req_mem = self.resources['requests']['memory']
                     if 'limits' in self.resources and 'cpu' in self.resources['limits']:
                         limit_cpu = self.resources['limits']['cpu']
                     if 'limits' in self.resources and 'memory' in self.resources['limits']:
@@ -1443,15 +1446,15 @@ scrape_configs:
                     self.resources['nodeSelector']['gpu'] = node_gpu
                     #print(self.resources)
                     # put resources to yaml file
-                    dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = req_cpu
-                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = limit_cpu
-                    dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = req_mem
-                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = limit_mem
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu'] = limit_cpu
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory'] = req_mem
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory'] = limit_mem
                     # remove limits if = 0
                     if limit_cpu == 0:
-                        del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu']
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu']
                     if limit_mem == 0:
-                        del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory']
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory']
                     # add resource gpu
                     #if len(specs) > 2:
                     if node_gpu:
@@ -1460,10 +1463,10 @@ scrape_configs:
                         if dep['spec']['template']['spec']['nodeSelector'] is None:
                             dep['spec']['template']['spec']['nodeSelector'] = {}
                         dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
-                        dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
                     else:
-                        if 'nvidia.com/gpu' in dep['spec']['template']['spec']['containers'][0]['resources']['limits']:
-                            del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu']
+                        if 'nvidia.com/gpu' in dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']:
+                            del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['nvidia.com/gpu']
                     # add resource cpu
                     #if node_cpu:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
