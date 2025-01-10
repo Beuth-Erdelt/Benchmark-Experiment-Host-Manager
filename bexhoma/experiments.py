@@ -2782,6 +2782,9 @@ class ycsb(default):
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct pool -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct poolloading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
         cmd = {}
         #stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
         #self.logger.debug('copy config connections.config: {}'.format(stdout))

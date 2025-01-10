@@ -296,6 +296,36 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+### Same with PVC
+### Fixed nodes
+### Scan for peak performance
+### base is 16384 - scan from 98304 to 163840
+### threads range from 48 to 96 in steps of 8
+### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 10 \
+  -nbp 1,8 \
+  -nbt 48,56,64,72,80,88,96 \
+  -nbf 6,7,8,9,10 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 50Gi \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_2.log &
+
+
+wait_process "ycsb"
+
+
 ### Fixed nodes
 ### Test workload C with uniform distribution
 ### repeat for 1 driver and 8 drivers
@@ -316,7 +346,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_2.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_3.log &
 
 
 wait_process "ycsb"
@@ -345,7 +375,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_3.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_4.log &
 
 
 wait_process "ycsb"
@@ -375,7 +405,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_4.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_5.log &
 
 
 wait_process "ycsb"
