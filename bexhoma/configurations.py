@@ -2413,6 +2413,32 @@ scrape_configs:
                     cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
+                    # pooling container "pool"
+                    if self.sut_has_pool:
+                        print("{:30s}: collecting loading metrics of pool at connection {}".format(connection, self.current_benchmark_connection))
+                        metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                        container = "pool"
+                        if container is not None:
+                            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                            metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                            metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                        print("{:30s}: example metric {}".format(connection, metric_example))
+                        cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct poolloading -cn pool -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                            connection, 
+                            c['name']+'.config', 
+                            '/results/'+self.code, 
+                            self.code, 
+                            self.timeLoadingStart, 
+                            self.timeLoadingEnd)
+                        stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loader_metrics'], pod=pod_dashboard, container="dashboard")
+                        self.logger.debug(stdout)
+                        self.logger.debug(stderr)
+                        # upload connections infos again, metrics has overwritten it
+                        filename = 'connections.config'
+                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                        self.logger.debug(stdout)
     def execute_command_in_pod_sut(self, command, pod='', container='', params=''):
         """
         Runs an shell command remotely inside a container of a pod.

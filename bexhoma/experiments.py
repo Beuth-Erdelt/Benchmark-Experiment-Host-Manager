@@ -2962,6 +2962,18 @@ class ycsb(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "poolloading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Pooling")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
         return test_results.rstrip('\n')
 
 
