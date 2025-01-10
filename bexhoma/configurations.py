@@ -2577,9 +2577,10 @@ scrape_configs:
                     if status == "Succeeded":
                         containers = self.experiment.cluster.get_pod_containers(pod)
                         for container in containers:
-                            if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
-                                self.experiment.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
-                                self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                            if len(container) > 0:
+                                if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                                    self.experiment.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
+                                    self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         #container = 'datagenerator'
                         #if container in containers:
                         #    if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
@@ -2618,7 +2619,8 @@ scrape_configs:
                         # TODO: Find names of containers dynamically
                         containers = self.experiment.cluster.get_pod_containers(pod)
                         for container in containers:
-                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                            if len(container) > 0:
+                                self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         self.experiment.cluster.delete_pod(pod)
                         #container = 'datagenerator'
                         #if container in containers:
