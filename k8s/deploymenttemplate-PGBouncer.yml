@@ -29,7 +29,7 @@ metadata:
   name: bexhoma-pool
   labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
 spec:
-  replicas: 4
+  replicas: 8
   selector:
     matchLabels: {app: bexhoma, component: pool, configuration: default, experiment: default}
   template:
@@ -49,6 +49,9 @@ spec:
         # SHOW POOLS;
         # SHOW CLIENTS;
         # SHOW SERVERS;
+        # https://www.pgbouncer.org/config.html
+        # https://github.com/edoburu/docker-pgbouncer
+        # https://github.com/farrajota/kubernetes-postgres-pgbouncer/blob/master/pgbouncer.yaml
         env: # https://github.com/edoburu/docker-pgbouncer/blob/master/entrypoint.sh
         - name: DB_USER
           value: postgres
@@ -64,7 +67,7 @@ spec:
         - name: AUTH_TYPE
           value: md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
         - name: POOL_MODE
-          value: transaction # session # mode = transaction not working for YCSB
+          value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
           value: postgres
         - name: DEFAULT_POOL_SIZE
@@ -83,8 +86,8 @@ spec:
           value: "1"
         - name: RESERVE_POOL_SIZE
           value: "16"
-        - name: MAX_PREPARED_STATEMENTS
-          value: "256"
+        #- name: MAX_PREPARED_STATEMENTS
+        #  value: "256"
         #readinessProbe:
         #  exec:
         #    command:
@@ -95,10 +98,10 @@ spec:
         #  periodSeconds: 60
         ports:
         - {containerPort: 5432}
-        resources:
-          limits: {cpu: 16000m, memory: 128Gi}
-          requests: {cpu: 4000m, memory: 4Gi}
-          #, ephemeral-storage: "1536Gi"}
+        #resources:
+        #  limits: {cpu: 16000m, memory: 128Gi}
+        #  requests: {cpu: 4000m, memory: 4Gi}
+        #  #, ephemeral-storage: "1536Gi"}
 ---
 apiVersion: v1
 kind: Service

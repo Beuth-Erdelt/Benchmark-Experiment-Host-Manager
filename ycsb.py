@@ -61,8 +61,9 @@ if __name__ == '__main__':
     parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
     parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
     parser.add_argument('-nbf', '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
-    parser.add_argument('-nci', '--num-connections-in', help='comma separated list of max connections into a connection pooler', default="")
-    parser.add_argument('-nco', '--num-connections-out', help='comma separated list of max connections out of a connection pooler', default="")
+    parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="1")
+    parser.add_argument('-npi', '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
+    parser.add_argument('-npo', '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
     parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'e', 'f', 'c2'], default='a')
     parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
     parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor = number of operations in millions (=SF if not set)', default=None)
@@ -167,8 +168,10 @@ if __name__ == '__main__':
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
     num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
-    num_connections_in = experiment.get_parameter_as_list('num_connections_in')
-    num_connections_out = experiment.get_parameter_as_list('num_connections_out')
+    num_pooling_pods = experiment.get_parameter_as_list('num_pooling_pods')
+    num_pooling_pods = int(num_pooling_pods[0])
+    num_pooling_in = experiment.get_parameter_as_list('num_pooling_in')
+    num_pooling_out = experiment.get_parameter_as_list('num_pooling_out')
     # set node labes for components
     if aws:
         # set node labes for components
@@ -252,20 +255,20 @@ if __name__ == '__main__':
                     config.add_benchmark_list(executor_list)
                 if ("PGBouncer" in args.dbms or len(args.dbms) == 0):
                     # PGBouncer
-                    if len(num_connections_in) == 0:
-                        num_connections_in = [int(loading_threads)]
-                    if len(num_connections_out) == 0:
-                        num_connections_out = [int(loading_threads)]
-                    for num_c_in in num_connections_in:
-                        for num_c_out in num_connections_out:
+                    if len(num_pooling_in) == 0:
+                        num_pooling_in = [int(loading_threads)]
+                    if len(num_pooling_out) == 0:
+                        num_pooling_out = [int(loading_threads)]
+                    for num_c_in in num_pooling_in:
+                        for num_c_out in num_pooling_out:
                             name_format = 'pgb-{threads}-{pods}-{c_in}-{c_out}'
                             #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
                             config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
-                            config.path_experiment_docker = 'PostgreSQL' # take init scripts of PostgreSQL
+                            config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
                             config.sut_envs = {
-                                'DEFAULT_POOL_SIZE': int(num_c_out),                 # max connections to PostgreSQL
-                                'MIN_POOL_SIZE': int(num_c_out),                     # min connections to PostgreSQL
-                                'MAX_CLIENT_CONN': int(num_c_in),                    # max connections to PGBouncer
+                                'DEFAULT_POOL_SIZE': int(num_c_out/num_pooling_pods),                 # max connections to PostgreSQL
+                                'MIN_POOL_SIZE': int(num_c_out/num_pooling_pods),                     # min connections to PostgreSQL
+                                'MAX_CLIENT_CONN': int(num_c_in/num_pooling_pods),                    # max connections to PGBouncer
                             }
                             config.set_storage(
                                 storageConfiguration = 'postgresql'

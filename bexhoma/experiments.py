@@ -201,6 +201,9 @@ class default():
         num_loading_threads = self.get_parameter_as_list('num_loading_threads')
         num_benchmarking_pods = self.get_parameter_as_list('num_benchmarking_pods')
         num_benchmarking_threads = self.get_parameter_as_list('num_benchmarking_threads')
+        num_pooling_pods = self.get_parameter_as_list('num_pooling_pods')
+        num_pooling_in = self.get_parameter_as_list('num_pooling_in')
+        num_pooling_out = self.get_parameter_as_list('num_pooling_out')
         cpu = str(args.request_cpu)
         memory = str(args.request_ram)
         cpu_type = str(args.request_cpu_type)
@@ -302,6 +305,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
         self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
         self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+        if len(num_pooling_pods) > 0:
+            self.workload['info'] = self.workload['info']+"\nPooling is done with {} pods having {} inbound and {} outbound connections in total.".format(num_pooling_pods, num_pooling_in, num_pooling_out)
         self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
