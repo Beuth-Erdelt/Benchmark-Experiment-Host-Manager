@@ -249,7 +249,9 @@ class default():
             nodeSelector = {
                 'cpu': cpu_type,
                 'gpu': '',
-            })
+            },
+            #replicas_pooling = num_pooling_pods,
+        )
         # persistent storage
         self.set_storage(
             storageClassName = request_storage_type,

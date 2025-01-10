@@ -1402,8 +1402,11 @@ scrape_configs:
                 # parameter from instance name
                 # request = limit
                 # we only want to manipulate nodeSelector for pool container in pooler
-                """ if dep['metadata']['name'] == name_pool:
-                    if 'nodeSelector' in self.resources:
+                if dep['metadata']['name'] == name_pool:
+                    if 'replicas_pooling' in self.resources:
+                        num_replicas_pooling = self.resources['replicas_pooling']
+                        result[key]['spec']['replicas'] = num_replicas_pooling
+                    """if 'nodeSelector' in self.resources:
                         nodeSelectors = self.resources['nodeSelector'].copy()
                     else:
                         nodeSelectors = {}
@@ -1443,6 +1446,8 @@ scrape_configs:
                         nodeSelectors = self.resources['nodeSelector'].copy()
                     else:
                         nodeSelectors = {}
+                    if 'replicas_pooling' in self.resources:
+                        num_replicas_pooling = self.resources['replicas_pooling']
                     #print(nodeSelectors)
                     # we want to have a resource dict anyway!
                     self.resources = {}
@@ -1456,6 +1461,7 @@ scrape_configs:
                     self.resources['nodeSelector'] = {}
                     self.resources['nodeSelector']['cpu'] = node_cpu
                     self.resources['nodeSelector']['gpu'] = node_gpu
+                    self.resources['replicas_pooling'] = num_replicas_pooling
                     #print(self.resources)
                     # put resources to yaml file
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu

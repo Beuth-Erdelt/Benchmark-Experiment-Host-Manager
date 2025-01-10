@@ -270,6 +270,9 @@ if __name__ == '__main__':
                                 'MIN_POOL_SIZE': int(num_c_out/num_pooling_pods),                     # min connections to PostgreSQL
                                 'MAX_CLIENT_CONN': int(num_c_in/num_pooling_pods),                    # max connections to PGBouncer
                             }
+                            config.set_resources(
+                                replicas_pooling = num_pooling_pods,
+                            )
                             config.set_storage(
                                 storageConfiguration = 'postgresql'
                                 )
