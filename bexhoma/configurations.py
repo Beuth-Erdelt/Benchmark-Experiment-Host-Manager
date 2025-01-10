@@ -171,6 +171,7 @@ class default():
         self.worker_containers_deployed = [] # Name of the containers of the SUT statefulset
         self.pool_containers_deployed = [] # Name of the containers of the Pool deployment
         self.sut_envs = {} # parameters sent to container via ENV
+        self.sut_has_pool = False # if there is a pool component - in particular for monitoring
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
         self.current_benchmark_connection = "" # Name of the current connection - for metrics collection
@@ -1446,6 +1447,7 @@ scrape_configs:
                         nodeSelectors = self.resources['nodeSelector'].copy()
                     else:
                         nodeSelectors = {}
+                    num_replicas_pooling = 0
                     if 'replicas_pooling' in self.resources:
                         num_replicas_pooling = self.resources['replicas_pooling']
                     #print(nodeSelectors)
@@ -1461,7 +1463,8 @@ scrape_configs:
                     self.resources['nodeSelector'] = {}
                     self.resources['nodeSelector']['cpu'] = node_cpu
                     self.resources['nodeSelector']['gpu'] = node_gpu
-                    self.resources['replicas_pooling'] = num_replicas_pooling
+                    if num_replicas_pooling > 0:
+                        self.resources['replicas_pooling'] = num_replicas_pooling
                     #print(self.resources)
                     # put resources to yaml file
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu

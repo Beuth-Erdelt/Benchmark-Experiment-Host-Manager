@@ -265,6 +265,7 @@ if __name__ == '__main__':
                             #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
                             config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
                             config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
+                            config.sut_has_pool = True                                                # in particular monitor pool component
                             config.sut_envs = {
                                 'DEFAULT_POOL_SIZE': int(num_c_out/num_pooling_pods),                 # max connections to PostgreSQL
                                 'MIN_POOL_SIZE': int(num_c_out/num_pooling_pods),                     # min connections to PostgreSQL

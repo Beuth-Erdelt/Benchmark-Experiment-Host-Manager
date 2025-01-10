@@ -1586,27 +1586,28 @@ class default():
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
                         # Pooler
-                        print("{:30s}: collecting execution metrics of pooler at connection {}".format(connection, config.current_benchmark_connection))
-                        #print(config.current_benchmark_connection)
-                        #print(config.benchmark.dbms.keys())
-                        metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
-                        container = "pool"
-                        if container is not None:
-                            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
-                            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
-                            metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
-                            metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
-                        print("{:30s}: example metric {}".format(connection, metric_example))
-                        cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct pool -cn pool -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
-                        #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
-                        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
-                        self.cluster.logger.debug(stdout)
-                        self.cluster.logger.debug(stderr)
-                        # upload connections infos again, metrics has overwritten it
-                        filename = 'connections.config'
-                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
-                        self.cluster.logger.debug(stdout)
+                        if config.sut_has_pool:
+                            print("{:30s}: collecting execution metrics of pooler at connection {}".format(connection, config.current_benchmark_connection))
+                            #print(config.current_benchmark_connection)
+                            #print(config.benchmark.dbms.keys())
+                            metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                            container = "pool"
+                            if container is not None:
+                                metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                                metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                                metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                                metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                            print("{:30s}: example metric {}".format(connection, metric_example))
+                            cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct pool -cn pool -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
+                            #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                            self.cluster.logger.debug(stdout)
+                            self.cluster.logger.debug(stderr)
+                            # upload connections infos again, metrics has overwritten it
+                            filename = 'connections.config'
+                            cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                            stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                            self.cluster.logger.debug(stdout)
                     # get metrics of benchmarker components
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
