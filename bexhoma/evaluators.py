@@ -715,79 +715,87 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        df.fillna(0, inplace=True)
-        df_typed = df.astype({
-            'connection':'str',
-            'configuration':'str',
-            'experiment_run':'int',
-            'client':'int',
-            'pod':'str',
-            'pod_count':'int',
-            'threads':'int',
-            'target':'int',
-            'sf':'int',
-            'workload':'str',
-            'operations':'int',
-            'exceptions':'int',
-            '[OVERALL].RunTime(ms)':'float',
-            '[OVERALL].Throughput(ops/sec)':'float',
-            #'[TOTAL_GCS_PS_Scavenge].Count':'int',
-            #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
-            #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
-            #'[TOTAL_GCS_PS_MarkSweep].Count':'int',
-            #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
-            #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
-            #'[TOTAL_GCs].Count':'int',
-            #'[TOTAL_GC_TIME].Time(ms)':'float',
-            #'[TOTAL_GC_TIME_%].Time(%)':'float',
-            '[CLEANUP].Operations':'int',
-            '[CLEANUP].AverageLatency(us)':'float',
-            '[CLEANUP].MinLatency(us)':'float',
-            '[CLEANUP].MaxLatency(us)':'float',
-            '[CLEANUP].95thPercentileLatency(us)':'float',
-            '[CLEANUP].99thPercentileLatency(us)':'float',
-        })
-        if '[READ].Operations'in df_typed.columns:
-            df_typed = df_typed.astype({
-                '[READ].Operations':'int',
-                '[READ].AverageLatency(us)':'float',
-                '[READ].MinLatency(us)':'float',
-                '[READ].MaxLatency(us)':'float',
-                '[READ].95thPercentileLatency(us)':'float',
-                '[READ].99thPercentileLatency(us)':'float',
-                '[READ].Return=OK':'int',
-        })
-        if '[UPDATE].Operations'in df_typed.columns:
-            df_typed = df_typed.astype({
-                '[UPDATE].Operations':'int',
-                '[UPDATE].AverageLatency(us)':'float',
-                '[UPDATE].MinLatency(us)':'float',
-                '[UPDATE].MaxLatency(us)':'float',
-                '[UPDATE].95thPercentileLatency(us)':'float',
-                '[UPDATE].99thPercentileLatency(us)':'float',
-                '[UPDATE].Return=OK': 'int',
-        })
-        if '[INSERT].Operations'in df_typed.columns:
-            df_typed = df_typed.astype({
-                '[INSERT].Operations':'int',
-                '[INSERT].AverageLatency(us)':'float',
-                '[INSERT].MinLatency(us)':'float',
-                '[INSERT].MaxLatency(us)':'float',
-                '[INSERT].95thPercentileLatency(us)':'float',
-                '[INSERT].99thPercentileLatency(us)':'float',
-                '[INSERT].Return=OK': 'int',
-        })
-        if '[SCAN].Operations'in df_typed.columns:
-            df_typed = df_typed.astype({
-                '[SCAN].Operations':'int',
-                '[SCAN].AverageLatency(us)':'float',
-                '[SCAN].MinLatency(us)':'float',
-                '[SCAN].MaxLatency(us)':'float',
-                '[SCAN].95thPercentileLatency(us)':'float',
-                '[SCAN].99thPercentileLatency(us)':'float',
-                '[SCAN].Return=OK':'int',
+        try:
+            df.fillna(0, inplace=True)
+            df_typed = df.astype({
+                'connection':'str',
+                'configuration':'str',
+                'experiment_run':'int',
+                'client':'int',
+                'pod':'str',
+                'pod_count':'int',
+                'threads':'int',
+                'target':'int',
+                'sf':'int',
+                'workload':'str',
+                'operations':'int',
+                'exceptions':'int',
+                '[OVERALL].RunTime(ms)':'float',
+                '[OVERALL].Throughput(ops/sec)':'float',
+                #'[TOTAL_GCS_PS_Scavenge].Count':'int',
+                #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
+                #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
+                #'[TOTAL_GCS_PS_MarkSweep].Count':'int',
+                #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
+                #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
+                #'[TOTAL_GCs].Count':'int',
+                #'[TOTAL_GC_TIME].Time(ms)':'float',
+                #'[TOTAL_GC_TIME_%].Time(%)':'float',
             })
-        return df_typed
+            if '[CLEANUP].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[CLEANUP].Operations':'int',
+                    '[CLEANUP].AverageLatency(us)':'float',
+                    '[CLEANUP].MinLatency(us)':'float',
+                    '[CLEANUP].MaxLatency(us)':'float',
+                    '[CLEANUP].95thPercentileLatency(us)':'float',
+                    '[CLEANUP].99thPercentileLatency(us)':'float',
+            })
+            if '[READ].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[READ].Operations':'int',
+                    '[READ].AverageLatency(us)':'float',
+                    '[READ].MinLatency(us)':'float',
+                    '[READ].MaxLatency(us)':'float',
+                    '[READ].95thPercentileLatency(us)':'float',
+                    '[READ].99thPercentileLatency(us)':'float',
+                    '[READ].Return=OK':'int',
+            })
+            if '[UPDATE].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[UPDATE].Operations':'int',
+                    '[UPDATE].AverageLatency(us)':'float',
+                    '[UPDATE].MinLatency(us)':'float',
+                    '[UPDATE].MaxLatency(us)':'float',
+                    '[UPDATE].95thPercentileLatency(us)':'float',
+                    '[UPDATE].99thPercentileLatency(us)':'float',
+                    '[UPDATE].Return=OK': 'int',
+            })
+            if '[INSERT].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[INSERT].Operations':'int',
+                    '[INSERT].AverageLatency(us)':'float',
+                    '[INSERT].MinLatency(us)':'float',
+                    '[INSERT].MaxLatency(us)':'float',
+                    '[INSERT].95thPercentileLatency(us)':'float',
+                    '[INSERT].99thPercentileLatency(us)':'float',
+                    '[INSERT].Return=OK': 'int',
+            })
+            if '[SCAN].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[SCAN].Operations':'int',
+                    '[SCAN].AverageLatency(us)':'float',
+                    '[SCAN].MinLatency(us)':'float',
+                    '[SCAN].MaxLatency(us)':'float',
+                    '[SCAN].95thPercentileLatency(us)':'float',
+                    '[SCAN].99thPercentileLatency(us)':'float',
+                    '[SCAN].Return=OK':'int',
+                })
+            return df_typed
+        except Exception as e:
+            print(e)
+            #print(list_columns)
+            return df
     def benchmarking_aggregate_by_parallel_pods(self, df):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
@@ -822,13 +830,16 @@ class ycsb(logger):
                 #'[TOTAL_GCs].Count':'sum',
                 #'[TOTAL_GC_TIME].Time(ms)':'max',
                 #'[TOTAL_GC_TIME_%].Time(%)':'max',
+            }
+            if '[CLEANUP].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
                 '[CLEANUP].Operations':'sum',
                 '[CLEANUP].AverageLatency(us)':'mean',
                 '[CLEANUP].MinLatency(us)':'min',
                 '[CLEANUP].MaxLatency(us)':'max',
                 '[CLEANUP].95thPercentileLatency(us)':'mean',
                 '[CLEANUP].99thPercentileLatency(us)':'mean',
-            }
+                }}
             if '[READ].Operations' in grp.columns:
                 aggregate = {**aggregate, **{
                     '[READ].Operations':'sum',
