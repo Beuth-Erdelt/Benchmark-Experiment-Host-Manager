@@ -33,6 +33,8 @@ import json
 import traceback
 import ast
 from dbmsbenchmarker import monitor
+from datetime import datetime
+import glob
 
 def natural_sort(l): 
     convert = lambda text: int(text) if text.isdigit() else text.lower()
@@ -1020,6 +1022,134 @@ class ycsb(logger):
             df = pd.DataFrame()
         #df#.sort_values(["configuration", "pod"])
         return df
+    def parse_ycsb_log_file(self, file_path):
+        def parse_string(log):
+            log = re.sub(r'Avg=�', 'Avg=0', log)
+            try:
+                # Extract the date and time
+                date_time_match = re.match(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}:\d{3})", log)
+                date_time_str = date_time_match.group(1) if date_time_match else None
+                date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S:%f") if date_time_str else None
+                # Extract all numbers
+                #all_numbers = re.findall(r"\b\d+\.?\d*\b", log)
+                # Extract metrics from sections like [READ: ...] or [UPDATE: ...]
+                # Match the pattern for operations and ops/sec
+                match = re.search(r"(\d+)\s+operations", log)
+                if match:
+                    total_operations = int(match.group(1))  # First captured group
+                # Match the pattern for operations and ops/sec
+                match = re.search(r"(\d+)\s+sec:", log)
+                if match:
+                    sec = int(match.group(1))  # First captured group
+                # Match the pattern for operations and ops/sec
+                match = re.search(r";\s+([\d.]+)\s+current ops/sec", log)
+                if match:
+                    current_ops_per_sec = float(match.group(1))  # First captured group
+                sections = re.findall(r"\[(\w+): ([^\]]+)\]", log)
+                metrics = {}
+                for section, content in sections:
+                    # Extract key-value pairs
+                    metrics[section] = {}
+                    for key_value in content.split(", "):
+                        key, value = key_value.split("=")
+                        metrics[section][key] = float(value) if "." in value else int(value)
+                return {
+                    "date_time": date_time,
+                    "sec": sec,
+                    "total_operations": total_operations,
+                    "current_ops_per_sec": current_ops_per_sec,
+                    #"all_numbers": list(map(float, all_numbers)),  # Convert all numbers to float
+                    "metrics": metrics,
+                }
+            except Exception as e:
+                # Log or handle any parsing errors (optional)
+                return None
+        results = []
+        with open(file_path, 'r') as file:
+            for line in file:
+                parsed_data = parse_string(line.strip())
+                if parsed_data:
+                    results.append(parsed_data)
+        return results
+    def benchmark_logs_to_timeseries_df(self, list_logs, aggregate=True):
+        column = "current_ops_per_sec"
+        remove_first = 0
+        remove_last = 0
+        def find_matching_files(directory, pattern):
+            # Use glob to find files matching the pattern
+            matching_files = glob.glob(os.path.join(directory, pattern))
+            return matching_files
+        if not aggregate:
+            df_total = []
+        else:
+            df_total = pd.DataFrame()
+        for file_logs in list_logs:
+            pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
+            #print(self.path+'/'+self.code)
+            matching_files = find_matching_files(self.path, pattern)
+            for file in matching_files:
+                #print(file)
+                parsed_results = self.parse_ycsb_log_file(file)
+                data = []
+                for result in parsed_results:
+                    d = {
+                        'sec': result['sec'],
+                        column: result[column]
+                    }
+                    data.append(d)
+                #print(data)
+                df = pd.DataFrame(data)
+                df = df.set_index('sec')
+                df = df.groupby(df.index).last() # in case of duplicate indexes (i.e., times)
+                if remove_first > 0:
+                    df = df.iloc[remove_first:]
+                if remove_last > 0:
+                    df = df.iloc[:-remove_last]
+                #print(df)
+                df['avg'] = df[column].mean()
+                #print(df)
+                #df_total = pd.concat([df_total, df], axis=1)
+                if not aggregate:
+                    df_total.append(df.copy())
+                else:
+                    if df_total.empty:
+                        df_total = df.copy()
+                    else:
+                        df_total[column] = df_total[column] + df[column]
+                #df.plot(ylim=(0,df['current_ops_per_sec'].max()*1.1))
+        if aggregate:
+            #print(df_total)
+            df_total['avg'] = df_total[column].mean()
+        return df_total
+    def get_benchmark_logs_timeseries_df_aggregated(self, configuration, client='1'):
+        #code = "1737365651"
+        #code = "1737110896"
+        #path = "/home/perdelt/benchmarks"
+        #evaluation = evaluator.ycsb(code=code, path=path)
+        client = str(client)#'49'
+        #configuration = 'configuration'
+        df = self.get_df_benchmarking()
+        #print(df)
+        list_logs = df[(df['client'] == client) & (df['configuration'] == configuration)]['pod'].tolist()
+        #print(list_logs)
+        #list_logs = df[df['client'] == client]['pod'].tolist()
+        #list_logs = df[df['client'] == client]['pod_count'].tolist()
+        df_total = self.benchmark_logs_to_timeseries_df(list_logs)
+        return df_total
+    def get_benchmark_logs_timeseries_df_single(self, configuration, client='1'):
+        #code = "1737365651"
+        #code = "1737110896"
+        #path = "/home/perdelt/benchmarks"
+        #evaluation = evaluator.ycsb(code=code, path=path)
+        client = str(client)#'49'
+        #configuration = 'configuration'
+        df = self.get_df_benchmarking()
+        list_logs = df[(df['client'] == client) & (df['configuration'] == configuration)]['pod'].tolist()
+        #list_logs = df[df['client'] == client]['pod'].tolist()
+        #list_logs = df[df['client'] == client]['pod_count'].tolist()
+        df_total = self.benchmark_logs_to_timeseries_df(list_logs, aggregate=False)
+        return df_total
+
 
 
 

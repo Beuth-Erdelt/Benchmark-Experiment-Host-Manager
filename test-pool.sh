@@ -309,7 +309,7 @@ nohup python ycsb.py -ms 1 -tr \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 10 \
+  -nlf 12 \
   -nbp 1,8 \
   -nbt 48,56,64,72,80,88,96,104,112,120 \
   -nbf 6,7,8,9,10,11,12,13,14 \
@@ -338,7 +338,7 @@ nohup python ycsb.py -ms 1 -tr \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 10 \
+  -nlf 12 \
   -nbp 1,8 \
   -nbt 48,56,64,72,80,88,96,104,112,120 \
   -nbf 6,7,8,9,10,11,12,13,14 \
@@ -368,7 +368,7 @@ nohup python ycsb.py -ms 1 -tr \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 10 \
+  -nlf 12 \
   -nbp 1,8 \
   -nbt 48,56,64,72,80,88,96,104,112,120 \
   -nbf 6,7,8,9,10,11,12,13,14 \
@@ -444,11 +444,183 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+BEXHOMA_YCSB_SF_DATA=64
+BEXHOMA_YCSB_SF_OPS=64
+
+
+### Same with higher number of data and ops
+### Fixed nodes
+### Scan for peak performance
+### base is 16384 - scan from 98304 to 229376
+### threads range from 48 to 120 in steps of 8
+### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1,8 \
+  -nbt 48,56,64,72,80,88,96,104,112,120 \
+  -nbf 6,7,8,9,10,11,12,13,14 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 200Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_6.log &
+
+
+wait_process "ycsb"
+
+
+BEXHOMA_YCSB_SF_DATA=64
+BEXHOMA_YCSB_SF_OPS=128
+
+
+### Same with higher number of data and ops
+### Fixed nodes
+### Scan for peak performance
+### base is 16384 - scan from 163840 to 229376
+### threads range from 104 to 136 in steps of 8
+### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1,8 \
+  -nbt 104,112,120,128,136 \
+  -nbf 10,11,12,13,14 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 200Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_7.log &
+
+
+wait_process "ycsb"
+
+
+
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=256
+
+
+### Same with higher number of data and ops
+### Fixed nodes
+### Scan for peak performance
+### base is 16384 - scan from 163840 to 229376
+### threads range from 104 to 136 in steps of 8
+### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1,8 \
+  -nbt 104,112,120,128,136 \
+  -nbf 10,11,12,13,14 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_8.log &
+
+
+wait_process "ycsb"
+
+
+
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=512
+
+
+### Same with higher number of data and ops
+### Fixed nodes
+### Scan for peak performance
+### base is 16384 - scan from 163840 to 229376
+### threads range from 104 to 136 in steps of 8
+### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1,8 \
+  -nbt 104,112,120,128,136 \
+  -nbf 10,11,12,13,14 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_9.log &
+
+
+wait_process "ycsb"
 
 
 
 
 
+
+
+
+
+
+
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=16
+
+
+### Small functional test
+### Fixed nodes
+### Workload A
+### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 12 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_workload_a.log &
+
+
+wait_process "ycsb"
 
 
 
