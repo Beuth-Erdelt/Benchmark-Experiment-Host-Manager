@@ -20,7 +20,7 @@ ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
 ENV BEXHOMA_USER root
 ENV BEXHOMA_PASSWORD root
-ENV BEXHOMA_SYNCH_LOAD 0
+ENV BEXHOMA_SYNCH_LOAD 1
 ENV DATABASE demo
 ENV DBMSBENCHMARKER_START 0
 ENV DBMSBENCHMARKER_NOW 0
@@ -78,8 +78,8 @@ RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.2.jre8.ja
 RUN cp monetdb-jdbc-3.2.jre8.jar jars/monetdb-jdbc-3.2.jre8.jar
 
 ######### Specific version of MonetDB JDBC #########
-RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
-RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
+#RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
+#RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
 
 ######### Specific version of SingleStore JDBC #########
 RUN wget https://github.com/memsql/S2-JDBC-Connector/releases/download/v1.1.4/singlestore-jdbc-client-1.1.4.jar

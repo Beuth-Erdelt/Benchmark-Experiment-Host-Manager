@@ -642,14 +642,14 @@ nohup python ycsb.py -ms 1 -tr \
   -nlp 8 \
   -nlt 64 \
   -nlf 12 \
-  -nbp 1 \
+  -nbp 1,8,16 \
   -nbt 64 \
   -nbf 12 \
   -ne 1 \
-  -nc 1 \
+  -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_workload_a.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_workload_a2.log &
 
 
 wait_process "ycsb"
