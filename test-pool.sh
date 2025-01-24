@@ -583,6 +583,38 @@ wait_process "ycsb"
 
 
 
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=16
+
+### 16 pods
+### Fixed nodes
+### Try big amount of data
+### repeat for 1 driver and 8 drivers
+### TODO: Set target and threads
+### TODO: Size possible?
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1,16 \
+  -nbt 64 \
+  -nbf 12 \
+  -ne 2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_10.log &
+
+
+wait_process "ycsb"
+
+
 
 
 

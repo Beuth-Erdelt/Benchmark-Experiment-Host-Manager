@@ -1121,7 +1121,7 @@ class ycsb(logger):
             #print(df_total)
             df_total['avg'] = df_total[column].mean()
         return df_total
-    def get_benchmark_logs_timeseries_df_aggregated(self, configuration, client='1'):
+    def get_benchmark_logs_timeseries_df_aggregated(self, configuration, client='1', experiment_run='1'):
         #code = "1737365651"
         #code = "1737110896"
         #path = "/home/perdelt/benchmarks"
@@ -1130,13 +1130,13 @@ class ycsb(logger):
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
         #print(df)
-        list_logs = df[(df['client'] == client) & (df['configuration'] == configuration)]['pod'].tolist()
+        list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
         #print(list_logs)
         #list_logs = df[df['client'] == client]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs)
         return df_total
-    def get_benchmark_logs_timeseries_df_single(self, configuration, client='1'):
+    def get_benchmark_logs_timeseries_df_single(self, configuration, client='1', experiment_run='1'):
         #code = "1737365651"
         #code = "1737110896"
         #path = "/home/perdelt/benchmarks"
@@ -1144,7 +1144,7 @@ class ycsb(logger):
         client = str(client)#'49'
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
-        list_logs = df[(df['client'] == client) & (df['configuration'] == configuration)]['pod'].tolist()
+        list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, aggregate=False)
