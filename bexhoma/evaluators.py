@@ -1102,11 +1102,13 @@ class ycsb(logger):
             df_total = []
         else:
             df_total = pd.DataFrame()
+        num_logs = 0
         for file_logs in list_logs:
             pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
             #print(self.path+'/'+self.code)
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
+                num_logs = num_logs + 1
                 #print(file)
                 parsed_results = self.parse_ycsb_log_file(file)
                 data = []
@@ -1125,6 +1127,7 @@ class ycsb(logger):
                             column: result[column]
                         }
                     data.append(d)
+                data.pop()  # remove the last measure as it is not reliable
                 #print(data)
                 df = pd.DataFrame(data)
                 df = df.set_index('sec')
@@ -1143,15 +1146,23 @@ class ycsb(logger):
                     df_total.append(df.copy())
                 else:
                     if df_total.empty:
-                        df['avg'] = df[column].mean()
+                        #df['avg'] = df[column].mean()
                         df_total = df.copy()
                     else:
-                        df_total = df_total.add(df, fill_value=0)
+                        if "9" in metric:
+                            df_total[column] = df_total[column].combine(df[column], lambda x, y: x if (x > y and pd.notna(x) and pd.notna(y)) or (pd.notna(x) and not pd.notna(y)) else y)
+                        else:
+                            df_total = df_total.add(df, fill_value=0)
                         #df_total[column] = df_total[column] + df[column]
                 #df.plot(ylim=(0,df['current_ops_per_sec'].max()*1.1))
         if aggregate:
             #print(df_total)
-            df_total['avg'] = df_total[column].mean()
+            if not metric == "current_ops_per_sec" and not "9" in metric:
+                #print(df_total)
+                #print("divide by", num_logs)
+                df_total = df_total / num_logs
+            df_total['avg'] = int(df_total[column].mean())
+            #print(df_total)
         return df_total
     def get_benchmark_logs_timeseries_df_aggregated(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
         #code = "1737365651"
