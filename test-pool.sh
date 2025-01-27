@@ -694,6 +694,40 @@ wait_process "ycsb"
 
 
 
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=16
+
+
+### Small functional test - low target - same, but 60s interval ycsb metrics
+### Fixed nodes
+### Workload A
+### repeat for 1 driver and 8 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8,16 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_workload_a4.log &
+
+
+wait_process "ycsb"
+
+
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

@@ -1128,6 +1128,8 @@ class ycsb(logger):
                 #print(data)
                 df = pd.DataFrame(data)
                 df = df.set_index('sec')
+                #print("BLA", df)
+                #df.fillna(0)
                 df = df.groupby(df.index).last() # in case of duplicate indexes (i.e., times)
                 if remove_first > 0:
                     df = df.iloc[remove_first:]
@@ -1143,7 +1145,8 @@ class ycsb(logger):
                     if df_total.empty:
                         df_total = df.copy()
                     else:
-                        df_total[column] = df_total[column] + df[column]
+                        df_total = df_total.add(df, fill_value=0)
+                        #df_total[column] = df_total[column] + df[column]
                 #df.plot(ylim=(0,df['current_ops_per_sec'].max()*1.1))
         if aggregate:
             #print(df_total)
@@ -1162,7 +1165,7 @@ class ycsb(logger):
         #print(list_logs)
         #list_logs = df[df['client'] == client]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod_count'].tolist()
-        df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric)
+        df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=True)
         return df_total
     def get_benchmark_logs_timeseries_df_single(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
         #code = "1737365651"
@@ -1173,6 +1176,7 @@ class ycsb(logger):
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
+        #print(list_logs)
         #list_logs = df[df['client'] == client]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
