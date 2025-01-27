@@ -1071,10 +1071,29 @@ class ycsb(logger):
                 if parsed_data:
                     results.append(parsed_data)
         return results
-    def benchmark_logs_to_timeseries_df(self, list_logs, aggregate=True):
-        column = "current_ops_per_sec"
+    def benchmark_logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True):
+        #column = "current_ops_per_sec"
+        #column = "READ_Avg"
+        column = metric
         remove_first = 0
         remove_last = 0
+        def flatten_dict(d, parent_key='', sep='_'):
+            """
+            Flattens a nested dictionary so that nested keys are concatenated with a separator.
+
+            :param d: Dictionary to flatten.
+            :param parent_key: String to prepend to the keys (used during recursion).
+            :param sep: Separator for concatenating keys.
+            :return: Flattened dictionary.
+            """
+            items = []
+            for k, v in d.items():
+                new_key = f"{parent_key}{sep}{k}" if parent_key else k  # Concatenate parent and child keys
+                if isinstance(v, dict):  # If value is a dictionary, recurse
+                    items.extend(flatten_dict(v, new_key, sep=sep).items())
+                else:  # Otherwise, add the key-value pair
+                    items.append((new_key, v))
+            return dict(items)
         def find_matching_files(directory, pattern):
             # Use glob to find files matching the pattern
             matching_files = glob.glob(os.path.join(directory, pattern))
@@ -1092,10 +1111,19 @@ class ycsb(logger):
                 parsed_results = self.parse_ycsb_log_file(file)
                 data = []
                 for result in parsed_results:
-                    d = {
-                        'sec': result['sec'],
-                        column: result[column]
-                    }
+                    #print(result)
+                    if not column in result:
+                        result_metrics = flatten_dict(result['metrics'])
+                        #print(result_metrics)
+                        d = {
+                            'sec': result['sec'],
+                            column: result_metrics[column]
+                        }
+                    else:
+                        d = {
+                            'sec': result['sec'],
+                            column: result[column]
+                        }
                     data.append(d)
                 #print(data)
                 df = pd.DataFrame(data)
@@ -1121,7 +1149,7 @@ class ycsb(logger):
             #print(df_total)
             df_total['avg'] = df_total[column].mean()
         return df_total
-    def get_benchmark_logs_timeseries_df_aggregated(self, configuration, client='1', experiment_run='1'):
+    def get_benchmark_logs_timeseries_df_aggregated(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
         #code = "1737365651"
         #code = "1737110896"
         #path = "/home/perdelt/benchmarks"
@@ -1134,9 +1162,9 @@ class ycsb(logger):
         #print(list_logs)
         #list_logs = df[df['client'] == client]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod_count'].tolist()
-        df_total = self.benchmark_logs_to_timeseries_df(list_logs)
+        df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric)
         return df_total
-    def get_benchmark_logs_timeseries_df_single(self, configuration, client='1', experiment_run='1'):
+    def get_benchmark_logs_timeseries_df_single(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
         #code = "1737365651"
         #code = "1737110896"
         #path = "/home/perdelt/benchmarks"
@@ -1147,7 +1175,7 @@ class ycsb(logger):
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod'].tolist()
         #list_logs = df[df['client'] == client]['pod_count'].tolist()
-        df_total = self.benchmark_logs_to_timeseries_df(list_logs, aggregate=False)
+        df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         return df_total
 
 
