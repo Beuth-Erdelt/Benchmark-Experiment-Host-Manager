@@ -174,6 +174,7 @@ sed -i "s/ROW_START/$ROW_START/" $FILENAME
 sed -i "s/ROW_PART/$ROW_PART/" $FILENAME
 sed -i "s/YCSB_THREADCOUNT/$YCSB_THREADCOUNT/" $FILENAME
 sed -i "s/YCSB_TARGET/$YCSB_TARGET/" $FILENAME
+sed -i "s/YCSB_STATUS_INTERVAL/$YCSB_STATUS_INTERVAL/" $FILENAME
 
 echo "# Yahoo! Cloud System Benchmark
 # Workload A: Update heavy workload

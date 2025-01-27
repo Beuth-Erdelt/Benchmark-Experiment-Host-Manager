@@ -221,6 +221,7 @@ if __name__ == '__main__':
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = 10,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -254,6 +255,7 @@ if __name__ == '__main__':
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = 10,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -297,6 +299,7 @@ if __name__ == '__main__':
                                     YCSB_ROWS = ycsb_rows,
                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                     YCSB_BATCHSIZE = batchsize,
+                                    YCSB_STATUS_INTERVAL = 10,
                                     )
                                 config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                                 executor_list = []
@@ -321,6 +324,7 @@ if __name__ == '__main__':
                                                     YCSB_ROWS = ycsb_rows,
                                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                                     YCSB_BATCHSIZE = batchsize,
+                                                    YCSB_STATUS_INTERVAL = 10,
                                                     )
                                 #print(executor_list)
                                 config.add_benchmark_list(executor_list)
@@ -342,6 +346,7 @@ if __name__ == '__main__':
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = 10,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -375,6 +380,7 @@ if __name__ == '__main__':
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = 10,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -396,6 +402,7 @@ if __name__ == '__main__':
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = 10,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -429,6 +436,7 @@ if __name__ == '__main__':
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = 10,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -525,6 +533,7 @@ if __name__ == '__main__':
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = 10,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -558,6 +567,7 @@ if __name__ == '__main__':
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = 10,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -582,6 +592,7 @@ if __name__ == '__main__':
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = 10,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -615,6 +626,7 @@ if __name__ == '__main__':
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = 10,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -640,6 +652,7 @@ if __name__ == '__main__':
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = 10,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -664,6 +677,7 @@ if __name__ == '__main__':
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = 10,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

@@ -39,3 +39,4 @@ insertcount=ROW_PART
 
 threadcount=YCSB_THREADCOUNT
 target=YCSB_TARGET
+status.interval=YCSB_STATUS_INTERVAL
