@@ -1136,13 +1136,14 @@ class ycsb(logger):
                 if remove_last > 0:
                     df = df.iloc[:-remove_last]
                 #print(df)
-                df['avg'] = df[column].mean()
+                #df['avg'] = df[column].mean()
                 #print(df)
                 #df_total = pd.concat([df_total, df], axis=1)
                 if not aggregate:
                     df_total.append(df.copy())
                 else:
                     if df_total.empty:
+                        df['avg'] = df[column].mean()
                         df_total = df.copy()
                     else:
                         df_total = df_total.add(df, fill_value=0)
