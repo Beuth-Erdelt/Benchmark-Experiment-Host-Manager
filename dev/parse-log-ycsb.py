@@ -65,7 +65,7 @@ def parse_file(file_path):
     return results
 
 # Example usage
-file_path = 'logfile.txt'  # Replace with the path to your log file
+file_path = '/home/perdelt/benchmarks/1737365651/bexhoma-benchmarker-postgresql-64-8-196608-1737365651-1-1-tgwps.dbmsbenchmarker.log'  # Replace with the path to your log file
 parsed_results = parse_file(file_path)
 
 # Output results
