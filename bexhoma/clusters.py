@@ -73,19 +73,31 @@ class testbed():
     """
     def __init__(self, clusterconfig='cluster.config', experiments_configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.logger = logging.getLogger('bexhoma')
-        if context is None:
-            # use current context
-            context = kubernetes_config.list_kube_config_contexts()[1]['name']
-        self.context = context
-        self.experiments = []
-        self.benchmark = None
+        self.clusterconfig = clusterconfig
+        self.appname = 'bexhoma'
+        self.namespace = 'bexhoma'
         with open(clusterconfig) as f:
             configfile=f.read()
             self.config = eval(configfile)
+        if context is None:
+            # use current context
+            try:
+                context = kubernetes_config.list_kube_config_contexts()[1]['name']
+                self.contextdata = self.config['credentials']['k8s']['context'][self.context]
+                self.host = 'localhost'
+                self.port = self.contextdata['port']
+                # k8s:
+                self.namespace = self.contextdata['namespace']
+                self.appname = self.config['credentials']['k8s']['appname']
+                self.yamlfolder = yamlfolder
+            except:
+                print("WARN: No Kubernetes context found")
+        self.context = context
+        self.experiments = []
+        self.benchmark = None
         self.experiments_configfolder = experiments_configfolder
         self.resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         self.queryfile = queryfile
-        self.clusterconfig = clusterconfig
         self.timeLoading = 0
         self.resources = {}
         self.ddl_parameters = {}
@@ -96,16 +108,9 @@ class testbed():
         self.connectionmanagement['singleConnection'] = False
         self.querymanagement = {}
         self.workload = {}
-        self.contextdata = self.config['credentials']['k8s']['context'][self.context]
-        self.host = 'localhost'
-        self.port = self.contextdata['port']
         self.monitoring_active = True
         self.monitor_cluster_active = False
         self.monitor_cluster_exists = False                                                     # True, if there are cAdvisors and a Prometheus server independent from bexhoma
-        # k8s:
-        self.namespace = self.contextdata['namespace']
-        self.appname = self.config['credentials']['k8s']['appname']
-        self.yamlfolder = yamlfolder
         # experiment:
         self.set_experiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.set_experiment(instance, volume, docker, script)
@@ -116,11 +121,14 @@ class testbed():
         provide access to an K8s cluster by initializing connection handlers.
         """
         self.logger.debug('testbed.cluster_access({})'.format(self.context))
-        kubernetes_config.load_kube_config(context=self.context)
-        self.v1core = kubernetes_client.CoreV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
-        #self.v1beta = kubernetes_client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
-        self.v1apps = kubernetes_client.AppsV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
-        self.v1batches = kubernetes_client.BatchV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
+        try:
+            kubernetes_config.load_kube_config(context=self.context)
+            self.v1core = kubernetes_client.CoreV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
+            #self.v1beta = kubernetes_client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
+            self.v1apps = kubernetes_client.AppsV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
+            self.v1batches = kubernetes_client.BatchV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
+        except:
+            print("WARN: Could not connect to Kubernetes")
     def set_code(self, code):
         """
         Sets the unique identifier of an experiment.
