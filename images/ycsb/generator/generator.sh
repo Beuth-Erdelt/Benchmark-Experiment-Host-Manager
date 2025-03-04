@@ -11,6 +11,7 @@ echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_DBMS:$BEXHOMA_DBMS"
 
 ######################## Wait for synched starting time ########################
 echo "benchmark started at $DBMSBENCHMARKER_NOW"
@@ -134,12 +135,24 @@ else
 fi
 
 ######################## Generate driver file ########################
-echo "db.driver=$BEXHOMA_DRIVER
+# Redis or JDBC
+#redis.cluster=false  # Set to true if using Redis Cluster
+#redis.pipeline=true  # Enable pipelining for performance
+#redis.pipeline.maxsize=50  # Adjust based on workload
+if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
+    echo "BEXHOMA_DBMS is set to Redis"
+    echo "redis.host=$BEXHOMA_HOST
+redis.port=$BEXHOMA_PORT
+redis.passwd=$BEXHOMA_PASSWORD
+" > db.properties
+else
+#    echo "BEXHOMA_DRIVER has a different value or is empty"
+    echo "db.driver=$BEXHOMA_DRIVER
 db.url=$BEXHOMA_URL
 db.user=$BEXHOMA_USER
 db.passwd=$BEXHOMA_PASSWORD
 " > db.properties
-# db.batchsize=1000             # The number of rows to be batched before commit (or executeBatch() when jdbc.batchupdateapi=true)
+fi
 
 if [ -z "$YCSB_BATCHSIZE" ]
 then
@@ -210,13 +223,22 @@ echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Execute workload ###################
-if test $YCSB_STATUS -ne 0
-then
-    # report status
-    time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
+    if test $YCSB_STATUS -ne 0
+    then
+        # report status
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+    else
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
+    fi
 else
-    time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
-fi
+    if test $YCSB_STATUS -ne 0
+    then
+        # report status
+        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+    else
+        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
+    fi
 
 ######################## End time measurement ###################
 SECONDS_END=$SECONDS

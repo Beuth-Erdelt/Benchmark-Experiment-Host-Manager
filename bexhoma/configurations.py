@@ -2084,14 +2084,15 @@ scrape_configs:
                     # other components (not managed by bexhoma)
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(
-            serverip=serverip,
-            dbname=self.experiment.volume,
-            DBNAME=self.experiment.volume.upper(),
-            timout_s=c['connectionmanagement']['timeout'],
-            timeout_ms=c['connectionmanagement']['timeout']*1000,
-            namespace=self.experiment.cluster.namespace
-            )
+        if 'JDBC' in c:
+            c['JDBC']['url'] = c['JDBC']['url'].format(
+                serverip=serverip,
+                dbname=self.experiment.volume,
+                DBNAME=self.experiment.volume.upper(),
+                timout_s=c['connectionmanagement']['timeout'],
+                timeout_ms=c['connectionmanagement']['timeout']*1000,
+                namespace=self.experiment.cluster.namespace
+                )
         #print(c)
         return c#.copy()
     def run_benchmarker_pod(self,
@@ -2176,11 +2177,12 @@ scrape_configs:
         self.check_volumes()
         # add config jarfolder
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
-        if isinstance(c['JDBC']['jar'], list):
-            for i, j in enumerate(c['JDBC']['jar']):
-                c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
-        elif isinstance(c['JDBC']['jar'], str):
-            c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
+        if 'JDBC' in c:
+            if isinstance(c['JDBC']['jar'], list):
+                for i, j in enumerate(c['JDBC']['jar']):
+                    c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
+            elif isinstance(c['JDBC']['jar'], str):
+                c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
         #print(c)
         self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(connection))
         self.benchmark = benchmarker.benchmarker(
@@ -2839,29 +2841,33 @@ scrape_configs:
         else:
             volume = ''
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
-        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
-        #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {
-            'app':self.appname,
-            'component':'sut',
-            'experiment':self.code,
-            'configuration':self.configuration,
-            'pod_sut':self.pod_sut,
-            'scriptfolder':scriptfolder,
-            'commands':commands,
-            'loadData':self.dockertemplate['loadData'],
-            'path':self.experiment.path,
-            'volume':volume,
-            'context':self.experiment.cluster.context,
-            'service_name':service_name,
-            'time_offset':time_offset,
-            'script_type':script_type,
-            'time_start_int':time_start_int,
-            'namespace':self.experiment.cluster.namespace
-        }
-        thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
-        thread.start()
-        return
+        if not 'loadData' in self.dockertemplate:
+            print("{:30s}: no load command found in config".format(self.configuration))
+            return
+        else:
+            self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
+            #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
+            thread_args = {
+                'app':self.appname,
+                'component':'sut',
+                'experiment':self.code,
+                'configuration':self.configuration,
+                'pod_sut':self.pod_sut,
+                'scriptfolder':scriptfolder,
+                'commands':commands,
+                'loadData':self.dockertemplate['loadData'],
+                'path':self.experiment.path,
+                'volume':volume,
+                'context':self.experiment.cluster.context,
+                'service_name':service_name,
+                'time_offset':time_offset,
+                'script_type':script_type,
+                'time_start_int':time_start_int,
+                'namespace':self.experiment.cluster.namespace
+            }
+            thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+            thread.start()
+            return
     def get_patched_yaml(self, file, patch=""):
         """
         Applies a YAML formatted patch to a YAML file and returns merged result as a YAML object.
@@ -2942,21 +2948,25 @@ scrape_configs:
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
         env_default = dict()
-        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
-            serverip=servicename,
-            dbname=self.experiment.volume,
-            DBNAME=self.experiment.volume.upper(),
-            timout_s=c['connectionmanagement']['timeout'],
-            timeout_ms=c['connectionmanagement']['timeout']*1000,
-            namespace=self.experiment.cluster.namespace
-            )
-        env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
-        env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
-        env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
-        if isinstance(c['JDBC']['jar'], str):
-            env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
+        if 'JDBC' in c:
+            env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
+                serverip=servicename,
+                dbname=self.experiment.volume,
+                DBNAME=self.experiment.volume.upper(),
+                timout_s=c['connectionmanagement']['timeout'],
+                timeout_ms=c['connectionmanagement']['timeout']*1000,
+                namespace=self.experiment.cluster.namespace
+                )
+            env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
+            env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
+            env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
+            if isinstance(c['JDBC']['jar'], str):
+                env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
+            else:
+                env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
         else:
-            env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
+            env_default['BEXHOMA_USER'] = c['auth'][0]
+            env_default['BEXHOMA_PASSWORD'] = c['auth'][1]
         env_default['BEXHOMA_HOST'] = servicename
         env_default['BEXHOMA_CLIENT'] = int(self.client)-1
         #env_default['BEXHOMA_CLIENT'] = str(parallelism) # why?

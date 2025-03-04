@@ -10,6 +10,7 @@ The following parameter (ENV) have been added:
 * `RNGSEED`: Random Seed. Currently ignored.
 * `CONNECTION`: Name of the Bexhoma connection.
 * `EXPERIMENT`: Id of the Bexhoma experiment.
+* `BEXHOMA_DBMS`: Type of dbms to connect do (jdbc, redis)
 * `BEXHOMA_URL`: For db.url
 * `BEXHOMA_HOST`: Ignored 
 * `BEXHOMA_PORT`: Ignored 
