@@ -138,6 +138,7 @@ echo "YCSB_THREADCOUNT $YCSB_THREADCOUNT"
 echo "YCSB_TARGET $YCSB_TARGET"
 echo "YCSB_WORKLOAD $YCSB_WORKLOAD"
 echo "YCSB_BATCHSIZE:$YCSB_BATCHSIZE"
+echo "YCSB_MEASUREMENT_TYPE:$YCSB_MEASUREMENT_TYPE"
 
 ######################## Generate driver file ########################
 echo "db.driver=$BEXHOMA_DRIVER
@@ -175,6 +176,7 @@ sed -i "s/ROW_PART/$ROW_PART/" $FILENAME
 sed -i "s/YCSB_THREADCOUNT/$YCSB_THREADCOUNT/" $FILENAME
 sed -i "s/YCSB_TARGET/$YCSB_TARGET/" $FILENAME
 sed -i "s/YCSB_STATUS_INTERVAL/$YCSB_STATUS_INTERVAL/" $FILENAME
+sed -i "s/YCSB_MEASUREMENT_TYPE/$YCSB_MEASUREMENT_TYPE/" $FILENAME
 
 echo "# Yahoo! Cloud System Benchmark
 # Workload A: Update heavy workload
