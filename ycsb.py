@@ -222,6 +222,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "jdbc",
                         YCSB_MEASUREMENT_TYPE = "hdrhistogram"
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -257,6 +258,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "jdbc",
                                         YCSB_MEASUREMENT_TYPE = "hdrhistogram"
                                         )
                     #print(executor_list)
@@ -302,6 +304,7 @@ if __name__ == '__main__':
                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                     YCSB_BATCHSIZE = batchsize,
                                     YCSB_STATUS_INTERVAL = 10,
+                                    BEXHOMA_DBMS = "jdbc",
                                     )
                                 config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                                 executor_list = []
@@ -327,6 +330,7 @@ if __name__ == '__main__':
                                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                                     YCSB_BATCHSIZE = batchsize,
                                                     YCSB_STATUS_INTERVAL = 10,
+                                                    BEXHOMA_DBMS = "jdbc",
                                                     )
                                 #print(executor_list)
                                 config.add_benchmark_list(executor_list)
@@ -349,6 +353,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "jdbc",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -383,6 +388,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "jdbc",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -405,6 +411,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "jdbc",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -439,6 +446,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "jdbc",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -536,6 +544,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "jdbc",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -570,6 +579,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "jdbc",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -595,6 +605,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "jdbc",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -629,6 +640,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "jdbc",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -655,6 +667,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "jdbc",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -680,6 +693,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "jdbc",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -703,6 +717,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "redis",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -737,6 +752,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "redis",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
