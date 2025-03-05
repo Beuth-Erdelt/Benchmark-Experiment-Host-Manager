@@ -239,6 +239,7 @@ else
     else
         time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
     fi
+fi
 
 ######################## End time measurement ###################
 SECONDS_END=$SECONDS
