@@ -11,6 +11,7 @@ ENV CHILD=1
 ENV RNGSEED=123
 ENV CONNECTION=mysql
 ENV EXPERIMENT=12345
+ENV BEXHOMA_DBMS=jdbc
 ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
 ENV BEXHOMA_PORT 3306
@@ -30,6 +31,7 @@ ENV YCSB_STATUS_INTERVAL 10
 ENV YCSB_STATUS 0
 ENV YCSB_WORKLOAD a
 ENV YCSB_BATCHSIZE=""
+ENV YCSB_MEASUREMENT_TYPE=histogram
 
 RUN apk update && apk add --update curl openjdk8-jre && \
     mkdir -p /opt && cd /opt && \

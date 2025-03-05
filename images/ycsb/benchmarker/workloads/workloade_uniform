@@ -48,4 +48,6 @@ insertcount=ROW_PART_AFTER_LOADING
 
 threadcount=YCSB_THREADCOUNT
 target=YCSB_TARGET
+status.interval=YCSB_STATUS_INTERVAL
+measurementtype=YCSB_MEASUREMENT_TYPE
 
