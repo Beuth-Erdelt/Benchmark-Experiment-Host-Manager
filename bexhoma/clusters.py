@@ -83,7 +83,7 @@ class testbed():
             # use current context
             try:
                 context = kubernetes_config.list_kube_config_contexts()[1]['name']
-                self.contextdata = self.config['credentials']['k8s']['context'][self.context]
+                self.contextdata = self.config['credentials']['k8s']['context'][context]
                 self.host = 'localhost'
                 self.port = self.contextdata['port']
                 # k8s:
