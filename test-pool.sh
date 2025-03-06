@@ -774,6 +774,7 @@ BEXHOMA_YCSB_SF_OPS=256
 ### only 128 threads, target = 180224
 ### different measurement of latencies - hdrhistogram
 ### repeat for 1 driver and 8 drivers and 16 drivers
+#-p hdrhistogram.fileoutput=true
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -sfo $BEXHOMA_YCSB_SF_OPS \
@@ -800,14 +801,45 @@ wait_process "ycsb"
 
 
 BEXHOMA_YCSB_SF_DATA=16
-BEXHOMA_YCSB_SF_OPS=256
+BEXHOMA_YCSB_SF_OPS=64
 
 
-### High number of data and ops
 ### Redis
 ### Fixed nodes
-### only 128 threads, target = 180224
-### different measurement of latencies - hdrhistogram
+### only 128 threads, no target
+### repeat for 1 driver and 8 drivers and 16 drivers
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1,1,8 \
+  -nbt 128 \
+  -nbf 0 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_16.log &
+
+
+wait_process "ycsb"
+
+
+
+
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=64
+
+
+### Redis
+### Fixed nodes
+### scan for 128 threads, no target
 ### repeat for 1 driver and 8 drivers and 16 drivers
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
@@ -820,18 +852,55 @@ nohup python ycsb.py -ms 1 -tr \
   -nlt 64 \
   -nlf 12 \
   -nbp 1 \
-  -nbt 80,128,160 \
-  -nbf 11 \
+  -nbt 1,2,4,8,16,32,64,128 \
+  -nbf 0 \
   -ne 1 \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_16.log &
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_17.log &
 
 
 wait_process "ycsb"
 
 
+
+
+
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=256
+
+
+### High number of data and ops
+### no target
+### Fixed nodes
+### Scan for peak performance
+### different measurement of latencies - hdrhistogram
+### base is 16384 - scan from 163840 to 229376
+### threads range from 104 to 136 in steps of 8
+### repeat for 1 driver and 8 drivers and 16 drivers
+### TODO: Do the same for PGBouncer sidecar? Check resources first
+nohup python ycsb.py -ms 1 -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1,8,16 \
+  -nbt 80,96,112,128,144,160,176,192 \
+  -nbf 0,9,10,11,12,13,14,15,16 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_18.log &
+
+
+wait_process "ycsb"
 
 
 

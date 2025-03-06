@@ -227,17 +227,17 @@ if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -s
     else
-        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram
     fi
 else
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -s
     else
-        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
+        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram
     fi
 fi
 

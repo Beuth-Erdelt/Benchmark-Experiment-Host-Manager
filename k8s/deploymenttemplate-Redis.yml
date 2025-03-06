@@ -45,21 +45,35 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-          image: redis
-          env:
-            - name: MASTER
-              value: "true"
-          ports:
-            - containerPort: 6379
-          securityContext:
-            allowPrivilegeEscalation: false
-            #runAsNonRoot: true
-            #runAsUser: 1000
-            #runAsGroup: 1000
-            #capabilities:
-            #  drop:
-            #    - ALL
-            readOnlyRootFilesystem: false
+        image: redis:7.4.2
+        args: ["--maxclients", "10000", "--io-threads", "64"]
+        env:
+          - name: MASTER
+            value: "true"
+        ports:
+          - containerPort: 6379
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli ping | grep PONG"
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
+          readOnlyRootFilesystem: false
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 1000m, memory: 1Gi}
