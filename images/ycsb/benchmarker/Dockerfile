@@ -11,6 +11,7 @@ ENV CHILD=1
 ENV RNGSEED=123
 ENV CONNECTION=mysql
 ENV EXPERIMENT=12345
+ENV BEXHOMA_DBMS=jdbc
 ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
 ENV BEXHOMA_PORT 3306
@@ -20,16 +21,17 @@ ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
 ENV BEXHOMA_USER root
 ENV BEXHOMA_PASSWORD root
-ENV BEXHOMA_SYNCH_LOAD 0
+ENV BEXHOMA_SYNCH_LOAD 1
 ENV DATABASE demo
 ENV DBMSBENCHMARKER_START 0
 ENV DBMSBENCHMARKER_NOW 0
 ENV YCSB_THREADCOUNT 1
 ENV YCSB_TARGET 10000
-ENV YCSB_STATUS_INTERVAL 60
+ENV YCSB_STATUS_INTERVAL 10
 ENV YCSB_STATUS 0
 ENV YCSB_WORKLOAD a
 ENV YCSB_BATCHSIZE=""
+ENV YCSB_MEASUREMENT_TYPE=histogram
 
 RUN apk update && apk add --update curl openjdk8-jre && \
     mkdir -p /opt && cd /opt && \
@@ -78,8 +80,8 @@ RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.2.jre8.ja
 RUN cp monetdb-jdbc-3.2.jre8.jar jars/monetdb-jdbc-3.2.jre8.jar
 
 ######### Specific version of MonetDB JDBC #########
-RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
-RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
+#RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
+#RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
 
 ######### Specific version of SingleStore JDBC #########
 RUN wget https://github.com/memsql/S2-JDBC-Connector/releases/download/v1.1.4/singlestore-jdbc-client-1.1.4.jar

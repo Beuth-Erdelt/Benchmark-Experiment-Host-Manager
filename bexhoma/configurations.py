@@ -149,6 +149,7 @@ class default():
         self.storage_label = experiment.storage_label
         self.experiment_done = False #: True, iff the SUT has performed the experiment completely
         self.dockerimage = dockerimage #: Name of the Docker image of the SUT
+        self.path_experiment_docker = self.docker #: Name of the correspond folder in the experiment path. Default = Name of Docker image (e.g., PostgreSQL for experiment/ycsb/PostgreSQL)
         self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
         self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
         self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
@@ -166,8 +167,14 @@ class default():
         self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
         self.sut_service_name = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.sut_containers_deployed = [] # Name of the containers of the SUT deployment
+        self.worker_containers_deployed = [] # Name of the containers of the SUT statefulset
+        self.pool_containers_deployed = [] # Name of the containers of the Pool deployment
+        self.sut_envs = {} # parameters sent to container via ENV
+        self.sut_has_pool = False # if there is a pool component - in particular for monitoring
         self.reset_sut()
         self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
+        self.current_benchmark_connection = "" # Name of the current connection - for metrics collection
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
@@ -1065,6 +1072,7 @@ scrape_configs:
             storageConfiguration = configuration
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+        name_pool = self.generate_component_name(app=app, component='pool', experiment=experiment, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         if len(deployments) > 0:
@@ -1072,7 +1080,8 @@ scrape_configs:
             return False
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         # ENV
-        env = {}
+        # default empty: env = {}
+        env = self.sut_envs.copy()
         # generate list of worker names
         list_of_workers = []
         for worker in range(self.num_worker):
@@ -1080,6 +1089,7 @@ scrape_configs:
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
+        env['BEXHOMA_SUT_NAME'] = name
         if self.num_worker > 0:
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
@@ -1177,7 +1187,9 @@ scrape_configs:
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                self.worker_containers_deployed = []
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
+                    self.worker_containers_deployed.append(container['name'])
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
@@ -1240,7 +1252,7 @@ scrape_configs:
                     for i_env,e in env.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
             if dep['kind'] == 'Service':
-                if dep['metadata']['name'] != 'bexhoma-service':
+                if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
                     if self.num_worker == 0:
                         del result[key]
                         continue
@@ -1264,6 +1276,22 @@ scrape_configs:
                             if 'name' in ports and ports['name'] != 'port-dbms':
                                 del result[key]['spec']['ports'][i]
                     continue
+                if dep['metadata']['name'] == 'bexhoma-pool': #!= 'bexhoma-service':
+                    dep['metadata']['name'] = name_pool
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'pool'
+                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['experiment'] = experiment
+                    dep['metadata']['labels']['dbms'] = self.docker
+                    dep['metadata']['labels']['volume'] = self.volume
+                    for label_key, label_value in self.additional_labels.items():
+                        dep['metadata']['labels'][label_key] = str(label_value)
+                    #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
+                    continue
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
@@ -1286,22 +1314,48 @@ scrape_configs:
                             del result[key]['spec']['ports'][i]
                 #print(pvc)
             if dep['kind'] == 'Deployment':
-                yaml_deployment = result[key]
-                dep['metadata']['name'] = name
+                if dep['metadata']['name'] == 'bexhoma-pool':
+                    dep['metadata']['name'] = name_pool
+                    dep['metadata']['labels']['component'] = 'pool'
+                else:
+                    yaml_deployment = result[key]       # this will be marked 'loaded' iff pvc exists
+                    dep['metadata']['name'] = name
+                    dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = component
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
                 dep['metadata']['labels']['volume'] = self.volume
+                dep['metadata']['labels']['sut'] = name
+                dep['metadata']['labels']['pool'] = name_pool
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
                 dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
-                deployment = dep['metadata']['name']
-                appname = dep['spec']['template']['metadata']['labels']['app']
-                for i, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
+                #deployment = dep['metadata']['name']
+                #appname = dep['spec']['template']['metadata']['labels']['app']
+                if dep['metadata']['name'] != name_pool:
+                    self.sut_containers_deployed = []
+                else:
+                    self.pool_containers_deployed = []
+                for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
+                    if dep['metadata']['name'] != name_pool:
+                        self.sut_containers_deployed.append(container['name'])
+                    else:
+                        self.pool_containers_deployed.append(container['name'])
+                    self.logger.debug('configuration.create_manifest_deployment({})'.format(env))
+                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                        dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i_env,e in env.items():
+                        index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['containers'][i_container]['env']) if d.get('name') == i_env), -1)
+                        if index_of_env >= 0:
+                            # update value of existing env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'][index_of_env]['value'] = str(e)
+                        else:
+                            # append new env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
@@ -1311,21 +1365,23 @@ scrape_configs:
                                 if vol['name'] == 'benchmark-storage-volume':
                                     #print(vol['mountPath'])
                                     if not use_storage:
-                                        del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                                        del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                                 if vol['name'] == 'benchmark-data-volume':
                                     #print(vol['mountPath'])
                                     if not use_data:
-                                        del result[key]['spec']['template']['spec']['containers'][i]['volumeMounts'][j]
+                                        del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                         if self.dockerimage:
-                            result[key]['spec']['template']['spec']['containers'][i]['image'] = self.dockerimage
+                            result[key]['spec']['template']['spec']['containers'][i_container]['image'] = self.dockerimage
                         else:
-                            self.dockerimage = result[key]['spec']['template']['spec']['containers'][i]['image']
+                            self.dockerimage = result[key]['spec']['template']['spec']['containers'][i_container]['image']
                     elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
-                            del result[key]['spec']['template']['spec']['containers'][i]
+                            del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.sut_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
-                            del result[key]['spec']['template']['spec']['containers'][i]
+                            del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.sut_containers_deployed.pop()
                 if 'volumes' in dep['spec']['template']['spec']:
                     for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
                         if vol['name'] == 'benchmark-storage-volume':
@@ -1346,94 +1402,119 @@ scrape_configs:
                 #print(appname)
                 # parameter from instance name
                 # request = limit
-                req_cpu = cpu
-                limit_cpu = cpu
-                req_mem = mem
-                limit_mem = mem
-                req_gpu = gpu
-                node_cpu = ''
-                node_gpu = node
-                # should be overwritten by resources dict?
-                if 'requests' in self.resources and 'cpu' in self.resources['requests']:
-                   req_cpu = self.resources['requests']['cpu']
-                if 'requests' in self.resources and 'memory' in self.resources['requests']:
-                   req_mem = self.resources['requests']['memory']
-                if 'limits' in self.resources and 'cpu' in self.resources['limits']:
-                    limit_cpu = self.resources['limits']['cpu']
-                if 'limits' in self.resources and 'memory' in self.resources['limits']:
-                    limit_mem = self.resources['limits']['memory']
-                #nodeSelector: {cpu: epyc-7542}
-                if 'nodeSelector' in self.resources and 'cpu' in self.resources['nodeSelector']:
-                    node_cpu = self.resources['nodeSelector']['cpu']
-                if 'nodeSelector' in self.resources and 'gpu' in self.resources['nodeSelector']:
-                    node_gpu = self.resources['nodeSelector']['gpu']
-                if 'nodeSelector' in self.resources:
-                    nodeSelectors = self.resources['nodeSelector'].copy()
-                else:
-                    nodeSelectors = {}
-                #print(nodeSelectors)
-                # we want to have a resource dict anyway!
-                self.resources = {}
-                self.resources['requests'] = {}
-                self.resources['requests']['cpu'] = req_cpu
-                self.resources['requests']['memory'] = req_mem
-                self.resources['requests']['gpu'] = req_gpu
-                self.resources['limits'] = {}
-                self.resources['limits']['cpu'] = limit_cpu
-                self.resources['limits']['memory'] = limit_mem
-                self.resources['nodeSelector'] = {}
-                self.resources['nodeSelector']['cpu'] = node_cpu
-                self.resources['nodeSelector']['gpu'] = node_gpu
-                #print(self.resources)
-                # put resources to yaml file
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['cpu'] = req_cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu'] = limit_cpu
-                dep['spec']['template']['spec']['containers'][0]['resources']['requests']['memory'] = req_mem
-                dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory'] = limit_mem
-                # remove limits if = 0
-                if limit_cpu == 0:
-                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['cpu']
-                if limit_mem == 0:
-                    del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['memory']
-                # add resource gpu
-                #if len(specs) > 2:
-                if node_gpu:
-                    if not 'nodeSelector' in dep['spec']['template']['spec']:
-                        dep['spec']['template']['spec']['nodeSelector'] = {}
-                    if dep['spec']['template']['spec']['nodeSelector'] is None:
-                        dep['spec']['template']['spec']['nodeSelector'] = {}
-                    dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
-                    dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
-                else:
-                    if 'nvidia.com/gpu' in dep['spec']['template']['spec']['containers'][0]['resources']['limits']:
-                        del dep['spec']['template']['spec']['containers'][0]['resources']['limits']['nvidia.com/gpu']
-                # add resource cpu
-                #if node_cpu:
-                if not 'nodeSelector' in dep['spec']['template']['spec']:
-                    dep['spec']['template']['spec']['nodeSelector'] = {}
-                if dep['spec']['template']['spec']['nodeSelector'] is None:
-                    dep['spec']['template']['spec']['nodeSelector'] = {}
-                dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
-                if node_cpu == '':
-                    del dep['spec']['template']['spec']['nodeSelector']['cpu']
-                # nodeSelector that is not cpu or gpu is copied to yaml
-                for nodeSelector, value in nodeSelectors.items():
-                    if nodeSelector == 'cpu' or nodeSelector == 'gpu':
-                        continue
+                # we only want to manipulate nodeSelector for pool container in pooler
+                if dep['metadata']['name'] == name_pool:
+                    if 'replicas_pooling' in self.resources:
+                        num_replicas_pooling = self.resources['replicas_pooling']
+                        result[key]['spec']['replicas'] = num_replicas_pooling
+                    """if 'nodeSelector' in self.resources:
+                        nodeSelectors = self.resources['nodeSelector'].copy()
                     else:
-                        dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
-                        self.resources['nodeSelector'][nodeSelector] = value
-                # set nodeSelector
-                if 'sut' in self.nodes:
+                        nodeSelectors = {}
+                    for nodeSelector, value in nodeSelectors.items():
+                        if nodeSelector == 'cpu' or nodeSelector == 'gpu':
+                            continue
+                        else:
+                            dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
+                            #self.resources['nodeSelector'][nodeSelector] = value """
+                # we only want to manipulate resources for dbms container in SUT
+                if dep['metadata']['name'] == name:
+                    for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
+                        if container['name'] == 'dbms':
+                            break
+                    req_cpu = cpu
+                    limit_cpu = cpu
+                    req_mem = mem
+                    limit_mem = mem
+                    req_gpu = gpu
+                    node_cpu = ''
+                    node_gpu = node
+                    # should be overwritten by resources dict?
+                    if 'requests' in self.resources and 'cpu' in self.resources['requests']:
+                        req_cpu = self.resources['requests']['cpu']
+                    if 'requests' in self.resources and 'memory' in self.resources['requests']:
+                        req_mem = self.resources['requests']['memory']
+                    if 'limits' in self.resources and 'cpu' in self.resources['limits']:
+                        limit_cpu = self.resources['limits']['cpu']
+                    if 'limits' in self.resources and 'memory' in self.resources['limits']:
+                        limit_mem = self.resources['limits']['memory']
+                    #nodeSelector: {cpu: epyc-7542}
+                    if 'nodeSelector' in self.resources and 'cpu' in self.resources['nodeSelector']:
+                        node_cpu = self.resources['nodeSelector']['cpu']
+                    if 'nodeSelector' in self.resources and 'gpu' in self.resources['nodeSelector']:
+                        node_gpu = self.resources['nodeSelector']['gpu']
+                    if 'nodeSelector' in self.resources:
+                        nodeSelectors = self.resources['nodeSelector'].copy()
+                    else:
+                        nodeSelectors = {}
+                    num_replicas_pooling = 0
+                    if 'replicas_pooling' in self.resources:
+                        num_replicas_pooling = self.resources['replicas_pooling']
+                    #print(nodeSelectors)
+                    # we want to have a resource dict anyway!
+                    self.resources = {}
+                    self.resources['requests'] = {}
+                    self.resources['requests']['cpu'] = req_cpu
+                    self.resources['requests']['memory'] = req_mem
+                    self.resources['requests']['gpu'] = req_gpu
+                    self.resources['limits'] = {}
+                    self.resources['limits']['cpu'] = limit_cpu
+                    self.resources['limits']['memory'] = limit_mem
+                    self.resources['nodeSelector'] = {}
+                    self.resources['nodeSelector']['cpu'] = node_cpu
+                    self.resources['nodeSelector']['gpu'] = node_gpu
+                    if num_replicas_pooling > 0:
+                        self.resources['replicas_pooling'] = num_replicas_pooling
+                    #print(self.resources)
+                    # put resources to yaml file
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu'] = limit_cpu
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory'] = req_mem
+                    dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory'] = limit_mem
+                    # remove limits if = 0
+                    if limit_cpu == 0:
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu']
+                    if limit_mem == 0:
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory']
+                    # add resource gpu
+                    #if len(specs) > 2:
+                    if node_gpu:
+                        if not 'nodeSelector' in dep['spec']['template']['spec']:
+                            dep['spec']['template']['spec']['nodeSelector'] = {}
+                        if dep['spec']['template']['spec']['nodeSelector'] is None:
+                            dep['spec']['template']['spec']['nodeSelector'] = {}
+                        dep['spec']['template']['spec']['nodeSelector']['gpu'] = node_gpu
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['nvidia.com/gpu'] = int(req_gpu)
+                    else:
+                        if 'nvidia.com/gpu' in dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']:
+                            del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['nvidia.com/gpu']
+                    # add resource cpu
+                    #if node_cpu:
                     if not 'nodeSelector' in dep['spec']['template']['spec']:
-                        dep['spec']['template']['spec']['nodeSelector'] = dict()
+                        dep['spec']['template']['spec']['nodeSelector'] = {}
                     if dep['spec']['template']['spec']['nodeSelector'] is None:
-                        dep['spec']['template']['spec']['nodeSelector'] = dict()
-                    dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['sut']
-                #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
-            if dep['kind'] == 'Service':
-                service = dep['metadata']['name']
-                #print(service)
+                        dep['spec']['template']['spec']['nodeSelector'] = {}
+                    dep['spec']['template']['spec']['nodeSelector']['cpu'] = node_cpu
+                    if node_cpu == '':
+                        del dep['spec']['template']['spec']['nodeSelector']['cpu']
+                    # nodeSelector that is not cpu or gpu is copied to yaml
+                    for nodeSelector, value in nodeSelectors.items():
+                        if nodeSelector == 'cpu' or nodeSelector == 'gpu':
+                            continue
+                        else:
+                            dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
+                            self.resources['nodeSelector'][nodeSelector] = value
+                    # set nodeSelector
+                    if 'sut' in self.nodes:
+                        if not 'nodeSelector' in dep['spec']['template']['spec']:
+                            dep['spec']['template']['spec']['nodeSelector'] = dict()
+                        if dep['spec']['template']['spec']['nodeSelector'] is None:
+                            dep['spec']['template']['spec']['nodeSelector'] = dict()
+                        dep['spec']['template']['spec']['nodeSelector']['type'] = self.nodes['sut']
+                    #print('nodeSelector', dep['spec']['template']['spec']['nodeSelector'])
+            #if dep['kind'] == 'Service':
+            #    service = dep['metadata']['name']
+            #    #print(service)
         #with open(self.yamlfolder+"deployment-"+self.d+"-"+instance+".yml","w+") as stream:
         with open(deployment_experiment,"w+") as stream:
             try:
@@ -1497,6 +1578,7 @@ scrape_configs:
             self.stop_loading()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
+            self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def get_host_gpus(self):
         """
         Returns information about the sut's host GPUs.
@@ -1559,6 +1641,40 @@ scrape_configs:
         except Exception as e:
             logging.error(e)
             return "", ""
+    def get_host_hugepages_total(self):
+        """
+        Returns information about the sut's huge pages setting.
+        Basically this calls `cat /proc/meminfo | grep HugePages_Total` on the host.
+
+        :return: HugePages_Total setting of the host
+        """
+        self.logger.debug('configuration.get_host_memory()')
+        try:
+            command = "cat /proc/meminfo | grep HugePages_Total"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            result = stdout
+            mem =  int(result.replace(" ","").replace("HugePages_Total:",""))
+            return mem
+        except Exception as e:
+            logging.error(e)
+            return 0
+    def get_host_hugepages_free(self):
+        """
+        Returns information about the sut's huge pages setting.
+        Basically this calls `cat /proc/meminfo | grep HugePages_Free` on the host.
+
+        :return: HugePages_Free setting of the host
+        """
+        self.logger.debug('configuration.get_host_memory()')
+        try:
+            command = "cat /proc/meminfo | grep HugePages_Free"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            result = stdout
+            mem =  int(result.replace(" ","").replace("HugePages_Free:",""))
+            return mem
+        except Exception as e:
+            logging.error(e)
+            return 0
     def get_host_memory(self):
         """
         Returns information about the sut's host RAM.
@@ -1735,13 +1851,13 @@ scrape_configs:
         else:
             return 0
         try:
-            command = "du "+datadir+" | awk 'END{print \\$1}'"
+            command = "du --block-size=1M -Ls "+datadir+" | awk 'END{print \\$1}'"
             cmd['disk_space_used'] = command
             stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
             return int(stdout.replace('\n',''))
         except Exception as e:
             # Windows
-            command = "du "+datadir+" | awk 'END{print $1}'"
+            command = "du --block-size=1M -Ls "+datadir+" | awk 'END{print $1}'"
             cmd['disk_space_used'] = command
             try:
                 stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
@@ -1833,6 +1949,9 @@ scrape_configs:
         size, used = self.get_host_volume()
         server['volume_size'] = size
         server['volume_used'] = used
+        server['cuda'] = self.get_host_cuda()
+        server['hugepages_total'] = self.get_host_hugepages_total()
+        server['hugepages_free'] = self.get_host_hugepages_free()
         server['cuda'] = self.get_host_cuda()
         return server
     def set_metric_of_config_default(self, metric, host, gpuid):
@@ -1965,14 +2084,15 @@ scrape_configs:
                     # other components (not managed by bexhoma)
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
-        c['JDBC']['url'] = c['JDBC']['url'].format(
-            serverip=serverip,
-            dbname=self.experiment.volume,
-            DBNAME=self.experiment.volume.upper(),
-            timout_s=c['connectionmanagement']['timeout'],
-            timeout_ms=c['connectionmanagement']['timeout']*1000,
-            namespace=self.experiment.cluster.namespace
-            )
+        if 'JDBC' in c:
+            c['JDBC']['url'] = c['JDBC']['url'].format(
+                serverip=serverip,
+                dbname=self.experiment.volume,
+                DBNAME=self.experiment.volume.upper(),
+                timout_s=c['connectionmanagement']['timeout'],
+                timeout_ms=c['connectionmanagement']['timeout']*1000,
+                namespace=self.experiment.cluster.namespace
+                )
         #print(c)
         return c#.copy()
     def run_benchmarker_pod(self,
@@ -2024,6 +2144,7 @@ scrape_configs:
         tools.query.template = self.experiment.querymanagement
         # store information about current benchmark
         self.current_benchmark_connection = connection
+        self.logger.debug('configuration.run_benchmarker_pod(current_benchmark_connection = {})'.format(self.current_benchmark_connection))
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         time_now = str(datetime.now())
@@ -2056,11 +2177,12 @@ scrape_configs:
         self.check_volumes()
         # add config jarfolder
         #print(self.experiment.cluster.config['benchmarker']['jarfolder'])
-        if isinstance(c['JDBC']['jar'], list):
-            for i, j in enumerate(c['JDBC']['jar']):
-                c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
-        elif isinstance(c['JDBC']['jar'], str):
-            c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
+        if 'JDBC' in c:
+            if isinstance(c['JDBC']['jar'], list):
+                for i, j in enumerate(c['JDBC']['jar']):
+                    c['JDBC']['jar'][i] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar'][i]
+            elif isinstance(c['JDBC']['jar'], str):
+                c['JDBC']['jar'] = self.experiment.cluster.config['benchmarker']['jarfolder']+c['JDBC']['jar']
         #print(c)
         self.logger.debug('configuration.run_benchmarker_pod(): {}'.format(connection))
         self.benchmark = benchmarker.benchmarker(
@@ -2214,7 +2336,7 @@ scrape_configs:
                 cmd = {}
                 #self.monitoring_sut = True
                 if self.monitoring_sut:
-                    print("{:30s}: collecting loading metrics of SUT".format(connection))
+                    print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, self.current_benchmark_connection))
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     # with container name? should better be part of the metric query
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
@@ -2244,7 +2366,7 @@ scrape_configs:
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0 or self.experiment.cluster.monitor_cluster_exists:
                     # data generator container
-                    print("{:30s}: collecting metrics of data generator".format(connection))
+                    print("{:30s}: collecting metrics of data generator at connection {}".format(connection, self.current_benchmark_connection))
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                     container = "datagenerator"
                     if container is not None:
@@ -2269,7 +2391,7 @@ scrape_configs:
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # data injector container "sensor"
-                    print("{:30s}: collecting metrics of data injector".format(connection))
+                    print("{:30s}: collecting metrics of data injector at connection {}".format(connection, self.current_benchmark_connection))
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                     container = "sensor"
                     if container is not None:
@@ -2293,6 +2415,32 @@ scrape_configs:
                     cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
+                    # pooling container "pool"
+                    if self.sut_has_pool:
+                        print("{:30s}: collecting loading metrics of pool at connection {}".format(connection, self.current_benchmark_connection))
+                        metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                        container = "pool"
+                        if container is not None:
+                            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                            metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                            metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                        print("{:30s}: example metric {}".format(connection, metric_example))
+                        cmd['fetch_loader_metrics'] = 'python metrics.py -r /results/ -db -ct poolloading -cn pool -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
+                            connection, 
+                            c['name']+'.config', 
+                            '/results/'+self.code, 
+                            self.code, 
+                            self.timeLoadingStart, 
+                            self.timeLoadingEnd)
+                        stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loader_metrics'], pod=pod_dashboard, container="dashboard")
+                        self.logger.debug(stdout)
+                        self.logger.debug(stderr)
+                        # upload connections infos again, metrics has overwritten it
+                        filename = 'connections.config'
+                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                        self.logger.debug(stdout)
     def execute_command_in_pod_sut(self, command, pod='', container='', params=''):
         """
         Runs an shell command remotely inside a container of a pod.
@@ -2341,19 +2489,19 @@ scrape_configs:
         if len(self.ddl_parameters):
             #for script in self.initscript:
             for script in scripts:
-                filename_template = self.docker+'/'+script
+                filename_template = self.path_experiment_docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
                     with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
                         data = initscript_template.read()
                         data = data.format(**self.ddl_parameters)
-                        filename_filled = self.docker+'/filled_'+script
+                        filename_filled = self.path_experiment_docker+'/filled_'+script
                         with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
                         self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
         else:
             #for script in self.initscript:
             for script in scripts:
-                filename = self.docker+'/'+script
+                filename = self.path_experiment_docker+'/'+script
                 if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename):
                     self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script))
@@ -2431,9 +2579,10 @@ scrape_configs:
                     if status == "Succeeded":
                         containers = self.experiment.cluster.get_pod_containers(pod)
                         for container in containers:
-                            if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
-                                self.experiment.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
-                                self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                            if len(container) > 0:
+                                if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
+                                    self.experiment.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
+                                    self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         #container = 'datagenerator'
                         #if container in containers:
                         #    if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
@@ -2472,7 +2621,8 @@ scrape_configs:
                         # TODO: Find names of containers dynamically
                         containers = self.experiment.cluster.get_pod_containers(pod)
                         for container in containers:
-                            self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                            if len(container) > 0:
+                                self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
                         self.experiment.cluster.delete_pod(pod)
                         #container = 'datagenerator'
                         #if container in containers:
@@ -2691,29 +2841,33 @@ scrape_configs:
         else:
             volume = ''
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
-        self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
-        #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-        thread_args = {
-            'app':self.appname,
-            'component':'sut',
-            'experiment':self.code,
-            'configuration':self.configuration,
-            'pod_sut':self.pod_sut,
-            'scriptfolder':scriptfolder,
-            'commands':commands,
-            'loadData':self.dockertemplate['loadData'],
-            'path':self.experiment.path,
-            'volume':volume,
-            'context':self.experiment.cluster.context,
-            'service_name':service_name,
-            'time_offset':time_offset,
-            'script_type':script_type,
-            'time_start_int':time_start_int,
-            'namespace':self.experiment.cluster.namespace
-        }
-        thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
-        thread.start()
-        return
+        if not 'loadData' in self.dockertemplate:
+            print("{:30s}: no load command found in config".format(self.configuration))
+            return
+        else:
+            self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
+            #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
+            thread_args = {
+                'app':self.appname,
+                'component':'sut',
+                'experiment':self.code,
+                'configuration':self.configuration,
+                'pod_sut':self.pod_sut,
+                'scriptfolder':scriptfolder,
+                'commands':commands,
+                'loadData':self.dockertemplate['loadData'],
+                'path':self.experiment.path,
+                'volume':volume,
+                'context':self.experiment.cluster.context,
+                'service_name':service_name,
+                'time_offset':time_offset,
+                'script_type':script_type,
+                'time_start_int':time_start_int,
+                'namespace':self.experiment.cluster.namespace
+            }
+            thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+            thread.start()
+            return
     def get_patched_yaml(self, file, patch=""):
         """
         Applies a YAML formatted patch to a YAML file and returns merged result as a YAML object.
@@ -2794,21 +2948,25 @@ scrape_configs:
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
         env_default = dict()
-        env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
-            serverip=servicename,
-            dbname=self.experiment.volume,
-            DBNAME=self.experiment.volume.upper(),
-            timout_s=c['connectionmanagement']['timeout'],
-            timeout_ms=c['connectionmanagement']['timeout']*1000,
-            namespace=self.experiment.cluster.namespace
-            )
-        env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
-        env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
-        env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
-        if isinstance(c['JDBC']['jar'], str):
-            env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
+        if 'JDBC' in c:
+            env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
+                serverip=servicename,
+                dbname=self.experiment.volume,
+                DBNAME=self.experiment.volume.upper(),
+                timout_s=c['connectionmanagement']['timeout'],
+                timeout_ms=c['connectionmanagement']['timeout']*1000,
+                namespace=self.experiment.cluster.namespace
+                )
+            env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
+            env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
+            env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
+            if isinstance(c['JDBC']['jar'], str):
+                env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
+            else:
+                env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
         else:
-            env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
+            env_default['BEXHOMA_USER'] = c['auth'][0]
+            env_default['BEXHOMA_PASSWORD'] = c['auth'][1]
         env_default['BEXHOMA_HOST'] = servicename
         env_default['BEXHOMA_CLIENT'] = int(self.client)-1
         #env_default['BEXHOMA_CLIENT'] = str(parallelism) # why?

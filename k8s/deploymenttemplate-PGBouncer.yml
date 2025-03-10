@@ -15,10 +15,102 @@ apiVersion: v1
 kind: Service
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-service
+  name: bexhoma-sut
 spec:
+  #type: ClusterIP
+  #clusterIP: None
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  selector: {app: bexhoma, component: pool, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bexhoma-pool
+  labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
+spec:
+  replicas: 4
+  selector:
+    matchLabels: {app: bexhoma, component: pool, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: pool, configuration: default, experiment: default, pool: bexhoma-pool}
+    spec:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      nodeSelector:
+      #  kubernetes.io/hostname: cl-worker19
+      containers:
+      - name: pool
+        image: edoburu/pgbouncer
+        # connect via 'psql -U postgres -p 5432 -h localhost pgbouncer'
+        # SHOW STATS;
+        # SHOW POOLS;
+        # SHOW CLIENTS;
+        # SHOW SERVERS;
+        # https://www.pgbouncer.org/config.html
+        # https://github.com/edoburu/docker-pgbouncer
+        # https://github.com/farrajota/kubernetes-postgres-pgbouncer/blob/master/pgbouncer.yaml
+        env: # https://github.com/edoburu/docker-pgbouncer/blob/master/entrypoint.sh
+        - name: DB_USER
+          value: postgres
+        - name: DB_PASSWORD
+          value: postgres
+        - name: DB_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['pool']
+              #value: $(expr $BEXHOMA_SUT_NAME)
+        - name: DB_PORT
+          value: "9092"
+        - name: AUTH_TYPE
+          value: md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
+        - name: POOL_MODE
+          value: session # mode = transaction not working for YCSB
+        - name: ADMIN_USERS
+          value: postgres
+        - name: DEFAULT_POOL_SIZE
+          value: "32"
+        - name: MIN_POOL_SIZE
+          value: "4"
+        - name: MAX_CLIENT_CONN
+          value: "32"
+        - name: LOG_CONNECTIONS
+          value: "1"
+        - name: LOG_DISCONNECTIONS
+          value: "1"
+        - name: LOG_POOLER_ERRORS
+          value: "1"
+        - name: LOG_STATS
+          value: "1"
+        - name: RESERVE_POOL_SIZE
+          value: "16"
+        #- name: MAX_PREPARED_STATEMENTS
+        #  value: "256"
+        #readinessProbe:
+        #  exec:
+        #    command:
+        #    - pg_isready
+        #    - -U
+        #    - postgres
+        #  initialDelaySeconds: 15
+        #  periodSeconds: 60
+        ports:
+        - {containerPort: 5432}
+        #resources:
+        #  limits: {cpu: 16000m, memory: 128Gi}
+        #  requests: {cpu: 4000m, memory: 4Gi}
+        #  #, ephemeral-storage: "1536Gi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: pool, configuration: default, experiment: default}
+  name: bexhoma-pool
+spec:
+  ports:
+  - {port: 9092, protocol: TCP, name: port-dbms, targetPort: 5433}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
@@ -39,38 +131,12 @@ spec:
       imagePullSecrets:
       - {name: dockerhub}
       nodeSelector:
+      #  kubernetes.io/hostname: cl-worker11
       tolerations:
-      #- key: "nvidia.com/gpu"
-      #  effect: "NoSchedule"
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
       containers:
-      - name: pool
-        image: edoburu/pgbouncer
-        env:
-        - name: DB_USER
-          value: postgres
-        - name: DB_PASSWORD
-          value: postgres
-        - name: DB_HOST
-          value: localhost
-        - name: DB_PORT
-          value: 5433
-        - name: AUTH_TYPE
-          value: scram-sha-256 # remove/comment this line if using postgres:13 and lower
-        - name: POOL_MODE
-          value: transaction
-        - name: ADMIN_USERS
-          value: postgres,dbuser
-        readinessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -U
-            - postgres
-          initialDelaySeconds: 15
-          periodSeconds: 60
-        ports:
-        - {containerPort: 5432}
       - name: dbms
         image: postgres:16.1
         env:
@@ -79,12 +145,12 @@ spec:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         - name: PGPORT
-          value: 5433 # remove/comment this line for default ports
+          value: "5433" # remove/comment this line for default ports
         # pg_ctl: cannot be run as root
         lifecycle:
-          postStart:
-            exec:
-              command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
+          #postStart:
+          #  exec:
+          #    command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
               #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -D /var/lib/postgresql/data -m fast"]
@@ -106,6 +172,8 @@ spec:
             - pg_isready
             - -U
             - postgres
+            - -p
+            - "5433"
           initialDelaySeconds: 15
           periodSeconds: 60
         ports:

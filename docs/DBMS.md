@@ -57,6 +57,35 @@ This has
 * an optional name of a `logfile` that is downloaded after the benchmark
 * name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
 
+### Collect Host Informations
+
+Some information is given by configuration (JDBC data e.g.), some is collected automatically from the experiment host:
+```
+cluster.get_host_memory()
+cluster.get_host_cpu()
+cluster.get_host_cores()
+cluster.get_host_system()
+cluster.get_host_diskspace_used()
+cluster.get_host_diskspace_used_data()
+cluster.get_host_cuda()
+cluster.get_host_gpus()
+cluster.get_host_gpu_ids()
+cluster.get_host_node()
+```
+
+Most of these run inside the docker container:
+* `cluster.get_host_memory()`: Collects `grep MemTotal /proc/meminfo | awk '{print $2}'` and multiplies by 1024
+* `cluster.get_host_cpu()`: Collects `cat /proc/cpuinfo | grep \'model name\' | head -n 1`
+* `cluster.get_host_cores()`: Collects `grep -c ^processor /proc/cpuinfo`
+* `cluster.get_host_system()`: Collects `uname -r`
+* `cluster.get_host_diskspace_used()`: Collects `df / | awk 'NR == 2{print $3}'`
+* `cluster.get_host_diskspace_used_data()`: Collects `du datadir | awk 'END{ FS=OFS=\"\t\" }END{print $1}'` inside docker container, where `datadir` is set in config of DBMS
+* `cluster.get_host_cuda()`: Collects `nvidia-smi | grep \'CUDA\'`
+* `cluster.get_host_gpus()`: Collects `nvidia-smi -L` and then aggregates the type using `Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])`
+* `cluster.get_host_gpu_ids()`: Collects `nvidia-smi -L` and finds 'UUID: ' inside
+* `cluster.get_host_node()`: Gets `spec.nodeName` from pod description
+* `cluster.get_host_volume()`: Gets size and used from `df -h | grep volumes`
+
 ### Deployment Manifests
 
 Every DBMS that is deployed by bexhoma needs a YAML manifest.

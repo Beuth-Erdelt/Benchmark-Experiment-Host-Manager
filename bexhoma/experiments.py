@@ -201,6 +201,9 @@ class default():
         num_loading_threads = self.get_parameter_as_list('num_loading_threads')
         num_benchmarking_pods = self.get_parameter_as_list('num_benchmarking_pods')
         num_benchmarking_threads = self.get_parameter_as_list('num_benchmarking_threads')
+        num_pooling_pods = self.get_parameter_as_list('num_pooling_pods')
+        num_pooling_in = self.get_parameter_as_list('num_pooling_in')
+        num_pooling_out = self.get_parameter_as_list('num_pooling_out')
         cpu = str(args.request_cpu)
         memory = str(args.request_ram)
         cpu_type = str(args.request_cpu_type)
@@ -246,7 +249,9 @@ class default():
             nodeSelector = {
                 'cpu': cpu_type,
                 'gpu': '',
-            })
+            },
+            #replicas_pooling = num_pooling_pods,
+        )
         # persistent storage
         self.set_storage(
             storageClassName = request_storage_type,
@@ -302,6 +307,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
         self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
         self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+        if len(num_pooling_pods) > 0 and  len(num_pooling_in) > 0 and len(num_pooling_out) > 0:
+            self.workload['info'] = self.workload['info']+"\nPooling is done with {} pods having {} inbound and {} outbound connections in total.".format(num_pooling_pods, num_pooling_in, num_pooling_out)
         self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
@@ -1163,6 +1170,12 @@ class default():
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
+                    # check if SUT is healthy
+                    if config.sut_is_running():
+                        if not config.sut_is_healthy():
+                            # we wait for health check
+                            print("{:30s}: waits for health check to succeed".format(config.configuration))
+                            continue
                     # when loaded from PVC, system may not be ready yet
                     if config.loading_after_time is None:
                         # we have started from PVC
@@ -1222,11 +1235,21 @@ class default():
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 if len(pods) > 0:
                                     pod_sut = pods[0]
-                                    self.cluster.store_pod_log(pod_sut, 'dbms')
+                                    for container in config.sut_containers_deployed:
+                                        self.cluster.store_pod_log(pod_sut, container)
+                                    #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_worker in pods:
-                                    self.cluster.store_pod_log(pod_worker, 'dbms')
+                                    for container in config.worker_containers_deployed:
+                                        self.cluster.store_pod_log(pod_worker, container)
+                                    #self.cluster.store_pod_log(pod_worker, 'dbms')
+                                component = 'pool'
+                                pods = self.cluster.get_pods(app, component, self.code, config.configuration)
+                                for pod_pool in pods:
+                                    for container in config.pool_containers_deployed:
+                                        self.cluster.store_pod_log(pod_pool, container)
+                                    #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
@@ -1247,72 +1270,75 @@ class default():
                                 print("{} can be stopped, but we leave it running".format(config.configuration))
                 else:
                     print("{:30s}: is loading".format(config.configuration))
-            # all jobs of configuration - benchmarker
-            #app = self.cluster.appname
-            #component = 'benchmarker'
-            #configuration = ''
-            #jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-            # success of job
-            app = self.cluster.appname
-            component = 'benchmarker'
-            configuration = ''
-            #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
-            jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-            # all pods to these jobs
-            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
-            # status per job
-            for job in jobs:
-                # status per pod
-                for p in pods:
-                    if not self.cluster.pod_log_exists(p):
-                        status = self.cluster.get_pod_status(p)
-                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                        #print(p,status)
-                        if status == 'Succeeded' or status == 'Failed':
-                            containers = self.cluster.get_pod_containers(p)
-                            for container in containers:
-                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                self.cluster.store_pod_log(p, container)
-                        #if status == 'Succeeded':
-                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #    #if status != 'Running':
-                        #    self.cluster.store_pod_log(p)
-                        #    #self.cluster.delete_pod(p)
-                        #if status == 'Failed':
-                        #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #    #if status != 'Running':
-                        #    self.cluster.store_pod_log(p)
-                        #    #self.cluster.delete_pod(p)
-                success = self.cluster.get_job_status(job)
-                self.cluster.logger.debug('job {} has success status {}'.format(job, success))
-                #print(job, success)
-                if success:
+            for config in self.configurations:
+                # all jobs of configuration - benchmarker
+                #app = self.cluster.appname
+                #component = 'benchmarker'
+                #configuration = ''
+                #jobs = self.cluster.get_jobs(app, component, self.code, configuration)
+                # success of job
+                app = self.cluster.appname
+                component = 'benchmarker'
+                configuration = config.configuration#''
+                #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
+                jobs = self.cluster.get_jobs(app, component, self.code, configuration)
+                # all pods to these jobs
+                pods = self.cluster.get_job_pods(app, component, self.code, configuration)
+                # status per job
+                for job in jobs:
                     # status per pod
                     for p in pods:
-                        status = self.cluster.get_pod_status(p)
-                        self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                        if status == 'Succeeded' or status == 'Failed':
-                            containers = self.cluster.get_pod_containers(p)
-                            for container in containers:
-                                self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                self.cluster.store_pod_log(p, container)
-                            self.cluster.delete_pod(p)
-                        #print(p,status)
-                        #if status == 'Succeeded':
-                        #    #if status != 'Running':
-                        #    if not self.cluster.pod_log_exists(p):
-                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #        self.cluster.store_pod_log(p)
-                        #    self.cluster.delete_pod(p)
-                        #if status == 'Failed':
-                        #    #if status != 'Running':
-                        #    if not self.cluster.pod_log_exists(p):
-                        #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                        #        self.cluster.store_pod_log(p)
-                        #    self.cluster.delete_pod(p)
-                    self.end_benchmarking(job, config)
-                    self.cluster.delete_job(job)
-                    config.check_volumes()
+                        if not self.cluster.pod_log_exists(p):
+                            status = self.cluster.get_pod_status(p)
+                            self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                            #print(p,status)
+                            if status == 'Succeeded' or status == 'Failed':
+                                containers = self.cluster.get_pod_containers(p)
+                                for container in containers:
+                                    if len(container) > 0:
+                                        self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                        self.cluster.store_pod_log(p, container)
+                            #if status == 'Succeeded':
+                            #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #    #if status != 'Running':
+                            #    self.cluster.store_pod_log(p)
+                            #    #self.cluster.delete_pod(p)
+                            #if status == 'Failed':
+                            #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #    #if status != 'Running':
+                            #    self.cluster.store_pod_log(p)
+                            #    #self.cluster.delete_pod(p)
+                    success = self.cluster.get_job_status(job)
+                    self.cluster.logger.debug('job {} has success status {}'.format(job, success))
+                    #print(job, success)
+                    if success:
+                        # status per pod
+                        for p in pods:
+                            status = self.cluster.get_pod_status(p)
+                            self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                            if status == 'Succeeded' or status == 'Failed':
+                                containers = self.cluster.get_pod_containers(p)
+                                for container in containers:
+                                    if len(container) > 0:
+                                        self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
+                                        self.cluster.store_pod_log(p, container)
+                                self.cluster.delete_pod(p)
+                            #print(p,status)
+                            #if status == 'Succeeded':
+                            #    #if status != 'Running':
+                            #    if not self.cluster.pod_log_exists(p):
+                            #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #        self.cluster.store_pod_log(p)
+                            #    self.cluster.delete_pod(p)
+                            #if status == 'Failed':
+                            #    #if status != 'Running':
+                            #    if not self.cluster.pod_log_exists(p):
+                            #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
+                            #        self.cluster.store_pod_log(p)
+                            #    self.cluster.delete_pod(p)
+                        self.end_benchmarking(job, config)
+                        self.cluster.delete_job(job)
+                        config.check_volumes()
             if len(pods) == 0 and len(jobs) == 0:
                 do = False
                 for config in self.configurations:
@@ -1544,7 +1570,7 @@ class default():
                 # get monitoring for benchmarking
                 if self.monitoring_active:
                     if config.monitoring_sut:
-                        print("{:30s}: collecting execution metrics of SUT".format(connection))
+                        print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
                         #print(config.current_benchmark_connection)
                         #print(config.benchmark.dbms.keys())
                         metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory'].copy()
@@ -1559,11 +1585,34 @@ class default():
                         cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
+                        # Pooler
+                        if config.sut_has_pool:
+                            print("{:30s}: collecting execution metrics of pooler at connection {}".format(connection, config.current_benchmark_connection))
+                            #print(config.current_benchmark_connection)
+                            #print(config.benchmark.dbms.keys())
+                            metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
+                            container = "pool"
+                            if container is not None:
+                                metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+                                metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                                metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+                                metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+                            print("{:30s}: example metric {}".format(connection, metric_example))
+                            cmd['fetch_benchmarking_metrics'] = 'python metrics.py -r /results/ -db -ct pool -cn pool -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, connection+'.config', '/results/'+self.code, self.code, start_time, end_time)
+                            #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
+                            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['fetch_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                            self.cluster.logger.debug(stdout)
+                            self.cluster.logger.debug(stderr)
+                            # upload connections infos again, metrics has overwritten it
+                            filename = 'connections.config'
+                            cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                            stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                            self.cluster.logger.debug(stdout)
                     # get metrics of benchmarker components
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
-                        print("{:30s}: collecting metrics of benchmarker".format(connection))
+                        print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, config.current_benchmark_connection))
                         metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                         container = "dbmsbenchmarker"
                         if container is not None:
@@ -2672,13 +2721,13 @@ class ycsb(default):
         self.set_experiment(script='Schema')
         # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
-        self.workload['info'] = self.workload['info']+" Number of rows to insert is {}.".format(ycsb_rows)
-        self.workload['info'] = self.workload['info']+" Number of operations is {}.".format(ycsb_operations)
-        self.workload['info'] = self.workload['info']+" Batch size is '{}'.".format(batchsize)
-        self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
-        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
-        self.workload['info'] = self.workload['info']+" Factors for loading are {}.".format(num_loading_target_factors)
-        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
+        self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
+        self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
+        #self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
+        self.workload['info'] = self.workload['info']+"\nTarget is based on multiples of '{}'.".format(target_base)
+        self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
+        self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
         default.prepare_testbed(self, parameter)
     def test_results(self):
         """
@@ -2728,6 +2777,12 @@ class ycsb(default):
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct pool -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct poolloading -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
         cmd = {}
@@ -2800,7 +2855,7 @@ class ycsb(default):
             df_plot = self.evaluator.loading_set_datatypes(df)
             df_aggregated = self.evaluator.loading_aggregate_by_parallel_pods(df_plot)
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
-            df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             print(df_aggregated_loaded)
             test_loading = True
         #####################
@@ -2808,10 +2863,12 @@ class ycsb(default):
         if not df.empty:
             print("\n### Execution")
             df.fillna(0, inplace=True)
+            #print(df.T)
+            #exit()
             df_plot = self.evaluator.benchmarking_set_datatypes(df)
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count"]].copy()
+            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions"]].copy()
             columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
             for col in columns:
                 if col in df_aggregated.columns:
@@ -2896,6 +2953,30 @@ class ycsb(default):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "pool")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Execution - Pooling")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+            #####################
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "poolloading")
+            ##########
+            if len(df_monitoring) > 0:
+                print("\n### Ingestion - Pooling")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                print(df)
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                    test_results = test_results + "TEST failed: Ingestion Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                else:
+                    test_results = test_results + "TEST passed: Ingestion Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
         return test_results.rstrip('\n')
 
 
