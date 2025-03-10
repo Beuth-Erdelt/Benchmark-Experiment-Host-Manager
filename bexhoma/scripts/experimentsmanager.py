@@ -327,6 +327,24 @@ def manage():
                     #print(status)
                     apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
                 ############
+                component = 'pool'
+                apps[configuration][component] = ''
+                if args.verbose:
+                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+                    print("Stateful Sets", stateful_sets)
+                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+                    print("Pooling Services", services)
+                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                if args.verbose:
+                    print("Pooling Pods", pods)
+                pods_per_status = {}
+                for pod in pods:
+                    status = cluster.get_pod_status(pod)
+                    pods_per_status[status] = pods_per_status[status]+1 if status in pods_per_status  else 1
+                    #print(status)
+                for status, number in pods_per_status.items():
+                    apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
+                ############
                 component = 'maintaining'
                 apps[configuration][component] = ''
                 if args.verbose:

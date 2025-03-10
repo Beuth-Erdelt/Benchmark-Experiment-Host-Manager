@@ -14,3 +14,4 @@ api/*
 bexhoma/__pycache__/*
 /cluster-monitoring-default.config
 logs_tests/local/*
+dev/.ipynb_checkpoints/*
