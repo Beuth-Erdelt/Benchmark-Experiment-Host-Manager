@@ -149,6 +149,7 @@ class default():
         self.storage_label = experiment.storage_label
         self.experiment_done = False #: True, iff the SUT has performed the experiment completely
         self.dockerimage = dockerimage #: Name of the Docker image of the SUT
+        self.sut_template = template = "deploymenttemplate-"+self.docker+".yml" #: Name of YAML manifest in k8s/ for deployment of SUT (default: "deploymenttemplate-"+self.docker+".yml")
         self.path_experiment_docker = self.docker #: Name of the correspond folder in the experiment path. Default = Name of Docker image (e.g., PostgreSQL for experiment/ycsb/PostgreSQL)
         self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
         self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
@@ -1062,7 +1063,8 @@ scrape_configs:
         if len(experiment) == 0:
             experiment = self.code
         instance = self.get_instance_from_resources()#self.i
-        template = "deploymenttemplate-"+self.docker+".yml"
+        template = self.sut_template
+        #template = "deploymenttemplate-"+self.docker+".yml"
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
         if self.storage['storageConfiguration']:
