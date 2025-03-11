@@ -3225,7 +3225,7 @@ scrape_configs:
 
         :return: list of endpoints
         """
-        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.experiment_name)# self.code)
         print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):
@@ -3239,7 +3239,7 @@ scrape_configs:
         :return: list of endpoints
         """
         endpoints = []
-        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.experiment_name)# self.code)
         pods_worker = self.get_worker_pods()
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
