@@ -19,6 +19,7 @@
     ./Example-TPC-DS.md
     ./Example-YugaByteDB.md
     ./Example-CockroachDB.md
+    ./Example-Citus.md
     ./Example-Redis.md
     ./Example-CloudDatabase.md
     ./Example-custom.md

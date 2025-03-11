@@ -19,8 +19,6 @@ References:
 1. https://redis.io/
 1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
-1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
-1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
 1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
