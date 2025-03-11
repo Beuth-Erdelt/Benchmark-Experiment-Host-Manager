@@ -126,6 +126,7 @@ class default():
         self.additional_labels = dict()
         self.set_additional_labels(**self.experiment.additional_labels)
         self.experiment.add_configuration(self)
+        self.experiment_name = self.code                                        #: Identifier of experiment, default is experiment code. May be overwritten, when pvc of stateful set forbids different names per experiment
         self.dialect = dialect
         self.use_distributed_datasource = False                                 #: True, iff the SUT should mount 'benchmark-data-volume' as source of (non-generated) data
         # scaling of other components
@@ -1067,24 +1068,34 @@ scrape_configs:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        instance = self.get_instance_from_resources()#self.i
-        template = self.sut_template
-        #template = "deploymenttemplate-"+self.docker+".yml"
-        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-        name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
+        instance = self.get_instance_from_resources()
+        # storage configuration
         if self.storage['storageConfiguration']:
             storageConfiguration = self.storage['storageConfiguration']
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
         else:
             storageConfiguration = configuration
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+        # configure names
+        if self.num_worker > 0:
+            # we assume here, a stateful set is used
+            # this means we do not want to have the experiment code as part of the names
+            # this would imply there cannot be experiment independent pvcs
+            self.experiment_name = storageConfiguration
+        else:
+            self.experiment_name = experiment
+        name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+        name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
-        name_pool = self.generate_component_name(app=app, component='pool', experiment=experiment, configuration=configuration)
+        name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
-        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        # test, if SUT is already running
+        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
             return False
+        # Deployment manifest template - a configured copy will be stored in result folder
+        template = self.sut_template #template = "deploymenttemplate-"+self.docker+".yml"
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         # ENV
         # default empty: env = {}
