@@ -1123,7 +1123,9 @@ scrape_configs:
         if len(specs) > 2:
             gpu = specs[2]
             node= specs[3]
-        with open(self.experiment.cluster.yamlfolder+template) as stream:
+        sut_manifest_file = self.experiment.cluster.yamlfolder+template
+        #print(sut_manifest_file)
+        with open(sut_manifest_file) as stream:
             try:
                 result=yaml.safe_load_all(stream)
                 result = [data for data in result]
@@ -2531,9 +2533,10 @@ scrape_configs:
         Attaches worker nodes to the master of the sut.
         This runs the dockertemplate['attachWorker'] command.
         """
+        self.logger.debug('Try to attach worker to master')
         if self.num_worker > 0:
             pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
-            name_worker = self.generate_component_name(component='worker', experiment=self.code, configuration=self.configuration)
+            name_worker = self.generate_component_name(component='worker', experiment=self.experiment_name, configuration=self.configuration) #experiment=self.code, configuration=self.configuration)
             if len(pods) > 0:
                 pod_sut = pods[0]
                 num_worker = 0
@@ -2922,11 +2925,11 @@ scrape_configs:
         :return: name of the configuration's sut's service
         """
         app = self.appname
-        experiment = str(int(self.code))
+        #experiment = str(int(self.code))
         if len(self.sut_service_name) > 0:
             servicename = self.sut_service_name
         else:
-            servicename = self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
+            servicename = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
         return servicename
     def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
         """
@@ -3225,7 +3228,7 @@ scrape_configs:
 
         :return: list of endpoints
         """
-        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.experiment_name)# self.code)
+        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):

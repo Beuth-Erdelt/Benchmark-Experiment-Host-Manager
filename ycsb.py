@@ -53,7 +53,7 @@ if __name__ == '__main__':
     parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
     parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="")
-    parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=1)
+    parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
     #parser.add_argument('-nl',  '--num-loading', help='number of parallel loaders per configuration', default=1)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")

@@ -71,7 +71,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
 
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 2 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -93,7 +93,7 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 2 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -116,7 +116,7 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 2 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -134,6 +134,31 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
+
+
+wait_process "ycsb"
+
+
+
+nohup python ycsb.py -ms 2 -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  --workload a \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
 
 
 wait_process "ycsb"
