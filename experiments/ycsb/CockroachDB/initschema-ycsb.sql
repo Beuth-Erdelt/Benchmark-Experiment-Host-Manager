@@ -12,5 +12,7 @@ CREATE TABLE public.usertable (
   FIELD9 text
 );
 
+ALTER TABLE public.usertable CONFIGURE ZONE USING num_replicas = {num_worker_replicas};
+
 SHOW ZONE CONFIGURATION FROM TABLE public.usertable;
 

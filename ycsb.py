@@ -54,6 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="")
     parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=1)
+    parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
     #parser.add_argument('-nl',  '--num-loading', help='number of parallel loaders per configuration', default=1)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
@@ -122,6 +123,7 @@ if __name__ == '__main__':
     skip_loading = args.skip_loading
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
+    num_worker_replicas = int(args.num_worker_replicas)
     ##############
     ### specific to: YCSB
     ##############
@@ -591,6 +593,9 @@ if __name__ == '__main__':
                     config.set_storage(
                         storageConfiguration = 'cockroachdb'
                         )
+                    config.set_ddl_parameters(
+                        num_worker_replicas = num_worker_replicas
+                        )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(
@@ -707,6 +712,11 @@ if __name__ == '__main__':
                     config.set_storage(
                         storageConfiguration = 'redis'
                         )
+                    config.set_ddl_parameters(
+                        num_worker_replicas = num_worker_replicas
+                        )
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
@@ -764,6 +774,9 @@ if __name__ == '__main__':
                     config = configurations.ycsb(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
                     config.set_storage(
                         storageConfiguration = 'citus'
+                        )
+                    config.set_ddl_parameters(
+                        num_worker_replicas = num_worker_replicas
                         )
                     if skip_loading:
                         config.loading_deactivated = True

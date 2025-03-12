@@ -11,4 +11,9 @@ CREATE TABLE public.usertable (
   FIELD8 text,
   FIELD9 text,
   PRIMARY KEY (YCSB_KEY)
-)
+);
+
+SELECT create_distributed_table('usertable', 'YCSB_KEY');
+
+ALTER TABLE usertable SET (replication_factor = {num_worker_replicas});
+
