@@ -173,6 +173,7 @@ spec:
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
+      terminationGracePeriodSeconds: 30
       containers:
       - name: dbms
         image: redis:7.4.2
@@ -203,6 +204,10 @@ spec:
             port: 6379
           initialDelaySeconds: 10
           periodSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              command: ["redis-cli", "shutdown", "save"]
         ports:
           - containerPort: 6379
         env:
@@ -267,23 +272,35 @@ spec:
         env:
         - name: BEXHOMA_WORKER_LIST_SPACE
           value: redis-0.redis redis-1.redis redis-2.redis
-        env:
         - name: BEXHOMA_WORKER_FIRST
           value: redis-0.redis
-        command: [ "sh", "-c" ]
-        args:
+        command:
+          - sh
+          - -c
           - |
-            echo "Waiting for Redis pods..."
-            #until nslookup $(expr $BEXHOMA_WORKER_FIRST); do sleep 2; done
-            echo "All pods are ready (?). Creating Redis cluster..."
-            redis-cli --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas 0 --cluster-yes
-        readinessProbe:
-          exec:
-            command:
-              - sh
-              - -c
-              - "redis-cli cluster info | grep 'cluster_state:ok'"
-          initialDelaySeconds: 10
-          periodSeconds: 5
+            echo "Creating Redis Cluster..."
+
+            # Ensure all nodes are ready by checking cluster info
+            for node in $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) print $i}'); do
+              until redis-cli -h $node -p 6379 ping | grep -q 'PONG'; do
+                echo "Waiting for Redis node $node to be ready..."
+                sleep 5
+              done
+              echo "Node $node is ready."
+            done
+            last_entry=$(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{print $NF}')
+            echo "Checking cluster status of $last_entry"
+            redis-cli -h $node -p 6379 cluster nodes
+            if redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; then
+              echo "Cluster already initialized."
+            else
+              redis-cli --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas 0 --cluster-yes
+              echo "Waiting for Redis Cluster to be ready..."
+              until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
+                echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."
+                sleep 5
+              done
+            fi
+            echo "Redis Cluster is ready!"
       restartPolicy: OnFailure
   ttlSecondsAfterFinished: 30  # Deletes the job and pods 30 seconds after completion
