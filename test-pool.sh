@@ -852,7 +852,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nlt 64 \
   -nlf 12 \
   -nbp 1 \
-  -nbt 1,2,4,8,16,32,64,128 \
+  -nbt 1,2,4,8,16,32,48,64,96,128 \
   -nbf 0 \
   -ne 1 \
   -nc 2 \
