@@ -43,7 +43,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus'], default=[], nargs='*')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -460,6 +460,7 @@ if __name__ == '__main__':
                     if skip_loading:
                         config.loading_deactivated = True
                     config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
+                    config.sut_pod_name = "yb-tserver-"                 # fix pod name of SUT, because it is not managed by bexhoma
                     config.sut_container_name = ''                      # fix container name of SUT
                     def get_worker_pods(self):
                         """
@@ -475,25 +476,24 @@ if __name__ == '__main__':
                         #print("****************", pods_worker)
                         return pods_worker
                     config.get_worker_pods = types.MethodType(get_worker_pods, config)
-                    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-                        """
-                        Generate a name for the monitoring component.
-                        This is used in a pattern for promql.
-                        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
-                        For YugabyteDB, the service of the SUT to be monitored is named like 'yb-tserver-'.
-
-                        :param app: app the component belongs to
-                        :param component: Component, for example sut or monitoring
-                        :param experiment: Unique identifier of the experiment
-                        :param configuration: Name of the dbms configuration
-                        """
-                        if component == 'sut':
-                            name = 'yb-tserver-'
-                        else:
-                            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-                        self.logger.debug("yugabytedb.create_monitoring({})".format(name))
-                        return name
-                    config.create_monitoring = types.MethodType(create_monitoring, config)
+                    #def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+                    #    """
+                    #    Generate a name for the monitoring component.
+                    #    This is used in a pattern for promql.
+                    #    Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
+                    #    For YugabyteDB, the service of the SUT to be monitored is named like 'yb-tserver-'.
+                    #    :param app: app the component belongs to
+                    #    :param component: Component, for example sut or monitoring
+                    #    :param experiment: Unique identifier of the experiment
+                    #    :param configuration: Name of the dbms configuration
+                    #    """
+                    #    if component == 'sut':
+                    #        name = 'yb-tserver-'
+                    #    else:
+                    #        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+                    #    self.logger.debug("yugabytedb.create_monitoring({})".format(name))
+                    #    return name
+                    #config.create_monitoring = types.MethodType(create_monitoring, config)
                     def get_worker_endpoints(self):
                         """
                         Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
@@ -701,7 +701,9 @@ if __name__ == '__main__':
                 if ("Redis" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
                     name_format = 'Redis-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='Redis', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV')
+                    config = configurations.ycsb(experiment=experiment, docker='Redis', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker)
+                    if num_worker > 0:
+                        config.sut_template = "deploymenttemplate-RedisCluster.yml"
                     config.set_storage(
                         storageConfiguration = 'redis'
                         )
@@ -756,6 +758,67 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
+                if ("Citus" in args.dbms):# or len(args.dbms) == 0): # not included per default
+                    # CockroachDB
+                    name_format = 'Citus-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
+                    config.set_storage(
+                        storageConfiguration = 'citus'
+                        )
+                    if skip_loading:
+                        config.loading_deactivated = True
+                    config.set_loading_parameters(
+                        PARALLEL = str(loading_pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = args.workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = 10,
+                        BEXHOMA_DBMS = "jdbc",
+                        )
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(num_executor*benchmarking_pods),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = 10,
+                                        BEXHOMA_DBMS = "jdbc",
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
+                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

@@ -126,8 +126,9 @@ class default():
         self.additional_labels = dict()
         self.set_additional_labels(**self.experiment.additional_labels)
         self.experiment.add_configuration(self)
+        self.experiment_name = self.code                                        #: Identifier of experiment, default is experiment code. May be overwritten, when pvc of stateful set forbids different names per experiment
         self.dialect = dialect
-        self.use_distributed_datasource = False #: True, iff the SUT should mount 'benchmark-data-volume' as source of (non-generated) data
+        self.use_distributed_datasource = False                                 #: True, iff the SUT should mount 'benchmark-data-volume' as source of (non-generated) data
         # scaling of other components
         self.num_worker = worker
         self.num_loading = 0
@@ -140,41 +141,42 @@ class default():
         self.prometheus_timeout = experiment.prometheus_timeout
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
-        self.loading_deactivated = False # Do not load at all and do not test for loading
-        self.monitor_loading = True #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
-        self.monitoring_sut = True #: Fetch metrics of SUT, if monítoring is active - this is set to False when a service outside of K8s is benchmarked
+        self.loading_deactivated = False                                        #: Do not load at all and do not test for loading
+        self.monitor_loading = True                                             #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
+        self.monitoring_sut = True                                              #: Fetch metrics of SUT, if monítoring is active - this is set to False when a service outside of K8s is benchmarked
         self.jobtemplate_maintaining = ""
         self.jobtemplate_loading = ""
-        #self.parallelism = 1
         self.storage_label = experiment.storage_label
-        self.experiment_done = False #: True, iff the SUT has performed the experiment completely
-        self.dockerimage = dockerimage #: Name of the Docker image of the SUT
-        self.path_experiment_docker = self.docker #: Name of the correspond folder in the experiment path. Default = Name of Docker image (e.g., PostgreSQL for experiment/ycsb/PostgreSQL)
-        self.connection_parameter = {} #: Collect all parameters that might be interesting in evaluation of results
-        self.timeLoading = 0 #: Time in seconds the system has taken for the initial loading of data
-        self.timeGenerating = 0 #: Time in seconds the system has taken for generating the data
-        self.timeIngesting = 0 #: Time in seconds the system has taken for ingesting existing
-        self.timeSchema = 0 #: Time in seconds the system has taken for creating the db schema
-        self.timeIndex = 0 #: Time in seconds the system has taken for indexing the database
-        self.times_scripts = dict() # contains times for each single script that is run on db (create schema, index etc)
-        self.loading_started = False #: Time as an integer when initial loading has started
-        self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
-        self.loading_finished = False #: Time as an integer when initial loading has finished
-        self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are  
+        self.experiment_done = False                                            #: True, iff the SUT has performed the experiment completely
+        self.dockerimage = dockerimage                                          #: Name of the Docker image of the SUT
+        self.sut_template = template = "deploymenttemplate-"+self.docker+".yml" #: Name of YAML manifest in k8s/ for deployment of SUT (default: "deploymenttemplate-"+self.docker+".yml")
+        self.path_experiment_docker = self.docker                               #: Name of the correspond folder in the experiment path. Default = Name of Docker image (e.g., PostgreSQL for experiment/ycsb/PostgreSQL)
+        self.connection_parameter = {}                                          #: Collect all parameters that might be interesting in evaluation of results
+        self.timeLoading = 0                                                    #: Time in seconds the system has taken for the initial loading of data
+        self.timeGenerating = 0                                                 #: Time in seconds the system has taken for generating the data
+        self.timeIngesting = 0                                                  #: Time in seconds the system has taken for ingesting existing
+        self.timeSchema = 0                                                     #: Time in seconds the system has taken for creating the db schema
+        self.timeIndex = 0                                                      #: Time in seconds the system has taken for indexing the database
+        self.times_scripts = dict()                                             #: contains times for each single script that is run on db (create schema, index etc)
+        self.loading_started = False                                            #: Time as an integer when initial loading has started
+        self.loading_after_time = None                                          #: Time as an integer when initial loading should start - to give the system time to start up completely
+        self.loading_finished = False                                           #: Time as an integer when initial loading has finished
+        self.client = 1                                                         #: If we have a sequence of benchmarkers, this tells at which position we are  
         self.timeLoadingStart = 0
         self.timeLoadingEnd = 0
-        self.loading_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of loading pods
-        self.benchmarking_timespans = {} # Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
-        self.sut_service_name = "" # Name of the DBMS service name, if it is fixed and not installed per configuration
-        self.sut_container_name = "dbms" # Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
-        self.sut_containers_deployed = [] # Name of the containers of the SUT deployment
-        self.worker_containers_deployed = [] # Name of the containers of the SUT statefulset
-        self.pool_containers_deployed = [] # Name of the containers of the Pool deployment
-        self.sut_envs = {} # parameters sent to container via ENV
-        self.sut_has_pool = False # if there is a pool component - in particular for monitoring
+        self.loading_timespans = {}                                             #: Dict of lists per container of (start,end) pairs containing time markers of loading pods
+        self.benchmarking_timespans = {}                                        #: Dict of lists per container of (start,end) pairs containing time markers of benchmarking pods
+        self.sut_service_name = ""                                              #: Name of the DBMS service name, if it is fixed and not installed per configuration
+        self.sut_pod_name = ""                                                  #: Name of pod of SUT, if it is not managed by bexhoma
+        self.sut_container_name = "dbms"                                        #: Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
+        self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
+        self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
+        self.sut_envs = {}                                                      #: parameters sent to container via ENV
+        self.sut_has_pool = False                                               #: if there is a pool component - in particular for monitoring
         self.reset_sut()
-        self.benchmark = None # Optional subobject for benchmarking (dbmsbenchmarker instance)
-        self.current_benchmark_connection = "" # Name of the current connection - for metrics collection
+        self.benchmark = None                                                   #: Optional subobject for benchmarking (dbmsbenchmarker instance)
+        self.current_benchmark_connection = ""                                  #: Name of the current connection - for metrics collection
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
@@ -755,13 +757,18 @@ class default():
         """
         Generate a name for the monitoring component.
         This is used in a pattern for promql.
-        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`
+        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
+        If there is a self.sut_pod_name and we want to monitor SUT, that name is taken instead.
 
         :param app: app the component belongs to
         :param component: Component, for example sut or monitoring
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         """
+        if component == 'sut' and len(self.sut_pod_name) > 0:
+            name = self.sut_pod_name
+        else:
+            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         self.logger.debug("configuration.create_monitoring({})".format(name))
         return name
@@ -1061,23 +1068,34 @@ scrape_configs:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        instance = self.get_instance_from_resources()#self.i
-        template = "deploymenttemplate-"+self.docker+".yml"
-        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-        name_worker = self.generate_component_name(app=app, component='worker', experiment=experiment, configuration=configuration)
+        instance = self.get_instance_from_resources()
+        # storage configuration
         if self.storage['storageConfiguration']:
             storageConfiguration = self.storage['storageConfiguration']
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
         else:
             storageConfiguration = configuration
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+        # configure names
+        if self.num_worker > 0:
+            # we assume here, a stateful set is used
+            # this means we do not want to have the experiment code as part of the names
+            # this would imply there cannot be experiment independent pvcs
+            self.experiment_name = storageConfiguration
+        else:
+            self.experiment_name = experiment
+        name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+        name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
-        name_pool = self.generate_component_name(app=app, component='pool', experiment=experiment, configuration=configuration)
+        name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
-        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
+        # test, if SUT is already running
+        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
             return False
+        # Deployment manifest template - a configured copy will be stored in result folder
+        template = self.sut_template #template = "deploymenttemplate-"+self.docker+".yml"
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         # ENV
         # default empty: env = {}
@@ -1089,6 +1107,8 @@ scrape_configs:
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
+        list_of_workers_as_string_space = " ".join(list_of_workers)
+        env['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
         env['BEXHOMA_SUT_NAME'] = name
         if self.num_worker > 0:
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
@@ -3205,7 +3225,7 @@ scrape_configs:
 
         :return: list of endpoints
         """
-        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.experiment_name)# self.code)
         print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):
@@ -3219,7 +3239,7 @@ scrape_configs:
         :return: list of endpoints
         """
         endpoints = []
-        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.experiment_name)# self.code)
         pods_worker = self.get_worker_pods()
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
