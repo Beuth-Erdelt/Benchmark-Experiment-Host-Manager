@@ -2025,7 +2025,7 @@ scrape_configs:
         :param gpuid: GPU that the metrics should watch
         :return: promql query without parameters
         """
-        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.experiment_name)
     def set_metric_of_config(self, metric, host, gpuid):
         """
         Returns a promql query.
