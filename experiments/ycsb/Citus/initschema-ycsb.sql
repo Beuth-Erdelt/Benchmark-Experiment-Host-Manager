@@ -19,8 +19,27 @@ SELECT create_distributed_table('usertable', 'ycsb_key');
 -- only citus enterprise:
 -- ALTER DATABASE mydb SET citus.shard_replication_factor = 2;
 
+SELECT "pg_stat_replication";
 SELECT * FROM pg_stat_replication;
 
-SELECT * FROM citus_shard_replication_status;
+SELECT "pg_dist_partition";
+SELECT * from pg_dist_partition;
 
+SELECT "pg_dist_shard";
+SELECT * from pg_dist_shard;
+
+SELECT "citus_shards";
+SELECT * FROM citus_shards;
+
+SELECT "pg_dist_placement";
+SELECT * from pg_dist_placement;
+
+SELECT "pg_dist_node";
+SELECT * from pg_dist_node;
+
+SELECT "citus_tables";
+SELECT * FROM citus_tables;
+
+SELECT "citus_get_active_worker_nodes";
+SELECT * FROM citus_get_active_worker_nodes();
 

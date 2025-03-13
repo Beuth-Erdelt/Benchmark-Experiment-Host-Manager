@@ -47,7 +47,8 @@ spec:
       - name: dbms
         #image: citusdata/citus:pg12
         #image: citusdata/citus:postgres_13
-        image: citusdata/citus:postgres_14
+        #image: citusdata/citus:postgres_14
+        image: citusdata/citus:13.0.2-alpine
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
@@ -156,7 +157,8 @@ spec:
       containers:
       - name: dbms
         #image: citusdata/citus:pg12
-        image: citusdata/citus:postgres_14
+        #image: citusdata/citus:postgres_14
+        image: citusdata/citus:13.0.2-alpine
         env:
         - name: PGPASSWORD
           valueFrom:
