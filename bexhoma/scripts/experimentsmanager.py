@@ -322,10 +322,15 @@ def manage():
                 pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                 if args.verbose:
                     print("Worker Pods", pods)
+                num_pods = {}
                 for pod in pods:
                     status = cluster.get_pod_status(pod)
                     #print(status)
-                    apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+                    #apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+                    num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
+                #print(num_pods)
+                for status in num_pods.keys():
+                        apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
                 ############
                 component = 'pool'
                 apps[configuration][component] = ''
@@ -412,6 +417,7 @@ def manage():
                 pods = cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                 if args.verbose:
                     print("Benchmarker Pods", pods)
+                num_pods = {}
                 for pod in pods:
                     status = cluster.get_pod_status(pod)
                     #print(status)
@@ -419,7 +425,11 @@ def manage():
                         experimentRun = '{}. '.format(pod_labels[pod]['client'])
                     else:
                         experimentRun = ''
-                    apps[configuration][component] += "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    status_extended = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1
+                    #apps[configuration][component] += "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status_extended)
+                for status in num_pods.keys():
+                        apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)
             #print(apps)
             df = pd.DataFrame(apps)
             df = df.T
