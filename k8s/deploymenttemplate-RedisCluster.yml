@@ -306,7 +306,7 @@ spec:
             if redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; then
               echo "Cluster already initialized."
             else
-              redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
               echo "Waiting for Redis Cluster to be ready..."
               until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
                 echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."

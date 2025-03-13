@@ -660,9 +660,6 @@ if __name__ == '__main__':
                     config.set_storage(
                         storageConfiguration = 'databaseservice'
                         )
-                    config.set_sut_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(
@@ -723,6 +720,9 @@ if __name__ == '__main__':
                         )
                     config.set_ddl_parameters(
                         num_worker_replicas = num_worker_replicas
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
                         )
                     if skip_loading:
                         config.loading_deactivated = True

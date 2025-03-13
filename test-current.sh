@@ -116,6 +116,30 @@ nohup python ycsb.py -ms 2 -tr \
 wait_process "ycsb"
 
 
+nohup python ycsb.py -ms 2 -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 1 \
+  --workload a \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
+
+
+wait_process "ycsb"
+
+
 kubectl delete pvc bexhoma-storage-redis-ycsb-1
 
 
@@ -136,10 +160,11 @@ nohup python ycsb.py -ms 2 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
 
 
 wait_process "ycsb"
+
 
 ########### does not work - redis nodes do not find eachother after restart
 
@@ -166,7 +191,7 @@ nohup python ycsb.py -ms 2 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_5.log &
 
 
 wait_process "ycsb"
