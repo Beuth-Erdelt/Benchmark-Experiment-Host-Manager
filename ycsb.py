@@ -611,6 +611,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
                         BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_REPLICAS = num_worker_replicas,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -646,6 +647,7 @@ if __name__ == '__main__':
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
                                         BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -709,6 +711,9 @@ if __name__ == '__main__':
                     config = configurations.ycsb(experiment=experiment, docker='Redis', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker)
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
+                        bexhoma_dbms = "redis-cluster"
+                    else:
+                        bexhoma_dbms = "redis"
                     config.set_storage(
                         storageConfiguration = 'redis'
                         )
@@ -729,7 +734,8 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
-                        BEXHOMA_DBMS = "redis",
+                        BEXHOMA_DBMS = bexhoma_dbms,
+                        BEXHOMA_REPLICAS = num_worker_replicas,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -764,7 +770,8 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
-                                        BEXHOMA_DBMS = "redis",
+                                        BEXHOMA_DBMS = bexhoma_dbms,
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -793,6 +800,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
                         BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_REPLICAS = num_worker_replicas,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -828,6 +836,7 @@ if __name__ == '__main__':
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = 10,
                                         BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
