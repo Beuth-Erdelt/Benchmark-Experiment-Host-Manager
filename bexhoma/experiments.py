@@ -1168,15 +1168,16 @@ class default():
                             else:
                                 print("{:30s}: has pending maintaining".format(config.configuration))
                 # store logs of successful worker job pods
+                print("{:30s}: looking for completed startup pods".format(config.configuration))
                 app = self.cluster.appname
                 component = 'worker'
-                pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=config.experiment_name, configuration=configuration)
+                pods = self.cluster.get_job_pods(app=app, component=component, experiment=config.experiment_name, configuration=configuration)
                 for pod in pods:
-                    status = self.experiment.cluster.get_pod_status(pod)
-                    self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
+                    status = self.cluster.get_pod_status(pod)
+                    self.cluster.logger.debug("Pod {} has status {}".format(pod, status))
                     if status == "Succeeded":
-                        self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
-                        self.experiment.cluster.store_pod_log(pod_name=pod)
+                        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
+                        self.cluster.store_pod_log(pod_name=pod)
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
@@ -1185,6 +1186,10 @@ class default():
                         if not config.sut_is_healthy():
                             # we wait for health check
                             print("{:30s}: waits for health check to succeed".format(config.configuration))
+                            continue
+                        if not config.workers_are_healthy():
+                            # we wait for health check
+                            print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
                     # when loaded from PVC, system may not be ready yet
                     if config.loading_after_time is None:
@@ -1252,7 +1257,7 @@ class default():
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
-                                        self.cluster.store_pod_log(pod_worker, container, number=num_experiment_to_apply_done)
+                                        self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done)
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 component = 'pool'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)

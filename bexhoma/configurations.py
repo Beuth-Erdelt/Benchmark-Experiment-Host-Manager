@@ -533,6 +533,28 @@ class default():
                     #print("{:30s}: is not healthy yet".format(self.configuration))
                     return False
         return False
+    def workers_are_healthy(self):
+        """
+        Returns True, iff all workers of system-under-test (dbms) are running and healthy.
+
+        :return: True, if dbms is running
+        """
+        if self.num_worker > 0:
+            app = self.appname
+            component = 'worker'
+            configuration = self.configuration
+            pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
+            num_ready = 0
+            if len(pods) > 0:
+                pod_sut = pods[0]
+                status = self.experiment.cluster.get_pod_status(pod_sut)
+                if status == "Running":
+                    ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                    if ready:
+                        num_ready = num_ready + 1
+            return num_ready == self.num_worker
+        else:
+            return True
     def sut_is_existing(self):
         """
         Returns True, iff system-under-test (dbms) is existing in cluster (no matter what state).
