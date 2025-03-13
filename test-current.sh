@@ -217,10 +217,11 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
 
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 2 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
+  -nwr 1 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -244,7 +245,7 @@ nohup python ycsb.py -ms 1 -tr \
 ####################################################
 
 
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 2 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \

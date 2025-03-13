@@ -844,7 +844,6 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

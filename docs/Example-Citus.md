@@ -87,11 +87,11 @@ Cluster Prometheus: Running
 Message Queue: Running
 Data directory: Running
 Result directory: Running
-+----------------------+--------------+--------------+----------------+-------------------------------+-------------+
-| 1734624013           | sut          |   loaded [s] | use case       | worker                        | loading     |
-+======================+==============+==============+================+===============================+=============+
-| CockroachDB-1-1-1024 | (1. Running) |            2 | benchbase_tpcc | (Running) (Running) (Running) | (1 Running) |
-+----------------------+--------------+--------------+----------------+-------------------------------+-------------+
++------------------+--------------+------------+-------------+
+| 1741884177       | sut          | use case   | worker      |
++==================+==============+============+=============+
+| Citus-64-8-65536 | (1. Running) | ycsb       | (3 Running) |
++------------------+--------------+------------+-------------+
 ```
 
 The code `1730133803` is the unique identifier of the experiment.
@@ -108,6 +108,108 @@ At the end of a benchmark you will see a summary like
 
 ```bash
 ## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 427s 
+    Code: 1741883581
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker13.
+    Benchmarking is fixed to cl-worker13.
+    SUT is fixed to cl-worker20.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Citus-64-8-65536-1 uses docker image citusdata/citus:postgres_14
+    RAM:810204672000
+    CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
+    Cores:32
+    host:5.15.0-126-generic
+    node:cl-worker20
+    disk:445909212
+    datadisk:2204
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540595892224
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-126-generic
+        node:cl-worker23
+        disk:693696344
+        datadisk:44
+    worker 1
+        RAM:540587520000
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-131-generic
+        node:cl-worker22
+        disk:407592940
+        datadisk:44
+    worker 2
+        RAM:1081966526464
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker28
+        disk:1068018780
+        datadisk:44
+
+### Loading
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+Citus-64-8-65536               1       64   65536          8           0                   59518.049397                17855.0             1000000                              6729.0
+
+### Execution
+                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+Citus-64-8-65536-1               1       64   65536          1           0                       64302.89               155514.0           5000702                            1993.0             4999298                              3059.0
+
+### Workflow
+
+#### Actual
+DBMS Citus-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS Citus-64-8-65536 - Pods [[1]]
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1           0        0           0.0                  0.0
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1        3.21        0          0.07                 0.07
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1           0        0           0.0                  0.0
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1     1162.64        0          0.62                 0.63
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
 ```
 
 To see the summary again you can simply call `bexperiments summary -e 1730133803` with the experiment code.
