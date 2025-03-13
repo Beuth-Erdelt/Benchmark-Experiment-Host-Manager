@@ -660,6 +660,9 @@ if __name__ == '__main__':
                     config.set_storage(
                         storageConfiguration = 'databaseservice'
                         )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(
@@ -708,7 +711,8 @@ if __name__ == '__main__':
                 if ("Redis" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
                     name_format = 'Redis-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='Redis', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker)
+                    num_worker_inc_replicas = num_worker * (1+num_worker_replicas)
+                    config = configurations.ycsb(experiment=experiment, docker='Redis', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker_inc_replicas)
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
                         bexhoma_dbms = "redis-cluster"

@@ -111,6 +111,7 @@ class default():
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
         self.maintaining_parameters = {}                                # dict of parameters for maintaining component
         self.loading_parameters = {}                                    # dict of parameters for loading component
+        self.sut_parameters = {}                                        # dict of parameters for sut and worker component
         self.loading_patch = ""                                         # YAML to patch manifest for loading component
         self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
         self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
@@ -562,6 +563,15 @@ class default():
         # total number at least number of parallel
         if self.num_maintaining_pods < self.num_maintaining:
             self.num_maintaining_pods = self.num_maintaining
+    def set_sut_parameters(self,
+                               **kwargs):
+        """
+        Sets ENV for sut and worker components.
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.sut_parameters = kwargs
     def set_loading_parameters(self,
                                **kwargs):
         """

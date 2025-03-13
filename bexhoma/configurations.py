@@ -119,6 +119,7 @@ class default():
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.set_loading_parameters(**self.experiment.loading_parameters)
+        self.set_sut_parameters(**self.experiment.sut_parameters)
         self.patch_loading(self.experiment.loading_patch)
         self.patch_benchmarking(self.experiment.benchmarking_patch)
         self.set_benchmarking_parameters(**self.experiment.benchmarking_parameters)
@@ -172,7 +173,7 @@ class default():
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
         self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
-        self.sut_envs = {}                                                      #: parameters sent to container via ENV
+        #self.sut_envs = {}                                                      #: parameters sent to container via ENV
         self.sut_has_pool = False                                               #: if there is a pool component - in particular for monitoring
         self.reset_sut()
         self.benchmark = None                                                   #: Optional subobject for benchmarking (dbmsbenchmarker instance)
@@ -323,6 +324,14 @@ class default():
         # total number at least number of parallel
         if self.num_maintaining_pods < self.num_maintaining:
             self.num_maintaining_pods = self.num_maintaining
+    def set_sut_parameters(self, **kwargs):
+        """
+        Sets ENV for sut and workers components.
+        Can be set by experiment before creation of configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.sut_parameters = kwargs
     def set_loading_parameters(self, **kwargs):
         """
         Sets ENV for loading components.
@@ -1123,7 +1132,7 @@ scrape_configs:
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         # ENV
         # default empty: env = {}
-        env = self.sut_envs.copy()
+        env = self.sut_parameters #self.sut_envs.copy()
         # generate list of worker names
         list_of_workers = []
         for worker in range(self.num_worker):
@@ -1295,6 +1304,8 @@ scrape_configs:
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     self.logger.debug('configuration.add_env({})'.format(env))
                     #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
+                        dep['spec']['template']['spec']['containers'][i_container]['env'] = list()
                     for i_env,e in env.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
             if dep['kind'] == 'Service':

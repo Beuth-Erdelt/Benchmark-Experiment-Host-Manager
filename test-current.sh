@@ -141,6 +141,7 @@ nohup python ycsb.py -ms 2 -tr \
 
 wait_process "ycsb"
 
+########### does not work - redis nodes do not find eachother after restart
 
 kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-0
 kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-1
