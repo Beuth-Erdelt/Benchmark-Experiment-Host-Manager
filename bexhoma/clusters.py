@@ -1818,7 +1818,7 @@ class kubernetes(testbed):
         :param experiment: Experiment object
         """
         self.experiments.append(experiment)
-    def store_pod_log(self, pod_name, container=''):
+    def store_pod_log(self, pod_name, container='', number=None):
         """
         Store the log of a pod in a local file in the experiment result folder.
         Optionally the name of a container can be given (mandatory, if pod has multiple containers).
@@ -1828,10 +1828,17 @@ class kubernetes(testbed):
         :param container: Name of the container
         """
         # write pod log
-        if len(container) > 0:
-            filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+        if not number is None:
+            if len(container) > 0:
+                filename_log = "{path}/{code}/{pod}.{container}.{number}.log".format(path=resultfolder, code=self.code, pod=pod_name, container=container, number=number)
+            else:
+                filename_log = "{path}/{code}/{pod}.{number}.log".format(path=resultfolder, code=self.code, pod=pod_name, number=number)
         else:
-            filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+            if len(container) > 0:
+                filename_log = "{path}/{code}/{pod}.{container}.log".format(path=resultfolder, code=self.code, pod=pod_name, container=container)
+            else:
+                filename_log = "{path}/{code}/{pod}.log".format(path=resultfolder, code=self.code, pod=pod_name)
         # do not overwrite
         if not os.path.isfile(filename_log):
             # max 10 tries to receive the log (timeout might occure)

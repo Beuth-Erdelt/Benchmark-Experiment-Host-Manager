@@ -1167,6 +1167,16 @@ class default():
                                 config.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
                             else:
                                 print("{:30s}: has pending maintaining".format(config.configuration))
+                # store logs of successful worker job pods
+                app = self.cluster.appname
+                component = 'worker'
+                pods = self.experiment.cluster.get_job_pods(app=app, component=component, experiment=config.experiment_name, configuration=configuration)
+                for pod in pods:
+                    status = self.experiment.cluster.get_pod_status(pod)
+                    self.experiment.cluster.logger.debug("Pod {} has status {}".format(pod, status))
+                    if status == "Succeeded":
+                        self.experiment.cluster.logger.debug("Store logs of job {} pod {}".format(job, pod))
+                        self.experiment.cluster.store_pod_log(pod_name=pod)
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
@@ -1242,7 +1252,7 @@ class default():
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
-                                        self.cluster.store_pod_log(pod_worker, container)
+                                        self.cluster.store_pod_log(pod_worker, container, number=num_experiment_to_apply_done)
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 component = 'pool'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
