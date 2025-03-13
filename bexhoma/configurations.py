@@ -543,15 +543,17 @@ class default():
             app = self.appname
             component = 'worker'
             configuration = self.configuration
-            pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
+            #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
             num_ready = 0
-            if len(pods) > 0:
-                pod_sut = pods[0]
-                status = self.experiment.cluster.get_pod_status(pod_sut)
+            pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+            for pod in pods_worker:
+                #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+                status = self.experiment.cluster.get_pod_status(pod)
                 if status == "Running":
-                    ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                    ready = self.experiment.cluster.is_pod_ready(pod)
                     if ready:
                         num_ready = num_ready + 1
+            print("{:30s}: found {} / {} running workers".format(self.configuration, num_ready, self.num_worker))
             return num_ready == self.num_worker
         else:
             return True

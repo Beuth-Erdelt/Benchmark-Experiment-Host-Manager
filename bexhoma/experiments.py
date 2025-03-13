@@ -1127,6 +1127,10 @@ class default():
                             # we wait for health check
                             print("{:30s}: waits for health check to succeed".format(config.configuration))
                             continue
+                        if not config.workers_are_healthy():
+                            # we wait for health check
+                            print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
+                            continue
                         print("{:30s}: is not loaded yet".format(config.configuration))
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():

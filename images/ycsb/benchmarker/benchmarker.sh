@@ -146,7 +146,7 @@ echo "YCSB_MEASUREMENT_TYPE:$YCSB_MEASUREMENT_TYPE"
 #redis.cluster=false  # Set to true if using Redis Cluster
 #redis.pipeline=true  # Enable pipelining for performance
 #redis.pipeline.maxsize=50  # Adjust based on workload
-if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
+if [[ "$BEXHOMA_DBMS" == "redis" || "$BEXHOMA_DBMS" == "redis-cluster" ]]; then
     echo "BEXHOMA_DBMS is set to Redis"
     echo "redis.host=$BEXHOMA_HOST
 redis.port=$BEXHOMA_PORT
@@ -232,6 +232,14 @@ bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Execute workload ###################
 if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
+    if test $YCSB_STATUS -ne 0
+    then
+        # report status
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -p -s
+    else
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -p
+    fi
+elif [[ "$BEXHOMA_DBMS" == "redis-cluster" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
