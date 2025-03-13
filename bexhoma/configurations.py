@@ -1319,7 +1319,7 @@ scrape_configs:
                     if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
-                            if 'name' in ports and ports['name'] != 'port-dbms':
+                            if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
                                 del result[key]['spec']['ports'][i]
                     continue
                 if dep['metadata']['name'] == 'bexhoma-pool': #!= 'bexhoma-service':
@@ -1356,7 +1356,7 @@ scrape_configs:
                 if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
-                        if 'name' in ports and ports['name'] != 'port-dbms':
+                        if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
                             del result[key]['spec']['ports'][i]
                 #print(pvc)
             if dep['kind'] == 'Deployment':
