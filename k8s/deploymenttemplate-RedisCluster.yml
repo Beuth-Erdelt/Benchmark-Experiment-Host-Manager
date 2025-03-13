@@ -7,6 +7,7 @@ spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 6379}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
   selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
@@ -137,6 +138,7 @@ metadata:
 spec:
   ports:
   - {port: 6379, protocol: TCP, name: port-dbms, targetPort: 6379}
+  - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
   publishNotReadyAddresses: true
   clusterIP: None
   selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
@@ -180,7 +182,7 @@ spec:
           #- "$(POD_NAME)"
           #- "$(POD_IP)"
           - "--cluster-announce-hostname"
-          - "$(POD_NAME)"
+          - "$(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
           #- "yes"
           - "--cluster-preferred-endpoint-type"
           - "hostname"
@@ -203,6 +205,7 @@ spec:
               command: ["redis-cli", "shutdown", "save"]
         ports:
           - containerPort: 6379
+          - containerPort: 16379
         env:
           - name: POD_IP
             valueFrom:
@@ -212,6 +215,18 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          #- name: POD_SUBDOMAIN
+          #  valueFrom:
+          #    fieldRef:
+          #      fieldPath: subdomain
         volumeMounts:
         - name: bexhoma-workers
           mountPath: /data
