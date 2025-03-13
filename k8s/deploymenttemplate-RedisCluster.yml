@@ -160,7 +160,7 @@ spec:
       tolerations:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 60
       containers:
       - name: dbms
         image: redis:7.4.2

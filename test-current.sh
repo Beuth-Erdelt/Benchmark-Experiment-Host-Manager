@@ -116,6 +116,9 @@ nohup python ycsb.py -ms 2 -tr \
 wait_process "ycsb"
 
 
+kubectl delete pvc bexhoma-storage-redis-ycsb-1
+
+
 nohup python ycsb.py -ms 2 -tr \
   -sf 1 \
   -sfo 10 \
@@ -138,6 +141,10 @@ nohup python ycsb.py -ms 2 -tr \
 
 wait_process "ycsb"
 
+
+kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-2
 
 
 nohup python ycsb.py -ms 2 -tr \
