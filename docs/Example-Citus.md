@@ -4,6 +4,9 @@ This differs from the default behaviour of bexhoma, since we benchmark **a distr
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
+Citus is a PostgreSQL extension, that introduces sharding [1].
+A cluster has an instance of PostgreSQL with Citus as a coordinator (here called master, managed by a Kubernetes deployment).
+More instances can register at the master as worker nodes (here managed by Kubernetes stateful sets).
 
 **The results are not official benchmark results.
 Exact performance depends on a number of parameters.
@@ -11,6 +14,7 @@ You may get different results.
 These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 References:
+1. Citus: https://www.citusdata.com/
 1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
 1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C

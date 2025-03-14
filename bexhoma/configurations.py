@@ -2025,7 +2025,7 @@ scrape_configs:
         :param gpuid: GPU that the metrics should watch
         :return: promql query without parameters
         """
-        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.experiment_name)
     def set_metric_of_config(self, metric, host, gpuid):
         """
         Returns a promql query.
@@ -2570,11 +2570,14 @@ scrape_configs:
         """
         self.logger.debug('Try to attach worker to master')
         if self.num_worker > 0:
+            print("{:30s}: try to attach workers to master".format(self.configuration))
             pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
             name_worker = self.generate_component_name(component='worker', experiment=self.experiment_name, configuration=self.configuration) #experiment=self.code, configuration=self.configuration)
             if len(pods) > 0:
+                print("{:30s}: master found".format(self.configuration))
                 pod_sut = pods[0]
                 num_worker = 0
+                print("{:30s}: looking for worker pods".format(self.configuration))
                 while num_worker < self.num_worker:
                     self.wait(5)
                     num_worker = 0
@@ -2584,11 +2587,16 @@ scrape_configs:
                         status = self.experiment.cluster.get_pod_status(pod)
                         if status == "Running":
                             num_worker = num_worker+1
-                    print(self.configuration, "Workers", num_worker, "of", self.num_worker)
+                            print("{:30s}: found running worker {}".format(self.configuration, num_worker))
+                    print("{:30s}: found {} running workers of {}".format(self.configuration, num_worker, self.num_worker))
+                    #print(self.configuration, "Workers", num_worker, "of", self.num_worker)
+                print("{:30s}: list of workers".format(self.configuration))
                 pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
+                    print("{:30s}: worker {}.{} attached".format(self.configuration, pod, name_worker))
                     self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+                    print(stdin, stdout, stderr)
     def check_sut(self):
         """
         Check if the pod of the sut is running.

@@ -5,6 +5,7 @@ This differs from the default behaviour of bexhoma, since we benchmark **a distr
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 Redis is a Key / Value store [1].
+There is a single-host and a cluster version.
 See [dummy deployment](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Redis.yml) for a single-host version that is suitable for bexhoma and see [dummy deployment](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-RedisCluster.yml) for a multi-host version that is suitable for bexhoma.
 
 This can be managed by bexhoma.
@@ -16,7 +17,7 @@ You may get different results.
 These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 References:
-1. https://redis.io/
+1. Redis: https://redis.io/
 1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
 1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
 1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
@@ -217,7 +218,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_redis_2.log &
 ```
 
-### Evaluate Results
+yields something like
 
 ```bash
 ## Show Summary
@@ -303,7 +304,10 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
-### Replication
+## Replication
+
+We can set the number of replicas with the parameter `-nwr`.
+Note that Redis requires a worker per replicated shard, so `-nw 3` and `-nwr 1` creates 6 worker nodes, 3 for sharding and another 3 for the (single) replicas.
 
 ```
 nohup python ycsb.py -ms 1 -tr \
@@ -327,6 +331,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
 ```
 
+yields something like
 
 ```bash
 ## Show Summary
@@ -438,6 +443,7 @@ TEST passed: Workflow as planned
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
+**Currently this only works for single-host experiments, as provisioning for stateful-sets works differently.**
 
 Example:
 ```bash
@@ -463,7 +469,6 @@ nohup python ycsb.py -ms 1 -tr \
 
 The following status shows we have one volume of type `shared`.
 Every single-host Redis experiment running YCSB of SF=1 will take the databases from these volumes and skip loading.
-**Currently this only works for single-host experiments, as provisioning for stateful-sets works differently.**
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of Redis mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
