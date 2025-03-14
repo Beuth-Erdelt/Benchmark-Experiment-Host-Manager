@@ -239,6 +239,32 @@ nohup python ycsb.py -ms 2 -tr \
 
 
 
+wait_process "ycsb"
+
+
+
+nohup python ycsb.py -ms 2 -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 1 \
+  --workload a \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_citus_2.log &
+
+
 
 ####################################################
 ################## Benchbase Citus #################
