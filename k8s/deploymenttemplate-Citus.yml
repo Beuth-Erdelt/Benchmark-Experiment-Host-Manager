@@ -122,7 +122,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: bexhoma-workers
+  name: bexhoma-worker
   labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
 spec:
   selector:
