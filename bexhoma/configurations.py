@@ -2011,7 +2011,7 @@ scrape_configs:
         server['hugepages_free'] = self.get_host_hugepages_free()
         server['cuda'] = self.get_host_cuda()
         return server
-    def set_metric_of_config_default(self, metric, host, gpuid):
+    def set_metric_of_config_default(self, metric, host, gpuid, experiment=None):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -2025,7 +2025,9 @@ scrape_configs:
         :param gpuid: GPU that the metrics should watch
         :return: promql query without parameters
         """
-        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.experiment_name)
+        if experiment is None:
+            experiment = self.code
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment)
     def set_metric_of_config(self, metric, host, gpuid):
         """
         Returns a promql query.
@@ -2040,7 +2042,7 @@ scrape_configs:
         :param gpuid: GPU that the metrics should watch
         :return: promql query without parameters
         """
-        return self.set_metric_of_config_default(metric, host, gpuid)
+        return self.set_metric_of_config_default(metric, host, gpuid, self.experiment_name)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.
