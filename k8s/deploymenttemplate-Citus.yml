@@ -228,6 +228,8 @@ spec:
           mountPath: /dev/disk
           readOnly: true
       volumes:
+      - name: bexhoma-workers
+        persistentVolumeClaim: {claimName: bexhoma-workers}
       - name: rootfs
         hostPath:
           path: /

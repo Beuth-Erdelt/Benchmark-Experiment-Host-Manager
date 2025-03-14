@@ -231,8 +231,8 @@ spec:
         - name: bexhoma-workers
           mountPath: /data
       volumes:
-      - name: benchmark-data-volume
-        persistentVolumeClaim: {claimName: bexhoma-data}
+      #- name: benchmark-data-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-data}
       - name: bexhoma-workers
         persistentVolumeClaim: {claimName: bexhoma-workers}
       #- name: benchmark-storage-volume
