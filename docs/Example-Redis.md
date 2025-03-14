@@ -218,7 +218,7 @@ nohup python ycsb.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_ycsb_redis_2.log &
 ```
 
-### Evaluate Results
+yields something like
 
 ```bash
 ## Show Summary
@@ -304,7 +304,7 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
-### Replication
+## Replication
 
 We can set the number of replicas with the parameter `-nwr`.
 Note that Redis requires a worker per replicated shard, so `-nw 3` and `-nwr 1` creates 6 worker nodes, 3 for sharding and another 3 for the (single) replicas.
