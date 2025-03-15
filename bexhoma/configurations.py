@@ -2224,10 +2224,17 @@ scrape_configs:
             self.connection_parameter['loading_parameters'] = self.loading_parameters
         if len(self.benchmarking_parameters):
             self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
+        if len(self.sut_parameters):
+            self.connection_parameter['sut_parameters'] = self.sut_parameters
+        if len(self.eval_parameters):
+            self.connection_parameter['eval_parameters'] = self.eval_parameters
+        if len(self.ddl_parameters):
+            self.connection_parameter['ddl_parameters'] = self.ddl_parameters
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = experimentRun
+        c['parameter']['num_worker'] = self.num_worker
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
         c['hostsystem']['loading_timespans'] = self.loading_timespans

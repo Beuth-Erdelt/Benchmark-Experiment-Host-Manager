@@ -497,6 +497,7 @@ class default():
                             **kwargs):
         """
         Sets some arbitrary parameters that are supposed to be handed over to the benchmarker component.
+        These are for evaluation purposes only.
         Can be overwritten by configuration.
 
         :param kwargs: Dict of meta data, example 'type' => 'noindex'
@@ -2861,14 +2862,30 @@ class ycsb(default):
                   "uses docker image",
                   c['parameter']['dockerimage'])
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            key = 'client'
+            if key in c['parameter']:
+                info = c['parameter'][key]
+                infos.append("    {}:{}".format(key,info))
+            key = 'numExperiment'
+            if key in c['parameter']:
+                info = c['parameter'][key]
+                infos.append("    {}:{}".format(key,info))
             for info in infos:
                 print(info)
+            """
             if 'worker' in c and len(c['worker']) > 0:
                 for i, worker in enumerate(c['worker']):
                     print("    worker {}".format(i))
                     infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
-                        print(info)                
+                        print(info)
+            if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
+                for i, parameters in c['parameter']['connection_parameter'].items():
+                    print("    "+i)
+                    infos = ["                {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)
+            """
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
