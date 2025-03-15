@@ -2703,6 +2703,7 @@ class ycsb(default):
         self.SF = SF
         self.set_experiment(volume='ycsb')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/ycsb')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')

@@ -19,6 +19,14 @@ SELECT create_distributed_table('usertable', 'ycsb_key');
 -- only citus enterprise:
 -- ALTER DATABASE mydb SET citus.shard_replication_factor = 2;
 
+
+-- SET citus.shard_count = 32;
+-- or
+-- ALTER DATABASE postgres SET citus.shard_count = 32;
+-- or
+-- SELECT create_distributed_table('usertable', 'ycsb_key', 'hash', shard_count := 32);
+
+
 SELECT 'pg_stat_replication' AS message;
 SELECT * FROM pg_stat_replication;
 

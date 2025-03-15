@@ -1,22 +1,3 @@
-CREATE TABLE public.usertable (
-  YCSB_KEY varchar(255) PRIMARY KEY USING HASH,
-  FIELD0 text,
-  FIELD1 text,
-  FIELD2 text,
-  FIELD3 text,
-  FIELD4 text,
-  FIELD5 text,
-  FIELD6 text,
-  FIELD7 text,
-  FIELD8 text,
-  FIELD9 text
-);
-
-ALTER TABLE public.usertable CONFIGURE ZONE USING num_replicas = {num_worker_replicas};
-
-SELECT 'SHOW ZONE CONFIGURATION' AS message;
-SHOW ZONE CONFIGURATION FROM TABLE public.usertable;
-
 -- This table contains information about the distribution of ranges across the nodes. It gives insights into the status of ranges, including which node is hosting which range.
 SELECT 'crdb_internal.ranges' AS message;
 SELECT * FROM crdb_internal.ranges;
