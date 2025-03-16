@@ -3057,6 +3057,7 @@ class benchbase(default):
         self.SF = SF
         self.set_experiment(volume='benchbase')
         self.set_experiment(script='Schema')
+        self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/benchbase')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')

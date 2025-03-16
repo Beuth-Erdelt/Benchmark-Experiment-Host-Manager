@@ -1,3 +1,8 @@
+
+-- Verify Distribution
+SELECT * FROM citus_shards WHERE tablename IN ('usertable');
+
+
 SELECT 'pg_stat_replication' AS message;
 SELECT * FROM pg_stat_replication;
 
