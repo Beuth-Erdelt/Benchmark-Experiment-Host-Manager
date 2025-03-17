@@ -1695,7 +1695,7 @@ scrape_configs:
         finally:
             s.close()
         return found
-    def get_host_volume(self):
+    def get_host_volume(self, pod=''):
         """
         Returns information about the sut's mounted volumes.
         Basically this calls something equivalent to
@@ -1708,7 +1708,7 @@ scrape_configs:
         try:
             #command = "df -h | grep volumes | awk -F ' ' '{print $2}'"
             command = "df -h | grep volumes"
-            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command, pod=pod)
             parts = stdout.split(" ")
             parts = [x for x in parts if x != '']
             if len(parts) > 2:
@@ -1990,25 +1990,38 @@ scrape_configs:
         use_storage = self.use_storage()
         if use_storage:
             if self.storage['storageConfiguration']:
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+                volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+                volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
             else:
-                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+                volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+                volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.configuration)
+            pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
             # for worker pods: bexhoma-workers-
-            volume = name_pvc
-            volume_worker = "bexhoma-workers-{}".format(self.pod_sut)
-        else:
-            volume = ''
-        if volume:
-            size, used = self.get_host_volume()
-            # write infos to SUT's PVC (if exists)
-            fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
-            #print(fullcommand)
-            self.experiment.cluster.kubectl(fullcommand)
-            ## write infos to worker's PVC (if exists)
-            ## TODO: check if exists, test if it writes per worker size infos
-            #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
-            ##print(fullcommand)
-            #self.experiment.cluster.kubectl(fullcommand)
+            #volume = name_pvc
+            #volume_worker = "bexhoma-workers-{}".format(self.pod_sut)
+            if volume:
+                size, used = self.get_host_volume(pod=self.pod_sut)
+                # write infos to SUT's PVC (if exists)
+                fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
+                #print(fullcommand)
+                self.experiment.cluster.kubectl(fullcommand)
+                ## write infos to worker's PVC (if exists)
+                ## TODO: check if exists, test if it writes per worker size infos
+                #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
+                ##print(fullcommand)
+                #self.experiment.cluster.kubectl(fullcommand)
+            if volume_worker and pods_worker:
+                for pod in pods_worker:
+                    size, used = self.get_host_volume(pod=self.pod)
+                    # write infos to SUT's PVC (if exists)
+                    fullcommand = 'label pvc bexhoma-workers-{} --overwrite volume_size="{}" volume_used="{}"'.format(pod, size, used)
+                    #print(fullcommand)
+                    self.experiment.cluster.kubectl(fullcommand)
+                    ## write infos to worker's PVC (if exists)
+                    ## TODO: check if exists, test if it writes per worker size infos
+                    #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
+                    ##print(fullcommand)
+                    #self.experiment.cluster.kubectl(fullcommand)
     def get_host_all(self):
         """
         Calls all `get_host_x()` methods.
