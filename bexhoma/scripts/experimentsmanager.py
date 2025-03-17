@@ -67,7 +67,7 @@ def manage():
             cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
-            cluster.kubectl('delete all -l experiment='+cluster.code)
+            #cluster.kubectl('delete all -l experiment='+cluster.code)
             # kubectl delete all -l experiment=1742207308
         else:
             experiment = experiments.default(cluster=cluster, code=args.experiment)
@@ -76,6 +76,7 @@ def manage():
             experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
+            cluster.kubectl('delete all -l experiment='+args.experiment)
     elif args.mode == 'summary':
         if not args.experiment is None:
             cluster = clusters.kubernetes(clusterconfig, context=args.context)
