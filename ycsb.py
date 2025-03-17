@@ -55,6 +55,7 @@ if __name__ == '__main__':
     parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="")
     parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
     parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
+    parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
     #parser.add_argument('-nl',  '--num-loading', help='number of parallel loaders per configuration', default=1)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
@@ -124,6 +125,7 @@ if __name__ == '__main__':
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
+    num_worker_shards = int(args.num_worker_shards)
     ##############
     ### specific to: YCSB
     ##############
@@ -594,7 +596,12 @@ if __name__ == '__main__':
                         storageConfiguration = 'cockroachdb'
                         )
                     config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas
+                        num_worker_replicas = num_worker_replicas,
+                        num_worker_shards = num_worker_shards,
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
                         )
                     if skip_loading:
                         config.loading_deactivated = True
@@ -719,10 +726,12 @@ if __name__ == '__main__':
                         storageConfiguration = 'redis'
                         )
                     config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas
+                        num_worker_replicas = num_worker_replicas,
+                        num_worker_shards = num_worker_shards,
                         )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
                         )
                     if skip_loading:
                         config.loading_deactivated = True
@@ -787,7 +796,12 @@ if __name__ == '__main__':
                         storageConfiguration = 'citus'
                         )
                     config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas
+                        num_worker_replicas = num_worker_replicas,
+                        num_worker_shards = num_worker_shards,
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
                         )
                     if skip_loading:
                         config.loading_deactivated = True

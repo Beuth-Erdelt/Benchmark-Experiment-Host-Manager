@@ -48,6 +48,8 @@ if __name__ == '__main__':
     parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
     parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=1)
+    parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
+    parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
     #parser.add_argument('-nlf', '--num-loading-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
@@ -114,6 +116,8 @@ if __name__ == '__main__':
     skip_loading = args.skip_loading
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
+    num_worker_replicas = int(args.num_worker_replicas)
+    num_worker_shards = int(args.num_worker_shards)
     ##############
     ### specific to: Benchbase
     ##############
@@ -472,6 +476,14 @@ if __name__ == '__main__':
                     config = configurations.benchbase(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
                     if skip_loading:
                         config.loading_deactivated = True
+                    config.set_ddl_parameters(
+                        num_worker_replicas = num_worker_replicas,
+                        num_worker_shards = num_worker_shards,
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods), # =1
                         SF = SF,
@@ -484,6 +496,7 @@ if __name__ == '__main__':
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "",
+                        BEXHOMA_REPLICAS = num_worker_replicas,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -516,6 +529,7 @@ if __name__ == '__main__':
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BEXHOMA_USER = "root",
                                         BEXHOMA_PASSWORD = "",
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -579,6 +593,14 @@ if __name__ == '__main__':
                     config = configurations.benchbase(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
                     if skip_loading:
                         config.loading_deactivated = True
+                    config.set_ddl_parameters(
+                        num_worker_replicas = num_worker_replicas,
+                        num_worker_shards = num_worker_shards,
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods), # =1
                         SF = SF,
@@ -591,6 +613,7 @@ if __name__ == '__main__':
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "",
+                        BEXHOMA_REPLICAS = num_worker_replicas,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -623,6 +646,7 @@ if __name__ == '__main__':
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BEXHOMA_USER = "root",
                                         BEXHOMA_PASSWORD = "",
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
