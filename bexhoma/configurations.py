@@ -1254,6 +1254,14 @@ scrape_configs:
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                    elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
+                        # remove monitoring containers
+                        if container['name'] == 'cadvisor':
+                            del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.worker_containers_deployed.pop()
+                        if container['name'] == 'dcgm-exporter':
+                            del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.worker_containers_deployed.pop()
                     # get and set ENV
                     #env_manifest = {}
                     #envs = container['env']
