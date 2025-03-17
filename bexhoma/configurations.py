@@ -1133,7 +1133,8 @@ scrape_configs:
         else:
             self.experiment_name = experiment
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
-        name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+        #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+        name_worker = self.get_worker_name()
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
@@ -3309,6 +3310,31 @@ scrape_configs:
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
+    def get_worker_name(self):
+        """
+        Returns a template for the worker names.
+        Default is component name is 'worker' for a bexhoma managed DBMS.
+        If PVC are used, this must be changed, since the experiment code as part of the worker names would imply the PVC also are only valid for the concrete experiment.
+        This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
+
+        :return: list of endpoints
+        """
+        if self.storage['storageConfiguration']:
+            storageConfiguration = self.storage['storageConfiguration']
+        else:
+            storageConfiguration = self.configuration
+        # configure names
+        if self.num_worker > 0:
+            # we assume here, a stateful set is used
+            # this means we do not want to have the experiment code as part of the names
+            # this would imply there cannot be experiment independent pvcs
+            self.experiment_name = storageConfiguration
+        else:
+            self.experiment_name = experiment
+        #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+        #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+        name_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
+        return name_worker
     def get_worker_pods(self):
         """
         Returns a list of all pod names of workers for the current SUT.
