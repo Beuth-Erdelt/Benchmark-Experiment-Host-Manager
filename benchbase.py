@@ -601,6 +601,11 @@ if __name__ == '__main__':
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
                         )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods), # =1
                         SF = SF,
@@ -611,8 +616,8 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BEXHOMA_USER = "root",
-                        BEXHOMA_PASSWORD = "",
+                        #BEXHOMA_USER = "root",
+                        #BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -644,8 +649,8 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BEXHOMA_USER = "root",
-                                        BEXHOMA_PASSWORD = "",
+                                        #BEXHOMA_USER = "root",
+                                        #BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         )
                     #print(executor_list)
