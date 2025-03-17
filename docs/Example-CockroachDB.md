@@ -7,7 +7,10 @@ This differs from the default behaviour of bexhoma, since we benchmark **a distr
 CockroachDB offers several installation methods [1].
 We here rely on *CockroachDB insecure test cluster in a single Kubernetes cluster* [2].
 The benefit of this approach is we can use a [manifest](https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/cockroachdb-statefulset.yaml) for a stateful set provided by CockroachDB.
-See [dummy deployment](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-CockroachDB.yml) for a version that is suitable for bexhoma.
+See [dummy manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-CockroachDB.yml) for a version that is suitable for bexhoma.
+CockroachDB cluster does not require a coordinator.
+Bexhoma still deploys a main pod (called master) as a substitute for a single point of contact and to annotate status of experiments.
+Bexhoma also deploys a service for communication external to CockroachDB (from within the cluster) and a headless service for communication between the pods of the Redis cluster.
 
 This can be managed by bexhoma.
 

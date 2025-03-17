@@ -6,7 +6,12 @@ This differs from the default behaviour of bexhoma, since we benchmark **a distr
 
 Redis is a Key / Value store [1].
 There is a single-host and a cluster version.
-See [dummy deployment](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Redis.yml) for a single-host version that is suitable for bexhoma and see [dummy deployment](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-RedisCluster.yml) for a multi-host version that is suitable for bexhoma.
+In the cluster version, there are several pods deployed for the worker nodes using a stateful set.
+Each shard and each replication needs it's own pod.
+Redis cluster does not require a coordinator.
+Bexhoma still deploys a main pod (called master) as a substitute for a single point of contact and to annotate status of experiments.
+Bexhoma also deploys a service for communication external to Redis (from within the cluster) and a headless service for communication between the pods of the Redis cluster.
+See [dummy manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Redis.yml) for a single-host version that is suitable for bexhoma and see [dummy manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-RedisCluster.yml) for a multi-host version that is suitable for bexhoma.
 
 This can be managed by bexhoma.
 
