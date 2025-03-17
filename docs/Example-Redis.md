@@ -121,8 +121,8 @@ At the end of a benchmark you will see a summary like
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 469s 
-    Code: 1741875649
+    Duration: 661s 
+    Code: 1742224433
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -135,9 +135,9 @@ YCSB SF=1
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker13.
-    Benchmarking is fixed to cl-worker13.
-    SUT is fixed to cl-worker20.
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [128] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -145,22 +145,26 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:810204672000
-    CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
-    Cores:32
-    host:5.15.0-126-generic
-    node:cl-worker20
-    disk:443550708
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:141202068
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1742224433
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   20064.881886                49910.0             1000000                              4744.0
+Redis-64-8-196608               1       64  196608          8           0                   12778.254229                78483.0             1000000                              7549.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       44012.34               227209.0           4999653                            5363.0             5000347                              5363.0
+Redis-64-8-196608-1               1      128   65536          1           0                       27331.07               365884.0           4997945                            8815.0             5002055                              8807.0
 
 ### Workflow
 
@@ -176,7 +180,7 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
-To see the summary again you can simply call `bexperiments summary -e 1730133803` with the experiment code.
+To see the summary again you can simply call `bexperiments summary -e 1742224433` with the experiment code.
 
 ### Detailed Evaluation
 

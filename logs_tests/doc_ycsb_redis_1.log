@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1741947395
-Experiment                    : starts at 2025-03-14 11:16:35.485566 (6139558.956114476)
+Experiment                    : has code 1742224433
+Experiment                    : starts at 2025-03-17 16:13:53.492538 (6416596.963088364)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -15,44 +15,120 @@ Factors for benchmarking are [4].
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['Redis'].
 Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker13.
-Benchmarking is fixed to cl-worker13.
-SUT is fixed to cl-worker20.
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [128] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 Redis-64-8-196608             : will start now
 - waiting 30s -               : done
 Redis-64-8-196608             : is not loaded yet
-Redis-64-8-196608             : will start loading but not before 2025-03-14 10:17:36 (that is in 0 secs)
+Redis-64-8-196608             : will start loading but not before 2025-03-17 15:14:54 (that is in 0 secs)
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 Redis-64-8-196608             : is not loaded yet
 Redis-64-8-196608             : start asynch loading scripts of type loaded
-Redis-64-8-196608             : no load command found in config
 Redis-64-8-196608             : is loading
 - waiting 30s -               : done
 Redis-64-8-196608             : is loading
 - waiting 30s -               : done
 Redis-64-8-196608             : is loading
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+Redis-64-8-196608             : is loading
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 Redis-64-8-196608             : showing loader times
-Redis-64-8-196608             : loader timespan (first to last [s]) = 51
+Redis-64-8-196608             : loader timespan (first to last [s]) = 79
+Redis-64-8-196608             : start asynch loading scripts of type indexed
+Redis-64-8-196608             : is loading
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
 Redis-64-8-196608             : benchmarks done 0 of 1. This will be client 1
 Redis-64-8-196608             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 128, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'redis', 'BEXHOMA_REPLICAS': 0}
 Redis-64-8-196608-1           : start benchmarking
-Worker pods found:  []
-Redis-64-8-196608             : benchmarking results in folder /home/perdelt/benchmarks/1741947395
+Redis-64-8-196608             : Worker pods found: []
+Redis-64-8-196608             : benchmarking results in folder /home/perdelt/benchmarks/1742224433
 - waiting 10s -               : done
+Redis-64-8-196608             : benchmarking is waiting for job bexhoma-benchmarker-redis-64-8-196608-1742224433-1-1-bl4tv: Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
 found
 Redis-64-8-196608-1           : collecting loading metrics of SUT at connection Redis-64-8-196608-1
-Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1741947395(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1742224433(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Redis-64-8-196608-1           : collecting metrics of data generator at connection Redis-64-8-196608-1
-Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1741947395(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1742224433(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Redis-64-8-196608-1           : collecting metrics of data injector at connection Redis-64-8-196608-1
-Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1741947395(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1742224433(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 Redis-64-8-196608             : has running benchmarks
 - waiting 30s -               : done
@@ -65,19 +141,49 @@ Redis-64-8-196608             : has running benchmarks
 Redis-64-8-196608             : has running benchmarks
 - waiting 30s -               : done
 Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
 done
 Redis-64-8-196608             : has running benchmarks
 Redis-64-8-196608-1           : showing benchmarker times
-Redis-64-8-196608-1           : benchmarker timespan (start to end single container [s]) = 238
-Redis-64-8-196608-1           : benchmarker times (start/end per pod and container) = [(1741947591, 1741947821)]
-Redis-64-8-196608-1           : found and updated times {'benchmarker': [(1741947591, 1741947821)]}
+Redis-64-8-196608-1           : benchmarker timespan (start to end single container [s]) = 376
+Redis-64-8-196608-1           : benchmarker times (start/end per pod and container) = [(1742224688, 1742225054)]
+Redis-64-8-196608-1           : found and updated times {'benchmarker': [(1742224688, 1742225054)]}
 Redis-64-8-196608-1           : collecting execution metrics of SUT at connection Redis-64-8-196608-1
-Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1741947395(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1742224433(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Redis-64-8-196608-1           : collecting metrics of benchmarker at connection Redis-64-8-196608-1
-Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1741947395(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Redis-64-8-196608-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1742224433(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
 done
 Redis-64-8-196608             : can be stopped
-Experiment                    : ends at 2025-03-14 11:24:24.792363 (6140028.262916115) - 469.31s total
+Experiment                    : ends at 2025-03-17 16:24:53.930662 (6417257.401211295) - 660.44s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -88,8 +194,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 470s 
-    Code: 1741947395
+    Duration: 661s 
+    Code: 1742224433
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -102,9 +208,9 @@ YCSB SF=1
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker13.
-    Benchmarking is fixed to cl-worker13.
-    SUT is fixed to cl-worker20.
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [128] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -112,22 +218,26 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:810204672000
-    CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
-    Cores:32
-    host:5.15.0-126-generic
-    node:cl-worker20
-    disk:476848700
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:141202068
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1742224433
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   20414.768753                49215.0             1000000                              4698.0
+Redis-64-8-196608               1       64  196608          8           0                   12778.254229                78483.0             1000000                              7549.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       43627.73               229212.0           5001801                            5419.0             4998199                              5427.0
+Redis-64-8-196608-1               1      128   65536          1           0                       27331.07               365884.0           4997945                            8815.0             5002055                              8807.0
 
 ### Workflow
 
