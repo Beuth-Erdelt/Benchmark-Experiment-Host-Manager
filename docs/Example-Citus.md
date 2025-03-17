@@ -45,6 +45,8 @@ nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
+  -nwr 1 \
+  -nws 32 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

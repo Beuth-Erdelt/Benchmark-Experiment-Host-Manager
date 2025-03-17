@@ -217,11 +217,12 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
 
-nohup python ycsb.py -ms 2 -tr \
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
   -nwr 1 \
+  -nws 32 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -243,11 +244,12 @@ wait_process "ycsb"
 
 
 
-nohup python ycsb.py -ms 2 -tr \
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
   -nwr 1 \
+  -nws 32 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -264,6 +266,8 @@ nohup python ycsb.py -ms 2 -tr \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_citus_2.log &
 
+
+wait_process "ycsb"
 
 
 ####################################################

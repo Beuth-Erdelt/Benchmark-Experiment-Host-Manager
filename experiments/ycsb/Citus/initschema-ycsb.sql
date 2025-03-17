@@ -28,6 +28,8 @@ SELECT create_distributed_table('usertable', 'ycsb_key');
 -- or
 -- SELECT create_distributed_table('usertable', 'ycsb_key', 'hash', shard_count => {num_worker_shards});
 
+-- Verify Distribution
+SELECT * FROM citus_shards;
 
 SELECT 'pg_stat_replication' AS message;
 SELECT * FROM pg_stat_replication;
@@ -58,3 +60,16 @@ SELECT logicalrelid AS tablename,
 FROM pg_dist_shard_placement ps
 JOIN pg_dist_shard p ON ps.shardid=p.shardid
 GROUP BY logicalrelid;
+
+
+SELECT 
+    table_name, 
+    shardid, 
+    shard_name, 
+    citus_table_type, 
+    colocation_id, 
+    nodename, 
+    nodeport, 
+    pg_size_pretty(shard_size::bigint) AS shard_size_readable
+FROM citus_shards;
+

@@ -1279,7 +1279,7 @@ scrape_configs:
                     if not use_storage:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
-                        print(result[key]['spec']['volumeClaimTemplates'])
+                        #print(result[key]['spec']['volumeClaimTemplates'])
                         if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
                             dep['spec']['volumeClaimTemplates'][0]['spec']['storageClassName'] = self.storage['storageClassName']
                             #print(dep['spec']['storageClassName'])
@@ -3281,7 +3281,8 @@ scrape_configs:
         :return: list of endpoints
         """
         pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-        print("Worker pods found: ", pods_worker)
+        print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
+        #print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):
         """
@@ -3299,7 +3300,8 @@ scrape_configs:
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
             endpoints.append(endpoint)
-            print('Worker endpoint: {endpoint}'.format(endpoint = endpoint))
+            print("{:30s}: Worker endpoint : {}".format(self.configuration, endpoint))
+            #print('Worker endpoint: {endpoint}'.format(endpoint = endpoint))
         return endpoints
 
 
