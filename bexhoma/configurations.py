@@ -190,7 +190,9 @@ class default():
         self.loading_started = False #: Time as an integer when initial loading has started
         self.loading_after_time = None #: Time as an integer when initial loading should start - to give the system time to start up completely
         self.loading_finished = False #: Time as an integer when initial loading has finished
-        self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are       
+        self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are
+        self.is_sut_ready = False
+        self.are_worker_ready = False
     def add_benchmark_list(self, list_clients):
         """
         Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
@@ -298,7 +300,8 @@ class default():
 
         :param kwargs: Dict of meta data, example 'type' => 'noindex'
         """
-        self.eval_parameters = kwargs
+        #self.eval_parameters = kwargs
+        self.eval_parameters = {**self.eval_parameters, **kwargs}
     def set_maintaining_parameters(self, **kwargs):
         """
         Sets ENV for maintaining components.
@@ -527,6 +530,8 @@ class default():
 
         :return: True, if dbms is running
         """
+        if is_sut_ready:
+            return True
         app = self.appname
         component = 'sut'
         configuration = self.configuration
@@ -537,6 +542,7 @@ class default():
             if status == "Running":
                 ready = self.experiment.cluster.is_pod_ready(pod_sut)
                 if ready:
+                    self.is_sut_ready = True
                     return True
                 else:
                     #print("{:30s}: is not healthy yet".format(self.configuration))
@@ -549,6 +555,8 @@ class default():
         :return: True, if dbms is running
         """
         if self.num_worker > 0:
+            if self.are_worker_ready:
+                return True
             app = self.appname
             component = 'worker'
             configuration = self.configuration
@@ -563,7 +571,8 @@ class default():
                     if ready:
                         num_ready = num_ready + 1
             print("{:30s}: found {} / {} running workers".format(self.configuration, num_ready, self.num_worker))
-            return num_ready == self.num_worker
+            self.are_worker_ready = (num_ready == self.num_worker)
+            return self.are_worker_ready
         else:
             return True
     def sut_is_existing(self):
