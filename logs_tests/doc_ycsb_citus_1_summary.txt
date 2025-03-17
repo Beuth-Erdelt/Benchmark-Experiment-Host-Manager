@@ -1,0 +1,99 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 547s 
+    Code: 1741943211
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker13.
+    Benchmarking is fixed to cl-worker13.
+    SUT is fixed to cl-worker20.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Citus-64-8-65536-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:810204672000
+    CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
+    Cores:32
+    host:5.15.0-126-generic
+    node:cl-worker20
+    disk:476257712
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:1081650974720
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-133-generic
+        node:cl-worker34
+        disk:138983112
+    worker 1
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-126-generic
+        node:cl-worker25
+        disk:384079056
+    worker 2
+        RAM:540595888128
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-127-generic
+        node:cl-worker24
+        disk:158990540
+
+### Loading
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+Citus-64-8-65536               1       64   65536          8           0                   31406.745886                32286.0             1000000                              3408.5
+
+### Execution
+                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+Citus-64-8-65536-1               1       64   65536          1           0                       42070.72               237695.0           4998591                            1961.0             5001409                              6347.0
+
+### Workflow
+
+#### Actual
+DBMS Citus-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS Citus-64-8-65536 - Pods [[1]]
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1      527.67     3.17          1.11                 2.87
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1      146.39        0          4.36                 4.42
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1     7360.49    21.31          2.95                 6.04
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1       904.4     7.09          0.62                 0.63
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

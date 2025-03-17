@@ -1,0 +1,102 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 464s 
+    Code: 1741881604
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [12].
+    Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Redis'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker13.
+    Benchmarking is fixed to cl-worker13.
+    SUT is fixed to cl-worker20.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [128] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Redis-64-8-196608-1 uses docker image redis:7.4.2
+    RAM:810204672000
+    CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
+    Cores:32
+    host:5.15.0-126-generic
+    node:cl-worker20
+    disk:443046940
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:1081966526464
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1067-nvidia
+        node:cl-worker28
+        disk:1067835416
+    worker 1
+        RAM:540595892224
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-126-generic
+        node:cl-worker23
+        disk:693867324
+    worker 2
+        RAM:540587520000
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-131-generic
+        node:cl-worker22
+        disk:407668660
+    worker 3
+        RAM:540595888128
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-127-generic
+        node:cl-worker24
+        disk:158354628
+    worker 4
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-126-generic
+        node:cl-worker25
+        disk:383504844
+    worker 5
+        RAM:1081751019520
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-126-generic
+        node:cl-worker29
+        disk:438200600
+    worker 6
+        node:cl-worker12
+
+### Loading
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+Redis-64-8-196608               1       64  196608          8           0                   24266.472148                41474.0             1000000                              5123.0
+
+### Execution
+                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+Redis-64-8-196608-1               1      128   65536          1           0                        61299.3               163134.0           4997939                            2385.0             5002061                              2373.0
+
+### Workflow
+
+#### Actual
+DBMS Redis-64-8-196608 - Pods [[1]]
+
+#### Planned
+DBMS Redis-64-8-196608 - Pods [[1]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

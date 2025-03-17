@@ -178,11 +178,22 @@ spec:
           - "yes"
           - "--protected-mode"
           - "no"
+          - "--cluster-announce-port"
+          - "6379"
+          - "--cluster-announce-bus-port"
+          - "16379"
+          - "--cluster-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          - "--replica-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          - "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          #- "--cluster-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
+          #- "--replica-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
+          #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
           #- "--cluster-announce-ip"
+          #- "bexhoma-worker-redis-64-8-196608-redis"
           #- "$(POD_NAME)"
           #- "$(POD_IP)"
-          - "--cluster-announce-hostname"
-          - "$(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          #- "--cluster-announce-hostname"
+          #- "$(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
           #- "yes"
           - "--cluster-preferred-endpoint-type"
           - "hostname"
@@ -306,7 +317,8 @@ spec:
             if redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; then
               echo "Cluster already initialized."
             else
-              yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE") --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
               echo "Waiting for Redis Cluster to be ready..."
               until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
                 echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."

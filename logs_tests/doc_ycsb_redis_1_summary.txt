@@ -1,0 +1,58 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 470s 
+    Code: 1741947395
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [12].
+    Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Redis'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker13.
+    Benchmarking is fixed to cl-worker13.
+    SUT is fixed to cl-worker20.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [128] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Redis-64-8-196608-1 uses docker image redis:7.4.2
+    RAM:810204672000
+    CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
+    Cores:32
+    host:5.15.0-126-generic
+    node:cl-worker20
+    disk:476848700
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Loading
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+Redis-64-8-196608               1       64  196608          8           0                   20414.768753                49215.0             1000000                              4698.0
+
+### Execution
+                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+Redis-64-8-196608-1               1      128   65536          1           0                       43627.73               229212.0           5001801                            5419.0             4998199                              5427.0
+
+### Workflow
+
+#### Actual
+DBMS Redis-64-8-196608 - Pods [[1]]
+
+#### Planned
+DBMS Redis-64-8-196608 - Pods [[1]]
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Workflow as planned

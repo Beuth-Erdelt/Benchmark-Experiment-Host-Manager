@@ -1,0 +1,187 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1741972167
+Experiment                    : starts at 2025-03-14 18:09:27.120042 (6164330.590591953)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Number of operations is 10000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [12].
+Factors for benchmarking are [4].
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['Redis'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker13.
+Benchmarking is fixed to cl-worker13.
+SUT is fixed to cl-worker20.
+Database is persisted to disk of type shared and size 50Gi.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [128] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run 2 times.
+Cluster monitoring            : is running
+done
+Redis-64-8-196608             : will start now
+[{'metadata': {'name': 'bexhoma-workers', 'labels': {'app': 'bexhoma', 'component': 'worker', 'configuration': 'default', 'experiment': 'default'}}, 'spec': {'accessModes': ['ReadWriteOnce'], 'resources': {'requests': {'storage': '100Gi'}}, 'storageClassName': 'shared'}}]
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 3 / 3 running workers
+Redis-64-8-196608             : is not loaded yet
+Redis-64-8-196608             : will start loading but not before 2025-03-14 17:10:28 (that is in 0 secs)
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : done
+Worker pods found:  ['bexhoma-worker-redis-64-8-196608-redis-0', 'bexhoma-worker-redis-64-8-196608-redis-1', 'bexhoma-worker-redis-64-8-196608-redis-2', 'bexhoma-worker-redis-64-8-196608-redis-kjx52']
+Redis-64-8-196608             : found 4 / 3 running workers
+Redis-64-8-196608             : waits for health check of workers to succeed
+- waiting 30s -               : 
