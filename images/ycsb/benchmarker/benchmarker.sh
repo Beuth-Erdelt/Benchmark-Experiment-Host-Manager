@@ -231,29 +231,30 @@ echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Execute workload ###################
+# to force "new" method of measurement: -p measurementtype=hdrhistogram
 if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -s
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
     else
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
     fi
 elif [[ "$BEXHOMA_DBMS" == "redis-cluster" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -p redis.cluster=true -s
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true -s
     else
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -p redis.cluster=true
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true
     fi
 else
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram -s
+        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
     else
-        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p measurementtype=hdrhistogram
+        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
     fi
 fi
 
