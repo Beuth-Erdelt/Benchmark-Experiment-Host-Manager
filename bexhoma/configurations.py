@@ -1641,7 +1641,7 @@ scrape_configs:
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.delete_deployment(deployment)
-        stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+        stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
         for stateful_set in stateful_sets:
             self.experiment.cluster.delete_stateful_set(stateful_set)
         jobs = self.experiment.cluster.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -1658,6 +1658,7 @@ scrape_configs:
             self.stop_loading()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
+            self.stop_sut(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
             self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def get_host_gpus(self):
         """
