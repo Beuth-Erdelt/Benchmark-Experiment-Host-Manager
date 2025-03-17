@@ -67,6 +67,8 @@ def manage():
             cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
+            cluster.kubectl('delete all -l experiment='+cluster.code)
+            # kubectl delete all -l experiment=1742207308
         else:
             experiment = experiments.default(cluster=cluster, code=args.experiment)
             experiment.stop_sut()

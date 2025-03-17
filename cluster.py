@@ -65,6 +65,7 @@ if __name__ == '__main__':
             cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
+            cluster.kubectl('delete all -l experiment='+cluster.code)
         else:
             experiment = experiments.default(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
