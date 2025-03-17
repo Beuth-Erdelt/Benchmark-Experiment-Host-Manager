@@ -144,6 +144,7 @@ class default():
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
         self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        self.set_eval_parameters(code = self.code)
     def get_parameter_as_list(self,
                               parameter):
         """

@@ -1247,6 +1247,20 @@ scrape_configs:
                     self.worker_containers_deployed.append(container['name'])
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
+                    # get and set ENV
+                    #env_manifest = {}
+                    #envs = container['env']
+                    #for num_env, e in enumerate(envs):
+                    #    env_manifest[e['name']] = e['value']
+                    #print(env_manifest)
+                    #env_merged = {**env_manifest, **env}
+                    #print(env_merged)
+                    self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
+                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                        dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
+                    for i_env,e in env.items():
+                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
                         for j, vol in enumerate(container['volumeMounts']):
@@ -1262,20 +1276,6 @@ scrape_configs:
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
                             self.worker_containers_deployed.pop()
-                    # get and set ENV
-                    #env_manifest = {}
-                    #envs = container['env']
-                    #for num_env, e in enumerate(envs):
-                    #    env_manifest[e['name']] = e['value']
-                    #print(env_manifest)
-                    #env_merged = {**env_manifest, **env}
-                    #print(env_merged)
-                    self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
-                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
-                        dep['spec']['template']['spec']['containers'][i_container]['env'] = []
-                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
-                    for i_env,e in env.items():
-                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                 # remove volumes
                 for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
                     if vol['name'] == 'bexhoma-workers':
@@ -2228,15 +2228,15 @@ scrape_configs:
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
         #c['parameter'] = {}
         # add parameters to connection
-        if len(self.loading_parameters):
+        if len(self.loading_parameters) > 0 and not self.loading_parameters == {...}:
             self.connection_parameter['loading_parameters'] = self.loading_parameters
-        if len(self.benchmarking_parameters):
+        if len(self.benchmarking_parameters) > 0 and not self.benchmarking_parameters == {...}:
             self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
-        if len(self.sut_parameters):
+        if len(self.sut_parameters) > 0 and not self.sut_parameters == {...}:
             self.connection_parameter['sut_parameters'] = self.sut_parameters
-        if len(self.eval_parameters):
+        if len(self.eval_parameters) > 0 and not self.eval_parameters == {...}:
             self.connection_parameter['eval_parameters'] = self.eval_parameters
-        if len(self.ddl_parameters):
+        if len(self.ddl_parameters) > 0 and not self.ddl_parameters == {...}:
             self.connection_parameter['ddl_parameters'] = self.ddl_parameters
         c['parameter'] = self.eval_parameters
         c['parameter']['parallelism'] = parallelism
