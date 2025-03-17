@@ -2012,7 +2012,7 @@ scrape_configs:
                 #self.experiment.cluster.kubectl(fullcommand)
             if volume_worker and pods_worker:
                 for pod in pods_worker:
-                    size, used = self.get_host_volume(pod=self.pod)
+                    size, used = self.get_host_volume(pod=pod)
                     # write infos to SUT's PVC (if exists)
                     fullcommand = 'label pvc bexhoma-workers-{} --overwrite volume_size="{}" volume_used="{}"'.format(pod, size, used)
                     #print(fullcommand)
