@@ -1272,11 +1272,20 @@ scrape_configs:
                     #env_merged = {**env_manifest, **env}
                     #print(env_merged)
                     self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
-                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                    #if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     for i_env,e in env.items():
-                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
+                        index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['containers'][i_container]['env']) if d.get('name') == i_env), -1)
+                        if index_of_env >= 0:
+                            # update value of existing env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'][index_of_env]['value'] = str(e)
+                        else:
+                            # append new env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
+                    #for i_env,e in env.items():
+                    #    dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
                         for j, vol in enumerate(container['volumeMounts']):
@@ -1331,7 +1340,15 @@ scrape_configs:
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = list()
                     for i_env,e in env.items():
-                        dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
+                        index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['containers'][i_container]['env']) if d.get('name') == i_env), -1)
+                        if index_of_env >= 0:
+                            # update value of existing env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'][index_of_env]['value'] = str(e)
+                        else:
+                            # append new env
+                            dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
+                    #for i_env,e in env.items():
+                    #    dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
             if dep['kind'] == 'Service':
                 if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
                     if self.num_worker == 0:
@@ -1426,7 +1443,8 @@ scrape_configs:
                     else:
                         self.pool_containers_deployed.append(container['name'])
                     self.logger.debug('configuration.create_manifest_deployment({})'.format(env))
-                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                    #if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
+                    if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     for i_env,e in env.items():
@@ -3343,7 +3361,20 @@ scrape_configs:
 
         :return: list of endpoints
         """
-        pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        if self.storage['storageConfiguration']:
+            storageConfiguration = self.storage['storageConfiguration']
+        else:
+            storageConfiguration = self.configuration
+        # configure names
+        if self.num_worker > 0:
+            # we assume here, a stateful set is used
+            # this means we do not want to have the experiment code as part of the names
+            # this would imply there cannot be experiment independent pvcs
+            self.experiment_name = storageConfiguration
+        else:
+            self.experiment_name = experiment
+        pods_worker = self.experiment.cluster.get_pods(app=app, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
+        #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
         return pods_worker
@@ -3358,7 +3389,8 @@ scrape_configs:
         :return: list of endpoints
         """
         endpoints = []
-        name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.experiment_name)# self.code)
+        name_worker = self.get_worker_name()
+        #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.experiment_name)# self.code)
         pods_worker = self.get_worker_pods()
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
