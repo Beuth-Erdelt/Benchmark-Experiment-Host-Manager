@@ -1707,7 +1707,7 @@ scrape_configs:
         self.logger.debug('configuration.get_host_volume()')
         try:
             #command = "df -h | grep volumes | awk -F ' ' '{print $2}'"
-            command = "df -h | grep volumes"
+            command = "df -hP | grep volumes"
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command, pod=pod)
             parts = stdout.split(" ")
             parts = [x for x in parts if x != '']

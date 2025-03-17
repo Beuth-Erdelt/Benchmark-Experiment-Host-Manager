@@ -303,8 +303,6 @@ class default():
                     'kubernetes.io/hostname': request_node_name
                 })        
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
-        if self.num_worker > 0:
-            self.workload['info'] = self.workload['info']+"\nSUT has {} worker nodes.".format(self.num_worker)
         if skip_loading:
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
