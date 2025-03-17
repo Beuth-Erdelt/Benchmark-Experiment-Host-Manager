@@ -109,7 +109,13 @@ class default():
         self.code = self.experiment.cluster.code
         self.path = self.experiment.path
         self.resources = {}
-        self.storage = {}
+        self.ddl_parameters = {}                                                # DDL schema parameter for init scripts (like index type or sharding strategy)
+        self.eval_parameters = {}                                               # parameters that will be handed over to dbmsbenchmarker
+        self.storage = {}                                                       # parameters for persistent storage (like type and size)
+        self.nodes = {}                                                         # dict of node infos to guide components (like nodeSelector for SUT)
+        self.maintaining_parameters = {}                                        # dict of parameters for maintaining component
+        self.loading_parameters = {}                                            # dict of parameters for loading component
+        self.sut_parameters = {}                                                # dict of parameters for sut and worker component
         self.pod_sut = '' #: Name of the sut's master pod
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
@@ -530,7 +536,7 @@ class default():
 
         :return: True, if dbms is running
         """
-        if is_sut_ready:
+        if self.is_sut_ready:
             return True
         app = self.appname
         component = 'sut'
@@ -1635,7 +1641,7 @@ scrape_configs:
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
         for deployment in deployments:
             self.experiment.cluster.delete_deployment(deployment)
-        stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+        stateful_sets = self.experiment.cluster.get_stateful_sets(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         for stateful_set in stateful_sets:
             self.experiment.cluster.delete_stateful_set(stateful_set)
         jobs = self.experiment.cluster.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -2237,17 +2243,17 @@ scrape_configs:
         c = self.get_connection_config(connection, alias, dialect, serverip=service_host, monitoring_host=monitoring_host)#config_K8s['ip'])
         #c['parameter'] = {}
         # add parameters to connection
-        if len(self.loading_parameters) > 0 and not self.loading_parameters == {...}:
-            self.connection_parameter['loading_parameters'] = self.loading_parameters
-        if len(self.benchmarking_parameters) > 0 and not self.benchmarking_parameters == {...}:
-            self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters
-        if len(self.sut_parameters) > 0 and not self.sut_parameters == {...}:
-            self.connection_parameter['sut_parameters'] = self.sut_parameters
-        if len(self.eval_parameters) > 0 and not self.eval_parameters == {...}:
-            self.connection_parameter['eval_parameters'] = self.eval_parameters
-        if len(self.ddl_parameters) > 0 and not self.ddl_parameters == {...}:
-            self.connection_parameter['ddl_parameters'] = self.ddl_parameters
-        c['parameter'] = self.eval_parameters
+        if len(self.loading_parameters) > 0:
+            self.connection_parameter['loading_parameters'] = self.loading_parameters.copy()
+        if len(self.benchmarking_parameters) > 0:
+            self.connection_parameter['benchmarking_parameters'] = self.benchmarking_parameters.copy()
+        if len(self.sut_parameters) > 0:
+            self.connection_parameter['sut_parameters'] = self.sut_parameters.copy()
+        if len(self.eval_parameters) > 0:
+            self.connection_parameter['eval_parameters'] = self.eval_parameters.copy()
+        if len(self.ddl_parameters) > 0:
+            self.connection_parameter['ddl_parameters'] = self.ddl_parameters.copy()
+        c['parameter'] = self.eval_parameters.copy()
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = experimentRun
