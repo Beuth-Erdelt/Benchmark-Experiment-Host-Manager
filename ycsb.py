@@ -603,6 +603,11 @@ if __name__ == '__main__':
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
                         )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
+                        )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(
@@ -733,6 +738,11 @@ if __name__ == '__main__':
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
                         )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
+                        )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(
@@ -789,7 +799,7 @@ if __name__ == '__main__':
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
                 if ("Citus" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # CockroachDB
+                    # Citus
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
                     config.set_storage(
@@ -802,6 +812,11 @@ if __name__ == '__main__':
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
+                        )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
                         )
                     if skip_loading:
                         config.loading_deactivated = True
@@ -858,6 +873,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
+                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed stateful set
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

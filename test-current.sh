@@ -242,6 +242,11 @@ nohup python ycsb.py -ms 1 -tr \
 
 wait_process "ycsb"
 
+kubectl delete pvc bexhoma-storage-citus-ycsb-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-64-8-65536-citus-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-64-8-65536-citus-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-64-8-65536-citus-2
+sleep 30
 
 
 nohup python ycsb.py -ms 1 -tr \
@@ -275,10 +280,12 @@ wait_process "ycsb"
 ####################################################
 
 
-nohup python benchbase.py -ms 2 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
+  -nwr 1 \
+  -nws 32 \
   -dbms Citus \
   -nbp 1,2 \
   -nbt 16 \
@@ -295,6 +302,8 @@ nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
   -nw 3 \
+  -nwr 1 \
+  -nws 32 \
   -dbms Citus \
   -nbp 1,2,4,8 \
   -nbt 64 \

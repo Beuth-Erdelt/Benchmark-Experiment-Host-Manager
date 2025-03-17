@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1742203445
-Experiment                    : starts at 2025-03-17 10:24:05.576392 (6395609.046941239)
+Experiment                    : has code 1742221635
+Experiment                    : starts at 2025-03-17 15:27:15.260346 (6413798.73089554)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -24,33 +24,60 @@ Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run 2 times.
 Cluster monitoring            : is running
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 Citus-64-8-65536              : will start now
-Citus-64-8-65536              : storage exists bexhoma-storage-citus-ycsb-1
-Citus-64-8-65536              : loading is set to finished
 - waiting 30s -               : done
 Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
 Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : will start benchmarking but not before 2025-03-17 09:26:06 (that is in 60 secs)
+Citus-64-8-65536              : is not loaded yet
+Citus-64-8-65536              : will start loading but not before 2025-03-17 14:29:16 (that is in 60 secs)
 - waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : will start benchmarking but not before 2025-03-17 09:26:06
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+Citus-64-8-65536              : is not loaded yet
+Citus-64-8-65536              : will start loading but not before 2025-03-17 14:29:16
+- waiting 30s -               : done
+Citus-64-8-65536              : is not loaded yet
+Citus-64-8-65536              : try to attach workers to master
+Citus-64-8-65536              : master found
+Citus-64-8-65536              : looking for worker pods
 done
 Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
+Citus-64-8-65536              : found running worker 1
+Citus-64-8-65536              : found running worker 2
+Citus-64-8-65536              : found running worker 3
+Citus-64-8-65536              : found 3 running workers of 3
+Citus-64-8-65536              : list of workers
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
+Citus-64-8-65536              : worker bexhoma-worker-citus-64-8-65536-citus-0.bexhoma-worker-citus-64-8-65536-citus attached
+  master_add_node 
+-----------------
+               1
+(1 row)
+
+
+Citus-64-8-65536              : worker bexhoma-worker-citus-64-8-65536-citus-1.bexhoma-worker-citus-64-8-65536-citus attached
+  master_add_node 
+-----------------
+               2
+(1 row)
+
+
+Citus-64-8-65536              : worker bexhoma-worker-citus-64-8-65536-citus-2.bexhoma-worker-citus-64-8-65536-citus attached
+  master_add_node 
+-----------------
+               3
+(1 row)
+
+
+Citus-64-8-65536              : start asynch loading scripts of type loaded
+Citus-64-8-65536              : is loading
+done
+Citus-64-8-65536              : is loading
+done
+Citus-64-8-65536              : showing loader times
+Citus-64-8-65536              : loader timespan (first to last [s]) = 20
+Citus-64-8-65536              : start asynch loading scripts of type indexed
+Citus-64-8-65536              : is loading
+done
 Citus-64-8-65536              : benchmarks done 0 of 2. This will be client 1
 Citus-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 1}
 Citus-64-8-65536-1-1          : start benchmarking
@@ -58,471 +85,254 @@ Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-6
 Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-64-8-65536-citus-0
 Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-64-8-65536-citus-1
 Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-64-8-65536-citus-2
-Citus-64-8-65536              : benchmarking results in folder /home/perdelt/benchmarks/1742203445
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
+Citus-64-8-65536              : benchmarking results in folder /home/perdelt/benchmarks/1742221635
 - waiting 10s -               : done
-Citus-64-8-65536              : benchmarking is waiting for job bexhoma-benchmarker-citus-64-8-65536-1742203445-1-1-79pb6: found
+found
+Citus-64-8-65536-1-1          : collecting loading metrics of SUT at connection Citus-64-8-65536-1-1
+Citus-64-8-65536-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-citus(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-64-8-65536-1-1          : collecting metrics of data generator at connection Citus-64-8-65536-1-1
+Citus-64-8-65536-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1742221635(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-64-8-65536-1-1          : collecting metrics of data injector at connection Citus-64-8-65536-1-1
+Citus-64-8-65536-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1742221635(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
 Citus-64-8-65536              : has running benchmarks
 - waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
 Citus-64-8-65536              : has running benchmarks
 - waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
 Citus-64-8-65536              : has running benchmarks
 - waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
 Citus-64-8-65536              : has running benchmarks
 - waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
 Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
-Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
+done
 Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : done
+Citus-64-8-65536-1-1          : showing benchmarker times
+Citus-64-8-65536-1-1          : benchmarker timespan (start to end single container [s]) = 210
+Citus-64-8-65536-1-1          : benchmarker times (start/end per pod and container) = [(1742221873, 1742222071)]
+Citus-64-8-65536-1-1          : found and updated times {'benchmarker': [(1742221873, 1742222071)]}
+Citus-64-8-65536-1-1          : collecting execution metrics of SUT at connection Citus-64-8-65536-1-1
+Citus-64-8-65536-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-citus(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-64-8-65536-1-1          : collecting metrics of benchmarker at connection Citus-64-8-65536-1-1
+Citus-64-8-65536-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1742221635(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
-Citus-64-8-65536              : found 3 / 3 running workers
-Citus-64-8-65536              : has running benchmarks
-- waiting 30s -               : 
+done
+Citus-64-8-65536              : can be stopped
+Citus-64-8-65536              : still being removed
+done
+Citus-64-8-65536              : starts again
+Citus-64-8-65536              : storage exists bexhoma-storage-citus-ycsb-1
+Citus-64-8-65536              : loading is set to finished
+- waiting 10s -               : done
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
+Citus-64-8-65536              : found 3 / 3 running workers
+Citus-64-8-65536              : will start benchmarking but not before 2025-03-17 14:37:35 (that is in 60 secs)
+- waiting 30s -               : done
+Citus-64-8-65536              : will start benchmarking but not before 2025-03-17 14:37:35
+done
+Citus-64-8-65536              : benchmarks done 1 of 2. This will be client 1
+Citus-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 1}
+Citus-64-8-65536-2-1          : start benchmarking
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
+Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-64-8-65536-citus-0
+Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-64-8-65536-citus-1
+Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-64-8-65536-citus-2
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
+Citus-64-8-65536              : benchmarking results in folder /home/perdelt/benchmarks/1742221635
+- waiting 10s -               : done
+Citus-64-8-65536              : benchmarking is waiting for job bexhoma-benchmarker-citus-64-8-65536-1742221635-2-1-62552: found
+- waiting 30s -               : done
+Citus-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+Citus-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+Citus-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+Citus-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+Citus-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+Citus-64-8-65536              : has running benchmarks
+done
+Citus-64-8-65536              : has running benchmarks
+Citus-64-8-65536-2-1          : showing benchmarker times
+Citus-64-8-65536-2-1          : benchmarker timespan (start to end single container [s]) = 223
+Citus-64-8-65536-2-1          : benchmarker times (start/end per pod and container) = [(1742222266, 1742222468)]
+Citus-64-8-65536-2-1          : found and updated times {'benchmarker': [(1742222266, 1742222468)]}
+Citus-64-8-65536-2-1          : collecting execution metrics of SUT at connection Citus-64-8-65536-2-1
+Citus-64-8-65536-2-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-citus(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-64-8-65536-2-1          : collecting metrics of benchmarker at connection Citus-64-8-65536-2-1
+Citus-64-8-65536-2-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1742221635(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-64-8-65536-citus-0', 'bexhoma-worker-citus-64-8-65536-citus-1', 'bexhoma-worker-citus-64-8-65536-citus-2']
+done
+Citus-64-8-65536              : can be stopped
+Experiment                    : ends at 2025-03-17 15:42:10.490318 (6414693.960872076) - 895.23s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 896s 
+    Code: 1742221635
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+Citus-64-8-65536-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:140181680
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    worker 0
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:20512136
+        volume_size:50.0G
+        volume_used:40.0M
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:278333764
+        volume_size:50.0G
+        volume_used:40.0M
+    worker 2
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:100039448
+        volume_size:50.0G
+        volume_used:36.0M
+    eval_parameters
+                code:1742221635
+                BEXHOMA_REPLICAS:1
+                BEXHOMA_SHARDS:32
+                BEXHOMA_WORKERS:3
+Citus-64-8-65536-2-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:140181668
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:2
+    worker 0
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:20512152
+        volume_size:50.0G
+        volume_used:1.5G
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:296522600
+        volume_size:50.0G
+        volume_used:1.5G
+    worker 2
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:100039640
+        volume_size:50.0G
+        volume_used:1.3G
+    eval_parameters
+                code:1742221635
+                BEXHOMA_REPLICAS:1
+                BEXHOMA_SHARDS:32
+                BEXHOMA_WORKERS:3
+
+### Loading
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+Citus-64-8-65536               1       64   65536          8           0                   55888.628404                18860.0             1000000                              2390.5
+
+### Execution
+                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+Citus-64-8-65536-1-1               1       64   65536          1           0                       50528.02               197910.0           5002256                            1982.0             4997744                              1999.0
+Citus-64-8-65536-2-1               2       64   65536          1           0                       49652.68               201399.0           4999081                            2063.0             5000919                              2089.0
+
+### Workflow
+
+#### Actual
+DBMS Citus-64-8-65536 - Pods [[1], [1]]
+
+#### Planned
+DBMS Citus-64-8-65536 - Pods [[1], [1]]
+
+### Ingestion - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1-1      594.65     7.87          11.4                12.69
+
+### Ingestion - Loader
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1-1      107.96        0          3.48                 3.52
+
+### Execution - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1-1     5606.58     8.69         12.72                14.23
+Citus-64-8-65536-2-1     5934.92    22.73         15.41                18.65
+
+### Execution - Benchmarker
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1-1     1126.41     7.88          0.62                 0.63
+Citus-64-8-65536-2-1     1342.18     8.49          0.63                 0.63
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
