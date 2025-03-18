@@ -578,6 +578,8 @@ class default():
                         num_ready = num_ready + 1
             print("{:30s}: found {} / {} running workers".format(self.configuration, num_ready, self.num_worker))
             self.are_worker_ready = (num_ready == self.num_worker)
+            if self.are_worker_ready:
+                self.attach_worker()
             return self.are_worker_ready
         else:
             return True
@@ -708,8 +710,8 @@ class default():
             status = self.experiment.cluster.get_pod_status(pod_sut)
             if status != "Running":
                 return False
-            if self.num_worker > 0:
-                self.attach_worker()
+            #if self.num_worker > 0:
+            #    self.attach_worker()
             #while status != "Running":
             #    print(pod_sut, status)
             #    self.wait(10)
