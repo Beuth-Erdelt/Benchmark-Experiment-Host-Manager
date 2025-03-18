@@ -261,6 +261,7 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+kubectl delete pvc bexhoma-storage-cockroachdb-ycsb-1
 kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-0
 kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-1
 kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-2
@@ -284,6 +285,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
+  -db  \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
 
