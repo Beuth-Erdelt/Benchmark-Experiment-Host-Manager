@@ -2653,7 +2653,7 @@ scrape_configs:
         if self.num_worker > 0:
             print("{:30s}: try to attach workers to master".format(self.configuration))
             pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
-            name_worker = self.generate_component_name(component='worker', experiment=self.experiment_name, configuration=self.configuration) #experiment=self.code, configuration=self.configuration)
+            name_worker = self.get_worker_name() #self.generate_component_name(component='worker', experiment=self.experiment_name, configuration=self.configuration) #experiment=self.code, configuration=self.configuration)
             if len(pods) > 0:
                 print("{:30s}: master found".format(self.configuration))
                 pod_sut = pods[0]
