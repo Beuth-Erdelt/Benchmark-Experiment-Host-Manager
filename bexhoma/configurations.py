@@ -3348,10 +3348,10 @@ scrape_configs:
             # this would imply there cannot be experiment independent pvcs
             self.experiment_name = storageConfiguration
         else:
-            self.experiment_name = experiment
+            self.experiment_name = self.code
         #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
-        name_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
+        name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self):
         """
@@ -3372,8 +3372,8 @@ scrape_configs:
             # this would imply there cannot be experiment independent pvcs
             self.experiment_name = storageConfiguration
         else:
-            self.experiment_name = experiment
-        pods_worker = self.experiment.cluster.get_pods(app=app, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
+            self.experiment_name = self.code
+        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
