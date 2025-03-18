@@ -1228,6 +1228,7 @@ scrape_configs:
                             copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
                             for label in copy_labels:
                                 if label in pvc_labels:
+                                    print("{:30s}: label {} copied value {}".format(configuration, label, pvc_labels[label]))
                                     yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
                             #if 'loaded' in pvc_labels:
                             #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
