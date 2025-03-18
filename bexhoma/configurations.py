@@ -1129,7 +1129,7 @@ scrape_configs:
             # we assume here, a stateful set is used
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
-            self.experiment_name = storageConfiguration
+            self.experiment_name = self.storage_label#storageConfiguration
         else:
             self.experiment_name = experiment
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
@@ -1146,6 +1146,11 @@ scrape_configs:
         # Deployment manifest template - a configured copy will be stored in result folder
         template = self.sut_template #template = "deploymenttemplate-"+self.docker+".yml"
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
+        print("{:30s}: Name of SUT pods = {}".format(configuration, name))
+        print("{:30s}: Name of SUT service = {}".format(configuration, name))
+        print("{:30s}: Name of SUT PVC name = {}".format(configuration, name_pvc))
+        print("{:30s}: Name of Worker pods = {}".format(configuration, name_worker))
+        print("{:30s}: Name of Worker service headless = {}".format(configuration, name_worker))
         # ENV
         # default empty: env = {}
         env = self.sut_parameters #self.sut_envs.copy()
@@ -3346,12 +3351,12 @@ scrape_configs:
             # we assume here, a stateful set is used
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
-            self.experiment_name = storageConfiguration
+            self.experiment_name = self.storage_label#storageConfiguration
         else:
             self.experiment_name = self.code
         #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
-        name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
+        name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self):
         """
@@ -3370,10 +3375,10 @@ scrape_configs:
             # we assume here, a stateful set is used
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
-            self.experiment_name = storageConfiguration
+            self.experiment_name = self.storage_label#storageConfiguration
         else:
             self.experiment_name = self.code
-        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.storage_label, configuration=storageConfiguration)
+        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
