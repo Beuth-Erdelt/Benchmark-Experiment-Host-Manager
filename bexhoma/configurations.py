@@ -1318,6 +1318,16 @@ scrape_configs:
                     if not use_storage:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
+                        #result[key]['spec']['volumeClaimTemplates'][0]['metadata']['name'] = name_worker
+                        #self.service = dep['metadata']['name']
+                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['app'] = app
+                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['component'] = 'worker'
+                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['configuration'] = storageConfiguration
+                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['experiment'] = self.storage_label
+                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['dbms'] = self.docker
+                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['volume'] = self.volume
+                        for label_key, label_value in self.additional_labels.items():
+                            result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels'][label_key] = str(label_value)
                         #print(result[key]['spec']['volumeClaimTemplates'])
                         if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
                             dep['spec']['volumeClaimTemplates'][0]['spec']['storageClassName'] = self.storage['storageClassName']
@@ -3379,7 +3389,8 @@ scrape_configs:
             self.experiment_name = self.storage_label#storageConfiguration
         else:
             self.experiment_name = self.code
-        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
+        #pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
+        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.code, configuration=self.configuration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
