@@ -71,7 +71,8 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
 
-nohup python ycsb.py -ms 2 -tr \
+# Single host Redis
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -93,7 +94,8 @@ nohup python ycsb.py -ms 2 -tr \
 wait_process "ycsb"
 
 
-nohup python ycsb.py -ms 2 -tr \
+# Cluster of 3 Redis instances
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -115,8 +117,8 @@ nohup python ycsb.py -ms 2 -tr \
 
 wait_process "ycsb"
 
-
-nohup python ycsb.py -ms 2 -tr \
+# Cluster of 3 Redis instances and replication
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -142,8 +144,8 @@ wait_process "ycsb"
 
 kubectl delete pvc bexhoma-storage-redis-ycsb-1
 
-
-nohup python ycsb.py -ms 2 -tr \
+# Single host Redis with PVC
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -166,14 +168,15 @@ nohup python ycsb.py -ms 2 -tr \
 wait_process "ycsb"
 
 
-########### does not work - redis nodes do not find eachother after restart
+# Cluster of 3 Redis instances and PVC
+########### does not work - redis nodes rely on IPs and do not find eachother after restart
 
 kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-0
 kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-1
 kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-2
 
 
-nohup python ycsb.py -ms 2 -tr \
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
