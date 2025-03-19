@@ -1035,12 +1035,13 @@ class testbed():
         :param pod: name of the pod
         :return: list of names of (init)containers
         """
-        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.containers[*].name}'"
+        fullcommand = 'get pods '+pod+' -o jsonpath="{.spec.containers[*].name}"'
         #print(fullcommand)
         output = self.kubectl(fullcommand)
         #print("get_pod_containers", output)
         containers = output.split(" ")
-        fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initContainers[*].name}'"
+        #fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initContainers[*].name}'"
+        fullcommand = 'get pods '+pod+' -o jsonpath="{.spec.initContainers[*].name}"'
         #print(fullcommand)
         output = self.kubectl(fullcommand)
         #print("get_pod_containers", output)
