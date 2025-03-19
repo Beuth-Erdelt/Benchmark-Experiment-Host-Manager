@@ -1138,6 +1138,7 @@ scrape_configs:
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         name_worker = self.get_worker_name()
+        name_service_headless = name_worker#"ss"
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
@@ -1160,7 +1161,8 @@ scrape_configs:
         # generate list of worker names
         list_of_workers = []
         for worker in range(self.num_worker):
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
@@ -1168,7 +1170,8 @@ scrape_configs:
         env['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
         env['BEXHOMA_SUT_NAME'] = name
         if self.num_worker > 0:
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
         # resources
         specs = instance.split("-")
@@ -1376,7 +1379,7 @@ scrape_configs:
                     if self.num_worker == 0:
                         del result[key]
                         continue
-                    dep['metadata']['name'] = name_worker
+                    dep['metadata']['name'] = name_service_headless# name_worker
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'worker'
                     dep['metadata']['labels']['configuration'] = configuration
@@ -2656,7 +2659,7 @@ scrape_configs:
         This runs the dockertemplate['attachWorker'] command.
         """
         self.logger.debug('Try to attach worker to master')
-        if self.num_worker > 0:
+        if self.num_worker > 0 and 'attachWorker' in self.dockertemplate and len(self.dockertemplate['attachWorker']) > 0:
             print("{:30s}: try to attach workers to master".format(self.configuration))
             pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
             name_worker = self.get_worker_name() #self.generate_component_name(component='worker', experiment=self.experiment_name, configuration=self.configuration) #experiment=self.code, configuration=self.configuration)
