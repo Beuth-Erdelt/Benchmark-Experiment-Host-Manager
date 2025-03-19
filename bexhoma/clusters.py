@@ -740,6 +740,28 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_pvc_status(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
+    def get_statefulset_pods(self, stateful_set=''):
+        """
+        Return all pods belonging to a given stateful set.
+
+        :param stateful_set: name of the stateful set
+        :return: list of pod names
+        """
+        self.logger.debug('testbed.get_statefulset_pods()')
+        label = f"statefulset.kubernetes.io/pod-name={stateful_set}"
+        self.logger.debug('get_statefulset_pods'+label)
+        try: 
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
+            pprint(api_response)
+            if len(api_response.items) > 0:
+                return [p.metadata.name for p in api_response.items]
+            else:
+                return []
+        except ApiException as e:
+            print("Exception when calling CoreV1Api->list_namespaced_pod: %s\n" % e)
+            self.cluster_access()
+            self.wait(2)
+            return self.get_statefulset_pods(stateful_set=stateful_set)
     def delete_stateful_set(self, name):
         """
         Delete a stateful set given by name

@@ -176,6 +176,7 @@ class default():
         self.sut_service_name = ""                                              #: Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_pod_name = ""                                                  #: Name of pod of SUT, if it is not managed by bexhoma
         self.sut_container_name = "dbms"                                        #: Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
         self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment

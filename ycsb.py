@@ -465,6 +465,7 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
                     config.sut_pod_name = "yb-tserver-"                 # fix pod name of SUT, because it is not managed by bexhoma
+                    config.statefulset_name = 'yb-tserver'              # name of the stateful set of DBMS pods
                     config.sut_container_name = ''                      # fix container name of SUT
                     def get_worker_pods(self):
                         """
@@ -475,9 +476,10 @@ if __name__ == '__main__':
 
                         :return: list of endpoints
                         """
-                        pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
+                        #pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
+                        pods_worker = cluster.get_statefulset_pods(self.statefulset_name)
                         #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
-                        #print("****************", pods_worker)
+                        print("****************", pods_worker)
                         return pods_worker
                     config.get_worker_pods = types.MethodType(get_worker_pods, config)
                     #def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
