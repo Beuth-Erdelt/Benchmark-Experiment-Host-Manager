@@ -35,6 +35,12 @@ References:
 
 Get the helm chart and follow the instructions: https://docs.yugabyte.com/stable/deploy/kubernetes/single-zone/oss/helm-chart/
 
+This will deploy master and tserver worker.
+The master pods manage table metadata and keep track of which nodes store which data.
+They handle automatic sharding and tablet distribution and manage Raft-based leader election for tablets (shards).
+The number of master pods is 3 or 5 typically.
+The tserver worker store the actual data (tablets) and execute SQL queries via the YSQL or YCQL API.
+The number of tserver depends on the size of the data and the cluster.
 
 ```bash
 helm install bexhoma yugabytedb/yugabyte \
@@ -54,6 +60,8 @@ storage.tserver.size=100Gi,\
 storage.ephemeral=true,\
 tserver.tolerations[0].effect=NoSchedule,\
 tserver.tolerations[0].key=nvidia.com/gpu,\
+replicas.master=3,\
+replicas.tserver=3,\
 enableLoadBalancer=True
 ```
 

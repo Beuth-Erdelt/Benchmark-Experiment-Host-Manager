@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS usertable (
            FIELD8 TEXT, FIELD9 TEXT);
 
 /*
+or: ) SPLIT INTO 16 TABLETS;
+*/
+
+/*
 CREATE TABLE usertable (
   YCSB_KEY varchar(255),
   FIELD0 text,

@@ -1,0 +1,334 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  #clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-citus
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      containers:
+      - name: dbms
+        #image: citusdata/citus:pg12
+        #image: citusdata/citus:postgres_13
+        #image: citusdata/citus:postgres_14
+        image: citusdata/citus:13.0.2-alpine
+        args: [
+          "-c", "max_worker_processes=64",
+          "-c", "max_parallel_workers=64",
+          "-c", "max_parallel_workers_per_gather=64",
+          "-c", "max_parallel_maintenance_workers=64", # only for PostgreSQL > 10 (?)
+          "-c", "max_wal_size=32GB",
+          "-c", "shared_buffers=64GB",
+          #"-c", "shared_memory_size=32GB", # read-only
+          "-c", "max_connections=2048",
+          "-c", "autovacuum_max_workers=10",
+          "-c", "autovacuum_vacuum_cost_limit=3000",
+          "-c", "vacuum_cost_limit=1000",
+          "-c", "checkpoint_completion_target=0.9",
+          "-c", "cpu_tuple_cost=0.03",
+          "-c", "effective_cache_size=64GB",
+          "-c", "maintenance_work_mem=2GB",
+          #"-c", "max_connections=1700",
+          #"-c", "random_page_cost=1.1",
+          "-c", "wal_buffers=1GB",
+          "-c", "work_mem=32GB",
+          #"-c", "huge_pages=on",
+          "-c", "temp_buffers=4GB",
+          "-c", "autovacuum_work_mem=-1",
+          "-c", "max_stack_depth=7MB",
+          "-c", "max_files_per_process=4000",
+          "-c", "effective_io_concurrency=32",
+          "-c", "wal_level=minimal",
+          "-c", "max_wal_senders=0",
+          "-c", "synchronous_commit=off",
+          "-c", "checkpoint_timeout=1h",
+          "-c", "checkpoint_warning=0",
+          "-c", "autovacuum=off",
+          "-c", "max_locks_per_transaction=64",
+          "-c", "max_pred_locks_per_transaction=64",
+          "-c", "default_statistics_target=1000",
+          "-c", "random_page_cost=60"
+        ]
+        env:
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
+        ports:
+        - {containerPort: 5432}
+        resources:
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 16000m, memory: 128Gi}
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+        - {mountPath: /dev/shm, name: dshm}
+        - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
+        livenessProbe:
+          exec:
+            command:
+            - ./pg_healthcheck
+          initialDelaySeconds: 60
+      - name: cadvisor
+        #image: k8s.gcr.io/cadvisor:v0.30.2
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 150m
+            memory: 200Mi
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  selector:
+    {app: bexhoma, component: worker, configuration: default, experiment: default}
+  clusterIP: None
+  ports:
+  - {port: 5432, protocol: TCP, name: port-dbms, targetPort: 5432}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  selector:
+    matchLabels:
+      {app: bexhoma, component: worker, configuration: default, experiment: default}
+  serviceName: bexhoma-workers
+  replicas: 6
+  template:
+    metadata:
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      containers:
+      - name: dbms
+        #image: citusdata/citus:pg12
+        #image: citusdata/citus:postgres_14
+        image: citusdata/citus:13.0.2-alpine
+        args: [
+          "-c", "max_worker_processes=64",
+          "-c", "max_parallel_workers=64",
+          "-c", "max_parallel_workers_per_gather=64",
+          "-c", "max_parallel_maintenance_workers=64", # only for PostgreSQL > 10 (?)
+          "-c", "max_wal_size=32GB",
+          "-c", "shared_buffers=64GB",
+          #"-c", "shared_memory_size=32GB", # read-only
+          "-c", "max_connections=2048",
+          "-c", "autovacuum_max_workers=10",
+          "-c", "autovacuum_vacuum_cost_limit=3000",
+          "-c", "vacuum_cost_limit=1000",
+          "-c", "checkpoint_completion_target=0.9",
+          "-c", "cpu_tuple_cost=0.03",
+          "-c", "effective_cache_size=64GB",
+          "-c", "maintenance_work_mem=2GB",
+          #"-c", "max_connections=1700",
+          #"-c", "random_page_cost=1.1",
+          "-c", "wal_buffers=1GB",
+          "-c", "work_mem=32GB",
+          #"-c", "huge_pages=on",
+          "-c", "temp_buffers=4GB",
+          "-c", "autovacuum_work_mem=-1",
+          "-c", "max_stack_depth=7MB",
+          "-c", "max_files_per_process=4000",
+          "-c", "effective_io_concurrency=32",
+          "-c", "wal_level=minimal",
+          "-c", "max_wal_senders=0",
+          "-c", "synchronous_commit=off",
+          "-c", "checkpoint_timeout=1h",
+          "-c", "checkpoint_warning=0",
+          "-c", "autovacuum=off",
+          "-c", "max_locks_per_transaction=64",
+          "-c", "max_pred_locks_per_transaction=64",
+          "-c", "default_statistics_target=1000",
+          "-c", "random_page_cost=60"
+        ]
+        env:
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: citus-secrets
+              key: password
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: citus-secrets
+              key: password
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: bexhoma-workers
+          mountPath: /var/lib/postgresql/data
+        - {mountPath: /dev/shm, name: dshm}
+        #lifecycle:
+        #  postStart:
+        #    exec:
+        #      command: 
+        #      - /bin/sh
+        #      - -c
+        #      #- if [ ${POD_IP} ]; then sleep 10 ; echo '${HOSTNAME}.citus-workers' ; fi
+        #      - if [ ${POD_IP} ]; then {sleep 180 ; psql --host=bexhoma-service --port 9091 --username=postgres --command="SELECT * from master_add_node('${HOSTNAME}.citus-workers', 5432);" }& fi
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
+        livenessProbe:
+          exec:
+            command:
+            - ./pg_healthcheck
+          initialDelaySeconds: 60
+      - name: cadvisor
+        #image: k8s.gcr.io/cadvisor:v0.30.2
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 150m
+            memory: 200Mi
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: bexhoma-workers
+        persistentVolumeClaim: {claimName: bexhoma-workers}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory
+  volumeClaimTemplates:
+  - metadata:
+      name: bexhoma-workers
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 50Gi
+      storageClassName: shared

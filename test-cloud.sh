@@ -241,6 +241,7 @@ nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
+  -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -260,11 +261,44 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+kubectl delete pvc bexhoma-storage-cockroachdb-ycsb-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-2
+
+#### YCSB PVC (Example-CockroachDB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -db  \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
+
+
+wait_process "ycsb"
+
+
 #### Benchbase Simple (Example-CockroachDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
+  -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2 \
   -nbt 16 \
@@ -282,6 +316,7 @@ nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
   -nw 3 \
+  -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 64 \

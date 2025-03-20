@@ -1,0 +1,377 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 6379}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
+  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      containers:
+      - name: dbms
+        image: redis:7.4.2
+        args: ["--maxclients", "10000", "--io-threads", "64"]
+        env:
+          - name: MASTER
+            value: "true"
+        ports:
+          - containerPort: 6379
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli ping | grep PONG"
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
+          readOnlyRootFilesystem: false
+        resources:
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          #, ephemeral-storage: "1536Gi"}
+        #volumeMounts:
+        #- {mountPath: /data, name: benchmark-data-volume}
+        #- {mountPath: /data, name: benchmark-storage-volume}
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
+          readOnlyRootFilesystem: true
+        resources:
+          requests: {cpu: 150m, memory: 200Mi}
+          limits: {cpu: 16000m, memory: 128Gi}
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      #- name: benchmark-data-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-data}
+      #- name: benchmark-storage-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  annotations:
+spec:
+  ports:
+  - {port: 6379, protocol: TCP, name: port-dbms, targetPort: 6379}
+  - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
+  publishNotReadyAddresses: true
+  clusterIP: None
+  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  serviceName: bexhoma-workers
+  replicas: 3
+  selector:
+    matchLabels:
+      {app: bexhoma, component: worker, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      nodeSelector:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: dbms
+        image: redis:7.4.2
+        command:
+          - "redis-server"
+          - "--cluster-enabled"
+          - "yes"
+          - "--cluster-config-file"
+          - "/data/nodes.conf"
+          - "--cluster-node-timeout"
+          - "5000"
+          - "--appendonly"
+          - "yes"
+          - "--protected-mode"
+          - "no"
+          - "--cluster-announce-port"
+          - "6379"
+          - "--cluster-announce-bus-port"
+          - "16379"
+          #- "--cluster-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          #- "--replica-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          #- "--cluster-announce-ip $(POD_IP)"
+          - "--cluster-announce-ip $(POD_NAME).$(STATEFULSET_NAME)"
+          - "--cluster-announce-hostname $(POD_NAME).$(STATEFULSET_NAME)"
+          #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-ycsb-1"
+          #- "--cluster-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
+          #- "--replica-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
+          #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
+          #- "--cluster-announce-ip"
+          #- "bexhoma-worker-redis-64-8-196608-redis"
+          #- "$(POD_NAME)"
+          #- "$(POD_IP)"
+          #- "--cluster-announce-hostname"
+          #- "$(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
+          #- "yes"
+          - "--cluster-preferred-endpoint-type"
+          - "hostname"
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli ping | grep PONG"
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              command: ["redis-cli", "shutdown", "save"]
+        ports:
+          - containerPort: 6379
+          - containerPort: 16379
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          #- name: POD_SUBDOMAIN
+          #  valueFrom:
+          #    fieldRef:
+          #      fieldPath: subdomain
+        volumeMounts:
+        - name: bexhoma-workers
+          mountPath: /data
+      volumes:
+      #- name: benchmark-data-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: bexhoma-workers
+        persistentVolumeClaim: {claimName: bexhoma-workers}
+      #- name: benchmark-storage-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory
+  volumeClaimTemplates:
+  - metadata:
+      name: bexhoma-workers
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 100Gi
+      storageClassName: shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-init
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  template:
+    metadata:
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      containers:
+      - name: cluster-init
+        image: redis:7.0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        #- name: BEXHOMA_WORKER_LIST_SPACE
+        #  value: redis-0.redis redis-1.redis redis-2.redis
+        #- name: BEXHOMA_WORKER_FIRST
+        #  value: redis-0.redis
+        command:
+          - sh
+          - -c
+          - |
+            echo "Creating Redis Cluster..."
+
+            # Ensure all nodes are ready by checking cluster info
+            for node in $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) print $i}'); do
+              until redis-cli -h $node -p 6379 ping | grep -q 'PONG'; do
+                echo "Waiting for Redis node $node to be ready..."
+                sleep 5
+              done
+              echo "Node $node is ready."
+            done
+            last_entry=$(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{print $NF}')
+            echo "Checking cluster status of $last_entry"
+            redis-cli -h $node -p 6379 cluster nodes
+            if redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; then
+              echo "Cluster already initialized."
+            else
+              #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s.perdelt.svc.cluster.local:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE") --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s.{$POD_NAMESPACE}.svc.cluster.local:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              yes yes | redis-cli -h "$node" --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk -v ns="$POD_NAMESPACE" '{for(i=1;i<=NF;i++) printf "%s.%s.svc.cluster.local:6379 ", $i, ns}') --cluster-replicas "$BEXHOMA_REPLICAS" --cluster-yes
+              echo "Waiting for Redis Cluster to be ready..."
+              until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
+                echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."
+                sleep 5
+              done
+            fi
+            echo "1/3 Redis Cluster test in 5 seconds again..."
+            sleep 5
+            redis-cli -h $node -p 6379 cluster info
+            until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
+              echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "2/3 Redis Cluster test in 5 seconds again..."
+            sleep 5
+            redis-cli -h $node -p 6379 cluster info
+            until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
+              echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "3/3 Redis Cluster test in 5 seconds again..."
+            sleep 5
+            redis-cli -h $node -p 6379 cluster info
+            until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
+              echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            redis-cli -h $node -p 6379 cluster info
+            redis-cli -h $node -p 6379 cluster nodes
+            echo "Redis Cluster is ready!"
+      restartPolicy: OnFailure
+  ttlSecondsAfterFinished: 300  # Deletes the job and pods 300 seconds after completion

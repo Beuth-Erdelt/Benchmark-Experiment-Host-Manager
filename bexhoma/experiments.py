@@ -111,6 +111,7 @@ class default():
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
         self.maintaining_parameters = {}                                # dict of parameters for maintaining component
         self.loading_parameters = {}                                    # dict of parameters for loading component
+        self.sut_parameters = {}                                        # dict of parameters for sut and worker component
         self.loading_patch = ""                                         # YAML to patch manifest for loading component
         self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
         self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
@@ -143,6 +144,7 @@ class default():
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
         self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        self.set_eval_parameters(code = self.code)
     def get_parameter_as_list(self,
                               parameter):
         """
@@ -496,6 +498,7 @@ class default():
                             **kwargs):
         """
         Sets some arbitrary parameters that are supposed to be handed over to the benchmarker component.
+        These are for evaluation purposes only.
         Can be overwritten by configuration.
 
         :param kwargs: Dict of meta data, example 'type' => 'noindex'
@@ -562,6 +565,15 @@ class default():
         # total number at least number of parallel
         if self.num_maintaining_pods < self.num_maintaining:
             self.num_maintaining_pods = self.num_maintaining
+    def set_sut_parameters(self,
+                               **kwargs):
+        """
+        Sets ENV for sut and worker components.
+        Can be overwritten by configuration.
+
+        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
+        """
+        self.sut_parameters = kwargs
     def set_loading_parameters(self,
                                **kwargs):
         """
@@ -1127,6 +1139,10 @@ class default():
                             # we wait for health check
                             print("{:30s}: waits for health check to succeed".format(config.configuration))
                             continue
+                        if not config.workers_are_healthy():
+                            # we wait for health check
+                            print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
+                            continue
                         print("{:30s}: is not loaded yet".format(config.configuration))
                     if len(config.benchmark_list) > 0:
                         if config.monitoring_active and not config.monitoring_is_running():
@@ -1167,6 +1183,17 @@ class default():
                                 config.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
                             else:
                                 print("{:30s}: has pending maintaining".format(config.configuration))
+                # store logs of successful worker job pods
+                #print("{:30s}: looking for completed startup pods".format(config.configuration))
+                app = self.cluster.appname
+                component = 'worker'
+                pods = self.cluster.get_job_pods(app=app, component=component, experiment=self.code, configuration=configuration)
+                for pod in pods:
+                    status = self.cluster.get_pod_status(pod)
+                    self.cluster.logger.debug("Pod {} has status {}".format(pod, status))
+                    if status == "Succeeded":
+                        self.cluster.logger.debug("Store logs of starter job pod {}".format(pod))
+                        self.cluster.store_pod_log(pod_name=pod)
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
@@ -1175,6 +1202,10 @@ class default():
                         if not config.sut_is_healthy():
                             # we wait for health check
                             print("{:30s}: waits for health check to succeed".format(config.configuration))
+                            continue
+                        if not config.workers_are_healthy():
+                            # we wait for health check
+                            print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
                     # when loaded from PVC, system may not be ready yet
                     if config.loading_after_time is None:
@@ -1242,7 +1273,7 @@ class default():
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
-                                        self.cluster.store_pod_log(pod_worker, container)
+                                        self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done)
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 component = 'pool'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
@@ -2674,6 +2705,7 @@ class ycsb(default):
         self.SF = SF
         self.set_experiment(volume='ycsb')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/ycsb')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')
@@ -2831,6 +2863,14 @@ class ycsb(default):
                   "uses docker image",
                   c['parameter']['dockerimage'])
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            key = 'client'
+            if key in c['parameter']:
+                info = c['parameter'][key]
+                infos.append("    {}:{}".format(key,info))
+            key = 'numExperiment'
+            if key in c['parameter']:
+                info = c['parameter'][key]
+                infos.append("    {}:{}".format(key,info))
             for info in infos:
                 print(info)
             if 'worker' in c and len(c['worker']) > 0:
@@ -2838,7 +2878,14 @@ class ycsb(default):
                     print("    worker {}".format(i))
                     infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
-                        print(info)                
+                        print(info)
+            if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
+                for i, parameters in c['parameter']['connection_parameter'].items():
+                    if i == "eval_parameters":
+                        print("    "+i)
+                        infos = ["        {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
@@ -3010,6 +3057,7 @@ class benchbase(default):
         self.SF = SF
         self.set_experiment(volume='benchbase')
         self.set_experiment(script='Schema')
+        self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/benchbase')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')
@@ -3168,6 +3216,14 @@ class benchbase(default):
                   "uses docker image",
                   c['parameter']['dockerimage'])
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            key = 'client'
+            if key in c['parameter']:
+                info = c['parameter'][key]
+                infos.append("    {}:{}".format(key,info))
+            key = 'numExperiment'
+            if key in c['parameter']:
+                info = c['parameter'][key]
+                infos.append("    {}:{}".format(key,info))
             for info in infos:
                 print(info)
             if 'worker' in c and len(c['worker']) > 0:
@@ -3175,7 +3231,14 @@ class benchbase(default):
                     print("    worker {}".format(i))
                     infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
-                        print(info)                
+                        print(info)
+            if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
+                for i, parameters in c['parameter']['connection_parameter'].items():
+                    if i == "eval_parameters":
+                        print("    "+i)
+                        infos = ["                {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)

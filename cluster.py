@@ -65,6 +65,7 @@ if __name__ == '__main__':
             cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
+            cluster.kubectl('delete all -l experiment='+cluster.code)
         else:
             experiment = experiments.default(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
@@ -242,6 +243,14 @@ if __name__ == '__main__':
             pvcs_status = cluster.get_pvc_status(app=app, component='worker', experiment='', configuration='', pvc=pvc)
             #print("PVCsStatus", pvcs_status)
             volumes[pvc]['status'] = pvcs_status[0].phase
+            if 'volume_size' in pvc_labels:
+                volumes[pvc]['size'] = pvc_labels['volume_size']
+            else:
+                volumes[pvc]['size'] = ""
+            if 'volume_used' in pvc_labels:
+                volumes[pvc]['used'] = pvc_labels['volume_used']
+            else:
+                volumes[pvc]['used'] = ""
         #print(volumes)
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T

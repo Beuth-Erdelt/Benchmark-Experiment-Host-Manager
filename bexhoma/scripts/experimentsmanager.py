@@ -67,6 +67,8 @@ def manage():
             cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
+            #cluster.kubectl('delete all -l experiment='+cluster.code)
+            # kubectl delete all -l experiment=1742207308
         else:
             experiment = experiments.default(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
@@ -74,6 +76,7 @@ def manage():
             experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
+            cluster.kubectl('delete all -l experiment='+args.experiment)
     elif args.mode == 'summary':
         if not args.experiment is None:
             cluster = clusters.kubernetes(clusterconfig, context=args.context)
@@ -247,6 +250,14 @@ def manage():
             pvcs_status = cluster.get_pvc_status(app=app, component='worker', experiment='', configuration='', pvc=pvc)
             #print("PVCsStatus", pvcs_status)
             volumes[pvc]['status'] = pvcs_status[0].phase
+            if 'volume_size' in pvc_labels:
+                volumes[pvc]['size'] = pvc_labels['volume_size']
+            else:
+                volumes[pvc]['size'] = ""
+            if 'volume_used' in pvc_labels:
+                volumes[pvc]['used'] = pvc_labels['volume_used']
+            else:
+                volumes[pvc]['used'] = ""
         #print(volumes)
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T
@@ -322,10 +333,51 @@ def manage():
                 pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                 if args.verbose:
                     print("Worker Pods", pods)
+                num_pods = {}
                 for pod in pods:
                     status = cluster.get_pod_status(pod)
                     #print(status)
-                    apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+                    #apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+                    num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
+                #print(num_pods)
+                for status in num_pods.keys():
+                        apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
+                ############
+                component = 'pool'
+                apps[configuration][component] = ''
+                if args.verbose:
+                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+                    print("Stateful Sets", stateful_sets)
+                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+                    print("Pooling Services", services)
+                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                if args.verbose:
+                    print("Pooling Pods", pods)
+                pods_per_status = {}
+                for pod in pods:
+                    status = cluster.get_pod_status(pod)
+                    pods_per_status[status] = pods_per_status[status]+1 if status in pods_per_status  else 1
+                    #print(status)
+                for status, number in pods_per_status.items():
+                    apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
+                ############
+                component = 'pool'
+                apps[configuration][component] = ''
+                if args.verbose:
+                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+                    print("Stateful Sets", stateful_sets)
+                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+                    print("Pooling Services", services)
+                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                if args.verbose:
+                    print("Pooling Pods", pods)
+                pods_per_status = {}
+                for pod in pods:
+                    status = cluster.get_pod_status(pod)
+                    pods_per_status[status] = pods_per_status[status]+1 if status in pods_per_status  else 1
+                    #print(status)
+                for status, number in pods_per_status.items():
+                    apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
                 ############
                 component = 'pool'
                 apps[configuration][component] = ''
@@ -412,6 +464,7 @@ def manage():
                 pods = cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
                 if args.verbose:
                     print("Benchmarker Pods", pods)
+                num_pods = {}
                 for pod in pods:
                     status = cluster.get_pod_status(pod)
                     #print(status)
@@ -419,7 +472,11 @@ def manage():
                         experimentRun = '{}. '.format(pod_labels[pod]['client'])
                     else:
                         experimentRun = ''
-                    apps[configuration][component] += "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    status_extended = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1
+                    #apps[configuration][component] += "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status_extended)
+                for status in num_pods.keys():
+                        apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)
             #print(apps)
             df = pd.DataFrame(apps)
             df = df.T

@@ -122,34 +122,6 @@ spec:
       - key: "nvidia.com/gpu"
         effect: "NoSchedule"
       containers:
-      - name: cadvisor
-        image: gcr.io/cadvisor/cadvisor:v0.47.0
-        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
-        ports:
-        - containerPort: 9300
-          #hostPort: 9300
-          name: http
-          protocol: TCP
-        resources:
-          requests:
-            cpu: 150m
-            memory: 200Mi
-        volumeMounts:
-        - name: rootfs
-          mountPath: /rootfs
-          readOnly: true
-        - name: var-run
-          mountPath: /var/run
-          readOnly: true
-        - name: sys
-          mountPath: /sys
-          readOnly: true
-        - name: docker
-          mountPath: /var/lib/docker
-          readOnly: true
-        - name: disk
-          mountPath: /dev/disk
-          readOnly: true
       - name: dbms
         image: cockroachdb/cockroach:v24.2.4
         imagePullPolicy: IfNotPresent
@@ -185,8 +157,8 @@ spec:
         - name: bexhoma-workers
           mountPath: /cockroach/cockroach-data
         env:
-        - name: BEXHOMA_WORKER_LIST
-          value: cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
+        #- name: BEXHOMA_WORKER_LIST
+        #  value: cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
         - name: COCKROACH_CHANNEL
           value: kubernetes-insecure
         - name: GOMAXPROCS
@@ -214,6 +186,34 @@ spec:
             --join $(expr $BEXHOMA_WORKER_LIST)
             --cache $(expr $MEMORY_LIMIT_MIB / 4)MiB
             --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 4)MiB
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 150m
+            memory: 200Mi
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
       # No pre-stop hook is required, a SIGTERM plus some time is all that's
       # needed for graceful shutdown of a node.
       terminationGracePeriodSeconds: 60
@@ -275,9 +275,9 @@ spec:
       - name: cluster-init
         image: cockroachdb/cockroach:v24.2.4
         imagePullPolicy: IfNotPresent
-        env:
-        - name: BEXHOMA_WORKER_LIST
-          value: cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
+        #env:
+        #- name: BEXHOMA_WORKER_LIST
+        #  value: cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
         env:
         - name: BEXHOMA_WORKER_FIRST
           value: cockroachdb-0.cockroachdb
@@ -292,7 +292,20 @@ spec:
             --insecure
             --host=$(expr $BEXHOMA_WORKER_FIRST)
       restartPolicy: OnFailure
-  ttlSecondsAfterFinished: 30  # Deletes the job and pods 30 seconds after completion
+  ttlSecondsAfterFinished: 300  # Deletes the job and pods 30 seconds after completion
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -317,7 +330,6 @@ spec:
       containers:
       - name: dbms
         image: cockroachdb/cockroach:v24.2.4
-        env:
         ports:
         - containerPort: 26257
         resources:
@@ -327,6 +339,10 @@ spec:
         args: ["-c", "while true; do echo hello; sleep 10;done"]
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
+        #- {mountPath: /dev/shm, name: dshm}
+        - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
