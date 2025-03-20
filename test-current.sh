@@ -171,9 +171,10 @@ wait_process "ycsb"
 # Cluster of 3 Redis instances and PVC
 ########### does not work - redis nodes rely on IPs and do not find eachother after restart
 
-kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-redis-64-8-196608-redis-2
+kubectl delete pvc bexhoma-storage-redis-ycsb-1
+kubectl delete pvc bexhoma-workers-bx-w-redis-ycsb-1-0
+kubectl delete pvc bexhoma-workers-bx-w-redis-ycsb-1-1
+kubectl delete pvc bexhoma-workers-bx-w-redis-ycsb-1-2
 
 
 nohup python ycsb.py -ms 1 -tr \

@@ -1138,7 +1138,7 @@ scrape_configs:
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         name_worker = self.get_worker_name()
-        name_service_headless = name_worker#"ss"
+        name_service_headless = name_worker# must be the same
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
@@ -3360,7 +3360,7 @@ scrape_configs:
         If PVC are used, this must be changed, since the experiment code as part of the worker names would imply the PVC also are only valid for the concrete experiment.
         This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
 
-        :return: list of endpoints
+        :return: name template for worker pods
         """
         if self.storage['storageConfiguration']:
             storageConfiguration = self.storage['storageConfiguration']
@@ -3376,6 +3376,9 @@ scrape_configs:
             self.experiment_name = self.code
         #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+        # test shorter names
+        #name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
+        #this works, but is long for Redis:
         name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self):

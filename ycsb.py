@@ -762,6 +762,36 @@ if __name__ == '__main__':
                         BEXHOMA_DBMS = bexhoma_dbms,
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         )
+                    def get_worker_name(self):
+                        """
+                        Returns a template for the worker names.
+                        Default is component name is 'worker' for a bexhoma managed DBMS.
+                        If PVC are used, this must be changed, since the experiment code as part of the worker names would imply the PVC also are only valid for the concrete experiment.
+                        This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
+                        For Redis, this is shortend to bx-w- in the beginning, since Redis has a limitation for hostnames.
+
+                        :return: name template for worker pods
+                        """
+                        if self.storage['storageConfiguration']:
+                            storageConfiguration = self.storage['storageConfiguration']
+                        else:
+                            storageConfiguration = self.configuration
+                        # configure names
+                        if self.num_worker > 0:
+                            # we assume here, a stateful set is used
+                            # this means we do not want to have the experiment code as part of the names
+                            # this would imply there cannot be experiment independent pvcs
+                            self.experiment_name = self.storage_label#storageConfiguration
+                        else:
+                            self.experiment_name = self.code
+                        #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+                        #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+                        # test shorter names
+                        name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
+                        #this works, but is long:
+                        #name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
+                        return name_worker
+                    config.get_worker_name = types.MethodType(get_worker_name, config)
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
                     for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):

@@ -589,6 +589,179 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
+### Redis as a Cluster
+
+```bash
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 984s
+    Code: 1742454335
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [12].
+    Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Redis'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [128] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+Redis-64-8-196608-1-1 uses docker image redis:7.4.2
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:150612704
+    datadisk:1
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    worker 0
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:406469936
+        datadisk:717
+        volume_size:50G
+        volume_used:716M
+    worker 1
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:21320292
+        datadisk:794
+        volume_size:50G
+        volume_used:792M
+    worker 2
+        RAM:1081966518272
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:376414308
+        datadisk:713
+        volume_size:50G
+        volume_used:712M
+    worker 3
+        node:cl-worker12
+    eval_parameters
+        code:1742454335
+        BEXHOMA_WORKERS:3
+Redis-64-8-196608-2-1 uses docker image redis:7.4.2
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:150612704
+    datadisk:1
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:2
+    worker 0
+        RAM:1081966518272
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:376426596
+        datadisk:710
+        volume_size:50G
+        volume_used:708M
+    worker 1
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:21320308
+        datadisk:771
+        volume_size:50G
+        volume_used:768M
+    worker 2
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:116596792
+        datadisk:992
+        volume_size:50G
+        volume_used:988M
+    worker 3
+        node:cl-worker12
+    eval_parameters
+        code:1742454335
+        BEXHOMA_WORKERS:3
+
+### Loading
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+Redis-64-8-196608               1       64  196608          8           0                   21606.324493                46589.0             1000000                              6935.5
+
+### Execution
+                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+Redis-64-8-196608-1-1               1      128   65536          1           0                       63136.89               158386.0           5000382                            4707.0             4999618                              4711.0
+Redis-64-8-196608-2-1               2      128   65536          1           0                       63146.86               158361.0           4998593                            3899.0             5001407                              3885.0
+
+### Workflow
+
+#### Actual
+DBMS Redis-64-8-196608 - Pods [[1], [1]]
+
+#### Planned
+DBMS Redis-64-8-196608 - Pods [[1], [1]]
+
+### Ingestion - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1-1        1.31     0.01          0.01                 0.01
+
+### Ingestion - Loader
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1-1        7.92        0          0.42                 0.42
+
+### Execution - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1-1        1.45     0.00          0.01                 0.01
+Redis-64-8-196608-2-1        4.19     0.01          0.01                 0.01
+
+### Execution - Benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1-1      586.02     6.49          0.83                 0.84
+Redis-64-8-196608-2-1      709.59     6.43          0.83                 0.84
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
+
 
 ## YCSB Example Explained
 
