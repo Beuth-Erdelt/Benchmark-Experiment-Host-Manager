@@ -285,7 +285,6 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -db  \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
 
