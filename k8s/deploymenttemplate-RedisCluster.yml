@@ -199,8 +199,8 @@ spec:
           #- "--replica-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
           #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
           #- "--cluster-announce-ip $(POD_IP)"
-          - "--cluster-announce-ip $(POD_NAME).bx-w-redis-ycsb-1"
-          - "--cluster-announce-hostname $(POD_NAME).bx-w-redis-ycsb-1"
+          - "--cluster-announce-ip $(POD_NAME).$(STATEFULSET_NAME)"
+          - "--cluster-announce-hostname $(POD_NAME).$(STATEFULSET_NAME)"
           #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-ycsb-1"
           #- "--cluster-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
           #- "--replica-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"
@@ -310,6 +310,10 @@ spec:
         image: redis:7.0
         imagePullPolicy: IfNotPresent
         env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
         #- name: BEXHOMA_WORKER_LIST_SPACE
         #  value: redis-0.redis redis-1.redis redis-2.redis
         #- name: BEXHOMA_WORKER_FIRST
@@ -335,8 +339,10 @@ spec:
               echo "Cluster already initialized."
             else
               #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
-              yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s.perdelt.svc.cluster.local:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s.perdelt.svc.cluster.local:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
               #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE") --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              #yes yes | redis-cli -h $node --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk '{for(i=1;i<=NF;i++) printf "%s.{$POD_NAMESPACE}.svc.cluster.local:6379 ", $i}') --cluster-replicas $BEXHOMA_REPLICAS --cluster-yes
+              yes yes | redis-cli -h "$node" --cluster create $(echo "$BEXHOMA_WORKER_LIST_SPACE" | awk -v ns="$POD_NAMESPACE" '{for(i=1;i<=NF;i++) printf "%s.%s.svc.cluster.local:6379 ", $i, ns}') --cluster-replicas "$BEXHOMA_REPLICAS" --cluster-yes
               echo "Waiting for Redis Cluster to be ready..."
               until redis-cli -h $node -p 6379 cluster info | grep -q 'cluster_state:ok'; do
                 echo "Redis Cluster is not ready yet. Retrying in 5 seconds..."

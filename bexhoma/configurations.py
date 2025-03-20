@@ -1173,6 +1173,7 @@ scrape_configs:
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
+        env['STATEFULSET_NAME'] = name_worker
         # resources
         specs = instance.split("-")
         #print(specs)
@@ -1285,14 +1286,14 @@ scrape_configs:
                     #print(env_merged)
                     self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
                     #if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
-                    print(dep['spec']['template']['spec']['containers'][i_container])
+                    #print(dep['spec']['template']['spec']['containers'][i_container])
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
-                    print(dep['spec']['template']['spec']['containers'][i_container]['env'])
+                    #print(dep['spec']['template']['spec']['containers'][i_container]['env'])
                     for i_env,e in env.items():
                         index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['containers'][i_container]['env']) if d.get('name') == i_env), -1)
-                        print("*************ENV*********", env, i_env, index_of_env)
+                        #print("*************ENV*********", env, i_env, index_of_env)
                         if index_of_env >= 0:
                             # update value of existing env
                             dep['spec']['template']['spec']['containers'][i_container]['env'][index_of_env]['value'] = str(e)
