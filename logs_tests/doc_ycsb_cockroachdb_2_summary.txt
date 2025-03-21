@@ -3,103 +3,151 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1209s 
-    Code: 1730404688
-    This includes no queries. YCSB runs the benchmark
+    Duration: 29880s 
+    Code: 1742540515
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['CockroachDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+    Experiment is run 2 times.
 
 ### Connections
-CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
-    RAM:541008605184
+CockroachDB-64-8-65536-1-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008592896
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:254913416
+    disk:150617372
+    volume_size:50G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
     worker 0
-        RAM:1081966493696
-        CPU:
-        GPU:
-        GPUIDs:[]
+        RAM:1081965510656
         Cores:256
-        host:5.15.0-1060-nvidia
-        node:cl-worker28
-        disk:684869688
-        datadisk:108191232
-        volume_size:1000G
-        volume_used:101G
-        cuda:
-    worker 1
-        RAM:1081965535232
-        CPU:
-        GPU:
-        GPUIDs:[]
-        Cores:256
-        host:5.15.0-1060-nvidia
+        host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:729321392
-        datadisk:107983636
-        volume_size:1000G
-        volume_used:101G
-        cuda:
-    worker 2
-        RAM:1081750962176
-        CPU:
-        GPU:
-        GPUIDs:[]
+        disk:623044044
+        datadisk:216761
+        volume_size:50G
+        volume_used:1.9G
+    worker 1
+        RAM:1081751007232
         Cores:128
-        host:5.15.0-122-generic
+        host:5.15.0-134-generic
         node:cl-worker29
-        disk:406572384
-        datadisk:107980308
-        volume_size:1000G
-        volume_used:101G
-        cuda:
+        disk:200940376
+        datadisk:216700
+        volume_size:50G
+        volume_used:1.8G
+    worker 2
+        RAM:1081966518272
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:535939132
+        datadisk:216701
+        volume_size:50G
+        volume_used:1.8G
+    eval_parameters
+        code:1742540515
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
+CockroachDB-64-8-65536-2-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008592896
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:150618212
+    volume_size:50G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:2
+    worker 0
+        RAM:1081966518272
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:556433168
+        datadisk:219693
+        volume_size:50G
+        volume_used:4.8G
+    worker 1
+        RAM:1081751007232
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker29
+        disk:200941008
+        datadisk:219682
+        volume_size:50G
+        volume_used:4.7G
+    worker 2
+        RAM:1081965510656
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:725014044
+        datadisk:219702
+        volume_size:50G
+        volume_used:4.8G
+    worker 3
+        node:cl-worker12
+    eval_parameters
+        code:1742540515
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
 
 ### Loading
-                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8                   12047.323421                83583.0             1000000                             17711.0
+                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+CockroachDB-64-8-65536               1       64   65536          8           0                     632.916222              1581488.0             1000000                            648831.0
 
 ### Execution
-                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-CockroachDB-64-8-65536-1               1       64   65536          1                        12148.6               823140.0           4996430                            7303.0             5003570                            163711.0
+                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+CockroachDB-64-8-65536-1-1               1       64   65536          1           0                         665.77             15020105.0           5001201                          178431.0             4998799                           3799039.0
+CockroachDB-64-8-65536-2-1               2       64   65536          1           0                         811.99             12315418.0           5000886                          154239.0             4999114                           2883583.0
 
 ### Workflow
 
 #### Actual
-DBMS CockroachDB-64-8-65536 - Pods [[1]]
+DBMS CockroachDB-64-8-65536 - Pods [[1], [1]]
 
 #### Planned
-DBMS CockroachDB-64-8-65536 - Pods [[1]]
+DBMS CockroachDB-64-8-65536 - Pods [[1], [1]]
 
 ### Ingestion - SUT
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     1495.11     8.35           4.2                 7.63
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1     2291.65     0.98          5.68                10.68
 
 ### Ingestion - Loader
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1       91.09        0          4.29                 4.31
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1      250.61     0.16          0.57                 0.58
 
 ### Execution - SUT
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1    21507.31    17.92          10.1                22.14
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1    32993.85     1.52         10.93                23.30
+CockroachDB-64-8-65536-2-1    29951.43     1.67         13.99                29.68
 
 ### Execution - Benchmarker
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     1184.95     1.48          0.61                 0.61
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1     1377.39     0.22          0.61                 0.61
+CockroachDB-64-8-65536-2-1     1380.38     0.15          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

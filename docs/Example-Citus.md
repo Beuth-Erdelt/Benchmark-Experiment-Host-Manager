@@ -248,8 +248,6 @@ In this example, this means that used memory, CPU time, etc. are summed across a
 
 ## Use Persistent Storage
 
-To be described: Persistent storage is per experiment here, because K8s statefulsets derive their pvc names directly from pod names.
-
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
 
@@ -283,7 +281,7 @@ In this example `-nc` is set to two, that is the complete experiment is repeated
 The first instance of Citus mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 Bexhoma uses two types of volumes.
-The first one is attached to the coordinator and is used to persist infos across experiments.
+The first one is attached to the coordinator and is used to persist infos across experiments (and not to store actual data).
 The other volumes (worker volumes) are attached to the worker pods and store the actual data.
 
 

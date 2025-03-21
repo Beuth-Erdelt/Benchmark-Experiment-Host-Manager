@@ -19,13 +19,13 @@ SELECT * FROM crdb_internal.tables;
 
 SELECT 'crdb_internal.tables.usertable' AS message;
 SELECT * 
-FROM crdb_internal.ranges 
-WHERE table_id = (SELECT table_id FROM crdb_internal.tables WHERE name = 'usertable');
+FROM crdb_internal.ranges;
+-- WHERE table_id = (SELECT table_id FROM crdb_internal.tables WHERE name = 'usertable');
 
 SELECT 'crdb_internal.tables.usertable.replicas' AS message;
 SELECT range_id, replicas, lease_holder 
-FROM crdb_internal.ranges 
-WHERE table_id = (SELECT table_id FROM crdb_internal.tables WHERE name = 'usertable');
+FROM crdb_internal.ranges;
+-- WHERE table_id = (SELECT table_id FROM crdb_internal.tables WHERE name = 'usertable');
 
 
 

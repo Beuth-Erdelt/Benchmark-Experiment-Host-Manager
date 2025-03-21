@@ -256,9 +256,228 @@ In this example, this means that used memory, CPU time, etc. are summed across a
 
 ## Use Persistent Storage
 
-To be described: Persistent storage is per experiment here, because K8s statefulsets derive their pvc names directly from pod names.
+
+The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
+If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
+
+Example:
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
+```
+The following status shows we have one volume of type `shared`.
+Every Citus experiment will take the databases from these volumes and skip loading.
+In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
+The first instance of CockroachDB mounts the volume and generates the data.
+All other instances just use the database without generating and loading data.
+Bexhoma uses two types of volumes.
+The first volume is attached to the (dummy) coordinator and is used to persist infos across experiments (and not to store actual data).
+The other volumes (worker volumes) are attached to the worker pods and store the actual data.
+
+
+```
++----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
+| Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
++========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
+| bexhoma-storage-cockroachdb-ycsb-1     | cockroachdb     | ycsb-1       | True         |              1589 | CockroachDB     | shared               | 50Gi      | Bound    | 50G    | 0      |
++----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
+
++-----------------------------------------------------+------------------------+--------------+-------------+----------------------+-----------+----------+--------+--------+
+| Volumes of Workers                                  | configuration          |   experiment | dbms        | storage_class_name   | storage   | status   | size   | used   |
++=====================================================+========================+==============+=============+======================+===========+==========+========+========+
+| bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-0 | CockroachDB-64-8-65536 |   1742540515 | CockroachDB | shared               | 50Gi      | Bound    | 50G    | 4.8G   |
++-----------------------------------------------------+------------------------+--------------+-------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-1 | CockroachDB-64-8-65536 |   1742540515 | CockroachDB | shared               | 50Gi      | Bound    | 50G    | 4.7G   |
++-----------------------------------------------------+------------------------+--------------+-------------+----------------------+-----------+----------+--------+--------+
+| bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-2 | CockroachDB-64-8-65536 |   1742540515 | CockroachDB | shared               | 50Gi      | Bound    | 50G    | 4.8G   |
++-----------------------------------------------------+------------------------+--------------+-------------+----------------------+-----------+----------+--------+--------+
+```
+
+The result looks something like
+
+
+```bash
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 29880s 
+    Code: 1742540515
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['CockroachDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+CockroachDB-64-8-65536-1-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008592896
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:150617372
+    volume_size:50G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    worker 0
+        RAM:1081965510656
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:623044044
+        datadisk:216761
+        volume_size:50G
+        volume_used:1.9G
+    worker 1
+        RAM:1081751007232
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker29
+        disk:200940376
+        datadisk:216700
+        volume_size:50G
+        volume_used:1.8G
+    worker 2
+        RAM:1081966518272
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:535939132
+        datadisk:216701
+        volume_size:50G
+        volume_used:1.8G
+    eval_parameters
+        code:1742540515
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
+CockroachDB-64-8-65536-2-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008592896
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:150618212
+    volume_size:50G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:2
+    worker 0
+        RAM:1081966518272
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:556433168
+        datadisk:219693
+        volume_size:50G
+        volume_used:4.8G
+    worker 1
+        RAM:1081751007232
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker29
+        disk:200941008
+        datadisk:219682
+        volume_size:50G
+        volume_used:4.7G
+    worker 2
+        RAM:1081965510656
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:725014044
+        datadisk:219702
+        volume_size:50G
+        volume_used:4.8G
+    worker 3
+        node:cl-worker12
+    eval_parameters
+        code:1742540515
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
+
+### Loading
+                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+CockroachDB-64-8-65536               1       64   65536          8           0                     632.916222              1581488.0             1000000                            648831.0
+
+### Execution
+                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+CockroachDB-64-8-65536-1-1               1       64   65536          1           0                         665.77             15020105.0           5001201                          178431.0             4998799                           3799039.0
+CockroachDB-64-8-65536-2-1               2       64   65536          1           0                         811.99             12315418.0           5000886                          154239.0             4999114                           2883583.0
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-64-8-65536 - Pods [[1], [1]]
+
+#### Planned
+DBMS CockroachDB-64-8-65536 - Pods [[1], [1]]
+
+### Ingestion - SUT
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1     2291.65     0.98          5.68                10.68
+
+### Ingestion - Loader
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1      250.61     0.16          0.57                 0.58
+
+### Execution - SUT
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1    32993.85     1.52         10.93                23.30
+CockroachDB-64-8-65536-2-1    29951.43     1.67         13.99                29.68
+
+### Execution - Benchmarker
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1     1377.39     0.22          0.61                 0.61
+CockroachDB-64-8-65536-2-1     1380.38     0.15          0.61                 0.61
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
 
 ## YCSB Example Explained
+
 
 
 ### Configuration of Bexhoma

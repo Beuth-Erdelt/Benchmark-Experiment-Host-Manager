@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 572s 
-    Code: 1742463891
+    Duration: 633s 
+    Code: 1742571522
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -32,7 +32,7 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:150613216
+    disk:150618888
     datadisk:1
     requests_cpu:4
     requests_memory:16Gi
@@ -44,37 +44,37 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:117343840
-        datadisk:719
+        disk:117486192
+        datadisk:718
     worker 1
         RAM:540595900416
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker23
-        disk:22141516
-        datadisk:802
+        disk:22144724
+        datadisk:799
     worker 2
-        RAM:1081650966528
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
+        RAM:540595896320
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
         host:5.15.0-134-generic
-        node:cl-worker34
-        disk:87163360
+        node:cl-worker24
+        disk:145920520
         datadisk:720
     worker 3
         node:cl-worker12
     eval_parameters
-        code:1742463891
+        code:1742571522
         BEXHOMA_WORKERS:3
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   26391.401725                38103.0             1000000                              4646.5
+Redis-64-8-196608               1       64  196608          8           0                   25843.775975                38834.0             1000000                              4961.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       63124.14               158418.0           5001133                            1742.0             4998867                              1722.0
+Redis-64-8-196608-1               1      128   65536          1           0                       63192.35               158247.0           5001503                            1877.0             4998497                              1873.0
 
 ### Workflow
 
@@ -86,25 +86,25 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 
 ### Ingestion - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1        5.83        0          0.01                 0.01
+Redis-64-8-196608-1      103.89     0.18          1.77                 1.77
 
 ### Ingestion - Loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1           0        0           0.0                  0.0
+Redis-64-8-196608-1       85.86        0          0.52                 0.52
 
 ### Execution - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1        1.64     0.01          0.01                 0.01
+Redis-64-8-196608-1      379.45     0.84          1.79                  1.8
 
 ### Execution - Benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      735.49     5.22          0.83                 0.84
+Redis-64-8-196608-1      554.78        0          0.83                 0.83
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
