@@ -487,6 +487,11 @@ if __name__ == '__main__':
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
                         )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods), # =1
                         SF = SF,

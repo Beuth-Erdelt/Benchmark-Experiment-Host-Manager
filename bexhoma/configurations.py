@@ -2124,7 +2124,16 @@ scrape_configs:
         :param gpuid: GPU that the metrics should watch
         :return: promql query without parameters
         """
-        return self.set_metric_of_config_default(metric, host, gpuid, self.experiment_name)
+        #use_storage = self.use_storage()
+        # configure names
+        if self.num_worker > 0: # and use_storage:
+            # we assume here, a stateful set is used
+            # this means we do not want to have the experiment code as part of the names
+            # this would imply there cannot be experiment independent pvcs
+            name_worker = self.get_worker_name()
+            return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="")
+        else:
+            return self.set_metric_of_config_default(metric, host, gpuid, self.experiment_name)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.

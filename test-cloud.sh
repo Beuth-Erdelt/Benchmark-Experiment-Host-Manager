@@ -262,9 +262,9 @@ wait_process "ycsb"
 
 
 kubectl delete pvc bexhoma-storage-cockroachdb-ycsb-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-64-8-65536-cockroachdb-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-2
 
 #### YCSB PVC (Example-CockroachDB.md)
 nohup python ycsb.py -ms 1 -tr \
@@ -285,7 +285,6 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -db  \
   -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
 
@@ -662,6 +661,7 @@ for file in "$LOG_DIR"/*.log; do
     echo "Cleaning $file"
     filename=$(basename "$file" .log)
     # Extract lines starting from "## Show Summary" and save as <filename>_summary.txt in the destination directory
+    dos2unix "$file"
     awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
 done
 

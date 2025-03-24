@@ -2,42 +2,51 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1730404688
-Experiment                    : starts at 2024-10-31 20:58:08.162731 (89489.569859888)
+Experiment                    : has code 1742540515
+Experiment                    : starts at 2025-03-21 08:01:57.848850 (175194.7082407)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Number of operations is 10000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [4].
+Factors for benchmarking are [4].
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['CockroachDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 50Gi.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
-Experiment is run once.
+Experiment is run 2 times.
 Cluster monitoring            : is running
-Warning: spec.template.spec.containers[1].env[4]: hides previous definition of "BEXHOMA_WORKER_LIST"
-Warning: spec.template.spec.containers[0].env[2]: hides previous definition of "BEXHOMA_WORKER_FIRST"
-done
+- waiting 30s -               : done
 CockroachDB-64-8-65536        : will start now
+CockroachDB-64-8-65536        : Name of SUT pods = bexhoma-sut-cockroachdb-64-8-65536-ycsb-1
+CockroachDB-64-8-65536        : Name of SUT service = bexhoma-sut-cockroachdb-64-8-65536-ycsb-1
+CockroachDB-64-8-65536        : Name of SUT PVC name = bexhoma-storage-cockroachdb-ycsb-1
+CockroachDB-64-8-65536        : Name of Worker pods = bexhoma-worker-cockroachdb-ycsb-1
+CockroachDB-64-8-65536        : Name of Worker service headless = bexhoma-worker-cockroachdb-ycsb-1
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2', 'bexhoma-worker-cockroachdb-ycsb-1-9v24c']
+CockroachDB-64-8-65536        : found 3 / 3 running workers
+CockroachDB-64-8-65536        : is not loaded yet
+CockroachDB-64-8-65536        : will start loading but not before 2025-03-21 07:05:10 (that is in 120 secs)
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-31 20:01:08 (that is in 120 secs)
+CockroachDB-64-8-65536        : will start loading but not before 2025-03-21 07:05:10
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-31 20:01:08
+CockroachDB-64-8-65536        : will start loading but not before 2025-03-21 07:05:10
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-31 20:01:08
+CockroachDB-64-8-65536        : will start loading but not before 2025-03-21 07:05:10
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is not loaded yet
-CockroachDB-64-8-65536        : will start loading but not before 2024-10-31 20:01:08
-- waiting 30s -               : done
-CockroachDB-64-8-65536        : is not loaded yet
-done
-CockroachDB-64-8-65536 Workers 3 of 3
 CockroachDB-64-8-65536        : start asynch loading scripts of type loaded
 CockroachDB-64-8-65536        : is loading
 - waiting 30s -               : done
@@ -46,18 +55,103 @@ CockroachDB-64-8-65536        : is loading
 CockroachDB-64-8-65536        : is loading
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : is loading
-done
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
 CockroachDB-64-8-65536        : showing loader times
-CockroachDB-64-8-65536        : loader timespan (first to last [s]) = 84
-CockroachDB-64-8-65536        : benchmarks done 0 of 1. This will be client 1
-CockroachDB-64-8-65536        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': ''}
-CockroachDB-64-8-65536-1      : start benchmarking
-CockroachDB-64-8-65536        : benchmarking results in folder /home/perdelt/benchmarks/1730404688
+CockroachDB-64-8-65536        : loader timespan (first to last [s]) = 1582
+CockroachDB-64-8-65536        : start asynch loading scripts of type indexed
+CockroachDB-64-8-65536        : is loading
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : benchmarks done 0 of 2. This will be client 1
+CockroachDB-64-8-65536        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 3}
+CockroachDB-64-8-65536-1-1    : start benchmarking
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2']
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-ycsb-1-0
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-ycsb-1-1
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-ycsb-1-2
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2']
+CockroachDB-64-8-65536        : benchmarking results in folder C:\data\benchmarks/1742540515
 - waiting 10s -               : done
-found
-CockroachDB-64-8-65536-1      : collecting loading metrics of SUT
-CockroachDB-64-8-65536-1      : collecting metrics of data generator
-CockroachDB-64-8-65536-1      : collecting metrics of data injector
+CockroachDB-64-8-65536        : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-64-8-65536-1742540515-1-1-bzds5: found
+CockroachDB-64-8-65536-1-1    : collecting loading metrics of SUT at connection CockroachDB-64-8-65536-1-1
+CockroachDB-64-8-65536-1-1    : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-cockroachdb-ycsb-1-(.*)", pod=~"(.*)bexhoma-worker-cockroachdb-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+CockroachDB-64-8-65536-1-1    : collecting metrics of data generator at connection CockroachDB-64-8-65536-1-1
+CockroachDB-64-8-65536-1-1    : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+CockroachDB-64-8-65536-1-1    : collecting metrics of data injector at connection CockroachDB-64-8-65536-1-1
+CockroachDB-64-8-65536-1-1    : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : has running benchmarks
 - waiting 30s -               : done
@@ -110,38 +204,1571 @@ CockroachDB-64-8-65536        : has running benchmarks
 CockroachDB-64-8-65536        : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-64-8-65536        : has running benchmarks
-done
+- waiting 30s -               : done
 CockroachDB-64-8-65536        : has running benchmarks
-CockroachDB-64-8-65536-1      : showing benchmarker times
-CockroachDB-64-8-65536-1      : benchmarker timespan (start to end single container [s]) = 841
-CockroachDB-64-8-65536-1      : benchmarker times (start/end per pod and container) = [(1730405012, 1730405835)]
-CockroachDB-64-8-65536-1      : found and updated times {'benchmarker': [(1730405012, 1730405835)]}
-CockroachDB-64-8-65536-1      : collecting execution metrics of SUT
-CockroachDB-64-8-65536-1      : collecting metrics of benchmarker
-done
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '4ebe6955-0576-442a-b27f-b74259722c32', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 21 Mar 2025 08:00:10 GMT', 'Content-Length': '129'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
+
+
+
+Create new access token
+- waiting 2s -                : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+CockroachDB-64-8-65536-1-1    : showing benchmarker times
+CockroachDB-64-8-65536-1-1    : benchmarker timespan (start to end single container [s]) = 15052
+CockroachDB-64-8-65536-1-1    : benchmarker times (start/end per pod and container) = [(1742542491, 1742557512)]
+CockroachDB-64-8-65536-1-1    : found and updated times {'benchmarker': [(1742542491, 1742557512)]}
+CockroachDB-64-8-65536-1-1    : collecting execution metrics of SUT at connection CockroachDB-64-8-65536-1-1
+CockroachDB-64-8-65536-1-1    : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-cockroachdb-ycsb-1-(.*)", pod=~"(.*)bexhoma-worker-cockroachdb-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+CockroachDB-64-8-65536-1-1    : collecting metrics of benchmarker at connection CockroachDB-64-8-65536-1-1
+CockroachDB-64-8-65536-1-1    : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2']
+- waiting 30s -               : done
 CockroachDB-64-8-65536        : can be stopped
-Experiment                    : ends at 2024-10-31 21:18:16.462565 (90697.869698848) - 1208.30s total
+CockroachDB-64-8-65536        : still being removed
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : starts again
+CockroachDB-64-8-65536        : Name of SUT pods = bexhoma-sut-cockroachdb-64-8-65536-ycsb-1
+CockroachDB-64-8-65536        : Name of SUT service = bexhoma-sut-cockroachdb-64-8-65536-ycsb-1
+CockroachDB-64-8-65536        : Name of SUT PVC name = bexhoma-storage-cockroachdb-ycsb-1
+CockroachDB-64-8-65536        : Name of Worker pods = bexhoma-worker-cockroachdb-ycsb-1
+CockroachDB-64-8-65536        : Name of Worker service headless = bexhoma-worker-cockroachdb-ycsb-1
+CockroachDB-64-8-65536        : storage exists bexhoma-storage-cockroachdb-ycsb-1
+CockroachDB-64-8-65536        : label loaded copied value True
+CockroachDB-64-8-65536        : label timeLoading copied value 1589
+CockroachDB-64-8-65536        : label timeLoadingStart copied value 1742540730
+CockroachDB-64-8-65536        : label timeLoadingEnd copied value 1742542391
+CockroachDB-64-8-65536        : label indexed copied value True
+CockroachDB-64-8-65536        : label time_generated copied value 0
+CockroachDB-64-8-65536        : label time_indexed copied value 3
+CockroachDB-64-8-65536        : label time_ingested copied value 1582
+CockroachDB-64-8-65536        : label time_initschema copied value 3
+CockroachDB-64-8-65536        : label time_loaded copied value 4
+CockroachDB-64-8-65536        : loading is set to finished
+- waiting 10s -               : done
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2', 'bexhoma-worker-cockroachdb-ycsb-1-dshfl']
+CockroachDB-64-8-65536        : found 2 / 3 running workers
+CockroachDB-64-8-65536        : waits for health check of workers to succeed
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2', 'bexhoma-worker-cockroachdb-ycsb-1-dshfl']
+CockroachDB-64-8-65536        : found 3 / 3 running workers
+CockroachDB-64-8-65536        : will start benchmarking but not before 2025-03-21 11:50:55 (that is in 120 secs)
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : will start benchmarking but not before 2025-03-21 11:50:55
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : will start benchmarking but not before 2025-03-21 11:50:55
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : will start benchmarking but not before 2025-03-21 11:50:55
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : benchmarks done 1 of 2. This will be client 1
+CockroachDB-64-8-65536        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 3}
+CockroachDB-64-8-65536-2-1    : start benchmarking
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2', 'bexhoma-worker-cockroachdb-ycsb-1-dshfl']
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-ycsb-1-0
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-ycsb-1-1
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-ycsb-1-2
+CockroachDB-64-8-65536        : distributed system - get host info for worker bexhoma-worker-cockroachdb-ycsb-1-dshfl
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2', 'bexhoma-worker-cockroachdb-ycsb-1-dshfl']
+CockroachDB-64-8-65536        : benchmarking results in folder C:\data\benchmarks/1742540515
+- waiting 10s -               : done
+CockroachDB-64-8-65536        : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-64-8-65536-1742540515-2-1-6vvrj: found
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : has running benchmarks
+CockroachDB-64-8-65536-2-1    : showing benchmarker times
+CockroachDB-64-8-65536-2-1    : benchmarker timespan (start to end single container [s]) = 12360
+CockroachDB-64-8-65536-2-1    : benchmarker times (start/end per pod and container) = [(1742557963, 1742570278)]
+CockroachDB-64-8-65536-2-1    : found and updated times {'benchmarker': [(1742557963, 1742570278)]}
+CockroachDB-64-8-65536-2-1    : collecting execution metrics of SUT at connection CockroachDB-64-8-65536-2-1
+CockroachDB-64-8-65536-2-1    : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-cockroachdb-ycsb-1-(.*)", pod=~"(.*)bexhoma-worker-cockroachdb-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+CockroachDB-64-8-65536-2-1    : collecting metrics of benchmarker at connection CockroachDB-64-8-65536-2-1
+CockroachDB-64-8-65536-2-1    : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", pod=~"(.*)cockroachdb-64-8-65536-1742540515(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2']
+- waiting 30s -               : done
+CockroachDB-64-8-65536        : can be stopped
+Experiment                    : ends at 2025-03-21 16:19:58.012966 (205074.4896155) - 29879.78s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Benchmarking                                           connection  ... [UPDATE].Return=OK
-connection_pod                                        ...                   
-CockroachDB-64-8-65536-1-1  CockroachDB-64-8-65536-1  ...            5003570
-
-[1 rows x 43 columns]
-Workflow {'CockroachDB-64-8-65536': [[1]]}
-Loading                                       connection  ... [INSERT].Return=OK
-connection_pod                                    ...                   
-CockroachDB-64-8-65536-1  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-2  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-3  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-4  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-5  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-6  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-7  CockroachDB-64-8-65536  ...             125000
-CockroachDB-64-8-65536-8  CockroachDB-64-8-65536  ...             125000
-
-[8 rows x 36 columns]
 Result workflow complete
 
 ## Show Summary
@@ -149,103 +1776,151 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1209s 
-    Code: 1730404688
-    This includes no queries. YCSB runs the benchmark
+    Duration: 29880s 
+    Code: 1742540515
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['CockroachDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+    Experiment is run 2 times.
 
 ### Connections
-CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
-    RAM:541008605184
+CockroachDB-64-8-65536-1-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008592896
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:254913416
+    disk:150617372
+    volume_size:50G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
     worker 0
-        RAM:1081966493696
-        CPU:
-        GPU:
-        GPUIDs:[]
+        RAM:1081965510656
         Cores:256
-        host:5.15.0-1060-nvidia
-        node:cl-worker28
-        disk:684869688
-        datadisk:108191232
-        volume_size:1000G
-        volume_used:101G
-        cuda:
-    worker 1
-        RAM:1081965535232
-        CPU:
-        GPU:
-        GPUIDs:[]
-        Cores:256
-        host:5.15.0-1060-nvidia
+        host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:729321392
-        datadisk:107983636
-        volume_size:1000G
-        volume_used:101G
-        cuda:
-    worker 2
-        RAM:1081750962176
-        CPU:
-        GPU:
-        GPUIDs:[]
+        disk:623044044
+        datadisk:216761
+        volume_size:50G
+        volume_used:1.9G
+    worker 1
+        RAM:1081751007232
         Cores:128
-        host:5.15.0-122-generic
+        host:5.15.0-134-generic
         node:cl-worker29
-        disk:406572384
-        datadisk:107980308
-        volume_size:1000G
-        volume_used:101G
-        cuda:
+        disk:200940376
+        datadisk:216700
+        volume_size:50G
+        volume_used:1.8G
+    worker 2
+        RAM:1081966518272
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:535939132
+        datadisk:216701
+        volume_size:50G
+        volume_used:1.8G
+    eval_parameters
+        code:1742540515
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
+CockroachDB-64-8-65536-2-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008592896
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:150618212
+    volume_size:50G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:2
+    worker 0
+        RAM:1081966518272
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:556433168
+        datadisk:219693
+        volume_size:50G
+        volume_used:4.8G
+    worker 1
+        RAM:1081751007232
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker29
+        disk:200941008
+        datadisk:219682
+        volume_size:50G
+        volume_used:4.7G
+    worker 2
+        RAM:1081965510656
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:725014044
+        datadisk:219702
+        volume_size:50G
+        volume_used:4.8G
+    worker 3
+        node:cl-worker12
+    eval_parameters
+        code:1742540515
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
 
 ### Loading
-                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8                   12047.323421                83583.0             1000000                             17711.0
+                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+CockroachDB-64-8-65536               1       64   65536          8           0                     632.916222              1581488.0             1000000                            648831.0
 
 ### Execution
-                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-CockroachDB-64-8-65536-1               1       64   65536          1                        12148.6               823140.0           4996430                            7303.0             5003570                            163711.0
+                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+CockroachDB-64-8-65536-1-1               1       64   65536          1           0                         665.77             15020105.0           5001201                          178431.0             4998799                           3799039.0
+CockroachDB-64-8-65536-2-1               2       64   65536          1           0                         811.99             12315418.0           5000886                          154239.0             4999114                           2883583.0
 
 ### Workflow
 
 #### Actual
-DBMS CockroachDB-64-8-65536 - Pods [[1]]
+DBMS CockroachDB-64-8-65536 - Pods [[1], [1]]
 
 #### Planned
-DBMS CockroachDB-64-8-65536 - Pods [[1]]
+DBMS CockroachDB-64-8-65536 - Pods [[1], [1]]
 
 ### Ingestion - SUT
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     1495.11     8.35           4.2                 7.63
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1     2291.65     0.98          5.68                10.68
 
 ### Ingestion - Loader
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1       91.09        0          4.29                 4.31
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1      250.61     0.16          0.57                 0.58
 
 ### Execution - SUT
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1    21507.31    17.92          10.1                22.14
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1    32993.85     1.52         10.93                23.30
+CockroachDB-64-8-65536-2-1    29951.43     1.67         13.99                29.68
 
 ### Execution - Benchmarker
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     1184.95     1.48          0.61                 0.61
+                            CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1-1     1377.39     0.22          0.61                 0.61
+CockroachDB-64-8-65536-2-1     1380.38     0.15          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
