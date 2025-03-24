@@ -95,6 +95,8 @@ RUN cp kinetica-client-jdbc-7.1.8.7/kinetica-jdbc-7.1.8.7-jar-with-dependencies.
 ######### Specific version of YugabyteDB JDBC #########
 RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
 RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
+RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.7.3-yb-3/jdbc-yugabytedb-42.7.3-yb-3.jar
+RUN cp jdbc-yugabytedb-42.7.3-yb-3.jar jars/jdbc-yugabytedb-42.7.3-yb-3.jar
 
 COPY ./workloads ./workloads
 
