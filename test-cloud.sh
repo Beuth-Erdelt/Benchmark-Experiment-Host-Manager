@@ -145,12 +145,14 @@ wait_process "ycsb"
 
 # remove YugabyteDB installation
 remove_yugabytedb
+sleep 30
 
 # install YugabyteDB
 install_yugabytedb
+sleep 30
 
 kubectl delete pvc bexhoma-storage-yugabytedb-ycsb-1
-
+sleep 30
 
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
 nohup python ycsb.py -ms 1 -tr \
@@ -178,9 +180,11 @@ wait_process "ycsb"
 
 # remove YugabyteDB installation
 remove_yugabytedb
+sleep 30
 
 # install YugabyteDB
 install_yugabytedb
+sleep 30
 
 
 #### Benchbase Simple (Example-YugaByteDB.md)
@@ -201,9 +205,11 @@ wait_process "benchbase"
 
 # remove YugabyteDB installation
 remove_yugabytedb
+sleep 30
 
 # install YugabyteDB
 install_yugabytedb
+sleep 30
 
 
 #### Benchbase More Complex (Example-YugaByteDB.md)
