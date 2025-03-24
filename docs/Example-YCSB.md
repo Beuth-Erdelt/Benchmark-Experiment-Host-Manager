@@ -249,7 +249,9 @@ There are per DBMS
 * `initschema`-files, that are invoked before loading of data
 * `checkschema`-files, that are invoked after loading of data
 
-You can find the outout of the files in the result folder.
+You can find the output of the files in the result folder.
+
+
 
 ### Dockerfiles
 

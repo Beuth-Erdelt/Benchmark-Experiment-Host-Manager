@@ -196,6 +196,14 @@ The YAML manifests for the components can be found in https://github.com/Beuth-E
 
 The SQL scripts for pre and post ingestion can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/benchbase
 
+There are per DBMS
+* `initschema`-files, that are invoked before loading of data
+* `checkschema`-files, that are invoked after loading of data
+
+You can find the output of the files in the result folder.
+
+
+
 ### Dockerfiles
 
 The Dockerfiles for the components can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/benchbase
