@@ -252,6 +252,58 @@ after 5000
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
 fi
 
+######################## Generate workflow file ########################
+######################## Workflow: Citus ###################
+
+if [ "$HAMMERDB_TYPE" = "citus" ]; then
+    echo "#!/bin/tclsh
+proc runtimer { seconds } {
+set x 0
+set timerstop 0
+while {!\$timerstop} {
+incr x
+after 1000
+  if { ![ expr {\$x % 60} ] } {
+          set y [ expr \$x / 60 ]
+          puts \"Timer: \$y minutes elapsed\"
+  }
+update
+if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
+    }
+return
+}
+puts \"SETTING CONFIGURATION\"
+dbset db pg
+diset connection pg_host $BEXHOMA_HOST
+diset connection pg_port $BEXHOMA_PORT
+diset tpcc pg_count_ware $SF
+diset tpcc pg_num_vu $PARALLEL
+diset tpcc pg_superuser postgres
+diset tpcc pg_superuserpass postgres
+diset tpcc pg_defaultdbase postgres
+diset tpcc pg_user $USER
+diset tpcc pg_pass $PASSWORD
+diset tpcc pg_dbase tpcc
+diset tpcc pg_driver timed
+diset tpcc pg_rampup $HAMMERDB_RAMPUP
+diset tpcc pg_duration $HAMMERDB_DURATION
+diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
+diset tpcc pg_cituscompat true
+vuset logtotemp 1
+loadscript
+puts \"SEQUENCE STARTED\"
+foreach z { $HAMMERDB_VUSERS } {
+puts \"\$z VU TEST\"
+vuset vu \$z
+vucreate
+vurun
+runtimer 600
+vudestroy
+after 5000
+        }
+puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
+fi
+
 ######################## Show workflow file ########################
 cat benchmark.tcl
 
