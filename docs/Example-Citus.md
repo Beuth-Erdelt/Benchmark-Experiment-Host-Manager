@@ -46,7 +46,7 @@ nohup python ycsb.py -ms 1 -tr \
   -sfo 10 \
   -nw 3 \
   -nwr 1 \
-  -nws 32 \
+  -nws 48 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -258,7 +258,7 @@ nohup python ycsb.py -ms 1 -tr \
   -sfo 10 \
   -nw 3 \
   -nwr 1 \
-  -nws 32 \
+  -nws 48 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -533,6 +533,8 @@ nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
+  -nwr 1 \
+  -nws 48 \
   -dbms Citus \
   -nbp 1,2 \
   -nbt 16 \
@@ -677,11 +679,14 @@ nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
   -nw 3 \
+  -nwr 1 \
+  -nws 48 \
   -dbms Citus \
   -nbp 1,2,4,8 \
   -nbt 64 \
   -nbf 16 \
   -tb 1024 \
+  -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_citus_2.log &
 ```
