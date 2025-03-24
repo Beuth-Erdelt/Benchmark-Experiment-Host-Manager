@@ -76,9 +76,9 @@ pwd
 ######################## Execute workload ###################
 if echo "$BENCHBASE_STATUS_INTERVAL" | grep -qE '^[0-9]+$'; then
     echo "Benchbase dump status"
-	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=true --load=true --execute=false  --interval-monitor $BENCHBASE_STATUS_INTERVAL
+	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false  --interval-monitor $BENCHBASE_STATUS_INTERVAL
 else
-	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=true --load=true --execute=false
+	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false
 fi
 
 
