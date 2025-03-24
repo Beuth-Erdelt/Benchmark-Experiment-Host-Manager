@@ -661,6 +661,7 @@ for file in "$LOG_DIR"/*.log; do
     echo "Cleaning $file"
     filename=$(basename "$file" .log)
     # Extract lines starting from "## Show Summary" and save as <filename>_summary.txt in the destination directory
+    dos2unix "$file"
     awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
 done
 
