@@ -176,6 +176,7 @@ class default():
         self.sut_service_name = ""                                              #: Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_pod_name = ""                                                  #: Name of pod of SUT, if it is not managed by bexhoma
         self.sut_container_name = "dbms"                                        #: Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
         self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
@@ -1137,6 +1138,7 @@ scrape_configs:
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         name_worker = self.get_worker_name()
+        name_service_headless = name_worker# must be the same
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
@@ -1159,7 +1161,8 @@ scrape_configs:
         # generate list of worker names
         list_of_workers = []
         for worker in range(self.num_worker):
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
@@ -1167,8 +1170,10 @@ scrape_configs:
         env['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
         env['BEXHOMA_SUT_NAME'] = name
         if self.num_worker > 0:
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
+        env['STATEFULSET_NAME'] = name_worker
         # resources
         specs = instance.split("-")
         #print(specs)
@@ -1281,14 +1286,14 @@ scrape_configs:
                     #print(env_merged)
                     self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
                     #if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
-                    print(dep['spec']['template']['spec']['containers'][i_container])
+                    #print(dep['spec']['template']['spec']['containers'][i_container])
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
-                    print(dep['spec']['template']['spec']['containers'][i_container]['env'])
+                    #print(dep['spec']['template']['spec']['containers'][i_container]['env'])
                     for i_env,e in env.items():
                         index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['containers'][i_container]['env']) if d.get('name') == i_env), -1)
-                        print("*************ENV*********", env, i_env, index_of_env)
+                        #print("*************ENV*********", env, i_env, index_of_env)
                         if index_of_env >= 0:
                             # update value of existing env
                             dep['spec']['template']['spec']['containers'][i_container]['env'][index_of_env]['value'] = str(e)
@@ -1375,7 +1380,7 @@ scrape_configs:
                     if self.num_worker == 0:
                         del result[key]
                         continue
-                    dep['metadata']['name'] = name_worker
+                    dep['metadata']['name'] = name_service_headless# name_worker
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'worker'
                     dep['metadata']['labels']['configuration'] = configuration
@@ -2655,7 +2660,7 @@ scrape_configs:
         This runs the dockertemplate['attachWorker'] command.
         """
         self.logger.debug('Try to attach worker to master')
-        if self.num_worker > 0:
+        if self.num_worker > 0 and 'attachWorker' in self.dockertemplate and len(self.dockertemplate['attachWorker']) > 0:
             print("{:30s}: try to attach workers to master".format(self.configuration))
             pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
             name_worker = self.get_worker_name() #self.generate_component_name(component='worker', experiment=self.experiment_name, configuration=self.configuration) #experiment=self.code, configuration=self.configuration)
@@ -3356,7 +3361,7 @@ scrape_configs:
         If PVC are used, this must be changed, since the experiment code as part of the worker names would imply the PVC also are only valid for the concrete experiment.
         This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
 
-        :return: list of endpoints
+        :return: name template for worker pods
         """
         if self.storage['storageConfiguration']:
             storageConfiguration = self.storage['storageConfiguration']
@@ -3372,6 +3377,9 @@ scrape_configs:
             self.experiment_name = self.code
         #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+        # test shorter names
+        #name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
+        #this works, but is long for Redis:
         name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self):

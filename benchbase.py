@@ -476,6 +476,9 @@ if __name__ == '__main__':
                     config = configurations.benchbase(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
                     if skip_loading:
                         config.loading_deactivated = True
+                    config.set_storage(
+                        storageConfiguration = 'cockroachdb'
+                        )
                     config.set_ddl_parameters(
                         num_worker_replicas = num_worker_replicas,
                         num_worker_shards = num_worker_shards,
