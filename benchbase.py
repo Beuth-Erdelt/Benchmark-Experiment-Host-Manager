@@ -201,6 +201,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_STATUS_INTERVAL = 10,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -231,6 +232,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_STATUS_INTERVAL = 10,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

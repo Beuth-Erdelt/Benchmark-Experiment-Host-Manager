@@ -134,7 +134,14 @@ ls -lh
 pwd
 
 ######################## Execute workload ###################
-time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=false --load=false --execute=true
+if echo "$BENCHBASE_STATUS_INTERVAL" | grep -qE '^[0-9]+$'; then
+    echo "Benchbase dump status"
+    time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=false --load=false --execute=true --interval-monitor $BENCHBASE_STATUS_INTERVAL
+else
+    time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=false --load=false --execute=true
+fi
+
+
 
 
 ######################## End time measurement ###################
