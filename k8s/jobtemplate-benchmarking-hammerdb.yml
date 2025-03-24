@@ -21,7 +21,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
-        image: bexhoma/benchmarker_hammerdb:4.5
+        image: bexhoma/benchmarker_hammerdb:4.12
         imagePullPolicy: Always
         env:
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
