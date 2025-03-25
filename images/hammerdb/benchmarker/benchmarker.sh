@@ -206,21 +206,6 @@ fi
 
 if [ "$HAMMERDB_TYPE" = "postgresql" ]; then
     echo "#!/bin/tclsh
-proc runtimer { seconds } {
-set x 0
-set timerstop 0
-while {!\$timerstop} {
-incr x
-after 1000
-  if { ![ expr {\$x % 60} ] } {
-          set y [ expr \$x / 60 ]
-          puts \"Timer: \$y minutes elapsed\"
-  }
-update
-if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
-    }
-return
-}
 puts \"SETTING CONFIGURATION\"
 dbset db pg
 diset connection pg_host $BEXHOMA_HOST
@@ -238,17 +223,20 @@ diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
 diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
 vuset logtotemp 1
+tcset unique 0
+tcset refreshrate 10
+tcset timestamps 1
+tcset logtotemp 1
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
-puts \"\$z VU TEST\"
-vuset vu \$z
-vucreate
-vurun
-runtimer 600
-vudestroy
-after 5000
-        }
+    puts \"\$z VU TEST\"
+    vuset vu \$z
+    vucreate
+    vurun
+    vudestroy
+    after 5000
+}
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
 fi
 
