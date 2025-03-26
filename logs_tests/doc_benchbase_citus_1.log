@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1742770720
-Experiment                    : starts at 2025-03-23 23:58:40.744400 (7204.5137449)
+Experiment                    : has code 1742845987
+Experiment                    : starts at 2025-03-24 20:53:07.230265 (7038150.700816364)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
@@ -17,7 +17,7 @@ Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : done
+done
 Citus-1-1-1024                : will start now
 Citus-1-1-1024                : Name of SUT pods = bexhoma-sut-citus-1-1-1024-benchbase-16
 Citus-1-1-1024                : Name of SUT service = bexhoma-sut-citus-1-1-1024-benchbase-16
@@ -44,27 +44,27 @@ Citus-1-1-1024                : worker bexhoma-worker-citus-1-1-1024-benchbase-1
                1
 (1 row)
 
- 
+
 Citus-1-1-1024                : worker bexhoma-worker-citus-1-1-1024-benchbase-16-1.bexhoma-worker-citus-1-1-1024-benchbase-16 attached
   master_add_node 
 -----------------
                2
 (1 row)
 
- 
+
 Citus-1-1-1024                : worker bexhoma-worker-citus-1-1-1024-benchbase-16-2.bexhoma-worker-citus-1-1-1024-benchbase-16 attached
   master_add_node 
 -----------------
                3
 (1 row)
 
- 
+
 Citus-1-1-1024                : is not loaded yet
-Citus-1-1-1024                : will start loading but not before 2025-03-23 23:00:59 (that is in 60 secs)
+Citus-1-1-1024                : will start loading but not before 2025-03-24 19:55:13 (that is in 60 secs)
 - waiting 30s -               : done
 Citus-1-1-1024                : is not loaded yet
-Citus-1-1-1024                : will start loading but not before 2025-03-23 23:00:59
-- waiting 30s -               : done
+Citus-1-1-1024                : will start loading but not before 2025-03-24 19:55:13
+done
 Citus-1-1-1024                : is not loaded yet
 Citus-1-1-1024                : start asynch loading scripts of type loaded
 Citus-1-1-1024                : is loading
@@ -76,14 +76,18 @@ Citus-1-1-1024                : is loading
 Citus-1-1-1024                : is loading
 - waiting 30s -               : done
 Citus-1-1-1024                : is loading
-- waiting 30s -               : done
+done
+Citus-1-1-1024                : is loading
+done
 Citus-1-1-1024                : showing loader times
-Citus-1-1-1024                : loader timespan (first to last [s]) = 162
+Citus-1-1-1024                : loader timespan (first to last [s]) = 149
 Citus-1-1-1024                : start asynch loading scripts of type indexed
 Citus-1-1-1024                : is loading
 - waiting 30s -               : done
 Citus-1-1-1024                : is loading
 - waiting 30s -               : done
+Citus-1-1-1024                : is loading
+done
 Citus-1-1-1024                : benchmarks done 0 of 1. This will be client 1
 Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1}
 Citus-1-1-1024-1              : start benchmarking
@@ -91,9 +95,9 @@ Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-1-1-10
 Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-1-1-1024-benchbase-16-0
 Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-1-1-1024-benchbase-16-1
 Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-1-1-1024-benchbase-16-2
-Citus-1-1-1024                : benchmarking results in folder C:\data\benchmarks/1742770720
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1742845987
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1742770720-1-1-vm8kj: found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1742845987-1-1-rfgjt: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -111,12 +115,14 @@ Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
+Citus-1-1-1024                : has running benchmarks
+done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-1              : showing benchmarker times
-Citus-1-1-1024-1              : benchmarker timespan (start to end single container [s]) = 322
-Citus-1-1-1024-1              : benchmarker times (start/end per pod and container) = [(1742771164, 1742771470)]
-Citus-1-1-1024-1              : found and updated times {'benchmarker': [(1742771164, 1742771470)]}
-- waiting 30s -               : done
+Citus-1-1-1024-1              : benchmarker timespan (start to end single container [s]) = 315
+Citus-1-1-1024-1              : benchmarker times (start/end per pod and container) = [(1742846400, 1742846704)]
+Citus-1-1-1024-1              : found and updated times {'benchmarker': [(1742846400, 1742846704)]}
+done
 Citus-1-1-1024                : benchmarks done 0 of 1. This will be client 2
 Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1}
 Citus-1-1-1024-2              : start benchmarking
@@ -124,9 +130,9 @@ Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-1-1-10
 Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-1-1-1024-benchbase-16-0
 Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-1-1-1024-benchbase-16-1
 Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-1-1-1024-benchbase-16-2
-Citus-1-1-1024                : benchmarking results in folder C:\data\benchmarks/1742770720
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1742845987
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1742770720-1-2-fx5nr: found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1742845987-1-2-528q4: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -144,26 +150,28 @@ Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
+Citus-1-1-1024                : has running benchmarks
+done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-2              : showing benchmarker times
-Citus-1-1-1024-2              : benchmarker timespan (start to end single container [s]) = 327
-Citus-1-1-1024-2              : benchmarker times (start/end per pod and container) = [(1742771572, 1742771883), (1742771572, 1742771885)]
-Citus-1-1-1024-2              : found and updated times {'benchmarker': [(1742771572, 1742771883), (1742771572, 1742771885)]}
-- waiting 30s -               : done
+Citus-1-1-1024-2              : benchmarker timespan (start to end single container [s]) = 317
+Citus-1-1-1024-2              : benchmarker times (start/end per pod and container) = [(1742846754, 1742847058), (1742846755, 1742847057)]
+Citus-1-1-1024-2              : found and updated times {'benchmarker': [(1742846754, 1742847058), (1742846755, 1742847057)]}
+done
 Citus-1-1-1024                : can be stopped
-Experiment ends at 2025-03-24 00:19:01.401717 (8425.1713393): 1220.6575944000006s total
+Experiment ends at 2025-03-24 21:11:41.202022 (7039264.672576181): 1113.9717598166317s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
+Result workflow not complete
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 1221s 
-    Code: 1742770720
+    Duration: 1114s 
+    Code: 1742845987
     Benchbase runs the benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -185,36 +193,36 @@ Citus-1-1-1024-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:155046132
+    disk:158079280
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:767383928
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:135706388
     worker 1
         RAM:540595900416
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker23
-        disk:21645280
+        disk:24489252
     worker 2
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:132719032
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:785544660
     eval_parameters
-                code:1742770720
+                code:1742845987
                 BEXHOMA_REPLICAS:1
-                BEXHOMA_SHARDS:32
+                BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:3
 Citus-1-1-1024-2 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
@@ -222,57 +230,57 @@ Citus-1-1-1024-2 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:155488556
+    disk:159245336
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     worker 0
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:767448964
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:135845544
     worker 1
         RAM:540595900416
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker23
-        disk:21705612
+        disk:24624724
     worker 2
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:132779644
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:785674364
     eval_parameters
-                code:1742770720
+                code:1742845987
                 BEXHOMA_REPLICAS:1
-                BEXHOMA_SHARDS:32
+                BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:3
 
 ### Execution
                   experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-Citus-1-1-1024-1               1         16   16384          1  300.0                        386.85                                                      31712.0                                              41001.0
-Citus-1-1-1024-2               1         16   16384          2  300.0                        106.02                                                      47824.0                                             149922.0
+Citus-1-1-1024-1               1         16   16384          1  300.0                       1152.45                                                      28847.0                                              13874.0
+Citus-1-1-1024-2               1         16   16384          2  300.0                       1045.24                                                      33749.0                                              15295.0
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS Citus-1-1-1024 - Pods [[1, 2]]
+DBMS Citus-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
 DBMS Citus-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                   time_load  terminals  pods  Imported warehouses [1/h]
-Citus-1-1-1024-1      162.0        1.0   1.0                 355.555556
-Citus-1-1-1024-2      162.0        1.0   2.0                 355.555556
+Citus-1-1-1024-1      149.0        1.0   1.0                 386.577181
+Citus-1-1-1024-2      149.0        1.0   2.0                 386.577181
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
