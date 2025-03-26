@@ -13,8 +13,8 @@ CREATE TABLE public.usertable (
   PRIMARY KEY (ycsb_key)
 );
 
--- SET citus.shard_replication_factor = {num_worker_replicas}; -- default 1
--- SET citus.shard_count = {num_worker_shards}; -- default 32
+SET citus.shard_replication_factor = {num_worker_replicas}; -- default 1
+SET citus.shard_count = {num_worker_shards}; -- default 32
 
 SELECT create_distributed_table('usertable', 'ycsb_key');
 
