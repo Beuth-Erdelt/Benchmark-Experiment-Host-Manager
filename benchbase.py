@@ -629,6 +629,7 @@ if __name__ == '__main__':
                         #BEXHOMA_USER = "root",
                         #BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        BENCHBASE_CREATE_SCHEMA = "false",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
