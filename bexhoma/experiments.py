@@ -2255,6 +2255,7 @@ class tpcc(default):
         self.SF = SF
         self.set_experiment(volume='tpcc')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/tpcc')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')

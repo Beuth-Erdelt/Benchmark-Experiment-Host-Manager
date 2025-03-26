@@ -333,24 +333,24 @@ if __name__ == '__main__':
                 name_format = 'Citus-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 config = configurations.hammerdb(experiment=experiment, docker='Citus', configuration=config_name, dialect='Citus', alias='DBMS D', worker=num_worker)
-                    config.set_storage(
-                        storageConfiguration = 'citus'
-                        )
-                    config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas,
-                        num_worker_shards = num_worker_shards,
-                        )
-                    config.set_sut_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        )
-                    config.set_eval_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        BEXHOMA_WORKERS = num_worker
-                        )
-                    if skip_loading:
-                        config.loading_deactivated = True
+                config.set_storage(
+                    storageConfiguration = 'citus'
+                    )
+                config.set_ddl_parameters(
+                    num_worker_replicas = num_worker_replicas,
+                    num_worker_shards = num_worker_shards,
+                    )
+                config.set_sut_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    )
+                config.set_eval_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    BEXHOMA_WORKERS = num_worker
+                    )
+                if skip_loading:
+                    config.loading_deactivated = True
                 config.set_loading_parameters(
                     PARALLEL = 1,
                     SF = SF,
@@ -358,6 +358,8 @@ if __name__ == '__main__':
                     HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "citus",
                     HAMMERDB_VUSERS = loading_threads_per_pod,
+                    USER = "postgres",
+                    PASSWORD = "password1234",
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -386,6 +388,8 @@ if __name__ == '__main__':
                                     HAMMERDB_RAMPUP = str(num_rampup),
                                     HAMMERDB_TYPE = "citus",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                    USER = "postgres",
+                                    PASSWORD = "password1234",
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
