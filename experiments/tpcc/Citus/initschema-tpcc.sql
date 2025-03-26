@@ -118,7 +118,8 @@ CREATE TABLE public.customer (
 	CONSTRAINT customer_pkey PRIMARY KEY (c_w_id, c_d_id, c_id),
 	CONSTRAINT customer_c_w_id_fkey FOREIGN KEY (c_w_id,c_d_id) REFERENCES public.district(d_w_id,d_id) ON DELETE CASCADE
 );
-CREATE INDEX idx_customer_name ON public.customer USING lsm (c_w_id HASH, c_d_id ASC, c_last ASC, c_first ASC);
+
+-- CREATE INDEX idx_customer_name ON public.customer USING hash (c_w_id HASH, c_d_id ASC, c_last ASC, c_first ASC);
 
 
 -- public.history definition
@@ -141,11 +142,11 @@ CREATE TABLE public.history (
 );
 
 
--- public.oorder definition
+-- public.order definition
 
 -- Drop table
 
--- DROP TABLE public.oorder;
+-- DROP TABLE public.order;
 
 CREATE TABLE public.order (
 	o_w_id int4 NOT NULL,
@@ -156,9 +157,9 @@ CREATE TABLE public.order (
 	o_ol_cnt int4 NOT NULL,
 	o_all_local int4 NOT NULL,
 	o_entry_d timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	CONSTRAINT oorder_o_w_id_o_d_id_o_c_id_o_id_key UNIQUE (o_w_id, o_d_id, o_c_id, o_id),
-	CONSTRAINT oorder_pkey PRIMARY KEY (o_w_id, o_d_id, o_id),
-	CONSTRAINT oorder_o_w_id_fkey FOREIGN KEY (o_w_id,o_d_id,o_c_id) REFERENCES public.customer(c_w_id,c_d_id,c_id) ON DELETE CASCADE
+	CONSTRAINT order_o_w_id_o_d_id_o_c_id_o_id_key UNIQUE (o_w_id, o_d_id, o_c_id, o_id),
+	CONSTRAINT order_pkey PRIMARY KEY (o_w_id, o_d_id, o_id),
+	CONSTRAINT order_o_w_id_fkey FOREIGN KEY (o_w_id,o_d_id,o_c_id) REFERENCES public.customer(c_w_id,c_d_id,c_id) ON DELETE CASCADE
 );
 
 
@@ -181,7 +182,7 @@ CREATE TABLE public.order_line (
 	ol_dist_info bpchar(24) NOT NULL,
 	CONSTRAINT order_line_pkey PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number),
 	CONSTRAINT order_line_ol_supply_w_id_fkey FOREIGN KEY (ol_supply_w_id,ol_i_id) REFERENCES public.stock(s_w_id,s_i_id) ON DELETE CASCADE,
-	CONSTRAINT order_line_ol_w_id_fkey FOREIGN KEY (ol_w_id,ol_d_id,ol_o_id) REFERENCES public.oorder(o_w_id,o_d_id,o_id) ON DELETE CASCADE
+	CONSTRAINT order_line_ol_w_id_fkey FOREIGN KEY (ol_w_id,ol_d_id,ol_o_id) REFERENCES public.order(o_w_id,o_d_id,o_id) ON DELETE CASCADE
 );
 
 
@@ -196,8 +197,17 @@ CREATE TABLE public.new_order (
 	no_d_id int4 NOT NULL,
 	no_o_id int4 NOT NULL,
 	CONSTRAINT new_order_pkey PRIMARY KEY (no_w_id, no_d_id, no_o_id),
-	CONSTRAINT new_order_no_w_id_fkey FOREIGN KEY (no_w_id,no_d_id,no_o_id) REFERENCES public.oorder(o_w_id,o_d_id,o_id) ON DELETE CASCADE
+	CONSTRAINT new_order_no_w_id_fkey FOREIGN KEY (no_w_id,no_d_id,no_o_id) REFERENCES public.order(o_w_id,o_d_id,o_id) ON DELETE CASCADE
 );
+
+
+SET citus.shard_count = {num_worker_shards}; -- default 32
+
+-- only citus enterprise:
+SET citus.shard_replication_factor = {num_worker_replicas}; -- default 1
+
+-- Replicate Small Lookup Tables
+SELECT create_reference_table('item');
 
 -- Distribute main tables by warehouse_id
 SELECT create_distributed_table('warehouse', 'w_id');
@@ -210,7 +220,5 @@ SELECT create_distributed_table('stock', 's_w_id', colocate_with => 'warehouse')
 SELECT create_distributed_table('order_line', 'ol_w_id');
 SELECT create_distributed_table('history', 'h_w_id', colocate_with => 'warehouse');
 
--- Replicate Small Lookup Tables
-SELECT create_reference_table('item');
 
 
