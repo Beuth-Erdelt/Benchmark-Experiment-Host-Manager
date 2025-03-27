@@ -23,6 +23,16 @@
 -- SELECT run_command_on_workers('ANALYZE VERBOSE history');
 -- SELECT run_command_on_workers('ANALYZE VERBOSE item');
 
+ANALYZE VERBOSE warehouse;
+ANALYZE VERBOSE district;
+ANALYZE VERBOSE customer;
+ANALYZE VERBOSE oorder;
+ANALYZE VERBOSE new_order;
+ANALYZE VERBOSE stock;
+ANALYZE VERBOSE order_line;
+ANALYZE VERBOSE history;
+ANALYZE VERBOSE item;
+
 
 -- Verify Distribution
 SELECT * FROM citus_shards;
