@@ -512,8 +512,10 @@ Citus uses the PostgreSQL JDBC driver.
 
 ### Schema SQL File
 
-If data should be loaded, bexhoma at first creates a schema according to: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Citus
+Before ingestion, we run a script to create and distribute the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Citus/initschema-ycsb.sql
 
+After ingestion, we run a script to check the distributions.
+The script also vacuums and analyzes the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/ycsb/Citus/checkschema-ycsb.sql
 
 
 
@@ -524,8 +526,10 @@ If data should be loaded, bexhoma at first creates a schema according to: https:
 
 ## Benchbase's TPC-C
 
-Before ingestion with Benchbase, we run a script to create and distribute the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/initschema-benchbase.sql
-After ingestion with Benchbase, we run a script to check the distributions: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/checkschema-benchbase.sql
+Before ingestion, we run a script to create and distribute the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/initschema-benchbase.sql
+
+After ingestion, we run a script to check the distributions.
+The script also vacuums and analyzes the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/checkschema-benchbase.sql
 
 ### Benchbase Simple Example
 
@@ -939,6 +943,9 @@ TEST passed: Workflow as planned
 
 HammerDB provides an option to benchmark PostgreSQL with citus compatibility activated.
 This generates the tables and functions in an empty database and additionally distributes tables and functions: https://github.com/TPC-Council/HammerDB/blob/master/src/postgresql/pgoltp.tcl
+
+After ingestion, we run a script to check the distributions.
+The script also vacuums and analyzes the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpcc/Citus/checkschema-tpcc.sql
 
 ### HammerDB Simple Example
 
