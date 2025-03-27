@@ -305,7 +305,7 @@ wait_process "benchbase"
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
-  -nw 3 \
+  -nw 4 \
   -nwr 1 \
   -nws 48 \
   -dbms Citus \
@@ -315,6 +315,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_benchbase_citus_2.log &
 
 

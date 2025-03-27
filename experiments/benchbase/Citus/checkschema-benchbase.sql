@@ -12,6 +12,17 @@
 -- Replicate Small Lookup Tables
 -- SELECT create_reference_table('item');
 
+-- ERROR:  canceling the transaction since it was involved in a distributed deadlock
+-- SELECT run_command_on_workers('ANALYZE VERBOSE warehouse');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE district');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE customer');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE oorder');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE new_order');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE stock');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE order_line');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE history');
+-- SELECT run_command_on_workers('ANALYZE VERBOSE item');
+
 
 -- Verify Distribution
 SELECT * FROM citus_shards;
