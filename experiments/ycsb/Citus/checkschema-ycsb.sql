@@ -1,4 +1,9 @@
-ANALYZE VERBOSE usertable;
+
+VACUUM usertable;
+
+
+ANALYZE usertable;
+
 
 -- Verify Distribution
 SELECT * FROM citus_shards;

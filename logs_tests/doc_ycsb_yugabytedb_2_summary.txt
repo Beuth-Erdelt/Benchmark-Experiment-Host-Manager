@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 539s 
-    Code: 1742813262
+    Duration: 485s 
+    Code: 1743091301
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -33,17 +33,17 @@ YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:152073884
+    disk:184427020
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1742813262
+        code:1743091301
 
 ### Execution
                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1           0                       29081.26               343864.0           5000981                           42239.0             4999019                             45919.0
+YugabyteDB-64-8-65536-1               1       64   65536          1           0                       32804.31               304838.0           4999231                           27887.0             5000769                             39999.0
 
 ### Workflow
 
@@ -55,11 +55,11 @@ DBMS YugabyteDB-64-8-65536 - Pods [[1]]
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1    15261.12    15.75          7.26                23.08
+YugabyteDB-64-8-65536-1    13353.73    15.98          7.14                23.56
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1      892.04     3.18          0.61                 0.61
+YugabyteDB-64-8-65536-1      969.47     3.46          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

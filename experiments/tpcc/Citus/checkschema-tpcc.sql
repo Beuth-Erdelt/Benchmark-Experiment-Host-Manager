@@ -1,3 +1,27 @@
+
+VACUUM warehouse;
+VACUUM district;
+VACUUM customer;
+VACUUM orders;
+VACUUM new_order;
+VACUUM stock;
+VACUUM order_line;
+VACUUM history;
+VACUUM item;
+
+
+ANALYZE warehouse;
+ANALYZE district;
+ANALYZE customer;
+ANALYZE orders;
+ANALYZE new_order;
+ANALYZE stock;
+ANALYZE order_line;
+ANALYZE history;
+ANALYZE item;
+
+
+
 -- Verify Distribution
 SELECT * FROM citus_shards;
 

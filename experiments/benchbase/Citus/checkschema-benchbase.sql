@@ -23,15 +23,26 @@
 -- SELECT run_command_on_workers('ANALYZE VERBOSE history');
 -- SELECT run_command_on_workers('ANALYZE VERBOSE item');
 
-ANALYZE VERBOSE warehouse;
-ANALYZE VERBOSE district;
-ANALYZE VERBOSE customer;
-ANALYZE VERBOSE oorder;
-ANALYZE VERBOSE new_order;
-ANALYZE VERBOSE stock;
-ANALYZE VERBOSE order_line;
-ANALYZE VERBOSE history;
-ANALYZE VERBOSE item;
+VACUUM warehouse;
+VACUUM district;
+VACUUM customer;
+VACUUM oorder;
+VACUUM new_order;
+VACUUM stock;
+VACUUM order_line;
+VACUUM history;
+VACUUM item;
+
+
+ANALYZE warehouse;
+ANALYZE district;
+ANALYZE customer;
+ANALYZE oorder;
+ANALYZE new_order;
+ANALYZE stock;
+ANALYZE order_line;
+ANALYZE history;
+ANALYZE item;
 
 
 -- Verify Distribution
