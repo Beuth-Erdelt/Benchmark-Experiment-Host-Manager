@@ -323,8 +323,28 @@ wait_process "benchbase"
 
 
 
+####################################################
+################## HammerDB Citus ##################
+####################################################
 
 
+
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms Citus \
+  -nw 3 \
+  -nwr 1 \
+  -nws 48 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_1.log &
+
+
+wait_process "hammerdb"
 
 
 

@@ -524,6 +524,11 @@ If data should be loaded, bexhoma at first creates a schema according to: https:
 
 ## Benchbase's TPC-C
 
+Before ingestion with Benchbase, we run a script to create and distribute the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/initschema-benchbase.sql
+After ingestion with Benchbase, we run a script to check the distributions: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/checkschema-benchbase.sql
+
+### Benchbase Simple Example
+
 TPC-C is performed at 16 warehouses.
 The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
 Citus has 3 workers.
@@ -928,8 +933,112 @@ TEST passed: Workflow as planned
 ```
 
 
-## Benchbase Example Explained
 
-The setup is the same as for YCSB (see above).
 
-After ingestion with Benchbase, we run a script to distribute the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/checkschema-benchbase.sql
+## HammerDB's TPC-C
+
+HammerDB provides an option to benchmark PostgreSQL with citus compatibility activated.
+This generates the tables and functions in an empty database and additionally distributes tables and functions: https://github.com/TPC-Council/HammerDB/blob/master/src/postgresql/pgoltp.tcl
+
+### HammerDB Simple Example
+
+TPC-C is performed at 16 warehouses.
+The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
+Citus has 3 workers.
+
+
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms Citus \
+  -nw 3 \
+  -nwr 1 \
+  -nws 48 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_1.log &
+```
+
+yields
+
+```bash
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 766s 
+    Code: 1743067043
+    HammerDB runs the benchmark.
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [8] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:184430452
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:62237188
+    worker 1
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137239444
+    worker 2
+        RAM:540595896320
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker24
+        disk:94964112
+
+### Execution
+                 experiment_run  vusers  client  pod_count     NOPM       TPM  duration  errors
+Citus-BHT-8-1-1               1      16       1          1  48083.0  110535.0         5       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS Citus-BHT-8-1 - Pods [[1]]
+
+#### Planned
+DBMS Citus-BHT-8-1 - Pods [[1]]
+
+### Loading
+                 time_load  terminals  pods  Imported warehouses [1/h]
+Citus-BHT-8-1-1      105.0        1.0   1.0                 548.571429
+
+### Tests
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+

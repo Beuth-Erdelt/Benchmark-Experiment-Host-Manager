@@ -17,7 +17,6 @@ Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 PostgreSQL-BHT-8-1            : will start now
 PostgreSQL-BHT-8-1            : Name of SUT pods = bexhoma-sut-postgresql-bht-8-1-1742989036
@@ -37,8 +36,6 @@ PostgreSQL-BHT-8-1            : will start loading but not before 2025-03-26 11:
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
 PostgreSQL-BHT-8-1            : will start loading but not before 2025-03-26 11:40:48
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 PostgreSQL-BHT-8-1            : is not loaded yet
 PostgreSQL-BHT-8-1            : start asynch loading scripts of type loaded
@@ -49,19 +46,6 @@ PostgreSQL-BHT-8-1            : is loading
 PostgreSQL-BHT-8-1            : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is loading
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 PostgreSQL-BHT-8-1            : showing loader times
 PostgreSQL-BHT-8-1            : loader timespan (first to last [s]) = 90
@@ -99,23 +83,12 @@ PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-1          : showing benchmarker times
 PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 466
 PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1742989379, 1742989825)]
 PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1742989379, 1742989825)]}
-- waiting 30s -               : Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 PostgreSQL-BHT-8-1            : can be stopped
 Experiment ends at 2025-03-26 12:51:11.543248 (7182035.013801322): 835.364135986194s total
