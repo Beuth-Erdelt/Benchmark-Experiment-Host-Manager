@@ -271,7 +271,7 @@ diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
 diset tpcc pg_user $USER
 diset tpcc pg_pass $PASSWORD
-diset tpcc pg_dbase tpcc
+diset tpcc pg_dbase $DATABASE
 diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION

@@ -360,6 +360,7 @@ if __name__ == '__main__':
                     HAMMERDB_VUSERS = loading_threads_per_pod,
                     USER = "postgres",
                     PASSWORD = "password1234",
+                    DATABASE = "postgres",
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -390,6 +391,7 @@ if __name__ == '__main__':
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
                                     USER = "postgres",
                                     PASSWORD = "password1234",
+                                    DATABASE = "postgres",
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)

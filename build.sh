@@ -105,3 +105,5 @@ docker push bexhoma/generator_benchbase:latest
 docker build -t bexhoma/benchmarker_benchbase:latest -f Dockerfile_benchmarker .
 docker push bexhoma/benchmarker_benchbase:latest
 cd ..
+
+cd ..
