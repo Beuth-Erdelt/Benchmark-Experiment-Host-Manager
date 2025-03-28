@@ -3414,7 +3414,8 @@ scrape_configs:
         #pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.code, configuration=self.configuration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-        print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
+        if self.num_worker > 0:
+            print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):

@@ -60,6 +60,7 @@ if __name__ == '__main__':
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of warehouses', default=1)
     #parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
     parser.add_argument('-sd', '--scaling-duration', help='scaling factor = duration in minutes', default=5)
+    parser.add_argument('-slg', '--scaling-logging', help='logging status every x seconds', default=0)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=600)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
     parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
@@ -124,6 +125,7 @@ if __name__ == '__main__':
     SD = int(args.scaling_duration)*60
     target_base = int(args.target_base)
     type_of_benchmark = args.benchmark
+    scaling_logging = int(args.scaling_logging)*1000 # adjust unit to miliseconds
     ##############
     ### set cluster
     ##############
@@ -201,6 +203,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -231,6 +234,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -253,6 +257,7 @@ if __name__ == '__main__':
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "root",
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -283,6 +288,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -305,6 +311,7 @@ if __name__ == '__main__':
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "root",
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -335,6 +342,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -348,6 +356,8 @@ if __name__ == '__main__':
                     if skip_loading:
                         config.loading_deactivated = True
                     config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
+                    config.sut_pod_name = "yb-tserver-"                 # fix pod name of SUT, because it is not managed by bexhoma
+                    config.statefulset_name = 'yb-tserver'              # name of the stateful set of DBMS pods
                     config.sut_container_name = ''                      # fix container name of SUT
                     def get_worker_pods(self):
                         """
@@ -358,7 +368,8 @@ if __name__ == '__main__':
 
                         :return: list of endpoints
                         """
-                        pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
+                        #pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
+                        pods_worker = cluster.get_statefulset_pods(self.statefulset_name)
                         #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
                         #print("****************", pods_worker)
                         return pods_worker
@@ -433,6 +444,7 @@ if __name__ == '__main__':
                         BEXHOMA_USER = "yugabyte",
                         BEXHOMA_PASSWORD = "",
                         BEXHOMA_PORT = 5433,
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -466,6 +478,7 @@ if __name__ == '__main__':
                                         BEXHOMA_USER = "yugabyte",
                                         BEXHOMA_PASSWORD = "",
                                         BEXHOMA_PORT = 5433,
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -505,6 +518,7 @@ if __name__ == '__main__':
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -538,6 +552,7 @@ if __name__ == '__main__':
                                         BEXHOMA_USER = "root",
                                         BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -560,6 +575,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -591,6 +607,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -627,6 +644,8 @@ if __name__ == '__main__':
                         #BEXHOMA_USER = "root",
                         #BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        BENCHBASE_CREATE_SCHEMA = "false",
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -660,6 +679,7 @@ if __name__ == '__main__':
                                         #BEXHOMA_USER = "root",
                                         #BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

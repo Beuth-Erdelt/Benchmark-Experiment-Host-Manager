@@ -1,13 +1,29 @@
 
-VACUUM usertable;
+VACUUM warehouse;
+VACUUM district;
+VACUUM customer;
+VACUUM orders;
+VACUUM new_order;
+VACUUM stock;
+VACUUM order_line;
+VACUUM history;
+VACUUM item;
 
 
-ANALYZE usertable;
+ANALYZE warehouse;
+ANALYZE district;
+ANALYZE customer;
+ANALYZE orders;
+ANALYZE new_order;
+ANALYZE stock;
+ANALYZE order_line;
+ANALYZE history;
+ANALYZE item;
+
 
 
 -- Verify Distribution
 SELECT * FROM citus_shards;
-
 
 SELECT 'pg_stat_replication' AS message;
 SELECT * FROM pg_stat_replication;
@@ -32,16 +48,4 @@ SELECT * FROM citus_tables;
 
 SELECT 'citus_get_active_worker_nodes' AS message;
 SELECT * FROM citus_get_active_worker_nodes();
-
-
-SELECT 
-    table_name, 
-    shardid, 
-    shard_name, 
-    citus_table_type, 
-    colocation_id, 
-    nodename, 
-    nodeport, 
-    pg_size_pretty(shard_size::bigint) AS shard_size_readable
-FROM citus_shards;
 

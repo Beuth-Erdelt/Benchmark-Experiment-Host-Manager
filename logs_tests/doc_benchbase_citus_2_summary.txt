@@ -3,17 +3,19 @@
 ### Workload
 Benchbase Workload SF=128 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 15809s 
-    Code: 1742228675
+    Duration: 15681s 
+    Code: 1743074557
     Benchbase runs the benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -26,7 +28,9 @@ Citus-1-1-1024-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:180558040
+    disk:184387084
+    volume_size:50.0G
+    volume_used:40.0M
     requests_cpu:4
     requests_memory:16Gi
     client:1
@@ -37,33 +41,50 @@ Citus-1-1-1024-1 uses docker image citusdata/citus:13.0.2-alpine
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker23
-        disk:21341444
+        disk:60903640
+        volume_size:50.0G
+        volume_used:8.9G
     worker 1
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:101793644
+        disk:136140440
+        volume_size:50.0G
+        volume_used:6.1G
     worker 2
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:326746868
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80552440
+        volume_size:50.0G
+        volume_used:6.2G
+    worker 3
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:188421676
+        volume_size:50.0G
+        volume_used:6.1G
     eval_parameters
-                code:1742228675
+                code:1743074557
                 BEXHOMA_REPLICAS:1
-                BEXHOMA_SHARDS:32
-                BEXHOMA_WORKERS:3
+                BEXHOMA_SHARDS:48
+                BEXHOMA_WORKERS:4
 Citus-1-1-1024-2 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:205684788
+    disk:184387252
+    volume_size:50.0G
+    volume_used:404.0M
     requests_cpu:4
     requests_memory:16Gi
     client:2
@@ -74,33 +95,50 @@ Citus-1-1-1024-2 uses docker image citusdata/citus:13.0.2-alpine
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker23
-        disk:24277644
+        disk:60903872
+        volume_size:50.0G
+        volume_used:19.0G
     worker 1
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:106401480
+        disk:136150020
+        volume_size:50.0G
+        volume_used:11.0G
     worker 2
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:330737352
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80552584
+        volume_size:50.0G
+        volume_used:9.2G
+    worker 3
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:188421940
+        volume_size:50.0G
+        volume_used:10.9G
     eval_parameters
-                code:1742228675
+                code:1743074557
                 BEXHOMA_REPLICAS:1
-                BEXHOMA_SHARDS:32
-                BEXHOMA_WORKERS:3
+                BEXHOMA_SHARDS:48
+                BEXHOMA_WORKERS:4
 Citus-1-1-1024-3 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:218862228
+    disk:184387424
+    volume_size:50.0G
+    volume_used:560.0M
     requests_cpu:4
     requests_memory:16Gi
     client:3
@@ -111,33 +149,50 @@ Citus-1-1-1024-3 uses docker image citusdata/citus:13.0.2-alpine
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker23
-        disk:25365060
+        disk:60904092
+        volume_size:50.0G
+        volume_used:27.0G
     worker 1
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:108128780
+        disk:136307924
+        volume_size:50.0G
+        volume_used:15.4G
     worker 2
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:332066900
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80552720
+        volume_size:50.0G
+        volume_used:13.7G
+    worker 3
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:188422224
+        volume_size:50.0G
+        volume_used:15.0G
     eval_parameters
-                code:1742228675
+                code:1743074557
                 BEXHOMA_REPLICAS:1
-                BEXHOMA_SHARDS:32
-                BEXHOMA_WORKERS:3
+                BEXHOMA_SHARDS:48
+                BEXHOMA_WORKERS:4
 Citus-1-1-1024-4 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229785872
+    disk:184387596
+    volume_size:50.0G
+    volume_used:560.0M
     requests_cpu:4
     requests_memory:16Gi
     client:4
@@ -148,51 +203,98 @@ Citus-1-1-1024-4 uses docker image citusdata/citus:13.0.2-alpine
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker23
-        disk:25587696
+        disk:60904324
+        volume_size:50.0G
+        volume_used:28.5G
     worker 1
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:108138036
+        disk:136324680
+        volume_size:50.0G
+        volume_used:15.4G
     worker 2
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:332639084
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80552864
+        volume_size:50.0G
+        volume_used:13.7G
+    worker 3
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:188422484
+        volume_size:50.0G
+        volume_used:15.0G
     eval_parameters
-                code:1742228675
+                code:1743074557
                 BEXHOMA_REPLICAS:1
-                BEXHOMA_SHARDS:32
-                BEXHOMA_WORKERS:3
+                BEXHOMA_SHARDS:48
+                BEXHOMA_WORKERS:4
 
 ### Execution
                   experiment_run  terminals  target  pod_count    time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-Citus-1-1-1024-1               1         64   16384          1  3600.0                       4340.48                                                      31481.0                                             14740.00
-Citus-1-1-1024-2               1         64   16384          2  3600.0                       4213.02                                                      31791.0                                             15187.00
-Citus-1-1-1024-3               1         64   16384          4  3600.0                       3574.33                                                      36360.0                                             17901.00
-Citus-1-1-1024-4               1         64   16384          8  3600.0                       2053.90                                                      82549.0                                             31153.62
+Citus-1-1-1024-1               1         64   16384          1  3600.0                       1647.92                                                     141313.0                                             38831.00
+Citus-1-1-1024-2               1         64   16384          2  3600.0                       1418.96                                                     201757.0                                             45094.00
+Citus-1-1-1024-3               1         64   16384          4  3600.0                       1094.57                                                     267286.0                                             58461.00
+Citus-1-1-1024-4               1         64   16384          8  3600.0                        646.32                                                     438442.0                                             99006.62
 
 Warehouses: 128
 
 ### Workflow
 
 #### Actual
-DBMS Citus-1-1-1024 - Pods [[8, 4, 1, 2]]
+DBMS Citus-1-1-1024 - Pods [[4, 2, 8, 1]]
 
 #### Planned
 DBMS Citus-1-1-1024 - Pods [[1, 2, 4, 8]]
 
 ### Loading
                   time_load  terminals  pods  Imported warehouses [1/h]
-Citus-1-1-1024-1      766.0        1.0   1.0                  601.56658
-Citus-1-1-1024-2      766.0        1.0   2.0                  601.56658
-Citus-1-1-1024-3      766.0        1.0   4.0                  601.56658
-Citus-1-1-1024-4      766.0        1.0   8.0                  601.56658
+Citus-1-1-1024-1      727.0        1.0   1.0                 633.837689
+Citus-1-1-1024-2      727.0        1.0   2.0                 633.837689
+Citus-1-1-1024-3      727.0        1.0   4.0                 633.837689
+Citus-1-1-1024-4      727.0        1.0   8.0                 633.837689
+
+### Ingestion - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-1-1-1024-1     2944.81     3.63         24.41                37.06
+Citus-1-1-1024-2     2944.81     3.63         24.41                37.06
+Citus-1-1-1024-3     2944.81     3.63         24.41                37.06
+Citus-1-1-1024-4     2944.81     3.63         24.41                37.06
+
+### Ingestion - Loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-1-1-1024-1    11870.34     28.9          1.32                 1.32
+Citus-1-1-1024-2    11870.34     28.9          1.32                 1.32
+Citus-1-1-1024-3    11870.34     28.9          1.32                 1.32
+Citus-1-1-1024-4    11870.34     28.9          1.32                 1.32
+
+### Execution - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-1-1-1024-1    33676.77     5.69         31.11                49.28
+Citus-1-1-1024-2    28251.25     5.63         35.91                58.41
+Citus-1-1-1024-3    21442.25     4.02         39.41                65.23
+Citus-1-1-1024-4    12010.87     2.53         41.22                69.00
+
+### Execution - Benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-1-1-1024-1    11919.96     3.94          1.76                 1.76
+Citus-1-1-1024-2    11919.96     3.54          3.06                 3.06
+Citus-1-1-1024-3    11069.44     1.99          5.63                 5.63
+Citus-1-1-1024-4     8492.89     1.36          7.90                 7.90
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned

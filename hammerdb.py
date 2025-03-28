@@ -32,7 +32,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='start sut, also load data or also run the TPC-C queries', choices=['run', 'start', 'load', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'Citus'], default=[], nargs='*')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -46,6 +46,9 @@ if __name__ == '__main__':
     parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
     parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
+    parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
+    parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
+    parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
     #parser.add_argument('-nlf', '--num-loading-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
@@ -107,6 +110,10 @@ if __name__ == '__main__':
         list_clients = []
     # do not ingest, start benchmarking immediately
     skip_loading = args.skip_loading
+    # how many workers (for distributed dbms)
+    num_worker = int(args.num_worker)
+    num_worker_replicas = int(args.num_worker_replicas)
+    num_worker_shards = int(args.num_worker_shards)
     ##############
     ### specific to: Benchbase
     ##############
@@ -321,6 +328,74 @@ if __name__ == '__main__':
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
+            if ("Citus" in args.dbms or len(args.dbms) == 0):
+                # PostgreSQL
+                name_format = 'Citus-{cluster}-{users}-{pods}'
+                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
+                config = configurations.hammerdb(experiment=experiment, docker='Citus', configuration=config_name, dialect='Citus', alias='DBMS D', worker=num_worker)
+                config.set_storage(
+                    storageConfiguration = 'citus'
+                    )
+                config.set_ddl_parameters(
+                    num_worker_replicas = num_worker_replicas,
+                    num_worker_shards = num_worker_shards,
+                    )
+                config.set_sut_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    )
+                config.set_eval_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    BEXHOMA_WORKERS = num_worker
+                    )
+                if skip_loading:
+                    config.loading_deactivated = True
+                config.set_loading_parameters(
+                    PARALLEL = 1,
+                    SF = SF,
+                    HAMMERDB_DURATION = str(SD),
+                    HAMMERDB_RAMPUP = str(num_rampup),
+                    HAMMERDB_TYPE = "citus",
+                    HAMMERDB_VUSERS = loading_threads_per_pod,
+                    USER = "postgres",
+                    PASSWORD = "password1234",
+                    DATABASE = "postgres",
+                )
+                config.set_loading(parallel=1, num_pods=1)
+                executor_list = []
+                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
+                    for benchmarking_threads in num_benchmarking_threads:
+                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                            for num_executor in list_clients:
+                                benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                """
+                                print("benchmarking_target", benchmarking_target)
+                                print("benchmarking_pods", benchmarking_pods)
+                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                print("benchmarking_threads", benchmarking_threads)
+                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                """
+                                executor_list.append(benchmarking_pods_scaled)
+                                config.add_benchmarking_parameters(
+                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    SF = SF,
+                                    BEXHOMA_SYNCH_LOAD = 1,
+                                    HAMMERDB_DURATION = str(SD),
+                                    HAMMERDB_RAMPUP = str(num_rampup),
+                                    HAMMERDB_TYPE = "citus",
+                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                    USER = "postgres",
+                                    PASSWORD = "password1234",
+                                    DATABASE = "postgres",
+                                    )
+                #print(executor_list)
+                config.add_benchmark_list(executor_list)
+                cluster.max_sut = 1 # can only run 1 in same cluster because of fixed stateful set
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

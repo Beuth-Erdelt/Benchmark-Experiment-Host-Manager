@@ -224,6 +224,10 @@ You can connect to an evaluation server locally by `bexperiments jupyter`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 
+### Time Series of Metrics
+
+See an [example notebook](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/dev/Evaluation-YCSB-Timeseries-1739274625-Heatmaps-Compare.ipynb) about how to analyze results in detail.
+
 ## Adjust Parameters
 
 The script supports
@@ -240,6 +244,14 @@ The YAML manifests for the components can be found in https://github.com/Beuth-E
 ### SQL Scrips
 
 The SQL scripts for pre and post ingestion can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb
+
+There are per DBMS
+* `initschema`-files, that are invoked before loading of data
+* `checkschema`-files, that are invoked after loading of data
+
+You can find the output of the files in the result folder.
+
+
 
 ### Dockerfiles
 

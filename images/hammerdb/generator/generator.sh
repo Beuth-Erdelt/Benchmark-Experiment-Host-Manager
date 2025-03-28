@@ -105,6 +105,36 @@ wait_to_complete
 vwait forever" > load.tcl
 fi
 
+######################## Generate workflow file ########################
+######################## Workflow: Citus ###################
+
+if [ "$HAMMERDB_TYPE" = "citus" ]; then
+    echo "puts \"SETTING CONFIGURATION\"
+global complete
+proc wait_to_complete {} {
+global complete
+set complete [vucomplete]
+if {!\$complete} { after 5000 wait_to_complete } else { exit }
+}
+dbset db pg
+diset connection pg_host $BEXHOMA_HOST
+diset connection pg_port $BEXHOMA_PORT
+diset tpcc pg_count_ware $SF
+diset tpcc pg_num_vu $HAMMERDB_VUSERS
+diset tpcc pg_superuser postgres
+diset tpcc pg_superuserpass postgres
+diset tpcc pg_defaultdbase postgres
+diset tpcc pg_user $USER
+diset tpcc pg_pass $PASSWORD
+diset tpcc pg_dbase $DATABASE
+diset tpcc pg_cituscompat true
+print dict
+buildschema
+wait_to_complete
+vwait forever" > load.tcl
+fi
+
+
 ######################## Show workflow file ########################
 cat load.tcl
 

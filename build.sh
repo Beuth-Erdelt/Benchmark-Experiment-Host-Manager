@@ -77,12 +77,12 @@ cd ..
 ###########
 cd hammerdb
 cd benchmarker
-docker build -f Dockerfile -t bexhoma/benchmarker_hammerdb:4.5 .
-docker push bexhoma/benchmarker_hammerdb:4.5 &
+docker build -f Dockerfile -t bexhoma/benchmarker_hammerdb:4.12 .
+docker push bexhoma/benchmarker_hammerdb:4.12 &
 cd ..
 cd generator
-docker build -f Dockerfile -t bexhoma/generator_hammerdb:4.5 .
-docker push bexhoma/generator_hammerdb:4.5 &
+docker build -f Dockerfile -t bexhoma/generator_hammerdb:4.12 .
+docker push bexhoma/generator_hammerdb:4.12 &
 cd ..
 cd ..
 
@@ -104,4 +104,6 @@ docker build -t bexhoma/generator_benchbase:latest -f Dockerfile_generator .
 docker push bexhoma/generator_benchbase:latest
 docker build -t bexhoma/benchmarker_benchbase:latest -f Dockerfile_benchmarker .
 docker push bexhoma/benchmarker_benchbase:latest
+cd ..
+
 cd ..

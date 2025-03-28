@@ -206,6 +206,45 @@ fi
 
 if [ "$HAMMERDB_TYPE" = "postgresql" ]; then
     echo "#!/bin/tclsh
+puts \"SETTING CONFIGURATION\"
+dbset db pg
+diset connection pg_host $BEXHOMA_HOST
+diset connection pg_port $BEXHOMA_PORT
+diset tpcc pg_count_ware $SF
+diset tpcc pg_num_vu $PARALLEL
+diset tpcc pg_superuser postgres
+diset tpcc pg_superuserpass postgres
+diset tpcc pg_defaultdbase postgres
+diset tpcc pg_user $USER
+diset tpcc pg_pass $PASSWORD
+diset tpcc pg_dbase tpcc
+diset tpcc pg_driver timed
+diset tpcc pg_rampup $HAMMERDB_RAMPUP
+diset tpcc pg_duration $HAMMERDB_DURATION
+diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
+vuset logtotemp 1
+tcset unique 0
+tcset refreshrate 10
+tcset timestamps 1
+tcset logtotemp 1
+loadscript
+puts \"SEQUENCE STARTED\"
+foreach z { $HAMMERDB_VUSERS } {
+    puts \"\$z VU TEST\"
+    vuset vu \$z
+    vucreate
+    vurun
+    vudestroy
+    after 5000
+}
+puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
+fi
+
+######################## Generate workflow file ########################
+######################## Workflow: Citus ###################
+
+if [ "$HAMMERDB_TYPE" = "citus" ]; then
+    echo "#!/bin/tclsh
 proc runtimer { seconds } {
 set x 0
 set timerstop 0
@@ -232,11 +271,12 @@ diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
 diset tpcc pg_user $USER
 diset tpcc pg_pass $PASSWORD
-diset tpcc pg_dbase tpcc
+diset tpcc pg_dbase $DATABASE
 diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
 diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
+diset tpcc pg_cituscompat true
 vuset logtotemp 1
 loadscript
 puts \"SEQUENCE STARTED\"

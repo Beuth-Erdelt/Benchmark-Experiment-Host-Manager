@@ -3,13 +3,13 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 836s 
-    Code: 1742989036
+    Duration: 766s 
+    Code: 1743067043
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -20,34 +20,54 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
+Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:189403416
-    datadisk:3298
+    disk:184430452
     requests_cpu:4
     requests_memory:16Gi
+    worker 0
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:62237188
+    worker 1
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137239444
+    worker 2
+        RAM:540595896320
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker24
+        disk:94964112
 
 ### Execution
-                      experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11736.0  36880.0         5       0
+                 experiment_run  vusers  client  pod_count     NOPM       TPM  duration  errors
+Citus-BHT-8-1-1               1      16       1          1  48083.0  110535.0         5       0
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+DBMS Citus-BHT-8-1 - Pods [[1]]
 
 #### Planned
-DBMS PostgreSQL-BHT-8-1 - Pods [[1]]
+DBMS Citus-BHT-8-1 - Pods [[1]]
 
 ### Loading
-                      time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1       90.0        1.0   1.0                      640.0
+                 time_load  terminals  pods  Imported warehouses [1/h]
+Citus-BHT-8-1-1      105.0        1.0   1.0                 548.571429
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

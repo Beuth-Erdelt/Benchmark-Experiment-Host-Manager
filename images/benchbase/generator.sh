@@ -33,6 +33,8 @@ echo "BENCHBASE_TARGET $BENCHBASE_TARGET"
 echo "BENCHBASE_TIME $BENCHBASE_TIME"
 echo "BENCHBASE_TERMINALS $BENCHBASE_TERMINALS"
 echo "BENCHBASE_BATCHSIZE $BENCHBASE_BATCHSIZE"
+echo "BENCHBASE_CREATE_SCHEMA $BENCHBASE_CREATE_SCHEMA"
+
 
 
 ############ Start measurement of time of execution ############
@@ -74,7 +76,13 @@ ls -lh
 pwd
 
 ######################## Execute workload ###################
-time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=true --load=true --execute=false
+if echo "$BENCHBASE_STATUS_INTERVAL" | grep -qE '^[0-9]+$'; then
+    echo "Benchbase dump status"
+	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false  --interval-monitor $BENCHBASE_STATUS_INTERVAL
+else
+	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false
+fi
+
 
 
 ######################## End time measurement ###################

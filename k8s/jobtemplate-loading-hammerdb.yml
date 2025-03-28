@@ -21,7 +21,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: sensor
-        image: bexhoma/generator_hammerdb:4.5
+        image: bexhoma/generator_hammerdb:4.12
         imagePullPolicy: Always
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-timescaledb-aws-1658676533'}
@@ -38,8 +38,8 @@ spec:
           #, memory: 16Gi}
           #requests: {cpu: 4000m}
           #, memory: 16Gi}
-        securityContext:
-          privileged: true
+        #securityContext:
+        #  privileged: true
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpcc/"

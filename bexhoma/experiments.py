@@ -2255,6 +2255,7 @@ class tpcc(default):
         self.SF = SF
         self.set_experiment(volume='tpcc')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/tpcc')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')
@@ -3274,13 +3275,15 @@ class benchbase(default):
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
             #columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
-            columns = ["time", "Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["time", "num_errors", "Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
+        # test: show time series
+        #print(self.evaluator.get_benchmark_logs_timeseries_df_aggregated(configuration="Citus-1-1-1024", client=2))
         #####################
         print("\n### Workflow")
         workflow_actual = self.evaluator.reconstruct_workflow(df)

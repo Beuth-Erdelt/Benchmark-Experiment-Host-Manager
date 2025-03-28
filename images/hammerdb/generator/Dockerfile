@@ -1,4 +1,4 @@
-FROM tpcorg/hammerdb:v4.7
+FROM tpcorg/hammerdb:v4.12
 
 COPY ./generator.sh ./generator.sh
 RUN ["chmod", "+x", "./generator.sh"]
