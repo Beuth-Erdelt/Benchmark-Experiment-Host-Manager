@@ -3914,24 +3914,24 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
             stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-sut-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stdout) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stdout)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-sut-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stderr)
         elif file_extension.lower() == '.sh':
             stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-sut-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stdout) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stdout)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-sut-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:
