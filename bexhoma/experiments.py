@@ -3282,6 +3282,8 @@ class benchbase(default):
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             print(df_aggregated_reduced)
         print("\nWarehouses:", warehouses)
+        # test: show time series
+        #print(self.evaluator.get_benchmark_logs_timeseries_df_aggregated(configuration="Citus-1-1-1024", client=2))
         #####################
         print("\n### Workflow")
         workflow_actual = self.evaluator.reconstruct_workflow(df)
