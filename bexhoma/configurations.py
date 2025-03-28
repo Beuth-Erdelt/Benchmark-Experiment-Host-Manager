@@ -2697,6 +2697,12 @@ scrape_configs:
                     self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                     print(stdin, stdout, stderr)
+                    resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+                    #name_worker_attach = self.generate_component_name(app=self.appname, component='worker', experiment='attach', configuration=self.configuration)
+                    filename_log = "{path}/{code}/{pod}.{number}.log".format(path=resultfolder, code=self.code, pod=pod, number=self.num_experiment_to_apply_done+1)
+                    f = open(filename_log, "w")
+                    f.write(stdout)
+                    f.close()
     def check_sut(self):
         """
         Check if the pod of the sut is running.
