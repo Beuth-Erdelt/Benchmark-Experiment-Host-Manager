@@ -420,7 +420,12 @@ class logger(base):
         :return: DataFrame of benchmarking results
         """
         filename = "bexhoma-benchmarker.all.df.pickle"
-        df = pd.read_pickle(self.path+"/"+filename)
+        filename_full = self.path+"/"+filename
+        if os.path.isfile(filename_full):
+            df = pd.read_pickle(filename_full)
+        else:
+            self.evaluate_results()
+            df = pd.read_pickle(filename_full)
         #df#.sort_values(["configuration", "pod"])
         return df
     def get_df_loading(self):
@@ -1242,7 +1247,9 @@ class benchbase(logger):
             #terminals = re.findall('BENCHBASE_TERMINALS (.+?)\n', stdout)[0]
             batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
-            errors = re.findall('Exception in thread ', stdout)
+            #errors = re.findall('Exception in thread ', stdout)
+            errors = re.findall('error code', stdout)
+            #print(errors)
             num_errors = len(errors)
             header = {
                 'connection': connection_name,
@@ -1262,7 +1269,7 @@ class benchbase(logger):
                 'duration': duration,
             }
             df_header = pd.DataFrame(header, index=[0])
-            if num_errors == 0:
+            if True: # num_errors == 0:
                 log = re.findall('####BEXHOMA####(.+?)####BEXHOMA####', stdout, re.DOTALL)
                 if len(log) > 0:
                     result = json.loads(log[0])
