@@ -2699,7 +2699,7 @@ scrape_configs:
                     print(stdin, stdout, stderr)
                     resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
                     #name_worker_attach = self.generate_component_name(app=self.appname, component='worker', experiment='attach', configuration=self.configuration)
-                    filename_log = "{path}/{code}/{pod}.{number}.log".format(path=resultfolder, code=self.code, pod=pod, number=self.num_experiment_to_apply_done+1)
+                    filename_log = "{path}/{code}/attach.{pod}.{number}.log".format(path=resultfolder, code=self.code, pod=pod, number=self.num_experiment_to_apply_done+1)
                     f = open(filename_log, "w")
                     f.write(stdout)
                     f.close()
