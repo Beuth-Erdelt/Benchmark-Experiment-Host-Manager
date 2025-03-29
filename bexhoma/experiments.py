@@ -1273,7 +1273,7 @@ class default():
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
-                                        self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done)
+                                        self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done+1)
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 component = 'pool'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
