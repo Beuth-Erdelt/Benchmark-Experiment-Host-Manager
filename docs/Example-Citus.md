@@ -965,7 +965,8 @@ We run a benchmark with
 Note that the number of threads for each pod is a multiple of the number of warehouses.
 At start, Benchbase assigns each thread to a fixed warehouse.
 This way, we distribute the threads equally to the warehouses.
-Please also note, that this is not compliant to the TPC-C specifications, which require to have a fixed number of 10 terminals per warehouse (we here have 8).
+Each thread also gets assigned a fixed range of districts per warehouse.
+Please also note, that this is not compliant to the TPC-C specifications, which state: *For each active warehouse in the database, the SUT must accept requests for transactions from a population of 10 terminals.*
 
 ```bash
 python benchbase.py -ms 1 -tr \

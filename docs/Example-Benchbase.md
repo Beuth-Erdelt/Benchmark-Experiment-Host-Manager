@@ -2,10 +2,15 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-Benchbase's TPC-C implementation does not allow scaling data generation and ingestion, but scaling the benchmarking driver.
-It uses quite some resources, so that for simulating a lot of users, scale-out of the driver is necessary [3].
+Benchbase's TPC-C [1] implementation [2,5] does not allow scaling data generation and ingestion, but scaling the benchmarking driver.
+It uses quite some resources, so that for simulating a lot of users, scale-out of the driver is necessary [6].
 
 > TPC-C involves a mix of five concurrent transactions of different types and complexity either executed on-line or queued for deferred execution. The database is comprised of nine types of tables with a wide range of record and population sizes. TPC-C is measured in transactions per minute (tpmC). While the benchmark portrays the activity of a wholesale supplier, TPC-C is not limited to the activity of any particular business segment, but, rather represents any industry that must manage, sell, or distribute a product or service.
+
+In Benchbase's implementation, for each warehouse the number of assigned threads is computed [3].
+Each thread receives a fixed warehouse and a fixed number of districts and starts a connection [4].
+There still can be deadlocks, because *A supplying warehouse number (OL_SUPPLY_W_ID) is selected as the home warehouse 99% of the time and as a remote warehouse 1% of the time* [1], and a new order sets a lock at the stock table.
+
 
 <img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/tpcc.png" alt="drawing" width="600"/>
 
@@ -15,7 +20,10 @@ You may get different results.
 These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 References:
+1. TPC-C Homepage: https://www.tpc.org/tpcc/
 1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
+1. Benchbase threads per warehouse: https://github.com/cmu-db/benchbase/blob/main/src/main/java/com/oltpbenchmark/benchmarks/tpcc/TPCCBenchmark.java
+1. Benchbase connect: https://github.com/cmu-db/benchbase/blob/main/src/main/java/com/oltpbenchmark/api/BenchmarkModule.java#L82
 1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
 1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
 
