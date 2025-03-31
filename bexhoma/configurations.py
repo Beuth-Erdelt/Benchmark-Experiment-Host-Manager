@@ -2697,6 +2697,12 @@ scrape_configs:
                     self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                     print(stdin, stdout, stderr)
+                    resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+                    #name_worker_attach = self.generate_component_name(app=self.appname, component='worker', experiment='attach', configuration=self.configuration)
+                    filename_log = "{path}/{code}/{pod}.attach.{number}.log".format(path=resultfolder, code=self.code, pod=pod, number=self.num_experiment_to_apply_done+1)
+                    f = open(filename_log, "w")
+                    f.write(stdout)
+                    f.close()
     def check_sut(self):
         """
         Check if the pod of the sut is running.
@@ -3149,7 +3155,7 @@ scrape_configs:
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
         self.logger.debug(env)
         #job_experiment = self.experiment.path+'/job-dbmsbenchmarker-{configuration}-{client}.yml'.format(configuration=configuration, client=client)
-        job_experiment = self.experiment.path+'/{app}-{component}-{configuration}-{experimentRun}-{client}.yml'.format(app=app, component=component, configuration=configuration, experimentRun=experimentRun, client=client)
+        job_experiment = self.experiment.path+'/{app}-{component}-{configuration}-{experimentRun}-{client}.yml'.format(app=app, component=component, configuration=configuration, experimentRun=experimentRun, client=client).lower()
         #with open(self.experiment.cluster.yamlfolder+"jobtemplate-dbmsbenchmarker.yml") as stream:
         # old unpatched loader:
         #with open(self.experiment.cluster.yamlfolder+template) as stream:
@@ -3908,24 +3914,24 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         filename, file_extension = os.path.splitext(c)
         if file_extension.lower() == '.sql':
             stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stdout) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stdout)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stderr)
         elif file_extension.lower() == '.sh':
             stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.log'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stdout) > 0:
                 with open(filename_log,'w') as file:
                     file.write(stdout)
-            filename_log = path+'/load-sut-{configuration}-{filename}{extension}.error'.format(configuration=configuration, filename=filename, extension=file_extension.lower())
+            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
             #print(filename_log)
             if len(stderr) > 0:
                 with open(filename_log,'w') as file:

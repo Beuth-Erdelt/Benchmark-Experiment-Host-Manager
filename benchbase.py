@@ -616,6 +616,9 @@ if __name__ == '__main__':
                     # CockroachDB
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
+                    config.set_storage(
+                        storageConfiguration = 'citus'
+                        )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_ddl_parameters(

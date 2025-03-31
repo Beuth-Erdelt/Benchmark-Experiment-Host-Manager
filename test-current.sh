@@ -348,8 +348,26 @@ nohup python hammerdb.py -ms 1 -tr \
 wait_process "hammerdb"
 
 
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 128 \
+  -sd 30 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlp 1 \
+  -nlt 128 \
+  -nbp 1,2,4,8 \
+  -nbt 128 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_2.log &
 
 
+wait_process "hammerdb"
 
 
 
