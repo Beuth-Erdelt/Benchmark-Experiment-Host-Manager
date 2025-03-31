@@ -7,7 +7,7 @@ This differs from the default behaviour of bexhoma, since we benchmark **a distr
 Citus is a PostgreSQL extension, that introduces sharding [1].
 A cluster has an instance of PostgreSQL with Citus as a coordinator (here called master, managed by a Kubernetes deployment).
 More instances can register at the master as worker nodes (here managed by Kubernetes stateful sets).
-Bexhoma also deploys a service for communication external to Citus (from within the cluster) and a headless service for communication between the pods of the Redis cluster.
+Bexhoma also deploys a service for communication external to Citus (from within the cluster) and a headless service for communication between the pods of the Citus cluster.
 
 
 **The results are not official benchmark results.
@@ -938,7 +938,7 @@ TEST passed: Workflow as planned
 
 
 
-## Benchbase Realistic
+### Benchbase Realistic
 
 At first, we clean old PVC.
 
