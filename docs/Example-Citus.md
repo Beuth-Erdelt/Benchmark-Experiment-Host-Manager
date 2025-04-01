@@ -1431,7 +1431,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 ### Evaluate Results
 
-```
+```bash
 ## Show Summary
 
 ### Workload
@@ -1705,4 +1705,516 @@ TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
+
+
+### HammerDB Referenced Paper
+
+We here run HammerDB TPROC-C benchmark against Citus similar to [1].
+We in particular copy the setting 500 warehouses, 250 virtual users and 4 worker nodes.
+There has been made a contribution to HammerDB by [2] and we assume this reflects the configuration used in [1]:
+*In case of Citus, we converted the items table to a reference table
+and the remaining tables to co-located distributed tables with the
+warehouse ID column as the distribution column. Additionally, we
+configured Citus to delegate stored procedure calls to worker nodes
+based on the warehouse ID argument.*
+We configure the experiment to use 48 shards, run for 20 minutes and split the 250 virtual users (sequentially) into 1,2,5 and 10 pods.
+Database is persisted on PVCs.
+The experiment runs twice for confidence.
+
+[1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
+> Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
+> 2021. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21).
+> Association for Computing Machinery, New York, NY, USA, 2490–2502.
+> https://dl.acm.org/doi/10.1145/3448016.3457551
+
+[2] [How to benchmark performance of Citus and Postgres with HammerDB on Azure](https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-benchmark-performance-of-citus-and-postgres-with-hammerdb-on-azure/3254918)
+> JelteF, Microsoft.
+> Retrieved April 1, 2025, from https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-benchmark-performance-of-citus-and-postgres-with-hammerdb-on-azure/3254918
+
+
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 500 \
+  -sd 20 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlp 1 \
+  -nlt 500 \
+  -nbp 1,2,5,10 \
+  -nbt 250 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 200Gi \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_3.log &
+```
+
+### Evaluate Results
+
+```bash
+## Show Summary
+
+### Workload
+HammerDB Workload SF=500 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 16770s
+    Code: 1743497186
+    HammerDB runs the benchmark.
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 500. Benchmarking runs for 20 minutes.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker23.
+    Database is persisted to disk of type shared and size 200Gi.
+    Loading is tested with [500] threads, split into [1] pods.
+    Benchmarking is tested with [250] threads, split into [1, 2, 5, 10] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+Citus-BHT-500-1-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86384160
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137173756
+        volume_size:200.0G
+        volume_used:59.0G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80563656
+        volume_size:200.0G
+        volume_used:48.1G
+    worker 2
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:894091524
+        volume_size:200.0G
+        volume_used:47.9G
+    worker 3
+        RAM:1081966518272
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:700387028
+        volume_size:200.0G
+        volume_used:62.7G
+Citus-BHT-500-1-1-2 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86384236
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137174264
+        volume_size:200.0G
+        volume_used:59.0G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80563692
+        volume_size:200.0G
+        volume_used:48.1G
+    worker 2
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:901864272
+        volume_size:200.0G
+        volume_used:47.9G
+    worker 3
+        RAM:1081966518272
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:700387412
+        volume_size:200.0G
+        volume_used:62.7G
+Citus-BHT-500-1-1-3 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86384304
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137183064
+        volume_size:200.0G
+        volume_used:59.0G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80563728
+        volume_size:200.0G
+        volume_used:48.1G
+    worker 2
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:901866732
+        volume_size:200.0G
+        volume_used:47.9G
+    worker 3
+        RAM:1081966518272
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:700387712
+        volume_size:200.0G
+        volume_used:62.7G
+Citus-BHT-500-1-1-4 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86384432
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137183592
+        volume_size:200.0G
+        volume_used:59.0G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80563820
+        volume_size:200.0G
+        volume_used:48.1G
+    worker 2
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:887132264
+        volume_size:200.0G
+        volume_used:47.9G
+    worker 3
+        RAM:1081966518272
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker28
+        disk:700396276
+        volume_size:200.0G
+        volume_used:62.7G
+Citus-BHT-500-1-2-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86384792
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137194016
+        volume_size:200.0G
+        volume_used:68.9G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80563972
+        volume_size:200.0G
+        volume_used:54.3G
+    worker 2
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:211558356
+        volume_size:200.0G
+        volume_used:52.2G
+    worker 3
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:86384796
+        volume_size:200.0G
+        volume_used:67.7G
+Citus-BHT-500-1-2-2 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86384864
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137202792
+        volume_size:200.0G
+        volume_used:68.9G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80564064
+        volume_size:200.0G
+        volume_used:54.3G
+    worker 2
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:211558512
+        volume_size:200.0G
+        volume_used:52.2G
+    worker 3
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:86384868
+        volume_size:200.0G
+        volume_used:67.7G
+Citus-BHT-500-1-2-3 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86384988
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137203300
+        volume_size:200.0G
+        volume_used:68.9G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80564100
+        volume_size:200.0G
+        volume_used:54.3G
+    worker 2
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:211561244
+        volume_size:200.0G
+        volume_used:52.2G
+    worker 3
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:86384992
+        volume_size:200.0G
+        volume_used:67.7G
+Citus-BHT-500-1-2-4 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:86385064
+    volume_size:200.0G
+    volume_used:236.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:137212064
+        volume_size:200.0G
+        volume_used:68.9G
+    worker 1
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:80564136
+        volume_size:200.0G
+        volume_used:54.3G
+    worker 2
+        RAM:1081650966528
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:211563904
+        volume_size:200.0G
+        volume_used:52.2G
+    worker 3
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:86385064
+        volume_size:200.0G
+        volume_used:67.7G
+
+### Execution
+                     experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]      NOPM       TPM  duration  errors
+Citus-BHT-500-1-1-1               1     250       1          1    279.77    975.12  131780.0  302731.0        20       0
+Citus-BHT-500-1-1-2               1     250       2          2    253.37    942.30  122736.0  282265.0        20       0
+Citus-BHT-500-1-1-3               1     250       3          5    289.81   1098.57  121265.6  278954.6        20       0
+Citus-BHT-500-1-1-4               1     250       4         10    298.37   1118.25  111066.1  255331.5        20       0
+Citus-BHT-500-1-2-1               2     250       1          1    275.36    931.49  123117.0  282986.0        20       0
+Citus-BHT-500-1-2-2               2     250       2          2    279.73    964.50  115636.0  266063.0        20       0
+Citus-BHT-500-1-2-3               2     250       3          5    297.32   1000.17  117759.0  270781.4        20       0
+Citus-BHT-500-1-2-4               2     250       4         10    295.59   1102.34  104349.1  239878.4        20       0
+
+Warehouses: 500
+
+### Workflow
+
+#### Actual
+DBMS Citus-BHT-500-1 - Pods [[1, 2, 5, 10], [1, 2, 5, 10]]
+
+#### Planned
+DBMS Citus-BHT-500-1 - Pods [[1, 2, 5, 10], [1, 2, 5, 10]]
+
+### Loading
+                     time_load  terminals  pods  Imported warehouses [1/h]
+Citus-BHT-500-1-1-1      966.0        1.0   1.0                1863.354037
+Citus-BHT-500-1-1-2      966.0        1.0   2.0                1863.354037
+Citus-BHT-500-1-1-3      966.0        1.0   5.0                1863.354037
+Citus-BHT-500-1-1-4      966.0        1.0  10.0                1863.354037
+Citus-BHT-500-1-2-1      966.0        1.0   1.0                1863.354037
+Citus-BHT-500-1-2-2      966.0        1.0   2.0                1863.354037
+Citus-BHT-500-1-2-3      966.0        1.0   5.0                1863.354037
+Citus-BHT-500-1-2-4      966.0        1.0  10.0                1863.354037
+
+### Execution - SUT
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-500-1-1-1   255962.82   155.93         61.54               192.80
+Citus-BHT-500-1-1-2   259596.23   142.59         73.51               217.66
+Citus-BHT-500-1-1-3   243092.54   125.58         82.50               228.67
+Citus-BHT-500-1-1-4   251510.83   155.50         91.96               232.58
+Citus-BHT-500-1-2-1   276866.56   158.97         71.75               243.96
+Citus-BHT-500-1-2-2   264411.89   154.96         82.84               257.16
+Citus-BHT-500-1-2-3   281864.62   137.71         91.50               258.01
+Citus-BHT-500-1-2-4   280052.56   165.21         99.05               258.26
+
+### Execution - Benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-500-1-1-1     2223.47     2.03          2.41                 2.41
+Citus-BHT-500-1-1-2     2223.47     1.91          2.41                 2.41
+Citus-BHT-500-1-1-3     2215.88     1.26          1.22                 1.22
+Citus-BHT-500-1-1-4     2118.87     1.04          0.58                 0.58
+Citus-BHT-500-1-2-1     2099.47     1.81          2.80                 2.80
+Citus-BHT-500-1-2-2     2099.47     1.65          2.80                 2.80
+Citus-BHT-500-1-2-3     2012.92     1.01          1.05                 1.05
+Citus-BHT-500-1-2-4     2049.88     0.93          0.44                 0.44
+
+### Tests
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
 

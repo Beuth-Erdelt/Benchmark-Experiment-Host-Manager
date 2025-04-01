@@ -28,6 +28,8 @@ ENV HAMMERDB_VUSERS 1 2 4 8
 ENV HAMMERDB_MYSQL_ENGINE innodb
 ENV DBMSBENCHMARKER_START 1
 ENV DBMSBENCHMARKER_NOW 1
+ENV HAMMERDB_TIMEPROFILE true
+ENV HAMMERDB_ALLWAREHOUSES false
 
 # set async_client $pg_async_client;# Number of asynchronous clients per Vuser
 # set async_verbose $pg_async_verbose;# Report activity of asynchronous clients
