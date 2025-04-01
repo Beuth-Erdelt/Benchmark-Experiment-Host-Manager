@@ -277,6 +277,7 @@ diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
 diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
 diset tpcc pg_cituscompat true
+diset tpcc pg_timeprofile true
 vuset logtotemp 1
 loadscript
 puts \"SEQUENCE STARTED\"
