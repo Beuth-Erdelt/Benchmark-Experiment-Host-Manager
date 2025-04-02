@@ -1938,11 +1938,17 @@ Note: In [1] YCSB is run as this: *For this benchmark, the coordinator’s CPU u
 > JelteF, Microsoft.
 > Retrieved April 1, 2025, from https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-benchmark-performance-of-citus-and-postgres-with-hammerdb-on-azure/3254918
 
-[3] https://github.com/citusdata/citus-benchmark
+[3] [Citus Data Benchmark Toolkit](https://github.com/citusdata/citus-benchmark)
+> Citus Data.
+> Retrieved April 1, 2025, from https://github.com/citusdata/citus-benchmark
 
-[4] https://github.com/citusdata/citus-benchmark/blob/master/run.tcl
+[4] [Citus Data Benchmark Toolkit HammerDB settings](https://github.com/citusdata/citus-benchmark/blob/master/run.tcl)
+> Citus Data.
+> Retrieved April 1, 2025, from https://github.com/citusdata/citus-benchmark/blob/master/run.tcl
 
-[5] https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1
+[5] [Adding Postgres 16 support to Citus 12.1, plus schema-based sharding improvements](https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1)
+> Naisila Puka, September 22, 2023.
+> Retrieved April 1, 2025, from https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1
 
 
 ```bash
@@ -2430,4 +2436,235 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+
+## TPC-H
+
+We build the schema similar to [2] in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpch/Citus/initschema-tpch.sql
+
+```sql
+select create_reference_table('nation');
+select create_reference_table('region');
+select create_reference_table('part');
+select create_reference_table('supplier');
+select create_reference_table('partsupp');
+select create_reference_table('customer');
+select create_distributed_table('orders', 'o_orderkey');
+select create_distributed_table('lineitem', 'l_orderkey');
+```
+
+It is also mentioned in [1] that the big tables `orders` and `linetime` should be distributed and the others should be replicated.
+As the paper used Citus 9.5, columnar storage has not been included in Citus [3].
+Note that columnar storage has some limitations as no UPDATEs, no DELETEs and no FOREIGN KEYs.
+Also note that Citus does not support all TPC-H queries.
+In a correlated subquery there cannot be a replicated table, so we have to rewrite Q22.
+
+[1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
+> Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
+> 2021. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21).
+> Association for Computing Machinery, New York, NY, USA, 2490–2502.
+> https://dl.acm.org/doi/10.1145/3448016.3457551
+
+[2] [Citus TPC-H tests - schema](https://github.com/dimitri/tpch-citus/tree/master/schema)
+> Dimitri Fontaine.
+> Retrieved April 1, 2025, from https://github.com/dimitri/tpch-citus/tree/master/schema
+
+[3] [Citus columnar storage](https://docs.citusdata.com/en/stable/admin_guide/table_management.html#columnar-storage)
+> Citus Data.
+> Retrieved April 1, 2025, from https://docs.citusdata.com/en/stable/admin_guide/table_management.html#columnar-storage
+
+
+### TPC-H Simple Example
+
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 1200 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_1.log &
+```
+
+
+### Evaluate Results
+
+```bash
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 1316s 
+    Code: 1743612001
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 1200.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker23.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:151625644
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:229673792
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:966307088
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:132956400
+    worker 3
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:151625652
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 Citus-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                             199.73
+Minimum Cost Supplier Query (TPC-H Q2)                        292.55
+Shipping Priority (TPC-H Q3)                                  169.66
+Order Priority Checking Query (TPC-H Q4)                      130.10
+Local Supplier Volume (TPC-H Q5)                              168.90
+Forecasting Revenue Change (TPC-H Q6)                         109.08
+Forecasting Revenue Change (TPC-H Q7)                         170.97
+National Market Share (TPC-H Q8)                              173.83
+Product Type Profit Measure (TPC-H Q9)                        243.36
+Forecasting Revenue Change (TPC-H Q10)                        278.42
+Important Stock Identification (TPC-H Q11)                    163.41
+Shipping Modes and Order Priority (TPC-H Q12)                 122.43
+Customer Distribution (TPC-H Q13)                            1527.17
+Forecasting Revenue Change (TPC-H Q14)                        139.66
+Top Supplier Query (TPC-H Q15)                                281.32
+Parts/Supplier Relationship (TPC-H Q16)                       395.22
+Small-Quantity-Order Revenue (TPC-H Q17)                     4942.78
+Large Volume Customer (TPC-H Q18)                             218.35
+Discounted Revenue (TPC-H Q19)                                168.64
+Potential Part Promotion (TPC-H Q20)                         3104.19
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           155.45
+Global Sales Opportunity Query (TPC-H Q22)                   1456.73
+
+### Loading [s]
+                 timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+Citus-BHT-8-1-1           1.0           18.0         5.0       24.0      54.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                 Geo Times [s]
+DBMS                          
+Citus-BHT-8-1-1           0.32
+
+### Power@Size
+                 Power@Size [~Q/h]
+DBMS                              
+Citus-BHT-8-1-1           12042.26
+
+### Throughput@Size
+                                            time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS          SF num_experiment num_client                                              
+Citus-BHT-8-1 1  1              1                 19      1   1                  4168.42
+
+### Workflow
+
+#### Actual
+DBMS Citus-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS Citus-BHT-8 - Pods [[1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
+```
+
+### TPC-H More Complex Example
+
+At first we remove possibly existing PVC:
+
+```bash
+kubectl delete pvc bexhoma-storage-citus-tpch-100
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-3
+```
+
+Then we run TPC-H Power Test at SF=100.
+Note that this takes a lot of disk space including for indexes.
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 100 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 3600 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,1 \
+  -nc 2 \
+  -rst shared -rss 150Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_2.log &
+```
+
+### Evaluate Results
+
+```bash
+## Show Summary
+```
 

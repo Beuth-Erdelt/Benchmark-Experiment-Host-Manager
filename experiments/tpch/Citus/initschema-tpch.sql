@@ -113,3 +113,50 @@ ALTER SYSTEM SET citus.enable_repartition_joins TO 1;
 
 SELECT pg_reload_conf();
 
+
+-- https://github.com/dimitri/tpch-citus/tree/master/schema
+
+ALTER TABLE PART
+  ADD CONSTRAINT part_kpey
+     PRIMARY KEY (P_PARTKEY);
+
+ALTER TABLE SUPPLIER
+  ADD CONSTRAINT supplier_pkey
+     PRIMARY KEY (S_SUPPKEY);
+
+ALTER TABLE PARTSUPP
+  ADD CONSTRAINT partsupp_pkey
+     PRIMARY KEY (PS_PARTKEY, PS_SUPPKEY);
+
+ALTER TABLE CUSTOMER
+  ADD CONSTRAINT customer_pkey
+     PRIMARY KEY (C_CUSTKEY);
+
+ALTER TABLE ORDERS
+  ADD CONSTRAINT orders_pkey
+     PRIMARY KEY (O_ORDERKEY);
+
+ALTER TABLE LINEITEM
+  ADD CONSTRAINT lineitem_pkey
+     PRIMARY KEY (L_ORDERKEY, L_LINENUMBER);
+
+ALTER TABLE NATION
+  ADD CONSTRAINT nation_pkey
+     PRIMARY KEY (N_NATIONKEY);
+
+ALTER TABLE REGION
+  ADD CONSTRAINT region_pkey
+     PRIMARY KEY (R_REGIONKEY);
+
+
+-- Q22: ERROR: correlated subqueries are not supported when the FROM clause contains a reference table
+
+
+select create_reference_table('nation');
+select create_reference_table('region');
+select create_reference_table('part');
+select create_reference_table('supplier');
+select create_reference_table('partsupp');
+select create_reference_table('customer');
+select create_distributed_table('orders', 'o_orderkey');
+select create_distributed_table('lineitem', 'l_orderkey');
