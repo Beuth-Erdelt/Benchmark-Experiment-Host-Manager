@@ -283,17 +283,19 @@ diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
 diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
 diset tpcc pg_cituscompat true
+diset tpcc pg_storedprocs false
 diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
 vuset logtotemp 1
 loadscript
+print vuconf
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
 puts \"\$z VU TEST\"
 vuset vu \$z
 vucreate
+runtimer $HAMMERDB_DURATION
 vurun
-runtimer 600
 vudestroy
 after 5000
         }

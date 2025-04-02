@@ -1337,8 +1337,8 @@ nohup python hammerdb.py -ms 1 -tr \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 766s 
-    Code: 1743067043
+    Duration: 1319s 
+    Code: 1743575053
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
@@ -1347,7 +1347,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker23.
     Loading is tested with [8] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -1355,39 +1355,39 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
     host:5.15.0-134-generic
-    node:cl-worker11
-    disk:184430452
+    node:cl-worker23
+    disk:86432660
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:62237188
-    worker 1
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:137239444
+        disk:160047388
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:931299488
     worker 2
         RAM:540595896320
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker24
-        disk:94964112
+        disk:96570296
 
 ### Execution
-                 experiment_run  vusers  client  pod_count     NOPM       TPM  duration  errors
-Citus-BHT-8-1-1               1      16       1          1  48083.0  110535.0         5       0
+                 experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]     NOPM       TPM  duration  errors
+Citus-BHT-8-1-1               1      16       1          1     29.22     63.92  49005.0  112642.0         5       0
 
 Warehouses: 16
 
@@ -1401,7 +1401,7 @@ DBMS Citus-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-Citus-BHT-8-1-1      105.0        1.0   1.0                 548.571429
+Citus-BHT-8-1-1      115.0        1.0   1.0                 500.869565
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
@@ -1926,6 +1926,8 @@ We configure the experiment to use 48 shards, run for 20 minutes and split the 2
 Database is persisted on PVCs.
 The experiment runs twice for confidence.
 
+Note: In [1] YCSB is run as this: *For this benchmark, the coordinator’s CPU usage becomes a scaling bottleneck. Hence, we ran the benchmark with every worker node acting as coordinator and configured YCSB to load balance across all nodes.* This apparently uses [4], part of the Citus benchmark toolkit [3], and PostgreSQL loadbalancer feature [5].
+
 [1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
 > Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
 > 2021. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21).
@@ -1935,6 +1937,12 @@ The experiment runs twice for confidence.
 [2] [How to benchmark performance of Citus and Postgres with HammerDB on Azure](https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-benchmark-performance-of-citus-and-postgres-with-hammerdb-on-azure/3254918)
 > JelteF, Microsoft.
 > Retrieved April 1, 2025, from https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-benchmark-performance-of-citus-and-postgres-with-hammerdb-on-azure/3254918
+
+[3] https://github.com/citusdata/citus-benchmark
+
+[4] https://github.com/citusdata/citus-benchmark/blob/master/run.tcl
+
+[5] https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1
 
 
 ```bash
