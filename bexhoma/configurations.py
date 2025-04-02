@@ -3151,6 +3151,23 @@ scrape_configs:
         env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
         env_default['PARALLEL'] = str(parallelism)
         env_default['NUM_PODS'] = str(num_pods)
+        name = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
+        name_worker = self.get_worker_name()
+        name_service_headless = name_worker# must be the same
+        # generate list of worker names
+        list_of_workers = []
+        for worker in range(self.num_worker):
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+            list_of_workers.append(worker_full_name)
+        list_of_workers_as_string = ",".join(list_of_workers)
+        env_default['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
+        list_of_workers_as_string_space = " ".join(list_of_workers)
+        env_default['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
+        env_default['BEXHOMA_SUT_NAME'] = name
+        if self.num_worker > 0:
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)
+            env_default['BEXHOMA_WORKER_FIRST'] = worker_full_name
         env = {**env_default, **env}
         self.logger.debug('configuration.create_manifest_job({})'.format(jobname))
         self.logger.debug(env)

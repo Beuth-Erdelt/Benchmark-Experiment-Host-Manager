@@ -1649,13 +1649,66 @@ class tpcc(logger):
             vusers = re.findall("Vuser 1:(.+?) Active", stdout)
             #print(vusers)
             result_tupels = list(zip(results, vusers))
+            # Find the section that starts with 'SUMMARY OF 250 ACTIVE VIRTUAL USERS'
+            #start_index = stdout.find('SUMMARY OF 250 ACTIVE VIRTUAL USERS')
+            # Extract the text from that point onward
+            #if start_index != -1:
+            # Find the section that starts with 'SUMMARY OF <number> ACTIVE VIRTUAL USERS'
+            pattern = r'SUMMARY OF (\d+) ACTIVE VIRTUAL USERS'
+            # Search for the pattern in the text
+            match = re.search(pattern, stdout)
+            # If a match is found, extract the relevant section
+            if match:
+                start_index = match.start()
+                relevant_text = stdout[start_index:]
+                match = re.search('>>>>> PROC: NEWORD', relevant_text)
+                # If a match is found, extract the relevant section
+                start_index = match.start()
+                relevant_text = relevant_text[start_index:]
+                # Optional: If you want to stop after the "SUMMARY OF 250 ACTIVE VIRTUAL USERS" section, 
+                # you can cut off the text after this part by looking for the next occurrence of '>>>>> PROC'
+                end_index = relevant_text.find('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
+                if end_index != -1:
+                    relevant_text = relevant_text[:end_index]
+                # Create a dictionary to store the results
+                extracted_data = {}
+                # Regex pattern to match the labels and numbers (e.g., CALLS: 5426322, MIN: 2.990ms)
+                pattern = r'(\w+):\s*([\d\.]+)'
+                # Find all label-number pairs in the relevant text
+                matches = re.findall(pattern, relevant_text)
+                # Convert matches into dictionary form
+                for label, value in matches:
+                    #print(label)
+                    # only take first occurence
+                    if not label in extracted_data and not label + " [ms]" in extracted_data:
+                        # If the value ends with 'ms', strip it and convert it to float
+                        if 'ms' in value or label in ['MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50']:
+                            label = label + " [ms]"
+                            extracted_data[label] = float(value.replace('ms', '').strip())
+                        else:
+                            extracted_data[label] = float(value.strip())
+                # Output the dictionary
+                #print(extracted_data)
+            else:
+                pass
+                #print("No latencies found.")
             #for (result, vuser) in result_tupels:
             #    print(result, vuser)
             #print(result)
-            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, result[0], result[1], result[2]) for i, (result, vuser) in enumerate(result_tupels)]
+            # this finds ['CALLS', 'MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50', 'SD', 'RATIO']
+            # if latencies are logged
+            list_latencies = list(extracted_data.values())
+            #print(list_latencies)
+            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
+            #print(result_list)
             df = pd.DataFrame(result_list)
-            df.columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+            #print(list(extracted_data.keys()))
+            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+            column_names.extend(list(extracted_data.keys()))
+            #print(column_names)
+            df.columns = column_names
             df.index.name = connection_name
+            #print(df)
             return df
         except Exception as e:
             print(e)
@@ -1693,25 +1746,55 @@ class tpcc(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        df_typed = df.astype({
-            'connection':'str',
-            'configuration':'str',
-            'experiment_run':'int',
-            'client':'int',
-            'pod':'str',
-            'pod_count':'int',
-            'iterations':'int',
-            'duration':'int',
-            'rampup':'int',
-            'sf':'int',
-            'run':'int',
-            'errors':'int',
-            'vusers_loading':'int',
-            'vusers':'int',
-            'NOPM':'int',
-            'TPM':'int',
-            'dbms':'str',
-        })
+        # {'CALLS': 5426322.0, 'MIN': 2.99, 'AVG': 48.146, 'MAX': 22834.486, 'TOTAL': 261256185.492, 'P99': 975.119, 'P95': 279.771, 'P50': 5.818, 'SD': 201562.961, 'RATIO': 82.539}
+        if 'CALLS' in df:
+            df_typed = df.astype({
+                'connection':'str',
+                'configuration':'str',
+                'experiment_run':'int',
+                'client':'int',
+                'pod':'str',
+                'pod_count':'int',
+                'iterations':'int',
+                'duration':'int',
+                'rampup':'int',
+                'sf':'int',
+                'run':'int',
+                'errors':'int',
+                'vusers_loading':'int',
+                'vusers':'int',
+                'NOPM':'int',
+                'TPM':'int',
+                'dbms':'str',
+                'CALLS':'float',
+                'MIN [ms]':'float',
+                'AVG [ms]':'float',
+                'MAX [ms]':'float',
+                'TOTAL [ms]':'float',
+                'P99 [ms]':'float',
+                'P95 [ms]':'float',
+                'P50 [ms]':'float',
+            })
+        else:
+            df_typed = df.astype({
+                'connection':'str',
+                'configuration':'str',
+                'experiment_run':'int',
+                'client':'int',
+                'pod':'str',
+                'pod_count':'int',
+                'iterations':'int',
+                'duration':'int',
+                'rampup':'int',
+                'sf':'int',
+                'run':'int',
+                'errors':'int',
+                'vusers_loading':'int',
+                'vusers':'int',
+                'NOPM':'int',
+                'TPM':'int',
+                'dbms':'str',
+            })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df):
         """
@@ -1726,24 +1809,52 @@ class tpcc(logger):
         for key, grp in df.groupby(column):
             #print(key, len(grp.index))
             #print(grp)
-            aggregate = {
-                'client':'max',
-                'pod':'sum',
-                'pod_count':'count',
-                'iterations':'max',
-                'duration':'max',
-                'sf':'max',
-                'run':'max',
-                'errors':'sum',
-                'vusers_loading':'max',
-                'vusers':'sum',
-                #'vusers':'max',
-                #'NOPM':'sum',
-                'NOPM':'mean',
-                #'TPM':'sum',
-                'TPM':'mean',
-                'dbms':'max',
-            }
+            if 'CALLS' in grp:
+                aggregate = {
+                    'client':'max',
+                    'pod':'sum',
+                    'pod_count':'count',
+                    'iterations':'max',
+                    'duration':'max',
+                    'sf':'max',
+                    'run':'max',
+                    'errors':'sum',
+                    'vusers_loading':'max',
+                    'vusers':'sum',
+                    #'vusers':'max',
+                    #'NOPM':'sum',
+                    'NOPM':'mean',
+                    #'TPM':'sum',
+                    'TPM':'mean',
+                    'dbms':'max',
+                    'CALLS':'max',
+                    'MIN [ms]':'max',
+                    'AVG [ms]':'mean',
+                    'MAX [ms]':'max',
+                    'TOTAL [ms]':'max',
+                    'P99 [ms]':'max',
+                    'P95 [ms]':'max',
+                    'P50 [ms]':'max',
+                }
+            else:
+                aggregate = {
+                    'client':'max',
+                    'pod':'sum',
+                    'pod_count':'count',
+                    'iterations':'max',
+                    'duration':'max',
+                    'sf':'max',
+                    'run':'max',
+                    'errors':'sum',
+                    'vusers_loading':'max',
+                    'vusers':'sum',
+                    #'vusers':'max',
+                    #'NOPM':'sum',
+                    'NOPM':'mean',
+                    #'TPM':'sum',
+                    'TPM':'mean',
+                    'dbms':'max',
+                }
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]

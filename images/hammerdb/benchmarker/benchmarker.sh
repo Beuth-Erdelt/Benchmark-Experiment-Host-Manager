@@ -137,6 +137,8 @@ diset tpcc mysql_driver timed
 diset tpcc mysql_rampup $HAMMERDB_RAMPUP
 diset tpcc mysql_duration $HAMMERDB_DURATION
 diset tpcc mysql_total_iterations $HAMMERDB_ITERATIONS
+diset tpcc mysql_timeprofile $HAMMERDB_TIMEPROFILE
+diset tpcc mysql_allwarehouse $HAMMERDB_ALLWAREHOUSES
 vuset logtotemp 1
 loadscript
 puts \"SEQUENCE STARTED\"
@@ -186,6 +188,8 @@ diset tpcc maria_driver timed
 diset tpcc maria_rampup $HAMMERDB_RAMPUP
 diset tpcc maria_duration $HAMMERDB_DURATION
 diset tpcc maria_total_iterations $HAMMERDB_ITERATIONS
+diset tpcc maria_timeprofile $HAMMERDB_TIMEPROFILE
+diset tpcc maria_allwarehouse $HAMMERDB_ALLWAREHOUSES
 vuset logtotemp 1
 loadscript
 puts \"SEQUENCE STARTED\"
@@ -222,6 +226,8 @@ diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
 diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
+diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
+diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
 vuset logtotemp 1
 tcset unique 0
 tcset refreshrate 10
@@ -277,15 +283,19 @@ diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
 diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
 diset tpcc pg_cituscompat true
+diset tpcc pg_storedprocs false
+diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
+diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
 vuset logtotemp 1
 loadscript
+print vuconf
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
 puts \"\$z VU TEST\"
 vuset vu \$z
 vucreate
+runtimer $HAMMERDB_DURATION
 vurun
-runtimer 600
 vudestroy
 after 5000
         }
@@ -315,6 +325,8 @@ UUID=$(cat /proc/sys/kernel/random/uuid)
 cp /tmp/hammerdb.log /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
 echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log"
 # cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
+echo "/tmp/hdbxtprofile.log"
+cat /tmp/hdbxtprofile.log
 
 ######################## Show timing information ###################
 echo "Benchmarking done"

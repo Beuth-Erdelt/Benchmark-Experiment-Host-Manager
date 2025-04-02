@@ -30,5 +30,7 @@ The following parameter (ENV) have been added:
 * `HAMMERDB_ITERATIONS`: Number of transactions before logging off
 * `HAMMERDB_VUSERS`: 
 * `HAMMERDB_MYSQL_ENGINE`: 
+* `HAMMERDB_TIMEPROFILE`: default true, true means latencies are logged, too
+* `HAMMERDB_ALLWAREHOUSES`: default false, true means vusers do not get assigned to a fixed warehouse at startup, but use all (new assignment for each transaction)
 
 This folder contains the Dockerfile for a benchmarker, that runs the workload against a loaded DBMS.

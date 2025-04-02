@@ -1270,7 +1270,8 @@ class default():
                                         self.cluster.store_pod_log(pod_sut, container)
                                     #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
-                                pods = self.cluster.get_pods(app, component, self.code, config.configuration)
+                                #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
+                                pods = config.get_worker_pods()
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
                                         self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done+1)
@@ -2441,8 +2442,8 @@ class tpcc(default):
             df_plot = self.evaluator.benchmarking_set_datatypes(df)
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"vusers","client","pod_count"]].copy()
-            columns = ["NOPM", "TPM", "duration", "errors"]
+            df_aggregated_reduced = df_aggregated[['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]"]].copy()
+            columns = ["NOPM", "TPM", "duration", "errors","P95 [ms]","P99 [ms]"]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]

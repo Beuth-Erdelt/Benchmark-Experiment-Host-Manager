@@ -322,6 +322,27 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
+python benchbase.py -ms 1 -tr \
+  -sf 128 \
+  -sd 20 \
+  -slg 30 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dbms Citus \
+  -nbp 1,2,4,8 \
+  -nbt 1024 \
+  -nbf 4 \
+  -tb 1024 \
+  -m -mc \
+  -nc 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_benchbase_citus_3.log &
+
+
+wait_process "benchbase"
+
 
 
 ####################################################
