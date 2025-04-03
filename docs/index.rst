@@ -17,9 +17,9 @@
     ./Example-Benchbase.md
     ./Example-TPC-H.md
     ./Example-TPC-DS.md
+    ./Example-Citus.md
     ./Example-YugaByteDB.md
     ./Example-CockroachDB.md
-    ./Example-Citus.md
     ./Example-Redis.md
     ./Example-CloudDatabase.md
     ./Example-custom.md
