@@ -343,7 +343,7 @@ if __name__ == '__main__':
                 config = configurations.default(experiment=experiment, docker='Citus', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
                 if init_columns:
                     config.set_experiment(script='Schema-Columnar')
-                    config.set_experiment(indexing='Statistics')
+                    config.set_experiment(indexing='Index_and_Statistics')
                 config.set_storage(
                     storageConfiguration = 'citus'
                     )

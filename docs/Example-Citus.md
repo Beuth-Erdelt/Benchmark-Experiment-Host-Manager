@@ -2671,6 +2671,11 @@ nohup python tpch.py -ms 1 -tr \
 
 ### TPC-H Test Columnar Storage
 
+Citus provides the option to make a table using columnar storage via `USING COLUMNAR`.
+For Bexhoma's TPC-H, you can activate makeing the distributed tables `orders` and `lineitem` use columnar storage via `-icol`.
+Note that this also means there will be no foreign key constraints and no indexes on these tables.
+
+
 ```bash
 nohup python tpch.py -ms 1 -tr \
   -sf 100 \
