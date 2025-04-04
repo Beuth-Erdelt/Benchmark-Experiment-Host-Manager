@@ -2275,6 +2275,8 @@ class tpcc(default):
         mode = str(parameter['mode'])
         SF = str(self.SF)
         SD = int(args.scaling_duration)
+        extra_latency = int(args.extra_latency)
+        extra_keying = int(args.extra_keying)
         if mode == 'run':
             self.set_workload(
                 name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
@@ -2291,6 +2293,10 @@ class tpcc(default):
             self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
         if SD:
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
+        if extra_keying:
+            self.workload['info'] = self.workload['info']+" Benchmarking has keying and waiting times activated."
+        if extra_latency:
+            self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
         default.prepare_testbed(self, parameter)
     def test_results(self):
         """
@@ -2442,8 +2448,14 @@ class tpcc(default):
             df_plot = self.evaluator.benchmarking_set_datatypes(df)
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]"]].copy()
-            columns = ["NOPM", "TPM", "duration", "errors","P95 [ms]","P99 [ms]"]
+            if "P95 [ms]" in df_aggregated:
+                # we have latencies
+                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]"]
+                columns = ["NOPM", "TPM", "duration", "errors","P95 [ms]","P99 [ms]"]
+            else:
+                aggregated_list = ['experiment_run',"vusers","client","pod_count"]
+                columns = ["NOPM", "TPM", "duration", "errors"]
+            df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]

@@ -1653,6 +1653,8 @@ class tpcc(logger):
             #start_index = stdout.find('SUMMARY OF 250 ACTIVE VIRTUAL USERS')
             # Extract the text from that point onward
             #if start_index != -1:
+            # Create a dictionary to store the results latencies
+            extracted_data = {}
             # Find the section that starts with 'SUMMARY OF <number> ACTIVE VIRTUAL USERS'
             pattern = r'SUMMARY OF (\d+) ACTIVE VIRTUAL USERS'
             # Search for the pattern in the text
@@ -1670,8 +1672,6 @@ class tpcc(logger):
                 end_index = relevant_text.find('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
                 if end_index != -1:
                     relevant_text = relevant_text[:end_index]
-                # Create a dictionary to store the results
-                extracted_data = {}
                 # Regex pattern to match the labels and numbers (e.g., CALLS: 5426322, MIN: 2.990ms)
                 pattern = r'(\w+):\s*([\d\.]+)'
                 # Find all label-number pairs in the relevant text

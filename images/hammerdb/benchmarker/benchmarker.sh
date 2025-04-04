@@ -331,6 +331,7 @@ echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.
 # cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
 echo "/tmp/hdbxtprofile.log"
 cat /tmp/hdbxtprofile.log
+ls /tmp -lh
 
 ######################## Show timing information ###################
 echo "Benchmarking done"

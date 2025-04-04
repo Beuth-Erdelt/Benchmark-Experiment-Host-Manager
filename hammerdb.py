@@ -61,6 +61,8 @@ if __name__ == '__main__':
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of warehouses', default=1)
     #parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
     parser.add_argument('-sd', '--scaling-duration', help='scaling factor = duration in minutes', default=5)
+    parser.add_argument('-xlat', '--extra-latency', help='also log latencies', action='store_true', default=False)
+    parser.add_argument('-xkey', '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
     parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
@@ -119,6 +121,16 @@ if __name__ == '__main__':
     ##############
     SD = str(args.scaling_duration)
     num_rampup = args.num_rampup_time
+    extra_latency = int(args.extra_latency)
+    if extra_latency:
+        HAMMERDB_TIMEPROFILE = "true"
+    else:
+        HAMMERDB_TIMEPROFILE = "false"
+    extra_keying = int(args.extra_keying)
+    if extra_keying:
+        HAMMERDB_KEYANDTHINK = "true"
+    else:
+        HAMMERDB_KEYANDTHINK = "false"
     ##############
     ### set cluster
     ##############
@@ -191,6 +203,8 @@ if __name__ == '__main__':
                     HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "postgresql",
                     HAMMERDB_VUSERS = loading_threads_per_pod,
+                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -219,6 +233,8 @@ if __name__ == '__main__':
                                     HAMMERDB_RAMPUP = str(num_rampup),
                                     HAMMERDB_TYPE = "postgresql",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
@@ -241,6 +257,8 @@ if __name__ == '__main__':
                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
                     USER = "root",
                     PASSWORD = "root",
+                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -272,6 +290,8 @@ if __name__ == '__main__':
                                     USER = "root",
                                     PASSWORD = "root",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
@@ -294,6 +314,8 @@ if __name__ == '__main__':
                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
                     USER = "root",
                     PASSWORD = "root",
+                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -325,6 +347,8 @@ if __name__ == '__main__':
                                     USER = "root",
                                     PASSWORD = "root",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
@@ -361,6 +385,8 @@ if __name__ == '__main__':
                     USER = "postgres",
                     PASSWORD = "password1234",
                     DATABASE = "postgres",
+                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -392,6 +418,8 @@ if __name__ == '__main__':
                                     USER = "postgres",
                                     PASSWORD = "password1234",
                                     DATABASE = "postgres",
+                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
