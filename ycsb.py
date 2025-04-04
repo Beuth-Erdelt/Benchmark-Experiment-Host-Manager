@@ -904,6 +904,7 @@ if __name__ == '__main__':
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
+                                        YCSB_USE_HOSTLIST = "true",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
