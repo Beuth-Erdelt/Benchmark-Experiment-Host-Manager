@@ -1695,15 +1695,18 @@ class tpcc(logger):
             #for (result, vuser) in result_tupels:
             #    print(result, vuser)
             #print(result)
+            # compute efficiency, only valid for keying time
+            #print(result_tupels[0][0][0], result_tupels[0][1])
+            efficieny = round(100.*float(result_tupels[0][0][0])/float(result_tupels[0][1])/1.286, 2)
             # this finds ['CALLS', 'MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50', 'SD', 'RATIO']
             # if latencies are logged
             list_latencies = list(extracted_data.values())
             #print(list_latencies)
-            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
+            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficieny, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
             #print(result_list)
             df = pd.DataFrame(result_list)
             #print(list(extracted_data.keys()))
-            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficieny', 'NOPM', 'TPM', 'dbms']
             column_names.extend(list(extracted_data.keys()))
             #print(column_names)
             df.columns = column_names
@@ -1765,6 +1768,7 @@ class tpcc(logger):
                 'vusers':'int',
                 'NOPM':'int',
                 'TPM':'int',
+                'efficieny':'float',
                 'dbms':'str',
                 'CALLS':'float',
                 'MIN [ms]':'float',
@@ -1793,6 +1797,7 @@ class tpcc(logger):
                 'vusers':'int',
                 'NOPM':'int',
                 'TPM':'int',
+                'efficieny':'float',
                 'dbms':'str',
             })
         return df_typed
@@ -1826,6 +1831,7 @@ class tpcc(logger):
                     'NOPM':'mean',
                     #'TPM':'sum',
                     'TPM':'mean',
+                    'efficieny':'min',
                     'dbms':'max',
                     'CALLS':'max',
                     'MIN [ms]':'max',
@@ -1853,6 +1859,7 @@ class tpcc(logger):
                     'NOPM':'mean',
                     #'TPM':'sum',
                     'TPM':'mean',
+                    'efficieny':'min',
                     'dbms':'max',
                 }
             #print(grp.agg(aggregate))
