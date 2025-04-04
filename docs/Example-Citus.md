@@ -1315,7 +1315,7 @@ Citus has 3 workers.
 ```bash
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xlat \
   -dbms Citus \
   -nw 3 \
   -nwr 1 \
@@ -1337,17 +1337,17 @@ nohup python hammerdb.py -ms 1 -tr \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1319s 
-    Code: 1743575053
+    Duration: 1117s 
+    Code: 1743765273
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker23.
+    SUT is fixed to cl-worker11.
     Loading is tested with [8] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -1355,39 +1355,39 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:540595900416
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
     host:5.15.0-134-generic
-    node:cl-worker23
-    disk:86432660
+    node:cl-worker11
+    disk:201377888
     requests_cpu:4
     requests_memory:16Gi
     worker 0
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:151410852
+    worker 1
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:160047388
-    worker 1
+        disk:234755912
+    worker 2
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:931299488
-    worker 2
-        RAM:540595896320
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker24
-        disk:96570296
+        disk:977073952
 
 ### Execution
-                 experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]     NOPM       TPM  duration  errors
-Citus-BHT-8-1-1               1      16       1          1     29.22     63.92  49005.0  112642.0         5       0
+                 experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM       TPM  duration  errors
+Citus-BHT-8-1-1               1      16       1          1     30.12     60.59         0.0  47853.0  109891.0         5       0
 
 Warehouses: 16
 
@@ -1401,7 +1401,7 @@ DBMS Citus-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-Citus-BHT-8-1-1      115.0        1.0   1.0                 500.869565
+Citus-BHT-8-1-1      105.0        1.0   1.0                 548.571429
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
@@ -1414,6 +1414,7 @@ TEST passed: Workflow as planned
 nohup python hammerdb.py -ms 1 -tr \
   -sf 128 \
   -sd 30 \
+  -xlat \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
@@ -1424,9 +1425,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbp 1,2,4,8 \
   -nbt 128 \
   -ne 1 \
-  -nc 2 \
+  -nc 1 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_hammerdb_citus_2.log &
 ```
 
@@ -2654,7 +2655,7 @@ nohup python tpch.py -ms 1 -tr \
   -nwr 1 \
   -nws 48 \
   -dt \
-  -t 3600 \
+  -t 7200 \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ii -ic -is \
@@ -2687,7 +2688,7 @@ nohup python tpch.py -ms 1 -tr \
   -nwr 1 \
   -nws 48 \
   -dt \
-  -t 3600 \
+  -t 7200 \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -icol \

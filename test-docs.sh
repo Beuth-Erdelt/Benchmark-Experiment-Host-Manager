@@ -89,6 +89,7 @@ wait_process "hammerdb"
 #### HammerDB Monitoring (Example-HammerDB.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -sd 5 \
   -dbms PostgreSQL \
   -nlt 16 \
@@ -112,6 +113,7 @@ sleep 30
 #### HammerDB Persistent Storage (Example-HammerDB.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -dbms PostgreSQL \
   -nlt 8 \
   -nbp 1 \
@@ -127,6 +129,32 @@ nohup python hammerdb.py -ms 1 -tr \
 wait_process "hammerdb"
 
 
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
+sleep 30
+
+
+#### HammerDB Key time (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 20 \
+  -xlat \
+  -xkey \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 160 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_keytime.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 3000
+wait_process "hammerdb"
 
 
 ###########################################

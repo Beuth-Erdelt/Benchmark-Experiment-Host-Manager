@@ -280,12 +280,14 @@ options:
 ## Monitoring
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+We in the following also activate measurement of latencies with `-xlat`.
 
 Example:
 ```bash
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
+  -xlat \
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1,2 \
@@ -406,6 +408,7 @@ Example:
 ```bash
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -dbms PostgreSQL \
   -nlt 8 \
   -nbp 1 \
@@ -509,4 +512,31 @@ TEST passed: Workflow as planned
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 Also note the size descreases from first to second run (PostgreSQL does some cleaning?).
+
+## Keying and Waiting Time
+
+We at first remove persistent storage
+```bash
+kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
+```
+
+The keying and waiting times can be activated via `-xkey`:
+
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 20 \
+  -xlat \
+  -xkey \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 160 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_keytime.log &
+```
 

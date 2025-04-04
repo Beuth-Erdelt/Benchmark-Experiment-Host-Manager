@@ -1030,6 +1030,7 @@ TEST passed: Workflow as planned
 ```bash
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
@@ -1105,6 +1106,7 @@ TEST passed: Workflow as planned
 ```bash
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
