@@ -98,7 +98,6 @@ CockroachDB-64-8-65536        : Name of Worker service headless = bexhoma-worker
 *************ENV********* {'BEXHOMA_REPLICAS': 3, 'BEXHOMA_SHARDS': 0, 'BEXHOMA_WORKER_LIST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_WORKER_LIST_SPACE': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-cockroachdb-64-8-65536-ycsb-1', 'BEXHOMA_WORKER_FIRST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1'} BEXHOMA_REPLICAS -1
 *************ENV********* DEBUG:bexhoma:Deploy /home/perdelt/benchmarks/1742320781/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1.yml
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1742320781/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1.yml)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781,configuration=CockroachDB-64-8-65536
 DEBUG:bexhoma:testbed.get_pods()
@@ -186,16 +185,12 @@ CockroachDB-64-8-65536        : found 3 running workers of 3
 CockroachDB-64-8-65536        : list of workers
 CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2', 'bexhoma-worker-cockroachdb-ycsb-1-nnff8']
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-nnff8.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : is not loaded yet
 CockroachDB-64-8-65536        : will start loading but not before 2025-03-18 18:02:48 (that is in 120 secs)
@@ -319,7 +314,6 @@ DEBUG:bexhoma:configuration.prepare_init_dbms()
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/ycsb/CockroachDB/filled_initschema-ycsb.sql bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt:/tmp/initschema-ycsb.sql)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:load_data_asynch(app=bexhoma, component='sut', experiment=1742320781, configuration=CockroachDB-64-8-65536, pod_sut=bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt, scriptfolder=/tmp/, commands=['initschema-ycsb.sql'], loadData=cockroach sql --host {service_name} --port 9091 --insecure --file {scriptname}, path=/home/perdelt/benchmarks/1742320781, volume=bexhoma-storage-cockroachdb-ycsb-1, context=perdelt, service_name=bexhoma-sut-cockroachdb-64-8-65536-ycsb-1, time_offset=0, time_start_int=0, script_type=loaded, namespace=perdelt)
@@ -334,12 +328,10 @@ DEBUG:bexhoma:I am using messagequeue bexhoma-messagequeue-865dd9b44d-sdcpn
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-messagequeue-865dd9b44d-sdcpn -- sh -c "redis-cli rpush bexhoma-loading-CockroachDB-64-8-65536-1742320781 1 ")
 DEBUG:load_data_asynch:pod/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite loaded=False timeLoadingStart="1742320969")
 DEBUG:load_data_asynch:persistentvolumeclaim/bexhoma-storage-cockroachdb-ycsb-1 labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --container=dbms -- bash -c "cockroach sql --host bexhoma-sut-cockroachdb-64-8-65536-ycsb-1 --port 9091 --insecure --file /tmp/initschema-ycsb.sql")
 DEBUG:bexhoma:testbed.get_pods()
@@ -454,7 +446,6 @@ spec:
 DEBUG:bexhoma:configuration.create_manifest_job({'BEXHOMA_HOST': 'bexhoma-sut-cockroachdb-64-8-65536-ycsb-1', 'BEXHOMA_PORT': '9091', 'BEXHOMA_CONNECTION': 'CockroachDB-64-8-65536', 'BEXHOMA_EXPERIMENT': '1742320781', 'BEXHOMA_JAR': 'postgresql-42.5.0.jar', 'BEXHOMA_DRIVER': 'org.postgresql.Driver', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_URL': 'jdbc:postgresql://bexhoma-sut-cockroachdb-64-8-65536-ycsb-1:9091/defaultdb?reWriteBatchedInserts=true', 'PARALLEL': '8', 'CHILD': '1', 'SF': '1', 'RNGSEED': '123', 'YCSB_THREADCOUNT': 8, 'BEXHOMA_CLIENT': 0, 'BEXHOMA_CONFIGURATION': 'CockroachDB-64-8-65536', 'BEXHOMA_SLEEP': '60', 'BEXHOMA_VOLUME': 'ycsb', 'BEXHOMA_EXPERIMENT_RUN': '1', 'NUM_PODS': '8', 'DBMSBENCHMARKER_NOW': '2025-03-18 18:02:51', 'DBMSBENCHMARKER_START': 0, 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_TARGET': 8192, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1250000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 3})
 DEBUG:bexhoma:Deploy /home/perdelt/benchmarks/1742320781/bexhoma-loading-CockroachDB-64-8-65536-1-1.yml
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1742320781/bexhoma-loading-CockroachDB-64-8-65536-1-1.yml)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1742320781,configuration=CockroachDB-64-8-65536
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-worker-cockroachdb-ycsb-1-0 has status Running
@@ -466,7 +457,6 @@ DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-worker-cockroachdb-ycsb-1-nnff8 has status Succeeded
 DEBUG:bexhoma:Store logs of starter job pod bexhoma-worker-cockroachdb-ycsb-1-nnff8
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-worker-cockroachdb-ycsb-1-nnff8)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781,configuration=CockroachDB-64-8-65536
 DEBUG:bexhoma:testbed.get_pods()
@@ -569,7 +559,6 @@ node_id	network	address	advertise_address	sql_network	sql_address	advertise_sql_
 message
 crdb_internal.range_stats
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 ERROR: relation "crdb_internal.range_stats" does not exist
 SQLSTATE: 42P01
 ERROR: relation "crdb_internal.range_stats" does not exist
@@ -584,12 +573,10 @@ DEBUG:load_data_asynch:#### timeLoading after scrips: 3
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pods bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --overwrite timeLoadingEnd="1742320972"  loaded=True time_loaded=3 timeLoading=3 time_initschema=3)
 DEBUG:load_data_asynch:pod/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite timeLoadingEnd="1742320972"  loaded=True time_loaded=3 timeLoading=3 time_initschema=3)
 DEBUG:load_data_asynch:persistentvolumeclaim/bexhoma-storage-cockroachdb-ycsb-1 labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781)
@@ -2844,65 +2831,47 @@ DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c ha
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 has status Running
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pods_labels()
 DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1742320781,configuration=CockroachDB-64-8-65536
 DEBUG:bexhoma:testbed.get_pod_status()
@@ -2946,64 +2915,46 @@ DEBUG:bexhoma:getJobPods app=bexhoma,component=loading,experiment=1742320781,con
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz has container ['sensor', '']
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb has container ['sensor', '']
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds has container ['sensor', '']
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 has container ['sensor', '']
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 has container ['sensor', '']
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 container sensor
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 --container=sensor)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn has container ['sensor', '']
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp has container ['sensor', '']
 DEBUG:bexhoma:job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 will be suspended and parallel loading will be considered finished
 DEBUG:bexhoma:testbed.get_pods_labels()
@@ -3011,72 +2962,56 @@ DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-4jr9c)
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6n8sz)
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-6pdgb)
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-d8nds)
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5 has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-hwnp5)
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7 has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-qd6q7)
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-ssfxn)
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp has status Succeeded
 DEBUG:bexhoma:Store logs of job bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp has container ['sensor', '']
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1-wxvbp)
 DEBUG:bexhoma:default.end_loading(bexhoma-loading-cockroachdb-64-8-65536-1742320781-1-1)
@@ -3108,15 +3043,12 @@ DEBUG:bexhoma:1742320969
 DEBUG:bexhoma:1742322302
 DEBUG:bexhoma:1291
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pods bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --overwrite loaded=True timeLoadingEnd="1742322302" timeLoadingStart="1742320969" time_ingested=1288 timeLoading=1291 time_generated=0)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite loaded=True timeLoadingEnd="1742322302" timeLoadingStart="1742320969" time_ingested=1288 timeLoading=1291 time_generated=0)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.load_data()
 DEBUG:bexhoma:configuration.prepare_init_dbms()
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/ycsb/CockroachDB/filled_checkschema-ycsb.sql bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt:/tmp/checkschema-ycsb.sql)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:load_data_asynch(app=bexhoma, component='sut', experiment=1742320781, configuration=CockroachDB-64-8-65536, pod_sut=bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt, scriptfolder=/tmp/, commands=['checkschema-ycsb.sql'], loadData=cockroach sql --host {service_name} --port 9091 --insecure --file {scriptname}, path=/home/perdelt/benchmarks/1742320781, volume=bexhoma-storage-cockroachdb-ycsb-1, context=perdelt, service_name=bexhoma-sut-cockroachdb-64-8-65536-ycsb-1, time_offset=1291, time_start_int=1742320969, script_type=indexed, namespace=perdelt)
@@ -3136,7 +3068,6 @@ DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1742320781,co
 DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781,configuration=CockroachDB-64-8-65536
 DEBUG:load_data_asynch:pod/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite indexed=False timeLoadingStart="1742320969")
 DEBUG:bexhoma:testbed.get_pods()
@@ -3150,7 +3081,6 @@ CockroachDB-64-8-65536        : start asynch loading scripts of type indexed
 CockroachDB-64-8-65536        : is loading
 - waiting 30s -               : DEBUG:load_data_asynch:persistentvolumeclaim/bexhoma-storage-cockroachdb-ycsb-1 labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --container=dbms -- bash -c "cockroach sql --host bexhoma-sut-cockroachdb-64-8-65536-ycsb-1 --port 9091 --insecure --file /tmp/checkschema-ycsb.sql")
 DEBUG:load_data_asynch:message
@@ -3221,7 +3151,6 @@ node_id	network	address	advertise_address	sql_network	sql_address	advertise_sql_
 message
 crdb_internal.range_stats
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 ERROR: relation "crdb_internal.range_stats" does not exist
 SQLSTATE: 42P01
 ERROR: relation "crdb_internal.range_stats" does not exist
@@ -3236,12 +3165,10 @@ DEBUG:load_data_asynch:#### timeLoading after scrips: 1293
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pods bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --overwrite timeLoadingEnd="1742322304"  indexed=True time_indexed=2 timeLoading=1293 time_checkschema=2)
 DEBUG:load_data_asynch:pod/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite timeLoadingEnd="1742322304"  indexed=True time_indexed=2 timeLoading=1293 time_checkschema=2)
 DEBUG:load_data_asynch:persistentvolumeclaim/bexhoma-storage-cockroachdb-ycsb-1 labeled
 
-DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781)
@@ -3289,7 +3216,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -3321,7 +3247,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-worker-cockroachdb-ycsb-1-0 -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -3350,7 +3275,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-worker-cockroachdb-ycsb-1-1 -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -3379,7 +3303,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-worker-cockroachdb-ycsb-1-2 -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -3399,19 +3322,15 @@ DEBUG:bexhoma:get_pods label(app=bexhoma,component=worker,experiment=1742320781,
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite volume_size="50G" volume_used="0")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-0 --overwrite volume_size="50G" volume_used="1.9G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-1 --overwrite volume_size="50G" volume_used="1.8G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-2 --overwrite volume_size="50G" volume_used="1.8G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.run_benchmarker_pod(): CockroachDB-64-8-65536-1-1
 DEBUG:bexhoma:configuration.run_benchmarker_pod(Code=1742320781)
 DEBUG:bexhoma:testbed.log_experiment()
@@ -3419,19 +3338,14 @@ DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "mkdir -p /results/1742320781")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/queries.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/queries.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config queries.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/CockroachDB-64-8-65536-1-1.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/CockroachDB-64-8-65536-1-1.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config CockroachDB-64-8-65536-1-1.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/CockroachDB-64-8-65536-1-1.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/CockroachDB-64-8-65536-1-1.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config CockroachDB-64-8-65536-1-1.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config connections.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/protocol.json bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/protocol.json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config protocol.json: 
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
@@ -3521,7 +3435,6 @@ spec:
 
 DEBUG:bexhoma:configuration.create_manifest_job({'DBMSBENCHMARKER_CLIENT': '1', 'DBMSBENCHMARKER_CODE': '1742320781', 'DBMSBENCHMARKER_SLEEP': '60', 'DBMSBENCHMARKER_CONNECTION': 'CockroachDB-64-8-65536-1-1', 'DBMSBENCHMARKER_ALIAS': 'DBMS D', 'BEXHOMA_HOST': 'bexhoma-sut-cockroachdb-64-8-65536-ycsb-1', 'BEXHOMA_PORT': '9091', 'BEXHOMA_CONNECTION': 'CockroachDB-64-8-65536-1-1', 'BEXHOMA_EXPERIMENT': '1742320781', 'BEXHOMA_JAR': 'postgresql-42.5.0.jar', 'BEXHOMA_DRIVER': 'org.postgresql.Driver', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_URL': 'jdbc:postgresql://bexhoma-sut-cockroachdb-64-8-65536-ycsb-1:9091/defaultdb?reWriteBatchedInserts=true', 'PARALLEL': '1', 'CHILD': '1', 'SF': '1', 'RNGSEED': '123', 'YCSB_THREADCOUNT': 64, 'BEXHOMA_CLIENT': 1, 'BEXHOMA_CONFIGURATION': 'CockroachDB-64-8-65536', 'BEXHOMA_SLEEP': '60', 'BEXHOMA_VOLUME': 'ycsb', 'BEXHOMA_EXPERIMENT_RUN': '1', 'NUM_PODS': '1', 'DBMSBENCHMARKER_NOW': '2025-03-18 18:25:42', 'DBMSBENCHMARKER_START': 0, 'DBMSBENCHMARKER_PODS': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 3})
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1742320781/bexhoma-benchmarker-CockroachDB-64-8-65536-1-1.yml)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 CockroachDB-64-8-65536        : benchmarks done 0 of 2. This will be client 1
 CockroachDB-64-8-65536        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 3}
@@ -3579,7 +3492,6 @@ Fetch metric interval 1742320969 to 1742322304 = 1335 s span
 Metric total_gpu_memory
 Fetch metric interval 1742320969 to 1742322304 = 1335 s span
 
-DEBUG:bexhoma:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:benchmarker:Results in folder /results//1742320781/
 DEBUG:benchmarker:copied connection file /results/1742320781/CockroachDB-64-8-65536-1-1.config to /results//1742320781//connections.config
 DEBUG:root:Metric total_cpu_memory
@@ -3742,11 +3654,9 @@ ERROR:root:{"status":"success","data":{"resultType":"matrix","result":[]}}
 DEBUG:root:saveMetricsDataframe /results//1742320781//query_loading_metric_total_gpu_memory_CockroachDB-64-8-65536-1-1.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:get_service_endpoints(bexhoma-service-monitoring-default)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get endpoints -o jsonpath="{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "python metrics.py -r /results/ -db -ct datagenerator -cn datagenerator -c CockroachDB-64-8-65536-1-1 -cf CockroachDB-64-8-65536-1-1.config -f /results/1742320781 -e 1742320781 -ts 1742320969 -te 1742322304")
 DEBUG:bexhoma:Interval length 1335s
 URL https://prometheus.datexis.com/api/v1/
@@ -3788,7 +3698,6 @@ Fetch metric interval 1742320969 to 1742322304 = 1335 s span
 Metric total_gpu_memory
 Fetch metric interval 1742320969 to 1742322304 = 1335 s span
 
-DEBUG:bexhoma:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:benchmarker:Results in folder /results//1742320781/
 DEBUG:benchmarker:copied connection file /results/1742320781/CockroachDB-64-8-65536-1-1.config to /results//1742320781//connections.config
 DEBUG:root:Metric total_cpu_memory
@@ -3969,7 +3878,6 @@ ERROR:root:{"status":"success","data":{"resultType":"matrix","result":[]}}
 DEBUG:root:saveMetricsDataframe /results//1742320781//query_datagenerator_metric_total_gpu_memory_CockroachDB-64-8-65536-1-1.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "python metrics.py -r /results/ -db -ct loader -cn sensor -c CockroachDB-64-8-65536-1-1 -cf CockroachDB-64-8-65536-1-1.config -f /results/1742320781 -e 1742320781 -ts 1742320969 -te 1742322304")
 DEBUG:bexhoma:Interval length 1335s
@@ -4012,7 +3920,6 @@ Fetch metric interval 1742320969 to 1742322304 = 1335 s span
 Metric total_gpu_memory
 Fetch metric interval 1742320969 to 1742322304 = 1335 s span
 
-DEBUG:bexhoma:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:benchmarker:Results in folder /results//1742320781/
 DEBUG:benchmarker:copied connection file /results/1742320781/CockroachDB-64-8-65536-1-1.config to /results//1742320781//connections.config
 DEBUG:root:Metric total_cpu_memory
@@ -4175,7 +4082,6 @@ ERROR:root:{"status":"success","data":{"resultType":"matrix","result":[]}}
 DEBUG:root:saveMetricsDataframe /results//1742320781//query_loader_metric_total_gpu_memory_CockroachDB-64-8-65536-1-1.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781,configuration=CockroachDB-64-8-65536
@@ -20135,13 +20041,10 @@ DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:job-pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss has container ['dbmsbenchmarker', '']
 DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss container dbmsbenchmarker
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss --container=dbmsbenchmarker)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:getJobStatus app=bexhoma
 DEBUG:bexhoma:api_response.spec.completions 1
 DEBUG:bexhoma:api_response.status.succeeded 1
@@ -20150,9 +20053,7 @@ DEBUG:bexhoma:job bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1 has 
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:job-pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss has container ['dbmsbenchmarker', '']
 DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1 pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss container dbmsbenchmarker
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1-fspss)
@@ -20169,7 +20070,6 @@ DEBUG:bexhoma:duration: 13522
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "python metrics.py -r /results/ -db -ct stream -c CockroachDB-64-8-65536-1-1 -cf CockroachDB-64-8-65536-1-1.config -f /results/1742320781 -e 1742320781 -ts 1742322342 -te 1742335864")
 DEBUG:bexhoma:Interval length 13522s
@@ -20230,7 +20130,6 @@ Metric total_gpu_memory
 Fetch metric interval 1742322342 to 1742331341 = 8999 s span
 Fetch metric interval 1742331342 to 1742335864 = 4522 s span
 
-DEBUG:bexhoma:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:benchmarker:Results in folder /results//1742320781/
 DEBUG:benchmarker:copied connection file /results/1742320781/CockroachDB-64-8-65536-1-1.config to /results//1742320781//connections.config
 DEBUG:root:Metric total_cpu_memory
@@ -20479,11 +20378,9 @@ ERROR:root:{"status":"success","data":{"resultType":"matrix","result":[]}}
 DEBUG:root:saveMetricsDataframe /results//1742320781//query_stream_metric_total_gpu_memory_CockroachDB-64-8-65536-1-1.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:get_service_endpoints(bexhoma-service-monitoring-default)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get endpoints -o jsonpath="{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "python metrics.py -r /results/ -db -ct benchmarker -cn dbmsbenchmarker -c CockroachDB-64-8-65536-1-1 -cf CockroachDB-64-8-65536-1-1.config -f /results/1742320781 -e 1742320781 -ts 1742322342 -te 1742335864")
 DEBUG:bexhoma:Interval length 13522s
 URL https://prometheus.datexis.com/api/v1/
@@ -20543,7 +20440,6 @@ Metric total_gpu_memory
 Fetch metric interval 1742322342 to 1742331341 = 8999 s span
 Fetch metric interval 1742331342 to 1742335864 = 4522 s span
 
-DEBUG:bexhoma:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:benchmarker:Results in folder /results//1742320781/
 DEBUG:benchmarker:copied connection file /results/1742320781/CockroachDB-64-8-65536-1-1.config to /results//1742320781//connections.config
 DEBUG:root:Metric total_cpu_memory
@@ -20792,7 +20688,6 @@ ERROR:root:{"status":"success","data":{"resultType":"matrix","result":[]}}
 DEBUG:root:saveMetricsDataframe /results//1742320781//query_benchmarker_metric_total_gpu_memory_CockroachDB-64-8-65536-1-1.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:testbed.delete_job()
 DEBUG:bexhoma:testbed.delete_job(bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-1-1)
@@ -20801,19 +20696,15 @@ DEBUG:bexhoma:get_pods label(app=bexhoma,component=worker,experiment=1742320781,
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite volume_size="50G" volume_used="0")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-0 --overwrite volume_size="50G" volume_used="5.0G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-1 --overwrite volume_size="50G" volume_used="4.9G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-2 --overwrite volume_size="50G" volume_used="4.9G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 CockroachDB-64-8-65536        : has running benchmarks
 CockroachDB-64-8-65536-1-1    : showing benchmarker times
@@ -20854,21 +20745,16 @@ DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-74b5c888dc-hq8qt --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=worker,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=pool,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.get_deployments(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.delete_deployment()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt delete deployment bexhoma-sut-cockroachdb-64-8-65536-ycsb-1)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_stateful_sets()
 DEBUG:bexhoma:get_stateful_setsapp=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536
 DEBUG:bexhoma:getJobs(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
@@ -20969,7 +20855,6 @@ CockroachDB-64-8-65536        : loading is set to finished
 []
 *************ENV********* DEBUG:bexhoma:Deploy /home/perdelt/benchmarks/1742320781/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1.yml
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1742320781/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1.yml)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 {'BEXHOMA_REPLICAS': 3, 'BEXHOMA_SHARDS': 0, 'BEXHOMA_WORKER_LIST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_WORKER_LIST_SPACE': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-cockroachdb-64-8-65536-ycsb-1', 'BEXHOMA_WORKER_FIRST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1'} BEXHOMA_REPLICAS -1
 *************ENV********* {'BEXHOMA_REPLICAS': 3, 'BEXHOMA_SHARDS': 0, 'BEXHOMA_WORKER_LIST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_WORKER_LIST_SPACE': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-cockroachdb-64-8-65536-ycsb-1', 'BEXHOMA_WORKER_FIRST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1'} BEXHOMA_SHARDS -1
 *************ENV********* {'BEXHOMA_REPLICAS': 3, 'BEXHOMA_SHARDS': 0, 'BEXHOMA_WORKER_LIST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1,bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_WORKER_LIST_SPACE': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1 bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-cockroachdb-64-8-65536-ycsb-1', 'BEXHOMA_WORKER_FIRST': 'bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1'} BEXHOMA_WORKER_LIST -1
@@ -21064,16 +20949,12 @@ CockroachDB-64-8-65536        : found 4 running workers of 3
 CockroachDB-64-8-65536        : list of workers
 CockroachDB-64-8-65536        : Worker pods found: ['bexhoma-worker-cockroachdb-ycsb-1-0', 'bexhoma-worker-cockroachdb-ycsb-1-1', 'bexhoma-worker-cockroachdb-ycsb-1-2', 'bexhoma-worker-cockroachdb-ycsb-1-cmffj']
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-0.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-1.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-2.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : worker bexhoma-worker-cockroachdb-ycsb-1-cmffj.bexhoma-worker-cockroachdb-ycsb-1 attached
-  Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 
 CockroachDB-64-8-65536        : will start benchmarking but not before 2025-03-18 22:15:32 (that is in 120 secs)
 - waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
@@ -21217,7 +21098,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-6b459bb654-xn2dg --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-6b459bb654-xn2dg -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-6b459bb654-xn2dg --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -21249,7 +21129,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-worker-cockroachdb-ycsb-1-0 -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -21278,7 +21157,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-worker-cockroachdb-ycsb-1-1 -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -21307,7 +21185,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-worker-cockroachdb-ycsb-1-2 -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
@@ -21337,7 +21214,6 @@ DEBUG:bexhoma:configuration.get_host_system()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-cmffj --container=dbms -- sh -c "uname -r")
 DEBUG:bexhoma:configuration.get_host_node()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-worker-cockroachdb-ycsb-1-cmffj -o=json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_diskspace_used()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-cmffj --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-cmffj --container=dbms -- sh -c "df / | awk 'NR == 2{print $3}'")
@@ -21361,23 +21237,18 @@ DEBUG:bexhoma:get_pods label(app=bexhoma,component=worker,experiment=1742320781,
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-6b459bb654-xn2dg --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite volume_size="50G" volume_used="0")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-0 --overwrite volume_size="50G" volume_used="4.7G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-1 --overwrite volume_size="50G" volume_used="4.7G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-2 --overwrite volume_size="50G" volume_used="4.7G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-cmffj --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-cmffj --overwrite volume_size="0" volume_used="0")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 Error from server (NotFound): persistentvolumeclaims "bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-cmffj" not found
 DEBUG:bexhoma:configuration.run_benchmarker_pod(): CockroachDB-64-8-65536-2-1
 DEBUG:bexhoma:configuration.run_benchmarker_pod(Code=1742320781)
@@ -21386,19 +21257,14 @@ DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "mkdir -p /results/1742320781")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/queries.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/queries.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config queries.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/CockroachDB-64-8-65536-2-1.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/CockroachDB-64-8-65536-2-1.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config CockroachDB-64-8-65536-2-1.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/CockroachDB-64-8-65536-2-1.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/CockroachDB-64-8-65536-2-1.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config CockroachDB-64-8-65536-2-1.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config connections.config: 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1742320781/protocol.json bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/protocol.json)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:copy config protocol.json: 
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
@@ -21488,7 +21354,6 @@ spec:
 
 DEBUG:bexhoma:configuration.create_manifest_job({'DBMSBENCHMARKER_CLIENT': '1', 'DBMSBENCHMARKER_CODE': '1742320781', 'DBMSBENCHMARKER_SLEEP': '60', 'DBMSBENCHMARKER_CONNECTION': 'CockroachDB-64-8-65536-2-1', 'DBMSBENCHMARKER_ALIAS': 'DBMS D', 'BEXHOMA_HOST': 'bexhoma-sut-cockroachdb-64-8-65536-ycsb-1', 'BEXHOMA_PORT': '9091', 'BEXHOMA_CONNECTION': 'CockroachDB-64-8-65536-2-1', 'BEXHOMA_EXPERIMENT': '1742320781', 'BEXHOMA_JAR': 'postgresql-42.5.0.jar', 'BEXHOMA_DRIVER': 'org.postgresql.Driver', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_URL': 'jdbc:postgresql://bexhoma-sut-cockroachdb-64-8-65536-ycsb-1:9091/defaultdb?reWriteBatchedInserts=true', 'PARALLEL': '1', 'CHILD': '1', 'SF': '1', 'RNGSEED': '123', 'YCSB_THREADCOUNT': 64, 'BEXHOMA_CLIENT': 1, 'BEXHOMA_CONFIGURATION': 'CockroachDB-64-8-65536', 'BEXHOMA_SLEEP': '60', 'BEXHOMA_VOLUME': 'ycsb', 'BEXHOMA_EXPERIMENT_RUN': '2', 'NUM_PODS': '1', 'DBMSBENCHMARKER_NOW': '2025-03-18 22:15:50', 'DBMSBENCHMARKER_START': 0, 'DBMSBENCHMARKER_PODS': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 3})
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1742320781/bexhoma-benchmarker-CockroachDB-64-8-65536-2-1.yml)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 CockroachDB-64-8-65536        : benchmarks done 1 of 2. This will be client 1
 CockroachDB-64-8-65536        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 3}
@@ -35248,13 +35113,10 @@ DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:job-pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c has container ['dbmsbenchmarker', '']
 DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1 pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c container dbmsbenchmarker
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c --container=dbmsbenchmarker)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:getJobStatus app=bexhoma
 DEBUG:bexhoma:api_response.spec.completions 1
 DEBUG:bexhoma:api_response.status.succeeded 1
@@ -35263,9 +35125,7 @@ DEBUG:bexhoma:job bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1 has 
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:job-pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c has status Succeeded
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c -o jsonpath='{.spec.containers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c -o jsonpath='{.spec.initContainers[*].name}')
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:Pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c has container ['dbmsbenchmarker', '']
 DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1 pod bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c container dbmsbenchmarker
 DEBUG:bexhoma:testbed.delete_pod(bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1-hfc2c)
@@ -35282,7 +35142,6 @@ DEBUG:bexhoma:duration: 12673
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "python metrics.py -r /results/ -db -ct stream -c CockroachDB-64-8-65536-2-1 -cf CockroachDB-64-8-65536-2-1.config -f /results/1742320781 -e 1742320781 -ts 1742336150 -te 1742348823")
 DEBUG:bexhoma:Interval length 12673s
@@ -35343,7 +35202,6 @@ Metric total_gpu_memory
 Fetch metric interval 1742336150 to 1742345149 = 8999 s span
 Fetch metric interval 1742345150 to 1742348823 = 3673 s span
 
-DEBUG:bexhoma:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:benchmarker:Results in folder /results//1742320781/
 DEBUG:benchmarker:copied connection file /results/1742320781/CockroachDB-64-8-65536-2-1.config to /results//1742320781//connections.config
 DEBUG:root:Metric total_cpu_memory
@@ -35596,11 +35454,9 @@ ERROR:root:{"status":"success","data":{"resultType":"matrix","result":[]}}
 DEBUG:root:saveMetricsDataframe /results//1742320781//query_stream_metric_total_gpu_memory_CockroachDB-64-8-65536-2-1.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:get_service_endpoints(bexhoma-service-monitoring-default)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get endpoints -o jsonpath="{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-c67d8b6b4-dxlpf --container=dashboard -- sh -c "python metrics.py -r /results/ -db -ct benchmarker -cn dbmsbenchmarker -c CockroachDB-64-8-65536-2-1 -cf CockroachDB-64-8-65536-2-1.config -f /results/1742320781 -e 1742320781 -ts 1742336150 -te 1742348823")
 DEBUG:bexhoma:Interval length 12673s
 URL https://prometheus.datexis.com/api/v1/
@@ -35660,7 +35516,6 @@ Metric total_gpu_memory
 Fetch metric interval 1742336150 to 1742345149 = 8999 s span
 Fetch metric interval 1742345150 to 1742348823 = 3673 s span
 
-DEBUG:bexhoma:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:benchmarker:Results in folder /results//1742320781/
 DEBUG:benchmarker:copied connection file /results/1742320781/CockroachDB-64-8-65536-2-1.config to /results//1742320781//connections.config
 DEBUG:root:Metric total_cpu_memory
@@ -35909,7 +35764,6 @@ ERROR:root:{"status":"success","data":{"resultType":"matrix","result":[]}}
 DEBUG:root:saveMetricsDataframe /results//1742320781//query_benchmarker_metric_total_gpu_memory_CockroachDB-64-8-65536-2-1.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/connections.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/connections.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:
 DEBUG:bexhoma:testbed.delete_job()
 DEBUG:bexhoma:testbed.delete_job(bexhoma-benchmarker-cockroachdb-64-8-65536-1742320781-2-1)
@@ -35918,19 +35772,15 @@ DEBUG:bexhoma:get_pods label(app=bexhoma,component=worker,experiment=1742320781,
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-6b459bb654-xn2dg --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-storage-cockroachdb-ycsb-1 --overwrite volume_size="50G" volume_used="0")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-0 --overwrite volume_size="50G" volume_used="6.0G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-1 --overwrite volume_size="50G" volume_used="6.0G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:configuration.get_host_volume()
 DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms -- sh -c "df -hP | grep volumes")
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-2 --overwrite volume_size="50G" volume_used="6.0G")
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 done
 CockroachDB-64-8-65536        : has running benchmarks
 CockroachDB-64-8-65536-2-1    : showing benchmarker times
@@ -35968,21 +35818,16 @@ DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-sut-cockroachdb-64-8-65536-ycsb-1-6b459bb654-xn2dg --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=worker,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-worker-cockroachdb-ycsb-1-0 --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-worker-cockroachdb-ycsb-1-1 --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-worker-cockroachdb-ycsb-1-2 --container=dbms)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_pods()
 DEBUG:bexhoma:get_pods label(app=bexhoma,component=pool,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.get_deployments(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
 DEBUG:bexhoma:testbed.delete_deployment()
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt delete deployment bexhoma-sut-cockroachdb-64-8-65536-ycsb-1)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.get_stateful_sets()
 DEBUG:bexhoma:get_stateful_setsapp=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536
 DEBUG:bexhoma:getJobs(app=bexhoma,component=sut,experiment=1742320781,configuration=CockroachDB-64-8-65536)
@@ -36486,9 +36331,7 @@ Generated /results//1742320781//query_poolloading_metric_total_gpu_power.csv
 Generated /results//1742320781//query_poolloading_metric_total_gpu_memory.csv
 
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/ /home/perdelt/benchmarks/1742320781/ -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/ bexhoma-dashboard-c67d8b6b4-dxlpf:/results/ -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:default.get_workflow_list({'CockroachDB-64-8-65536': [[1], [1]]})
 DEBUG:bexhoma:testbed.get_dashboard_pod()
 DEBUG:bexhoma:testbed.get_pods()
@@ -36497,7 +36340,6 @@ DEBUG:bexhoma:testbed.get_dashboard_pod_name()=exists
 DEBUG:bexhoma:testbed.get_pod_status()
 DEBUG:bexhoma:bexhoma-dashboard-c67d8b6b4-dxlpfRunning
 DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1742320781/queries.config bexhoma-dashboard-c67d8b6b4-dxlpf:/results/1742320781/queries.config -c dashboard)
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
 DEBUG:bexhoma:experiment.stop_benchmarker()
 DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1742320781)
 DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1742320781
