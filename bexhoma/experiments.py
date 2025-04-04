@@ -2041,6 +2041,8 @@ class tpcds(default):
         init_indexes = args.init_indexes
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
+        # columnar storage
+        init_columns = args.init_columns
         # timeout of a benchmark
         timeout = int(args.timeout)
         if mode == 'run':
@@ -2084,6 +2086,8 @@ class tpcds(default):
             self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
         else:
             self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        if init_columns:
+            self.workload['info'] = self.workload['info']+"\nStorage is set to columnar."
         self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
         # optionally set some indexes and constraints after import
         self.set_experiment(script='Schema')
@@ -2450,11 +2454,11 @@ class tpcc(default):
             df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
             if "P95 [ms]" in df_aggregated:
                 # we have latencies
-                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]"]
-                columns = ["NOPM", "TPM", "duration", "errors","P95 [ms]","P99 [ms]"]
+                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                aggregated_list = ['experiment_run',"vusers","client","pod_count"]
-                columns = ["NOPM", "TPM", "duration", "errors"]
+                aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
                 if col in df_aggregated.columns:
