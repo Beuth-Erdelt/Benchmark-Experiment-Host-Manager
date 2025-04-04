@@ -1950,6 +1950,10 @@ Note: In [1] YCSB is run as this: *For this benchmark, the coordinator’s CPU u
 > Naisila Puka, September 22, 2023.
 > Retrieved April 1, 2025, from https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1
 
+[6] [Understand what you run before publishing your (silly) benchmark results](https://dev.to/yugabyte/understand-what-you-run-before-publishing-your-silly-benchmark-results-48bb)
+> Franck Pachot, YugabyteDB.
+> Retrieved April 1, 2025, from https://dev.to/yugabyte/understand-what-you-run-before-publishing-your-silly-benchmark-results-48bb
+
 
 ```bash
 nohup python hammerdb.py -ms 1 -tr \
