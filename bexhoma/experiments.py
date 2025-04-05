@@ -2298,7 +2298,7 @@ class tpcc(default):
         if SD:
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
         if extra_keying:
-            self.workload['info'] = self.workload['info']+" Benchmarking has keying and waiting times activated."
+            self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
         if extra_latency:
             self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
         default.prepare_testbed(self, parameter)

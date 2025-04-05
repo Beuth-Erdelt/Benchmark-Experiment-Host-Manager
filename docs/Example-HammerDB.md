@@ -513,14 +513,14 @@ The loading times for both instances of loading are the same, since both relate 
 Note the added section about `volume_size` and `volume_used` in the connections section.
 Also note the size descreases from first to second run (PostgreSQL does some cleaning?).
 
-## Keying and Waiting Time
+## Keying and Thinking Time
 
 We at first remove persistent storage
 ```bash
 kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
 ```
 
-The keying and waiting times can be activated via `-xkey`:
+The keying and thinking times can be activated via `-xkey`:
 
 ```bash
 nohup python hammerdb.py -ms 1 -tr \

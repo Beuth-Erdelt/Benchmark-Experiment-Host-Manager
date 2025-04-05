@@ -1631,6 +1631,9 @@ class tpcc(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             vusers_loading = re.findall('PARALLEL (.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            timeprofile = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]
+            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]
+            keyandthink = re.findall('HAMMERDB_KEYANDTHINK:(.+?)\n', stdout)[0]
             #client = "1"
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
@@ -1697,7 +1700,10 @@ class tpcc(logger):
             #print(result)
             # compute efficiency, only valid for keying time
             #print(result_tupels[0][0][0], result_tupels[0][1])
-            efficiency = round(100.*float(result_tupels[0][0][0])/float(result_tupels[0][1])/1.286, 2)
+            if keyandthink == "true":
+                efficiency = round(100.*float(result_tupels[0][0][0])/float(result_tupels[0][1])/1.286, 2)
+            else:
+                efficiency = 0
             # this finds ['CALLS', 'MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50', 'SD', 'RATIO']
             # if latencies are logged
             list_latencies = list(extracted_data.values())
