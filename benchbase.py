@@ -61,6 +61,7 @@ if __name__ == '__main__':
     #parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
     parser.add_argument('-sd', '--scaling-duration', help='scaling factor = duration in minutes', default=5)
     parser.add_argument('-slg', '--scaling-logging', help='logging status every x seconds', default=0)
+    parser.add_argument('-xkey', '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=600)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
     parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
@@ -126,6 +127,11 @@ if __name__ == '__main__':
     target_base = int(args.target_base)
     type_of_benchmark = args.benchmark
     scaling_logging = int(args.scaling_logging)*1000 # adjust unit to miliseconds
+    extra_keying = int(args.extra_keying)
+    if extra_keying:
+        BENCHBASE_KEY_AND_THINK = "true"
+    else:
+        BENCHBASE_KEY_AND_THINK = "false"
     ##############
     ### set cluster
     ##############
@@ -204,6 +210,7 @@ if __name__ == '__main__':
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -235,6 +242,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -258,6 +266,7 @@ if __name__ == '__main__':
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "root",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -289,6 +298,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -312,6 +322,7 @@ if __name__ == '__main__':
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "root",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -343,6 +354,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -445,6 +457,7 @@ if __name__ == '__main__':
                         BEXHOMA_PASSWORD = "",
                         BEXHOMA_PORT = 5433,
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -479,6 +492,7 @@ if __name__ == '__main__':
                                         BEXHOMA_PASSWORD = "",
                                         BEXHOMA_PORT = 5433,
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -519,6 +533,7 @@ if __name__ == '__main__':
                         BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -553,6 +568,7 @@ if __name__ == '__main__':
                                         BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -576,6 +592,7 @@ if __name__ == '__main__':
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -608,6 +625,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -649,6 +667,7 @@ if __name__ == '__main__':
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BENCHBASE_CREATE_SCHEMA = "false",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -683,6 +702,7 @@ if __name__ == '__main__':
                                         #BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
