@@ -129,7 +129,9 @@ sed -i "s/BENCHBASE_ISOLATION/$BENCHBASE_ISOLATION/" $FILENAME
 
 if [ "$BENCHBASE_KEY_AND_THINK" = "true" ]; then
     sed -i 's/<!--<preExecutionWait>/<preExecutionWait>/g' $FILENAME
-    sed -i 's/</preExecutionWait>-->/</preExecutionWait>/g' $FILENAME
+    sed -i 's/preExecutionWait>-->/preExecutionWait>/g' $FILENAME
+    sed -i 's/<!--<postExecutionWait>/<postExecutionWait>/g' $FILENAME
+    sed -i 's/postExecutionWait>-->/postExecutionWait>/g' $FILENAME
 fi
 
 cat $FILENAME
