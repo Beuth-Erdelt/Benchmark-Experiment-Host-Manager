@@ -127,6 +127,11 @@ sed -i "s/BENCHBASE_BATCHSIZE/$BENCHBASE_BATCHSIZE/" $FILENAME
 sed -i "s/BENCHBASE_TERMINALS/$BENCHBASE_TERMINALS/" $FILENAME
 sed -i "s/BENCHBASE_ISOLATION/$BENCHBASE_ISOLATION/" $FILENAME
 
+if [ "$BENCHBASE_KEY_AND_THINK" = "true" ]; then
+    sed -i 's/<!--<preExecutionWait>/<preExecutionWait>/g' $FILENAME
+    sed -i 's/</preExecutionWait>-->/</preExecutionWait>/g' $FILENAME
+fi
+
 cat $FILENAME
 
 ls -lh
