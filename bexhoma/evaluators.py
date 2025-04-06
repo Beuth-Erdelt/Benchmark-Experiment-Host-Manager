@@ -1247,11 +1247,16 @@ class benchbase(logger):
             time = re.findall('BENCHBASE_TIME (.+?)\n', stdout)[0]
             #terminals = re.findall('BENCHBASE_TERMINALS (.+?)\n', stdout)[0]
             batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
+            keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
             #errors = re.findall('Exception in thread ', stdout)
             errors = re.findall('error code', stdout)
             #print(errors)
             num_errors = len(errors)
+            #if keyandthink == "true":
+            #    efficiency = round(100.*/1.286, 2)
+            #else:
+            #    efficiency = 0
             header = {
                 'connection': connection_name,
                 'configuration': configuration_name,
@@ -1265,9 +1270,10 @@ class benchbase(logger):
                 'time': time,
                 #'terminals': terminals,
                 'batchsize': batchsize,
-                'sf': sf,
+                'sf': int(sf),
                 'num_errors': num_errors,
                 'duration': duration,
+                'efficiency': 0.0,
             }
             df_header = pd.DataFrame(header, index=[0])
             if True: # num_errors == 0:
@@ -1278,6 +1284,9 @@ class benchbase(logger):
                     #self.cluster.logger.debug(df)
                     df = pd.concat([df_header, df], axis=1)
                     df.index.name = connection_name
+                    #print(df, keyandthink)
+                    if keyandthink == "true":
+                        df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
                     #print(df)
                     return df
                 else:
@@ -1331,6 +1340,7 @@ class benchbase(logger):
             'Latency Distribution.99th Percentile Latency (microseconds)':'float',
             'Latency Distribution.75th Percentile Latency (microseconds)':'float',
             'Latency Distribution.Average Latency (microseconds)':'float',
+            'efficiency': 'float',
         })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df):
@@ -1377,6 +1387,7 @@ class benchbase(logger):
                 'Latency Distribution.99th Percentile Latency (microseconds)':'max',
                 'Latency Distribution.75th Percentile Latency (microseconds)':'max',
                 'Latency Distribution.Average Latency (microseconds)':'mean',
+                'efficiency': 'sum',
             }
             #print(grp.agg(aggregate))
             dict_grp = dict()
@@ -1392,6 +1403,15 @@ class benchbase(logger):
             #df_grp.set_index('connection', inplace=True)
             #print(df_grp)
             df_aggregated = pd.concat([df_aggregated, df_grp])
+        #print(df_aggregated)
+        #mask = df_aggregated['sf'] * 10 == df_aggregated['terminals']  # Condition
+        mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.)
+        #df_masked = df_aggregated[~mask]
+        #print(mask, df_aggregated.loc[mask])
+        df_aggregated['efficiency'] = 0.  # Default all rows to 0
+        df_aggregated.loc[mask, 'efficiency'] = (
+            0.45 * 60. * 100. * df_aggregated['Goodput (requests/second)'] / 12.86 / df_aggregated['sf']
+        )
         return df_aggregated
     def parse_benchbase_log_file(self, file_path):
         """
@@ -1631,9 +1651,9 @@ class tpcc(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             vusers_loading = re.findall('PARALLEL (.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
-            timeprofile = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]
-            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]
-            keyandthink = re.findall('HAMMERDB_KEYANDTHINK:(.+?)\n', stdout)[0]
+            timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
+            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
+            keyandthink = re.findall('HAMMERDB_KEYANDTHINK (.+?)\n', stdout)[0]
             #client = "1"
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
@@ -1883,7 +1903,7 @@ class tpcc(logger):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         #print(df_aggregated['sf'], df_aggregated['vusers'], df_aggregated['NOPM'])
         #print(df_aggregated['sf']*10 == df_aggregated['vusers'])
-        #print(df_aggregated['efficieny'])
+        #print(df_aggregated['efficiency'])
         df_aggregated['efficiency'] = 0.  # Default all rows to 0
         mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']  # Condition
         #print(mask, df_aggregated.loc[mask])

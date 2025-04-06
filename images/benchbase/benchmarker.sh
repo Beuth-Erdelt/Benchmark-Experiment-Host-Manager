@@ -93,6 +93,8 @@ echo "BENCHBASE_TARGET $BENCHBASE_TARGET"
 echo "BENCHBASE_TIME $BENCHBASE_TIME"
 echo "BENCHBASE_TERMINALS $BENCHBASE_TERMINALS"
 echo "BENCHBASE_BATCHSIZE $BENCHBASE_BATCHSIZE"
+echo "BENCHBASE_KEY_AND_THINK $BENCHBASE_KEY_AND_THINK"
+
 
 
 ######################## Start measurement of time of execution ########################
@@ -160,7 +162,7 @@ echo "Duration $DURATION seconds"
 
 ######################## Show result files ###################
 ls -lh /benchbase/results
-#cat /benchbase/results/*
+# cat /benchbase/results/*
 
 ######################## Show result summary ###################
 echo "####BEXHOMA####"
