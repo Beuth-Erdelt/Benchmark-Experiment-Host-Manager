@@ -358,7 +358,8 @@ if __name__ == '__main__':
                 config.set_eval_parameters(
                     BEXHOMA_REPLICAS = num_worker_replicas,
                     BEXHOMA_SHARDS = num_worker_shards,
-                    BEXHOMA_WORKERS = num_worker
+                    BEXHOMA_WORKERS = num_worker,
+                    COLUMNAR = init_columns,
                     )
                 if skip_loading:
                     config.loading_deactivated = True
