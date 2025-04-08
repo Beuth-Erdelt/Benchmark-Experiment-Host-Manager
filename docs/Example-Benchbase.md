@@ -713,7 +713,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
-Now also efficiency is computed via `0.45 * 60. * 100. * Goodput (requests/second)/ 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
+Now also efficiency is computed via `0.45 * 60. * 100. * Goodput (requests/second) / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
 * 45% is the average portion of new orders in the set of transactions
 * 60 transforms to per-minute
 * 100 makes it a percentage value

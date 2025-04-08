@@ -515,6 +515,9 @@ Also note the size descreases from first to second run (PostgreSQL does some cle
 
 ## Keying and Thinking Time
 
+We can activate waiting times before and after execution of transactions with `-xkey` to follow TPC-C specifications more closely.
+Also also make sure, the number of driver threads (`-nbt`) is 10 times the number of warehouses (`-sf`).
+
 We at first remove persistent storage
 ```bash
 kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
@@ -677,3 +680,10 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+Now also efficiency is computed via `100. * NOPM / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
+* 100 makes it a percentage value
+* NOPM is the number of new orders per minute
+* sf is the number of warehouses
+* 12.86 is the theoretical limit in the TPC-C speficications
+
+Note that these are statistical values.
