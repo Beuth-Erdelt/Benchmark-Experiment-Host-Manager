@@ -868,6 +868,7 @@ if __name__ == '__main__':
                         YCSB_STATUS_INTERVAL = 10,
                         BEXHOMA_DBMS = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        YCSB_USE_HOSTLIST = "true",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
