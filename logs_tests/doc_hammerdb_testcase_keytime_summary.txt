@@ -3,8 +3,8 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 6827s 
-    Code: 1743775308
+    Duration: 6734s 
+    Code: 1743794137
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
@@ -28,7 +28,7 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201244252
+    disk:201335700
     datadisk:3303
     volume_size:30G
     volume_used:3.3G
@@ -40,7 +40,7 @@ PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201264088
+    disk:201348924
     datadisk:3416
     volume_size:30G
     volume_used:3.3G
@@ -52,7 +52,7 @@ PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201423540
+    disk:201362308
     datadisk:3491
     volume_size:30G
     volume_used:3.5G
@@ -64,7 +64,7 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201423712
+    disk:201375532
     datadisk:3509
     volume_size:30G
     volume_used:3.5G
@@ -73,51 +73,51 @@ PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
 
 ### Execution
                         experiment_run  vusers  client  pod_count  efficiency   NOPM    TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1     160       1          1       97.69  201.0  623.0        20       0
-PostgreSQL-BHT-8-1-1-2               1     160       2          2       96.71  199.0  632.0        20       0
-PostgreSQL-BHT-8-1-2-1               2     160       1          1       97.69  201.0  617.0        20       0
-PostgreSQL-BHT-8-1-2-2               2     160       2          2       98.17  202.0  636.0        20       0
+PostgreSQL-BHT-8-1-1-1               1     160       1          1       98.17  202.0  610.0        20       0
+PostgreSQL-BHT-8-1-1-2               1     160       2          2       98.90  203.5  612.0        20       0
+PostgreSQL-BHT-8-1-2-1               2     160       1          1       97.69  201.0  633.0        20       0
+PostgreSQL-BHT-8-1-2-2               2     160       2          2       97.69  201.0  610.0        20       0
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-8-1 - Pods [[1, 2], [2, 1]]
+DBMS PostgreSQL-BHT-8-1 - Pods [[2, 1], [1, 2]]
 
 #### Planned
 DBMS PostgreSQL-BHT-8-1 - Pods [[1, 2], [1, 2]]
 
 ### Loading
                         time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1-1      100.0        1.0   1.0                      576.0
-PostgreSQL-BHT-8-1-1-2      100.0        1.0   2.0                      576.0
-PostgreSQL-BHT-8-1-2-1      100.0        1.0   1.0                      576.0
-PostgreSQL-BHT-8-1-2-2      100.0        1.0   2.0                      576.0
+PostgreSQL-BHT-8-1-1-1      105.0        1.0   1.0                 548.571429
+PostgreSQL-BHT-8-1-1-2      105.0        1.0   2.0                 548.571429
+PostgreSQL-BHT-8-1-2-1      105.0        1.0   1.0                 548.571429
+PostgreSQL-BHT-8-1-2-2      105.0        1.0   2.0                 548.571429
 
 ### Ingestion - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1      130.43     0.67          3.84                 5.41
-PostgreSQL-BHT-8-1-1-2      130.43     0.67          3.84                 5.41
+PostgreSQL-BHT-8-1-1-1      134.44     0.92          3.72                 5.32
+PostgreSQL-BHT-8-1-1-2      134.44     0.92          3.72                 5.32
 
 ### Ingestion - Loader
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1      265.46        0          0.08                 0.08
-PostgreSQL-BHT-8-1-1-2      265.46        0          0.08                 0.08
+PostgreSQL-BHT-8-1-1-1      313.18        0          0.08                 0.08
+PostgreSQL-BHT-8-1-1-2      313.18        0          0.08                 0.08
 
 ### Execution - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1      873.03     0.95          7.03                 8.50
-PostgreSQL-BHT-8-1-1-2      906.01     1.06          7.16                 8.66
-PostgreSQL-BHT-8-1-2-1     1941.38     1.02          6.53                 8.53
-PostgreSQL-BHT-8-1-2-2     1043.68     1.04          6.61                 8.62
+PostgreSQL-BHT-8-1-1-1      802.91     0.81          7.13                 8.60
+PostgreSQL-BHT-8-1-1-2      845.37     0.85          7.09                 8.58
+PostgreSQL-BHT-8-1-2-1     1750.33     1.11          6.53                 8.52
+PostgreSQL-BHT-8-1-2-2      967.45     1.01          6.57                 8.54
 
 ### Execution - Benchmarker
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       29.01     0.03          0.46                 0.46
-PostgreSQL-BHT-8-1-1-2       28.50     0.06          0.92                 0.92
-PostgreSQL-BHT-8-1-2-1       29.15     0.03          0.46                 0.46
-PostgreSQL-BHT-8-1-2-2       29.15     0.07          0.93                 0.93
+PostgreSQL-BHT-8-1-1-1       30.10     0.13          0.46                 0.46
+PostgreSQL-BHT-8-1-1-2       30.10     0.03          0.92                 0.92
+PostgreSQL-BHT-8-1-2-1       30.17     0.03          0.46                 0.46
+PostgreSQL-BHT-8-1-2-2       30.17     0.11          0.92                 0.92
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

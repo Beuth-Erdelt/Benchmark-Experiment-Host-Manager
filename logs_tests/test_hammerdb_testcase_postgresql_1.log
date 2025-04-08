@@ -2,11 +2,11 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1742989036
-Experiment                    : starts at 2025-03-26 12:37:16.179111 (7181199.649665336)
+Experiment                    : has code 1743784383
+Experiment                    : starts at 2025-04-04 18:33:03.002722 (7976546.473276058)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
-Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
 Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
@@ -19,11 +19,11 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 PostgreSQL-BHT-8-1            : will start now
-PostgreSQL-BHT-8-1            : Name of SUT pods = bexhoma-sut-postgresql-bht-8-1-1742989036
-PostgreSQL-BHT-8-1            : Name of SUT service = bexhoma-sut-postgresql-bht-8-1-1742989036
+PostgreSQL-BHT-8-1            : Name of SUT pods = bexhoma-sut-postgresql-bht-8-1-1743784383
+PostgreSQL-BHT-8-1            : Name of SUT service = bexhoma-sut-postgresql-bht-8-1-1743784383
 PostgreSQL-BHT-8-1            : Name of SUT PVC name = bexhoma-storage-postgresql-hammerdb-16
-PostgreSQL-BHT-8-1            : Name of Worker pods = bexhoma-worker-postgresql-1742989036
-PostgreSQL-BHT-8-1            : Name of Worker service headless = bexhoma-worker-postgresql-1742989036
+PostgreSQL-BHT-8-1            : Name of Worker pods = bexhoma-worker-postgresql-1743784383
+PostgreSQL-BHT-8-1            : Name of Worker service headless = bexhoma-worker-postgresql-1743784383
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : waits for health check to succeed
 - waiting 30s -               : done
@@ -32,10 +32,10 @@ PostgreSQL-BHT-8-1            : waits for health check to succeed
 PostgreSQL-BHT-8-1            : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2025-03-26 11:40:48 (that is in 60 secs)
+PostgreSQL-BHT-8-1            : will start loading but not before 2025-04-04 16:36:34 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2025-03-26 11:40:48
+PostgreSQL-BHT-8-1            : will start loading but not before 2025-04-04 16:36:34
 done
 PostgreSQL-BHT-8-1            : is not loaded yet
 PostgreSQL-BHT-8-1            : start asynch loading scripts of type loaded
@@ -49,12 +49,15 @@ PostgreSQL-BHT-8-1            : is loading
 done
 PostgreSQL-BHT-8-1            : showing loader times
 PostgreSQL-BHT-8-1            : loader timespan (first to last [s]) = 90
+PostgreSQL-BHT-8-1            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-8-1            : is loading
+done
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
+PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'true'}
 PostgreSQL-BHT-8-1-1          : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1742989036
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1743784383
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1742989036-1-1-zvh4z: found
+PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1743784383-1-1-b4j6x: found
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -86,12 +89,12 @@ PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-1          : showing benchmarker times
-PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 466
-PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1742989379, 1742989825)]
-PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1742989379, 1742989825)]}
+PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 464
+PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1743784754, 1743785202)]
+PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1743784754, 1743785202)]}
 done
 PostgreSQL-BHT-8-1            : can be stopped
-Experiment ends at 2025-03-26 12:51:11.543248 (7182035.013801322): 835.364135986194s total
+Experiment ends at 2025-04-04 18:47:27.607824 (7977411.078375823): 864.6050997646526s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -102,12 +105,12 @@ Result workflow complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 836s 
-    Code: 1742989036
+    Duration: 865s 
+    Code: 1743784383
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -125,14 +128,14 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:189403416
+    disk:204804716
     datadisk:3298
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                      experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11736.0  36880.0         5       0
+                      experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+PostgreSQL-BHT-8-1-1               1      16       1          1     14.16     17.86         0.0  11286.0  35013.0         5       0
 
 Warehouses: 16
 

@@ -2,18 +2,18 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1743625318
-Experiment                    : starts at 2025-04-02 22:22:00.815529 (205233.2561187)
+Experiment                    : has code 1744026225
+Experiment                    : starts at 2025-04-07 13:43:45.035042 (8218388.505596885)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=100) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
-Timeout per query is 3600.
+Timeout per query is 7200.
 Benchmark is limited to DBMS ['Citus'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker23.
+SUT is fixed to cl-worker11.
 Database is persisted to disk of type shared and size 150Gi.
 Loading is tested with [1] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
@@ -21,6 +21,492 @@ Benchmarking is run as [1, 1] times the number of benchmarking pods.
 Experiment is run 2 times.
 Cluster monitoring            : is running
 - waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Citus-BHT-8                   : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
 Citus-BHT-8                   : will start now
 Citus-BHT-8                   : Name of SUT pods = bexhoma-sut-citus-bht-8-tpch-100
 Citus-BHT-8                   : Name of SUT service = bexhoma-sut-citus-bht-8-tpch-100
@@ -32,9 +518,9 @@ Citus-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
-Citus-BHT-8                   : found 1 / 4 running workers
-Citus-BHT-8                   : waits for health check of workers to succeed
+Citus-BHT-8                   : waits for health check to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
 Citus-BHT-8                   : found 1 / 4 running workers
@@ -45,6 +531,18 @@ Citus-BHT-8                   : found 1 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
+Citus-BHT-8                   : found 1 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
+Citus-BHT-8                   : found 1 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
+Citus-BHT-8                   : found 2 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
 Citus-BHT-8                   : found 2 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
@@ -54,6 +552,14 @@ Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
 Citus-BHT-8                   : found 2 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
+Citus-BHT-8                   : found 3 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
+Citus-BHT-8                   : found 3 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
@@ -88,34 +594,34 @@ Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-0.bexhoma-w
                1
 (1 row)
 
- 
+
 Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-1.bexhoma-worker-citus-tpch-100 attached
   master_add_node 
 -----------------
                2
 (1 row)
 
- 
+
 Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-2.bexhoma-worker-citus-tpch-100 attached
   master_add_node 
 -----------------
                3
 (1 row)
 
- 
+
 Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-3.bexhoma-worker-citus-tpch-100 attached
   master_add_node 
 -----------------
                4
 (1 row)
 
- 
+
 Citus-BHT-8                   : is not loaded yet
-Citus-BHT-8                   : will start loading but not before 2025-04-02 20:32:48 (that is in 60 secs)
+Citus-BHT-8                   : will start loading but not before 2025-04-07 13:56:21 (that is in 60 secs)
 - waiting 30s -               : done
 Citus-BHT-8                   : is not loaded yet
-Citus-BHT-8                   : will start loading but not before 2025-04-02 20:32:48
-- waiting 30s -               : done
+Citus-BHT-8                   : will start loading but not before 2025-04-07 13:56:21
+done
 Citus-BHT-8                   : is not loaded yet
 Citus-BHT-8                   : start asynch loading scripts of type loaded
 Citus-BHT-8                   : is loading
@@ -214,15 +720,79 @@ Citus-BHT-8                   : is loading
 - waiting 30s -               : done
 Citus-BHT-8                   : is loading
 - waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+done
+Citus-BHT-8                   : is loading
+done
+Citus-BHT-8                   : is loading
+done
 Citus-BHT-8                   : showing loader times
 Citus-BHT-8                   : generator timespan (first to last [s]) = 1
-Citus-BHT-8                   : loader timespan (first to last [s]) = 2366
-Citus-BHT-8                   : total timespan (first to last [s]) = 2374
+Citus-BHT-8                   : loader timespan (first to last [s]) = 2176
+Citus-BHT-8                   : total timespan (first to last [s]) = 2184
 Citus-BHT-8                   : start asynch loading scripts of type indexed
 Citus-BHT-8                   : is loading
 - waiting 30s -               : done
 Citus-BHT-8                   : is loading
 - waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+done
 Citus-BHT-8                   : benchmarks done 0 of 2. This will be client 1
 Citus-BHT-8-1-1               : start benchmarking
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
@@ -231,9 +801,9 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder C:\data\benchmarks/1743625318
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744026225
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743625318-1-1-bqkhj: found
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744026225-1-1-mbmrz: .found
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -543,13 +1113,667 @@ Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-1-1               : showing benchmarker times
-Citus-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 6847
-Citus-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1743628777, 1743635579)]
-Citus-BHT-8-1-1               : found and updated times {'benchmarker': [(1743628777, 1743635579)]}
+Citus-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 14668
+Citus-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1744036728, 1744051373)]
+Citus-BHT-8-1-1               : found and updated times {'benchmarker': [(1744036728, 1744051373)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-- waiting 30s -               : done
+done
 Citus-BHT-8                   : benchmarks done 0 of 2. This will be client 2
 Citus-BHT-8-1-2               : start benchmarking
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
@@ -558,9 +1782,9 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder C:\data\benchmarks/1743625318
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744026225
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743625318-1-2-jhhpn: found
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744026225-1-2-rz5w7: found
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -880,15 +2104,655 @@ Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-1-2               : showing benchmarker times
-Citus-BHT-8-1-2               : benchmarker timespan (start to end single container [s]) = 7023
-Citus-BHT-8-1-2               : benchmarker times (start/end per pod and container) = [(1743635829, 1743642820)]
-Citus-BHT-8-1-2               : found and updated times {'benchmarker': [(1743635829, 1743642820)]}
+Citus-BHT-8-1-2               : benchmarker timespan (start to end single container [s]) = 14568
+Citus-BHT-8-1-2               : benchmarker times (start/end per pod and container) = [(1744051434, 1744065973)]
+Citus-BHT-8-1-2               : found and updated times {'benchmarker': [(1744051434, 1744065973)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-- waiting 30s -               : done
+done
 Citus-BHT-8                   : can be stopped
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
+Citus-BHT-8                   : still being removed
+done
 Citus-BHT-8                   : starts again
 Citus-BHT-8                   : Name of SUT pods = bexhoma-sut-citus-bht-8-tpch-100
 Citus-BHT-8                   : Name of SUT service = bexhoma-sut-citus-bht-8-tpch-100
@@ -897,17 +2761,22 @@ Citus-BHT-8                   : Name of Worker pods = bexhoma-worker-citus-tpch-
 Citus-BHT-8                   : Name of Worker service headless = bexhoma-worker-citus-tpch-100
 Citus-BHT-8                   : storage exists bexhoma-storage-citus-tpch-100
 Citus-BHT-8                   : label loaded copied value True
-Citus-BHT-8                   : label timeLoading copied value 2453
-Citus-BHT-8                   : label timeLoadingStart copied value 1743625995
-Citus-BHT-8                   : label timeLoadingEnd copied value 1743628603
+Citus-BHT-8                   : label timeLoading copied value 2464
+Citus-BHT-8                   : label timeLoadingStart copied value 1744034181
+Citus-BHT-8                   : label timeLoadingEnd copied value 1744036680
 Citus-BHT-8                   : label indexed copied value True
 Citus-BHT-8                   : label time_generated copied value 1
-Citus-BHT-8                   : label time_indexed copied value 69
-Citus-BHT-8                   : label time_ingested copied value 2366
-Citus-BHT-8                   : label time_initstatistics copied value 67
-Citus-BHT-8                   : label time_loaded copied value 10
+Citus-BHT-8                   : label time_indexed copied value 277
+Citus-BHT-8                   : label time_ingested copied value 2176
+Citus-BHT-8                   : label time_initindexes copied value 204
+Citus-BHT-8                   : label time_initstatistics copied value 74
+Citus-BHT-8                   : label time_loaded copied value 3
 Citus-BHT-8                   : loading is set to finished
 - waiting 10s -               : done
+- waiting 30s -               : done
+Citus-BHT-8                   : waits for health check to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
@@ -929,6 +2798,18 @@ Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-1
 Citus-BHT-8                   : found 1 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
+Citus-BHT-8                   : found 1 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
+Citus-BHT-8                   : found 1 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
+Citus-BHT-8                   : found 2 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
 Citus-BHT-8                   : found 2 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
@@ -939,6 +2820,18 @@ Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
 Citus-BHT-8                   : found 2 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
+Citus-BHT-8                   : found 2 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
+Citus-BHT-8                   : found 3 / 4 running workers
+Citus-BHT-8                   : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
+Citus-BHT-8                   : found 3 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
@@ -977,30 +2870,32 @@ Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-0.bexhoma-w
                1
 (1 row)
 
- 
+
 Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-1.bexhoma-worker-citus-tpch-100 attached
   master_add_node 
 -----------------
                2
 (1 row)
 
- 
+
 Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-2.bexhoma-worker-citus-tpch-100 attached
   master_add_node 
 -----------------
                3
 (1 row)
 
- 
+
 Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-3.bexhoma-worker-citus-tpch-100 attached
   master_add_node 
 -----------------
                4
 (1 row)
 
- 
-Citus-BHT-8                   : will start benchmarking but not before 2025-04-03 01:27:05 (that is in 60 secs)
+
+Citus-BHT-8                   : will start benchmarking but not before 2025-04-07 22:59:59 (that is in 60 secs)
 - waiting 30s -               : done
+Citus-BHT-8                   : will start benchmarking but not before 2025-04-07 22:59:59
+done
 Citus-BHT-8                   : benchmarks done 1 of 2. This will be client 1
 Citus-BHT-8-2-1               : start benchmarking
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
@@ -1009,9 +2904,9 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder C:\data\benchmarks/1743625318
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744026225
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743625318-2-1-hl9cc: found
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744026225-2-1-scqn6: found
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -1357,13 +3252,663 @@ Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-2-1               : showing benchmarker times
-Citus-BHT-8-2-1               : benchmarker timespan (start to end single container [s]) = 7383
-Citus-BHT-8-2-1               : benchmarker times (start/end per pod and container) = [(1743643785, 1743651142)]
-Citus-BHT-8-2-1               : found and updated times {'benchmarker': [(1743643785, 1743651142)]}
+Citus-BHT-8-2-1               : benchmarker timespan (start to end single container [s]) = 15121
+Citus-BHT-8-2-1               : benchmarker times (start/end per pod and container) = [(1744066819, 1744081920)]
+Citus-BHT-8-2-1               : found and updated times {'benchmarker': [(1744066819, 1744081920)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-- waiting 30s -               : done
+done
 Citus-BHT-8                   : benchmarks done 1 of 2. This will be client 2
 Citus-BHT-8-2-2               : start benchmarking
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
@@ -1372,9 +3917,9 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder C:\data\benchmarks/1743625318
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744026225
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743625318-2-2-tfx5j: found
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744026225-2-2-j725c: .found
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -1704,18 +4249,604 @@ Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-2-2               : showing benchmarker times
-Citus-BHT-8-2-2               : benchmarker timespan (start to end single container [s]) = 7052
-Citus-BHT-8-2-2               : benchmarker times (start/end per pod and container) = [(1743651367, 1743658372)]
-Citus-BHT-8-2-2               : found and updated times {'benchmarker': [(1743651367, 1743658372)]}
+Citus-BHT-8-2-2               : benchmarker timespan (start to end single container [s]) = 13914
+Citus-BHT-8-2-2               : benchmarker times (start/end per pod and container) = [(1744081994, 1744095885)]
+Citus-BHT-8-2-2               : found and updated times {'benchmarker': [(1744081994, 1744095885)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-- waiting 30s -               : done
+done
 Citus-BHT-8                   : can be stopped
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Experiment                    : ends at 2025-04-03 07:34:57.385768 (238409.0406862) - 33175.78s total
+Experiment                    : ends at 2025-04-08 09:05:27.298132 (8288090.768685343) - 69702.26s total
 Join results done!
-Build evaluation cube done!
+done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -1725,19 +4856,19 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=100
     Type: tpch
-    Duration: 33176s 
-    Code: 1743625318
+    Duration: 69703s 
+    Code: 1744026225
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=100) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q22.
     All instances use the same query parameters.
-    Timeout per query is 3600.
+    Timeout per query is 7200.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker23.
+    SUT is fixed to cl-worker11.
     Database is persisted to disk of type shared and size 150Gi.
     Loading is tested with [1] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
@@ -1746,255 +4877,258 @@ TPC-H Queries SF=100
 
 ### Connections
 Citus-BHT-8-1-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:540595900416
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
     host:5.15.0-134-generic
-    node:cl-worker23
-    disk:150068704
+    node:cl-worker11
+    disk:201456096
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
     requests_memory:16Gi
     worker 0
+        RAM:540595888128
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:150886672
+        volume_size:150.0G
+        volume_used:81.6G
+    worker 1
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:964828700
+        disk:1106521816
         volume_size:150.0G
-        volume_used:66.8G
-    worker 1
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:228194684
-        volume_size:150.0G
-        volume_used:67.1G
+        volume_used:81.7G
     worker 2
         RAM:540595879936
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker25
-        disk:131441884
+        disk:177751696
         volume_size:150.0G
-        volume_used:67.0G
+        volume_used:81.1G
     worker 3
-        RAM:540595900416
+        RAM:540595896320
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:150068708
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:173582400
         volume_size:150.0G
-        volume_used:67.3G
+        volume_used:81.5G
 Citus-BHT-8-1-2-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:540595900416
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
     host:5.15.0-134-generic
-    node:cl-worker23
-    disk:150069092
+    node:cl-worker11
+    disk:201457056
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:964826372
-        volume_size:150.0G
-        volume_used:66.8G
-    worker 1
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:228213500
-        volume_size:150.0G
-        volume_used:67.1G
-    worker 2
-        RAM:540595879936
+        RAM:540595888128
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:131442156
-        volume_size:150.0G
-        volume_used:67.0G
-    worker 3
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
+        host:5.15.0-136-generic
         node:cl-worker23
-        disk:150069148
+        disk:150887632
         volume_size:150.0G
-        volume_used:67.3G
+        volume_used:81.6G
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:1106445592
+        volume_size:150.0G
+        volume_used:81.7G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:177752256
+        volume_size:150.0G
+        volume_used:81.1G
+    worker 3
+        RAM:540595896320
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:173592692
+        volume_size:150.0G
+        volume_used:81.5G
 Citus-BHT-8-2-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:540595900416
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
     host:5.15.0-134-generic
-    node:cl-worker23
-    disk:150069500
+    node:cl-worker11
+    disk:201273896
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
     requests_memory:16Gi
     worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:300615868
+        volume_size:150.0G
+        volume_used:81.9G
+    worker 1
+        RAM:540595888128
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:150888572
+        volume_size:150.0G
+        volume_used:81.9G
+    worker 2
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:964855892
+        disk:1106453396
         volume_size:150.0G
-        volume_used:68.8G
-    worker 1
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:228241076
-        volume_size:150.0G
-        volume_used:68.8G
-    worker 2
+        volume_used:81.9G
+    worker 3
         RAM:540595879936
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker25
-        disk:131442452
+        disk:177752832
         volume_size:150.0G
-        volume_used:68.8G
-    worker 3
-        RAM:540595896320
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker24
-        disk:97662180
-        volume_size:150.0G
-        volume_used:68.9G
+        volume_used:81.9G
 Citus-BHT-8-2-2-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:540595900416
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
     host:5.15.0-134-generic
-    node:cl-worker23
-    disk:150069964
+    node:cl-worker11
+    disk:201435004
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
     requests_memory:16Gi
     worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:300641172
+        volume_size:150.0G
+        volume_used:81.9G
+    worker 1
+        RAM:540595888128
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:150889500
+        volume_size:150.0G
+        volume_used:81.9G
+    worker 2
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:964875968
+        disk:1106474920
         volume_size:150.0G
-        volume_used:68.8G
-    worker 1
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:228251876
-        volume_size:150.0G
-        volume_used:68.8G
-    worker 2
+        volume_used:81.9G
+    worker 3
         RAM:540595879936
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
         node:cl-worker25
-        disk:131442740
+        disk:177753408
         volume_size:150.0G
-        volume_used:68.8G
-    worker 3
-        RAM:540595896320
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker24
-        disk:97680092
-        volume_size:150.0G
-        volume_used:68.9G
+        volume_used:81.9G
 
 ### Errors (failed queries)
-No errors
+                                      Citus-BHT-8-1-1-1  Citus-BHT-8-1-2-1  Citus-BHT-8-2-1-1  Citus-BHT-8-2-2-1
+Potential Part Promotion (TPC-H Q20)              False               True               True              False
+Potential Part Promotion (TPC-H Q20)
+Citus-BHT-8-2-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
+Citus-BHT-8-1-2-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 Citus-BHT-8-1-1-1  Citus-BHT-8-1-2-1  Citus-BHT-8-2-1-1  Citus-BHT-8-2-2-1
-Pricing Summary Report (TPC-H Q1)                              9817.97            9768.36           29706.33            9746.19
-Minimum Cost Supplier Query (TPC-H Q2)                        13903.86           10344.75          237955.66            9966.38
-Shipping Priority (TPC-H Q3)                                   8224.88            7126.21           44097.08            7152.41
-Order Priority Checking Query (TPC-H Q4)                       4329.75            4279.18            4433.30            4311.72
-Local Supplier Volume (TPC-H Q5)                               8258.12            8333.89           11033.26            8303.91
-Forecasting Revenue Change (TPC-H Q6)                          3607.67            3611.15            3533.62            3553.92
-Forecasting Revenue Change (TPC-H Q7)                          7445.49            7569.37            7422.12            7349.39
-National Market Share (TPC-H Q8)                              10979.29           11196.61           39906.67           11048.30
-Product Type Profit Measure (TPC-H Q9)                      2629886.25         2614289.26         2575942.90         2615162.65
-Forecasting Revenue Change (TPC-H Q10)                        26582.40           26465.46           26712.02           26488.18
-Important Stock Identification (TPC-H Q11)                     5158.33            5348.12            5157.08            5295.08
-Shipping Modes and Order Priority (TPC-H Q12)                  6018.41            5951.84            6017.65            5990.53
-Customer Distribution (TPC-H Q13)                            542494.93          482145.47          553149.61          548891.86
-Forecasting Revenue Change (TPC-H Q14)                         6201.46            6284.01            6132.82            6238.80
-Top Supplier Query (TPC-H Q15)                                23687.01           23311.11           24411.85           24420.74
-Parts/Supplier Relationship (TPC-H Q16)                       66507.14           65871.33           65679.41           66634.93
-Small-Quantity-Order Revenue (TPC-H Q17)                     965922.38          995559.60          960229.40          946565.52
-Large Volume Customer (TPC-H Q18)                             13820.36           13910.52           14281.53           13799.29
-Discounted Revenue (TPC-H Q19)                                10472.11           10630.86           10307.96           10238.02
-Potential Part Promotion (TPC-H Q20)                        1578186.95         1836125.18         1747232.73         1779007.34
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          588694.79          589671.77          613225.53          592447.02
-Global Sales Opportunity Query (TPC-H Q22)                   254648.95          236995.71          352324.35          285427.21
+Pricing Summary Report (TPC-H Q1)                             10075.00            9774.92           32981.40            9921.69
+Minimum Cost Supplier Query (TPC-H Q2)                        11459.34           12170.48          263996.95           11772.20
+Shipping Priority (TPC-H Q3)                                   7226.02            7189.90           46729.23            7327.09
+Order Priority Checking Query (TPC-H Q4)                       4350.75            4352.32            4388.05            4317.57
+Local Supplier Volume (TPC-H Q5)                               8380.54            8361.04           10159.60            8402.74
+Forecasting Revenue Change (TPC-H Q6)                          3635.72            3569.60            3538.01            3516.43
+Forecasting Revenue Change (TPC-H Q7)                          7652.41            7677.64            7723.97            7597.95
+National Market Share (TPC-H Q8)                              11745.87           11520.25           42529.89           11490.19
+Product Type Profit Measure (TPC-H Q9)                      2664824.26         2647863.41         2630200.24         2661439.64
+Forecasting Revenue Change (TPC-H Q10)                        44035.84           43483.22           42725.77           42714.14
+Important Stock Identification (TPC-H Q11)                     6115.77            5301.34           15323.61            5895.25
+Shipping Modes and Order Priority (TPC-H Q12)                  6067.50            6079.08            5942.04            5963.05
+Customer Distribution (TPC-H Q13)                           1435194.82         1323465.15         1423562.32         1347278.54
+Forecasting Revenue Change (TPC-H Q14)                         6346.19            6335.67            6179.17            6193.48
+Top Supplier Query (TPC-H Q15)                                39800.70           40458.60           39226.16           39295.14
+Parts/Supplier Relationship (TPC-H Q16)                       73815.51           73383.17           70507.91           67818.87
+Small-Quantity-Order Revenue (TPC-H Q17)                    2345331.24         1547119.24         1676623.97         1693408.57
+Large Volume Customer (TPC-H Q18)                             13898.44           14381.02           13932.67           14469.85
+Discounted Revenue (TPC-H Q19)                                10295.74           10761.63           10725.49           10587.28
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          583668.36          581451.97          587546.37          578167.00
+Global Sales Opportunity Query (TPC-H Q22)                   907286.59          956709.23          951160.87          941509.82
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-Citus-BHT-8-1-1-1           1.0         2366.0        10.0       69.0    2453.0
-Citus-BHT-8-1-2-1           1.0         2366.0        10.0       69.0    2453.0
-Citus-BHT-8-2-1-1           1.0         2366.0        10.0       69.0    2453.0
-Citus-BHT-8-2-2-1           1.0         2366.0        10.0       69.0    2453.0
+Citus-BHT-8-1-1-1           1.0         2176.0         3.0      277.0    2464.0
+Citus-BHT-8-1-2-1           1.0         2176.0         3.0      277.0    2464.0
+Citus-BHT-8-2-1-1           1.0         2176.0         3.0      277.0    2464.0
+Citus-BHT-8-2-2-1           1.0         2176.0         3.0      277.0    2464.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-Citus-BHT-8-1-1-1          34.40
-Citus-BHT-8-1-2-1          33.69
-Citus-BHT-8-2-1-1          48.67
-Citus-BHT-8-2-2-1          33.94
+Citus-BHT-8-1-1-1          35.08
+Citus-BHT-8-1-2-1          34.19
+Citus-BHT-8-2-1-1          51.31
+Citus-BHT-8-2-2-1          34.24
 
 ### Power@Size
                    Power@Size [~Q/h]
 DBMS                                
-Citus-BHT-8-1-1-1           10631.47
-Citus-BHT-8-1-2-1           10822.79
-Citus-BHT-8-2-1-1            7493.79
-Citus-BHT-8-2-2-1           10749.07
+Citus-BHT-8-1-1-1           10412.67
+Citus-BHT-8-1-2-1           10679.86
+Citus-BHT-8-2-1-1            7053.25
+Citus-BHT-8-2-2-1           10685.35
 
 ### Throughput@Size
                                                time [s]  count   SF  Throughput@Size [~GB/h]
 DBMS            SF  num_experiment num_client                                               
-Citus-BHT-8-1-1 100 1              1               6802      1  100                  1164.36
-Citus-BHT-8-1-2 100 1              2               6991      1  100                  1132.89
-Citus-BHT-8-2-1 100 2              1               7357      1  100                  1076.53
-Citus-BHT-8-2-2 100 2              2               7005      1  100                  1130.62
+Citus-BHT-8-1-1 100 1              1              14645      1  100                   540.80
+Citus-BHT-8-1-2 100 1              2              14539      1  100                   544.74
+Citus-BHT-8-2-1 100 2              1              15101      1  100                   524.47
+Citus-BHT-8-2-2 100 2              2              13891      1  100                   570.15
 
 ### Workflow
 
@@ -2008,6 +5142,6 @@ DBMS Citus-BHT-8 - Pods [[1, 1], [1, 1]]
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
-TEST passed: No SQL errors
+TEST failed: SQL errors
 TEST passed: No SQL warnings
 TEST passed: Workflow as planned
