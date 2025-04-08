@@ -137,7 +137,7 @@ if __name__ == '__main__':
     ycsb_operations = int(SFO)*1000000
     target_base = int(args.target_base)
     batchsize = args.scaling_batchsize
-    scaling_logging = int(args.scaling_logging)*1000 # adjust unit to miliseconds
+    scaling_logging = int(args.scaling_logging) # ycsb expects seconds? *1000 # adjust unit to miliseconds
     ##############
     ### set cluster
     ##############

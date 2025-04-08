@@ -2298,7 +2298,7 @@ class tpcc(default):
         if SD:
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
         if extra_keying:
-            self.workload['info'] = self.workload['info']+" Benchmarking has keying and waiting times activated."
+            self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
         if extra_latency:
             self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
         default.prepare_testbed(self, parameter)
@@ -3096,6 +3096,7 @@ class benchbase(default):
         SD = int(args.scaling_duration)*60
         target_base = int(args.target_base)
         type_of_benchmark = args.benchmark
+        extra_keying = int(args.extra_keying)
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             self.set_workload(
@@ -3117,6 +3118,8 @@ class benchbase(default):
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
         self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
         self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        if extra_keying:
+            self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
         default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
@@ -3292,7 +3295,7 @@ class benchbase(default):
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
             #columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
-            columns = ["time", "num_errors", "Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]

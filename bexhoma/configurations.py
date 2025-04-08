@@ -1152,9 +1152,11 @@ scrape_configs:
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         print("{:30s}: Name of SUT pods = {}".format(configuration, name))
         print("{:30s}: Name of SUT service = {}".format(configuration, name))
-        print("{:30s}: Name of SUT PVC name = {}".format(configuration, name_pvc))
-        print("{:30s}: Name of Worker pods = {}".format(configuration, name_worker))
-        print("{:30s}: Name of Worker service headless = {}".format(configuration, name_worker))
+        if use_storage:
+            print("{:30s}: Name of SUT PVC name = {}".format(configuration, name_pvc))
+        if self.num_worker > 0:
+            print("{:30s}: Name of Worker pods = {}".format(configuration, name_worker))
+            print("{:30s}: Name of Worker service headless = {}".format(configuration, name_worker))
         # ENV
         # default empty: env = {}
         env = self.sut_parameters #self.sut_envs.copy()

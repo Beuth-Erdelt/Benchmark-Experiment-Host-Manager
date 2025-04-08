@@ -531,3 +531,194 @@ TEST passed: Workflow as planned
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 Also note the size increases from first to second run (benchmark writes data).
+
+## Keying and Thinking Time
+
+We can activate waiting times before and after execution of transactions with `-xkey` to follow TPC-C specifications more closely.
+Also also make sure, the number of driver threads (`-nbt`) is 10 times the number of warehouses (`-sf`).
+
+We at first remove persistent storage
+```bash
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-160
+```
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 160 \
+  -sd 30 \
+  -xkey \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1,2,5,10 \
+  -nbt 1600 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_keytime.log &
+```
+
+## Evaluate Results
+
+```
+## Show Summary
+
+### Workload
+Benchbase Workload SF=160 (warehouses for TPC-C)
+    Type: benchbase
+    Duration: 9779s 
+    Code: 1744035325
+    Benchbase runs the benchmark.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 160. Benchmarking runs for 30 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [1600] threads, split into [1, 2, 5, 10] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201456096
+    datadisk:43930
+    volume_size:100G
+    volume_used:43G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1744035325
+PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201488460
+    datadisk:47149
+    volume_size:100G
+    volume_used:43G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1744035325
+PostgreSQL-1-1-1024-3 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201448892
+    datadisk:47863
+    volume_size:100G
+    volume_used:47G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:3
+    numExperiment:1
+    eval_parameters
+                code:1744035325
+PostgreSQL-1-1-1024-4 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201446012
+    datadisk:48063
+    volume_size:100G
+    volume_used:47G
+    requests_cpu:4
+    requests_memory:16Gi
+    client:4
+    numExperiment:1
+    eval_parameters
+                code:1744035325
+
+### Execution
+                       experiment_run  terminals  target  pod_count    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1       1600    1024          1  1800.0           0                         76.55                      76.20       99.99                                                      13878.0                                               7486.0
+PostgreSQL-1-1-1024-2               1       1600    1024          2  1800.0           0                         76.34                      76.01       99.74                                                      14168.0                                               7715.5
+PostgreSQL-1-1-1024-3               1       1600    1020          5  1800.0           0                         76.65                      76.31      100.14                                                      14910.0                                               7880.0
+PostgreSQL-1-1-1024-4               1       1600    1020         10  1800.0           0                         76.50                      76.15       99.93                                                      18267.0                                               8291.7
+
+Warehouses: 160
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 5, 10]]
+
+#### Planned
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 5, 10]]
+
+### Loading
+                       time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-1-1-1024-1     1211.0        1.0   1.0                 475.639967
+PostgreSQL-1-1-1024-2     1211.0        1.0   2.0                 475.639967
+PostgreSQL-1-1-1024-3     1211.0        1.0   5.0                 475.639967
+PostgreSQL-1-1-1024-4     1211.0        1.0  10.0                 475.639967
+
+### Ingestion - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1     7514.54    11.17         18.42                34.39
+PostgreSQL-1-1-1024-2     7514.54    11.17         18.42                34.39
+PostgreSQL-1-1-1024-3     7514.54    11.17         18.42                34.39
+PostgreSQL-1-1-1024-4     7514.54    11.17         18.42                34.39
+
+### Ingestion - Loader
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1    14843.91    15.17          1.34                 1.34
+PostgreSQL-1-1-1024-2    14843.91    15.17          1.34                 1.34
+PostgreSQL-1-1-1024-3    14843.91    15.17          1.34                 1.34
+PostgreSQL-1-1-1024-4    14843.91    15.17          1.34                 1.34
+
+### Execution - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      590.51     0.66         28.37                44.63
+PostgreSQL-1-1-1024-2      619.71     0.54         29.03                45.49
+PostgreSQL-1-1-1024-3      643.01     0.42         29.91                46.58
+PostgreSQL-1-1-1024-4      664.16     0.47         30.71                47.57
+
+### Execution - Benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      421.89     0.72          6.45                 6.45
+PostgreSQL-1-1-1024-2      427.08     0.76          6.45                 6.45
+PostgreSQL-1-1-1024-3      653.73     1.58          4.86                 4.86
+PostgreSQL-1-1-1024-4      683.40     1.01          4.21                 4.21
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
+Now also efficiency is computed via `0.45 * 60. * 100. * Goodput (requests/second) / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
+* 45% is the average portion of new orders in the set of transactions
+* 60 transforms to per-minute
+* 100 makes it a percentage value
+* Goodput (requests/second) is the number of successful transactions per second
+* sf is the number of warehouses
+* 12.86 is the theoretical limit in the TPC-C speficications
+
+Note that these are statistical values.
