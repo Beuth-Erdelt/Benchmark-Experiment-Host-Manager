@@ -480,7 +480,7 @@ nohup python tpch.py -ms 1 -tr \
   -nwr 1 \
   -nws 48 \
   -dt \
-  -t 7200 \
+  -t 14400 \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ii -ic -is \
@@ -510,7 +510,7 @@ nohup python tpch.py -ms 1 -tr \
   -nwr 1 \
   -nws 48 \
   -dt \
-  -t 7200 \
+  -t 14400 \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -icol \

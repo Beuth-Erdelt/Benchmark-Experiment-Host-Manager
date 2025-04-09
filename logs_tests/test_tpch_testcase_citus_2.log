@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1743800949
-Experiment                    : starts at 2025-04-04 23:09:09.498884 (7993112.969439046)
+Experiment                    : has code 1744130893
+Experiment                    : starts at 2025-04-08 18:48:13.017198 (8323056.487752947)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=100) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
-Timeout per query is 7200.
+Timeout per query is 14400.
 Import sets indexes and constraints after loading and recomputes statistics.
 Benchmark is limited to DBMS ['Citus'].
 Import is handled by 8 processes (pods).
@@ -86,10 +86,6 @@ Citus-BHT-8                   : found 3 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : found 3 / 4 running workers
-Citus-BHT-8                   : waits for health check of workers to succeed
-- waiting 30s -               : done
-Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
 Citus-BHT-8                   : found 4 / 4 running workers
 Citus-BHT-8                   : try to attach workers to master
 Citus-BHT-8                   : master found
@@ -132,10 +128,10 @@ Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-3.bexhoma-w
 
 
 Citus-BHT-8                   : is not loaded yet
-Citus-BHT-8                   : will start loading but not before 2025-04-04 21:19:51 (that is in 60 secs)
+Citus-BHT-8                   : will start loading but not before 2025-04-08 16:58:25 (that is in 60 secs)
 - waiting 30s -               : done
 Citus-BHT-8                   : is not loaded yet
-Citus-BHT-8                   : will start loading but not before 2025-04-04 21:19:51
+Citus-BHT-8                   : will start loading but not before 2025-04-08 16:58:25
 done
 Citus-BHT-8                   : is not loaded yet
 Citus-BHT-8                   : start asynch loading scripts of type loaded
@@ -310,7 +306,13 @@ Citus-BHT-8                   : is loading
 Citus-BHT-8                   : is loading
 - waiting 30s -               : done
 Citus-BHT-8                   : is loading
-done
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
+Citus-BHT-8                   : is loading
+- waiting 30s -               : done
 Citus-BHT-8                   : is loading
 done
 Citus-BHT-8                   : is loading
@@ -319,15 +321,9 @@ Citus-BHT-8                   : is loading
 done
 Citus-BHT-8                   : showing loader times
 Citus-BHT-8                   : generator timespan (first to last [s]) = 1
-Citus-BHT-8                   : loader timespan (first to last [s]) = 2686
-Citus-BHT-8                   : total timespan (first to last [s]) = 2697
+Citus-BHT-8                   : loader timespan (first to last [s]) = 2774
+Citus-BHT-8                   : total timespan (first to last [s]) = 2782
 Citus-BHT-8                   : start asynch loading scripts of type indexed
-Citus-BHT-8                   : is loading
-- waiting 30s -               : done
-Citus-BHT-8                   : is loading
-- waiting 30s -               : done
-Citus-BHT-8                   : is loading
-- waiting 30s -               : done
 Citus-BHT-8                   : is loading
 - waiting 30s -               : done
 Citus-BHT-8                   : is loading
@@ -430,9 +426,39 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1743800949
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744130893
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743800949-1-1-c2mk5: found
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744130893-1-1-g5xz7: .found
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -1142,9 +1168,9 @@ Citus-BHT-8                   : has running benchmarks
 done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-1-1               : showing benchmarker times
-Citus-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 10761
-Citus-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1743805878, 1743816620)]
-Citus-BHT-8-1-1               : found and updated times {'benchmarker': [(1743805878, 1743816620)]}
+Citus-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 11215
+Citus-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1744135785, 1744146981)]
+Citus-BHT-8-1-1               : found and updated times {'benchmarker': [(1744135785, 1744146981)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
 done
 Citus-BHT-8                   : benchmarks done 0 of 2. This will be client 2
@@ -1155,9 +1181,23 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1743800949
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744130893
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743800949-1-2-dwqj2: found
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744130893-1-2-p9jzc: found
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -1901,9 +1941,9 @@ Citus-BHT-8                   : has running benchmarks
 done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-1-2               : showing benchmarker times
-Citus-BHT-8-1-2               : benchmarker timespan (start to end single container [s]) = 11274
-Citus-BHT-8-1-2               : benchmarker times (start/end per pod and container) = [(1743816678, 1743827937)]
-Citus-BHT-8-1-2               : found and updated times {'benchmarker': [(1743816678, 1743827937)]}
+Citus-BHT-8-1-2               : benchmarker timespan (start to end single container [s]) = 11485
+Citus-BHT-8-1-2               : benchmarker times (start/end per pod and container) = [(1744147037, 1744158490)]
+Citus-BHT-8-1-2               : found and updated times {'benchmarker': [(1744147037, 1744158490)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
 done
 Citus-BHT-8                   : can be stopped
@@ -1918,18 +1958,18 @@ Citus-BHT-8                   : Name of Worker pods = bexhoma-worker-citus-tpch-
 Citus-BHT-8                   : Name of Worker service headless = bexhoma-worker-citus-tpch-100
 Citus-BHT-8                   : storage exists bexhoma-storage-citus-tpch-100
 Citus-BHT-8                   : label loaded copied value True
-Citus-BHT-8                   : label timeLoading copied value 4191
-Citus-BHT-8                   : label timeLoadingStart copied value 1743801592
-Citus-BHT-8                   : label timeLoadingEnd copied value 1743805834
+Citus-BHT-8                   : label timeLoading copied value 4178
+Citus-BHT-8                   : label timeLoadingStart copied value 1744131506
+Citus-BHT-8                   : label timeLoadingEnd copied value 1744135734
 Citus-BHT-8                   : label indexed copied value True
 Citus-BHT-8                   : label time_generated copied value 1
-Citus-BHT-8                   : label time_indexed copied value 1490
-Citus-BHT-8                   : label time_ingested copied value 2686
-Citus-BHT-8                   : label time_initconstraints copied value 1215
-Citus-BHT-8                   : label time_initindexes copied value 246
-Citus-BHT-8                   : label time_initschema copied value 4
-Citus-BHT-8                   : label time_initstatistics copied value 30
-Citus-BHT-8                   : label time_loaded copied value 4
+Citus-BHT-8                   : label time_indexed copied value 1393
+Citus-BHT-8                   : label time_ingested copied value 2774
+Citus-BHT-8                   : label time_initconstraints copied value 1185
+Citus-BHT-8                   : label time_initindexes copied value 181
+Citus-BHT-8                   : label time_initschema copied value 3
+Citus-BHT-8                   : label time_initstatistics copied value 27
+Citus-BHT-8                   : label time_loaded copied value 3
 Citus-BHT-8                   : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
@@ -1941,18 +1981,12 @@ Citus-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-Citus-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
-Citus-BHT-8                   : found 1 / 4 running workers
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0']
+Citus-BHT-8                   : found 0 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
-Citus-BHT-8                   : found 1 / 4 running workers
-Citus-BHT-8                   : waits for health check of workers to succeed
-- waiting 30s -               : done
-Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
-Citus-BHT-8                   : found 1 / 4 running workers
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0']
+Citus-BHT-8                   : found 0 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1']
@@ -2051,8 +2085,8 @@ Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-1
 Citus-BHT-8                   : found 2 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : found 3 / 4 running workers
+Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2']
+Citus-BHT-8                   : found 2 / 4 running workers
 Citus-BHT-8                   : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
@@ -2149,9 +2183,9 @@ Citus-BHT-8                   : worker bexhoma-worker-citus-tpch-100-3.bexhoma-w
 (1 row)
 
 
-Citus-BHT-8                   : will start benchmarking but not before 2025-04-05 05:05:06 (that is in 60 secs)
+Citus-BHT-8                   : will start benchmarking but not before 2025-04-09 00:53:38 (that is in 60 secs)
 - waiting 30s -               : done
-Citus-BHT-8                   : will start benchmarking but not before 2025-04-05 05:05:06
+Citus-BHT-8                   : will start benchmarking but not before 2025-04-09 00:53:38
 done
 Citus-BHT-8                   : benchmarks done 1 of 2. This will be client 1
 Citus-BHT-8-2-1               : start benchmarking
@@ -2161,15 +2195,9 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1743800949
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744130893
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743800949-2-1-b224j: .found
-- waiting 30s -               : done
-Citus-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-Citus-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-Citus-BHT-8                   : has running benchmarks
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744130893-2-1-r4mjr: .found
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -2955,9 +2983,9 @@ Citus-BHT-8                   : has running benchmarks
 done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-2-1               : showing benchmarker times
-Citus-BHT-8-2-1               : benchmarker timespan (start to end single container [s]) = 12001
-Citus-BHT-8-2-1               : benchmarker times (start/end per pod and container) = [(1743829536, 1743841511)]
-Citus-BHT-8-2-1               : found and updated times {'benchmarker': [(1743829536, 1743841511)]}
+Citus-BHT-8-2-1               : benchmarker timespan (start to end single container [s]) = 11905
+Citus-BHT-8-2-1               : benchmarker times (start/end per pod and container) = [(1744160048, 1744171931)]
+Citus-BHT-8-2-1               : found and updated times {'benchmarker': [(1744160048, 1744171931)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
 done
 Citus-BHT-8                   : benchmarks done 1 of 2. This will be client 2
@@ -2968,9 +2996,15 @@ Citus-BHT-8                   : distributed system - get host info for worker be
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-2
 Citus-BHT-8                   : distributed system - get host info for worker bexhoma-worker-citus-tpch-100-3
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1743800949
+Citus-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1744130893
 - waiting 10s -               : done
-Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1743800949-2-2-rc4mt: found
+Citus-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1744130893-2-2-9tphp: found
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
+- waiting 30s -               : done
+Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-8                   : has running benchmarks
 - waiting 30s -               : done
@@ -3720,14 +3754,14 @@ Citus-BHT-8                   : has running benchmarks
 done
 Citus-BHT-8                   : has running benchmarks
 Citus-BHT-8-2-2               : showing benchmarker times
-Citus-BHT-8-2-2               : benchmarker timespan (start to end single container [s]) = 11357
-Citus-BHT-8-2-2               : benchmarker times (start/end per pod and container) = [(1743841571, 1743852914)]
-Citus-BHT-8-2-2               : found and updated times {'benchmarker': [(1743841571, 1743852914)]}
+Citus-BHT-8-2-2               : benchmarker timespan (start to end single container [s]) = 11441
+Citus-BHT-8-2-2               : benchmarker times (start/end per pod and container) = [(1744171987, 1744183411)]
+Citus-BHT-8-2-2               : found and updated times {'benchmarker': [(1744171987, 1744183411)]}
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
 done
 Citus-BHT-8                   : can be stopped
 Citus-BHT-8                   : Worker pods found: ['bexhoma-worker-citus-tpch-100-0', 'bexhoma-worker-citus-tpch-100-1', 'bexhoma-worker-citus-tpch-100-2', 'bexhoma-worker-citus-tpch-100-3']
-Experiment                    : ends at 2025-04-05 13:35:57.880102 (8045121.350656131) - 52008.38s total
+Experiment                    : ends at 2025-04-09 09:24:18.067076 (8375621.537629388) - 52565.05s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -3739,14 +3773,14 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=100
     Type: tpch
-    Duration: 52009s 
-    Code: 1743800949
+    Duration: 52566s 
+    Code: 1744130893
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=100) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q22.
     All instances use the same query parameters.
-    Timeout per query is 7200.
+    Timeout per query is 14400.
     Import sets indexes and constraints after loading and recomputes statistics.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 8 processes (pods).
@@ -3766,7 +3800,7 @@ Citus-BHT-8-1-1-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201402208
+    disk:201974568
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
@@ -3777,43 +3811,49 @@ Citus-BHT-8-1-1-1 uses docker image citusdata/citus:13.0.2-alpine
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:977282176
+        disk:1107772292
         volume_size:150.0G
-        volume_used:103.7G
+        volume_used:105.8G
     worker 1
-        RAM:540595900416
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:302265020
+        volume_size:150.0G
+        volume_used:105.5G
+    worker 2
+        RAM:540595896320
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:169786012
+        volume_size:150.0G
+        volume_used:105.4G
+    worker 3
+        RAM:540595879936
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
-        node:cl-worker23
-        disk:151105404
+        node:cl-worker25
+        disk:204431292
         volume_size:150.0G
-        volume_used:104.9G
-    worker 2
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:234704716
-        volume_size:150.0G
-        volume_used:105.9G
-    worker 3
-        RAM:1081650987008
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:5.15.0-134-generic
-        node:cl-worker34
-        disk:301036320
-        volume_size:150.0G
-        volume_used:105.7G
+        volume_used:104.2G
+    eval_parameters
+        code:1744130893
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
 Citus-BHT-8-1-2-1 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201453388
+    disk:201975088
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
@@ -3824,197 +3864,210 @@ Citus-BHT-8-1-2-1 uses docker image citusdata/citus:13.0.2-alpine
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:977642272
+        disk:1108146852
         volume_size:150.0G
-        volume_used:103.7G
+        volume_used:105.8G
     worker 1
-        RAM:540595900416
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:302276000
+        volume_size:150.0G
+        volume_used:105.5G
+    worker 2
+        RAM:540595896320
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:170231784
+        volume_size:150.0G
+        volume_used:105.4G
+    worker 3
+        RAM:540595879936
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-134-generic
-        node:cl-worker23
-        disk:151106076
+        node:cl-worker25
+        disk:204431712
         volume_size:150.0G
-        volume_used:104.9G
-    worker 2
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:234707400
-        volume_size:150.0G
-        volume_used:105.9G
-    worker 3
-        RAM:1081650987008
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:5.15.0-134-generic
-        node:cl-worker34
-        disk:301054020
-        volume_size:150.0G
-        volume_used:105.7G
+        volume_used:104.2G
+    eval_parameters
+        code:1744130893
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
 Citus-BHT-8-2-1-1 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201435504
+    disk:201975752
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
     requests_memory:16Gi
     worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:302280976
+        volume_size:150.0G
+        volume_used:104.8G
+    worker 1
+        RAM:540595888128
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:209624884
+        volume_size:150.0G
+        volume_used:101.6G
+    worker 2
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:978073124
+        disk:1108580488
         volume_size:150.0G
-        volume_used:104.8G
-    worker 1
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:151106836
-        volume_size:150.0G
-        volume_used:101.4G
-    worker 2
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:234717936
-        volume_size:150.0G
-        volume_used:100.8G
+        volume_used:100.0G
     worker 3
         RAM:540595896320
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-134-generic
+        host:5.15.0-136-generic
         node:cl-worker24
-        disk:127009108
+        disk:170236612
         volume_size:150.0G
-        volume_used:100.7G
+        volume_used:101.9G
+    eval_parameters
+        code:1744130893
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
 Citus-BHT-8-2-2-1 uses docker image citusdata/citus:13.0.2-alpine
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201430504
+    disk:201976268
     volume_size:150.0G
     volume_used:40.0M
     requests_cpu:4
     requests_memory:16Gi
     worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:302292872
+        volume_size:150.0G
+        volume_used:104.8G
+    worker 1
+        RAM:540595888128
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:209625608
+        volume_size:150.0G
+        volume_used:101.6G
+    worker 2
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:978484332
+        disk:1108969508
         volume_size:150.0G
-        volume_used:104.8G
-    worker 1
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:151107616
-        volume_size:150.0G
-        volume_used:101.4G
-    worker 2
-        RAM:540587544576
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker22
-        disk:234737332
-        volume_size:150.0G
-        volume_used:100.8G
+        volume_used:100.0G
     worker 3
         RAM:540595896320
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-134-generic
+        host:5.15.0-136-generic
         node:cl-worker24
-        disk:127010424
+        disk:170238548
         volume_size:150.0G
-        volume_used:100.7G
+        volume_used:101.9G
+    eval_parameters
+        code:1744130893
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
 
 ### Errors (failed queries)
-                                      Citus-BHT-8-1-1-1  Citus-BHT-8-1-2-1  Citus-BHT-8-2-1-1  Citus-BHT-8-2-2-1
-Potential Part Promotion (TPC-H Q20)               True               True               True               True
-Potential Part Promotion (TPC-H Q20)
-Citus-BHT-8-1-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
-Citus-BHT-8-2-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
-Citus-BHT-8-2-2-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
-Citus-BHT-8-1-2-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
+No errors
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 Citus-BHT-8-1-1-1  Citus-BHT-8-1-2-1  Citus-BHT-8-2-1-1  Citus-BHT-8-2-2-1
-Pricing Summary Report (TPC-H Q1)                              1963.14            2010.07          110388.32            1895.41
-Minimum Cost Supplier Query (TPC-H Q2)                        12835.49           10173.53          240014.14           10985.30
-Shipping Priority (TPC-H Q3)                                   2893.64            2914.81           53580.31            2806.84
-Order Priority Checking Query (TPC-H Q4)                       1626.54            1649.45            2076.47            1511.33
-Local Supplier Volume (TPC-H Q5)                               4644.29            4530.32            4586.54            4470.12
-Forecasting Revenue Change (TPC-H Q6)                          1010.96             994.70             935.43             901.61
-Forecasting Revenue Change (TPC-H Q7)                          2755.31            2597.66            8433.03            2426.49
-National Market Share (TPC-H Q8)                               3073.48            3051.28           50654.85            3067.60
-Product Type Profit Measure (TPC-H Q9)                        10314.51           10066.50           26291.84            9904.96
-Forecasting Revenue Change (TPC-H Q10)                        38608.06           38428.77           38548.82           38107.14
-Important Stock Identification (TPC-H Q11)                     4897.75            4782.77           14810.33            5569.14
-Shipping Modes and Order Priority (TPC-H Q12)                  1614.41            1604.54            1485.68            1506.65
-Customer Distribution (TPC-H Q13)                            787752.65         1325244.38         1221775.43         1017851.72
-Forecasting Revenue Change (TPC-H Q14)                         2665.48            2578.90            2557.34            2601.71
-Top Supplier Query (TPC-H Q15)                                38010.07           38011.35           37184.09           36964.83
-Parts/Supplier Relationship (TPC-H Q16)                       65900.56           67590.89           65959.05           67766.37
-Small-Quantity-Order Revenue (TPC-H Q17)                    1556291.76         1542035.69         1871091.76         1976551.63
-Large Volume Customer (TPC-H Q18)                             11758.23           12119.33           11428.52           11583.80
-Discounted Revenue (TPC-H Q19)                                 2556.18            2538.56            2528.23            2436.82
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)            2479.73            2507.23            2443.36            2453.19
-Global Sales Opportunity Query (TPC-H Q22)                   973140.35          968090.37          990551.61          926522.25
+Pricing Summary Report (TPC-H Q1)                              2005.00            1994.71           83199.30            1873.84
+Minimum Cost Supplier Query (TPC-H Q2)                        10861.16           10486.65          219402.68           10590.81
+Shipping Priority (TPC-H Q3)                                   2965.46            2926.16           60771.44            2736.31
+Order Priority Checking Query (TPC-H Q4)                       1627.06            1647.43            2078.80            1502.91
+Local Supplier Volume (TPC-H Q5)                               4660.57            4620.21            4585.37            4509.32
+Forecasting Revenue Change (TPC-H Q6)                          1044.02             992.80             903.18             927.13
+Forecasting Revenue Change (TPC-H Q7)                          2874.69            2703.20            7011.19            2435.16
+National Market Share (TPC-H Q8)                               3232.73            3063.08           49959.06            3113.10
+Product Type Profit Measure (TPC-H Q9)                        10414.80           10272.67           27655.86           10039.81
+Forecasting Revenue Change (TPC-H Q10)                        38914.98           39141.56           39136.14           39475.96
+Important Stock Identification (TPC-H Q11)                     5387.04            5358.73           13069.36            5346.46
+Shipping Modes and Order Priority (TPC-H Q12)                  1752.09            1661.45            1531.94            1535.21
+Customer Distribution (TPC-H Q13)                            767868.34          988880.09          864577.35          857188.67
+Forecasting Revenue Change (TPC-H Q14)                         2639.65            2655.74            2643.50            2594.58
+Top Supplier Query (TPC-H Q15)                                36660.69           36308.00           36471.58           35916.21
+Parts/Supplier Relationship (TPC-H Q16)                       66715.38           66239.43           69807.99           70118.61
+Small-Quantity-Order Revenue (TPC-H Q17)                    1512034.67         1533037.62         1426723.72         1501944.41
+Large Volume Customer (TPC-H Q18)                             12009.12           12003.23           11470.57           11368.80
+Discounted Revenue (TPC-H Q19)                                 2619.37            2565.43            2527.62            2565.88
+Potential Part Promotion (TPC-H Q20)                        7795245.00         7781681.73         8054847.04         7723103.80
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)            2569.67            2534.28            2395.62            2390.49
+Global Sales Opportunity Query (TPC-H Q22)                   894132.21          926314.08          885575.65         1116277.06
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-Citus-BHT-8-1-1-1           1.0         2686.0         4.0     1490.0    4191.0
-Citus-BHT-8-1-2-1           1.0         2686.0         4.0     1490.0    4191.0
-Citus-BHT-8-2-1-1           1.0         2686.0         4.0     1490.0    4191.0
-Citus-BHT-8-2-2-1           1.0         2686.0         4.0     1490.0    4191.0
+Citus-BHT-8-1-1-1           1.0         2774.0         3.0     1393.0    4178.0
+Citus-BHT-8-1-2-1           1.0         2774.0         3.0     1393.0    4178.0
+Citus-BHT-8-2-1-1           1.0         2774.0         3.0     1393.0    4178.0
+Citus-BHT-8-2-2-1           1.0         2774.0         3.0     1393.0    4178.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-Citus-BHT-8-1-1-1          11.26
-Citus-BHT-8-1-2-1          11.36
-Citus-BHT-8-2-1-1          24.41
-Citus-BHT-8-2-2-1          11.12
+Citus-BHT-8-1-1-1          15.21
+Citus-BHT-8-1-2-1          15.20
+Citus-BHT-8-2-1-1          30.12
+Citus-BHT-8-2-2-1          14.82
 
 ### Power@Size
                    Power@Size [~Q/h]
 DBMS                                
-Citus-BHT-8-1-1-1           32455.77
-Citus-BHT-8-1-2-1           32180.56
-Citus-BHT-8-2-1-1           14840.24
-Citus-BHT-8-2-2-1           32800.80
+Citus-BHT-8-1-1-1           23972.14
+Citus-BHT-8-1-2-1           24002.04
+Citus-BHT-8-2-1-1           12027.91
+Citus-BHT-8-2-2-1           24623.54
 
 ### Throughput@Size
                                                time [s]  count   SF  Throughput@Size [~GB/h]
 DBMS            SF  num_experiment num_client                                               
-Citus-BHT-8-1-1 100 1              1              10742      1  100                   737.29
-Citus-BHT-8-1-2 100 1              2              11259      1  100                   703.44
-Citus-BHT-8-2-1 100 2              1              11975      1  100                   661.38
-Citus-BHT-8-2-2 100 2              2              11343      1  100                   698.23
+Citus-BHT-8-1-1 100 1              1              11196      1  100                   707.40
+Citus-BHT-8-1-2 100 1              2              11453      1  100                   691.52
+Citus-BHT-8-2-1 100 2              1              11883      1  100                   666.50
+Citus-BHT-8-2-2 100 2              2              11424      1  100                   693.28
 
 ### Workflow
 
@@ -4028,6 +4081,6 @@ DBMS Citus-BHT-8 - Pods [[1, 1], [1, 1]]
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
-TEST failed: SQL errors
+TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Workflow as planned
