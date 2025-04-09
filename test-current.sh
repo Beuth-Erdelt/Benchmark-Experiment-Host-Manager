@@ -15,10 +15,9 @@
 ######################################################################################
 
 
-BEXHOMA_NODE_SUT="cl-worker20"
-BEXHOMA_NODE_LOAD="cl-worker13"
-BEXHOMA_NODE_BENCHMARK="cl-worker13"
-#BEXHOMA_NODE_BENCHMARK="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
@@ -330,16 +329,17 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
+  -xkey \
   -dbms Citus \
-  -nbp 1,2,4,8 \
-  -nbt 1024 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nbf 4 \
   -tb 1024 \
   -m -mc \

@@ -682,12 +682,23 @@ TEST passed: Workflow as planned
 
 TPC-C is performed at 128 warehouses.
 The 64 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
+At first, we remove old PVC:
+
+```bash
+kubectl delete pvc bexhoma-storage-citus-benchbase-128
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-3
+```
+
+The benchmark is run via
 
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
-  -nw 3 \
+  -nw 4 \
   -nwr 1 \
   -nws 48 \
   -dbms Citus \
@@ -697,6 +708,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 100Gi \
   run </dev/null &>$LOG_DIR/doc_benchbase_citus_2.log &
 ```
 
@@ -940,27 +952,18 @@ TEST passed: Workflow as planned
 
 ### Benchbase Realistic
 
-At first, we clean old PVC.
-
-```bash
-kubectl delete pvc bexhoma-storage-citus-ycsb-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-3
-```
-
 We run a benchmark with
 * PVCs for persistent database
 * monitoring
 * a sensible number of workers (4)
 * a sensible size (128 warehouses)
 * a sensible number of threads (1024)
-* suitable splittings (1x1024, 2x512, 4x256, 8x1028)
+* suitable splittings (1x1280, 2x640, 5x256, 10x128)
 * logging the state every 30 seconds
 * a realistic target (4096 transactions per second)
 * a realistic duration (20 minutes)
 * a repetition (`-nc` is 2)
+* keying and thinking tima activated (`-xkey`)
 
 Note that the number of threads for each pod is a multiple of the number of warehouses.
 At start, Benchbase assigns each thread to a fixed warehouse.
@@ -969,16 +972,17 @@ Each thread also gets assigned a fixed range of districts per warehouse.
 Please also note, that this is not compliant to the TPC-C specifications, which state: *For each active warehouse in the database, the SUT must accept requests for transactions from a population of 10 terminals.*
 
 ```bash
-python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
+  -xkey \
   -dbms Citus \
-  -nbp 1,2,4,8 \
-  -nbt 1024 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nbf 4 \
   -tb 1024 \
   -m -mc \
