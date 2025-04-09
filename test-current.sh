@@ -466,16 +466,16 @@ nohup python tpch.py -ms 1 -tr \
 wait_process "tpch"
 
 
-kubectl delete pvc bexhoma-storage-citus-tpch-100
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-3
+kubectl delete pvc bexhoma-storage-citus-tpch-10
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
 nohup python tpch.py -ms 1 -tr \
-  -sf 100 \
+  -sf 10 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
@@ -488,7 +488,8 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1,1 \
   -nc 2 \
-  -rst shared -rss 150Gi \
+  -m -mc \
+  -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_2.log &
 
 
@@ -496,16 +497,16 @@ wait_process "tpch"
 
 
 
-kubectl delete pvc bexhoma-storage-citus-tpch-100
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-100-3
+kubectl delete pvc bexhoma-storage-citus-tpch-10
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
 nohup python tpch.py -ms 1 -tr \
-  -sf 100 \
+  -sf 10 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
@@ -518,7 +519,8 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1,1 \
   -nc 2 \
-  -rst shared -rss 150Gi \
+  -m -mc \
+  -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_3.log &
 
 
