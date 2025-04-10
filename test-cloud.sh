@@ -69,6 +69,7 @@ install_yugabytedb() {
   --version 2.23.0 \
   --set \
 gflags.tserver.ysql_enable_packed_row=true,\
+gflags.tserver.ysql_max_connections=1280,\
 resource.master.limits.cpu=2,\
 resource.master.limits.memory=8Gi,\
 resource.master.requests.cpu=2,\
@@ -197,6 +198,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -m -mc \
   run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
 
 
@@ -215,13 +217,16 @@ sleep 30
 #### Benchbase More Complex (Example-YugaByteDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
-  -sd 60 \
+  -slg 30 \
+  -sd 20 \
+  -xkey \
   -dbms YugabyteDB \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -m -mc \
   run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
 
 

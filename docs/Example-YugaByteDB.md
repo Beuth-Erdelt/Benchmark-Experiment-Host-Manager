@@ -60,6 +60,7 @@ storage.tserver.size=100Gi,\
 storage.ephemeral=true,\
 tserver.tolerations[0].effect=NoSchedule,\
 tserver.tolerations[0].key=nvidia.com/gpu,\
+tserver.ysql_max_connections=1280,\
 replicas.master=3,\
 replicas.tserver=3,\
 enableLoadBalancer=True
@@ -641,6 +642,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -m -mc \
   run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
 ```
 
@@ -786,13 +788,16 @@ Make sure to reset the database before this test as it should not contain data f
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
-  -sd 60 \
+  -slg 30 \
+  -sd 20 \
+  -xkey \
   -dbms YugabyteDB \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -m -mc \
   run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
 ```
 
