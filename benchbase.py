@@ -458,7 +458,7 @@ if __name__ == '__main__':
                         BEXHOMA_PORT = 5433,
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
-                        BENCHBASE_CREATE_SCHEMA = "false",
+                        #BENCHBASE_CREATE_SCHEMA = "false",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
