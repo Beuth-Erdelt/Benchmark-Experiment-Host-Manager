@@ -216,9 +216,10 @@ sleep 30
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
+  -xkey \
   -dbms YugabyteDB \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

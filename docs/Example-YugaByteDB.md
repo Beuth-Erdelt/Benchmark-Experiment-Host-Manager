@@ -47,6 +47,11 @@ helm install bexhoma yugabytedb/yugabyte \
 --version 2.23.0 \
 --set \
 gflags.tserver.ysql_enable_packed_row=true,\
+gflags.tserver.num_connections_to_server=256,\
+gflags.tserver.pggate_num_connections_to_server=256,\
+gflags.tserver.ysql_conn_mgr_max_client_connections=10000,\
+gflags.tserver.ysql_conn_mgr_max_conns_per_db=10000,\
+gflags.tserver.ysql_max_connections=10000,\
 resource.master.limits.cpu=2,\
 resource.master.limits.memory=8Gi,\
 resource.master.requests.cpu=2,\
