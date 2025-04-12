@@ -951,7 +951,7 @@ TEST passed: Workflow as planned
 ```
 
 
-## Benchbase Example Explained
+### Benchbase Example Explained
 
 The setup is the same as for YCSB (see above).
 
