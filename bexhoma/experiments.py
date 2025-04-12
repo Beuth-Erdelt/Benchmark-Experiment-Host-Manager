@@ -40,6 +40,7 @@ import pandas as pd
 import json
 import ast
 from types import SimpleNamespace
+from importlib.metadata import version
 
 from bexhoma import evaluators
 
@@ -221,6 +222,8 @@ class default():
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
         self.cluster.start_messagequeue()
+        bexhoma_version = version('bexhoma')
+        self.workload['info'] = self.workload['info']+"\nExperiment uses bexhoma version {}.".format(bexhoma_version)
         if monitoring_cluster:
             # monitor all nodes of cluster (for not missing any component)
             self.monitoring_active = True
