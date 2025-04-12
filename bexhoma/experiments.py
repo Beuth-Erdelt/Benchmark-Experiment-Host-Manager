@@ -1718,7 +1718,14 @@ class default():
                     print("    worker {}".format(i))
                     infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
-                        print(info)                
+                        print(info)
+            if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
+                for i, parameters in c['parameter']['connection_parameter'].items():
+                    if i == "eval_parameters":
+                        print("    "+i)
+                        infos = ["        {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
         #evaluation = evaluators.base(code=code, path=resultfolder)
         #####################
         evaluate = inspector.inspector(resultfolder)
@@ -2041,6 +2048,8 @@ class tpcds(default):
         init_indexes = args.init_indexes
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
+        # columnar storage
+        init_columns = args.init_columns
         # timeout of a benchmark
         timeout = int(args.timeout)
         if mode == 'run':
@@ -2084,6 +2093,8 @@ class tpcds(default):
             self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
         else:
             self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+        if init_columns:
+            self.workload['info'] = self.workload['info']+"\nStorage is set to columnar."
         self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
         # optionally set some indexes and constraints after import
         self.set_experiment(script='Schema')
@@ -2275,6 +2286,8 @@ class tpcc(default):
         mode = str(parameter['mode'])
         SF = str(self.SF)
         SD = int(args.scaling_duration)
+        extra_latency = int(args.extra_latency)
+        extra_keying = int(args.extra_keying)
         if mode == 'run':
             self.set_workload(
                 name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
@@ -2291,6 +2304,10 @@ class tpcc(default):
             self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
         if SD:
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
+        if extra_keying:
+            self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
+        if extra_latency:
+            self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
         default.prepare_testbed(self, parameter)
     def test_results(self):
         """
@@ -2411,7 +2428,14 @@ class tpcc(default):
                     print("    worker {}".format(i))
                     infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
-                        print(info)                
+                        print(info)
+            if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
+                for i, parameters in c['parameter']['connection_parameter'].items():
+                    if i == "eval_parameters":
+                        print("    "+i)
+                        infos = ["        {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
@@ -2442,8 +2466,14 @@ class tpcc(default):
             df_plot = self.evaluator.benchmarking_set_datatypes(df)
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]"]].copy()
-            columns = ["NOPM", "TPM", "duration", "errors","P95 [ms]","P99 [ms]"]
+            if "P95 [ms]" in df_aggregated:
+                # we have latencies
+                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+            else:
+                aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
+            df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
@@ -3080,6 +3110,7 @@ class benchbase(default):
         SD = int(args.scaling_duration)*60
         target_base = int(args.target_base)
         type_of_benchmark = args.benchmark
+        extra_keying = int(args.extra_keying)
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             self.set_workload(
@@ -3101,6 +3132,8 @@ class benchbase(default):
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
         self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
         self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        if extra_keying:
+            self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
         default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
@@ -3276,7 +3309,7 @@ class benchbase(default):
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
             #columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
-            columns = ["time", "num_errors", "Throughput (requests/second)","Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]

@@ -146,6 +146,14 @@ echo "YCSB_MEASUREMENT_TYPE:$YCSB_MEASUREMENT_TYPE"
 #redis.cluster=false  # Set to true if using Redis Cluster
 #redis.pipeline=true  # Enable pipelining for performance
 #redis.pipeline.maxsize=50  # Adjust based on workload
+if [[ "$YCSB_USE_HOSTLIST" == "1" || "$YCSB_USE_HOSTLIST" == "true" ]]; then
+    echo "YCSB_USE_HOSTLIST is enabled"
+    URL=$BEXHOMA_URL_LIST
+else
+    echo "YCSB_USE_HOSTLIST is not enabled"
+    URL=$BEXHOMA_URL
+fi
+
 if [[ "$BEXHOMA_DBMS" == "redis" || "$BEXHOMA_DBMS" == "redis-cluster" ]]; then
     echo "BEXHOMA_DBMS is set to Redis"
     echo "redis.host=$BEXHOMA_HOST
@@ -155,7 +163,7 @@ redis.passwd=$BEXHOMA_PASSWORD
 else
 #    echo "BEXHOMA_DRIVER has a different value or is empty"
     echo "db.driver=$BEXHOMA_DRIVER
-db.url=$BEXHOMA_URL
+db.url=$URL
 db.user=$BEXHOMA_USER
 db.passwd=$BEXHOMA_PASSWORD
 " > db.properties

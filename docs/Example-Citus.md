@@ -120,8 +120,8 @@ At the end of a benchmark you will see a summary like
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 484s 
-    Code: 1742844516
+    Duration: 860s 
+    Code: 1744119497
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -149,45 +149,45 @@ Citus-64-8-65536-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:153709796
+    disk:202015212
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:25047912
-    worker 1
-        RAM:540587544576
+        RAM:540587528192
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-134-generic
+        host:5.15.0-136-generic
         node:cl-worker22
-        disk:136222144
-    worker 2
+        disk:303131640
+    worker 1
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:785979628
+        disk:1108138628
+    worker 2
+        RAM:1081650987008
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:310170044
     eval_parameters
-        code:1742844516
+        code:1744119497
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:3
 
 ### Loading
                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Citus-64-8-65536               1       64   65536          8           0                   55415.896735                20192.0             1000000                              2457.5
+Citus-64-8-65536               1       64   65536          8           0                   52571.176109                19850.0             1000000                              2733.5
 
 ### Execution
                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Citus-64-8-65536-1               1       64   65536          1           0                       50989.19               196120.0           4997358                            1867.0             5002642                              1850.0
+Citus-64-8-65536-1               1       64   65536          1           0                       64598.65               154802.0           5000346                            1212.0             4999654                              1157.0
 
 ### Workflow
 
@@ -199,19 +199,19 @@ DBMS Citus-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1       147.5     0.01          8.73                 9.66
+Citus-64-8-65536-1      213.81     1.36          8.81                 9.79
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1        0.05        0          0.01                 0.01
+Citus-64-8-65536-1         0.1        0          0.02                 0.02
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1     2094.44     9.66          9.95                11.39
+Citus-64-8-65536-1     3922.28    11.09         13.48                14.97
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1     1050.52     7.79          0.62                 0.63
+Citus-64-8-65536-1      888.84     8.18          0.63                 0.63
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -682,12 +682,23 @@ TEST passed: Workflow as planned
 
 TPC-C is performed at 128 warehouses.
 The 64 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
+At first, we remove old PVC:
+
+```bash
+kubectl delete pvc bexhoma-storage-citus-benchbase-128
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-3
+```
+
+The benchmark is run via
 
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
-  -nw 3 \
+  -nw 4 \
   -nwr 1 \
   -nws 48 \
   -dbms Citus \
@@ -697,6 +708,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 100Gi \
   run </dev/null &>$LOG_DIR/doc_benchbase_citus_2.log &
 ```
 
@@ -940,27 +952,18 @@ TEST passed: Workflow as planned
 
 ### Benchbase Realistic
 
-At first, we clean old PVC.
-
-```bash
-kubectl delete pvc bexhoma-storage-citus-ycsb-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-ycsb-1-3
-```
-
 We run a benchmark with
 * PVCs for persistent database
 * monitoring
 * a sensible number of workers (4)
 * a sensible size (128 warehouses)
 * a sensible number of threads (1024)
-* suitable splittings (1x1024, 2x512, 4x256, 8x1028)
+* suitable splittings (1x1280, 2x640, 5x256, 10x128)
 * logging the state every 30 seconds
 * a realistic target (4096 transactions per second)
 * a realistic duration (20 minutes)
 * a repetition (`-nc` is 2)
+* keying and thinking tima activated (`-xkey`)
 
 Note that the number of threads for each pod is a multiple of the number of warehouses.
 At start, Benchbase assigns each thread to a fixed warehouse.
@@ -969,16 +972,17 @@ Each thread also gets assigned a fixed range of districts per warehouse.
 Please also note, that this is not compliant to the TPC-C specifications, which state: *For each active warehouse in the database, the SUT must accept requests for transactions from a population of 10 terminals.*
 
 ```bash
-python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
+  -xkey \
   -dbms Citus \
-  -nbp 1,2,4,8 \
-  -nbt 1024 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nbf 4 \
   -tb 1024 \
   -m -mc \
@@ -1315,7 +1319,7 @@ Citus has 3 workers.
 ```bash
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xlat \
   -dbms Citus \
   -nw 3 \
   -nwr 1 \
@@ -1337,17 +1341,17 @@ nohup python hammerdb.py -ms 1 -tr \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1319s 
-    Code: 1743575053
+    Duration: 1117s 
+    Code: 1743765273
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker23.
+    SUT is fixed to cl-worker11.
     Loading is tested with [8] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -1355,39 +1359,39 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:540595900416
-    CPU:AMD EPYC 7352 24-Core Processor
-    Cores:96
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
     host:5.15.0-134-generic
-    node:cl-worker23
-    disk:86432660
+    node:cl-worker11
+    disk:201377888
     requests_cpu:4
     requests_memory:16Gi
     worker 0
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:151410852
+    worker 1
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:160047388
-    worker 1
+        disk:234755912
+    worker 2
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:931299488
-    worker 2
-        RAM:540595896320
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker24
-        disk:96570296
+        disk:977073952
 
 ### Execution
-                 experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]     NOPM       TPM  duration  errors
-Citus-BHT-8-1-1               1      16       1          1     29.22     63.92  49005.0  112642.0         5       0
+                 experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM       TPM  duration  errors
+Citus-BHT-8-1-1               1      16       1          1     30.12     60.59         0.0  47853.0  109891.0         5       0
 
 Warehouses: 16
 
@@ -1401,7 +1405,7 @@ DBMS Citus-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-Citus-BHT-8-1-1      115.0        1.0   1.0                 500.869565
+Citus-BHT-8-1-1      105.0        1.0   1.0                 548.571429
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
@@ -1414,6 +1418,7 @@ TEST passed: Workflow as planned
 nohup python hammerdb.py -ms 1 -tr \
   -sf 128 \
   -sd 30 \
+  -xlat \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
@@ -1424,9 +1429,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbp 1,2,4,8 \
   -nbt 128 \
   -ne 1 \
-  -nc 2 \
+  -nc 1 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_hammerdb_citus_2.log &
 ```
 
@@ -1938,11 +1943,21 @@ Note: In [1] YCSB is run as this: *For this benchmark, the coordinator’s CPU u
 > JelteF, Microsoft.
 > Retrieved April 1, 2025, from https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-benchmark-performance-of-citus-and-postgres-with-hammerdb-on-azure/3254918
 
-[3] https://github.com/citusdata/citus-benchmark
+[3] [Citus Data Benchmark Toolkit](https://github.com/citusdata/citus-benchmark)
+> Citus Data.
+> Retrieved April 1, 2025, from https://github.com/citusdata/citus-benchmark
 
-[4] https://github.com/citusdata/citus-benchmark/blob/master/run.tcl
+[4] [Citus Data Benchmark Toolkit HammerDB settings](https://github.com/citusdata/citus-benchmark/blob/master/run.tcl)
+> Citus Data.
+> Retrieved April 1, 2025, from https://github.com/citusdata/citus-benchmark/blob/master/run.tcl
 
-[5] https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1
+[5] [Adding Postgres 16 support to Citus 12.1, plus schema-based sharding improvements](https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1)
+> Naisila Puka, September 22, 2023.
+> Retrieved April 1, 2025, from https://www.citusdata.com/blog/2023/09/22/adding-postgres-16-support-to-citus-12-1
+
+[6] [Understand what you run before publishing your (silly) benchmark results](https://dev.to/yugabyte/understand-what-you-run-before-publishing-your-silly-benchmark-results-48bb)
+> Franck Pachot, YugabyteDB.
+> Retrieved April 1, 2025, from https://dev.to/yugabyte/understand-what-you-run-before-publishing-your-silly-benchmark-results-48bb
 
 
 ```bash
@@ -2429,5 +2444,970 @@ TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
+
+
+## TPC-H
+
+We build the schema similar to [2] in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpch/Citus/initschema-tpch.sql
+
+```sql
+select create_reference_table('nation');
+select create_reference_table('region');
+select create_reference_table('part');
+select create_reference_table('supplier');
+select create_reference_table('partsupp');
+select create_reference_table('customer');
+select create_distributed_table('orders', 'o_orderkey');
+select create_distributed_table('lineitem', 'l_orderkey');
+```
+
+It is also mentioned in [1] that the big tables `orders` and `linetime` should be distributed and the others should be replicated.
+As the paper used Citus 9.5, columnar storage has not been included in Citus [3].
+Note that columnar storage has some limitations as no UPDATEs, no DELETEs and no FOREIGN KEYs.
+Also note that Citus does not support all TPC-H queries.
+In a correlated subquery there cannot be a replicated table, so we have to rewrite Q22.
+
+[1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
+> Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
+> 2021. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21).
+> Association for Computing Machinery, New York, NY, USA, 2490–2502.
+> https://dl.acm.org/doi/10.1145/3448016.3457551
+
+[2] [Citus TPC-H tests - schema](https://github.com/dimitri/tpch-citus/tree/master/schema)
+> Dimitri Fontaine.
+> Retrieved April 1, 2025, from https://github.com/dimitri/tpch-citus/tree/master/schema
+
+[3] [Citus columnar storage](https://docs.citusdata.com/en/stable/admin_guide/table_management.html#columnar-storage)
+> Citus Data.
+> Retrieved April 1, 2025, from https://docs.citusdata.com/en/stable/admin_guide/table_management.html#columnar-storage
+
+
+### TPC-H Simple Example
+
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 1200 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_1.log &
+```
+
+
+### Evaluate Results
+
+```bash
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 1316s 
+    Code: 1743612001
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 1200.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker23.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:540595900416
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:5.15.0-134-generic
+    node:cl-worker23
+    disk:151625644
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587544576
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-134-generic
+        node:cl-worker22
+        disk:229673792
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:966307088
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:132956400
+    worker 3
+        RAM:540595900416
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker23
+        disk:151625652
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 Citus-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                             199.73
+Minimum Cost Supplier Query (TPC-H Q2)                        292.55
+Shipping Priority (TPC-H Q3)                                  169.66
+Order Priority Checking Query (TPC-H Q4)                      130.10
+Local Supplier Volume (TPC-H Q5)                              168.90
+Forecasting Revenue Change (TPC-H Q6)                         109.08
+Forecasting Revenue Change (TPC-H Q7)                         170.97
+National Market Share (TPC-H Q8)                              173.83
+Product Type Profit Measure (TPC-H Q9)                        243.36
+Forecasting Revenue Change (TPC-H Q10)                        278.42
+Important Stock Identification (TPC-H Q11)                    163.41
+Shipping Modes and Order Priority (TPC-H Q12)                 122.43
+Customer Distribution (TPC-H Q13)                            1527.17
+Forecasting Revenue Change (TPC-H Q14)                        139.66
+Top Supplier Query (TPC-H Q15)                                281.32
+Parts/Supplier Relationship (TPC-H Q16)                       395.22
+Small-Quantity-Order Revenue (TPC-H Q17)                     4942.78
+Large Volume Customer (TPC-H Q18)                             218.35
+Discounted Revenue (TPC-H Q19)                                168.64
+Potential Part Promotion (TPC-H Q20)                         3104.19
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           155.45
+Global Sales Opportunity Query (TPC-H Q22)                   1456.73
+
+### Loading [s]
+                 timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+Citus-BHT-8-1-1           1.0           18.0         5.0       24.0      54.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                 Geo Times [s]
+DBMS                          
+Citus-BHT-8-1-1           0.32
+
+### Power@Size
+                 Power@Size [~Q/h]
+DBMS                              
+Citus-BHT-8-1-1           12042.26
+
+### Throughput@Size
+                                            time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS          SF num_experiment num_client                                              
+Citus-BHT-8-1 1  1              1                 19      1   1                  4168.42
+
+### Workflow
+
+#### Actual
+DBMS Citus-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS Citus-BHT-8 - Pods [[1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
+```
+
+### TPC-H More Complex Example
+
+At first we remove possibly existing PVC:
+
+```bash
+kubectl delete pvc bexhoma-storage-citus-tpch-10
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+```
+
+Then we run TPC-H Power Test at SF=10.
+Note that this takes a lot of disk space including for indexes.
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 10 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 7200 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_2.log &
+```
+
+### Evaluate Results
+
+```bash
+## Show Summary
+
+### Workload
+TPC-H Queries SF=10
+    Type: tpch
+    Duration: 3690s 
+    Code: 1744190716
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 14400.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+Citus-BHT-8-1-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977368
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:302305884
+        volume_size:50.0G
+        volume_used:11.6G
+    worker 1
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235661604
+        volume_size:50.0G
+        volume_used:11.6G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204349788
+        volume_size:50.0G
+        volume_used:11.6G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154814296
+        volume_size:50.0G
+        volume_used:14.0G
+    eval_parameters
+        code:1744190716
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
+Citus-BHT-8-1-2-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977368
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:302305776
+        volume_size:50.0G
+        volume_used:11.6G
+    worker 1
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235661652
+        volume_size:50.0G
+        volume_used:11.6G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204349796
+        volume_size:50.0G
+        volume_used:11.6G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154814328
+        volume_size:50.0G
+        volume_used:14.0G
+    eval_parameters
+        code:1744190716
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
+Citus-BHT-8-2-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977344
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235662344
+        volume_size:50.0G
+        volume_used:13.9G
+    worker 1
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:328378508
+        volume_size:50.0G
+        volume_used:13.8G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154814648
+        volume_size:50.0G
+        volume_used:13.8G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204349832
+        volume_size:50.0G
+        volume_used:13.9G
+    eval_parameters
+        code:1744190716
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
+Citus-BHT-8-2-2-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977344
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235662460
+        volume_size:50.0G
+        volume_used:13.9G
+    worker 1
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:328378736
+        volume_size:50.0G
+        volume_used:13.8G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154814680
+        volume_size:50.0G
+        volume_used:13.8G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204349840
+        volume_size:50.0G
+        volume_used:13.9G
+    eval_parameters
+        code:1744190716
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:False
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 Citus-BHT-8-1-1-1  Citus-BHT-8-1-2-1  Citus-BHT-8-2-1-1  Citus-BHT-8-2-2-1
+Pricing Summary Report (TPC-H Q1)                               427.58             431.97            1793.57             436.59
+Minimum Cost Supplier Query (TPC-H Q2)                         3041.40            2880.37            2983.18            2287.11
+Shipping Priority (TPC-H Q3)                                    529.72             529.75            1694.14             511.01
+Order Priority Checking Query (TPC-H Q4)                        294.58             295.26             291.87             286.42
+Local Supplier Volume (TPC-H Q5)                                778.31             789.62             758.50             757.38
+Forecasting Revenue Change (TPC-H Q6)                           240.12             243.76             228.34             232.47
+Forecasting Revenue Change (TPC-H Q7)                           524.32             538.46             519.91             512.94
+National Market Share (TPC-H Q8)                                486.70             502.67             850.71             498.36
+Product Type Profit Measure (TPC-H Q9)                         1353.29            1345.85            2275.35            1343.88
+Forecasting Revenue Change (TPC-H Q10)                         3881.39            3996.23            3842.91            3847.07
+Important Stock Identification (TPC-H Q11)                     1167.25            1204.62            1076.53            1071.64
+Shipping Modes and Order Priority (TPC-H Q12)                   411.77             413.59             452.74             436.15
+Customer Distribution (TPC-H Q13)                             29830.94           30000.68           30624.18           29693.32
+Forecasting Revenue Change (TPC-H Q14)                          416.88             410.31             407.88             409.20
+Top Supplier Query (TPC-H Q15)                                 3761.75            3797.90            3737.06            3754.81
+Parts/Supplier Relationship (TPC-H Q16)                        1906.62            1937.04            1925.44            1991.38
+Small-Quantity-Order Revenue (TPC-H Q17)                      88941.19           88829.76           89253.06           87917.54
+Large Volume Customer (TPC-H Q18)                              1246.40            1282.99            1210.89            1220.72
+Discounted Revenue (TPC-H Q19)                                  517.93             524.15             528.49             528.73
+Potential Part Promotion (TPC-H Q20)                          90530.66           92901.09           89161.76           86828.12
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)             428.82             387.22             797.91             381.53
+Global Sales Opportunity Query (TPC-H Q22)                    37850.56           30251.01           24916.39           30152.94
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+Citus-BHT-8-1-1-1           1.0          379.0         4.0      147.0     538.0
+Citus-BHT-8-1-2-1           1.0          379.0         4.0      147.0     538.0
+Citus-BHT-8-2-1-1           1.0          379.0         4.0      147.0     538.0
+Citus-BHT-8-2-2-1           1.0          379.0         4.0      147.0     538.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+Citus-BHT-8-1-1-1           1.78
+Citus-BHT-8-1-2-1           1.77
+Citus-BHT-8-2-1-1           2.11
+Citus-BHT-8-2-2-1           1.72
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+Citus-BHT-8-1-1-1           20749.53
+Citus-BHT-8-1-2-1           20881.42
+Citus-BHT-8-2-1-1           17493.41
+Citus-BHT-8-2-2-1           21526.95
+
+### Throughput@Size
+                                              time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS            SF num_experiment num_client                                              
+Citus-BHT-8-1-1 10 1              1                277      1  10                  2859.21
+Citus-BHT-8-1-2 10 1              2                272      1  10                  2911.76
+Citus-BHT-8-2-1 10 2              1                266      1  10                  2977.44
+Citus-BHT-8-2-2 10 2              2                262      1  10                  3022.90
+
+### Workflow
+
+#### Actual
+DBMS Citus-BHT-8 - Pods [[1, 1], [1, 1]]
+
+#### Planned
+DBMS Citus-BHT-8 - Pods [[1, 1], [1, 1]]
+
+### Ingestion - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1     1444.45     2.24         35.21                 67.1
+Citus-BHT-8-1-2     1444.45     2.24         35.21                 67.1
+
+### Ingestion - Loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1      170.77      1.0          0.04                10.53
+Citus-BHT-8-1-2      170.77      1.0          0.04                10.53
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1     1255.50     2.38         39.75                69.49
+Citus-BHT-8-1-2     1129.87     1.52         40.88                70.63
+Citus-BHT-8-2-1     1084.29     3.13         39.81                94.06
+Citus-BHT-8-2-2     1073.16     3.24         40.94                96.17
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1       19.09     0.00          0.31                 0.31
+Citus-BHT-8-1-2       19.21     0.02          0.61                 0.62
+Citus-BHT-8-2-1       18.04     0.26          0.31                 0.33
+Citus-BHT-8-2-2       18.04     0.07          0.61                 0.64
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
+
+### TPC-H Test Columnar Storage
+
+Citus provides the option to make a table using columnar storage via `USING COLUMNAR`.
+For Bexhoma's TPC-H, you can activate makeing the distributed tables `orders` and `lineitem` use columnar storage via `-icol`.
+Note that this also means there will be no foreign key constraints and no indexes on these tables.
+
+At first we remove possibly existing PVC:
+
+```bash
+kubectl delete pvc bexhoma-storage-citus-tpch-10
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+```
+
+The experiment runs like this:
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  -sf 10 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 7200 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -icol \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_3.log &
+```
+
+### Evaluate Results
+
+
+```bash
+## Show Summary
+
+### Workload
+TPC-H Queries SF=10
+    Type: tpch
+    Duration: 4159s 
+    Code: 1744194649
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 14400.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['Citus'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+Citus-BHT-8-1-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977536
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:328379280
+        volume_size:50.0G
+        volume_used:8.9G
+    worker 1
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235662644
+        volume_size:50.0G
+        volume_used:9.3G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204349932
+        volume_size:50.0G
+        volume_used:9.0G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154814792
+        volume_size:50.0G
+        volume_used:8.9G
+    eval_parameters
+        code:1744194649
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:True
+Citus-BHT-8-1-2-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977536
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:328380052
+        volume_size:50.0G
+        volume_used:8.9G
+    worker 1
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235662912
+        volume_size:50.0G
+        volume_used:9.3G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204349948
+        volume_size:50.0G
+        volume_used:9.0G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154814848
+        volume_size:50.0G
+        volume_used:8.9G
+    eval_parameters
+        code:1744194649
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:True
+Citus-BHT-8-2-1-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977516
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235662964
+        volume_size:50.0G
+        volume_used:9.9G
+    worker 1
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:328380596
+        volume_size:50.0G
+        volume_used:9.9G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154815132
+        volume_size:50.0G
+        volume_used:9.9G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204349980
+        volume_size:50.0G
+        volume_used:9.9G
+    eval_parameters
+        code:1744194649
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:True
+Citus-BHT-8-2-2-1 uses docker image citusdata/citus:13.0.2-alpine
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:201977516
+    volume_size:50.0G
+    volume_used:40.0M
+    requests_cpu:4
+    requests_memory:16Gi
+    worker 0
+        RAM:540595875840
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker23
+        disk:235663016
+        volume_size:50.0G
+        volume_used:9.9G
+    worker 1
+        RAM:540587528192
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:5.15.0-136-generic
+        node:cl-worker22
+        disk:328380728
+        volume_size:50.0G
+        volume_used:9.9G
+    worker 2
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-136-generic
+        node:cl-worker24
+        disk:154815244
+        volume_size:50.0G
+        volume_used:9.9G
+    worker 3
+        RAM:540595879936
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:5.15.0-134-generic
+        node:cl-worker25
+        disk:204350044
+        volume_size:50.0G
+        volume_used:9.9G
+    eval_parameters
+        code:1744194649
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:4
+        COLUMNAR:True
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 Citus-BHT-8-1-1-1  Citus-BHT-8-1-2-1  Citus-BHT-8-2-1-1  Citus-BHT-8-2-2-1
+Pricing Summary Report (TPC-H Q1)                              1481.69            1353.92            2743.16            1349.24
+Minimum Cost Supplier Query (TPC-H Q2)                         2434.77            2192.54            3449.41            3058.91
+Shipping Priority (TPC-H Q3)                                    850.38             856.42            2122.41             822.18
+Order Priority Checking Query (TPC-H Q4)                        565.38             564.59             560.83             557.46
+Local Supplier Volume (TPC-H Q5)                                964.79             974.85             966.70             966.28
+Forecasting Revenue Change (TPC-H Q6)                           480.65             494.93             483.02             477.36
+Forecasting Revenue Change (TPC-H Q7)                           929.37             937.96             919.46             910.76
+National Market Share (TPC-H Q8)                               1163.91            1144.29            1440.85            1112.42
+Product Type Profit Measure (TPC-H Q9)                       125659.42          126017.52          127795.67          127160.55
+Forecasting Revenue Change (TPC-H Q10)                         4310.24            4298.39            4278.61            4286.20
+Important Stock Identification (TPC-H Q11)                     1012.45            1056.80            1067.05            1093.66
+Shipping Modes and Order Priority (TPC-H Q12)                   839.82             830.78             815.18             817.83
+Customer Distribution (TPC-H Q13)                             29191.89           30178.86           36320.13           32572.61
+Forecasting Revenue Change (TPC-H Q14)                          660.06             666.28             661.18             643.19
+Top Supplier Query (TPC-H Q15)                                 4098.70            4132.71            4232.58            4014.79
+Parts/Supplier Relationship (TPC-H Q16)                        1828.44            1935.21            1944.69            1898.30
+Small-Quantity-Order Revenue (TPC-H Q17)                     109776.04          110040.43          110499.07          110415.61
+Large Volume Customer (TPC-H Q18)                              1381.72            1368.91            1353.52            1358.59
+Discounted Revenue (TPC-H Q19)                                 1129.84            1122.67            1094.39            1175.08
+Potential Part Promotion (TPC-H Q20)                          84740.98           78228.67           83365.81           80815.02
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           57210.95           55640.58           57187.30           55890.82
+Global Sales Opportunity Query (TPC-H Q22)                    34039.65           34522.17           35036.53           31205.18
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+Citus-BHT-8-1-1-1           1.0          320.0         7.0       45.0     381.0
+Citus-BHT-8-1-2-1           1.0          320.0         7.0       45.0     381.0
+Citus-BHT-8-2-1-1           1.0          320.0         7.0       45.0     381.0
+Citus-BHT-8-2-2-1           1.0          320.0         7.0       45.0     381.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+Citus-BHT-8-1-1-1           3.68
+Citus-BHT-8-1-2-1           3.66
+Citus-BHT-8-2-1-1           4.11
+Citus-BHT-8-2-2-1           3.69
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+Citus-BHT-8-1-1-1           10025.98
+Citus-BHT-8-1-2-1           10082.93
+Citus-BHT-8-2-1-1            8992.73
+Citus-BHT-8-2-2-1           10006.02
+
+### Throughput@Size
+                                              time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS            SF num_experiment num_client                                              
+Citus-BHT-8-1-1 10 1              1                473      1  10                  1674.42
+Citus-BHT-8-1-2 10 1              2                467      1  10                  1695.93
+Citus-BHT-8-2-1 10 2              1                487      1  10                  1626.28
+Citus-BHT-8-2-2 10 2              2                470      1  10                  1685.11
+
+### Workflow
+
+#### Actual
+DBMS Citus-BHT-8 - Pods [[1, 1], [1, 1]]
+
+#### Planned
+DBMS Citus-BHT-8 - Pods [[1, 1], [1, 1]]
+
+### Ingestion - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1      1157.9     1.23         25.97                45.98
+Citus-BHT-8-1-2      1157.9     1.23         25.97                45.98
+
+### Ingestion - Loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1      175.85     0.54          0.04                10.53
+Citus-BHT-8-1-2      175.85     0.54          0.04                10.53
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1    27124.31     96.0         60.21                80.12
+Citus-BHT-8-1-2    26798.14     48.0         61.30                81.20
+Citus-BHT-8-2-1    27010.58     48.0         59.48                97.46
+Citus-BHT-8-2-2    27122.69     48.0         60.65                99.70
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-BHT-8-1-1       20.42     0.07          0.28                 0.29
+Citus-BHT-8-1-2       20.42     0.10          0.59                 0.60
+Citus-BHT-8-2-1       19.45     0.03          0.30                 0.32
+Citus-BHT-8-2-2       19.45     0.07          0.56                 0.60
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
 
 

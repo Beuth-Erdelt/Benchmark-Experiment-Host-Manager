@@ -1320,7 +1320,7 @@ Note the added section about `volume_size` and `volume_used` in the connections 
 
 
 
-# Example: MonetDB TPC-DS@100
+## Example: MonetDB TPC-DS@100
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -1339,7 +1339,7 @@ These examples are solely to illustrate how to use bexhoma and show the result e
 
 
 
-## Generate and Load Data
+### Generate and Load Data
 
 At first we generate TPC-DS data at SF=100 (`-sf`) with 8 parallel generators (`-nlp`).
 The generated data is stored at the shared disk `data`.
@@ -1374,7 +1374,7 @@ nohup python tpcds.py -ms 1 \
 ```
 
 
-## Status Database and Benchmark
+### Status Database and Benchmark
 
 You can watch the status of experiments via `bexperiments status`.
 
@@ -1397,7 +1397,7 @@ Cluster Prometheus: Running
 +-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 ```
 
-## Summary of Results
+### Summary of Results
 
 At the end of a benchmark you will see a summary like
 
@@ -1603,7 +1603,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
-## Perform Benchmark - Power Test
+### Perform Benchmark - Power Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
@@ -1871,7 +1871,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
-## Perform Benchmark - Throughput Test
+### Perform Benchmark - Throughput Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
 We then run two power tests, one after the other, and then a throughput test with 3 parallel driver (`-ne 1,1,3`). and shut down the DBMS.

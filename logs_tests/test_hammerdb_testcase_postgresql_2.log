@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1728368534
-Experiment                    : starts at 2024-10-08 08:22:14.266867 (3104474.39084162)
+Experiment                    : has code 1743785313
+Experiment                    : starts at 2025-04-04 18:48:33.755852 (7977477.22640493)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
-Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS PostgreSQL.
+Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -21,12 +21,25 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 PostgreSQL-BHT-8-1            : will start now
+PostgreSQL-BHT-8-1            : Name of SUT pods = bexhoma-sut-postgresql-bht-8-1-1743785313
+PostgreSQL-BHT-8-1            : Name of SUT service = bexhoma-sut-postgresql-bht-8-1-1743785313
+PostgreSQL-BHT-8-1            : Name of SUT PVC name = bexhoma-storage-postgresql-hammerdb-16
+PostgreSQL-BHT-8-1            : Name of Worker pods = bexhoma-worker-postgresql-1743785313
+PostgreSQL-BHT-8-1            : Name of Worker service headless = bexhoma-worker-postgresql-1743785313
+- waiting 30s -               : done
+PostgreSQL-BHT-8-1            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8-1            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8-1            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8-1            : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2024-10-08 06:24:14 (that is in 60 secs)
+PostgreSQL-BHT-8-1            : will start loading but not before 2025-04-04 16:52:35 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : will start loading but not before 2024-10-08 06:24:14
+PostgreSQL-BHT-8-1            : will start loading but not before 2025-04-04 16:52:35
 done
 PostgreSQL-BHT-8-1            : is not loaded yet
 PostgreSQL-BHT-8-1            : start asynch loading scripts of type loaded
@@ -40,15 +53,23 @@ PostgreSQL-BHT-8-1            : is loading
 done
 PostgreSQL-BHT-8-1            : showing loader times
 PostgreSQL-BHT-8-1            : loader timespan (first to last [s]) = 105
+PostgreSQL-BHT-8-1            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-8-1            : is loading
+done
 PostgreSQL-BHT-8-1            : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16}
+PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'true'}
 PostgreSQL-BHT-8-1-1          : start benchmarking
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1728368534
+PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1743785313
 - waiting 10s -               : done
 found
-PostgreSQL-BHT-8-1-1          : collecting loading metrics of SUT
-PostgreSQL-BHT-8-1-1          : collecting metrics of data generator
-PostgreSQL-BHT-8-1-1          : collecting metrics of data injector
+PostgreSQL-BHT-8-1-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-8-1-1
+PostgreSQL-BHT-8-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1743785313(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-8-1-1          : collecting metrics of data generator at connection PostgreSQL-BHT-8-1-1
+PostgreSQL-BHT-8-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1743785313(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-8-1-1          : collecting metrics of data injector at connection PostgreSQL-BHT-8-1-1
+PostgreSQL-BHT-8-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1743785313(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-BHT-8-1            : has running benchmarks
 - waiting 30s -               : done
@@ -78,39 +99,19 @@ PostgreSQL-BHT-8-1            : has running benchmarks
 done
 PostgreSQL-BHT-8-1            : has running benchmarks
 PostgreSQL-BHT-8-1-1          : showing benchmarker times
-PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 452
-PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1728368782, 1728369221)]
-PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1728368782, 1728369221)]}
-PostgreSQL-BHT-8-1-1          : collecting execution metrics of SUT
-PostgreSQL-BHT-8-1-1          : collecting metrics of benchmarker
+PostgreSQL-BHT-8-1-1          : benchmarker timespan (start to end single container [s]) = 480
+PostgreSQL-BHT-8-1-1          : benchmarker times (start/end per pod and container) = [(1743785712, 1743786162)]
+PostgreSQL-BHT-8-1-1          : found and updated times {'benchmarker': [(1743785712, 1743786162)]}
+PostgreSQL-BHT-8-1-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-8-1-1
+PostgreSQL-BHT-8-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1743785313(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-8-1-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-8-1-1
+PostgreSQL-BHT-8-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1743785313(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 PostgreSQL-BHT-8-1            : can be stopped
-Experiment ends at 2024-10-08 08:34:36.331849 (3105216.455829278): 742.0649876580574s total
+Experiment ends at 2025-04-04 19:03:53.001188 (7978396.471741022): 919.2453360911459s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-                                  connection  ...        dbms
-connection_pod                                ...            
-PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-1-1  ...  PostgreSQL
-
-[1 rows x 17 columns]
-connection_pod
-['16']
-vusers 16
-                                connection  ...        dbms
-PostgreSQL-BHT-8-1-1                        ...            
-0                     PostgreSQL-BHT-8-1-1  ...  PostgreSQL
-
-[1 rows x 17 columns]
-PostgreSQL-BHT-8-1-1
-['16']
-vusers 16
-Benchmarking                                   connection  ...        dbms
-connection_pod                                ...            
-PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-1-1  ...  PostgreSQL
-
-[1 rows x 17 columns]
-Workflow {'PostgreSQL-BHT-8-1': [[1]]}
 Result workflow complete
 
 ## Show Summary
@@ -118,14 +119,14 @@ Result workflow complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 743s 
-    Code: 1728368534
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 920s 
+    Code: 1743785313
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS PostgreSQL.
+    Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -138,21 +139,21 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:248973096
-    datadisk:3382309
+    disk:201427648
+    datadisk:3304
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                      experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1               1      16       1          1  11802.0  36290.0         5       0
+                      experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+PostgreSQL-BHT-8-1-1               1      16       1          1     14.14     17.85         0.0  11171.0  34518.0         5       0
 
 Warehouses: 16
 
@@ -170,19 +171,19 @@ PostgreSQL-BHT-8-1-1      105.0        1.0   1.0                 548.571429
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      132.63        0           3.6                 5.17
+PostgreSQL-BHT-8-1-1      132.23     1.15          3.72                 5.31
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1      313.97     3.91          0.08                 0.08
+PostgreSQL-BHT-8-1-1      320.94        0          0.08                 0.08
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1    24028.25    62.68          5.23                 5.98
+PostgreSQL-BHT-8-1-1    23615.01    56.16          5.37                  7.0
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1       41.13     0.12          0.06                 0.06
+PostgreSQL-BHT-8-1-1       53.75     0.14           0.1                  0.1
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

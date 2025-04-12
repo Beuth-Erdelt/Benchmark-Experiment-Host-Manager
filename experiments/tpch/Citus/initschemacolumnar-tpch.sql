@@ -1,9 +1,3 @@
--- https://github.com/dimitri/tpch-citus/tree/master/schema
-
--- Sccsid:     @(#)dss.ddl  2.1.8.1
-
--- SELECT * from master_add_node('citus-worker-0.citus-workers', 5432);
-
 SELECT * from master_get_active_worker_nodes();
 
 
@@ -83,7 +77,7 @@ CREATE TABLE orders
     o_clerk          CHAR(15) not null, 
     o_shippriority   INTEGER not null,
     o_comment        VARCHAR(79) not null
-);
+) USING COLUMNAR;
 
 
 CREATE TABLE lineitem
@@ -104,7 +98,7 @@ CREATE TABLE lineitem
     l_shipinstruct CHAR(25) not null,
     l_shipmode     CHAR(10) not null,
     l_comment      VARCHAR(44) not null
-);
+) USING COLUMNAR;
 
 
 ALTER SYSTEM SET citus.max_intermediate_result_size TO -1;
@@ -148,6 +142,13 @@ ALTER TABLE REGION
   ADD CONSTRAINT region_pkey
      PRIMARY KEY (R_REGIONKEY);
 
+
+
+-- CREATE INDEX IDX_SUPPLIER_NATION_KEY ON SUPPLIER (S_NATIONKEY);
+-- CREATE INDEX IDX_PARTSUPP_PARTKEY ON PARTSUPP (PS_PARTKEY);
+-- CREATE INDEX IDX_PARTSUPP_SUPPKEY ON PARTSUPP (PS_SUPPKEY);
+-- CREATE INDEX IDX_CUSTOMER_NATIONKEY ON CUSTOMER (C_NATIONKEY);
+-- CREATE INDEX IDX_NATION_REGIONKEY ON NATION (N_REGIONKEY);
 
 -- Q22: ERROR: correlated subqueries are not supported when the FROM clause contains a reference table
 

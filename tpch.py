@@ -37,7 +37,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus'], default=[], nargs='*')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
@@ -50,6 +50,9 @@ if __name__ == '__main__':
     parser.add_argument('-nr',  '--num-run', help='number of runs per query', default=1)
     parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
     parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
+    parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
+    parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
+    parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
     parser.add_argument('-nls', '--num-loading-split', help='portion of loaders that should run in parallel', default="1")
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
@@ -71,6 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('-ii',  '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
     parser.add_argument('-ic',  '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
     parser.add_argument('-is',  '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
+    parser.add_argument('-icol',  '--init-columns', help='uses columnar storage (for Citus)', action='store_true', default=False)
     parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=False)
     parser.add_argument('-shq', '--shuffle-queries', help='have different orderings per stream', action='store_true', default=False)
     # evaluate args
@@ -111,6 +115,10 @@ if __name__ == '__main__':
         list_clients = []
     # do not ingest, start benchmarking immediately
     skip_loading = args.skip_loading
+    # how many workers (for distributed dbms)
+    num_worker = int(args.num_worker)
+    num_worker_replicas = int(args.num_worker_replicas)
+    num_worker_shards = int(args.num_worker_shards)
     ##############
     ### specific to: dbmsbenchmarker TPC-H
     ##############
@@ -119,6 +127,8 @@ if __name__ == '__main__':
     shuffle_queries = args.shuffle_queries
     # limit to one table
     limit_import_table = args.limit_import_table
+    # columnar storage
+    init_columns = args.init_columns
     ##############
     ### set cluster
     ##############
@@ -325,6 +335,53 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     DBMSBENCHMARKER_DEV = debugging,
+                    )
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("Citus" in args.dbms):
+                # PostgreSQL
+                name_format = 'Citus-{cluster}-{pods}'
+                config = configurations.default(experiment=experiment, docker='Citus', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
+                if init_columns:
+                    config.set_experiment(script='Schema-Columnar')
+                    config.set_experiment(indexing='Index_and_Statistics')
+                config.set_storage(
+                    storageConfiguration = 'citus'
+                    )
+                config.set_ddl_parameters(
+                    num_worker_replicas = num_worker_replicas,
+                    num_worker_shards = num_worker_shards,
+                    )
+                config.set_sut_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    )
+                config.set_eval_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    BEXHOMA_WORKERS = num_worker,
+                    COLUMNAR = init_columns,
+                    )
+                if skip_loading:
+                    config.loading_deactivated = True
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                config.set_loading_parameters(
+                    SF = SF,
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    STORE_RAW_DATA = 1,
+                    STORE_RAW_DATA_RECREATE = 0,
+                    BEXHOMA_SYNCH_LOAD = 1,
+                    BEXHOMA_SYNCH_GENERATE = 1,
+                    TRANSFORM_RAW_DATA = 1,
+                    TPCH_TABLE = limit_import_table,
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    )
+                config.set_benchmarking_parameters(
+                    SF = SF,
+                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                    DBMSBENCHMARKER_DEV = debugging,
+                    BEXHOMA_REPLICAS = num_worker_replicas,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
     ##############

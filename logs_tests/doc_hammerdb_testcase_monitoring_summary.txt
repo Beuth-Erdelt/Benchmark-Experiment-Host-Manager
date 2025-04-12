@@ -3,14 +3,14 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1302s 
-    Code: 1728319600
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 1354s 
+    Code: 1743790955
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS PostgreSQL.
+    Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -22,30 +22,30 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:252347984
-    datadisk:3377092
+    disk:204846748
+    datadisk:3298
     requests_cpu:4
     requests_memory:16Gi
 PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:253258284
-    datadisk:4287392
+    disk:205720752
+    datadisk:4101
     requests_cpu:4
     requests_memory:16Gi
 
 ### Execution
-                       experiment_run  vusers  client  pod_count     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1  11991.0  37233.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2  10259.5  31913.0         5       0
+                       experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1     13.84     17.53         0.0  10862.0  33809.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2     15.08     18.72         0.0  10051.0  31132.5         5       0
 
 Warehouses: 16
 
@@ -64,23 +64,23 @@ PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1      101.58        0          4.03                 4.71
-PostgreSQL-BHT-16-1-2      101.58        0          4.03                 4.71
+PostgreSQL-BHT-16-1-1      134.22      1.7          3.77                 4.46
+PostgreSQL-BHT-16-1-2      134.22      1.7          3.77                 4.46
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1      259.86        0          0.14                 0.14
-PostgreSQL-BHT-16-1-2      259.86        0          0.14                 0.14
+PostgreSQL-BHT-16-1-1      350.93        0          0.14                 0.14
+PostgreSQL-BHT-16-1-2      350.93        0          0.14                 0.14
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1    26506.75    62.89          5.42                 6.21
-PostgreSQL-BHT-16-1-2    26808.52    62.73          5.52                 6.46
+PostgreSQL-BHT-16-1-1    23467.65    56.12          5.44                 6.18
+PostgreSQL-BHT-16-1-2    23879.26    55.90          5.63                 6.57
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1       45.15     0.13          0.06                 0.06
-PostgreSQL-BHT-16-1-2       45.15     0.09          0.12                 0.12
+PostgreSQL-BHT-16-1-1       50.15     0.13          0.10                 0.10
+PostgreSQL-BHT-16-1-2       50.15     0.06          0.18                 0.19
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

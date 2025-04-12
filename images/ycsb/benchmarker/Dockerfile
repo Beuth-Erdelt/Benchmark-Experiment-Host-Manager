@@ -32,6 +32,7 @@ ENV YCSB_STATUS 0
 ENV YCSB_WORKLOAD a
 ENV YCSB_BATCHSIZE=""
 ENV YCSB_MEASUREMENT_TYPE=hdrhistogram
+ENV YCSB_USE_HOSTLIST 0
 
 RUN apk update && apk add --update curl openjdk8-jre && \
     mkdir -p /opt && cd /opt && \

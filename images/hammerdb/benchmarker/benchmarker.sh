@@ -19,6 +19,9 @@ echo "PARALLEL $PARALLEL"
 echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
 echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
+echo "HAMMERDB_TIMEPROFILE $HAMMERDB_TIMEPROFILE"
+echo "HAMMERDB_ALLWAREHOUSES $HAMMERDB_ALLWAREHOUSES"
+echo "HAMMERDB_KEYANDTHINK $HAMMERDB_KEYANDTHINK"
 
 ######################## Wait for synched starting time ########################
 echo "benchmark started at $DBMSBENCHMARKER_NOW"
@@ -139,6 +142,7 @@ diset tpcc mysql_duration $HAMMERDB_DURATION
 diset tpcc mysql_total_iterations $HAMMERDB_ITERATIONS
 diset tpcc mysql_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc mysql_allwarehouse $HAMMERDB_ALLWAREHOUSES
+diset tpcc mysql_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 loadscript
 puts \"SEQUENCE STARTED\"
@@ -190,6 +194,7 @@ diset tpcc maria_duration $HAMMERDB_DURATION
 diset tpcc maria_total_iterations $HAMMERDB_ITERATIONS
 diset tpcc maria_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc maria_allwarehouse $HAMMERDB_ALLWAREHOUSES
+diset tpcc maria_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 loadscript
 puts \"SEQUENCE STARTED\"
@@ -228,6 +233,7 @@ diset tpcc pg_duration $HAMMERDB_DURATION
 diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
 diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
+diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 tcset unique 0
 tcset refreshrate 10
@@ -286,6 +292,7 @@ diset tpcc pg_cituscompat true
 diset tpcc pg_storedprocs false
 diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
+diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 loadscript
 print vuconf
@@ -327,6 +334,7 @@ echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.
 # cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
 echo "/tmp/hdbxtprofile.log"
 cat /tmp/hdbxtprofile.log
+ls /tmp -lh
 
 ######################## Show timing information ###################
 echo "Benchmarking done"

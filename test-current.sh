@@ -15,10 +15,9 @@
 ######################################################################################
 
 
-BEXHOMA_NODE_SUT="cl-worker20"
-BEXHOMA_NODE_LOAD="cl-worker13"
-BEXHOMA_NODE_BENCHMARK="cl-worker13"
-#BEXHOMA_NODE_BENCHMARK="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
@@ -302,6 +301,14 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
+kubectl delete pvc bexhoma-storage-citus-benchbase-128
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-3
+sleep 30
+
+
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 60 \
@@ -315,23 +322,24 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 100Gi \
   run </dev/null &>$LOG_DIR/doc_benchbase_citus_2.log &
 
 
 wait_process "benchbase"
 
 
-python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
+  -xkey \
   -dbms Citus \
-  -nbp 1,2,4,8 \
-  -nbt 1024 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nbf 4 \
   -tb 1024 \
   -m -mc \
@@ -353,6 +361,7 @@ wait_process "benchbase"
 
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -dbms Citus \
   -nw 3 \
   -nwr 1 \
@@ -369,9 +378,18 @@ nohup python hammerdb.py -ms 1 -tr \
 wait_process "hammerdb"
 
 
+kubectl delete pvc bexhoma-storage-citus-hammerdb-128
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-3
+sleep 30
+
+
 nohup python hammerdb.py -ms 1 -tr \
   -sf 128 \
   -sd 30 \
+  -xlat \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
@@ -389,6 +407,124 @@ nohup python hammerdb.py -ms 1 -tr \
 
 
 wait_process "hammerdb"
+
+
+kubectl delete pvc bexhoma-storage-citus-hammerdb-500
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-3
+sleep 30
+
+
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 500 \
+  -sd 20 \
+  -xlat \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlp 1 \
+  -nlt 500 \
+  -nbp 1,2,5,10 \
+  -nbt 5000 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 200Gi \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_3.log &
+
+
+wait_process "hammerdb"
+
+
+
+
+####################################################
+#################### TPC-H Citus ###################
+####################################################
+
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 1200 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_1.log &
+
+
+wait_process "tpch"
+
+
+kubectl delete pvc bexhoma-storage-citus-tpch-10
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+sleep 30
+
+
+nohup python tpch.py -ms 1 -tr \
+  -sf 10 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 14400 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_2.log &
+
+
+wait_process "tpch"
+
+
+
+kubectl delete pvc bexhoma-storage-citus-tpch-10
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+sleep 30
+
+
+nohup python tpch.py -ms 1 -tr \
+  -sf 10 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -dt \
+  -t 14400 \
+  -dbms Citus \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -icol \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_3.log &
+
+
+wait_process "tpch"
 
 
 

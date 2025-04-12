@@ -137,7 +137,7 @@ if __name__ == '__main__':
     ycsb_operations = int(SFO)*1000000
     target_base = int(args.target_base)
     batchsize = args.scaling_batchsize
-    scaling_logging = int(args.scaling_logging)*1000 # adjust unit to miliseconds
+    scaling_logging = int(args.scaling_logging) # ycsb expects seconds? *1000 # adjust unit to miliseconds
     ##############
     ### set cluster
     ##############
@@ -868,6 +868,7 @@ if __name__ == '__main__':
                         YCSB_STATUS_INTERVAL = 10,
                         BEXHOMA_DBMS = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        YCSB_USE_HOSTLIST = "true",
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -904,6 +905,7 @@ if __name__ == '__main__':
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
+                                        YCSB_USE_HOSTLIST = "true",
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1742844516
-Experiment                    : starts at 2025-03-24 20:28:36.608211 (7036680.078760933)
+Experiment                    : has code 1744119497
+Experiment                    : starts at 2025-04-08 15:38:17.479649 (8311660.95019964)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -27,9 +27,46 @@ done
 Citus-64-8-65536              : will start now
 Citus-64-8-65536              : Name of SUT pods = bexhoma-sut-citus-64-8-65536-ycsb-1
 Citus-64-8-65536              : Name of SUT service = bexhoma-sut-citus-64-8-65536-ycsb-1
-Citus-64-8-65536              : Name of SUT PVC name = bexhoma-storage-citus-ycsb-1
 Citus-64-8-65536              : Name of Worker pods = bexhoma-worker-citus-ycsb-1
 Citus-64-8-65536              : Name of Worker service headless = bexhoma-worker-citus-ycsb-1
+- waiting 30s -               : done
+Citus-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1']
+Citus-64-8-65536              : found 1 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1']
+Citus-64-8-65536              : found 1 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1']
+Citus-64-8-65536              : found 1 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1']
+Citus-64-8-65536              : found 1 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
+Citus-64-8-65536              : found 2 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
+Citus-64-8-65536              : found 2 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
+Citus-64-8-65536              : found 2 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
+Citus-64-8-65536              : found 2 / 3 running workers
+Citus-64-8-65536              : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
 Citus-64-8-65536              : found 3 / 3 running workers
@@ -66,40 +103,40 @@ Citus-64-8-65536              : worker bexhoma-worker-citus-ycsb-1-2.bexhoma-wor
 
 
 Citus-64-8-65536              : is not loaded yet
-Citus-64-8-65536              : will start loading but not before 2025-03-24 19:30:44 (that is in 60 secs)
+Citus-64-8-65536              : will start loading but not before 2025-04-08 13:45:58 (that is in 60 secs)
 - waiting 30s -               : done
 Citus-64-8-65536              : is not loaded yet
-Citus-64-8-65536              : will start loading but not before 2025-03-24 19:30:44
+Citus-64-8-65536              : will start loading but not before 2025-04-08 13:45:58
 done
 Citus-64-8-65536              : is not loaded yet
 Citus-64-8-65536              : start asynch loading scripts of type loaded
 Citus-64-8-65536              : is loading
-done
+- waiting 30s -               : done
+Citus-64-8-65536              : is loading
+- waiting 30s -               : done
 Citus-64-8-65536              : is loading
 done
 Citus-64-8-65536              : showing loader times
-Citus-64-8-65536              : loader timespan (first to last [s]) = 21
+Citus-64-8-65536              : loader timespan (first to last [s]) = 20
 Citus-64-8-65536              : start asynch loading scripts of type indexed
 Citus-64-8-65536              : is loading
 done
 Citus-64-8-65536              : benchmarks done 0 of 1. This will be client 1
-Citus-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 1}
+Citus-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'BEXHOMA_REPLICAS': 1, 'YCSB_USE_HOSTLIST': 'true'}
 Citus-64-8-65536-1            : start benchmarking
 Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
 Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-ycsb-1-0
 Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-ycsb-1-1
 Citus-64-8-65536              : distributed system - get host info for worker bexhoma-worker-citus-ycsb-1-2
-Citus-64-8-65536              : benchmarking results in folder /home/perdelt/benchmarks/1742844516
+Citus-64-8-65536              : benchmarking results in folder /home/perdelt/benchmarks/1744119497
 - waiting 10s -               : done
 found
 Citus-64-8-65536-1            : collecting loading metrics of SUT at connection Citus-64-8-65536-1
 Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-ycsb-1-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-64-8-65536-1            : collecting metrics of data generator at connection Citus-64-8-65536-1
-Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1742844516(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1744119497(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-64-8-65536-1            : collecting metrics of data injector at connection Citus-64-8-65536-1
-Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1742844516(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-- waiting 30s -               : done
-Citus-64-8-65536              : has running benchmarks
+Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1744119497(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 Citus-64-8-65536              : has running benchmarks
 - waiting 30s -               : done
@@ -111,16 +148,17 @@ Citus-64-8-65536              : has running benchmarks
 done
 Citus-64-8-65536              : has running benchmarks
 Citus-64-8-65536-1            : showing benchmarker times
-Citus-64-8-65536-1            : benchmarker timespan (start to end single container [s]) = 207
-Citus-64-8-65536-1            : benchmarker times (start/end per pod and container) = [(1742844752, 1742844949)]
-Citus-64-8-65536-1            : found and updated times {'benchmarker': [(1742844752, 1742844949)]}
+Citus-64-8-65536-1            : benchmarker timespan (start to end single container [s]) = 219
+Citus-64-8-65536-1            : benchmarker times (start/end per pod and container) = [(1744120141, 1744120296)]
+Citus-64-8-65536-1            : found and updated times {'benchmarker': [(1744120141, 1744120296)]}
 Citus-64-8-65536-1            : collecting execution metrics of SUT at connection Citus-64-8-65536-1
 Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-ycsb-1-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-64-8-65536-1            : collecting metrics of benchmarker at connection Citus-64-8-65536-1
-Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1742844516(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-64-8-65536-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-64-8-65536-1744119497(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 Citus-64-8-65536              : can be stopped
-Experiment                    : ends at 2025-03-24 20:36:40.071483 (7037163.542036787) - 483.46s total
+Citus-64-8-65536              : Worker pods found: ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
+Experiment                    : ends at 2025-04-08 15:52:37.156366 (8312520.62692002) - 859.68s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -131,8 +169,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 484s 
-    Code: 1742844516
+    Duration: 860s 
+    Code: 1744119497
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -160,45 +198,45 @@ Citus-64-8-65536-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:153709796
+    disk:202015212
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:25047912
-    worker 1
-        RAM:540587544576
+        RAM:540587528192
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-134-generic
+        host:5.15.0-136-generic
         node:cl-worker22
-        disk:136222144
-    worker 2
+        disk:303131640
+    worker 1
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:785979628
+        disk:1108138628
+    worker 2
+        RAM:1081650987008
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:310170044
     eval_parameters
-        code:1742844516
+        code:1744119497
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:3
 
 ### Loading
                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Citus-64-8-65536               1       64   65536          8           0                   55415.896735                20192.0             1000000                              2457.5
+Citus-64-8-65536               1       64   65536          8           0                   52571.176109                19850.0             1000000                              2733.5
 
 ### Execution
                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Citus-64-8-65536-1               1       64   65536          1           0                       50989.19               196120.0           4997358                            1867.0             5002642                              1850.0
+Citus-64-8-65536-1               1       64   65536          1           0                       64598.65               154802.0           5000346                            1212.0             4999654                              1157.0
 
 ### Workflow
 
@@ -210,19 +248,19 @@ DBMS Citus-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1       147.5     0.01          8.73                 9.66
+Citus-64-8-65536-1      213.81     1.36          8.81                 9.79
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1        0.05        0          0.01                 0.01
+Citus-64-8-65536-1         0.1        0          0.02                 0.02
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1     2094.44     9.66          9.95                11.39
+Citus-64-8-65536-1     3922.28    11.09         13.48                14.97
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1     1050.52     7.79          0.62                 0.63
+Citus-64-8-65536-1      888.84     8.18          0.63                 0.63
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

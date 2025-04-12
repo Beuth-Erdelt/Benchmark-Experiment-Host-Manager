@@ -1152,9 +1152,11 @@ scrape_configs:
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         print("{:30s}: Name of SUT pods = {}".format(configuration, name))
         print("{:30s}: Name of SUT service = {}".format(configuration, name))
-        print("{:30s}: Name of SUT PVC name = {}".format(configuration, name_pvc))
-        print("{:30s}: Name of Worker pods = {}".format(configuration, name_worker))
-        print("{:30s}: Name of Worker service headless = {}".format(configuration, name_worker))
+        if use_storage:
+            print("{:30s}: Name of SUT PVC name = {}".format(configuration, name_pvc))
+        if self.num_worker > 0:
+            print("{:30s}: Name of Worker pods = {}".format(configuration, name_worker))
+            print("{:30s}: Name of Worker service headless = {}".format(configuration, name_worker))
         # ENV
         # default empty: env = {}
         env = self.sut_parameters #self.sut_envs.copy()
@@ -3120,25 +3122,6 @@ scrape_configs:
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
         env_default = dict()
-        if 'JDBC' in c:
-            env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
-                serverip=servicename,
-                dbname=self.experiment.volume,
-                DBNAME=self.experiment.volume.upper(),
-                timout_s=c['connectionmanagement']['timeout'],
-                timeout_ms=c['connectionmanagement']['timeout']*1000,
-                namespace=self.experiment.cluster.namespace
-                )
-            env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
-            env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
-            env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
-            if isinstance(c['JDBC']['jar'], str):
-                env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
-            else:
-                env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
-        else:
-            env_default['BEXHOMA_USER'] = c['auth'][0]
-            env_default['BEXHOMA_PASSWORD'] = c['auth'][1]
         env_default['BEXHOMA_HOST'] = servicename
         env_default['BEXHOMA_CLIENT'] = int(self.client)-1
         #env_default['BEXHOMA_CLIENT'] = str(parallelism) # why?
@@ -3164,6 +3147,33 @@ scrape_configs:
         list_of_workers_as_string_space = " ".join(list_of_workers)
         env_default['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
         env_default['BEXHOMA_SUT_NAME'] = name
+        if 'JDBC' in c:
+            env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
+                serverip=servicename,
+                dbname=self.experiment.volume,
+                DBNAME=self.experiment.volume.upper(),
+                timout_s=c['connectionmanagement']['timeout'],
+                timeout_ms=c['connectionmanagement']['timeout']*1000,
+                namespace=self.experiment.cluster.namespace
+                )
+            env_default['BEXHOMA_URL_LIST'] = c['JDBC']['url'].format(
+                serverip=list_of_workers_as_string,
+                dbname=self.experiment.volume,
+                DBNAME=self.experiment.volume.upper(),
+                timout_s=c['connectionmanagement']['timeout'],
+                timeout_ms=c['connectionmanagement']['timeout']*1000,
+                namespace=self.experiment.cluster.namespace
+                )
+            env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
+            env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
+            env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
+            if isinstance(c['JDBC']['jar'], str):
+                env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
+            else:
+                env_default['BEXHOMA_JAR'] = c['JDBC']['jar'][0]
+        else:
+            env_default['BEXHOMA_USER'] = c['auth'][0]
+            env_default['BEXHOMA_PASSWORD'] = c['auth'][1]
         if self.num_worker > 0:
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)

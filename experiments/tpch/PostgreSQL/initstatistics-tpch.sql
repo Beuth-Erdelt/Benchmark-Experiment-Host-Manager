@@ -6,3 +6,6 @@ ANALYZE VERBOSE public.part;
 ANALYZE VERBOSE public.partsupp;
 ANALYZE VERBOSE public.region;
 ANALYZE VERBOSE public.supplier;
+
+SELECT COUNT(*) AS "count nation" FROM nation;
+SELECT COUNT(*) AS "count region" FROM region;

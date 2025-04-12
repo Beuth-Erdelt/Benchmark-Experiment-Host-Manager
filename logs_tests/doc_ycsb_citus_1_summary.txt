@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 484s 
-    Code: 1742844516
+    Duration: 860s 
+    Code: 1744119497
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -32,45 +32,45 @@ Citus-64-8-65536-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:153709796
+    disk:202015212
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:25047912
-    worker 1
-        RAM:540587544576
+        RAM:540587528192
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-134-generic
+        host:5.15.0-136-generic
         node:cl-worker22
-        disk:136222144
-    worker 2
+        disk:303131640
+    worker 1
         RAM:1081965510656
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:785979628
+        disk:1108138628
+    worker 2
+        RAM:1081650987008
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:5.15.0-134-generic
+        node:cl-worker34
+        disk:310170044
     eval_parameters
-        code:1742844516
+        code:1744119497
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:3
 
 ### Loading
                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Citus-64-8-65536               1       64   65536          8           0                   55415.896735                20192.0             1000000                              2457.5
+Citus-64-8-65536               1       64   65536          8           0                   52571.176109                19850.0             1000000                              2733.5
 
 ### Execution
                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Citus-64-8-65536-1               1       64   65536          1           0                       50989.19               196120.0           4997358                            1867.0             5002642                              1850.0
+Citus-64-8-65536-1               1       64   65536          1           0                       64598.65               154802.0           5000346                            1212.0             4999654                              1157.0
 
 ### Workflow
 
@@ -82,19 +82,19 @@ DBMS Citus-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1       147.5     0.01          8.73                 9.66
+Citus-64-8-65536-1      213.81     1.36          8.81                 9.79
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1        0.05        0          0.01                 0.01
+Citus-64-8-65536-1         0.1        0          0.02                 0.02
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1     2094.44     9.66          9.95                11.39
+Citus-64-8-65536-1     3922.28    11.09         13.48                14.97
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1     1050.52     7.79          0.62                 0.63
+Citus-64-8-65536-1      888.84     8.18          0.63                 0.63
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

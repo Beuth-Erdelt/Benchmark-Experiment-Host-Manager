@@ -1247,11 +1247,16 @@ class benchbase(logger):
             time = re.findall('BENCHBASE_TIME (.+?)\n', stdout)[0]
             #terminals = re.findall('BENCHBASE_TERMINALS (.+?)\n', stdout)[0]
             batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
+            keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
             #errors = re.findall('Exception in thread ', stdout)
             errors = re.findall('error code', stdout)
             #print(errors)
             num_errors = len(errors)
+            #if keyandthink == "true":
+            #    efficiency = round(100.*/1.286, 2)
+            #else:
+            #    efficiency = 0
             header = {
                 'connection': connection_name,
                 'configuration': configuration_name,
@@ -1265,9 +1270,10 @@ class benchbase(logger):
                 'time': time,
                 #'terminals': terminals,
                 'batchsize': batchsize,
-                'sf': sf,
+                'sf': int(sf),
                 'num_errors': num_errors,
                 'duration': duration,
+                'efficiency': 0.0,
             }
             df_header = pd.DataFrame(header, index=[0])
             if True: # num_errors == 0:
@@ -1278,6 +1284,9 @@ class benchbase(logger):
                     #self.cluster.logger.debug(df)
                     df = pd.concat([df_header, df], axis=1)
                     df.index.name = connection_name
+                    #print(df, keyandthink)
+                    if keyandthink == "true":
+                        df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
                     #print(df)
                     return df
                 else:
@@ -1331,6 +1340,7 @@ class benchbase(logger):
             'Latency Distribution.99th Percentile Latency (microseconds)':'float',
             'Latency Distribution.75th Percentile Latency (microseconds)':'float',
             'Latency Distribution.Average Latency (microseconds)':'float',
+            'efficiency': 'float',
         })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df):
@@ -1377,6 +1387,7 @@ class benchbase(logger):
                 'Latency Distribution.99th Percentile Latency (microseconds)':'max',
                 'Latency Distribution.75th Percentile Latency (microseconds)':'max',
                 'Latency Distribution.Average Latency (microseconds)':'mean',
+                'efficiency': 'sum',
             }
             #print(grp.agg(aggregate))
             dict_grp = dict()
@@ -1392,6 +1403,15 @@ class benchbase(logger):
             #df_grp.set_index('connection', inplace=True)
             #print(df_grp)
             df_aggregated = pd.concat([df_aggregated, df_grp])
+        #print(df_aggregated)
+        #mask = df_aggregated['sf'] * 10 == df_aggregated['terminals']  # Condition
+        mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.)
+        #df_masked = df_aggregated[~mask]
+        #print(mask, df_aggregated.loc[mask])
+        df_aggregated['efficiency'] = 0.  # Default all rows to 0
+        df_aggregated.loc[mask, 'efficiency'] = (
+            0.45 * 60. * 100. * df_aggregated['Goodput (requests/second)'] / 12.86 / df_aggregated['sf']
+        )
         return df_aggregated
     def parse_benchbase_log_file(self, file_path):
         """
@@ -1631,6 +1651,9 @@ class tpcc(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             vusers_loading = re.findall('PARALLEL (.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
+            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
+            keyandthink = re.findall('HAMMERDB_KEYANDTHINK (.+?)\n', stdout)[0]
             #client = "1"
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
@@ -1653,6 +1676,8 @@ class tpcc(logger):
             #start_index = stdout.find('SUMMARY OF 250 ACTIVE VIRTUAL USERS')
             # Extract the text from that point onward
             #if start_index != -1:
+            # Create a dictionary to store the results latencies
+            extracted_data = {}
             # Find the section that starts with 'SUMMARY OF <number> ACTIVE VIRTUAL USERS'
             pattern = r'SUMMARY OF (\d+) ACTIVE VIRTUAL USERS'
             # Search for the pattern in the text
@@ -1670,8 +1695,6 @@ class tpcc(logger):
                 end_index = relevant_text.find('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
                 if end_index != -1:
                     relevant_text = relevant_text[:end_index]
-                # Create a dictionary to store the results
-                extracted_data = {}
                 # Regex pattern to match the labels and numbers (e.g., CALLS: 5426322, MIN: 2.990ms)
                 pattern = r'(\w+):\s*([\d\.]+)'
                 # Find all label-number pairs in the relevant text
@@ -1695,15 +1718,21 @@ class tpcc(logger):
             #for (result, vuser) in result_tupels:
             #    print(result, vuser)
             #print(result)
+            # compute efficiency, only valid for keying time
+            #print(result_tupels[0][0][0], result_tupels[0][1])
+            if keyandthink == "true":
+                efficiency = round(100.*float(result_tupels[0][0][0])/float(result_tupels[0][1])/1.286, 2)
+            else:
+                efficiency = 0
             # this finds ['CALLS', 'MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50', 'SD', 'RATIO']
             # if latencies are logged
             list_latencies = list(extracted_data.values())
             #print(list_latencies)
-            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
+            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
             #print(result_list)
             df = pd.DataFrame(result_list)
             #print(list(extracted_data.keys()))
-            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'NOPM', 'TPM', 'dbms']
+            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             column_names.extend(list(extracted_data.keys()))
             #print(column_names)
             df.columns = column_names
@@ -1765,6 +1794,7 @@ class tpcc(logger):
                 'vusers':'int',
                 'NOPM':'int',
                 'TPM':'int',
+                'efficiency':'float',
                 'dbms':'str',
                 'CALLS':'float',
                 'MIN [ms]':'float',
@@ -1793,6 +1823,7 @@ class tpcc(logger):
                 'vusers':'int',
                 'NOPM':'int',
                 'TPM':'int',
+                'efficiency':'float',
                 'dbms':'str',
             })
         return df_typed
@@ -1826,6 +1857,7 @@ class tpcc(logger):
                     'NOPM':'mean',
                     #'TPM':'sum',
                     'TPM':'mean',
+                    'efficiency':'min',
                     'dbms':'max',
                     'CALLS':'max',
                     'MIN [ms]':'max',
@@ -1853,6 +1885,7 @@ class tpcc(logger):
                     'NOPM':'mean',
                     #'TPM':'sum',
                     'TPM':'mean',
+                    'efficiency':'min',
                     'dbms':'max',
                 }
             #print(grp.agg(aggregate))
@@ -1868,6 +1901,16 @@ class tpcc(logger):
             #df_grp.set_index('connection', inplace=True)
             #print(df_grp)
             df_aggregated = pd.concat([df_aggregated, df_grp])
+        #print(df_aggregated['sf'], df_aggregated['vusers'], df_aggregated['NOPM'])
+        #print(df_aggregated['sf']*10 == df_aggregated['vusers'])
+        #print(df_aggregated['efficiency'])
+        df_aggregated['efficiency'] = 0.  # Default all rows to 0
+        mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']  # Condition
+        #print(mask, df_aggregated.loc[mask])
+        df_aggregated.loc[mask, 'efficiency'] = (
+            100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
+        )
+        #print(df_aggregated['efficiency'])
         return df_aggregated
 
 

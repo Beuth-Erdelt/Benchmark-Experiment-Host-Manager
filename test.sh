@@ -263,6 +263,7 @@ wait_process "benchbase"
 ### HammerDB Simple (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
@@ -272,11 +273,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_postgresql_1.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 900
 wait_process "hammerdb"
 
 #### Delete persistent storage
@@ -287,6 +284,7 @@ sleep 30
 ### HammerDB Monitoring (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
@@ -298,11 +296,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
 
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_postgresql_2.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 900
 wait_process "hammerdb"
 
 
@@ -310,6 +304,7 @@ wait_process "hammerdb"
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
   -sd 2 \
+  -xlat \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
@@ -317,16 +312,15 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1,2 \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+    -m -mc \
+    -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_postgresql_3.log
 
 
 #### Wait so that next experiment receives a different code
 #sleep 3000
 wait_process "hammerdb"
+
 
 
 
