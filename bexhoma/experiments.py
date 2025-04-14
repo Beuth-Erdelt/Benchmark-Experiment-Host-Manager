@@ -3104,6 +3104,10 @@ class benchbase(default):
         self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.benchmark = 'tpcc'                                                          # Benchbase knows several benchmarks. Here we store, which one to use, default tpcc
+    def set_benchmark_type(self, benchmark='tpcc'):
+        self.benchmark = benchmark
+        self.cluster.set_experiments_configfolder('experiments/benchbase/'+benchmark)
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
         self.args = args
@@ -3130,7 +3134,7 @@ class benchbase(default):
         if len(type_of_benchmark):
             self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
         if SF:
-            self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses) is {}.".format(SF)
+            self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
         if SD:
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
         self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)

@@ -157,6 +157,7 @@ if __name__ == '__main__':
     ### prepare and configure experiment
     ##############
     experiment = experiments.benchbase(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment.set_benchmark_type(type_of_benchmark)
     experiment.prometheus_interval = "10s"
     experiment.prometheus_timeout = "10s"
     # remove running dbms
