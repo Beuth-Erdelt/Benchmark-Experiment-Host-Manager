@@ -54,10 +54,12 @@ if [ "$BENCHBASE_BENCH" = "twitter" ]; then
 	FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
 fi
 
-######################## CHBenchmark ###################
+######################## CHBenCHmark ###################
 if [ "$BENCHBASE_BENCH" = "chbenchmark" ]; then
 	#FILENAME=/benchbase/profiles/postgres/config/postgres/sample_tpcc_config.xml
 	FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_chbenchmark_config.xml
+	# we must generate and load both schemas
+	BENCHBASE_BENCH="tpcc,chbenchmark"
 fi
 
 ######################## Replace parameters in workload file ###################

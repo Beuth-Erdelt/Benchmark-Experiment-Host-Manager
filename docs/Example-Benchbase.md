@@ -65,7 +65,7 @@ This
 * runs streams of TPC-C queries (per DBMS)
     * running for 5 (`-sd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
-    * `-nbp`: first stream 1 pos, second stream 2 pods (8 threads each)
+    * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
     * target is 16x(`-ltf`) 1024 (`-tb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)

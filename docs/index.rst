@@ -15,6 +15,7 @@
     ./Example-YCSB.md
     ./Example-HammerDB.md
     ./Example-Benchbase.md
+    ./Example-Benchbase-Others.md
     ./Example-TPC-H.md
     ./Example-TPC-DS.md
     ./Example-Citus.md

@@ -3121,7 +3121,7 @@ class benchbase(default):
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             self.set_workload(
-                name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
+                name = 'Benchbase Workload SF={}'.format(SF),
                 info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
                 type = 'benchbase',
                 defaultParameters = {'SF': SF}

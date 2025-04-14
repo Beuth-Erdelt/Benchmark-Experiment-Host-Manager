@@ -179,7 +179,7 @@ if __name__ == '__main__':
             )
     # add labels about the use case
     experiment.set_additional_labels(
-        usecase="benchbase_tpcc",
+        usecase=f"benchbase_{type_of_benchmark}",
         warehouses=SF,
         #users_loading=scaling_users,
         #users_benchmarking=str(num_virtual_users),
