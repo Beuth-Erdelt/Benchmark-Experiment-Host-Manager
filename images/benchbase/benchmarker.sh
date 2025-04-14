@@ -110,8 +110,14 @@ fi
 
 ######################## Twitter ###################
 if [ "$BENCHBASE_BENCH" = "twitter" ]; then
-	#FILENAME=/benchbase/profiles/postgres/config/postgres/sample_tpcc_config.xml
-	FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
+    #FILENAME=/benchbase/profiles/postgres/config/postgres/sample_tpcc_config.xml
+    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
+fi
+
+######################## CHBenchmark ###################
+if [ "$BENCHBASE_BENCH" = "chbenchmark" ]; then
+    #FILENAME=/benchbase/profiles/postgres/config/postgres/sample_tpcc_config.xml
+    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_chbenchmark_config.xml
 fi
 
 ######################## Replace parameters in workload file ###################

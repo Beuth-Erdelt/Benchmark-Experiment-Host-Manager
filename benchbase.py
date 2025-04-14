@@ -75,7 +75,7 @@ if __name__ == '__main__':
     parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
     parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     #parser.add_argument('-nti', '--num-time', help='time per benchmark in seconds', default="60")
-    parser.add_argument('-b', '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter'])
+    parser.add_argument('-b', '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark'])
     #parser.add_argument('-nt', '--num-target', help='total number of loaders per configuration', default="1024")
     #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 1024 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb', '--target-base', help='ops as target, base for factors - default 1024 = 2**10', default="1024")
