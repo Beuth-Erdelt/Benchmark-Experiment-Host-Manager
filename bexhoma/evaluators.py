@@ -1285,7 +1285,7 @@ class benchbase(logger):
                     df = pd.concat([df_header, df], axis=1)
                     df.index.name = connection_name
                     #print(df, keyandthink)
-                    if keyandthink == "true":
+                    if keyandthink == "true" and bench == "tpcc":
                         df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
                     #print(df)
                     return df
@@ -1405,7 +1405,7 @@ class benchbase(logger):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         #print(df_aggregated)
         #mask = df_aggregated['sf'] * 10 == df_aggregated['terminals']  # Condition
-        mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.)
+        mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
         #df_masked = df_aggregated[~mask]
         #print(mask, df_aggregated.loc[mask])
         df_aggregated['efficiency'] = 0.  # Default all rows to 0
