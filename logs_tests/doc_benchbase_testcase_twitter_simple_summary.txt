@@ -1,10 +1,10 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 623s 
-    Code: 1744632801
+    Duration: 625s 
+    Code: 1744645235
     Benchbase runs the Twitter benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -27,18 +27,18 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:202606132
-    datadisk:262
+    disk:202609136
+    datadisk:264
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1744632801
+                code:1744645235
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0           0                        693.17                     693.22         0.0                                                      41495.0                                              23071.0
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0           0                        689.61                     689.66         0.0                                                      41497.0                                              23190.0
 
 Warehouses: 16
 

@@ -160,7 +160,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log &
 ```
 
-## Evaluate Results
+### Evaluate Results
 
 ```
 ## Show Summary
@@ -450,7 +450,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log &
 ```
 
-## Evaluate Results
+### Evaluate Results
 
 ```
 ## Show Summary
