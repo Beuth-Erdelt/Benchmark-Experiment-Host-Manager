@@ -3107,6 +3107,7 @@ class benchbase(default):
         self.benchmark = 'tpcc'                                                          # Benchbase knows several benchmarks. Here we store, which one to use, default tpcc
     def set_benchmark_type(self, benchmark='tpcc'):
         self.benchmark = benchmark
+        self.storage_label = 'benchbase-{benchmark}-{SF}'.format(benchmark=self.benchmark, SF=self.SF)
         self.cluster.set_experiments_configfolder('experiments/benchbase/'+benchmark)
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
