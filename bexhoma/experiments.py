@@ -3134,7 +3134,8 @@ class benchbase(default):
         if len(type_of_benchmark):
             self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
         if SF:
-            self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
+            #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
+            self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
         if SD:
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
         self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
@@ -3322,7 +3323,7 @@ class benchbase(default):
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             print(df_aggregated_reduced)
-        print("\nWarehouses:", warehouses)
+        #print("\nWarehouses:", warehouses)
         # test: show time series
         #print(self.evaluator.get_benchmark_logs_timeseries_df_aggregated(configuration="Citus-1-1-1024", client=2))
         #####################
@@ -3365,7 +3366,8 @@ class benchbase(default):
         df_tpx = (warehouses*3600.0)/df_connections.sort_index()
         #print(df_tpx)
         #df_loading_tpx = df_tpx['time_load']
-        df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        #df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        df_connections['Throughput [SF/h]'] = df_tpx['time_load']
         df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
         print(df_connections)
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
