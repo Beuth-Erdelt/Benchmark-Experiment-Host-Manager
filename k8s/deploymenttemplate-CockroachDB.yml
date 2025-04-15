@@ -154,7 +154,7 @@ spec:
           failureThreshold: 2
         volumeMounts:
         - {mountPath: /cockroach/cockroach-data/extern/data, name: benchmark-data-volume}
-        - name: bexhoma-workers
+        - name: bxw
           mountPath: /cockroach/cockroach-data
         env:
         #- name: BEXHOMA_WORKER_LIST
@@ -220,8 +220,8 @@ spec:
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
-      - name: bexhoma-workers
-        persistentVolumeClaim: {claimName: bexhoma-workers}
+      - name: bxw
+        persistentVolumeClaim: {claimName: bxw}
       - name: rootfs
         hostPath:
           path: /
@@ -248,7 +248,7 @@ spec:
     type: RollingUpdate
   volumeClaimTemplates:
   - metadata:
-      name: bexhoma-workers
+      name: bxw
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       accessModes:

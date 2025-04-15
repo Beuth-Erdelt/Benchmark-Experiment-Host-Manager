@@ -1307,7 +1307,7 @@ scrape_configs:
                     if container['name'] == 'dbms':
                         #print(container['volumeMounts'])
                         for j, vol in enumerate(container['volumeMounts']):
-                            if vol['name'] == 'bexhoma-workers':
+                            if vol['name'] == 'bxw':
                                 #print(vol['mountPath'])
                                 if not use_storage:
                                     del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
@@ -1321,7 +1321,7 @@ scrape_configs:
                             self.worker_containers_deployed.pop()
                 # remove volumes
                 for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
-                    if vol['name'] == 'bexhoma-workers':
+                    if vol['name'] == 'bxw':
                         #print(vol['mountPath'])
                         if not use_storage:
                             del result[key]['spec']['template']['spec']['volumes'][j]
@@ -2061,7 +2061,7 @@ scrape_configs:
                 for pod in pods_worker:
                     size, used = self.get_host_volume(pod=pod)
                     # write infos to SUT's PVC (if exists)
-                    fullcommand = 'label pvc bexhoma-workers-{} --overwrite volume_size="{}" volume_used="{}"'.format(pod, size, used)
+                    fullcommand = 'label pvc bxw-{} --overwrite volume_size="{}" volume_used="{}"'.format(pod, size, used)
                     #print(fullcommand)
                     self.experiment.cluster.kubectl(fullcommand)
                     ## write infos to worker's PVC (if exists)

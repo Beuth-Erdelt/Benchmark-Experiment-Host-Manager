@@ -264,7 +264,7 @@ spec:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         volumeMounts:
-        - name: bexhoma-workers
+        - name: bxw
           mountPath: /var/lib/postgresql/data
         - {mountPath: /dev/shm, name: dshm}
         #lifecycle:
@@ -341,8 +341,8 @@ spec:
           mountPath: /dev/disk
           readOnly: true
       volumes:
-      - name: bexhoma-workers
-        persistentVolumeClaim: {claimName: bexhoma-workers}
+      - name: bxw
+        persistentVolumeClaim: {claimName: bxw}
       - name: rootfs
         hostPath:
           path: /
@@ -363,7 +363,7 @@ spec:
           medium: Memory
   volumeClaimTemplates:
   - metadata:
-      name: bexhoma-workers
+      name: bxw
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       accessModes: [ "ReadWriteOnce" ]

@@ -256,13 +256,13 @@ spec:
           #    fieldRef:
           #      fieldPath: subdomain
         volumeMounts:
-        - name: bexhoma-workers
+        - name: bxw
           mountPath: /data
       volumes:
       #- name: benchmark-data-volume
       #  persistentVolumeClaim: {claimName: bexhoma-data}
-      - name: bexhoma-workers
-        persistentVolumeClaim: {claimName: bexhoma-workers}
+      - name: bxw
+        persistentVolumeClaim: {claimName: bxw}
       #- name: benchmark-storage-volume
       #  persistentVolumeClaim: {claimName: bexhoma-storage}
       - name: rootfs
@@ -285,7 +285,7 @@ spec:
           medium: Memory
   volumeClaimTemplates:
   - metadata:
-      name: bexhoma-workers
+      name: bxw
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       accessModes:

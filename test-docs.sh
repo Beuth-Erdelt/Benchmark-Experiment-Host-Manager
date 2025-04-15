@@ -300,7 +300,7 @@ wait_process "benchbase"
 
 
 #### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-16
 sleep 30
 
 
