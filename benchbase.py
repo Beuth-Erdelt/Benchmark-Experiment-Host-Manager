@@ -636,6 +636,9 @@ if __name__ == '__main__':
                     # CockroachDB
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
+                    create_schema = "true"
+                    if type_of_benchmark == "tpcc":
+                        create_schema = "false"
                     config.set_storage(
                         storageConfiguration = 'citus'
                         )
@@ -667,7 +670,7 @@ if __name__ == '__main__':
                         #BEXHOMA_USER = "root",
                         #BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
-                        BENCHBASE_CREATE_SCHEMA = "false",
+                        BENCHBASE_CREATE_SCHEMA = create_schema,
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )

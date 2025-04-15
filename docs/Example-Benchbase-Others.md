@@ -20,6 +20,19 @@ References:
 
 <img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/twitter.png" alt="drawing" width="600"/>
 
+> The Twitter workload is inspired by the popular micro-blogging
+website. In order to provide a realistic benchmark, we obtained
+an anonymized snapshot of the Twitter social graph from August
+2009 that contains 51 million users and almost 2 billion “follows”
+relationships [...]. We created a synthetic workload generator that
+is based on an approximation of the queries/transactions needed to
+support the application functionalities as we observe them by using the web site, along with information derived from a data set
+of 200,000 tweets. Although we do not claim that this is a precise
+representation of Twitter’s system, it still reflects its important characteristics, such as heavily skewed many-to-many relationships. [1]
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+1. Image Benchbase Twitter Benchmark: https://github.com/cmu-db/benchbase/wiki/Twitter
+
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
 BEXHOMA_NODE_SUT="cl-worker11"
@@ -274,9 +287,25 @@ TEST passed: Workflow as planned
 
 
 
+
+
+
+
+
+
 ## CH-benCHmark
 
 <img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/chbenchmark.png" alt="drawing" width="600"/>
+
+> This is a mixed workload derived from TPC-Cand TPC-H [...].
+It is useful to evaluate DBMSs designed to serve both OLTP and
+OLAP workloads. The implementation leverages the ability of
+OLTP-Bench to run multiple workloads. It uses our built-in implementation of TPC-C along with 22 additional analytical queries. [1]
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+1. Image Benchbase CH-benCHmark: https://github.com/cmu-db/benchbase/wiki/CH-benCHmark
+1. CH-benCHmark: https://db.in.tum.de/research/projects/CHbenCHmark/?lang=en
+
 
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
