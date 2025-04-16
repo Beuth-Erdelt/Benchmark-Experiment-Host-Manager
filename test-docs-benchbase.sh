@@ -103,7 +103,6 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-#sleep 1200
 wait_process "benchbase"
 
 
@@ -127,10 +126,29 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
-#sleep 900
 wait_process "benchbase"
 
 
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-160
+sleep 30
+
+
+nohup python benchbase.py -ms 1 -tr \
+  -sf 160 \
+  -sd 30 \
+  -xkey \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1,2,5,10 \
+  -nbt 1600 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_keytime.log &
 
 
 
