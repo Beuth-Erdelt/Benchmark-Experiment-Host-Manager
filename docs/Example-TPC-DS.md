@@ -1370,7 +1370,7 @@ nohup python tpcds.py -ms 1 \
   -dbms MonetDB \
   -t 7200 -dt \
   -rst shared -rss 300Gi \
-  run &>$LOG_DIR/doc_tpcds_monetdb_1.log &
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
 ```
 
 
@@ -1620,7 +1620,7 @@ nohup python tpcds.py -ms 1 \
   -dbms MonetDB \
   -t 7200 -dt \
   -rst shared -rss 300Gi \
-  run &>$LOG_DIR/doc_tpcds_monetdb_2.log &
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
 ```
 
 ### Evaluate Results
@@ -1888,7 +1888,7 @@ nohup python tpcds.py -ms 1 \
   -dbms MonetDB \
   -t 7200 -dt \
   -rst shared -rss 300Gi \
-  run &>$LOG_DIR/doc_tpcds_monetdb_3.log &
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
 ```
 
 ### Evaluate Results
