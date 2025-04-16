@@ -46,7 +46,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>$LOG_DIR/doc_tpch_monetdb_1.log &
+  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
 ```
 
 ## Status Data Disk
@@ -255,7 +255,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>$LOG_DIR/doc_tpch_monetdb_2.log &
+  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
 ```
 
 yields
@@ -454,7 +454,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run &>$LOG_DIR/doc_tpch_monetdb_3.log &
+  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
 ```
 
 yields something like
