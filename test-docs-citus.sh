@@ -91,9 +91,9 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 kubectl delete pvc bexhoma-storage-citus-ycsb-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-64-8-65536-citus-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-64-8-65536-citus-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-64-8-65536-citus-2
+kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-0
+kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-1
+kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-2
 sleep 30
 
 
@@ -146,11 +146,11 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-kubectl delete pvc bexhoma-storage-citus-benchbase-128
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-3
+kubectl delete pvc bexhoma-storage-citus-benchbase-tpcc-128
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-0
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-1
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-2
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-3
 sleep 30
 
 
@@ -224,10 +224,10 @@ wait_process "hammerdb"
 
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-128
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-128-3
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-0
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-1
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-2
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-3
 sleep 30
 
 
@@ -255,10 +255,10 @@ wait_process "hammerdb"
 
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-500
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-hammerdb-500-3
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-0
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-1
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-2
+kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-3
 sleep 30
 
 
@@ -312,10 +312,10 @@ wait_process "tpch"
 
 
 kubectl delete pvc bexhoma-storage-citus-tpch-10
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
@@ -343,10 +343,10 @@ wait_process "tpch"
 
 
 kubectl delete pvc bexhoma-storage-citus-tpch-10
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 

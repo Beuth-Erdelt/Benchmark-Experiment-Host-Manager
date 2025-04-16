@@ -166,9 +166,10 @@ wait_process "ycsb"
 ########### does not work - redis nodes rely on IPs and do not find eachother after restart
 
 kubectl delete pvc bexhoma-storage-redis-ycsb-1
-kubectl delete pvc bexhoma-workers-bx-w-redis-ycsb-1-0
-kubectl delete pvc bexhoma-workers-bx-w-redis-ycsb-1-1
-kubectl delete pvc bexhoma-workers-bx-w-redis-ycsb-1-2
+kubectl delete pvc bxw-bx-w-redis-ycsb-1-0
+kubectl delete pvc bxw-bx-w-redis-ycsb-1-1
+kubectl delete pvc bxw-bx-w-redis-ycsb-1-2
+sleep 30
 
 
 nohup python ycsb.py -ms 1 -tr \

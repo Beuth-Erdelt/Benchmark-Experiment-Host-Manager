@@ -89,9 +89,9 @@ wait_process "ycsb"
 
 
 kubectl delete pvc bexhoma-storage-cockroachdb-ycsb-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-cockroachdb-ycsb-1-2
+kubectl delete pvc bxw-bexhoma-worker-cockroachdb-ycsb-1-0
+kubectl delete pvc bxw-bexhoma-worker-cockroachdb-ycsb-1-1
+kubectl delete pvc bxw-bexhoma-worker-cockroachdb-ycsb-1-2
 
 #### YCSB PVC (Example-CockroachDB.md)
 nohup python ycsb.py -ms 1 -tr \

@@ -292,15 +292,15 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 | bexhoma-storage-citus-ycsb-1           | citus           | ycsb-1       | True         |                26 | Citus           | shared               | 50Gi      | Bound    | 50.0G  | 40.0M  |
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 
-+-----------------------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
-| Volumes of Workers                            | configuration     |   experiment | dbms   | storage_class_name   | storage   | status   | size   | used   |
-+===============================================+===================+==============+========+======================+===========+==========+========+========+
-| bexhoma-workers-bexhoma-worker-citus-ycsb-1-0 | Citus-64-8-65536  |   1742471862 | Citus  | shared               | 50Gi      | Bound    | 50.0G  | 1.4G   |
-+-----------------------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
-| bexhoma-workers-bexhoma-worker-citus-ycsb-1-1 | Citus-64-8-65536  |   1742471862 | Citus  | shared               | 50Gi      | Bound    | 50.0G  | 1.4G   |
-+-----------------------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
-| bexhoma-workers-bexhoma-worker-citus-ycsb-1-2 | Citus-64-8-65536  |   1742471862 | Citus  | shared               | 50Gi      | Bound    | 50.0G  | 1.2G   |
-+-----------------------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
++-----------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
+| Volumes of Workers                | configuration     |   experiment | dbms   | storage_class_name   | storage   | status   | size   | used   |
++===================================+===================+==============+========+======================+===========+==========+========+========+
+| bxw-bexhoma-worker-citus-ycsb-1-0 | Citus-64-8-65536  |   1742471862 | Citus  | shared               | 50Gi      | Bound    | 50.0G  | 1.4G   |
++-----------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
+| bxw-bexhoma-worker-citus-ycsb-1-1 | Citus-64-8-65536  |   1742471862 | Citus  | shared               | 50Gi      | Bound    | 50.0G  | 1.4G   |
++-----------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
+| bxw-bexhoma-worker-citus-ycsb-1-2 | Citus-64-8-65536  |   1742471862 | Citus  | shared               | 50Gi      | Bound    | 50.0G  | 1.2G   |
++-----------------------------------+-------------------+--------------+--------+----------------------+-----------+----------+--------+--------+
 ```
 
 The result looks something like
@@ -686,10 +686,10 @@ At first, we remove old PVC:
 
 ```bash
 kubectl delete pvc bexhoma-storage-citus-benchbase-128
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-benchbase-128-3
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-0
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-1
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-2
+kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-3
 ```
 
 The benchmark is run via
@@ -2928,10 +2928,10 @@ At first we remove possibly existing PVC:
 
 ```bash
 kubectl delete pvc bexhoma-storage-citus-tpch-10
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 ```
 
 Then we run TPC-H Power Test at SF=10.
@@ -3317,10 +3317,10 @@ At first we remove possibly existing PVC:
 
 ```bash
 kubectl delete pvc bexhoma-storage-citus-tpch-10
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bexhoma-workers-bexhoma-worker-citus-tpch-10-3
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
+kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 ```
 
 The experiment runs like this:
