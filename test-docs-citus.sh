@@ -261,9 +261,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlp 1 \
-  -nlt 500 \
+  -nlt 250 \
   -nbp 1,2,5,10 \
-  -nbt 5000 \
+  -nbt 250 \
   -ne 1 \
   -nc 2 \
   -m -mc \

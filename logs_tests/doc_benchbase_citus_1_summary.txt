@@ -1,14 +1,15 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 1068s 
-    Code: 1743087319
-    Benchbase runs the benchmark.
+    Duration: 1419s 
+    Code: 1744733178
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.4.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -26,34 +27,34 @@ Citus-1-1-1024-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:184429676
+    disk:202385032
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:62432208
+        RAM:1077382836224
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:984406844
     worker 1
-        RAM:1081650966528
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:5.15.0-134-generic
-        node:cl-worker34
-        disk:189699460
+        RAM:2164173475840
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-57-generic
+        node:cl-worker36
+        disk:161143388
     worker 2
-        RAM:540595879936
+        RAM:540590919680
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-134-generic
+        host:6.8.0-57-generic
         node:cl-worker25
-        disk:81828268
+        disk:165151968
     eval_parameters
-                code:1743087319
+                code:1744733178
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:3
@@ -63,57 +64,55 @@ Citus-1-1-1024-2 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:184451332
+    disk:202406148
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:62824440
+        RAM:1077382836224
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:984693436
     worker 1
-        RAM:1081650966528
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:5.15.0-134-generic
-        node:cl-worker34
-        disk:190021172
+        RAM:2164173475840
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-57-generic
+        node:cl-worker36
+        disk:161504272
     worker 2
-        RAM:540595879936
+        RAM:540590919680
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-134-generic
+        host:6.8.0-57-generic
         node:cl-worker25
-        disk:82150072
+        disk:165453560
     eval_parameters
-                code:1743087319
+                code:1744733178
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:3
 
 ### Execution
-                  experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-Citus-1-1-1024-1               1         16   16384          1  300.0                        790.39                                                      40008.0                                              20231.0
-Citus-1-1-1024-2               1         16   16384          2  300.0                        705.86                                                      49080.0                                              22653.0
-
-Warehouses: 16
+                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+Citus-1-1-1024-1               1         16   16384          1  300.0           0                        712.78                     709.74         0.0                                                      48135.0                                              22434.0
+Citus-1-1-1024-2               1         16   16384          2  300.0           1                        670.29                     664.76         0.0                                                      50671.0                                              23855.5
 
 ### Workflow
 
 #### Actual
-DBMS Citus-1-1-1024 - Pods [[1, 2]]
+DBMS Citus-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
 DBMS Citus-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                  time_load  terminals  pods  Imported warehouses [1/h]
-Citus-1-1-1024-1      166.0        1.0   1.0                 346.987952
-Citus-1-1-1024-2      166.0        1.0   2.0                 346.987952
+                  time_load  terminals  pods  Throughput [SF/h]
+Citus-1-1-1024-1      185.0        1.0   1.0         311.351351
+Citus-1-1-1024-2      185.0        1.0   2.0         311.351351
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

@@ -85,6 +85,7 @@ clean_logs() {
     grep -rl "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." . \
     | xargs sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
 
+    cd "$MYDIR" || return
 
     echo "Extracting summaries from log files..."
 
@@ -96,6 +97,5 @@ clean_logs() {
         awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
     done
 
-    cd "$MYDIR" || return
     echo "Extraction complete! Files are saved in $LOG_DIR."
 }
