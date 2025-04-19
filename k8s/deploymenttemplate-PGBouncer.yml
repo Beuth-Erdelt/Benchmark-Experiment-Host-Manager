@@ -49,6 +49,8 @@ spec:
         # SHOW POOLS;
         # SHOW CLIENTS;
         # SHOW SERVERS;
+        # works: AUTH_TYPE scram-sha-256 with password postgres
+        # works: AUTH_TYPE trust with empty password
         # https://www.pgbouncer.org/config.html
         # https://github.com/edoburu/docker-pgbouncer
         # https://github.com/farrajota/kubernetes-postgres-pgbouncer/blob/master/pgbouncer.yaml
@@ -56,7 +58,7 @@ spec:
         - name: DB_USER
           value: postgres
         - name: DB_PASSWORD
-          value: 
+          value: #postgres
         - name: DB_HOST
           valueFrom:
             fieldRef:
@@ -65,7 +67,7 @@ spec:
         - name: DB_PORT
           value: "9092"
         - name: AUTH_TYPE
-          value: trust #md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
+          value: trust #scram-sha-256 #trust #md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
         - name: POOL_MODE
           value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
