@@ -72,7 +72,7 @@ This
     * with a loading container each
       * threads = 64/`n` (`-nlt`)
       * target throughput is `t` * 16384
-      * generates YCSB data = 1.000.000 rows (i.e., SF=10, `-sf`)
+      * generates YCSB data = 10.000.000 rows (i.e., SF=10, `-sf`)
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
