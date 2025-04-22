@@ -288,9 +288,9 @@ if __name__ == '__main__':
                                 config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
                                 config.sut_has_pool = True                                                # in particular monitor pool component
                                 config.sut_envs = {
-                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),                 # max connections to PostgreSQL
-                                    'MIN_POOL_SIZE': int(num_c_out/num_c_pods),                     # min connections to PostgreSQL
-                                    'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),                    # max connections to PGBouncer
+                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),                       # max connections to PostgreSQL
+                                    'MIN_POOL_SIZE': int(num_c_out/num_c_pods),                           # min connections to PostgreSQL
+                                    'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),                          # max connections to PGBouncer
                                 }
                                 config.set_resources(
                                     replicas_pooling = num_c_pods,

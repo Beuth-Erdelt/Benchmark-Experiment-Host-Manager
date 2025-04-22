@@ -3120,6 +3120,7 @@ class benchbase(default):
         target_base = int(args.target_base)
         type_of_benchmark = args.benchmark
         extra_keying = int(args.extra_keying)
+        extra_new_connection = int(args.extra_new_connection)
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             self.set_workload(
@@ -3144,6 +3145,8 @@ class benchbase(default):
         self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
         if extra_keying:
             self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
+        if extra_new_connection:
+            self.workload['info'] = self.workload['info']+" There is a reconnect for each transaction."
         default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))

@@ -447,3 +447,219 @@ The script also vacuums and analyzes the tables: https://github.com/Beuth-Erdelt
 
 
 
+
+## Benchbase's TPC-C
+
+
+Benchbase allows to activate new-connection-per-transaction [1].
+The default value is "false" [2].
+When activated, after each transaction the connections is closed [3].
+A new connection will be opened right before the next transaction.
+This behavior can be expected to affect throughput and latency.
+It can also be expected that a connection pooler like PGBouncer will help here.
+
+1. Example: https://illuminatedcomputing.com/posts/2024/08/benchbase-documentation/
+1. Default value: https://github.com/cmu-db/benchbase/blob/main/src/main/java/com/oltpbenchmark/DBWorkload.java#L143
+1. Implementation: https://github.com/cmu-db/benchbase/blob/main/src/main/java/com/oltpbenchmark/api/Worker.java
+
+### Benchbase Reconnect
+
+TPC-C is performed at 16 warehouses.
+The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
+We activate the new-connection-per-transaction feature with `-xconn`.
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -xconn \
+  -dbms PostgreSQL \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn.log &
+```
+
+### Evaluate Results
+
+```bash
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16
+    Type: benchbase
+    Duration: 1181s 
+    Code: 1745302456
+    Benchbase runs the TPC-C benchmark.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.4.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:206799668
+    datadisk:4324
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1745302456
+PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:207525888
+    datadisk:5033
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1745302456
+
+### Execution
+                       experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0           0                        803.23                     468.27         0.0                                                      35400.0                                              19912.0
+PostgreSQL-1-1-1024-2               1         16   16384          2  300.0           0                        657.23                     653.14         0.0                                                      38464.0                                              24330.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
+
+#### Planned
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1      169.0        1.0   1.0         340.828402
+PostgreSQL-1-1-1024-2      169.0        1.0   2.0         340.828402
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+
+### Benchbase Reconnect via Pool
+
+TPC-C is performed at 16 warehouses.
+The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
+We activate the new-connection-per-transaction feature.
+This time there will be a connection pool of size 32, handled by 2 pods of PGBouncer.
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -xconn \
+  -dbms PGBouncer \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -npp 2 \
+  -npi 32 \
+  -npo 32 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log &
+```
+
+### Evaluate Results
+
+```bash
+## Show Summary
+
+### Workload
+Benchbase Workload SF=16
+    Type: benchbase
+    Duration: 1997s 
+    Code: 1745330708
+    Benchbase runs the TPC-C benchmark.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.4.
+    Benchmark is limited to DBMS ['PGBouncer'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Pooling is done with [2] pods having [32] inbound and [32] outbound connections in total.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+pgb-1-2-32-32-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:206800728
+    datadisk:4323
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1745330708
+pgb-1-2-32-32-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:207458900
+    datadisk:4966
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1745330708
+
+### Execution
+                 experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+pgb-1-2-32-32-1               1         16   16384          1  300.0           0                        936.98                     468.51         0.0                                                      35352.0                                              17069.0
+pgb-1-2-32-32-2               1         16   16384          2  300.0           2                        766.86                     760.68         0.0                                                      41835.0                                              20850.0
+
+### Workflow
+
+#### Actual
+DBMS pgb-1-2-32-32 - Pods [[2, 1]]
+
+#### Planned
+DBMS pgb-1-2-32-32 - Pods [[1, 2]]
+
+### Loading
+                 time_load  terminals  pods  Throughput [SF/h]
+pgb-1-2-32-32-1      148.0        1.0   1.0         389.189189
+pgb-1-2-32-32-2      148.0        1.0   2.0         389.189189
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+

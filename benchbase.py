@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='start sut, also load data or also run the TPC-C queries', choices=['run', 'start', 'load'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'Citus'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'Citus', 'PGBouncer'], default=[], nargs='*')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -56,12 +56,16 @@ if __name__ == '__main__':
     parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
     parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
     parser.add_argument('-nbf', '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
+    parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="1")
+    parser.add_argument('-npi', '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
+    parser.add_argument('-npo', '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
     #parser.add_argument('-nvu', '--num-virtual-users', help='comma separated list of number of virtual users for Benchbase benchmarking', default="1")
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of warehouses', default=1)
     #parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
     parser.add_argument('-sd', '--scaling-duration', help='scaling factor = duration in minutes', default=5)
     parser.add_argument('-slg', '--scaling-logging', help='logging status every x seconds', default=0)
     parser.add_argument('-xkey', '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
+    parser.add_argument('-xconn', '--extra-new-connection', help='new connection for every transaction', action='store_true', default=False)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=600)
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
     parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
@@ -132,6 +136,11 @@ if __name__ == '__main__':
         BENCHBASE_KEY_AND_THINK = "true"
     else:
         BENCHBASE_KEY_AND_THINK = "false"
+    extra_new_connection = int(args.extra_new_connection)
+    if extra_new_connection:
+        BENCHBASE_NEWCONNPERTXN = "true"
+    else:
+        BENCHBASE_NEWCONNPERTXN = "false"
     ##############
     ### set cluster
     ##############
@@ -168,6 +177,9 @@ if __name__ == '__main__':
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
     num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
+    num_pooling_pods = experiment.get_parameter_as_list('num_pooling_pods')
+    num_pooling_in = experiment.get_parameter_as_list('num_pooling_in')
+    num_pooling_out = experiment.get_parameter_as_list('num_pooling_out')
     # set node groups for components
     if aws:
         # set node labes for components
@@ -212,6 +224,7 @@ if __name__ == '__main__':
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                        BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -244,9 +257,88 @@ if __name__ == '__main__':
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                                        BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
+                if ("PGBouncer" in args.dbms or len(args.dbms) == 0):
+                    # PGBouncer
+                    if len(num_pooling_in) == 0:
+                        num_pooling_in = [int(loading_threads)]
+                    if len(num_pooling_out) == 0:
+                        num_pooling_out = [int(loading_threads)]
+                    for num_c_pods in num_pooling_pods:
+                        for num_c_in in num_pooling_in:
+                            for num_c_out in num_pooling_out:
+                                if len(num_pooling_pods) > 0:
+                                    name_format = 'pgb-{threads}-{pooling_pods}-{c_in}-{c_out}'
+                                else:
+                                    name_format = 'pgb-{threads}-{loading_pods}-{c_in}-{c_out}'
+                                # this is too long
+                                #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
+                                config = configurations.benchbase(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
+                                config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
+                                config.sut_has_pool = True                                                # in particular monitor pool component
+                                config.sut_envs = {
+                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),                       # max connections to PostgreSQL
+                                    'MIN_POOL_SIZE': int(num_c_out/num_c_pods),                           # min connections to PostgreSQL
+                                    'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),                          # max connections to PGBouncer
+                                }
+                                config.set_resources(
+                                    replicas_pooling = num_c_pods,
+                                )
+                                config.set_storage(
+                                    storageConfiguration = 'postgresql'
+                                    )
+                                config.set_loading_parameters(
+                                    PARALLEL = str(loading_pods), # =1
+                                    SF = SF,
+                                    BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                    BENCHBASE_PROFILE = 'postgres',
+                                    BEXHOMA_DATABASE = 'postgres',
+                                    #BENCHBASE_TARGET = int(target),
+                                    BENCHBASE_TERMINALS = loading_threads_per_pod,
+                                    BENCHBASE_TIME = SD,
+                                    BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                    BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                    BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                                    BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
+                                    )
+                                config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                                executor_list = []
+                                for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                                    benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                                    for benchmarking_threads in num_benchmarking_threads:
+                                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                            for num_executor in list_clients:
+                                                benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                                """
+                                                print("benchmarking_target", benchmarking_target)
+                                                print("benchmarking_pods", benchmarking_pods)
+                                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                                print("benchmarking_threads", benchmarking_threads)
+                                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                                """
+                                                executor_list.append(benchmarking_pods_scaled)
+                                                config.add_benchmarking_parameters(
+                                                    PARALLEL = str(benchmarking_pods_scaled),
+                                                    SF = SF,
+                                                    BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                                    BENCHBASE_PROFILE = 'postgres',
+                                                    BEXHOMA_DATABASE = 'postgres',
+                                                    BENCHBASE_TARGET = benchmarking_target_per_pod,
+                                                    BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
+                                                    BENCHBASE_TIME = SD,
+                                                    BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                                    BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                                    BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                                                    BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
+                                                    )
+                                #print(executor_list)
+                                config.add_benchmark_list(executor_list)
                 if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
                     name_format = 'MySQL-{threads}-{pods}-{target}'

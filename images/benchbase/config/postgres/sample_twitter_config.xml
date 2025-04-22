@@ -9,6 +9,7 @@
     <password>BEXHOMA_PASSWORD</password>
     <isolation>TRANSACTION_SERIALIZABLE</isolation>
     <batchsize>BENCHBASE_BATCHSIZE</batchsize>
+    <newConnectionPerTxn>BENCHBASE_NEWCONNPERTXN</newConnectionPerTxn>
 
     <!-- Scalefactor in Twitter scales by *500 the number of users-->
     <scalefactor>BEXHOMA_SF</scalefactor>

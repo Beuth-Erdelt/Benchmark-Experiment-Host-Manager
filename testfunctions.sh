@@ -93,7 +93,7 @@ clean_logs() {
     for file in "$LOG_DIR"/*.log; do
         echo "Cleaning $file"
         filename=$(basename "$file" .log)
-        #dos2unix "$file"
+        dos2unix "$file"
         awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
     done
 
