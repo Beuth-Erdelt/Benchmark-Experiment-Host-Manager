@@ -32,6 +32,9 @@ The following parameter (ENV) have been added:
 * `BENCHBASE_BATCHSIZE`: batchsize for batching queries to be sent to the dbms
 * `BENCHBASE_ISOLATION`: isolation level, for example TRANSACTION_READ_COMMITTED
 * `BENCHBASE_KEY_AND_THINK`: true = activate key and think time in tpcc (default false)
+* `BENCHBASE_NEWCONNPERTXN`: true = reconnect after each transaction (default false)
+* `BENCHBASE_YCSB_WEIGHTS`: YCSB weights of query types (read, insert, scan, update, delete, readmodifywrite)
+* `BENCHBASE_YCSB_WORKLOAD`: YCSB workload (a, ..., f)
 
 
 This folder contains two Dockerfiles:

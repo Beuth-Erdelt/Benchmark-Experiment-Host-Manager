@@ -59,6 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="1")
     parser.add_argument('-npi', '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
     parser.add_argument('-npo', '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
+    parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'e', 'f', 'c2'], default='a')
     #parser.add_argument('-nvu', '--num-virtual-users', help='comma separated list of number of virtual users for Benchbase benchmarking', default="1")
     parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of warehouses', default=1)
     #parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
@@ -141,6 +142,7 @@ if __name__ == '__main__':
         BENCHBASE_NEWCONNPERTXN = "true"
     else:
         BENCHBASE_NEWCONNPERTXN = "false"
+    workload = args.workload
     ##############
     ### set cluster
     ##############
@@ -225,6 +227,7 @@ if __name__ == '__main__':
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
+                        BENCHBASE_YCSB_WORKLOAD = workload,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -258,6 +261,7 @@ if __name__ == '__main__':
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
+                                        BENCHBASE_YCSB_WORKLOAD = workload,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
