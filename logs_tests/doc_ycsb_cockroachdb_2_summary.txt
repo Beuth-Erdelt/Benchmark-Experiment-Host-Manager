@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 23652s 
-    Code: 1744791668
+    Duration: 12490s 
+    Code: 1744896360
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -33,7 +33,7 @@ CockroachDB-64-8-65536-1-1 uses docker image cockroachdb/cockroach:v24.2.4
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:202345996
+    disk:202353232
     volume_size:50G
     requests_cpu:4
     requests_memory:16Gi
@@ -44,30 +44,30 @@ CockroachDB-64-8-65536-1-1 uses docker image cockroachdb/cockroach:v24.2.4
         Cores:224
         host:6.8.0-57-generic
         node:cl-worker36
-        disk:269076900
-        datadisk:227386
+        disk:377155880
+        datadisk:227379
         volume_size:50G
         volume_used:1.9G
     worker 1
+        RAM:1081965461504
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:1350329568
+        datadisk:227317
+        volume_size:50G
+        volume_used:1.8G
+    worker 2
         RAM:1077382836224
         Cores:256
         host:6.8.0-1025-nvidia
         node:cl-worker28
-        disk:1006707040
-        datadisk:227333
-        volume_size:50G
-        volume_used:1.8G
-    worker 2
-        RAM:1081742880768
-        Cores:128
-        host:6.8.0-57-generic
-        node:cl-worker29
-        disk:488195280
-        datadisk:227343
+        disk:1051121268
+        datadisk:227318
         volume_size:50G
         volume_used:1.8G
     eval_parameters
-        code:1744791668
+        code:1744896360
         BEXHOMA_REPLICAS:3
         BEXHOMA_WORKERS:3
 CockroachDB-64-8-65536-2-1 uses docker image cockroachdb/cockroach:v24.2.4
@@ -75,7 +75,7 @@ CockroachDB-64-8-65536-2-1 uses docker image cockroachdb/cockroach:v24.2.4
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:202348736
+    disk:202353388
     volume_size:50G
     requests_cpu:4
     requests_memory:16Gi
@@ -86,49 +86,49 @@ CockroachDB-64-8-65536-2-1 uses docker image cockroachdb/cockroach:v24.2.4
         Cores:224
         host:6.8.0-57-generic
         node:cl-worker36
-        disk:288344656
-        datadisk:229016
+        disk:377217084
+        datadisk:227385
         volume_size:50G
-        volume_used:3.5G
+        volume_used:1.9G
     worker 1
         RAM:1077382836224
         Cores:256
         host:6.8.0-1025-nvidia
         node:cl-worker28
-        disk:1030013512
-        datadisk:229016
+        disk:1051119640
+        datadisk:227386
         volume_size:50G
-        volume_used:3.5G
+        volume_used:1.9G
     worker 2
-        RAM:1081742880768
-        Cores:128
-        host:6.8.0-57-generic
-        node:cl-worker29
-        disk:488192048
-        datadisk:229011
+        RAM:1081965461504
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:1350328680
+        datadisk:227385
         volume_size:50G
-        volume_used:3.5G
+        volume_used:1.9G
     worker 3
-        node:cl-worker5
+        node:cl-worker4
     eval_parameters
-        code:1744791668
+        code:1744896360
         BEXHOMA_REPLICAS:3
         BEXHOMA_WORKERS:3
 
 ### Loading
                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8           0                     498.946003              2011191.0             1000000                            596735.0
+CockroachDB-64-8-65536               1       64   65536          8           0                     555.105016              1802379.0             1000000                            623871.0
 list index out of range
-Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744791668-1-1-4k4sm.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744896360-1-1-887jz.dbmsbenchmarker.log
 {}
 list index out of range
-Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744791668-2-1-8glxf.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744896360-2-1-7mhfh.dbmsbenchmarker.log
 {}
 list index out of range
-Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744791668-1-1-4k4sm.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744896360-1-1-887jz.dbmsbenchmarker.log
 {}
 list index out of range
-Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744791668-2-1-8glxf.dbmsbenchmarker.log
+Error in bexhoma-benchmarker-cockroachdb-64-8-65536-1744896360-2-1-7mhfh.dbmsbenchmarker.log
 {}
 Traceback (most recent call last):
   File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/ycsb.py", line 971, in <module>
@@ -145,4 +145,4 @@ Traceback (most recent call last):
   File "/home/perdelt/anaconda3/envs/dbmsbenchmarker/lib/python3.11/site-packages/pandas/io/common.py", line 882, in get_handle
     handle = open(handle, ioargs.mode)
              ^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/perdelt/benchmarks/1744791668/bexhoma-benchmarker.all.df.pickle'
+FileNotFoundError: [Errno 2] No such file or directory: '/home/perdelt/benchmarks/1744896360/bexhoma-benchmarker.all.df.pickle'
