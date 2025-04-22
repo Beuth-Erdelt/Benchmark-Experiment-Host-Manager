@@ -76,6 +76,9 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
+  -npp 4 \
+  -npi 64 \
+  -npo 64 \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log &
 
 

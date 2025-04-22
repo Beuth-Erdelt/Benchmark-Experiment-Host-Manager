@@ -51,6 +51,8 @@ spec:
         # SHOW POOLS;
         # SHOW CLIENTS;
         # SHOW SERVERS;
+        # works: AUTH_TYPE scram-sha-256 with password postgres
+        # works: AUTH_TYPE trust with empty password
         env: # https://github.com/edoburu/docker-pgbouncer/blob/master/entrypoint.sh
         - name: DB_USER
           value: postgres
