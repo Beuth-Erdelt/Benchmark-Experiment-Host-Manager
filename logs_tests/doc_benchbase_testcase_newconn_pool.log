@@ -2,11 +2,11 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1745330708
-Experiment                    : starts at 2025-04-22 16:05:07.846401 (9522871.316955427)
+Experiment                    : has code 1745336081
+Experiment                    : starts at 2025-04-22 17:34:41.109289 (9528244.579843689)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 10 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction.
 Experiment uses bexhoma version 0.8.4.
 Benchmark is limited to DBMS ['PGBouncer'].
 Import is handled by 1 processes (pods).
@@ -14,23 +14,25 @@ Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
 Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [16] threads, split into [1, 2] pods.
+Benchmarking is tested with [32] threads, split into [1, 2] pods.
 Pooling is done with [2] pods having [32] inbound and [32] outbound connections in total.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
 done
 pgb-1-2-32-32                 : will start now
-pgb-1-2-32-32                 : Name of SUT pods = bexhoma-sut-pgb-1-2-32-32-1745330708
-pgb-1-2-32-32                 : Name of SUT service = bexhoma-sut-pgb-1-2-32-32-1745330708
+pgb-1-2-32-32                 : Name of SUT pods = bexhoma-sut-pgb-1-2-32-32-1745336081
+pgb-1-2-32-32                 : Name of SUT service = bexhoma-sut-pgb-1-2-32-32-1745336081
+- waiting 30s -               : done
+pgb-1-2-32-32                 : waits for health check to succeed
 - waiting 30s -               : done
 pgb-1-2-32-32                 : waits for health check to succeed
 - waiting 30s -               : done
 pgb-1-2-32-32                 : is not loaded yet
-pgb-1-2-32-32                 : will start loading but not before 2025-04-22 14:07:39 (that is in 60 secs)
+pgb-1-2-32-32                 : will start loading but not before 2025-04-22 15:37:42 (that is in 60 secs)
 - waiting 30s -               : done
 pgb-1-2-32-32                 : is not loaded yet
-pgb-1-2-32-32                 : will start loading but not before 2025-04-22 14:07:39
+pgb-1-2-32-32                 : will start loading but not before 2025-04-22 15:37:42
 done
 pgb-1-2-32-32                 : is not loaded yet
 pgb-1-2-32-32                 : start asynch loading scripts of type loaded
@@ -45,80 +47,40 @@ pgb-1-2-32-32                 : is loading
 pgb-1-2-32-32                 : is loading
 - waiting 30s -               : done
 pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
-- waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
 done
 pgb-1-2-32-32                 : showing loader times
-pgb-1-2-32-32                 : loader timespan (first to last [s]) = 148
+pgb-1-2-32-32                 : loader timespan (first to last [s]) = 154
 pgb-1-2-32-32                 : start asynch loading scripts of type indexed
 pgb-1-2-32-32                 : is loading
 - waiting 30s -               : done
 pgb-1-2-32-32                 : is loading
 done
 pgb-1-2-32-32                 : benchmarks done 0 of 1. This will be client 1
-pgb-1-2-32-32                 : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'true'}
+pgb-1-2-32-32                 : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 32, 'BENCHBASE_TIME': 600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'true'}
 pgb-1-2-32-32-1               : start benchmarking
-pgb-1-2-32-32                 : benchmarking results in folder /home/perdelt/benchmarks/1745330708
+pgb-1-2-32-32                 : benchmarking results in folder /home/perdelt/benchmarks/1745336081
 - waiting 10s -               : done
-pgb-1-2-32-32                 : benchmarking is waiting for job bexhoma-benchmarker-pgb-1-2-32-32-1745330708-1-1-xvpmw: found
+pgb-1-2-32-32                 : benchmarking is waiting for job bexhoma-benchmarker-pgb-1-2-32-32-1745336081-1-1-r956w: found
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
 - waiting 30s -               : done
 pgb-1-2-32-32                 : has running benchmarks
 - waiting 30s -               : done
@@ -140,16 +102,36 @@ pgb-1-2-32-32                 : has running benchmarks
 done
 pgb-1-2-32-32                 : has running benchmarks
 pgb-1-2-32-32-1               : showing benchmarker times
-pgb-1-2-32-32-1               : benchmarker timespan (start to end single container [s]) = 313
-pgb-1-2-32-32-1               : benchmarker times (start/end per pod and container) = [(1745332014, 1745332317)]
-pgb-1-2-32-32-1               : found and updated times {'benchmarker': [(1745332014, 1745332317)]}
+pgb-1-2-32-32-1               : benchmarker timespan (start to end single container [s]) = 617
+pgb-1-2-32-32-1               : benchmarker times (start/end per pod and container) = [(1745336510, 1745337116)]
+pgb-1-2-32-32-1               : found and updated times {'benchmarker': [(1745336510, 1745337116)]}
 done
 pgb-1-2-32-32                 : benchmarks done 0 of 1. This will be client 2
-pgb-1-2-32-32                 : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'true'}
+pgb-1-2-32-32                 : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'true'}
 pgb-1-2-32-32-2               : start benchmarking
-pgb-1-2-32-32                 : benchmarking results in folder /home/perdelt/benchmarks/1745330708
+pgb-1-2-32-32                 : benchmarking results in folder /home/perdelt/benchmarks/1745336081
 - waiting 10s -               : done
-pgb-1-2-32-32                 : benchmarking is waiting for job bexhoma-benchmarker-pgb-1-2-32-32-1745330708-1-2-fkktv: found
+pgb-1-2-32-32                 : benchmarking is waiting for job bexhoma-benchmarker-pgb-1-2-32-32-1745336081-1-2-clqxw: found
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
+- waiting 30s -               : done
+pgb-1-2-32-32                 : has running benchmarks
 - waiting 30s -               : done
 pgb-1-2-32-32                 : has running benchmarks
 - waiting 30s -               : done
@@ -171,28 +153,30 @@ pgb-1-2-32-32                 : has running benchmarks
 done
 pgb-1-2-32-32                 : has running benchmarks
 pgb-1-2-32-32-2               : showing benchmarker times
-pgb-1-2-32-32-2               : benchmarker timespan (start to end single container [s]) = 313
-pgb-1-2-32-32-2               : benchmarker times (start/end per pod and container) = [(1745332361, 1745332664), (1745332361, 1745332664)]
-pgb-1-2-32-32-2               : found and updated times {'benchmarker': [(1745332361, 1745332664), (1745332361, 1745332664)]}
+pgb-1-2-32-32-2               : benchmarker timespan (start to end single container [s]) = 617
+pgb-1-2-32-32-2               : benchmarker times (start/end per pod and container) = [(1745337162, 1745337765), (1745337162, 1745337765)]
+pgb-1-2-32-32-2               : found and updated times {'benchmarker': [(1745337162, 1745337765), (1745337162, 1745337765)]}
+/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py:3317: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  df.fillna(0, inplace=True)
 done
 pgb-1-2-32-32                 : can be stopped
-Experiment ends at 2025-04-22 16:38:24.453651 (9524867.924204458): 1996.6072490308434s total
+Experiment ends at 2025-04-22 18:03:27.354410 (9529970.824963681): 1726.2451199926436s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow not complete
+Result workflow complete
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
     Type: benchbase
-    Duration: 1997s 
-    Code: 1745330708
+    Duration: 1727s 
+    Code: 1745336081
     Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 10 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction.
     Experiment uses bexhoma version 0.8.4.
     Benchmark is limited to DBMS ['PGBouncer'].
     Import is handled by 1 processes (pods).
@@ -200,7 +184,7 @@ Benchbase Workload SF=16
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is tested with [32] threads, split into [1, 2] pods.
     Pooling is done with [2] pods having [32] inbound and [32] outbound connections in total.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
@@ -212,46 +196,46 @@ pgb-1-2-32-32-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:206800728
+    disk:206801068
     datadisk:4323
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1745330708
+                code:1745336081
 pgb-1-2-32-32-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:207458900
-    datadisk:4966
+    disk:207951228
+    datadisk:5447
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1745330708
+                code:1745336081
 
 ### Execution
                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-pgb-1-2-32-32-1               1         16   16384          1  300.0           0                        936.98                     468.51         0.0                                                      35352.0                                              17069.0
-pgb-1-2-32-32-2               1         16   16384          2  300.0           2                        766.86                     760.68         0.0                                                      41835.0                                              20850.0
+pgb-1-2-32-32-1               1         32   16384          1  600.0           1                       1632.17                     467.24         0.0                                                      30530.0                                              19602.0
+pgb-1-2-32-32-2               1         32   16384          2  600.0           2                       1529.88                     934.00         0.0                                                      38417.0                                              20915.0
 
 ### Workflow
 
 #### Actual
-DBMS pgb-1-2-32-32 - Pods [[2, 1]]
+DBMS pgb-1-2-32-32 - Pods [[1, 2]]
 
 #### Planned
 DBMS pgb-1-2-32-32 - Pods [[1, 2]]
 
 ### Loading
                  time_load  terminals  pods  Throughput [SF/h]
-pgb-1-2-32-32-1      148.0        1.0   1.0         389.189189
-pgb-1-2-32-32-2      148.0        1.0   2.0         389.189189
+pgb-1-2-32-32-1      154.0        1.0   1.0         374.025974
+pgb-1-2-32-32-2      154.0        1.0   2.0         374.025974
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
