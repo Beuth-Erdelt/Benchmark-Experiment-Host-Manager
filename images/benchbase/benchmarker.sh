@@ -104,24 +104,18 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
-######################## TPC-C ###################
-if [ "$BENCHBASE_BENCH" = "tpcc" ]; then
-	FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_tpcc_config.xml
-fi
-
-######################## Twitter ###################
-if [ "$BENCHBASE_BENCH" = "twitter" ]; then
+######################## Benchmark Config File ###################
+if [ "$BENCHBASE_BENCH" == "tpcc" ]; then
+    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_tpcc_config.xml
+elif [ "$BENCHBASE_BENCH" == "twitter" ]; then
     FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
-fi
-
-######################## CHBenchmark ###################
-if [ "$BENCHBASE_BENCH" = "chbenchmark" ]; then
+elif [ "$BENCHBASE_BENCH" == "chbenchmark" ]; then
     FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_chbenchmark_config.xml
-fi
-
-######################## CHBenchmark ###################
-if [ "$BENCHBASE_BENCH" = "ycsb" ]; then
+elif [ "$BENCHBASE_BENCH" == "ycsb" ]; then
     FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_ycsb_config.xml
+else
+    echo "Unknown benchmark"
+    exit 0
 fi
 
 ######################## Replace parameters in workload file ###################

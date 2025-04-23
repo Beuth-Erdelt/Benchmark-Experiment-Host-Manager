@@ -80,7 +80,7 @@ if __name__ == '__main__':
     parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
     parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     #parser.add_argument('-nti', '--num-time', help='time per benchmark in seconds', default="60")
-    parser.add_argument('-b', '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark'])
+    parser.add_argument('-b', '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark', 'ycsb'])
     #parser.add_argument('-nt', '--num-target', help='total number of loaders per configuration', default="1024")
     #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 1024 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb', '--target-base', help='ops as target, base for factors - default 1024 = 2**10', default="1024")
@@ -130,19 +130,19 @@ if __name__ == '__main__':
     ##############
     SD = int(args.scaling_duration)*60
     target_base = int(args.target_base)
-    type_of_benchmark = args.benchmark
-    scaling_logging = int(args.scaling_logging)*1000 # adjust unit to miliseconds
-    extra_keying = int(args.extra_keying)
+    type_of_benchmark = args.benchmark                    # twitter, tpccc, ycsb etc
+    scaling_logging = int(args.scaling_logging)*1000      # adjust unit to miliseconds
+    extra_keying = int(args.extra_keying)                 # activate key and think time (tpc-c)
     if extra_keying:
         BENCHBASE_KEY_AND_THINK = "true"
     else:
         BENCHBASE_KEY_AND_THINK = "false"
-    extra_new_connection = int(args.extra_new_connection)
+    extra_new_connection = int(args.extra_new_connection) # reconnect for every transaction
     if extra_new_connection:
         BENCHBASE_NEWCONNPERTXN = "true"
     else:
         BENCHBASE_NEWCONNPERTXN = "false"
-    workload = args.workload
+    workload = args.workload                              # workload for ycsb (a, ..., f)
     ##############
     ### set cluster
     ##############
