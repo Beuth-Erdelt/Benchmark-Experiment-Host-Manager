@@ -2084,7 +2084,7 @@ class tpcds(default):
                 defaultParameters = {'SF': SF}
             )
             # patch: use short profiling (only keys)
-            self.set_queryfile('queries-tpcds-profiling-keys.config')
+            #self.set_queryfile('queries-tpcds-profiling-keys.config')
         # new loading in cluster
         self.loading_active = True
         self.use_distributed_datasource = True
@@ -2209,7 +2209,7 @@ class tpch(default):
                 defaultParameters = {'SF': SF}
             )
             # patch: use short profiling (only keys)
-            self.set_queryfile('queries-tpch-profiling-keys.config')
+            #self.set_queryfile('queries-tpch-profiling-keys.config')
         # new loading in cluster
         self.loading_active = True
         self.use_distributed_datasource = True
