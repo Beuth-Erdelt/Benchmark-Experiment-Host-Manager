@@ -69,13 +69,39 @@ for node in "${ready_nodes[@]}"; do
   -nlp 8 \
   -nlt 8 \
   -ne 1,1 \
-  -sf 10 \
+  -sf 30 \
   -ii -ic -is \
   -m -mc \
   -rnn $node \
-  profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling_$node.log &
-  sleep 900
+  profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling_30_$node.log &
+  sleep 3600
 done
+
+BEXHOMA_YCSB_SF_DATA=16
+BEXHOMA_YCSB_SF_OPS=128
+
+
+for node in "${ready_nodes[@]}"; do
+  python ycsb.py -tr \
+  -sf $BEXHOMA_YCSB_SF_DATA \
+  -sfo $BEXHOMA_YCSB_SF_OPS \
+  --workload c \
+  -dbms PostgreSQL \
+  -rnn $node \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
+  -nbf 11 \
+  -ne 1,1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_profiling_$node.log &
+  sleep 3600
+done
+
 
 
 
@@ -102,7 +128,7 @@ node="cl-worker36"
 
 
 BEXHOMA_YCSB_SF_DATA=16
-BEXHOMA_YCSB_SF_OPS=16
+BEXHOMA_YCSB_SF_OPS=128
 
 python ycsb.py -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \

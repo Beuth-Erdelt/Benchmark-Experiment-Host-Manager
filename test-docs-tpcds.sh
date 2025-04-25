@@ -207,6 +207,36 @@ wait_process "tpcds"
 
 
 
+
+
+
+###########################################
+############ Profiling MonetDB ############
+###########################################
+
+
+
+
+
+#### TCP-H Monitoring (Example-TPC-H.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -ii -ic -is \
+  -ne 1,1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 50Gi \
+  profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
