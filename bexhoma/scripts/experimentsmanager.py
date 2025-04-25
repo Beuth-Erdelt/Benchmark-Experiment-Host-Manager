@@ -40,6 +40,7 @@ def manage():
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data','summary'])
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
+    parser.add_argument('-fe', '--force-evaluate', help='force a re-evaluation of the results', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
     parser.add_argument('-v', '--verbose', help='gives more details about Kubernetes objects', action='store_true')
@@ -98,6 +99,8 @@ def manage():
                 # regenerate results - only for debugging
                 #experiment.evaluate_results()
                 #experiment.store_workflow_results()
+                if args.force_evaluate:
+                    experiment.evaluate_results()
                 experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
