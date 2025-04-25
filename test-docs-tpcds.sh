@@ -215,10 +215,7 @@ wait_process "tpcds"
 ###########################################
 
 
-
-
-
-#### TCP-H Monitoring (Example-TPC-H.md)
+#### TCP-H Profiling (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
