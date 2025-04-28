@@ -1780,11 +1780,13 @@ class default():
             print("No warnings")
         #####################
         print("\n### Latency of Timer Execution [ms]")
+        num_of_queries = 0
         df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
         if not df is None:
             df = df.sort_index().T.round(2)
             df.index = df.index.map(map_index_to_queryname)
             print(df)
+            num_of_queries = len(df.index)
         #####################
         print("\n### Loading [s]")
         times = {}
@@ -1811,7 +1813,7 @@ class default():
         df_geo_mean_runtime = df.copy()
         print(df.round(2))
         #####################
-        print("\n### Power@Size")
+        print("\n### Power@Size ((3600*SF)/(geo times))")
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index().astype('float')
         df = float(parameter.defaultParameters['SF'])*3600./df
@@ -1820,7 +1822,7 @@ class default():
         print(df.round(2))
         #####################
         # aggregate time and throughput for parallel pods
-        print("\n### Throughput@Size")
+        print("\n### Throughput@Size ((queries*streams*3600*SF)/(span of time))")
         df_merged_time = pd.DataFrame()
         for connection_nr, connection in evaluate.benchmarks.dbms.items():
             df_time = pd.DataFrame()
@@ -1850,7 +1852,8 @@ class default():
         benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
         df_benchmark['count'] = benchmark_count['benchmark_end']
         df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-        df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        #df_benchmark['Throughput@Size [~GB/h]'] = (22*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
         index_names = list(df_benchmark.index.names)
         index_names[0] = "DBMS"
         df_benchmark.rename_axis(index_names, inplace=True)
@@ -1872,7 +1875,8 @@ class default():
         print("\n### Tests")
         self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
         self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
-        self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
         if num_errors == 0:
             print("TEST passed: No SQL errors")
         else:
