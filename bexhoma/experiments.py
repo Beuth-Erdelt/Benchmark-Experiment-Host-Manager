@@ -210,6 +210,8 @@ class default():
         num_pooling_out = self.get_parameter_as_list('num_pooling_out')
         cpu = str(args.request_cpu)
         memory = str(args.request_ram)
+        cpu_limit = str(args.limit_cpu)
+        memory_limit = str(args.limit_ram)
         cpu_type = str(args.request_cpu_type)
         gpu_type = str(args.request_gpu_type)
         gpus = str(args.request_gpu)
@@ -249,8 +251,8 @@ class default():
                 'gpu': 0
             },
             limits = {
-                'cpu': 0,
-                'memory': 0
+                'cpu': cpu_limit,
+                'memory': memory_limit
             },
             nodeSelector = {
                 'cpu': cpu_type,

@@ -43,7 +43,7 @@ wait_process "ycsb"
 
 
 
-kill $(ps aux | grep MonetDB | head -n 1 | awk '{print $2}')
+kill $(ps aux | grep PostgreSQL | head -n 1 | awk '{print $2}')
 
 
 ###########################################
@@ -161,11 +161,13 @@ nohup python hammerdb.py -tr \
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 8 \
   -m -mc \
   -ne 1,1 \
   -nc 1 \
   -rnn $node \
+  -lc 8 \
+  -lr 16Gi \
   run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_profiling_$node.log &
 
 
@@ -178,11 +180,13 @@ for node in "${ready_nodes[@]}"; do
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 8 \
   -m -mc \
   -ne 1,1 \
   -nc 1 \
   -rnn $node \
+  -lc 8 \
+  -lr 16Gi \
   run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_profiling_$node.log &
   sleep 3600
 done

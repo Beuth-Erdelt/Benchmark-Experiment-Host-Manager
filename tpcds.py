@@ -57,6 +57,8 @@ if __name__ == '__main__':
     parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
     parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF)', default=1)
     parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=600)
+    parser.add_argument('-lr',  '--limit-ram', help='limit ram for sut, default 0 (none)', default='0')
+    parser.add_argument('-lc',  '--limit-cpu', help='limit cpus for sut, default 0 (none)', default='0')
     parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
     parser.add_argument('-rc',  '--request-cpu', help='request cpus for sut, default 4', default='4')
     parser.add_argument('-rct', '--request-cpu-type', help='request node for sut to have node label cpu=', default='')

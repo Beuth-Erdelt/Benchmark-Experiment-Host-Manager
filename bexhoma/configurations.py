@@ -1056,7 +1056,7 @@ scrape_configs:
             print(p, status)
             #if status == "Running":
             self.experiment.cluster.delete_pod(p)
-    def get_instance_from_resources(self):
+    def DEPRECATED_get_instance_from_resources(self):
         """
         Generates an instance name out of the resource parameters that are set using `set_resources()`.
         Should be DEPRECATED and replaced by something better.
@@ -1119,7 +1119,7 @@ scrape_configs:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        instance = self.get_instance_from_resources()
+        #instance = self.get_instance_from_resources()
         # storage configuration
         if self.storage['storageConfiguration']:
             storageConfiguration = self.storage['storageConfiguration']
@@ -1177,15 +1177,15 @@ scrape_configs:
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
         env['STATEFULSET_NAME'] = name_worker
         # resources
-        specs = instance.split("-")
+        #specs = instance.split("-")
         #print(specs)
-        cpu = specs[0]
-        mem = specs[1]
-        node = ''
-        gpu = ''
-        if len(specs) > 2:
-            gpu = specs[2]
-            node= specs[3]
+        #cpu = specs[0]
+        #mem = specs[1]
+        #node = ''
+        #gpu = ''
+        #if len(specs) > 2:
+        #    gpu = specs[2]
+        #    node= specs[3]
         sut_manifest_file = self.experiment.cluster.yamlfolder+template
         #print(sut_manifest_file)
         with open(sut_manifest_file) as stream:
@@ -1549,13 +1549,27 @@ scrape_configs:
                     for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
                         if container['name'] == 'dbms':
                             break
+                    """req_cpu = self.resources['requests']['cpu']
+                    req_mem = self.resources['requests']['memory']
+                    limit_cpu = self.resources['limits']['cpu']
+                    limit_mem = self.resources['limits']['memory']
+                    node_cpu = ''
+                    node = self.resources['nodeSelector']['node']
+                    gpu = self.resources['requests']['gpu']
                     req_cpu = cpu
                     limit_cpu = cpu
                     req_mem = mem
                     limit_mem = mem
                     req_gpu = gpu
                     node_cpu = ''
-                    node_gpu = node
+                    node_gpu = node"""
+                    req_cpu = 0
+                    limit_cpu = 0
+                    req_mem = 0
+                    limit_mem = 0
+                    req_gpu = 0
+                    node_cpu = ''
+                    node_gpu = ''
                     # should be overwritten by resources dict?
                     if 'requests' in self.resources and 'cpu' in self.resources['requests']:
                         req_cpu = self.resources['requests']['cpu']
@@ -1598,11 +1612,13 @@ scrape_configs:
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu'] = limit_cpu
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory'] = req_mem
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory'] = limit_mem
+                    #print(dep['spec']['template']['spec']['containers'][i_container]['resources']['limits'])
                     # remove limits if = 0
-                    if limit_cpu == 0:
+                    if limit_cpu == "0":
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu']
-                    if limit_mem == 0:
+                    if limit_mem == "0":
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory']
+                    #print(dep['spec']['template']['spec']['containers'][i_container]['resources']['limits'])
                     # add resource gpu
                     #if len(specs) > 2:
                     if node_gpu:

@@ -75,6 +75,8 @@ if __name__ == '__main__':
     #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb',  '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
     parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=180)
+    parser.add_argument('-lr',  '--limit-ram', help='limit ram for sut, default 0 (none)', default='0')
+    parser.add_argument('-lc',  '--limit-cpu', help='limit cpus for sut, default 0 (none)', default='0')
     parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
     parser.add_argument('-rc',  '--request-cpu', help='request cpus for sut, default 4', default='4')
     parser.add_argument('-rct', '--request-cpu-type', help='request node for sut to have node label cpu=', default='')
