@@ -161,7 +161,7 @@ nohup python hammerdb.py -tr \
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1 \
-  -nbt 8 \
+  -nbt 4 \
   -m -mc \
   -ne 1,1 \
   -nc 1 \
@@ -172,7 +172,7 @@ nohup python hammerdb.py -tr \
   -rr 16Gi \
   run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_profiling_$node.log &
 
-ready_nodes=("cl-worker10" "cl-worker11")
+# ready_nodes=("cl-worker10" "cl-worker11")
 
 # loop over all nodes
 for node in "${ready_nodes[@]}"; do

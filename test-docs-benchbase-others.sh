@@ -123,6 +123,47 @@ wait_process "benchbase"
 
 
 
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload c \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload a \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_2.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
 
 
 
