@@ -168,8 +168,11 @@ nohup python hammerdb.py -tr \
   -rnn $node \
   -lc 8 \
   -lr 16Gi \
+  -rc 8 \
+  -rr 16Gi \
   run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_profiling_$node.log &
 
+ready_nodes=("cl-worker10" "cl-worker11")
 
 # loop over all nodes
 for node in "${ready_nodes[@]}"; do
@@ -180,13 +183,15 @@ for node in "${ready_nodes[@]}"; do
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1 \
-  -nbt 8 \
+  -nbt 4 \
   -m -mc \
   -ne 1,1 \
   -nc 1 \
   -rnn $node \
   -lc 8 \
   -lr 16Gi \
+  -rc 8 \
+  -rr 16Gi \
   run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_profiling_$node.log &
   sleep 3600
 done
