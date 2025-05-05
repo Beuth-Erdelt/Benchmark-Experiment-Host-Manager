@@ -3125,6 +3125,7 @@ class benchbase(default):
         SD = int(args.scaling_duration)*60
         target_base = int(args.target_base)
         type_of_benchmark = args.benchmark
+        workload = args.workload
         extra_keying = int(args.extra_keying)
         extra_new_connection = int(args.extra_new_connection)
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
@@ -3142,6 +3143,8 @@ class benchbase(default):
         self.workload['info'] = self.workload['info']+"\nBenchbase data is generated and loaded using several threads."
         if len(type_of_benchmark):
             self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
+            if type_of_benchmark == "ycsb":
+                self.workload['info'] = self.workload['info']+" Workload is '{}'.".format(workload)
         if SF:
             #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
             self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
