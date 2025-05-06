@@ -157,6 +157,150 @@ wait_process "ycsb"
 
 
 
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_a.log &
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload b \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_b.log &
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload c \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_c.log &
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload d \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_d.log &
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload e \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_e.log &
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  --workload f \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_f.log &
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+
+
+
+
+
+
 
 
 ###########################################

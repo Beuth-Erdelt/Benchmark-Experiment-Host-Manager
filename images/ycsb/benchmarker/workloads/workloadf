@@ -35,8 +35,10 @@ readmodifywriteproportion=0.5
 
 requestdistribution=zipfian
 
-insertstart=ROW_START_AFTER_LOADING
-insertcount=ROW_PART_AFTER_LOADING
+#insertstart=ROW_START_AFTER_LOADING
+#insertcount=ROW_PART_AFTER_LOADING
+insertstart=ROW_START
+insertcount=ROW_PART
 
 threadcount=YCSB_THREADCOUNT
 target=YCSB_TARGET
