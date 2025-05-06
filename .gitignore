@@ -16,3 +16,4 @@ bexhoma/__pycache__/*
 logs_tests/local/*
 dev/.ipynb_checkpoints/*
 experiments/*/*/filled_*
+experiments/*/*/*/filled_*

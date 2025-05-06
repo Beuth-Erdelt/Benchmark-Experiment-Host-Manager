@@ -1075,21 +1075,4 @@ wait_process "ycsb"
 ###########################################
 
 
-
-export MYDIR=$(pwd)
-cd $LOG_DIR
-# remove connection errors from logs
-grep -rl "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." . | xargs sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
-cd $MYDIR
-
-# Loop over each text file in the source directory
-for file in "$LOG_DIR"/*.log; do
-    # Get the filename without the path and extension
-    echo "Cleaning $file"
-    filename=$(basename "$file" .log)
-    # Extract lines starting from "## Show Summary" and save as <filename>_summary.txt in the destination directory
-    awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
-done
-
-echo "Extraction complete! Files are saved in $LOG_DIR."
-
+clean_logs

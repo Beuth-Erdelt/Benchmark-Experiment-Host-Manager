@@ -40,6 +40,7 @@ import pandas as pd
 import json
 import ast
 from types import SimpleNamespace
+from importlib.metadata import version
 
 from bexhoma import evaluators
 
@@ -162,7 +163,8 @@ class default():
             values = value.split(",")
             value = [int(x) for x in values]
         elif value.isdigit():
-            value = list(str(int(value)))
+            #value = list(str(int(value)))
+            value = list(int(value))
         return value
     def prepare_testbed(self,
                         parameter):
@@ -208,6 +210,8 @@ class default():
         num_pooling_out = self.get_parameter_as_list('num_pooling_out')
         cpu = str(args.request_cpu)
         memory = str(args.request_ram)
+        cpu_limit = str(args.limit_cpu)
+        memory_limit = str(args.limit_ram)
         cpu_type = str(args.request_cpu_type)
         gpu_type = str(args.request_gpu_type)
         gpus = str(args.request_gpu)
@@ -221,6 +225,8 @@ class default():
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
         self.cluster.start_messagequeue()
+        bexhoma_version = version('bexhoma')
+        self.workload['info'] = self.workload['info']+"\nExperiment uses bexhoma version {}.".format(bexhoma_version)
         if monitoring_cluster:
             # monitor all nodes of cluster (for not missing any component)
             self.monitoring_active = True
@@ -245,8 +251,8 @@ class default():
                 'gpu': 0
             },
             limits = {
-                'cpu': 0,
-                'memory': 0
+                'cpu': cpu_limit,
+                'memory': memory_limit
             },
             nodeSelector = {
                 'cpu': cpu_type,
@@ -1776,11 +1782,13 @@ class default():
             print("No warnings")
         #####################
         print("\n### Latency of Timer Execution [ms]")
+        num_of_queries = 0
         df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
         if not df is None:
             df = df.sort_index().T.round(2)
             df.index = df.index.map(map_index_to_queryname)
             print(df)
+            num_of_queries = len(df.index)
         #####################
         print("\n### Loading [s]")
         times = {}
@@ -1807,7 +1815,7 @@ class default():
         df_geo_mean_runtime = df.copy()
         print(df.round(2))
         #####################
-        print("\n### Power@Size")
+        print("\n### Power@Size ((3600*SF)/(geo times))")
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index().astype('float')
         df = float(parameter.defaultParameters['SF'])*3600./df
@@ -1816,7 +1824,7 @@ class default():
         print(df.round(2))
         #####################
         # aggregate time and throughput for parallel pods
-        print("\n### Throughput@Size")
+        print("\n### Throughput@Size ((queries*streams*3600*SF)/(span of time))")
         df_merged_time = pd.DataFrame()
         for connection_nr, connection in evaluate.benchmarks.dbms.items():
             df_time = pd.DataFrame()
@@ -1846,7 +1854,8 @@ class default():
         benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
         df_benchmark['count'] = benchmark_count['benchmark_end']
         df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-        df_benchmark['Throughput@Size [~GB/h]'] = (22*3600*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+        #df_benchmark['Throughput@Size [~GB/h]'] = (22*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
         index_names = list(df_benchmark.index.names)
         index_names[0] = "DBMS"
         df_benchmark.rename_axis(index_names, inplace=True)
@@ -1868,7 +1877,8 @@ class default():
         print("\n### Tests")
         self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
         self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
-        self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+        self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
         if num_errors == 0:
             print("TEST passed: No SQL errors")
         else:
@@ -2080,7 +2090,7 @@ class tpcds(default):
                 defaultParameters = {'SF': SF}
             )
             # patch: use short profiling (only keys)
-            self.set_queryfile('queries-tpcds-profiling-keys.config')
+            #self.set_queryfile('queries-tpcds-profiling-keys.config')
         # new loading in cluster
         self.loading_active = True
         self.use_distributed_datasource = True
@@ -2205,7 +2215,7 @@ class tpch(default):
                 defaultParameters = {'SF': SF}
             )
             # patch: use short profiling (only keys)
-            self.set_queryfile('queries-tpch-profiling-keys.config')
+            #self.set_queryfile('queries-tpch-profiling-keys.config')
         # new loading in cluster
         self.loading_active = True
         self.use_distributed_datasource = True
@@ -3101,6 +3111,11 @@ class benchbase(default):
         self.storage_label = 'benchbase-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.benchmark = 'tpcc'                                                          # Benchbase knows several benchmarks. Here we store, which one to use, default tpcc
+    def set_benchmark_type(self, benchmark='tpcc'):
+        self.benchmark = benchmark
+        self.storage_label = 'benchbase-{benchmark}-{SF}'.format(benchmark=self.benchmark, SF=self.SF)
+        self.cluster.set_experiments_configfolder('experiments/benchbase/'+benchmark)
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
         self.args = args
@@ -3110,11 +3125,13 @@ class benchbase(default):
         SD = int(args.scaling_duration)*60
         target_base = int(args.target_base)
         type_of_benchmark = args.benchmark
+        workload = args.workload
         extra_keying = int(args.extra_keying)
+        extra_new_connection = int(args.extra_new_connection)
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             self.set_workload(
-                name = 'Benchbase Workload SF={} (warehouses for TPC-C)'.format(SF),
+                name = 'Benchbase Workload SF={}'.format(SF),
                 info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
                 type = 'benchbase',
                 defaultParameters = {'SF': SF}
@@ -3126,14 +3143,19 @@ class benchbase(default):
         self.workload['info'] = self.workload['info']+"\nBenchbase data is generated and loaded using several threads."
         if len(type_of_benchmark):
             self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
+            if type_of_benchmark == "ycsb":
+                self.workload['info'] = self.workload['info']+" Workload is '{}'.".format(workload)
         if SF:
-            self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses) is {}.".format(SF)
+            #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
+            self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
         if SD:
             self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
         self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
         self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
         if extra_keying:
             self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
+        if extra_new_connection:
+            self.workload['info'] = self.workload['info']+" There is a reconnect for each transaction."
         default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
@@ -3315,7 +3337,7 @@ class benchbase(default):
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             print(df_aggregated_reduced)
-        print("\nWarehouses:", warehouses)
+        #print("\nWarehouses:", warehouses)
         # test: show time series
         #print(self.evaluator.get_benchmark_logs_timeseries_df_aggregated(configuration="Citus-1-1-1024", client=2))
         #####################
@@ -3358,7 +3380,8 @@ class benchbase(default):
         df_tpx = (warehouses*3600.0)/df_connections.sort_index()
         #print(df_tpx)
         #df_loading_tpx = df_tpx['time_load']
-        df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        #df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+        df_connections['Throughput [SF/h]'] = df_tpx['time_load']
         df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
         print(df_connections)
         #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")

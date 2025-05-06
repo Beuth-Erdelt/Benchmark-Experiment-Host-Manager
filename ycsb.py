@@ -66,7 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="1")
     parser.add_argument('-npi', '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
     parser.add_argument('-npo', '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
-    parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'e', 'f', 'c2'], default='a')
+    parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'e', 'f'], default='')
     parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
     parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor = number of operations in millions (=SF if not set)', default=None)
     #parser.add_argument('-su',  '--scaling-users', help='scaling factor = number of total threads', default=64)
@@ -75,6 +75,8 @@ if __name__ == '__main__':
     #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb',  '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
     parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=180)
+    parser.add_argument('-lr',  '--limit-ram', help='limit ram for sut, default 0 (none)', default='0')
+    parser.add_argument('-lc',  '--limit-cpu', help='limit cpus for sut, default 0 (none)', default='0')
     parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
     parser.add_argument('-rc',  '--request-cpu', help='request cpus for sut, default 4', default='4')
     parser.add_argument('-rct', '--request-cpu-type', help='request node for sut to have node label cpu=', default='')
@@ -138,6 +140,7 @@ if __name__ == '__main__':
     target_base = int(args.target_base)
     batchsize = args.scaling_batchsize
     scaling_logging = int(args.scaling_logging) # ycsb expects seconds? *1000 # adjust unit to miliseconds
+    workload = args.workload
     ##############
     ### set cluster
     ##############
@@ -197,7 +200,7 @@ if __name__ == '__main__':
         experiment_design="compare-scaleout",
         rows=ycsb_rows,
         operations=ycsb_operations,
-        workload=args.workload,
+        workload=workload,
         )
     ##############
     ### add configs of dbms to be tested
@@ -223,7 +226,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -259,7 +262,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
@@ -288,12 +291,12 @@ if __name__ == '__main__':
                                 config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
                                 config.sut_has_pool = True                                                # in particular monitor pool component
                                 config.sut_envs = {
-                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_pooling_pods),                 # max connections to PostgreSQL
-                                    'MIN_POOL_SIZE': int(num_c_out/num_pooling_pods),                     # min connections to PostgreSQL
-                                    'MAX_CLIENT_CONN': int(num_c_in/num_pooling_pods),                    # max connections to PGBouncer
+                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),                       # max connections to PostgreSQL
+                                    'MIN_POOL_SIZE': int(num_c_out/num_c_pods),                           # min connections to PostgreSQL
+                                    'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),                          # max connections to PGBouncer
                                 }
                                 config.set_resources(
-                                    replicas_pooling = num_pooling_pods,
+                                    replicas_pooling = num_c_pods,
                                 )
                                 config.set_storage(
                                     storageConfiguration = 'postgresql'
@@ -305,7 +308,7 @@ if __name__ == '__main__':
                                     YCSB_THREADCOUNT = loading_threads_per_pod,
                                     YCSB_TARGET = loading_target_per_pod,
                                     YCSB_STATUS = 1,
-                                    YCSB_WORKLOAD = args.workload,
+                                    YCSB_WORKLOAD = workload,
                                     YCSB_ROWS = ycsb_rows,
                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                     YCSB_BATCHSIZE = batchsize,
@@ -331,7 +334,7 @@ if __name__ == '__main__':
                                                     YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                                     YCSB_TARGET = benchmarking_target_per_pod,
                                                     YCSB_STATUS = 1,
-                                                    YCSB_WORKLOAD = args.workload,
+                                                    YCSB_WORKLOAD = workload,
                                                     YCSB_ROWS = ycsb_rows,
                                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                                     YCSB_BATCHSIZE = batchsize,
@@ -354,7 +357,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -389,7 +392,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
@@ -412,7 +415,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -447,7 +450,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
@@ -547,7 +550,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -582,7 +585,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
@@ -621,7 +624,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -657,7 +660,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
@@ -685,7 +688,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -711,7 +714,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
@@ -756,7 +759,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -822,7 +825,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
@@ -861,7 +864,7 @@ if __name__ == '__main__':
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
                         YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = args.workload,
+                        YCSB_WORKLOAD = workload,
                         YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
@@ -898,7 +901,7 @@ if __name__ == '__main__':
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = args.workload,
+                                        YCSB_WORKLOAD = workload,
                                         YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,

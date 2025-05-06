@@ -3,14 +3,15 @@
 ### Workload
 TPC-H Queries SF=10
     Type: tpch
-    Duration: 4159s 
-    Code: 1744194649
+    Duration: 19368s 
+    Code: 1744819457
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=10) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q22.
     All instances use the same query parameters.
     Timeout per query is 14400.
+    Experiment uses bexhoma version 0.8.4.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 8 processes (pods).
@@ -30,49 +31,49 @@ Citus-BHT-8-1-1-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201977536
+    disk:202349496
     volume_size:50.0G
-    volume_used:40.0M
+    volume_used:22.7G
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:328379280
+        RAM:1077382836224
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1049393936
         volume_size:50.0G
-        volume_used:8.9G
+        volume_used:13.8G
     worker 1
-        RAM:540595875840
+        RAM:540590919680
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-57-generic
+        node:cl-worker25
+        disk:152099016
+        volume_size:50.0G
+        volume_used:13.9G
+    worker 2
+        RAM:540595888128
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-136-generic
         node:cl-worker23
-        disk:235662644
+        disk:359890364
         volume_size:50.0G
-        volume_used:9.3G
-    worker 2
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204349932
-        volume_size:50.0G
-        volume_used:9.0G
+        volume_used:13.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker24
-        disk:154814792
+        RAM:1081649926144
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-57-generic
+        node:cl-worker34
+        disk:351533204
         volume_size:50.0G
-        volume_used:8.9G
+        volume_used:13.8G
     eval_parameters
-        code:1744194649
+        code:1744819457
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
@@ -83,49 +84,49 @@ Citus-BHT-8-1-2-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201977536
+    disk:202349668
     volume_size:50.0G
-    volume_used:40.0M
+    volume_used:22.6G
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:328380052
+        RAM:1077382836224
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1049394604
         volume_size:50.0G
-        volume_used:8.9G
+        volume_used:13.8G
     worker 1
-        RAM:540595875840
+        RAM:540590919680
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-57-generic
+        node:cl-worker25
+        disk:152099656
+        volume_size:50.0G
+        volume_used:13.9G
+    worker 2
+        RAM:540595888128
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
         host:5.15.0-136-generic
         node:cl-worker23
-        disk:235662912
+        disk:359891092
         volume_size:50.0G
-        volume_used:9.3G
-    worker 2
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204349948
-        volume_size:50.0G
-        volume_used:9.0G
+        volume_used:13.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker24
-        disk:154814848
+        RAM:1081649926144
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-57-generic
+        node:cl-worker34
+        disk:351540804
         volume_size:50.0G
-        volume_used:8.9G
+        volume_used:13.8G
     eval_parameters
-        code:1744194649
+        code:1744819457
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
@@ -136,49 +137,49 @@ Citus-BHT-8-2-1-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201977516
+    disk:202349992
     volume_size:50.0G
-    volume_used:40.0M
+    volume_used:22.6G
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:235662964
+        RAM:1081965461504
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:1347683628
         volume_size:50.0G
-        volume_used:9.9G
+        volume_used:13.8G
     worker 1
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:328380596
+        RAM:1077382836224
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1049461132
         volume_size:50.0G
-        volume_used:9.9G
+        volume_used:13.9G
     worker 2
-        RAM:540595879936
+        RAM:540590919680
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker24
-        disk:154815132
-        volume_size:50.0G
-        volume_used:9.9G
-    worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
+        host:6.8.0-57-generic
         node:cl-worker25
-        disk:204349980
+        disk:152100208
         volume_size:50.0G
-        volume_used:9.9G
+        volume_used:13.8G
+    worker 3
+        RAM:1081649926144
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-57-generic
+        node:cl-worker34
+        disk:358780364
+        volume_size:50.0G
+        volume_used:13.8G
     eval_parameters
-        code:1744194649
+        code:1744819457
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
@@ -189,49 +190,49 @@ Citus-BHT-8-2-2-1 uses docker image citusdata/citus:13.0.2-alpine
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201977516
+    disk:202350164
     volume_size:50.0G
-    volume_used:40.0M
+    volume_used:22.6G
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:235663016
+        RAM:1081965461504
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:1347685420
         volume_size:50.0G
-        volume_used:9.9G
+        volume_used:13.8G
     worker 1
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:328380728
+        RAM:1077382836224
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1049395984
         volume_size:50.0G
-        volume_used:9.9G
+        volume_used:13.9G
     worker 2
-        RAM:540595879936
+        RAM:540590919680
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker24
-        disk:154815244
-        volume_size:50.0G
-        volume_used:9.9G
-    worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
+        host:6.8.0-57-generic
         node:cl-worker25
-        disk:204350044
+        disk:152100820
         volume_size:50.0G
-        volume_used:9.9G
+        volume_used:13.8G
+    worker 3
+        RAM:1081649926144
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-57-generic
+        node:cl-worker34
+        disk:358787652
+        volume_size:50.0G
+        volume_used:13.8G
     eval_parameters
-        code:1744194649
+        code:1744819457
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
@@ -245,59 +246,59 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 Citus-BHT-8-1-1-1  Citus-BHT-8-1-2-1  Citus-BHT-8-2-1-1  Citus-BHT-8-2-2-1
-Pricing Summary Report (TPC-H Q1)                              1481.69            1353.92            2743.16            1349.24
-Minimum Cost Supplier Query (TPC-H Q2)                         2434.77            2192.54            3449.41            3058.91
-Shipping Priority (TPC-H Q3)                                    850.38             856.42            2122.41             822.18
-Order Priority Checking Query (TPC-H Q4)                        565.38             564.59             560.83             557.46
-Local Supplier Volume (TPC-H Q5)                                964.79             974.85             966.70             966.28
-Forecasting Revenue Change (TPC-H Q6)                           480.65             494.93             483.02             477.36
-Forecasting Revenue Change (TPC-H Q7)                           929.37             937.96             919.46             910.76
-National Market Share (TPC-H Q8)                               1163.91            1144.29            1440.85            1112.42
-Product Type Profit Measure (TPC-H Q9)                       125659.42          126017.52          127795.67          127160.55
-Forecasting Revenue Change (TPC-H Q10)                         4310.24            4298.39            4278.61            4286.20
-Important Stock Identification (TPC-H Q11)                     1012.45            1056.80            1067.05            1093.66
-Shipping Modes and Order Priority (TPC-H Q12)                   839.82             830.78             815.18             817.83
-Customer Distribution (TPC-H Q13)                             29191.89           30178.86           36320.13           32572.61
-Forecasting Revenue Change (TPC-H Q14)                          660.06             666.28             661.18             643.19
-Top Supplier Query (TPC-H Q15)                                 4098.70            4132.71            4232.58            4014.79
-Parts/Supplier Relationship (TPC-H Q16)                        1828.44            1935.21            1944.69            1898.30
-Small-Quantity-Order Revenue (TPC-H Q17)                     109776.04          110040.43          110499.07          110415.61
-Large Volume Customer (TPC-H Q18)                              1381.72            1368.91            1353.52            1358.59
-Discounted Revenue (TPC-H Q19)                                 1129.84            1122.67            1094.39            1175.08
-Potential Part Promotion (TPC-H Q20)                          84740.98           78228.67           83365.81           80815.02
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           57210.95           55640.58           57187.30           55890.82
-Global Sales Opportunity Query (TPC-H Q22)                    34039.65           34522.17           35036.53           31205.18
+Pricing Summary Report (TPC-H Q1)                             65779.99           63511.25           98018.61           61711.61
+Minimum Cost Supplier Query (TPC-H Q2)                         4401.91            3973.34           40628.68            3973.79
+Shipping Priority (TPC-H Q3)                                  28435.81           28629.42           45500.19           27990.34
+Order Priority Checking Query (TPC-H Q4)                      23872.90           23865.39           24730.36           24289.51
+Local Supplier Volume (TPC-H Q5)                              31405.97           30205.39           30654.05           30075.84
+Forecasting Revenue Change (TPC-H Q6)                         20157.67           20206.86           20228.05           20126.39
+Forecasting Revenue Change (TPC-H Q7)                         30587.42           30484.55           30461.12           30487.10
+National Market Share (TPC-H Q8)                              31841.77           32619.63           32341.27           31872.98
+Product Type Profit Measure (TPC-H Q9)                       207802.43          203000.45          222922.00          204829.02
+Forecasting Revenue Change (TPC-H Q10)                        29413.22           29454.66           29961.48           29842.85
+Important Stock Identification (TPC-H Q11)                     1942.21            1937.09            1954.27            1961.53
+Shipping Modes and Order Priority (TPC-H Q12)                 33015.23           32823.54           32935.46           32907.28
+Customer Distribution (TPC-H Q13)                             24518.88           24399.19           24735.34           25024.94
+Forecasting Revenue Change (TPC-H Q14)                        18856.41           18856.08           19086.12           18944.99
+Top Supplier Query (TPC-H Q15)                                19565.83           19594.17           19775.17           19552.01
+Parts/Supplier Relationship (TPC-H Q16)                        3585.90            3587.43            3562.15            3597.15
+Small-Quantity-Order Revenue (TPC-H Q17)                      59878.22           59718.86           59654.29           58633.14
+Large Volume Customer (TPC-H Q18)                             58962.27           59364.37           58353.81           59691.41
+Discounted Revenue (TPC-H Q19)                                36038.94           36033.96           36279.05           35942.15
+Potential Part Promotion (TPC-H Q20)                          27387.59           28264.77           27799.12           28371.86
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)         3272881.36         3290031.65         3227600.38         3253855.82
+Global Sales Opportunity Query (TPC-H Q22)                     8956.66            8866.38            8767.24            8632.93
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-Citus-BHT-8-1-1-1           1.0          320.0         7.0       45.0     381.0
-Citus-BHT-8-1-2-1           1.0          320.0         7.0       45.0     381.0
-Citus-BHT-8-2-1-1           1.0          320.0         7.0       45.0     381.0
-Citus-BHT-8-2-2-1           1.0          320.0         7.0       45.0     381.0
+Citus-BHT-8-1-1-1           1.0          576.0         4.0      582.0    1170.0
+Citus-BHT-8-1-2-1           1.0          576.0         4.0      582.0    1170.0
+Citus-BHT-8-2-1-1           1.0          576.0         4.0      582.0    1170.0
+Citus-BHT-8-2-2-1           1.0          576.0         4.0      582.0    1170.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-Citus-BHT-8-1-1-1           3.68
-Citus-BHT-8-1-2-1           3.66
-Citus-BHT-8-2-1-1           4.11
-Citus-BHT-8-2-2-1           3.69
+Citus-BHT-8-1-1-1          29.48
+Citus-BHT-8-1-2-1          29.28
+Citus-BHT-8-2-1-1          34.08
+Citus-BHT-8-2-2-1          29.20
 
 ### Power@Size
                    Power@Size [~Q/h]
 DBMS                                
-Citus-BHT-8-1-1-1           10025.98
-Citus-BHT-8-1-2-1           10082.93
-Citus-BHT-8-2-1-1            8992.73
-Citus-BHT-8-2-2-1           10006.02
+Citus-BHT-8-1-1-1            1238.23
+Citus-BHT-8-1-2-1            1246.69
+Citus-BHT-8-2-1-1            1070.28
+Citus-BHT-8-2-2-1            1249.33
 
 ### Throughput@Size
                                               time [s]  count  SF  Throughput@Size [~GB/h]
 DBMS            SF num_experiment num_client                                              
-Citus-BHT-8-1-1 10 1              1                473      1  10                  1674.42
-Citus-BHT-8-1-2 10 1              2                467      1  10                  1695.93
-Citus-BHT-8-2-1 10 2              1                487      1  10                  1626.28
-Citus-BHT-8-2-2 10 2              2                470      1  10                  1685.11
+Citus-BHT-8-1-1 10 1              1               4048      1  10                   195.65
+Citus-BHT-8-1-2 10 1              2               4060      1  10                   195.07
+Citus-BHT-8-2-1 10 2              1               4103      1  10                   193.03
+Citus-BHT-8-2-2 10 2              2               4021      1  10                   196.97
 
 ### Workflow
 
@@ -309,27 +310,27 @@ DBMS Citus-BHT-8 - Pods [[1, 1], [1, 1]]
 
 ### Ingestion - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-8-1-1      1157.9     1.23         25.97                45.98
-Citus-BHT-8-1-2      1157.9     1.23         25.97                45.98
+Citus-BHT-8-1-1        24.4     0.01         15.43                15.94
+Citus-BHT-8-1-2        24.4     0.01         15.43                15.94
 
 ### Ingestion - Loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-8-1-1      175.85     0.54          0.04                10.53
-Citus-BHT-8-1-2      175.85     0.54          0.04                10.53
+Citus-BHT-8-1-1      171.75     0.29          0.05                10.53
+Citus-BHT-8-1-2      171.75     0.29          0.05                10.53
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-8-1-1    27124.31     96.0         60.21                80.12
-Citus-BHT-8-1-2    26798.14     48.0         61.30                81.20
-Citus-BHT-8-2-1    27010.58     48.0         59.48                97.46
-Citus-BHT-8-2-2    27122.69     48.0         60.65                99.70
+Citus-BHT-8-1-1       77.51     0.02         15.43                15.94
+Citus-BHT-8-1-2       77.81     0.01         15.43                15.94
+Citus-BHT-8-2-1       84.50     0.02         15.41                15.74
+Citus-BHT-8-2-2       81.41     0.02         15.42                15.74
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-8-1-1       20.42     0.07          0.28                 0.29
-Citus-BHT-8-1-2       20.42     0.10          0.59                 0.60
-Citus-BHT-8-2-1       19.45     0.03          0.30                 0.32
-Citus-BHT-8-2-2       19.45     0.07          0.56                 0.60
+Citus-BHT-8-1-1       23.73     0.02          0.31                 0.31
+Citus-BHT-8-1-2       23.73     0.21          0.55                 0.57
+Citus-BHT-8-2-1       24.19     0.01          0.30                 0.32
+Citus-BHT-8-2-2       24.19     0.06          0.54                 0.57
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN

@@ -64,6 +64,8 @@ if __name__ == '__main__':
     parser.add_argument('-xlat', '--extra-latency', help='also log latencies', action='store_true', default=False)
     parser.add_argument('-xkey', '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=180)
+    parser.add_argument('-lr',  '--limit-ram', help='limit ram for sut, default 0 (none)', default='0')
+    parser.add_argument('-lc',  '--limit-cpu', help='limit cpus for sut, default 0 (none)', default='0')
     parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
     parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
     parser.add_argument('-rct', '--request-cpu-type', help='request node having node label cpu=', default='')

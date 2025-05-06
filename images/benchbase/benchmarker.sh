@@ -94,7 +94,9 @@ echo "BENCHBASE_TIME $BENCHBASE_TIME"
 echo "BENCHBASE_TERMINALS $BENCHBASE_TERMINALS"
 echo "BENCHBASE_BATCHSIZE $BENCHBASE_BATCHSIZE"
 echo "BENCHBASE_KEY_AND_THINK $BENCHBASE_KEY_AND_THINK"
-
+echo "BENCHBASE_NEWCONNPERTXN $BENCHBASE_NEWCONNPERTXN"
+echo "BENCHBASE_YCSB_WEIGHTS $BENCHBASE_YCSB_WEIGHTS"
+echo "BENCHBASE_YCSB_WORKLOAD $BENCHBASE_YCSB_WORKLOAD"
 
 
 ######################## Start measurement of time of execution ########################
@@ -102,20 +104,36 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
-######################## TPC-C ###################
-if [ "$BENCHBASE_BENCH" = "tpcc" ]; then
-	#FILENAME=/benchbase/profiles/postgres/config/postgres/sample_tpcc_config.xml
-	FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_tpcc_config.xml
-fi
-
-######################## Twitter ###################
-if [ "$BENCHBASE_BENCH" = "twitter" ]; then
-	#FILENAME=/benchbase/profiles/postgres/config/postgres/sample_tpcc_config.xml
-	FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
+######################## Benchmark Config File ###################
+if [ "$BENCHBASE_BENCH" == "tpcc" ]; then
+    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_tpcc_config.xml
+elif [ "$BENCHBASE_BENCH" == "twitter" ]; then
+    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
+elif [ "$BENCHBASE_BENCH" == "chbenchmark" ]; then
+    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_chbenchmark_config.xml
+elif [ "$BENCHBASE_BENCH" == "ycsb" ]; then
+    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_ycsb_config.xml
+else
+    echo "Unknown benchmark"
+    exit 0
 fi
 
 ######################## Replace parameters in workload file ###################
 echo "FILENAME $FILENAME"
+
+if [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "a" ]]; then
+    BENCHBASE_YCSB_WEIGHTS=50,0,0,50,0,0
+elif [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "b" ]]; then
+    BENCHBASE_YCSB_WEIGHTS=95,0,0,5,0,0
+elif [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "c" ]]; then
+    BENCHBASE_YCSB_WEIGHTS=100,0,0,0,0,0
+elif [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "d" ]]; then
+    BENCHBASE_YCSB_WEIGHTS=95,5,0,0,0,0
+elif [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "e" ]]; then
+    BENCHBASE_YCSB_WEIGHTS=0,5,95,0,0,0
+elif [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "f" ]]; then
+    BENCHBASE_YCSB_WEIGHTS=50,0,0,0,0,50
+fi
 
 sed -i "s/BEXHOMA_HOST/$BEXHOMA_HOST/" $FILENAME
 sed -i "s/BEXHOMA_PORT/$BEXHOMA_PORT/" $FILENAME
@@ -128,6 +146,8 @@ sed -i "s/BEXHOMA_SF/$SF/" $FILENAME
 sed -i "s/BENCHBASE_BATCHSIZE/$BENCHBASE_BATCHSIZE/" $FILENAME
 sed -i "s/BENCHBASE_TERMINALS/$BENCHBASE_TERMINALS/" $FILENAME
 sed -i "s/BENCHBASE_ISOLATION/$BENCHBASE_ISOLATION/" $FILENAME
+sed -i "s/BENCHBASE_NEWCONNPERTXN/$BENCHBASE_NEWCONNPERTXN/" $FILENAME
+sed -i "s/BENCHBASE_YCSB_WEIGHTS/$BENCHBASE_YCSB_WEIGHTS/" $FILENAME
 
 if [ "$BENCHBASE_KEY_AND_THINK" = "true" ]; then
     sed -i 's/<!--<preExecutionWait>/<preExecutionWait>/g' $FILENAME

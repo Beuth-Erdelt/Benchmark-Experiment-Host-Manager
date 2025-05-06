@@ -159,7 +159,7 @@ class testbed():
     def set_experiments_configfolder(self, experiments_configfolder):
         """
         Sets the configuration folder for the experiments.
-        Bexhoma expects subfolders for expeiment types, for example tpch.
+        Bexhoma expects subfolders for experiment types, for example tpch.
         In there, bexhoma looks for query.config files (for dbmsbenchmarker) and subfolders containing the schema per dbms.
 
         :param experiments_configfolder: Relative path to an experiment folder

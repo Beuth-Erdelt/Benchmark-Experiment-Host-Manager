@@ -137,6 +137,9 @@ fi
 echo "DBMSBENCHMARKER_SHUFFLE_QUERIES $DBMSBENCHMARKER_SHUFFLE_QUERIES"
 echo "DBMSBENCHMARKER_RECREATE_PARAMETER $DBMSBENCHMARKER_RECREATE_PARAMETER"
 
+######################## Show all jars ########################
+ls jars -lh
+
 ######################## Execute workload ###################
 # run dbmsbenchmarker
 if test $DBMSBENCHMARKER_VERBOSE -gt 0

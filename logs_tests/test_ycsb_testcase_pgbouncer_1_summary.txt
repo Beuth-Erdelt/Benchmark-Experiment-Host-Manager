@@ -1,0 +1,95 @@
+## Show Summary
+
+### Workload
+YCSB SF=16
+    Type: ycsb
+    Duration: 1593s 
+    Code: 1745062608
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'C'.
+    Number of rows to insert is 16000000.
+    Number of operations is 16000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [11].
+    Factors for benchmarking are [11].
+    Experiment uses bexhoma version 0.8.4.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PGBouncer'].
+    Import is handled by 16 processes (pods).
+    Loading is fixed to cl-worker13.
+    Benchmarking is fixed to cl-worker13.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [64] threads, split into [16] pods.
+    Benchmarking is tested with [128] threads, split into [16] pods.
+    Pooling is done with [4] pods having [128] inbound and [64] outbound connections in total.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+pgb-64-4-128-64-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:241554848
+    datadisk:38276
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1745062608
+
+### Loading
+                 experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+pgb-64-4-128-64               1       64  180224         16           0                   28817.563319               568643.0            16000000                             5900.75
+
+### Execution
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
+pgb-64-4-128-64-1               1      128  180224         16          20                       76904.14               198420.0          14750000                            2497.0
+
+### Workflow
+
+#### Actual
+DBMS pgb-64-4-128-64 - Pods [[16]]
+
+#### Planned
+DBMS pgb-64-4-128-64 - Pods [[16]]
+
+### Ingestion - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     2788.21     5.49         23.38                32.23
+
+### Ingestion - Loader
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     1988.22     1.28          0.58                 0.58
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     2082.37    14.23         25.64                35.87
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     1404.68     2.76          0.57                 0.58
+
+### Execution - Pooling
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1      596.15      1.0          0.01                 0.01
+
+### Ingestion - Pooling
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1      735.21     0.81          0.01                 0.01
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
