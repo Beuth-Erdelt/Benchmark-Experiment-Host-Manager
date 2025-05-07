@@ -799,6 +799,69 @@ class ycsb(logger):
                     '[SCAN].99thPercentileLatency(us)':'float',
                     '[SCAN].Return=OK':'int',
                 })
+            if '[READ-MODIFY-WRITE].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[READ-MODIFY-WRITE].Operations':'int',
+                    '[READ-MODIFY-WRITE].AverageLatency(us)':'float',
+                    '[READ-MODIFY-WRITE].MinLatency(us)':'float',
+                    '[READ-MODIFY-WRITE].MaxLatency(us)':'float',
+                    '[READ-MODIFY-WRITE].95thPercentileLatency(us)':'float',
+                    '[READ-MODIFY-WRITE].99thPercentileLatency(us)':'float',
+                })
+            if '[CLEANUP-FAILED].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[CLEANUP-FAILED].Operations':'int',
+                    '[CLEANUP-FAILED].AverageLatency(us)':'float',
+                    '[CLEANUP-FAILED].MinLatency(us)':'float',
+                    '[CLEANUP-FAILED].MaxLatency(us)':'float',
+                    '[CLEANUP-FAILED].95thPercentileLatency(us)':'float',
+                    '[CLEANUP-FAILED].99thPercentileLatency(us)':'float',
+            })
+            if '[READ-FAILED].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[READ-FAILED].Operations':'int',
+                    '[READ-FAILED].AverageLatency(us)':'float',
+                    '[READ-FAILED].MinLatency(us)':'float',
+                    '[READ-FAILED].MaxLatency(us)':'float',
+                    '[READ-FAILED].95thPercentileLatency(us)':'float',
+                    '[READ-FAILED].99thPercentileLatency(us)':'float',
+            })
+            if '[UPDATE-FAILED].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[UPDATE-FAILED].Operations':'int',
+                    '[UPDATE-FAILED].AverageLatency(us)':'float',
+                    '[UPDATE-FAILED].MinLatency(us)':'float',
+                    '[UPDATE-FAILED].MaxLatency(us)':'float',
+                    '[UPDATE-FAILED].95thPercentileLatency(us)':'float',
+                    '[UPDATE-FAILED].99thPercentileLatency(us)':'float',
+            })
+            if '[INSERT-FAILED].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[INSERT-FAILED].Operations':'int',
+                    '[INSERT-FAILED].AverageLatency(us)':'float',
+                    '[INSERT-FAILED].MinLatency(us)':'float',
+                    '[INSERT-FAILED].MaxLatency(us)':'float',
+                    '[INSERT-FAILED].95thPercentileLatency(us)':'float',
+                    '[INSERT-FAILED].99thPercentileLatency(us)':'float',
+            })
+            if '[SCAN-FAILED].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[SCAN-FAILED].Operations':'int',
+                    '[SCAN-FAILED].AverageLatency(us)':'float',
+                    '[SCAN-FAILED].MinLatency(us)':'float',
+                    '[SCAN-FAILED].MaxLatency(us)':'float',
+                    '[SCAN-FAILED].95thPercentileLatency(us)':'float',
+                    '[SCAN-FAILED].99thPercentileLatency(us)':'float',
+                })
+            if '[READ-MODIFY-WRITE-FAILED].Operations'in df_typed.columns:
+                df_typed = df_typed.astype({
+                    '[READ-MODIFY-WRITE-FAILED].Operations':'int',
+                    '[READ-MODIFY-WRITE-FAILED].AverageLatency(us)':'float',
+                    '[READ-MODIFY-WRITE-FAILED].MinLatency(us)':'float',
+                    '[READ-MODIFY-WRITE-FAILED].MaxLatency(us)':'float',
+                    '[READ-MODIFY-WRITE-FAILED].95thPercentileLatency(us)':'float',
+                    '[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)':'float',
+                })
             return df_typed
         except Exception as e:
             print(e)
@@ -887,6 +950,69 @@ class ycsb(logger):
                     '[SCAN].95thPercentileLatency(us)':'max',
                     '[SCAN].99thPercentileLatency(us)':'max',
                     '[SCAN].Return=OK':'sum',
+                }}
+            if '[READ-MODIFY-WRITE].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[READ-MODIFY-WRITE].Operations':'sum',
+                    '[READ-MODIFY-WRITE].AverageLatency(us)':'mean',
+                    '[READ-MODIFY-WRITE].MinLatency(us)':'min',
+                    '[READ-MODIFY-WRITE].MaxLatency(us)':'max',
+                    '[READ-MODIFY-WRITE].95thPercentileLatency(us)':'max',
+                    '[READ-MODIFY-WRITE].99thPercentileLatency(us)':'max',
+                }}
+            if '[CLEANUP-FAILED].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                '[CLEANUP-FAILED].Operations':'sum',
+                '[CLEANUP-FAILED].AverageLatency(us)':'mean',
+                '[CLEANUP-FAILED].MinLatency(us)':'min',
+                '[CLEANUP-FAILED].MaxLatency(us)':'max',
+                '[CLEANUP-FAILED].95thPercentileLatency(us)':'max',
+                '[CLEANUP-FAILED].99thPercentileLatency(us)':'max',
+                }}
+            if '[READ-FAILED].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[READ-FAILED].Operations':'sum',
+                    '[READ-FAILED].AverageLatency(us)':'mean',
+                    '[READ-FAILED].MinLatency(us)':'min',
+                    '[READ-FAILED].MaxLatency(us)':'max',
+                    '[READ-FAILED].95thPercentileLatency(us)':'max',
+                    '[READ-FAILED].99thPercentileLatency(us)':'max',
+                }}
+            if '[INSERT-FAILED].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[INSERT-FAILED].Operations':'sum',
+                    '[INSERT-FAILED].AverageLatency(us)':'mean',
+                    '[INSERT-FAILED].MinLatency(us)':'min',
+                    '[INSERT-FAILED].MaxLatency(us)':'max',
+                    '[INSERT-FAILED].95thPercentileLatency(us)':'max',
+                    '[INSERT-FAILED].99thPercentileLatency(us)':'max',
+                }}
+            if '[UPDATE-FAILED].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[UPDATE-FAILED].Operations':'sum',
+                    '[UPDATE-FAILED].AverageLatency(us)':'mean',
+                    '[UPDATE-FAILED].MinLatency(us)':'min',
+                    '[UPDATE-FAILED].MaxLatency(us)':'max',
+                    '[UPDATE-FAILED].95thPercentileLatency(us)':'max',
+                    '[UPDATE-FAILED].99thPercentileLatency(us)':'max',
+                }}
+            if '[SCAN-FAILED].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[SCAN-FAILED].Operations':'sum',
+                    '[SCAN-FAILED].AverageLatency(us)':'mean',
+                    '[SCAN-FAILED].MinLatency(us)':'min',
+                    '[SCAN-FAILED].MaxLatency(us)':'max',
+                    '[SCAN-FAILED].95thPercentileLatency(us)':'max',
+                    '[SCAN-FAILED].99thPercentileLatency(us)':'max',
+                }}
+            if '[READ-MODIFY-WRITE-FAILED].Operations' in grp.columns:
+                aggregate = {**aggregate, **{
+                    '[READ-MODIFY-WRITE-FAILED].Operations':'sum',
+                    '[READ-MODIFY-WRITE-FAILED].AverageLatency(us)':'mean',
+                    '[READ-MODIFY-WRITE-FAILED].MinLatency(us)':'min',
+                    '[READ-MODIFY-WRITE-FAILED].MaxLatency(us)':'max',
+                    '[READ-MODIFY-WRITE-FAILED].95thPercentileLatency(us)':'max',
+                    '[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)':'max',
                 }}
             #print(grp.agg(aggregate))
             dict_grp = dict()

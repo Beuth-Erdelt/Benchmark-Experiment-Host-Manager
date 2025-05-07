@@ -189,7 +189,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nlp 8 \
   -nlt 64 \
   -nlf 4 \
-  -nbp 1,8 \
+  -nbp 8 \
   -nbt 64 \
   -nbf 4 \
   -ne 1 \
@@ -212,7 +212,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nlp 8 \
   -nlt 64 \
   -nlf 4 \
-  -nbp 1,8 \
+  -nbp 8 \
   -nbt 64 \
   -nbf 4 \
   -ne 1 \
@@ -281,7 +281,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nlp 8 \
   -nlt 64 \
   -nlf 4 \
-  -nbp 1,8 \
+  -nbp 8 \
   -nbt 64 \
   -nbf 4 \
   -ne 1 \
