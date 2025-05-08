@@ -843,6 +843,8 @@ Note the added section about `volume_size` and `volume_used` in the connections 
 
 ### Workload A
 
+Workload A is 50% READ and 50% UPDATE.
+
 Example:
 ```bash
 nohup python ycsb.py -ms 1 -tr \
@@ -974,6 +976,8 @@ TEST passed: Workflow as planned
 
 
 ### Workload B
+
+Workload B is 95% READ and 5% UPDATE.
 
 Example:
 ```bash
@@ -1107,6 +1111,8 @@ TEST passed: Workflow as planned
 
 ### Workload C
 
+Workload C is 100%.
+
 Example:
 ```bash
 nohup python ycsb.py -ms 1 -tr \
@@ -1239,6 +1245,11 @@ TEST passed: Workflow as planned
 
 ### Workload D
 
+Workload D is 95% READ and 5% INSERT.
+This means there are more rows in the database after the benchmark than before the benchmark.
+The range of key that can be read or inserted changes.
+Repetition is only fully sensible after a clean creation of the database.
+
 Example:
 ```bash
 nohup python ycsb.py -ms 1 -tr \
@@ -1352,6 +1363,11 @@ TEST passed: Workflow as planned
 
 ### Workload E
 
+Workload E is 95% SCAN and 5% INSERT.
+This means there are more rows in the database after the benchmark than before the benchmark.
+The range of key that can be read or inserted changes.
+Repetition is only fully sensible after a clean creation of the database.
+
 Example:
 ```bash
 nohup python ycsb.py -ms 1 -tr \
@@ -1464,6 +1480,8 @@ TEST passed: Workflow as planned
 
 
 ### Workload F
+
+Workload F is 50% READ and 50% READ-MODIFY-WRITE.
 
 Example:
 ```bash
