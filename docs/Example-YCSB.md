@@ -1111,7 +1111,7 @@ TEST passed: Workflow as planned
 
 ### Workload C
 
-Workload C is 100%.
+Workload C is 100% READ.
 
 Example:
 ```bash
