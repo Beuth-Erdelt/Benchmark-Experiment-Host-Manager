@@ -76,7 +76,6 @@ nohup python tpcds.py -ms 3 -dt -tr \
 
 
 #### Wait so that next experiment receives a different code
-#sleep 7200
 wait_process "tpcds"
 
 
@@ -93,7 +92,6 @@ nohup python tpcds.py -ms 1 -dt -tr \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monitoring.log &
 
 #### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpcds"
 
 
@@ -111,7 +109,6 @@ nohup python tpcds.py -ms 1 -dt -tr \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_throughput.log &
 
 #### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpcds"
 
 
@@ -134,7 +131,6 @@ nohup python tpcds.py -ms 1 -dt -tr \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_storage.log &
 
 #### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpcds"
 
 
@@ -164,7 +160,6 @@ nohup python tpcds.py -ms 1 \
 
 
 #### Wait so that next experiment receives a different code
-#sleep 1800
 wait_process "tpcds"
 
 
@@ -183,7 +178,6 @@ nohup python tpcds.py -ms 1 \
 
 
 #### Wait so that next experiment receives a different code
-#sleep 4800
 wait_process "tpcds"
 
 
@@ -231,6 +225,32 @@ nohup python tpcds.py -ms 1 -dt -tr \
 #### Wait so that next experiment receives a different code
 #sleep 600
 wait_process "tpcds"
+
+
+
+
+
+###########################################
+############# TPC-DS Compare ##############
+###########################################
+
+
+#### TCP-DS Compare (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 30 \
+  -t 7200 \
+  -ii -ic -is \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 7200
+wait_process "tpcds"
+
 
 
 
