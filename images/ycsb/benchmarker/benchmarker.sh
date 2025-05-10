@@ -75,10 +75,10 @@ OPERATIONS_TOTAL=$(($YCSB_OPERATIONS*$NUM_PODS))
 # for loading phase
 ROW_PART=$(($YCSB_ROWS/$NUM_PODS))
 ROW_START=$(($YCSB_ROWS/$NUM_PODS*($CHILD-1)))
-# for benchmarking phase - workload E, we again insert 5% new rows
-#ROWS_TO_INSERT=$(awk "BEGIN {print 0.05*$OPERATIONS_TOTAL}")
+# for benchmarking phase - workload D and E, we again insert 5% new rows
+ROWS_TO_INSERT=$(awk "BEGIN {print 0.05*$OPERATIONS_TOTAL}")
 # assume 100% of operations are INSERTs
-ROWS_TO_INSERT=$OPERATIONS_TOTAL
+#ROWS_TO_INSERT=$OPERATIONS_TOTAL
 ROW_PART_AFTER_LOADING=$(($ROWS_TO_INSERT/$NUM_PODS))
 ROW_START_AFTER_LOADING=$(($ROWS_TO_INSERT/$NUM_PODS*($CHILD-1)+$YCSB_ROWS))
 # if new rows are to be inserted in benchmark, too

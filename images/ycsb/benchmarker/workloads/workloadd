@@ -26,7 +26,8 @@
 # which orders items purely by time, and demands the latest, is very different than 
 # workload here (which we believe is more typical of how people build systems.)
 
-recordcount=ROWS_AFTER_BENCHMARK
+#recordcount=ROWS_AFTER_BENCHMARK
+recordcount=YCSB_ROWS
 operationcount=YCSB_OPERATIONS
 workload=site.ycsb.workloads.CoreWorkload
 
@@ -39,8 +40,8 @@ insertproportion=0.05
 
 requestdistribution=latest
 
-insertstart=ROW_START_AFTER_LOADING
-insertcount=ROW_PART_AFTER_LOADING
+#insertstart=ROW_START_AFTER_LOADING
+#insertcount=ROW_PART_AFTER_LOADING
 
 threadcount=YCSB_THREADCOUNT
 target=YCSB_TARGET
