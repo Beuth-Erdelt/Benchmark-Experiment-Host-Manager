@@ -157,6 +157,11 @@ wait_process "ycsb"
 
 
 
+###########################################
+############## All Workloads ##############
+###########################################
+
+
 #### YCSB Monitoring (Example-YCSB.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 10 \
