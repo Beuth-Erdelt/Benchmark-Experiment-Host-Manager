@@ -96,6 +96,7 @@ echo "YCSB_TARGET $YCSB_TARGET"
 echo "YCSB_WORKLOAD $YCSB_WORKLOAD"
 echo "YCSB_BATCHSIZE:$YCSB_BATCHSIZE"
 echo "YCSB_MEASUREMENT_TYPE:$YCSB_MEASUREMENT_TYPE"
+echo "YCSB_INSERTORDER:$YCSB_INSERTORDER"
 
 ######################## Wait until all pods of job are ready ########################
 if test "$BEXHOMA_SYNCH_LOAD" != "0"
@@ -192,6 +193,7 @@ sed -i "s/YCSB_THREADCOUNT/$YCSB_THREADCOUNT/" $FILENAME
 sed -i "s/YCSB_TARGET/$YCSB_TARGET/" $FILENAME
 sed -i "s/YCSB_STATUS_INTERVAL/$YCSB_STATUS_INTERVAL/" $FILENAME
 sed -i "s/YCSB_MEASUREMENT_TYPE/$YCSB_MEASUREMENT_TYPE/" $FILENAME
+sed -i "s/YCSB_INSERTORDER/$YCSB_INSERTORDER/" $FILENAME
 
 echo "# Yahoo! Cloud System Benchmark
 # Workload A: Update heavy workload

@@ -140,6 +140,7 @@ echo "YCSB_TARGET $YCSB_TARGET"
 echo "YCSB_WORKLOAD $YCSB_WORKLOAD"
 echo "YCSB_BATCHSIZE:$YCSB_BATCHSIZE"
 echo "YCSB_MEASUREMENT_TYPE:$YCSB_MEASUREMENT_TYPE"
+echo "YCSB_INSERTORDER:$YCSB_INSERTORDER"
 
 ######################## Generate driver file ########################
 # Redis or JDBC

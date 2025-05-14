@@ -235,6 +235,7 @@ wait_process "ycsb"
 nohup python ycsb.py -ms 1 -tr \
   -sf 10 \
   --workload d \
+  -xio hashed \
   -dbms PostgreSQL \
   -tb 16384 \
   -nlp 8 \
@@ -258,12 +259,13 @@ wait_process "ycsb"
 nohup python ycsb.py -ms 1 -tr \
   -sf 10 \
   --workload e \
+  -xio ordered \
   -dbms PostgreSQL \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
   -nlf 4 \
-  -nbp 1 \
+  -nbp 2 \
   -nbt 64 \
   -nbf 4 \
   -ne 1 \

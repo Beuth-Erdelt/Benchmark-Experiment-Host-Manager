@@ -2771,6 +2771,7 @@ class ycsb(default):
         ycsb_rows = int(SF)*1000000 # 1kb each, that is SF is size in GB
         ycsb_operations = int(SFO)*1000000
         target_base = int(args.target_base)
+        extra_insert_order = args.extra_insert_order                 # insert keys by ordering or by hashed value
         batchsize = args.scaling_batchsize
         num_loading_target_factors = self.get_parameter_as_list('num_loading_target_factors')
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
@@ -2796,6 +2797,7 @@ class ycsb(default):
         # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
         self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
+        self.workload['info'] = self.workload['info']+"\nOrdering of inserts is {}.".format(extra_insert_order)
         self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
         self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
         #self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
