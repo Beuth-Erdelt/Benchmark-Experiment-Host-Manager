@@ -233,6 +233,7 @@ if __name__ == '__main__':
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = "jdbc",
                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                        YCSB_INSERTORDER = 'ordered',
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -269,6 +270,7 @@ if __name__ == '__main__':
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
                                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                                        YCSB_INSERTORDER = 'ordered',
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
