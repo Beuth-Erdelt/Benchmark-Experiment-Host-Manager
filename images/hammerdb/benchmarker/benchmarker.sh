@@ -134,8 +134,8 @@ diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
 diset tpcc mysql_count_ware $SF
 diset tpcc mysql_num_vu $HAMMERDB_NUM_VU
-diset tpcc mysql_user $USER
-diset tpcc mysql_pass $PASSWORD
+diset tpcc mysql_user $BEXHOMA_USER
+diset tpcc mysql_pass $BEXHOMA_PASSWORD
 diset tpcc mysql_driver timed
 diset tpcc mysql_rampup $HAMMERDB_RAMPUP
 diset tpcc mysql_duration $HAMMERDB_DURATION
@@ -186,8 +186,8 @@ diset connection maria_host $BEXHOMA_HOST
 diset connection maria_port $BEXHOMA_PORT
 diset tpcc maria_count_ware $SF
 diset tpcc maria_num_vu $HAMMERDB_NUM_VU
-diset tpcc maria_user $USER
-diset tpcc maria_pass $PASSWORD
+diset tpcc maria_user $BEXHOMA_USER
+diset tpcc maria_pass $BEXHOMA_PASSWORD
 diset tpcc maria_driver timed
 diset tpcc maria_rampup $HAMMERDB_RAMPUP
 diset tpcc maria_duration $HAMMERDB_DURATION
@@ -224,8 +224,8 @@ diset tpcc pg_num_vu $HAMMERDB_NUM_VU
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $USER
-diset tpcc pg_pass $PASSWORD
+diset tpcc pg_user $BEXHOMA_USER
+diset tpcc pg_pass $BEXHOMA_PASSWORD
 diset tpcc pg_dbase tpcc
 diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
@@ -281,9 +281,9 @@ diset tpcc pg_num_vu $HAMMERDB_NUM_VU
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $USER
-diset tpcc pg_pass $PASSWORD
-diset tpcc pg_dbase $DATABASE
+diset tpcc pg_user $BEXHOMA_USER
+diset tpcc pg_pass $BEXHOMA_PASSWORD
+diset tpcc pg_dbase $BEXHOMA_DATABASE
 diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
