@@ -217,7 +217,7 @@ if __name__ == '__main__':
                         storageConfiguration = 'postgresql'
                         )
                     config.set_loading_parameters(
-                        PARALLEL = str(loading_pods), # =1
+                        #PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
@@ -251,7 +251,7 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        #PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
@@ -297,7 +297,7 @@ if __name__ == '__main__':
                                     storageConfiguration = 'postgresql'
                                     )
                                 config.set_loading_parameters(
-                                    PARALLEL = str(loading_pods), # =1
+                                    #PARALLEL = str(loading_pods), # =1
                                     SF = SF,
                                     BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                     BENCHBASE_PROFILE = 'postgres',
@@ -330,7 +330,7 @@ if __name__ == '__main__':
                                                 """
                                                 executor_list.append(benchmarking_pods_scaled)
                                                 config.add_benchmarking_parameters(
-                                                    PARALLEL = str(benchmarking_pods_scaled),
+                                                    #PARALLEL = str(benchmarking_pods_scaled),
                                                     SF = SF,
                                                     BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                                     BENCHBASE_PROFILE = 'postgres',
@@ -353,7 +353,7 @@ if __name__ == '__main__':
                         storageConfiguration = 'mysql'
                         )
                     config.set_loading_parameters(
-                        PARALLEL = str(loading_pods), # =1
+                        #PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'mysql',
@@ -387,7 +387,7 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        #PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'mysql',
@@ -409,7 +409,7 @@ if __name__ == '__main__':
                         storageConfiguration = 'mariadb'
                         )
                     config.set_loading_parameters(
-                        PARALLEL = str(loading_pods), # =1
+                        #PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'mariadb',
@@ -443,7 +443,7 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        #PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'mariadb',
@@ -543,7 +543,7 @@ if __name__ == '__main__':
                         return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
-                        PARALLEL = str(loading_pods), # =1
+                        #PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
@@ -579,7 +579,7 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        #PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
@@ -620,7 +620,7 @@ if __name__ == '__main__':
                         BEXHOMA_WORKERS = num_worker
                         )
                     config.set_loading_parameters(
-                        PARALLEL = str(loading_pods), # =1
+                        #PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'cockroachdb',
@@ -655,7 +655,7 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        #PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'cockroachdb',
@@ -681,7 +681,7 @@ if __name__ == '__main__':
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_loading_parameters(
-                        PARALLEL = str(loading_pods), # =1
+                        #PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
@@ -714,7 +714,7 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        #PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
@@ -756,7 +756,7 @@ if __name__ == '__main__':
                         BEXHOMA_WORKERS = num_worker
                         )
                     config.set_loading_parameters(
-                        PARALLEL = str(loading_pods), # =1
+                        #PARALLEL = str(loading_pods), # =1
                         SF = SF,
                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
@@ -792,7 +792,7 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        #PARALLEL = str(benchmarking_pods_scaled),
                                         SF = SF,
                                         BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
