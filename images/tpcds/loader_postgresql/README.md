@@ -2,8 +2,8 @@
 
 The following parameter (ENV) have been added:
 
-* `NUM_PODS`: 
-* `CHILD`: 
+* `BEXHOMA_NUM_PODS`: 
+* `BEXHOMA_CHILD`: 
 * `BEXHOMA_HOST`: 
 * `BEXHOMA_PORT`: 
 * `BEXHOMA_CONNECTION`: 

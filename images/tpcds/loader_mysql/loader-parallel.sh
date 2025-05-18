@@ -17,24 +17,24 @@ echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 
 ######################## Show more parameters ########################
-CHILD=$(cat /tmp/tpcds/CHILD )
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+BEXHOMA_CHILD=$(cat /tmp/tpcds/BEXHOMA_CHILD )
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
 ######################## Destination of raw data ########################
 if test $STORE_RAW_DATA -gt 0
 then
     # store in (distributed) file system
-    if test $NUM_PODS -gt 1
+    if test $BEXHOMA_NUM_PODS -gt 1
     then
-        destination_raw=/data/tpcds/SF$SF/$NUM_PODS/$CHILD/
+        destination_raw=/data/tpcds/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD/
     else
         destination_raw=/data/tpcds/SF$SF/
     fi
 else
     # only store locally
-    destination_raw=/tmp/tpcds/SF$SF/$NUM_PODS/$CHILD
+    destination_raw=/tmp/tpcds/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
 fi
 echo "destination_raw $destination_raw"
 cd $destination_raw
@@ -52,12 +52,12 @@ then
     # wait for number of pods to be as expected
     while : ; do
         PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-        echo "Found $PODS_RUNNING / $NUM_PODS running pods"
-        if  test "$PODS_RUNNING" == $NUM_PODS
+        echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS running pods"
+        if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS
         then
             echo "OK"
             break
-        elif test "$PODS_RUNNING" -gt $NUM_PODS
+        elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS
         then
             echo "Too many pods! Restart occured?"
             exit 0
@@ -78,7 +78,7 @@ echo "Start $SECONDS_START seconds"
 #export LANG="en_US.utf8"
 
 ######################## Parallel loading (several scripts at once) only makes sense for more than 1 pod ########################
-if test $NUM_PODS -gt 1
+if test $BEXHOMA_NUM_PODS -gt 1
 then
     echo "MYSQL_LOADING_PARALLEL:$MYSQL_LOADING_PARALLEL"
 else
@@ -90,7 +90,7 @@ fi
 # this holds for parallel loading, i.e. one client writes all files to host
 if test $MYSQL_LOADING_PARALLEL -gt 0
 then
-    if test $CHILD -gt 1
+    if test $BEXHOMA_CHILD -gt 1
     then
         echo "Only first loader pod should be active"
         bexhoma_end_epoch=$(date -u +%s)
@@ -121,9 +121,9 @@ fi
 #for i in `ls *.dat | shuf`; do
 # ordered
 for i in *.dat; do
-    if test $NUM_PODS -gt 1
+    if test $BEXHOMA_NUM_PODS -gt 1
     then
-        basename=${i%_"$CHILD"_"$NUM_PODS"*}
+        basename=${i%_"$BEXHOMA_CHILD"_"$BEXHOMA_NUM_PODS"*}
     else
         basename=${i%.dat*}
     fi
@@ -144,13 +144,13 @@ for i in *.dat; do
     then
         # first pod: table nation or region will be imported olny one, others: we will import all parts at once
         COMMAND="util.import_table(["
-        for ((j=1;j<=$NUM_PODS;j++)); 
+        for ((j=1;j<=$BEXHOMA_NUM_PODS;j++)); 
         do 
            #echo $j
-           echo "Looking for $destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat"
-           if [ -f "$destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat" ]
+           echo "Looking for $destination_raw/../$j/${basename}_${j}_${BEXHOMA_NUM_PODS}.dat"
+           if [ -f "$destination_raw/../$j/${basename}_${j}_${BEXHOMA_NUM_PODS}.dat" ]
            then
-               file="'$destination_raw/../$j/${basename}_${j}_${NUM_PODS}.dat',"
+               file="'$destination_raw/../$j/${basename}_${j}_${BEXHOMA_NUM_PODS}.dat',"
                COMMAND=$COMMAND$file
            fi
         done

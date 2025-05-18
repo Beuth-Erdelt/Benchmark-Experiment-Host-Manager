@@ -5,8 +5,8 @@ The image is based on https://www.tpc.org/tpcds/
 The following parameter (ENV) have been added:
 
 * `SF`: 
-* `NUM_PODS`: 
-* `CHILD`: 
+* `BEXHOMA_NUM_PODS`: 
+* `BEXHOMA_CHILD`: 
 * `RNGSEED`: 
 * `CONNECTION`: 
 * `EXPERIMENT`: 

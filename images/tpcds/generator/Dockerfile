@@ -21,8 +21,8 @@ COPY ./generator.sh /tmp/generator.sh
 RUN ["chmod", "+x", "/tmp/generator.sh"]
 
 ENV SF=1
-ENV NUM_PODS=4
-ENV CHILD=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
 ENV RNGSEED=123
 ENV CONNECTION=monetdb
 ENV EXPERIMENT=12345
@@ -36,5 +36,5 @@ RUN mkdir -p /tmp/tpcds
 
 CMD ["/bin/bash", "-c", "/tmp/generator.sh"]
 
-#CMD ["/bin/bash", "-c", "/tmp/dsdgen -dir /tmp/ -scale $SF -parallel $NUM_PODS -child $CHILD -verbose -RNGSEED $RNGSEED; while true; do sleep 2; done"]
+#CMD ["/bin/bash", "-c", "/tmp/dsdgen -dir /tmp/ -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -verbose -RNGSEED $RNGSEED; while true; do sleep 2; done"]
 #CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]

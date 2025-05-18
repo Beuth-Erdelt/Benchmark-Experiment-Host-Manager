@@ -12,18 +12,18 @@ echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 
 ######################## Show more parameters ########################
-CHILD=$(cat /tmp/tpcds/CHILD )
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+BEXHOMA_CHILD=$(cat /tmp/tpcds/BEXHOMA_CHILD )
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
 ######################## Destination of raw data ########################
 if test $STORE_RAW_DATA -gt 0
 then
     # store in (distributed) file system
-    if test $NUM_PODS -gt 1
+    if test $BEXHOMA_NUM_PODS -gt 1
     then
-        destination_raw=/data/tpcds/SF$SF/$NUM_PODS/$CHILD/
+        destination_raw=/data/tpcds/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD/
     else
         destination_raw=/data/tpcds/SF$SF/
     fi
@@ -47,12 +47,12 @@ then
     # wait for number of pods to be as expected
     while : ; do
         PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-        echo "Found $PODS_RUNNING / $NUM_PODS running pods"
-        if  test "$PODS_RUNNING" == $NUM_PODS
+        echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS running pods"
+        if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS
         then
             echo "OK"
             break
-        elif test "$PODS_RUNNING" -gt $NUM_PODS
+        elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS
         then
             echo "Too many pods! Restart occured?"
             exit 0
@@ -73,9 +73,9 @@ echo "Start $SECONDS_START seconds"
 #for i in `ls *.dat | shuf`; do
 # ordered
 for i in *.dat; do
-    if test $NUM_PODS -gt 1
+    if test $BEXHOMA_NUM_PODS -gt 1
     then
-        basename=${i%_"$CHILD"_"$NUM_PODS"*}
+        basename=${i%_"$BEXHOMA_CHILD"_"$BEXHOMA_NUM_PODS"*}
     else
         basename=${i%.dat*}
     fi
