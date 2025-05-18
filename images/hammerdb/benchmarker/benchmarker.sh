@@ -15,7 +15,7 @@ echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 echo "CHILD $CHILD"
 echo "NUM_PODS $NUM_PODS"
 echo "SF $SF"
-echo "PARALLEL $PARALLEL"
+echo "HAMMERDB_NUM_VU $HAMMERDB_NUM_VU"
 echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
 echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
@@ -133,7 +133,7 @@ dbset db mysql
 diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
 diset tpcc mysql_count_ware $SF
-diset tpcc mysql_num_vu $PARALLEL
+diset tpcc mysql_num_vu $HAMMERDB_NUM_VU
 diset tpcc mysql_user $USER
 diset tpcc mysql_pass $PASSWORD
 diset tpcc mysql_driver timed
@@ -185,7 +185,7 @@ dbset db maria
 diset connection maria_host $BEXHOMA_HOST
 diset connection maria_port $BEXHOMA_PORT
 diset tpcc maria_count_ware $SF
-diset tpcc maria_num_vu $PARALLEL
+diset tpcc maria_num_vu $HAMMERDB_NUM_VU
 diset tpcc maria_user $USER
 diset tpcc maria_pass $PASSWORD
 diset tpcc maria_driver timed
@@ -220,7 +220,7 @@ dbset db pg
 diset connection pg_host $BEXHOMA_HOST
 diset connection pg_port $BEXHOMA_PORT
 diset tpcc pg_count_ware $SF
-diset tpcc pg_num_vu $PARALLEL
+diset tpcc pg_num_vu $HAMMERDB_NUM_VU
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
@@ -277,7 +277,7 @@ dbset db pg
 diset connection pg_host $BEXHOMA_HOST
 diset connection pg_port $BEXHOMA_PORT
 diset tpcc pg_count_ware $SF
-diset tpcc pg_num_vu $PARALLEL
+diset tpcc pg_num_vu $HAMMERDB_NUM_VU
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres

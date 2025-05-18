@@ -5,7 +5,6 @@ RUN ["chmod", "+x", "./generator.sh"]
 
 ENV SF=1
 ENV CHILD=1
-ENV PARALLEL=1
 ENV RNGSEED=123
 ENV CONNECTION=monetdb
 ENV EXPERIMENT=12345
@@ -24,6 +23,7 @@ ENV HAMMERDB_DURATION 5
 # Number of transactions before logging off
 ENV HAMMERDB_ITERATIONS 10000000
 ENV HAMMERDB_MYSQL_ENGINE innodb
+ENV HAMMERDB_NUM_VU=4
 ENV HAMMERDB_VUSERS 1
 
 # set async_client $pg_async_client;# Number of asynchronous clients per Vuser

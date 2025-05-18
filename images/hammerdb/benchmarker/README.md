@@ -7,11 +7,9 @@ Currently, TPC-C is adapted for PostgreSQL, MySQL and MariaDB here.
 The following parameter (ENV) have been added:
 
 * `SF`: scaling factor (number of warehouses)
-* `NUM_PODS`: number of pods in the k8s job
-* `CHILD`: number of the current pod in the job, will be overwritten by redis queue value
-* `RNGSEED`: seed for random number generator, currently ignored
-* `CONNECTION`: name of the connection (i.e., dbms configuration) to be queried (deprecated)
-* `EXPERIMENT`: code of the experiment this is part of, deprecated
+* `BEXHOMA_NUM_PODS`: number of pods in the k8s job
+* `BEXHOMA_CHILD`: number of the current pod in the job, will be overwritten by redis queue value
+* `BEXHOMA_RNGSEED`: seed for random number generator, currently ignored
 * `USER`: username for sut dbms connection
 * `PASSWORD`: password for sut dbms connection
 * `DATABASE`: database name for sut dbms connection
@@ -32,6 +30,7 @@ The following parameter (ENV) have been added:
 * `HAMMERDB_DURATION`: duration in minutes before second Transaction Count is taken
 * `HAMMERDB_ITERATIONS`: number of transactions before logging off
 * `HAMMERDB_VUSERS`: number of vusers (threads)
+* `HAMMERDB_NUM_VU`: number of vusers for setup
 * `HAMMERDB_MYSQL_ENGINE`: engine to be used by MySQL (default innodb)
 * `HAMMERDB_TIMEPROFILE`: default true, true means latencies are logged, too
 * `HAMMERDB_ALLWAREHOUSES`: default false, true means vusers do not get assigned to a fixed warehouse at startup, but use all (new assignment for each transaction)

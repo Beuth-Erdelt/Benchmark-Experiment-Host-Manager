@@ -1775,7 +1775,7 @@ class tpcc(logger):
             duration = re.findall('HAMMERDB_DURATION (.+?)\n', stdout)[0]
             rampup = re.findall('HAMMERDB_RAMPUP (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
-            vusers_loading = re.findall('PARALLEL (.+?)\n', stdout)[0]
+            vusers_loading = re.findall('HAMMERDB_NUM_VU (.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
             allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]

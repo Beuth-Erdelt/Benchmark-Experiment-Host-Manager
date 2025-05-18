@@ -2518,7 +2518,7 @@ class tpcc(default):
             result[c['name']] = {
                 'time_load': c['timeIngesting'],
                 #'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'], # these are the benchmark clients
-                'terminals': c['parameter']['connection_parameter']['loading_parameters']['PARALLEL'],
+                'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_NUM_VU'],
                 #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
                 'pods': c['parameter']['parallelism'],
             }

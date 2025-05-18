@@ -199,7 +199,7 @@ if __name__ == '__main__':
                     storageConfiguration = 'postgresql'
                 )
                 config.set_loading_parameters(
-                    PARALLEL = 1,
+                    HAMMERDB_NUM_VU = 1,
                     SF = SF,
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
@@ -228,7 +228,7 @@ if __name__ == '__main__':
                                 """
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
-                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
                                     SF = SF,
                                     BEXHOMA_SYNCH_LOAD = 1,
                                     HAMMERDB_DURATION = str(SD),
@@ -250,7 +250,7 @@ if __name__ == '__main__':
                 )
                 #config.num_loading = 1
                 config.set_loading_parameters(
-                    PARALLEL = 1,
+                    HAMMERDB_NUM_VU = 1,
                     SF = SF,
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
@@ -282,7 +282,7 @@ if __name__ == '__main__':
                                 """
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
-                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
                                     SF = SF,
                                     BEXHOMA_SYNCH_LOAD = 1,
                                     HAMMERDB_DURATION = str(SD),
@@ -307,7 +307,7 @@ if __name__ == '__main__':
                 )
                 #config.num_loading = 1
                 config.set_loading_parameters(
-                    PARALLEL = 1,
+                    HAMMERDB_NUM_VU = 1,
                     SF = SF,
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
@@ -339,7 +339,7 @@ if __name__ == '__main__':
                                 """
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
-                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
                                     SF = SF,
                                     BEXHOMA_SYNCH_LOAD = 1,
                                     HAMMERDB_DURATION = str(SD),
@@ -378,7 +378,7 @@ if __name__ == '__main__':
                 if skip_loading:
                     config.loading_deactivated = True
                 config.set_loading_parameters(
-                    PARALLEL = 1,
+                    HAMMERDB_NUM_VU = 1,
                     SF = SF,
                     HAMMERDB_DURATION = str(SD),
                     HAMMERDB_RAMPUP = str(num_rampup),
@@ -410,7 +410,7 @@ if __name__ == '__main__':
                                 """
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
-                                    PARALLEL = str(benchmarking_pods_scaled),
+                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
                                     SF = SF,
                                     BEXHOMA_SYNCH_LOAD = 1,
                                     HAMMERDB_DURATION = str(SD),
