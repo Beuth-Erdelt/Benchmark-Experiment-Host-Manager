@@ -1,16 +1,41 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker HammerDB
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "benchmarker".
+#
+# Base Image: tpcorg/hammerdb:v4.12
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+######################################################################################
 FROM tpcorg/hammerdb:v4.12
 
 COPY ./benchmarker.sh ./benchmarker.sh
 RUN ["chmod", "+x", "./benchmarker.sh"]
 
 ENV SF=1
-ENV BEXHOMA_CLIENT 1
+ENV BEXHOMA_NUM_PODS=4
 ENV BEXHOMA_CHILD=1
 ENV BEXHOMA_RNGSEED=123
+ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
-ENV BEXHOMA_PORT 3307
-ENV BEXHOMA_CONNECTION="monetdb"
+ENV BEXHOMA_PORT 3306
+ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_USER root
+ENV BEXHOMA_PASSWORD root
+ENV BEXHOMA_DATABASE demo
+ENV BEXHOMA_TIME_START 0
+ENV BEXHOMA_TIME_NOW 0
 ENV HAMMERDB_TYPE postgresql
 # Rampup time in minutes before first Transaction Count is taken
 ENV HAMMERDB_RAMPUP 2
@@ -21,8 +46,6 @@ ENV HAMMERDB_ITERATIONS 10000000
 ENV HAMMERDB_VUSERS 1 2 4 8
 ENV HAMMERDB_NUM_VU=4
 ENV HAMMERDB_MYSQL_ENGINE innodb
-ENV BEXHOMA_TIME_START 1
-ENV BEXHOMA_TIME_NOW 1
 ENV HAMMERDB_TIMEPROFILE true
 ENV HAMMERDB_ALLWAREHOUSES false
 ENV HAMMERDB_KEYANDTHINK false

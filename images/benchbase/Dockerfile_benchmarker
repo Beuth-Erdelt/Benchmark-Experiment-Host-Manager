@@ -1,3 +1,20 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker Benchbase
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "benchmarker".
+#
+# Base Image: benchbase.azurecr.io/benchbase
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+######################################################################################
 FROM benchbase.azurecr.io/benchbase
 
 USER root
@@ -31,8 +48,8 @@ ENV BENCHBASE_TERMINALS 1
 ENV BENCHBASE_BATCHSIZE 128
 ENV BENCHBASE_ISOLATION "TRANSACTION_SERIALIZABLE"
 ENV BENCHBASE_STATUS_INTERVAL=
-ENV BENCHBASE_KEY_AND_THINK=false
 ENV BENCHBASE_NEWCONNPERTXN=false
+ENV BENCHBASE_KEY_AND_THINK=false
 ENV BENCHBASE_YCSB_WEIGHTS=100,0,0,0,0,0
 ENV BENCHBASE_YCSB_WORKLOAD=a
 

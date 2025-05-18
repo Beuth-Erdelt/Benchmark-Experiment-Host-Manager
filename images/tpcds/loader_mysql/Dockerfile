@@ -1,3 +1,21 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker TPC-H
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "loader".
+#
+# Base Image: debian:stable-20221004-slim
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Pre-generated data is loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+# MySQL client is installed.
+######################################################################################
 FROM debian:stable-20240110-slim
 
 RUN apt-get clean

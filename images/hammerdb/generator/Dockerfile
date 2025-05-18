@@ -1,3 +1,18 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker HammerDB
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "loader".
+#
+# Base Image: tpcorg/hammerdb:v4.12
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Data is generated and loaded.
+# The configuration is given by environment variables.
+######################################################################################
 FROM tpcorg/hammerdb:v4.12
 
 COPY ./generator.sh ./generator.sh

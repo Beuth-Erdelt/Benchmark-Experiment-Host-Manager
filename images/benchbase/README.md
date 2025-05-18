@@ -21,8 +21,8 @@ The following parameter (ENV) have been added:
 * `BEXHOMA_USER`: username for sut dbms connection
 * `BEXHOMA_PASSWORD`: password for sut dbms connection
 * `BEXHOMA_DATABASE`: database name for sut dbms connection
-* `BEXHOMA_TIME_START`: 
-* `BEXHOMA_TIME_NOW`: 
+* `BEXHOMA_TIME_START`: Optional. If non-zero, pod will wait until time encoded in this var before starting doing something.
+* `BEXHOMA_TIME_NOW`: Optional. Includes time about planned start.
 * `BENCHBASE_BENCH`: name of the benchmark. currently only tpcc is supported
 * `BENCHBASE_PROFILE`: name of the dbms to be benchmarked. corresponds to a folder in the benchbase config
 * `BENCHBASE_TARGET`: target throughput. if used, throughput will be throttled
@@ -34,7 +34,8 @@ The following parameter (ENV) have been added:
 * `BENCHBASE_NEWCONNPERTXN`: true = reconnect after each transaction (default false)
 * `BENCHBASE_YCSB_WEIGHTS`: YCSB weights of query types (read, insert, scan, update, delete, readmodifywrite)
 * `BENCHBASE_YCSB_WORKLOAD`: YCSB workload (a, ..., f)
-
+* `BENCHBASE_STATUS_INTERVAL`: 
+* `BENCHBASE_CREATE_SCHEMA`: 
 
 This folder contains two Dockerfiles:
 1. a data generator, that loads data into a DBMS

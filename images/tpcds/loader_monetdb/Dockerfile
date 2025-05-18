@@ -1,3 +1,21 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker TPC-H
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "loader".
+#
+# Base Image: monetdb/monetdb:Sep2022
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Pre-generated data is loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+# MonetDB client is installed.
+######################################################################################
 FROM monetdb/monetdb:Sep2022
 #FROM centos:centos7
 

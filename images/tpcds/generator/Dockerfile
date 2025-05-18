@@ -1,3 +1,21 @@
+######################################################################################
+# Dockerfile for Bexhoma - Generator TPC-DS
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "generator".
+#
+# Base Image: eclipse-temurin:11
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Data is generated and loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+# TPC-DS generator is copied from external folder.
+######################################################################################
 FROM eclipse-temurin:11
 
 # FROM alpine:3.16.2

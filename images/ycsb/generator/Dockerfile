@@ -1,3 +1,23 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker YCSB
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "loader".
+#
+# Base Image: alpine:3.15
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Data is generated and loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Java is installed.
+# Python2 is installed.
+# Redis client is installed.
+# Some JDBC driver are installed.
+######################################################################################
 #FROM alpine:latest
 FROM alpine:3.15
 

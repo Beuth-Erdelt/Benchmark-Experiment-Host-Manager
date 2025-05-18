@@ -21,8 +21,8 @@ The following parameter (ENV) have been added:
 * `BEXHOMA_USER`: username for sut dbms connection, for future use only
 * `BEXHOMA_PASSWORD`: password for sut dbms connection, for future use only
 * `BEXHOMA_DATABASE`: database name for sut dbms connection, for future use only
-* `BEXHOMA_TIME_START`: anticipated start time for benchmarking
-* `BEXHOMA_TIME_NOW`: time job was launched
+* `BEXHOMA_TIME_START`: Optional. If non-zero, pod will wait until time encoded in this var before starting doing something.
+* `BEXHOMA_TIME_NOW`: Optional. Includes time about planned start.
 * `HAMMERDB_TYPE`: type of sut dbms (postgresql, mysql, mariadb, citus)
 * `HAMMERDB_RAMPUP`: rampup time in minutes before first Transaction Count is taken
 * `HAMMERDB_DURATION`: duration in minutes before second Transaction Count is taken
