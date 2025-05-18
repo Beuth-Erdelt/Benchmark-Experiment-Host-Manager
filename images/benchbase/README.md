@@ -21,8 +21,8 @@ The following parameter (ENV) have been added:
 * `BEXHOMA_USER`: username for sut dbms connection
 * `BEXHOMA_PASSWORD`: password for sut dbms connection
 * `BEXHOMA_DATABASE`: database name for sut dbms connection
-* `DBMSBENCHMARKER_START`: 
-* `DBMSBENCHMARKER_NOW`: 
+* `BEXHOMA_TIME_START`: 
+* `BEXHOMA_TIME_NOW`: 
 * `BENCHBASE_BENCH`: name of the benchmark. currently only tpcc is supported
 * `BENCHBASE_PROFILE`: name of the dbms to be benchmarked. corresponds to a folder in the benchbase config
 * `BENCHBASE_TARGET`: target throughput. if used, throughput will be throttled

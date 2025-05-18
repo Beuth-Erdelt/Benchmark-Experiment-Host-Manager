@@ -3315,8 +3315,8 @@ scrape_configs:
         start = now + timedelta(seconds=240)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
         # store parameters in connection for evaluation
-        e = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
+        e = {'BEXHOMA_TIME_NOW': now_string,
+            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
@@ -3354,8 +3354,8 @@ scrape_configs:
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': start_string,
+        env = {'BEXHOMA_TIME_NOW': now_string,
+            'BEXHOMA_TIME_START': start_string,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
@@ -3398,8 +3398,8 @@ scrape_configs:
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=60)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
+        env = {'BEXHOMA_TIME_NOW': now_string,
+            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
             }
         # store parameters in connection for evaluation
         if len(self.loading_parameters):
@@ -3557,8 +3557,8 @@ class hammerdb(default):
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
+        env = {'BEXHOMA_TIME_NOW': now_string,
+            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
@@ -3635,8 +3635,8 @@ class ycsb(default):
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
+        env = {'BEXHOMA_TIME_NOW': now_string,
+            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
@@ -3712,8 +3712,8 @@ class benchbase(default):
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         start = now + timedelta(seconds=180)
         start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'DBMSBENCHMARKER_NOW': now_string,
-            'DBMSBENCHMARKER_START': 0,#start_string, # wait until (=0 do not wait)
+        env = {'BEXHOMA_TIME_NOW': now_string,
+            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
             'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,

@@ -24,19 +24,19 @@ then
 fi
 
 ######################## Wait for synched starting time ########################
-echo "benchmark started at $DBMSBENCHMARKER_NOW"
-echo "benchmark should wait until $DBMSBENCHMARKER_START"
-if test "$DBMSBENCHMARKER_START" != "0"
+echo "benchmark started at $BEXHOMA_TIME_NOW"
+echo "benchmark should wait until $BEXHOMA_TIME_START"
+if test "$BEXHOMA_TIME_START" != "0"
 then
-    benchmark_start_epoch=$(date -u -d "$DBMSBENCHMARKER_NOW" +%s)
+    benchmark_start_epoch=$(date -u -d "$BEXHOMA_TIME_NOW" +%s)
     echo "that is $benchmark_start_epoch"
 
     TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
     echo "now is $current_epoch"
     current_epoch=$(date -u +%s)
     echo "that is $current_epoch"
-    target_epoch=$(date -u -d "$DBMSBENCHMARKER_START" +%s)
-    echo "wait until $DBMSBENCHMARKER_START"
+    target_epoch=$(date -u -d "$BEXHOMA_TIME_START" +%s)
+    echo "wait until $BEXHOMA_TIME_START"
     echo "that is $target_epoch"
     sleep_seconds=$(( $target_epoch - $current_epoch ))
     echo "that is wait $sleep_seconds seconds"
@@ -164,7 +164,7 @@ then
         -mps \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
-        #-st "$DBMSBENCHMARKER_START" \
+        #-st "$BEXHOMA_TIME_START" \
 else
     python ./benchmark.py run -b -w connection \
         -f /results/$DBMSBENCHMARKER_CODE \
@@ -181,7 +181,7 @@ else
         -mps \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
-        #-st "$DBMSBENCHMARKER_START" \
+        #-st "$BEXHOMA_TIME_START" \
 fi
 # -f   config folder
 # -r   result folder

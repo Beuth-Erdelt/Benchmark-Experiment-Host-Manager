@@ -21,8 +21,8 @@ The following parameter (ENV) have been added:
 * `BEXHOMA_USER`: For db.user
 * `BEXHOMA_PASSWORD`: For db.passwd
 * `BEXHOMA_DATABASE`: Ignored
-* `DBMSBENCHMARKER_START`: Optional. If non-zero, pod will wait until time encoded in this var before starting doing something.
-* `DBMSBENCHMARKER_NOW`: Optional. Includes time about planned start.
+* `BEXHOMA_TIME_START`: Optional. If non-zero, pod will wait until time encoded in this var before starting doing something.
+* `BEXHOMA_TIME_NOW`: Optional. Includes time about planned start.
 * `YCSB_THREADCOUNT`: YCSB workload property threadcount
 * `YCSB_TARGET`: YCSB workload property target
 * `YCSB_STATUS_INTERVAL`: YCSB workload property status.interval
