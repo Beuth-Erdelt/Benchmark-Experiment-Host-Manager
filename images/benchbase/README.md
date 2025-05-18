@@ -32,10 +32,10 @@ The following parameter (ENV) have been added:
 * `BENCHBASE_ISOLATION`: isolation level, for example TRANSACTION_READ_COMMITTED
 * `BENCHBASE_KEY_AND_THINK`: true = activate key and think time in tpcc (default false)
 * `BENCHBASE_NEWCONNPERTXN`: true = reconnect after each transaction (default false)
-* `BENCHBASE_YCSB_WEIGHTS`: YCSB weights of query types (read, insert, scan, update, delete, readmodifywrite)
+* `BENCHBASE_YCSB_WEIGHTS`: YCSB weights of query types (read, insert, scan, update, delete, readmodifywrite). This is set via `BENCHBASE_YCSB_WORKLOAD`.
 * `BENCHBASE_YCSB_WORKLOAD`: YCSB workload (a, ..., f)
-* `BENCHBASE_STATUS_INTERVAL`: 
-* `BENCHBASE_CREATE_SCHEMA`: 
+* `BENCHBASE_STATUS_INTERVAL`: log status every x milliseconds.
+* `BENCHBASE_CREATE_SCHEMA`: if 1, schema will be created. Set to 0, if schema is created outside of these containers.
 
 This folder contains two Dockerfiles:
 1. a data generator, that loads data into a DBMS
