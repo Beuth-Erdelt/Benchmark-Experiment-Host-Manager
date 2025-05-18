@@ -10,18 +10,16 @@ The following parameter (ENV) have been added:
 * `NUM_PODS`: 
 * `CHILD`: 
 * `RNGSEED`: 
-* `CONNECTION`: 
-* `EXPERIMENT`: 
-* `BEXHOMA_URL`: 
-* `BEXHOMA_HOST`: 
-* `BEXHOMA_PORT`: 
-* `BEXHOMA_JAR`: 
-* `BEXHOMA_DRIVER`: 
-* `BEXHOMA_CONNECTION`: 
-* `BEXHOMA_EXPERIMENT`: 
-* `BEXHOMA_USER`: 
-* `BEXHOMA_PASSWORD`: 
-* `BEXHOMA_DATABASE`: 
+* `BEXHOMA_URL`: url of the sut dbms, currently ignored
+* `BEXHOMA_HOST`: host of the sut dbms
+* `BEXHOMA_PORT`: port of the sut dbms
+* `BEXHOMA_JAR`: name of jdbc jar file, currently ignored
+* `BEXHOMA_DRIVER`: jdbc driver name, currently ignored
+* `BEXHOMA_CONNECTION`: name of the connection (i.e., dbms configuration) to be queried
+* `BEXHOMA_EXPERIMENT`: code of the experiment this is part of
+* `BEXHOMA_USER`: username for sut dbms connection
+* `BEXHOMA_PASSWORD`: password for sut dbms connection
+* `BEXHOMA_DATABASE`: database name for sut dbms connection
 * `DBMSBENCHMARKER_START`: 
 * `DBMSBENCHMARKER_NOW`: 
 * `BENCHBASE_BENCH`: name of the benchmark. currently only tpcc is supported
