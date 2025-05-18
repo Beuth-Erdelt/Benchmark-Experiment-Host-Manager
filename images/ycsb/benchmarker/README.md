@@ -5,11 +5,9 @@ The image is based on https://github.com/brianfrankcooper/YCSB
 The following parameter (ENV) have been added:
 
 * `SF`: Scaling factor. Number of rows = 100000xSF, if not set otherwise. Number of operations = 100000xSF, if not set otherwise. 
-* `NUM_PODS`: Number of parallel pods
-* `CHILD`: Number of the current pod. This will be overwritten by entry in Redis queue.
-* `RNGSEED`: Random Seed. Currently ignored.
-* `CONNECTION`: Name of the Bexhoma connection.
-* `EXPERIMENT`: Id of the Bexhoma experiment.
+* `BEXHOMA_NUM_PODS`: Number of parallel pods
+* `BEXHOMA_CHILD`: Number of the current pod. This will be overwritten by entry in Redis queue.
+* `BEXHOMA_RNGSEED`: Random Seed. Currently ignored.
 * `BEXHOMA_DBMS`: Type of dbms to connect do (jdbc, redis)
 * `BEXHOMA_URL`: For db.url
 * `BEXHOMA_HOST`: Ignored for JDBC, host info for Redis.
