@@ -677,7 +677,7 @@ class ycsb(logger):
             else:
                 exceptions = 0
             #workload = "A"
-            pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
             result = []
             #for line in s.split("\n"):
             for line in lines:
@@ -1366,7 +1366,7 @@ class benchbase(logger):
             if len(error_timesynch) > 0:
                 # log is incomplete
                 return pd.DataFrame()
-            pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
             bench = re.findall('BENCHBASE_BENCH (.+?)\n', stdout)[0]
             profile = re.findall('BENCHBASE_PROFILE (.+?)\n', stdout)[0]
             target = re.findall('BENCHBASE_TARGET (.+?)\n', stdout)[0]
@@ -1786,7 +1786,7 @@ class tpcc(logger):
                 # log is incomplete
                 print(filename, "log is incomplete")
                 return pd.DataFrame()
-            pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
             errors = re.findall('Error ', stdout)
             if len(errors) > 0:
                 # something went wrong

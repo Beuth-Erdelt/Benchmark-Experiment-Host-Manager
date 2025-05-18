@@ -3148,8 +3148,10 @@ scrape_configs:
         env_default['BEXHOMA_SLEEP'] = '60'
         env_default['BEXHOMA_VOLUME'] = self.volume
         env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
-        env_default['PARALLEL'] = str(parallelism)
-        env_default['NUM_PODS'] = str(num_pods)
+        env_default['BEXHOMA_PARALLEL'] = str(parallelism)
+        env_default['BEXHOMA_NUM_PODS'] = str(num_pods)
+        env_default['PARALLEL'] = str(parallelism)  # deprecated
+        env_default['NUM_PODS'] = str(num_pods)     # deprecated
         name = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
         name_worker = self.get_worker_name()
         name_service_headless = name_worker# must be the same
