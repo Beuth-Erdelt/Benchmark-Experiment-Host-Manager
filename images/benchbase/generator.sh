@@ -15,17 +15,17 @@ echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 ######################## Get number of client in job queue ########################
 #echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 #redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-#CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-if [ -z "$CHILD" ]
+#BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+if [ -z "$BEXHOMA_CHILD" ]
 then
-	CHILD=1
+	BEXHOMA_CHILD=1
 fi
-# echo "$CHILD" > /tmp/ycsb/CHILD
+# echo "$BEXHOMA_CHILD" > /tmp/ycsb/BEXHOMA_CHILD
 
 
 ############ Show more parameters ############
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 echo "BENCHBASE_BENCH $BENCHBASE_BENCH"
 echo "BENCHBASE_PROFILE $BENCHBASE_PROFILE"

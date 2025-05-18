@@ -6,10 +6,10 @@ Currently, TPC-C is adapted for PostgreSQL here.
 
 The following parameter (ENV) have been added:
 
-* `SF`: 
-* `NUM_PODS`: 
-* `CHILD`: 
-* `RNGSEED`: 
+* `SF`: scaling factor (e.g., number of warehouses)
+* `BEXHOMA_NUM_PODS`: number of pods in the k8s job
+* `BEXHOMA_CHILD`: number of the current pod in the job, will be overwritten by redis queue value
+* `BEXHOMA_RNGSEED`: seed for random number generator, currently ignored
 * `BEXHOMA_URL`: url of the sut dbms, currently ignored
 * `BEXHOMA_HOST`: host of the sut dbms
 * `BEXHOMA_PORT`: port of the sut dbms

@@ -8,9 +8,9 @@ COPY ./config /tmp/config/
 RUN chown -R containeruser:containergroup /tmp/config/
 
 ENV SF=1
-ENV NUM_PODS=4
-ENV CHILD=1
-ENV RNGSEED=123
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
 ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
 ENV BEXHOMA_PORT 3306
