@@ -13,8 +13,8 @@ RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-s
 
 RUN apk update && apk --update add postgresql-client
 
-ENV NUM_PODS=4
-ENV CHILD=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
 ENV BEXHOMA_HOST="www.example.com"
 ENV BEXHOMA_PORT 50000
 ENV BEXHOMA_CONNECTION="monetdb"

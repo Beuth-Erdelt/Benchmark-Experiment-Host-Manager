@@ -21,8 +21,8 @@ COPY ./generator.sh /tmp/generator.sh
 RUN ["chmod", "+x", "/tmp/generator.sh"]
 
 ENV SF=1
-ENV NUM_PODS=4
-ENV CHILD=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
 ENV RNGSEED=123
 ENV CONNECTION=monetdb
 ENV EXPERIMENT=12345
