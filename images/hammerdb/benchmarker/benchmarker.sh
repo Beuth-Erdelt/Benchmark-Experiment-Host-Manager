@@ -12,8 +12,8 @@ echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 echo "HAMMERDB_NUM_VU $HAMMERDB_NUM_VU"
 echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
@@ -59,13 +59,13 @@ mkdir -p /results/$BEXHOMA_EXPERIMENT
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 # redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-if [ -z "$CHILD" ]
+BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+if [ -z "$BEXHOMA_CHILD" ]
 then
     echo "No entry found in message queue. I assume this is the first child."
-    CHILD=1
+    BEXHOMA_CHILD=1
 else
-    echo "Found entry number $CHILD in message queue."
+    echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
 
 ######################## Wait until all pods of job are ready ########################
@@ -75,7 +75,7 @@ redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_
 # wait for number of pods to be as expected
 while : ; do
     PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-    echo "Found $PODS_RUNNING / $NUM_PODS running pods"
+    echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS running pods"
     if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
     then
         echo "PODS_RUNNING contains a number."
@@ -83,11 +83,11 @@ while : ; do
         echo "PODS_RUNNING does not contain a number."
         exit 0
     fi
-    if  test "$PODS_RUNNING" == $NUM_PODS
+    if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS
     then
-        echo "OK, found $NUM_PODS ready pods."
+        echo "OK, found $BEXHOMA_NUM_PODS ready pods."
         break
-    elif test "$PODS_RUNNING" -gt $NUM_PODS
+    elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS
     then
         echo "Too many pods! Restart occured?"
         exit 0
@@ -98,8 +98,8 @@ while : ; do
 done
 
 ######################## Show more parameters ########################
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
 ######################## Generate workflow file ########################

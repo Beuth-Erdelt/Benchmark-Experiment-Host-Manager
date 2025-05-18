@@ -17,6 +17,7 @@ The following parameter (ENV) have been added:
 * `BEXHOMA_DRIVER`: jdbc driver name, currently ignored
 * `BEXHOMA_CONNECTION`: name of the connection (i.e., dbms configuration) to be queried
 * `BEXHOMA_EXPERIMENT`: code of the experiment this is part of
+* `BEXHOMA_CLIENT`: number of the client in a list of executors
 * `BEXHOMA_USER`: username for sut dbms connection
 * `BEXHOMA_PASSWORD`: password for sut dbms connection
 * `BEXHOMA_DATABASE`: database name for sut dbms connection
