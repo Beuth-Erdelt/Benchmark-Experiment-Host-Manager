@@ -1,3 +1,22 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker DBMSBenchmarker
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "benchmarker".
+#
+# Base Image: python:3.12.8
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Java is installed.
+# Redis client is installed.
+# Some JDBC driver are installed.
+######################################################################################
 FROM python:3.12.8
 
 # does not compile numpy correctly
@@ -5,14 +24,28 @@ FROM python:3.12.8
 
 WORKDIR /usr/src/app
 
+ENV SF=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
+ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
+ENV BEXHOMA_HOST="www.example.com"
+ENV BEXHOMA_PORT 3306
+ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_CONNECTION="mysql"
+ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
+ENV BEXHOMA_USER root
+ENV BEXHOMA_PASSWORD root
+ENV BEXHOMA_DATABASE demo
+ENV BEXHOMA_TIME_START 0
+ENV BEXHOMA_TIME_NOW 0
 ENV DBMSBENCHMARKER_SLEEP 30
 ENV DBMSBENCHMARKER_RECREATE_PARAMETER 0
 ENV DBMSBENCHMARKER_VERBOSE 0
 ENV DBMSBENCHMARKER_DEV 0
-ENV DBMSBENCHMARKER_NOW 0
-ENV DBMSBENCHMARKER_START 0
 ENV DBMSBENCHMARKER_SHUFFLE_QUERIES False
-ENV DBMSBENCHMARKER_TESTRUN 0
 
 RUN apt update
 RUN apt install default-jre -y
@@ -105,7 +138,7 @@ CMD ["/bin/bash", "-c", "./benchmarker.sh"]
 #	-cs -sf $DBMSBENCHMARKER_CONNECTION \
 #	-ms $DBMSBENCHMARKER_CLIENT \
 #	-sl $DBMSBENCHMARKER_SLEEP \
-#	-st "$DBMSBENCHMARKER_START" \
+#	-st "$BEXHOMA_TIME_START" \
 #	-c "$DBMSBENCHMARKER_CONNECTION" \
 #	-ca "$DBMSBENCHMARKER_ALIAS" \
 #	-cf ${DBMSBENCHMARKER_CONNECTION}.config \

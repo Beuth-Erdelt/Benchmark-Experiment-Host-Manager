@@ -3,12 +3,13 @@
 ### Workload
 YCSB SF=10
     Type: ycsb
-    Duration: 1070s 
-    Code: 1747131698
+    Duration: 1064s 
+    Code: 1747660702
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'B'.
     Number of rows to insert is 10000000.
+    Ordering of inserts is hashed.
     Number of operations is 10000000.
     Batch size is ''.
     Target is based on multiples of '16384'.
@@ -33,37 +34,37 @@ PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:255182308
-    datadisk:23605
+    disk:263049324
+    datadisk:23602
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1747131698
+        code:1747660702
 PostgreSQL-64-8-65536-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:255968376
-    datadisk:24372
+    disk:263835572
+    datadisk:24370
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-        code:1747131698
+        code:1747660702
 
 ### Loading
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-65536               1       64   65536          8           0                   35532.726816               282888.0            10000000                              5647.5
+PostgreSQL-64-8-65536               1       64   65536          8           0                   37611.184663               267943.0            10000000                              5976.5
 
 ### Execution
                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-65536-1               1       64   65536          1           0                       65359.90               152999.0           9498103                             412.0              501897                               611.0
-PostgreSQL-64-8-65536-2               1       64   65536          8           0                       65430.68               152847.0           9499741                             427.0              500259                               622.0
+PostgreSQL-64-8-65536-1               1       64   65536          1           0                       65345.81               153032.0           9499542                             425.0              500458                               624.0
+PostgreSQL-64-8-65536-2               1       64   65536          8           0                       65432.82               152844.0           9499697                             425.0              500303                               619.0
 
 ### Workflow
 
@@ -75,23 +76,23 @@ DBMS PostgreSQL-64-8-65536 - Pods [[1, 8]]
 
 ### Ingestion - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1     1609.79     7.29         14.19                17.73
-PostgreSQL-64-8-65536-2     1609.79     7.29         14.19                17.73
+PostgreSQL-64-8-65536-1     1760.41     6.51         14.49                18.41
+PostgreSQL-64-8-65536-2     1760.41     6.51         14.49                18.41
 
 ### Ingestion - Loader
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1     1117.81      1.6          4.62                 4.64
-PostgreSQL-64-8-65536-2     1117.81      1.6          4.62                 4.64
+PostgreSQL-64-8-65536-1      1081.9      2.3          4.62                 4.64
+PostgreSQL-64-8-65536-2      1081.9      2.3          4.62                 4.64
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1     1230.79     8.59         15.90                20.47
-PostgreSQL-64-8-65536-2     1371.94     8.31         16.11                20.87
+PostgreSQL-64-8-65536-1     1403.95     8.85         15.81                20.25
+PostgreSQL-64-8-65536-2      998.85     8.75         16.12                20.84
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1      554.99     4.71          0.60                 0.61
-PostgreSQL-64-8-65536-2      658.71     2.49          5.16                 5.18
+PostgreSQL-64-8-65536-1      677.00     4.97          0.60                 0.61
+PostgreSQL-64-8-65536-2      750.64     1.89          5.19                 5.21
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

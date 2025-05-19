@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=10
     Type: ycsb
-    Duration: 1797s 
-    Code: 1747319890
+    Duration: 832s 
+    Code: 1747662923
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'D'.
@@ -34,22 +34,22 @@ PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:289060120
-    datadisk:23156
+    disk:263055544
+    datadisk:23608
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1747319890
+        code:1747662923
 
 ### Loading
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-65536               1       64   65536          8           0                    8149.203675              1229524.0            10000000                              7105.5
+PostgreSQL-64-8-65536               1       64   65536          8           0                   38065.273134               265205.0            10000000                              6221.5
 
 ### Execution
                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [READ].Return=OK  [READ].99thPercentileLatency(us)
-PostgreSQL-64-8-65536-1               1       64   65536          1           0                       65345.81               153032.0              498839                               690.0           9501161                             443.0
+PostgreSQL-64-8-65536-1               1       64   65536          1           0                       65345.81               153032.0              500046                               622.0           9499954                             458.0
 
 ### Workflow
 
@@ -61,19 +61,19 @@ DBMS PostgreSQL-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1     1868.07     3.68         14.76                18.18
+PostgreSQL-64-8-65536-1      1827.2     7.12         14.78                18.52
 
 ### Ingestion - Loader
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1     1335.72     0.61          4.63                 4.65
+PostgreSQL-64-8-65536-1     1085.82     2.48          4.62                 4.64
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1      906.98     8.44         15.97                19.95
+PostgreSQL-64-8-65536-1     1355.97     8.49         15.94                20.22
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1      430.18     5.21           0.6                  0.6
+PostgreSQL-64-8-65536-1      710.37      5.3           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

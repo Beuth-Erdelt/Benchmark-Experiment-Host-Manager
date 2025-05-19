@@ -37,6 +37,7 @@ ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
 ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
 ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
 ENV BEXHOMA_USER root
 ENV BEXHOMA_PASSWORD root
 ENV BEXHOMA_SYNCH_LOAD 1
@@ -69,6 +70,23 @@ RUN apk add --no-cache bash
 RUN apk add --no-cache nano
 
 RUN apk add --no-cache make cmake gcc libc-dev
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    git \
+    autoconf \
+    automake \
+    libtool
+
+# Build and install jemalloc
+RUN git clone https://github.com/jemalloc/jemalloc.git /tmp/jemalloc && \
+    cd /tmp/jemalloc && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /tmp/jemalloc
 
 RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
 

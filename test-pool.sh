@@ -44,6 +44,48 @@ wait_process "ycsb"
 
 
 
+#### Benchbase Scale (Example-Benchbase.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 10 \
+  -xconn \
+  -dbms PostgreSQL \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+#### Benchbase Scale (Example-Benchbase.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 10 \
+  -xconn \
+  -dbms PGBouncer \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -npp 2 \
+  -npi 32 \
+  -npo 32 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+
+
 
 
 

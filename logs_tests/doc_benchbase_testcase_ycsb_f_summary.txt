@@ -3,13 +3,13 @@
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
-    Duration: 1031s 
-    Code: 1746438711
+    Duration: 1029s 
+    Code: 1747717213
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'f'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -27,33 +27,33 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229261000
+    disk:256421128
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746438711
+                code:1747717213
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:233184476
-    datadisk:6129
+    disk:260343692
+    datadisk:6128
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1746438711
+                code:1747717213
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.03                   16384.06         0.0                                                        953.0                                                669.0
-PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.03                   16384.06         0.0                                                        958.0                                                675.5
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.04                   16384.06         0.0                                                        950.0                                                672.0
+PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.06                   16384.06         0.0                                                        959.0                                                677.5
 
 ### Workflow
 

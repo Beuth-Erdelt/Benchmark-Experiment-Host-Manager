@@ -16,6 +16,7 @@ The following parameter (ENV) have been added:
 * `BEXHOMA_DRIVER`: For db.driver
 * `BEXHOMA_CONNECTION`: Name of the Bexhoma connection. Used for connecting to Redis queue.
 * `BEXHOMA_EXPERIMENT`: Id of the Bexhoma experiment. Used for connecting to Redis queue.
+* `BEXHOMA_EXPERIMENT_RUN`: number of total runs (for repetition of the complete experiment)
 * `BEXHOMA_USER`: For db.user
 * `BEXHOMA_PASSWORD`: For db.passwd
 * `BEXHOMA_DATABASE`: Ignored

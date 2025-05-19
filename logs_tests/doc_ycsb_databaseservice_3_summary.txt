@@ -3,12 +3,19 @@
 ### Workload
 YCSB SF=5
     Type: ycsb
-    Duration: 3718s 
-    Code: 1734700853
+    Duration: 642s 
+    Code: 1747937338
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 5000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 5000000.
+    Ordering of inserts is hashed.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.5.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
@@ -23,25 +30,29 @@ YCSB SF=5
 
 ### Connections
 DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:250060572
-    datadisk:39192
+    disk:256997988
+    datadisk:39
     volume_size:1.0G
     volume_used:36M
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1747937338
 
 ### Loading
-                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8                   34656.857878               145263.0             5000000                              6815.5
+                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+DatabaseService-64-8-65536               1       64   65536          8           0                   47204.753915               107134.0             5000000                             30085.0
 
 ### Execution
-                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                        65353.5               153014.0           4997965                             653.0             5002035                              1296.0
+                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1           0                       53778.19               185949.0           5000674                            2733.0             4999326                             42143.0
 
 ### Workflow
 
@@ -53,11 +64,11 @@ DBMS DatabaseService-64-8-65536 - Pods [[1]]
 
 ### Ingestion - Loader
                               CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      397.12     0.88           4.6                 4.62
+DatabaseService-64-8-65536-1      301.41        0          4.58                  4.6
 
 ### Execution - Benchmarker
                               CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      743.75     5.11           0.6                 0.61
+DatabaseService-64-8-65536-1      779.23     6.21           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -65,3 +76,4 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

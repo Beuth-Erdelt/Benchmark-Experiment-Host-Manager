@@ -103,6 +103,7 @@ sleep 30
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
   -xlat \
+  -sd 5 \
   -dbms PostgreSQL \
   -nlt 8 \
   -nbp 1 \
@@ -110,6 +111,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_storage.log &
 
 

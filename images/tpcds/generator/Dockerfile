@@ -26,7 +26,7 @@ FROM eclipse-temurin:11
 RUN apt-get update
 RUN apt-get install -y make
 RUN apt-get install -y gcc
-#RUN apt-get install -y build-essential
+RUN apt-get install -y build-essential
 
 RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
 
@@ -49,6 +49,7 @@ ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
 ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
 ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
 ENV BEXHOMA_USER root
 ENV BEXHOMA_PASSWORD root
 ENV BEXHOMA_DATABASE demo

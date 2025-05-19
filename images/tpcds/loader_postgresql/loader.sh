@@ -100,7 +100,7 @@ for i in *.dat; do
     COMMAND="\COPY $basename FROM '$i' delimiter '|' null ''"
     echo "============================"
     echo "$COMMAND"
-    #OUTPUT="$(mclient --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -s \"COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''\" - < $i)"
+    #OUTPUT="$(mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -s \"COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''\" - < $i)"
 
     #FAILED=0 # everything ok
     #FAILED=1 # known error
@@ -111,15 +111,15 @@ for i in *.dat; do
         FAILED=2
         SECONDS_START=$SECONDS
         echo "=========="
-        #time mclient --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -E UTF-8 -s "$COMMAND" - < $i &>OUTPUT.txt
-        time psql -U $BEXHOMA_USER -d $DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT -c "$COMMAND" &> /tmp/OUTPUT.txt
+        #time mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -E UTF-8 -s "$COMMAND" - < $i &>OUTPUT.txt
+        time psql -U $BEXHOMA_USER -d $BEXHOMA_DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT -c "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS
         echo "End $SECONDS_END seconds"
         DURATION=$((SECONDS_END-SECONDS_START))
         echo "Duration $DURATION seconds"
-        #mclient --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -E UTF-8 -L import.log -s "$COMMAND" - < $i &>OUTPUT.txt
-        #mclient --host $BEXHOMA_HOST --database $DATABASE --port $BEXHOMA_PORT -s "COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''" - < $i &>OUTPUT.txt
+        #mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -E UTF-8 -L import.log -s "$COMMAND" - < $i &>OUTPUT.txt
+        #mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -s "COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''" - < $i &>OUTPUT.txt
         #cat import.log
         OUTPUT=$(cat /tmp/OUTPUT.txt )
         echo "$OUTPUT"

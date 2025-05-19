@@ -2,42 +2,43 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1744394934
-Experiment                    : starts at 2025-04-11 20:08:55.787129 (90176.5139666)
+Experiment                    : has code 1747919911
+Experiment                    : starts at 2025-05-22 15:18:30.959922 (12112074.430475947)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking has keying and thinking times activated.
+Benchmark is 'tpcc'. Scaling factor is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+Experiment uses bexhoma version 0.8.5.
 Benchmark is limited to DBMS ['CockroachDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
 Loading is tested with [1] threads, split into [1] pods.
-Benchmarking is tested with [1280] threads, split into [1, 2, 5, 10] pods.
+Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-- waiting 30s -               : done
+done
 CockroachDB-1-1-1024          : will start now
-CockroachDB-1-1-1024          : Name of SUT pods = bexhoma-sut-cockroachdb-1-1-1024-benchbase-128
-CockroachDB-1-1-1024          : Name of SUT service = bexhoma-sut-cockroachdb-1-1-1024-benchbase-128
-CockroachDB-1-1-1024          : Name of Worker pods = bexhoma-worker-cockroachdb-benchbase-128
-CockroachDB-1-1-1024          : Name of Worker service headless = bexhoma-worker-cockroachdb-benchbase-128
+CockroachDB-1-1-1024          : Name of SUT pods = bexhoma-sut-cockroachdb-1-1-1024-benchbase-tpcc-128
+CockroachDB-1-1-1024          : Name of SUT service = bexhoma-sut-cockroachdb-1-1-1024-benchbase-tpcc-128
+CockroachDB-1-1-1024          : Name of Worker pods = bexhoma-worker-cockroachdb-benchbase-tpcc-128
+CockroachDB-1-1-1024          : Name of Worker service headless = bexhoma-worker-cockroachdb-benchbase-tpcc-128
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-128-0', 'bexhoma-worker-cockroachdb-benchbase-128-1', 'bexhoma-worker-cockroachdb-benchbase-128-2', 'bexhoma-worker-cockroachdb-benchbase-128-3', 'bexhoma-worker-cockroachdb-benchbase-128-wbf5r']
-CockroachDB-1-1-1024          : found 4 / 4 running workers
+CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-128-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-2', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-5lvfc']
+CockroachDB-1-1-1024          : found 3 / 3 running workers
 CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2025-04-11 18:12:09 (that is in 120 secs)
-- waiting 30s -               : done
-CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2025-04-11 18:12:09
+CockroachDB-1-1-1024          : will start loading but not before 2025-05-22 13:21:32 (that is in 120 secs)
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2025-04-11 18:12:09
+CockroachDB-1-1-1024          : will start loading but not before 2025-05-22 13:21:32
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2025-04-11 18:12:09
+CockroachDB-1-1-1024          : will start loading but not before 2025-05-22 13:21:32
 - waiting 30s -               : done
+CockroachDB-1-1-1024          : is not loaded yet
+CockroachDB-1-1-1024          : will start loading but not before 2025-05-22 13:21:32
+done
 CockroachDB-1-1-1024          : is not loaded yet
 CockroachDB-1-1-1024          : start asynch loading scripts of type loaded
 CockroachDB-1-1-1024          : is loading
@@ -88,22 +89,53 @@ CockroachDB-1-1-1024          : is loading
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : is loading
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : showing loader times
-CockroachDB-1-1-1024          : loader timespan (first to last [s]) = 835
-CockroachDB-1-1-1024          : start asynch loading scripts of type indexed
 CockroachDB-1-1-1024          : is loading
 - waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : is loading
+done
+CockroachDB-1-1-1024          : showing loader times
+CockroachDB-1-1-1024          : loader timespan (first to last [s]) = 1199
+CockroachDB-1-1-1024          : start asynch loading scripts of type indexed
+CockroachDB-1-1-1024          : is loading
+done
 CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 1
-CockroachDB-1-1-1024          : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 1280, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'true'}
+CockroachDB-1-1-1024          : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 64, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 CockroachDB-1-1-1024-1        : start benchmarking
-CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-128-0', 'bexhoma-worker-cockroachdb-benchbase-128-1', 'bexhoma-worker-cockroachdb-benchbase-128-2', 'bexhoma-worker-cockroachdb-benchbase-128-3']
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-0
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-1
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-2
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-3
-CockroachDB-1-1-1024          : benchmarking results in folder C:\data\benchmarks/1744394934
+CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-128-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-2']
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-0
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-1
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-2
+CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1747919911
 - waiting 10s -               : done
-CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1744394934-1-1-pgqch: found
+CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1747919911-1-1-k4n7c: found
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
@@ -175,23 +207,190 @@ CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+done
 CockroachDB-1-1-1024          : has running benchmarks
 CockroachDB-1-1-1024-1        : showing benchmarker times
-CockroachDB-1-1-1024-1        : benchmarker timespan (start to end single container [s]) = 1306
-CockroachDB-1-1-1024-1        : benchmarker times (start/end per pod and container) = [(1744396144, 1744397441)]
-CockroachDB-1-1-1024-1        : found and updated times {'benchmarker': [(1744396144, 1744397441)]}
-- waiting 30s -               : done
+CockroachDB-1-1-1024-1        : benchmarker timespan (start to end single container [s]) = 3649
+CockroachDB-1-1-1024-1        : benchmarker times (start/end per pod and container) = [(1747921348, 1747924971)]
+CockroachDB-1-1-1024-1        : found and updated times {'benchmarker': [(1747921348, 1747924971)]}
+done
 CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 2
-CockroachDB-1-1-1024          : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 640, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'true'}
+CockroachDB-1-1-1024          : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 32, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 CockroachDB-1-1-1024-2        : start benchmarking
-CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-128-0', 'bexhoma-worker-cockroachdb-benchbase-128-1', 'bexhoma-worker-cockroachdb-benchbase-128-2', 'bexhoma-worker-cockroachdb-benchbase-128-3']
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-0
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-1
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-2
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-3
-CockroachDB-1-1-1024          : benchmarking results in folder C:\data\benchmarks/1744394934
+CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-128-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-2']
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-0
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-1
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-2
+CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1747919911
 - waiting 10s -               : done
-CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1744394934-1-2-5l8tg: found
+CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1747919911-1-2-qvx68: found
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
@@ -263,23 +462,188 @@ CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+done
 CockroachDB-1-1-1024          : has running benchmarks
 CockroachDB-1-1-1024-2        : showing benchmarker times
-CockroachDB-1-1-1024-2        : benchmarker timespan (start to end single container [s]) = 1338
-CockroachDB-1-1-1024-2        : benchmarker times (start/end per pod and container) = [(1744397568, 1744398850), (1744397568, 1744398869)]
-CockroachDB-1-1-1024-2        : found and updated times {'benchmarker': [(1744397568, 1744398850), (1744397568, 1744398869)]}
-- waiting 30s -               : done
+CockroachDB-1-1-1024-2        : benchmarker timespan (start to end single container [s]) = 3625
+CockroachDB-1-1-1024-2        : benchmarker times (start/end per pod and container) = [(1747925038, 1747928651), (1747925038, 1747928652)]
+CockroachDB-1-1-1024-2        : found and updated times {'benchmarker': [(1747925038, 1747928651), (1747925038, 1747928652)]}
+done
 CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 3
-CockroachDB-1-1-1024          : we will change parameters of benchmark as {'PARALLEL': '5', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 3276, 'BENCHBASE_TERMINALS': 256, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'true'}
+CockroachDB-1-1-1024          : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 CockroachDB-1-1-1024-3        : start benchmarking
-CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-128-0', 'bexhoma-worker-cockroachdb-benchbase-128-1', 'bexhoma-worker-cockroachdb-benchbase-128-2', 'bexhoma-worker-cockroachdb-benchbase-128-3']
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-0
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-1
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-2
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-3
-CockroachDB-1-1-1024          : benchmarking results in folder C:\data\benchmarks/1744394934
+CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-128-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-2']
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-0
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-1
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-2
+CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1747919911
 - waiting 10s -               : done
-CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1744394934-1-3-29lxq: found
+CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1747919911-1-3-5fn89: found
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
@@ -321,15 +685,6 @@ CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '9fe2e4bd-8e0b-465e-b477-9d26b88cde67', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 11 Apr 2025 19:30:19 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
-- waiting 2s -                : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
@@ -356,23 +711,192 @@ CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+done
 CockroachDB-1-1-1024          : has running benchmarks
 CockroachDB-1-1-1024-3        : showing benchmarker times
-CockroachDB-1-1-1024-3        : benchmarker timespan (start to end single container [s]) = 1322
-CockroachDB-1-1-1024-3        : benchmarker times (start/end per pod and container) = [(1744399028, 1744400292), (1744399028, 1744400300), (1744399028, 1744400304), (1744399028, 1744400313), (1744399029, 1744400316)]
-CockroachDB-1-1-1024-3        : found and updated times {'benchmarker': [(1744399028, 1744400292), (1744399028, 1744400300), (1744399028, 1744400304), (1744399028, 1744400313), (1744399029, 1744400316)]}
-- waiting 30s -               : done
+CockroachDB-1-1-1024-3        : benchmarker timespan (start to end single container [s]) = 3634
+CockroachDB-1-1-1024-3        : benchmarker times (start/end per pod and container) = [(1747928705, 1747932316), (1747928705, 1747932316), (1747928705, 1747932316), (1747928705, 1747932317)]
+CockroachDB-1-1-1024-3        : found and updated times {'benchmarker': [(1747928705, 1747932316), (1747928705, 1747932316), (1747928705, 1747932316), (1747928705, 1747932317)]}
+done
 CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 4
-CockroachDB-1-1-1024          : we will change parameters of benchmark as {'PARALLEL': '10', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 1638, 'BENCHBASE_TERMINALS': 128, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'true'}
+CockroachDB-1-1-1024          : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 2048, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 3600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 CockroachDB-1-1-1024-4        : start benchmarking
-CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-128-0', 'bexhoma-worker-cockroachdb-benchbase-128-1', 'bexhoma-worker-cockroachdb-benchbase-128-2', 'bexhoma-worker-cockroachdb-benchbase-128-3']
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-0
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-1
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-2
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-128-3
-CockroachDB-1-1-1024          : benchmarking results in folder C:\data\benchmarks/1744394934
+CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-128-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-2']
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-0
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-1
+CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-128-2
+CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1747919911
 - waiting 10s -               : done
-CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1744394934-1-4-26mmq: found
+CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1747919911-1-4-4prrv: found
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
@@ -436,38 +960,211 @@ CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
 CockroachDB-1-1-1024          : has running benchmarks
 - waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+- waiting 30s -               : done
+CockroachDB-1-1-1024          : has running benchmarks
+done
 CockroachDB-1-1-1024          : has running benchmarks
 CockroachDB-1-1-1024-4        : showing benchmarker times
-CockroachDB-1-1-1024-4        : benchmarker timespan (start to end single container [s]) = 1347
-CockroachDB-1-1-1024-4        : benchmarker times (start/end per pod and container) = [(1744400483, 1744401734), (1744400483, 1744401789), (1744400482, 1744401747), (1744400482, 1744401786), (1744400482, 1744401760), (1744400482, 1744401772), (1744400483, 1744401758), (1744400483, 1744401743), (1744400483, 1744401749), (1744400483, 1744401736)]
-CockroachDB-1-1-1024-4        : found and updated times {'benchmarker': [(1744400483, 1744401734), (1744400483, 1744401789), (1744400482, 1744401747), (1744400482, 1744401786), (1744400482, 1744401760), (1744400482, 1744401772), (1744400483, 1744401758), (1744400483, 1744401743), (1744400483, 1744401749), (1744400483, 1744401736)]}
-- waiting 30s -               : done
+CockroachDB-1-1-1024-4        : benchmarker timespan (start to end single container [s]) = 3634
+CockroachDB-1-1-1024-4        : benchmarker times (start/end per pod and container) = [(1747932385, 1747935992), (1747932386, 1747935993), (1747932385, 1747935994), (1747932385, 1747935992), (1747932386, 1747935993), (1747932385, 1747935993), (1747932385, 1747935992), (1747932385, 1747935994)]
+CockroachDB-1-1-1024-4        : found and updated times {'benchmarker': [(1747932385, 1747935992), (1747932386, 1747935993), (1747932385, 1747935994), (1747932385, 1747935992), (1747932386, 1747935993), (1747932385, 1747935993), (1747932385, 1747935992), (1747932385, 1747935994)]}
+done
 CockroachDB-1-1-1024          : can be stopped
-CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-128-0', 'bexhoma-worker-cockroachdb-benchbase-128-1', 'bexhoma-worker-cockroachdb-benchbase-128-2', 'bexhoma-worker-cockroachdb-benchbase-128-3']
-Experiment ends at 2025-04-11 22:04:35.541738 (97116.2686609): 6939.754694299991s total
+CockroachDB-1-1-1024          : Worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-128-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-128-2']
+Experiment ends at 2025-05-22 19:47:27.514055 (12128210.98460875): 16136.554132804275s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
+Result workflow not complete
 
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=128 (warehouses for TPC-C)
+Benchbase Workload SF=128
     Type: benchbase
-    Duration: 6940s 
-    Code: 1744394934
-    Benchbase runs the benchmark.
+    Duration: 16137s 
+    Code: 1747919911
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking has keying and thinking times activated.
+    Benchmark is 'tpcc'. Scaling factor is 128. Benchmarking runs for 60 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['CockroachDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [1280] threads, split into [1, 2, 5, 10] pods.
+    Benchmarking is tested with [64] threads, split into [1, 2, 4, 8] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
@@ -477,225 +1174,187 @@ CockroachDB-1-1-1024-1 uses docker image cockroachdb/cockroach:v24.2.4
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201988344
+    disk:256997096
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:1081966514176
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker28
-        disk:966607168
-        datadisk:233351
-        volume_size:1000G
-        volume_used:221G
-    worker 1
-        RAM:1081751007232
+        RAM:1081854078976
         Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker29
-        disk:372159320
-        datadisk:233181
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:164842396
+        datadisk:273711
         volume_size:1000G
-        volume_used:221G
-    worker 2
-        RAM:1081965506560
+        volume_used:258G
+    worker 1
+        RAM:1081965461504
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:1274119432
-        datadisk:233646
+        disk:1402197580
+        datadisk:273504
         volume_size:1000G
-        volume_used:221G
-    worker 3
-        RAM:540595875840
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:299429352
-        datadisk:232341
+        volume_used:258G
+    worker 2
+        RAM:1077382844416
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1423525672
+        datadisk:273511
         volume_size:1000G
-        volume_used:221G
+        volume_used:258G
     eval_parameters
-                code:1744394934
-                BEXHOMA_REPLICAS:1
-                BEXHOMA_WORKERS:4
+                code:1747919911
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
 CockroachDB-1-1-1024-2 uses docker image cockroachdb/cockroach:v24.2.4
     RAM:541008592896
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201988344
+    disk:256997268
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     worker 0
-        RAM:1081966514176
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker28
-        disk:966739224
-        datadisk:233478
-        volume_size:1000G
-        volume_used:221G
-    worker 1
-        RAM:1081751007232
+        RAM:1081854078976
         Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker29
-        disk:372325488
-        datadisk:233343
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:171351032
+        datadisk:280057
         volume_size:1000G
-        volume_used:221G
-    worker 2
-        RAM:1081965506560
+        volume_used:258G
+    worker 1
+        RAM:1081965461504
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:1274180396
-        datadisk:233704
+        disk:1408675364
+        datadisk:279817
         volume_size:1000G
-        volume_used:221G
-    worker 3
-        RAM:540595875840
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:299628108
-        datadisk:232535
+        volume_used:258G
+    worker 2
+        RAM:1077382844416
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1429941212
+        datadisk:279765
         volume_size:1000G
-        volume_used:221G
+        volume_used:258G
     eval_parameters
-                code:1744394934
-                BEXHOMA_REPLICAS:1
-                BEXHOMA_WORKERS:4
+                code:1747919911
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
 CockroachDB-1-1-1024-3 uses docker image cockroachdb/cockroach:v24.2.4
     RAM:541008592896
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201988516
+    disk:256997440
     requests_cpu:4
     requests_memory:16Gi
     client:3
     numExperiment:1
     worker 0
-        RAM:1081966514176
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker28
-        disk:966878164
-        datadisk:233613
-        volume_size:1000G
-        volume_used:221G
-    worker 1
-        RAM:1081751007232
+        RAM:1081854078976
         Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker29
-        disk:372461324
-        datadisk:233476
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:175208220
+        datadisk:283808
         volume_size:1000G
-        volume_used:221G
-    worker 2
-        RAM:1081965506560
+        volume_used:258G
+    worker 1
+        RAM:1081965461504
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:1274293636
-        datadisk:233814
+        disk:1412523480
+        datadisk:283572
         volume_size:1000G
-        volume_used:221G
-    worker 3
-        RAM:540595875840
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:299731120
-        datadisk:232635
+        volume_used:258G
+    worker 2
+        RAM:1077382844416
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1433860968
+        datadisk:283594
         volume_size:1000G
-        volume_used:221G
+        volume_used:258G
     eval_parameters
-                code:1744394934
-                BEXHOMA_REPLICAS:1
-                BEXHOMA_WORKERS:4
+                code:1747919911
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
 CockroachDB-1-1-1024-4 uses docker image cockroachdb/cockroach:v24.2.4
     RAM:541008592896
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:201988516
+    disk:256997788
     requests_cpu:4
     requests_memory:16Gi
     client:4
     numExperiment:1
     worker 0
-        RAM:1081966514176
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker28
-        disk:967013976
-        datadisk:233744
-        volume_size:1000G
-        volume_used:221G
-    worker 1
-        RAM:1081751007232
+        RAM:1081854078976
         Cores:128
-        host:5.15.0-134-generic
-        node:cl-worker29
-        disk:372601084
-        datadisk:233612
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:178341212
+        datadisk:286867
         volume_size:1000G
-        volume_used:221G
-    worker 2
-        RAM:1081965506560
+        volume_used:258G
+    worker 1
+        RAM:1081965461504
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker27
-        disk:1274428820
-        datadisk:233945
+        disk:1415682144
+        datadisk:286657
         volume_size:1000G
-        volume_used:221G
-    worker 3
-        RAM:540595875840
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:299840092
-        datadisk:232741
+        volume_used:258G
+    worker 2
+        RAM:1077382844416
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1437057980
+        datadisk:286710
         volume_size:1000G
-        volume_used:221G
+        volume_used:258G
     eval_parameters
-                code:1744394934
-                BEXHOMA_REPLICAS:1
-                BEXHOMA_WORKERS:4
+                code:1747919911
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
 
 ### Execution
                         experiment_run  terminals  target  pod_count    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-CockroachDB-1-1-1024-1               1       1280   16384          1  1200.0           0                         61.35                      61.08      100.18                                                      94311.0                                              38281.0
-CockroachDB-1-1-1024-2               1       1280   16384          2  1200.0           0                         61.09                      60.82       99.75                                                      94083.0                                              36669.0
-CockroachDB-1-1-1024-3               1       1280   16380          5  1200.0           0                         61.21                      60.91       99.92                                                      95072.0                                              36116.0
-CockroachDB-1-1-1024-4               1       1280   16380         10  1200.0           0                         61.17                      60.89       99.88                                                     104708.0                                              37183.9
-
-Warehouses: 128
+CockroachDB-1-1-1024-1               1         64   16384          1  3600.0           0                       1217.07                    1211.56         0.0                                                     141878.0                                             52578.00
+CockroachDB-1-1-1024-2               1         64   16384          2  3600.0           0                       1103.96                    1099.04         0.0                                                     159135.0                                             57966.50
+CockroachDB-1-1-1024-3               1         64   16384          4  3600.0           0                        987.17                     982.45         0.0                                                     169318.0                                             64827.00
+CockroachDB-1-1-1024-4               1         64   16384          8  3600.0           0                        660.25                     654.14         0.0                                                     237516.0                                             96951.12
 
 ### Workflow
 
 #### Actual
-DBMS CockroachDB-1-1-1024 - Pods [[1, 2, 5, 10]]
+DBMS CockroachDB-1-1-1024 - Pods [[8, 1, 2, 4]]
 
 #### Planned
-DBMS CockroachDB-1-1-1024 - Pods [[1, 2, 5, 10]]
+DBMS CockroachDB-1-1-1024 - Pods [[1, 2, 4, 8]]
 
 ### Loading
-                        time_load  terminals  pods  Imported warehouses [1/h]
-CockroachDB-1-1-1024-1      835.0        1.0   1.0                 551.856287
-CockroachDB-1-1-1024-2      835.0        1.0   2.0                 551.856287
-CockroachDB-1-1-1024-3      835.0        1.0   5.0                 551.856287
-CockroachDB-1-1-1024-4      835.0        1.0  10.0                 551.856287
+                        time_load  terminals  pods  Throughput [SF/h]
+CockroachDB-1-1-1024-1     1199.0        1.0   1.0         384.320267
+CockroachDB-1-1-1024-2     1199.0        1.0   2.0         384.320267
+CockroachDB-1-1-1024-3     1199.0        1.0   4.0         384.320267
+CockroachDB-1-1-1024-4     1199.0        1.0   8.0         384.320267
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

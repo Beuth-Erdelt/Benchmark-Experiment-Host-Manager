@@ -14,6 +14,7 @@ The container expects some environment variables:
 * `BEXHOMA_DRIVER`: jdbc driver name, currently ignored
 * `BEXHOMA_CONNECTION`: name of the connection (i.e., dbms configuration) to be queried
 * `BEXHOMA_EXPERIMENT`: code of the experiment this is part of
+* `BEXHOMA_EXPERIMENT_RUN`: number of total runs (for repetition of the complete experiment)
 * `BEXHOMA_CLIENT`: number of the client in a list of executors
 * `BEXHOMA_USER`: username for sut dbms connection
 * `BEXHOMA_PASSWORD`: password for sut dbms connection

@@ -26,6 +26,7 @@ ENV BEXHOMA_HOST="www.example.com"
 ENV BEXHOMA_PORT 3307
 ENV BEXHOMA_CONNECTION="monetdb"
 ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
 ENV HAMMERDB_TYPE postgresql
 # Rampup time in minutes before first Transaction Count is taken
 ENV HAMMERDB_RAMPUP 2
