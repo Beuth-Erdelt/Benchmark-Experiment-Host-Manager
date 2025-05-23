@@ -115,6 +115,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
+doc_ycsb_redis_1.log
 ```bash
 ## Show Summary
 
@@ -250,6 +251,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 yields something like
 
+doc_ycsb_redis_2.log
 ```bash
 ## Show Summary
 
@@ -392,6 +394,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 yields something like
 
+doc_ycsb_redis_3.log
 ```bash
 ## Show Summary
 
@@ -574,7 +577,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-
+doc_ycsb_redis_4.log
 ```bash
 ## Show Summary
 
@@ -736,6 +739,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 
 The result looks something like
 
+doc_ycsb_redis_5.log
 ```bash
 ## Show Summary
 
@@ -926,12 +930,4 @@ In `cluster.config` there is a section:
 ```
 
 Notice how this does not have a JDBC section (as Redis does not support this).
-
-
-
-
-
-
-
-
 

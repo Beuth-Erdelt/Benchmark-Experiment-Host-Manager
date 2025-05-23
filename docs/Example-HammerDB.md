@@ -95,6 +95,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
+doc_hammerdb_testcase_scale.log
 ```bash
 ## Show Summary
 
@@ -311,6 +312,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 If monitoring is activated, the summary also contains a section like
 
+doc_hammerdb_testcase_monitoring.log
 ```bash
 ## Show Summary
 
@@ -449,7 +451,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-
+doc_hammerdb_testcase_storage.log
 ```
 ## Show Summary
 
@@ -557,6 +559,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 ## Evaluate Results
 
+doc_hammerdb_testcase_keytime.log
 ```bash
 ## Show Summary
 

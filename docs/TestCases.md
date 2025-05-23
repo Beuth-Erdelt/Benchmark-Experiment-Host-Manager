@@ -44,6 +44,7 @@ nohup python tpch.py -ms 1 -tr \
 
 yields (after ca. 10 minutes) something like
 
+test_tpch_testcase_postgresql_1.log
 ```bash
 ## Show Summary
 
@@ -166,6 +167,7 @@ nohup python tpch.py -ms 1 -tr \
 
 yields (after ca. 15 minutes) something like
 
+test_tpch_testcase_postgresql_2.log
 ```bash
 ## Show Summary
 
@@ -309,6 +311,7 @@ nohup python tpch.py -ms 1 -tr \
 
 yields (after ca. 15 minutes) something like
 
+test_tpch_testcase_postgresql_3.log
 ```bash
 ## Show Summary
 
@@ -546,15 +549,16 @@ nohup python benchbase.py -ms 1 -tr \
 
 yields (after ca. 10 minutes) something like
 
+test_benchbase_testcase_postgresql_1.log
 ```bash
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 619s 
-    Code: 1728364014
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 721s 
+    Code: 1743084354
+    Benchbase runs the benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
@@ -570,19 +574,23 @@ Benchbase Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:253382488
-    datadisk:4409564
+    disk:188797212
+    datadisk:4307
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1743084354
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2624.39                                                      13535.0                                               6091.0
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                       2779.24                                                      13347.0                                               5752.0
 
 Warehouses: 16
 
@@ -596,7 +604,7 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      122.0        1.0   1.0                 472.131148
+PostgreSQL-1-1-1024-1      114.0        1.0   1.0                 505.263158
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -631,6 +639,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 yields (after ca. 10 minutes) something like
 
+test_benchbase_testcase_postgresql_2.log
 ```bash
 ## Show Summary
 
@@ -726,6 +735,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 yields (after ca. 10 minutes) something like
 
+test_benchbase_testcase_postgresql_3.log
 ```bash
 ## Show Summary
 
@@ -825,6 +835,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 yields (after ca. 30 minutes) something like
 
+test_benchbase_testcase_postgresql_4.log
 ```bash
 ## Show Summary
 
@@ -1043,6 +1054,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 yields (after ca. 10 minutes)
 
+test_hammerdb_testcase_postgresql_1.log
 ```bash
 ## Show Summary
 
@@ -1121,6 +1133,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 yields (after ca. 15 minutes)
 
+test_hammerdb_testcase_postgresql_2.log
 ```bash
 ## Show Summary
 
@@ -1222,6 +1235,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 yields (after ca. 60 minutes)
 
+test_hammerdb_testcase_postgresql_3.log
 ```bash
 ## Show Summary
 
@@ -1443,6 +1457,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 yields (after ca. 15 minutes) something like
 
+test_ycsb_testcase_postgresql_1.log
 ```bash
 ## Show Summary
 
@@ -1564,6 +1579,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 yields (after ca. 10 minutes) something like
 
+test_ycsb_testcase_postgresql_2.log
 ```bash
 ## Show Summary
 
@@ -1660,6 +1676,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 yields (after ca. 15 minutes) something like
 
+test_ycsb_testcase_postgresql_3.log
 ```bash
 ## Show Summary
 
@@ -1829,6 +1846,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 yields (after ca. 5 minutes) something like
 
+test_ycsb_testcase_postgresql_4.log
 ```bash
 ## Show Summary
 
@@ -1907,6 +1925,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 yields (after ca. 10 minutes) something like
 
+test_ycsb_testcase_postgresql_5.log
 ```bash
 ## Show Summary
 

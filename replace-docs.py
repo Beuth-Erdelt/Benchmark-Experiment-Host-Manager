@@ -19,7 +19,7 @@ for filename in os.listdir(md_directory):
             base_name = os.path.splitext(log_marker)[0]
             summary_filename = f"{base_name}_summary.txt"
             summary_path = os.path.join(logs_directory, summary_filename)
-            print(f"Looking for {summary_path}")
+            print(f"->Looking for {summary_path}")
             if os.path.exists(summary_path):
                 with open(summary_path, 'r', encoding='utf-8') as log_f:
                     log_content = log_f.read().strip()
