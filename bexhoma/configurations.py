@@ -3185,6 +3185,8 @@ scrape_configs:
             env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
             env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
             env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
+            env_default['BEXHOMA_DATABASE'] = c['JDBC']['database']
+            env_default['BEXHOMA_VOLUME'] = self.experiment.volume
             if isinstance(c['JDBC']['jar'], str):
                 env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
             else:
