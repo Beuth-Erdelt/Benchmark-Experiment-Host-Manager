@@ -82,6 +82,7 @@ This
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_twitter_simple
 ```bash
 ## Show Summary
 
@@ -175,6 +176,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 ### Evaluate Results
 
+doc_benchbase_testcase_twitter_scale.log
 ```
 ## Show Summary
 
@@ -356,6 +358,7 @@ This
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_chbenchmark_simple.log
 ```bash
 ## Show Summary
 
@@ -448,6 +451,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 ### Evaluate Results
 
+doc_benchbase_testcase_chbenchmark_scale.log
 ```
 ## Show Summary
 
@@ -620,6 +624,7 @@ This
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_ycsb_c.log
 ```bash
 ## Show Summary
 
@@ -724,6 +729,7 @@ nohup python benchbase.py -tr \
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_ycsb_a.log
 ```bash
 ## Show Summary
 
@@ -827,6 +833,7 @@ nohup python benchbase.py -tr \
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_ycsb_b.log
 ```bash
 ## Show Summary
 
@@ -935,6 +942,7 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_ycsb_d.log
 ```bash
 ## Show Summary
 
@@ -1027,6 +1035,7 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_ycsb_e.log
 ```bash
 ## Show Summary
 
@@ -1115,6 +1124,7 @@ nohup python benchbase.py -tr \
 
 At the end of a benchmark you will see a summary like
 
+doc_benchbase_testcase_ycsb_f.log
 ```bash
 ## Show Summary
 
