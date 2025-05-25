@@ -1257,6 +1257,11 @@ Workload D is 95% READ and 5% INSERT.
 This means there are more rows in the database after the benchmark than before the benchmark.
 The range of key that can be read or inserted changes.
 Repetition is only fully sensible after a clean creation of the database.
+It is not possible to scale out the driver.
+This is because of the `latest` distribution.
+It assumes the keyspace is filled completely up to some `recordcount` and new data is added straight after this number [1].
+
+[1] https://github.com/brianfrankcooper/YCSB/blob/1e62880552fc95fa4b012846c0f3887420e676a8/core/src/main/java/site/ycsb/workloads/CoreWorkload.java#L491
 
 Example:
 ```bash
@@ -1379,6 +1384,8 @@ Workload E is 95% SCAN and 5% INSERT.
 This means there are more rows in the database after the benchmark than before the benchmark.
 The range of key that can be read or inserted changes.
 Repetition is only fully sensible after a clean creation of the database.
+This workload can be scaled out.
+Scans might be done over empty keyspaces.
 
 Example:
 ```bash
