@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='start sut, also load data or also run the TPC-C queries', choices=['run', 'start', 'load'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'Citus', 'PGBouncer'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'Citus', 'PGBouncer', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -215,6 +215,64 @@ if __name__ == '__main__':
                     config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'postgresql'
+                        )
+                    config.set_loading_parameters(
+                        #PARALLEL = str(loading_pods), # =1
+                        SF = SF,
+                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                        BENCHBASE_PROFILE = 'postgres',
+                        BEXHOMA_DATABASE = 'postgres',
+                        #BENCHBASE_TARGET = int(target),
+                        BENCHBASE_TERMINALS = loading_threads_per_pod,
+                        BENCHBASE_TIME = SD,
+                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                        BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
+                        BENCHBASE_YCSB_WORKLOAD = workload,
+                        )
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        #PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                        BENCHBASE_PROFILE = 'postgres',
+                                        BEXHOMA_DATABASE = 'postgres',
+                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
+                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
+                                        BENCHBASE_TIME = SD,
+                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                                        BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
+                                        BENCHBASE_YCSB_WORKLOAD = workload,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
+                if ("CedarDB" in args.dbms):
+                    # PostgreSQL
+                    name_format = 'CedarDB-{threads}-{pods}-{target}'
+                    config = configurations.benchbase(experiment=experiment, docker='CedarDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                    config.set_storage(
+                        storageConfiguration = 'cedardb'
                         )
                     config.set_loading_parameters(
                         #PARALLEL = str(loading_pods), # =1

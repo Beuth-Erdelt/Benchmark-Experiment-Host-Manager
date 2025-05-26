@@ -43,7 +43,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
@@ -220,6 +220,68 @@ if __name__ == '__main__':
                     config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'postgresql'
+                        )
+                    config.set_loading_parameters(
+                        PARALLEL = str(loading_pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = scaling_logging,
+                        BEXHOMA_DBMS = "jdbc",
+                        YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                        YCSB_INSERTORDER = extra_insert_order,
+                        )
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = scaling_logging,
+                                        BEXHOMA_DBMS = "jdbc",
+                                        YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                                        YCSB_INSERTORDER = extra_insert_order,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
+                if ("CedarDB" in args.dbms):
+                    # PostgreSQL
+                    name_format = 'CedarDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='CedarDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                    config.set_storage(
+                        storageConfiguration = 'cedardb'
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
