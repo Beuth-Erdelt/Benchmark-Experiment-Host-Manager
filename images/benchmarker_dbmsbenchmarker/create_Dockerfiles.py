@@ -14,4 +14,4 @@ for version in versions:
 	filename_versioned = 'Dockerfile_{}'.format(version)
 	with open(filename_versioned, 'w') as file:
 		file.write(dockerfile.format(version=version, DBMSBENCHMARKER_CONNECTION="{DBMSBENCHMARKER_CONNECTION}"))
-	subprocess.call(['docker', 'build', '-f', filename_versioned, '-t', 'bexhoma/benchmarker_dbmsbenchmarker:'+version, '.'])
+	subprocess.call(['docker', 'build', '-f', filename_versioned, '--no-cache', '-t', 'bexhoma/benchmarker_dbmsbenchmarker:'+version, '.'])
