@@ -66,12 +66,13 @@ if __name__ == '__main__':
     parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="1")
     parser.add_argument('-npi', '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
     parser.add_argument('-npo', '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
-    parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'e', 'f'], default='')
+    parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='')
     parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF) = number of rows in millions', default=1)
     parser.add_argument('-sfo', '--scaling-factor-operations', help='scaling factor = number of operations in millions (=SF if not set)', default=None)
     #parser.add_argument('-su',  '--scaling-users', help='scaling factor = number of total threads', default=64)
     parser.add_argument('-sbs', '--scaling-batchsize', help='batch size', default="")
     parser.add_argument('-slg', '--scaling-logging', help='logging status every x seconds', default=10)
+    parser.add_argument('-xio', '--extra-insert-order', help='how to insert keys', default='hashed', choices=['hashed', 'ordered'])
     #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb',  '--target-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384")
     parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=180)
@@ -140,6 +141,7 @@ if __name__ == '__main__':
     target_base = int(args.target_base)
     batchsize = args.scaling_batchsize
     scaling_logging = int(args.scaling_logging) # ycsb expects seconds? *1000 # adjust unit to miliseconds
+    extra_insert_order = args.extra_insert_order                 # insert keys by ordering or by hashed value
     workload = args.workload
     ##############
     ### set cluster
@@ -233,6 +235,7 @@ if __name__ == '__main__':
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = "jdbc",
                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -269,6 +272,7 @@ if __name__ == '__main__':
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
                                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -314,6 +318,7 @@ if __name__ == '__main__':
                                     YCSB_BATCHSIZE = batchsize,
                                     YCSB_STATUS_INTERVAL = scaling_logging,
                                     BEXHOMA_DBMS = "jdbc",
+                                    YCSB_INSERTORDER = extra_insert_order,
                                     )
                                 config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                                 executor_list = []
@@ -340,6 +345,7 @@ if __name__ == '__main__':
                                                     YCSB_BATCHSIZE = batchsize,
                                                     YCSB_STATUS_INTERVAL = scaling_logging,
                                                     BEXHOMA_DBMS = "jdbc",
+                                                    YCSB_INSERTORDER = extra_insert_order,
                                                     )
                                 #print(executor_list)
                                 config.add_benchmark_list(executor_list)
@@ -363,6 +369,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = "jdbc",
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -398,6 +405,7 @@ if __name__ == '__main__':
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -421,6 +429,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = "jdbc",
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -456,6 +465,7 @@ if __name__ == '__main__':
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -556,6 +566,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = "jdbc",
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -591,6 +602,7 @@ if __name__ == '__main__':
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -631,6 +643,7 @@ if __name__ == '__main__':
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -667,6 +680,7 @@ if __name__ == '__main__':
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -694,6 +708,7 @@ if __name__ == '__main__':
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = "jdbc",
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -720,6 +735,7 @@ if __name__ == '__main__':
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = "jdbc",
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -766,6 +782,7 @@ if __name__ == '__main__':
                         YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS = bexhoma_dbms,
                         BEXHOMA_REPLICAS = num_worker_replicas,
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     def get_worker_name(self):
                         """
@@ -832,6 +849,7 @@ if __name__ == '__main__':
                                         YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS = bexhoma_dbms,
                                         BEXHOMA_REPLICAS = num_worker_replicas,
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -872,6 +890,7 @@ if __name__ == '__main__':
                         BEXHOMA_DBMS = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_USE_HOSTLIST = "true",
+                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -909,6 +928,7 @@ if __name__ == '__main__':
                                         BEXHOMA_DBMS = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         YCSB_USE_HOSTLIST = "true",
+                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

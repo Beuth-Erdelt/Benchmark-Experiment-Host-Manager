@@ -75,10 +75,10 @@ OPERATIONS_TOTAL=$(($YCSB_OPERATIONS*$NUM_PODS))
 # for loading phase
 ROW_PART=$(($YCSB_ROWS/$NUM_PODS))
 ROW_START=$(($YCSB_ROWS/$NUM_PODS*($CHILD-1)))
-# for benchmarking phase - workload E, we again insert 5% new rows
-#ROWS_TO_INSERT=$(awk "BEGIN {print 0.05*$OPERATIONS_TOTAL}")
+# for benchmarking phase - workload D and E, we again insert 5% new rows
+ROWS_TO_INSERT=$(awk "BEGIN {print 0.05*$OPERATIONS_TOTAL}")
 # assume 100% of operations are INSERTs
-ROWS_TO_INSERT=$OPERATIONS_TOTAL
+#ROWS_TO_INSERT=$OPERATIONS_TOTAL
 ROW_PART_AFTER_LOADING=$(($ROWS_TO_INSERT/$NUM_PODS))
 ROW_START_AFTER_LOADING=$(($ROWS_TO_INSERT/$NUM_PODS*($CHILD-1)+$YCSB_ROWS))
 # if new rows are to be inserted in benchmark, too
@@ -140,6 +140,7 @@ echo "YCSB_TARGET $YCSB_TARGET"
 echo "YCSB_WORKLOAD $YCSB_WORKLOAD"
 echo "YCSB_BATCHSIZE:$YCSB_BATCHSIZE"
 echo "YCSB_MEASUREMENT_TYPE:$YCSB_MEASUREMENT_TYPE"
+echo "YCSB_INSERTORDER:$YCSB_INSERTORDER"
 
 ######################## Generate driver file ########################
 # Redis or JDBC
@@ -200,6 +201,8 @@ sed -i "s/YCSB_THREADCOUNT/$YCSB_THREADCOUNT/" $FILENAME
 sed -i "s/YCSB_TARGET/$YCSB_TARGET/" $FILENAME
 sed -i "s/YCSB_STATUS_INTERVAL/$YCSB_STATUS_INTERVAL/" $FILENAME
 sed -i "s/YCSB_MEASUREMENT_TYPE/$YCSB_MEASUREMENT_TYPE/" $FILENAME
+sed -i "s/YCSB_INSERTORDER/$YCSB_INSERTORDER/" $FILENAME
+
 
 echo "# Yahoo! Cloud System Benchmark
 # Workload A: Update heavy workload

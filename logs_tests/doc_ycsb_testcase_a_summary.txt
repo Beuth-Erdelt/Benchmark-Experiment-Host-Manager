@@ -1,0 +1,104 @@
+## Show Summary
+
+### Workload
+YCSB SF=10
+    Type: ycsb
+    Duration: 1001s 
+    Code: 1747130617
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 10000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.5.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:255182808
+    datadisk:23605
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1747130617
+PostgreSQL-64-8-65536-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:259537860
+    datadisk:27858
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1747130617
+
+### Loading
+                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-8-65536               1       64   65536          8           0                   35095.100376               286035.0            10000000                              6401.0
+
+### Execution
+                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-65536-1               1       64   65536          1           0                       65346.66               153030.0           4999256                             996.0             5000744                              1661.0
+PostgreSQL-64-8-65536-2               1       64   65536          8           0                       65430.90               152841.0           5000587                             520.0             4999413                              1182.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-65536 - Pods [[8, 1]]
+
+#### Planned
+DBMS PostgreSQL-64-8-65536 - Pods [[1, 8]]
+
+### Ingestion - SUT
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1     1617.58     7.39         13.82                17.16
+PostgreSQL-64-8-65536-2     1617.58     7.39         13.82                17.16
+
+### Ingestion - Loader
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1     1124.68     1.84          4.62                 4.65
+PostgreSQL-64-8-65536-2     1124.68     1.84          4.62                 4.65
+
+### Execution - SUT
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1     1630.95    10.67         17.36                22.68
+PostgreSQL-64-8-65536-2     1649.68    10.55         17.66                23.27
+
+### Execution - Benchmarker
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1      687.45     5.94          0.60                 0.61
+PostgreSQL-64-8-65536-2      668.37     1.87          5.16                 5.18
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

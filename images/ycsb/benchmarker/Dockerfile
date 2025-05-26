@@ -33,6 +33,7 @@ ENV YCSB_WORKLOAD a
 ENV YCSB_BATCHSIZE=""
 ENV YCSB_MEASUREMENT_TYPE=hdrhistogram
 ENV YCSB_USE_HOSTLIST 0
+ENV YCSB_INSERTORDER=hashed
 
 RUN apk update && apk add --update curl openjdk8-jre && \
     mkdir -p /opt && cd /opt && \
@@ -51,6 +52,23 @@ RUN apk add --no-cache bash
 RUN apk add --no-cache nano
 
 RUN apk add --no-cache make cmake gcc libc-dev
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    git \
+    autoconf \
+    automake \
+    libtool
+
+# Build and install jemalloc
+RUN git clone https://github.com/jemalloc/jemalloc.git /tmp/jemalloc && \
+    cd /tmp/jemalloc && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /tmp/jemalloc
 
 RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
 

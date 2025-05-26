@@ -1,0 +1,245 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1747145586
+Experiment                    : starts at 2025-05-13 16:13:05.856157 (11337749.326705247)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'F'.
+Number of rows to insert is 10000000.
+Number of operations is 10000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [4].
+Factors for benchmarking are [4].
+Experiment uses bexhoma version 0.8.5.
+System metrics are monitored by a cluster-wide installation.
+Benchmark is limited to DBMS ['PostgreSQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+done
+PostgreSQL-64-8-65536         : will start now
+PostgreSQL-64-8-65536         : Name of SUT pods = bexhoma-sut-postgresql-64-8-65536-1747145586
+PostgreSQL-64-8-65536         : Name of SUT service = bexhoma-sut-postgresql-64-8-65536-1747145586
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is not loaded yet
+PostgreSQL-64-8-65536         : will start loading but not before 2025-05-13 14:16:37 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is not loaded yet
+PostgreSQL-64-8-65536         : will start loading but not before 2025-05-13 14:16:37
+done
+PostgreSQL-64-8-65536         : is not loaded yet
+PostgreSQL-64-8-65536         : start asynch loading scripts of type loaded
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+done
+PostgreSQL-64-8-65536         : showing loader times
+PostgreSQL-64-8-65536         : loader timespan (first to last [s]) = 300
+PostgreSQL-64-8-65536         : start asynch loading scripts of type indexed
+PostgreSQL-64-8-65536         : is loading
+done
+PostgreSQL-64-8-65536         : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-64-8-65536         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '10', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'f', 'YCSB_ROWS': 10000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram'}
+PostgreSQL-64-8-65536-1       : start benchmarking
+PostgreSQL-64-8-65536         : benchmarking results in folder /home/perdelt/benchmarks/1747145586
+- waiting 10s -               : done
+found
+PostgreSQL-64-8-65536-1       : collecting loading metrics of SUT at connection PostgreSQL-64-8-65536-1
+PostgreSQL-64-8-65536-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-64-8-65536-1       : collecting metrics of data generator at connection PostgreSQL-64-8-65536-1
+PostgreSQL-64-8-65536-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-64-8-65536-1       : collecting metrics of data injector at connection PostgreSQL-64-8-65536-1
+PostgreSQL-64-8-65536-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+done
+PostgreSQL-64-8-65536         : has running benchmarks
+PostgreSQL-64-8-65536-1       : showing benchmarker times
+PostgreSQL-64-8-65536-1       : benchmarker timespan (start to end single container [s]) = 179
+PostgreSQL-64-8-65536-1       : benchmarker times (start/end per pod and container) = [(1747146175, 1747146328)]
+PostgreSQL-64-8-65536-1       : found and updated times {'benchmarker': [(1747146175, 1747146328)]}
+PostgreSQL-64-8-65536-1       : collecting execution metrics of SUT at connection PostgreSQL-64-8-65536-1
+PostgreSQL-64-8-65536-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-64-8-65536-1       : collecting metrics of benchmarker at connection PostgreSQL-64-8-65536-1
+PostgreSQL-64-8-65536-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-64-8-65536         : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-64-8-65536         : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '10', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 8192, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'f', 'YCSB_ROWS': 10000000, 'YCSB_OPERATIONS': 1250000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram'}
+PostgreSQL-64-8-65536-2       : start benchmarking
+PostgreSQL-64-8-65536         : benchmarking results in folder /home/perdelt/benchmarks/1747145586
+- waiting 10s -               : done
+found
+PostgreSQL-64-8-65536-2       : collecting loading metrics of SUT at connection PostgreSQL-64-8-65536-2
+PostgreSQL-64-8-65536-2       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-64-8-65536-2       : collecting metrics of data generator at connection PostgreSQL-64-8-65536-2
+PostgreSQL-64-8-65536-2       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-64-8-65536-2       : collecting metrics of data injector at connection PostgreSQL-64-8-65536-2
+PostgreSQL-64-8-65536-2       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+done
+PostgreSQL-64-8-65536         : has running benchmarks
+PostgreSQL-64-8-65536-2       : showing benchmarker times
+PostgreSQL-64-8-65536-2       : benchmarker timespan (start to end single container [s]) = 183
+PostgreSQL-64-8-65536-2       : benchmarker times (start/end per pod and container) = [(1747146406, 1747146559), (1747146405, 1747146559), (1747146406, 1747146559), (1747146406, 1747146559), (1747146405, 1747146559), (1747146406, 1747146559), (1747146405, 1747146558), (1747146406, 1747146559)]
+PostgreSQL-64-8-65536-2       : found and updated times {'benchmarker': [(1747146406, 1747146559), (1747146405, 1747146559), (1747146406, 1747146559), (1747146406, 1747146559), (1747146405, 1747146559), (1747146406, 1747146559), (1747146405, 1747146558), (1747146406, 1747146559)]}
+PostgreSQL-64-8-65536-2       : collecting execution metrics of SUT at connection PostgreSQL-64-8-65536-2
+PostgreSQL-64-8-65536-2       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-64-8-65536-2       : collecting metrics of benchmarker at connection PostgreSQL-64-8-65536-2
+PostgreSQL-64-8-65536-2       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-64-8-65536-1747145586(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-64-8-65536         : can be stopped
+Experiment                    : ends at 2025-05-13 16:30:23.060685 (11338786.531234706) - 1037.20s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow not complete
+
+## Show Summary
+
+### Workload
+YCSB SF=10
+    Type: ycsb
+    Duration: 1038s 
+    Code: 1747145586
+    YCSB tool runs the benchmark.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'F'.
+    Number of rows to insert is 10000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.5.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:255182684
+    datadisk:23604
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1747145586
+PostgreSQL-64-8-65536-2 uses docker image postgres:16.1
+    RAM:541008592896
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-134-generic
+    node:cl-worker11
+    disk:259506416
+    datadisk:27827
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1747145586
+
+### Loading
+                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-8-65536               1       64   65536          8           0                   33640.715192               299138.0            10000000                              6313.0
+
+### Execution
+                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)  [READ-MODIFY-WRITE].Operations  [READ-MODIFY-WRITE].99thPercentileLatency(us)
+PostgreSQL-64-8-65536-1               1       64   65536          1           0                       65355.21               153010.0          10000000                             682.0             5000417                              1286.0                         5000417                                         1717.0
+PostgreSQL-64-8-65536-2               1       64   65536          8           0                       65429.72               152852.0          10000000                             579.0             4998723                              1019.0                         4998723                                         1578.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-64-8-65536 - Pods [[8, 1]]
+
+#### Planned
+DBMS PostgreSQL-64-8-65536 - Pods [[1, 8]]
+
+### Ingestion - SUT
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1      1751.8     5.78         14.75                18.44
+PostgreSQL-64-8-65536-2      1751.8     5.78         14.75                18.44
+
+### Ingestion - Loader
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1      986.67     1.51          4.62                 4.64
+PostgreSQL-64-8-65536-2      986.67     1.51          4.62                 4.64
+
+### Execution - SUT
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1     2347.29     0.00         16.98                22.04
+PostgreSQL-64-8-65536-2     2217.07     8.05         17.63                23.25
+
+### Execution - Benchmarker
+                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-65536-1      949.85     7.74           0.6                 0.61
+PostgreSQL-64-8-65536-2      856.12     3.97           5.2                 5.22
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

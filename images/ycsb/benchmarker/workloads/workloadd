@@ -26,8 +26,14 @@
 # which orders items purely by time, and demands the latest, is very different than 
 # workload here (which we believe is more typical of how people build systems.)
 
-recordcount=ROWS_AFTER_BENCHMARK
+# works for 1 pod:
+recordcount=YCSB_ROWS
 operationcount=YCSB_OPERATIONS
+
+# does not work even for 1 pod:
+#recordcount=ROWS_AFTER_BENCHMARK
+#operationcount=YCSB_OPERATIONS
+
 workload=site.ycsb.workloads.CoreWorkload
 
 readallfields=true
@@ -39,10 +45,13 @@ insertproportion=0.05
 
 requestdistribution=latest
 
-insertstart=ROW_START_AFTER_LOADING
-insertcount=ROW_PART_AFTER_LOADING
+# comment out: works for 1 pod (does not work otherwise)
+#insertstart=ROW_START_AFTER_LOADING
+#insertcount=ROW_PART_AFTER_LOADING
 
 threadcount=YCSB_THREADCOUNT
 target=YCSB_TARGET
 status.interval=YCSB_STATUS_INTERVAL
 measurementtype=YCSB_MEASUREMENT_TYPE
+
+insertorder=YCSB_INSERTORDER

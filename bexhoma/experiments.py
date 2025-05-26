@@ -2771,6 +2771,7 @@ class ycsb(default):
         ycsb_rows = int(SF)*1000000 # 1kb each, that is SF is size in GB
         ycsb_operations = int(SFO)*1000000
         target_base = int(args.target_base)
+        extra_insert_order = args.extra_insert_order                 # insert keys by ordering or by hashed value
         batchsize = args.scaling_batchsize
         num_loading_target_factors = self.get_parameter_as_list('num_loading_target_factors')
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
@@ -2796,6 +2797,7 @@ class ycsb(default):
         # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
         self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
+        self.workload['info'] = self.workload['info']+"\nOrdering of inserts is {}.".format(extra_insert_order)
         self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
         self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
         #self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
@@ -2948,6 +2950,7 @@ class ycsb(default):
             print(df_aggregated_loaded)
             test_loading = True
         #####################
+        contains_failed = False
         df = self.evaluator.get_df_benchmarking()
         if not df.empty:
             print("\n### Execution")
@@ -2958,11 +2961,25 @@ class ycsb(default):
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions"]].copy()
-            columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+            columns = [
+            "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
+            "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
+            "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
+            "[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)",
+            "[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)",
+            "[READ-MODIFY-WRITE].Operations","[READ-MODIFY-WRITE].99thPercentileLatency(us)","[READ-MODIFY-WRITE].99thPercentileLatency(us)",
+            "[INSERT-FAILED].Operations","[INSERT-FAILED].99thPercentileLatency(us)","[INSERT-FAILED].99thPercentileLatency(us)",
+            "[READ-FAILED].Operations","[READ-FAILED].99thPercentileLatency(us)","[READ-FAILED].99thPercentileLatency(us)",
+            "[UPDATE-FAILED].Operations","[UPDATE-FAILED].99thPercentileLatency(us)","[UPDATE-FAILED].99thPercentileLatency(us)",
+            "[SCAN-FAILED].Operations","[SCAN-FAILED].99thPercentileLatency(us)","[SCAN-FAILED].99thPercentileLatency(us)",
+            "[READ-MODIFY-WRITE-FAILED].Operations","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)",
+            ]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             print(df_aggregated_reduced)
+            #print(df_aggregated_reduced.columns)
+            contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
         print("\n### Workflow")
@@ -2988,6 +3005,15 @@ class ycsb(default):
             print("TEST passed: Workflow as planned")
         else:
             print("TEST failed: Workflow not as planned")
+        silent = False
+        if contains_failed:
+            if not silent:
+                print("TEST failed: {} contains FAILED column".format("Result"))
+            return False
+        else:
+            if not silent:
+                print("TEST passed: {} contains no FAILED column".format("Result"))
+            return True
     def show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
