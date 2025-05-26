@@ -177,18 +177,24 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
+doc_ycsb_yugabytedb_1.log
 ```bash
 ## Show Summary
 
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 562s 
-    Code: 1734625544
+    Duration: 603s 
+    Code: 1743090641
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['YugabyteDB'].
     Import is handled by 8 processes (pods).
@@ -202,44 +208,26 @@ YCSB SF=1
 
 ### Connections
 YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249253840
-    datadisk:39428
+    disk:184427192
     requests_cpu:4
     requests_memory:16Gi
-    worker 0
-        RAM:1081966526464
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1067-nvidia
-        node:cl-worker28
-        disk:439206828
-    worker 1
-        RAM:540587499520
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-126-generic
-        node:cl-worker22
-        disk:122936080
-    worker 2
-        RAM:1081965555712
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1067-nvidia
-        node:cl-worker27
-        disk:584264864
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1743090641
 
 ### Loading
-                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-YugabyteDB-64-8-65536               1       64   65536          8                   28456.559524                35509.0             1000000                             15762.0
+                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+YugabyteDB-64-8-65536               1       64   65536          8           0                   28169.468138                35702.0             1000000                             18097.0
 
 ### Execution
-                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1                       31861.75               313856.0           4998066                           37663.0             5001934                             43039.0
+                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+YugabyteDB-64-8-65536-1               1       64   65536          1           0                       32870.73               304222.0           5001556                           28431.0             4998444                             40031.0
 
 ### Workflow
 
@@ -251,19 +239,19 @@ DBMS YugabyteDB-64-8-65536 - Pods [[1]]
 
 ### Ingestion - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1      925.63     4.64          1.75                 5.32
+YugabyteDB-64-8-65536-1      835.36     4.79          2.08                 6.16
 
 ### Ingestion - Loader
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1        0.09        0          0.01                 0.01
+YugabyteDB-64-8-65536-1         0.1        0          0.01                 0.01
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1     13499.7    15.99          4.92                16.26
+YugabyteDB-64-8-65536-1    13538.38     16.0          4.78                16.18
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1      932.99      3.2          0.61                 0.61
+YugabyteDB-64-8-65536-1       920.3     3.53          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -316,18 +304,24 @@ nohup python ycsb.py -ms 1 -tr \
 
 This skips loading (`-sl`), as data is already present in the database.
 
+doc_ycsb_yugabytedb_2.log
 ```bash
 ## Show Summary
 
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 511s 
-    Code: 1734626144
+    Duration: 485s 
+    Code: 1743091301
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['YugabyteDB'].
     Import is handled by 8 processes (pods).
@@ -342,40 +336,22 @@ YCSB SF=1
 
 ### Connections
 YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249253676
-    datadisk:39268
+    disk:184427020
     requests_cpu:4
     requests_memory:16Gi
-    worker 0
-        RAM:1081966526464
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1067-nvidia
-        node:cl-worker28
-        disk:441407636
-    worker 1
-        RAM:540587499520
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-126-generic
-        node:cl-worker22
-        disk:125219072
-    worker 2
-        RAM:1081965555712
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1067-nvidia
-        node:cl-worker27
-        disk:586475888
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1743091301
 
 ### Execution
-                         experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1                       31287.55               319616.0           4999554                           39551.0             5000446                             43999.0
+                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+YugabyteDB-64-8-65536-1               1       64   65536          1           0                       32804.31               304838.0           4999231                           27887.0             5000769                             39999.0
 
 ### Workflow
 
@@ -387,11 +363,11 @@ DBMS YugabyteDB-64-8-65536 - Pods [[1]]
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1    13772.52     16.0          7.23                23.99
+YugabyteDB-64-8-65536-1    13353.73    15.98          7.14                23.56
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1      982.63      3.4          0.61                 0.61
+YugabyteDB-64-8-65536-1      969.47     3.46          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -459,6 +435,7 @@ If YugabyteDB is restarted or data is delete somehow, this PVC information will 
 
 This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
 
+doc_ycsb_yugabytedb_3.log
 ```bash
 ## Show Summary
 
@@ -648,14 +625,15 @@ nohup python benchbase.py -ms 1 -tr \
 
 yields
 
+doc_benchbase_yugabytedb_1.log
 ```bash
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=16 (warehouses for TPC-C)
     Type: benchbase
-    Duration: 1075s 
-    Code: 1742826989
+    Duration: 1109s 
+    Code: 1743093070
     Benchbase runs the benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -677,88 +655,88 @@ YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:154012004
+    disk:184427364
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:788016396
-    worker 1
         RAM:1081966518272
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker28
-        disk:620781964
+        disk:656224716
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:801057352
     worker 2
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:138730872
+        disk:139746800
     eval_parameters
-                code:1742826989
+                code:1743093070
 YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:154012004
+    disk:184427364
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     worker 0
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:788780536
-    worker 1
         RAM:1081966518272
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1073-nvidia
         node:cl-worker28
-        disk:621515396
+        disk:657142496
+    worker 1
+        RAM:1081965510656
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1073-nvidia
+        node:cl-worker27
+        disk:801979560
     worker 2
         RAM:540587544576
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:5.15.0-134-generic
         node:cl-worker22
-        disk:139424796
+        disk:140483168
     eval_parameters
-                code:1742826989
+                code:1743093070
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-YugabyteDB-1-1-1024-1               1         16   16384          1  300.0                        375.56                                                     105592.0                                              42584.0
-YugabyteDB-1-1-1024-2               1         16   16384          2  300.0                        327.49                                                     120228.0                                              48839.0
+YugabyteDB-1-1-1024-1               1         16   16384          1  300.0                        433.85                                                      88992.0                                              36862.0
+YugabyteDB-1-1-1024-2               1         16   16384          2  300.0                        380.94                                                     105164.0                                              41982.5
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
+DBMS YugabyteDB-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
 DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-YugabyteDB-1-1-1024-1      205.0        1.0   1.0                  280.97561
-YugabyteDB-1-1-1024-2      205.0        1.0   2.0                  280.97561
+YugabyteDB-1-1-1024-1      225.0        1.0   1.0                      256.0
+YugabyteDB-1-1-1024-2      225.0        1.0   2.0                      256.0
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -803,6 +781,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 yields
 
+doc_benchbase_yugabytedb_2.log
 ```bash
 ## Show Summary
 

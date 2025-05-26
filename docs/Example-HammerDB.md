@@ -95,6 +95,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
+doc_hammerdb_testcase_scale.log
 ```bash
 ## Show Summary
 
@@ -311,6 +312,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 If monitoring is activated, the summary also contains a section like
 
+doc_hammerdb_testcase_monitoring.log
 ```bash
 ## Show Summary
 
@@ -421,7 +423,6 @@ Example:
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
   -xlat \
-  -sd 5 \
   -dbms PostgreSQL \
   -nlt 8 \
   -nbp 1 \
@@ -429,7 +430,6 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_storage.log &
 ```
 
@@ -451,8 +451,8 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-
-```bash
+doc_hammerdb_testcase_storage.log
+```
 ## Show Summary
 
 ### Workload
@@ -559,6 +559,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 ## Evaluate Results
 
+doc_hammerdb_testcase_keytime.log
 ```bash
 ## Show Summary
 
