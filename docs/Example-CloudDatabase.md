@@ -186,12 +186,19 @@ doc_ycsb_databaseservice_1.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 354s 
-    Code: 1734663459
+    Duration: 384s 
+    Code: 1747936097
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -204,23 +211,27 @@ YCSB SF=1
 
 ### Connections
 DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249256012
-    datadisk:39348
+    disk:257037340
+    datadisk:39
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1747936097
 
 ### Loading
-                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8                   49973.150502                20251.0             1000000                             25397.0
+                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+DatabaseService-64-8-65536               1       64   65536          8           0                   48034.123385                21157.0             1000000                             25453.0
 
 ### Execution
-                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                       55202.87                18115.0            499487                            2095.0              500513                             42239.0
+                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1           0                       54507.79                18346.0            499749                            2649.0              500251                             37183.0
 
 ### Workflow
 
@@ -234,6 +245,7 @@ DBMS DatabaseService-64-8-65536 - Pods [[1]]
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column
 ```
 
 To see the summary again you can simply call `bexperiments summary -e 1730133803` with the experiment code.
@@ -284,12 +296,19 @@ doc_ycsb_databaseservice_2.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 322s 
-    Code: 1734663819
+    Duration: 442s 
+    Code: 1747936517
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.5.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
@@ -304,19 +323,23 @@ YCSB SF=1
 
 ### Connections
 DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249256004
-    datadisk:39348
+    disk:257037332
+    datadisk:39
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1747936517
 
 ### Execution
-                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                       64975.99               153903.0           4999780                            2423.0             5000220                             30719.0
+                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1           0                       58442.62               171108.0           4997830                            2379.0             5002170                             38655.0
 
 ### Workflow
 
@@ -328,12 +351,13 @@ DBMS DatabaseService-64-8-65536 - Pods [[1]]
 
 ### Execution - Benchmarker
                               CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      745.84     6.07           0.6                 0.61
+DatabaseService-64-8-65536-1      760.31     6.49           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column
 ```
 
 
@@ -401,12 +425,19 @@ doc_ycsb_databaseservice_3.log
 ### Workload
 YCSB SF=5
     Type: ycsb
-    Duration: 3718s 
-    Code: 1734700853
+    Duration: 642s 
+    Code: 1747937338
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 5000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 5000000.
+    Ordering of inserts is hashed.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.5.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
@@ -421,25 +452,29 @@ YCSB SF=5
 
 ### Connections
 DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:250060572
-    datadisk:39192
+    disk:256997988
+    datadisk:39
     volume_size:1.0G
     volume_used:36M
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1747937338
 
 ### Loading
-                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8                   34656.857878               145263.0             5000000                              6815.5
+                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+DatabaseService-64-8-65536               1       64   65536          8           0                   47204.753915               107134.0             5000000                             30085.0
 
 ### Execution
-                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                        65353.5               153014.0           4997965                             653.0             5002035                              1296.0
+                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1           0                       53778.19               185949.0           5000674                            2733.0             4999326                             42143.0
 
 ### Workflow
 
@@ -451,11 +486,11 @@ DBMS DatabaseService-64-8-65536 - Pods [[1]]
 
 ### Ingestion - Loader
                               CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      397.12     0.88           4.6                 4.62
+DatabaseService-64-8-65536-1      301.41        0          4.58                  4.6
 
 ### Execution - Benchmarker
                               CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      743.75     5.11           0.6                 0.61
+DatabaseService-64-8-65536-1      779.23     6.21           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -463,6 +498,7 @@ TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column
 ```
 
 ## YCSB Example Explained
@@ -568,14 +604,15 @@ doc_benchbase_databaseservice_1.log
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 1091s 
-    Code: 1734664810
-    Benchbase runs the benchmark.
+    Duration: 1121s 
+    Code: 1747938098
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -588,45 +625,51 @@ Benchbase Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 DatabaseService-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249256016
-    datadisk:39348
+    disk:257037332
+    datadisk:39
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1747938098
 DatabaseService-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249256020
-    datadisk:39348
+    disk:257037332
+    datadisk:39
     requests_cpu:4
     requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1747938098
 
 ### Execution
-                            experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-DatabaseService-1-1-1024-1               1         16   16384          1  300.0                       1873.16                                                      19246.0                                               8535.0
-DatabaseService-1-1-1024-2               1         16   16384          2  300.0                       1820.81                                                      21236.0                                               8782.5
-
-Warehouses: 16
+                            experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DatabaseService-1-1-1024-1               1         16   16384          1  300.0           0                       1847.76                    1839.32         0.0                                                      19729.0                                               8652.0
+DatabaseService-1-1-1024-2               1         16   16384          2  300.0           4                       1676.42                    1660.97         0.0                                                      22231.0                                               9535.5
 
 ### Workflow
 
 #### Actual
-DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
+DBMS DatabaseService-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
 DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                            time_load  terminals  pods  Imported warehouses [1/h]
-DatabaseService-1-1-1024-1      150.0        1.0   1.0                      384.0
-DatabaseService-1-1-1024-2      150.0        1.0   2.0                      384.0
+                            time_load  terminals  pods  Throughput [SF/h]
+DatabaseService-1-1-1024-1      156.0        1.0   1.0         369.230769
+DatabaseService-1-1-1024-2      156.0        1.0   2.0         369.230769
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -669,14 +712,15 @@ doc_benchbase_databaseservice_2.log
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 814s 
-    Code: 1734665950
-    Benchbase runs the benchmark.
+    Duration: 908s 
+    Code: 1747939238
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -690,32 +734,38 @@ Benchbase Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 DatabaseService-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249256028
-    datadisk:39348
+    disk:257037332
+    datadisk:39
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1747939238
 DatabaseService-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-134-generic
     node:cl-worker11
-    disk:249256028
-    datadisk:39348
+    disk:257037508
+    datadisk:39
     requests_cpu:4
     requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1747939238
 
 ### Execution
-                            experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-DatabaseService-1-1-1024-1               1         16   16384          1  300.0                       1948.43                                                      18329.0                                               8206.0
-DatabaseService-1-1-1024-2               1         16   16384          2  300.0                       1774.67                                                      21116.0                                               9008.5
-
-Warehouses: 16
+                            experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DatabaseService-1-1-1024-1               1         16   16384          1  300.0           0                       1832.74                    1824.33         0.0                                                      20419.0                                               8723.0
+DatabaseService-1-1-1024-2               1         16   16384          2  300.0           1                       1758.50                    1742.11         0.0                                                      21694.0                                               9090.0
 
 ### Workflow
 
@@ -726,9 +776,9 @@ DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
 DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                            time_load  terminals  pods  Imported warehouses [1/h]
-DatabaseService-1-1-1024-1          0          1     1                        inf
-DatabaseService-1-1-1024-2          0          1     2                        inf
+                            time_load  terminals  pods  Throughput [SF/h]
+DatabaseService-1-1-1024-1          0          1     1                inf
+DatabaseService-1-1-1024-2          0          1     2                inf
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
