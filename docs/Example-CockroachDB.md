@@ -271,7 +271,7 @@ Example:
 ```bash
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
-  -sfo 10 \
+  -sfo 1 \
   -nw 3 \
   -nwr 3 \
   --workload a \

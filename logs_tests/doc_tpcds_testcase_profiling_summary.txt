@@ -3,8 +3,8 @@
 ### Workload
 TPC-DS Data Profiling SF=10
     Type: tpcds
-    Duration: 898s 
-    Code: 1748325602
+    Duration: 808s 
+    Code: 1748410145
     We compute for all columns: Minimum, maximum, average, count, count distinct, count NULL and non NULL entries and coefficient of variation.
     This experiment compares imported TPC-DS data sets in different DBMS.
     TPC-DS (SF=10) data is loaded and benchmark is executed.
@@ -12,7 +12,7 @@ TPC-DS Data Profiling SF=10
     All instances use the same query parameters.
     Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
@@ -32,28 +32,28 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:298915504
+    disk:301206216
     datadisk:40080
     volume_size:50G
     volume_used:40G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748325602
+        code:1748410145
 MonetDB-BHT-8-2-1 uses docker image monetdb/monetdb:Aug2024
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:298915508
+    disk:301206220
     datadisk:40080
     volume_size:50G
     volume_used:40G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748325602
+        code:1748410145
 
 ### Errors (failed queries)
 No errors
@@ -63,435 +63,435 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                                    MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1
-statistics_tab about call_center.cc_call_center_sk - all                            63.45              25.27
-statistics_tab about call_center.cc_call_center_id - all                            84.51               5.89
-statistics_tab about call_center.cc_rec_start_date - all                            18.83               6.21
-statistics_tab about call_center.cc_rec_end_date - all                              25.63               5.11
-statistics_tab about call_center.cc_closed_date_sk - all                            27.05               3.54
-statistics_tab about call_center.cc_open_date_sk - all                              44.72               3.23
-statistics_tab about call_center.cc_name - all                                      38.16               5.19
-statistics_tab about call_center.cc_class - all                                     74.30               4.81
-statistics_tab about call_center.cc_employees - all                                 35.57               2.88
-statistics_tab about call_center.cc_sq_ft - all                                     22.64               3.18
-statistics_tab about call_center.cc_hours - all                                     23.91               5.81
-statistics_tab about call_center.cc_manager - all                                   36.58               5.19
-statistics_tab about call_center.cc_mkt_id - all                                    15.84               3.26
-statistics_tab about call_center.cc_mkt_class - all                                 64.77               4.93
-statistics_tab about call_center.cc_mkt_desc - all                                 100.42               4.79
-statistics_tab about call_center.cc_market_manager - all                            39.44               5.00
-statistics_tab about call_center.cc_division - all                                  66.75               2.80
-statistics_tab about call_center.cc_division_name - all                             38.27               4.92
-statistics_tab about call_center.cc_company - all                                   31.23               2.94
-statistics_tab about call_center.cc_company_name - all                              61.64               4.85
-statistics_tab about call_center.cc_street_number - all                             27.50               4.66
-statistics_tab about call_center.cc_street_name - all                               69.65               4.92
-statistics_tab about call_center.cc_street_type - all                               47.05               4.99
-statistics_tab about call_center.cc_suite_number - all                              83.42               4.60
-statistics_tab about call_center.cc_city - all                                     289.15               5.44
-statistics_tab about call_center.cc_county - all                                    54.53               4.98
-statistics_tab about call_center.cc_state - all                                     32.53               4.96
-statistics_tab about call_center.cc_zip - all                                       35.32               5.77
-statistics_tab about call_center.cc_country - all                                   64.46               5.11
-statistics_tab about call_center.cc_gmt_offset - all                                38.39               4.29
-statistics_tab about call_center.cc_tax_percentage - all                            49.08               3.71
-statistics_tab about catalog_page.cp_catalog_page_sk - all                         126.32               3.96
-statistics_tab about catalog_page.cp_catalog_page_id - all                         206.39               6.74
-statistics_tab about catalog_page.cp_start_date_sk - all                            42.09               4.68
-statistics_tab about catalog_page.cp_end_date_sk - all                              20.13               4.16
-statistics_tab about catalog_page.cp_department - all                              352.86               6.73
-statistics_tab about catalog_page.cp_catalog_number - all                           29.82               4.09
-statistics_tab about catalog_page.cp_catalog_page_number - all                      16.69               3.95
-statistics_tab about catalog_page.cp_description - all                             128.38               9.64
-statistics_tab about catalog_page.cp_type - all                                     70.98               6.41
-statistics_tab about catalog_returns.cr_returned_date_sk - all                     124.90              65.63
-statistics_tab about catalog_returns.cr_returned_time_sk - all                     385.33              98.92
-statistics_tab about catalog_returns.cr_item_sk - all                              164.45              96.04
-statistics_tab about catalog_returns.cr_refunded_customer_sk - all                 301.67             115.56
-statistics_tab about catalog_returns.cr_refunded_cdemo_sk - all                    424.39             164.18
-statistics_tab about catalog_returns.cr_refunded_hdemo_sk - all                    158.20              65.39
-statistics_tab about catalog_returns.cr_refunded_addr_sk - all                     207.93              97.54
-statistics_tab about catalog_returns.cr_returning_customer_sk - all                272.27             132.38
-statistics_tab about catalog_returns.cr_returning_cdemo_sk - all                   351.84             200.58
-statistics_tab about catalog_returns.cr_returning_hdemo_sk - all                   175.43              65.33
-statistics_tab about catalog_returns.cr_returning_addr_sk - all                    214.02              98.64
-statistics_tab about catalog_returns.cr_call_center_sk - all                       406.25              57.35
-statistics_tab about catalog_returns.cr_catalog_page_sk - all                      202.16              61.07
-statistics_tab about catalog_returns.cr_ship_mode_sk - all                         136.87              61.21
-statistics_tab about catalog_returns.cr_warehouse_sk - all                         111.80              58.20
-statistics_tab about catalog_returns.cr_reason_sk - all                            303.06              63.85
-statistics_tab about catalog_returns.cr_order_number - all                         162.12              76.49
-statistics_tab about catalog_returns.cr_return_quantity - all                      165.45              60.58
-statistics_tab about catalog_returns.cr_return_amount - all                        191.44             113.02
-statistics_tab about catalog_returns.cr_return_tax - all                           171.35              75.20
-statistics_tab about catalog_returns.cr_return_amt_inc_tax - all                   422.03             114.37
-statistics_tab about catalog_returns.cr_fee - all                                  310.33              59.44
-statistics_tab about catalog_returns.cr_return_ship_cost - all                     238.35              96.79
-statistics_tab about catalog_returns.cr_refunded_cash - all                        203.15             103.51
-statistics_tab about catalog_returns.cr_reversed_charge - all                      154.53              85.29
-statistics_tab about catalog_returns.cr_store_credit - all                         195.30              99.03
-statistics_tab about catalog_returns.cr_net_loss - all                             216.56             100.31
-statistics_tab about catalog_sales.cs_sold_date_sk - all                          1668.59             642.14
-statistics_tab about catalog_sales.cs_sold_time_sk - all                          1930.41             731.75
-statistics_tab about catalog_sales.cs_ship_date_sk - all                          3251.02             612.76
-statistics_tab about catalog_sales.cs_bill_customer_sk - all                      2085.67             860.86
-statistics_tab about catalog_sales.cs_bill_cdemo_sk - all                         2070.20             916.40
-statistics_tab about catalog_sales.cs_bill_hdemo_sk - all                         2106.43             596.68
-statistics_tab about catalog_sales.cs_bill_addr_sk - all                          2078.11             784.80
-statistics_tab about catalog_sales.cs_ship_customer_sk - all                      1860.06             833.04
-statistics_tab about catalog_sales.cs_ship_cdemo_sk - all                         2123.86             875.46
-statistics_tab about catalog_sales.cs_ship_hdemo_sk - all                         2024.71             584.70
-statistics_tab about catalog_sales.cs_ship_addr_sk - all                          2117.58             794.25
-statistics_tab about catalog_sales.cs_call_center_sk - all                        1937.58             579.03
-statistics_tab about catalog_sales.cs_catalog_page_sk - all                       2208.67             582.62
-statistics_tab about catalog_sales.cs_ship_mode_sk - all                          1687.75             619.28
-statistics_tab about catalog_sales.cs_warehouse_sk - all                          1574.43             614.76
-statistics_tab about catalog_sales.cs_item_sk - all                               2105.89             796.93
-statistics_tab about catalog_sales.cs_promo_sk - all                              1864.29             619.70
-statistics_tab about catalog_sales.cs_order_number - all                          1903.47             855.18
-statistics_tab about catalog_sales.cs_quantity - all                              1813.11             611.83
-statistics_tab about catalog_sales.cs_wholesale_cost - all                        1670.30             642.59
-statistics_tab about catalog_sales.cs_list_price - all                            2225.29             691.94
-statistics_tab about catalog_sales.cs_sales_price - all                           2228.71             674.38
-statistics_tab about catalog_sales.cs_ext_discount_amt - all                      3346.39            1781.84
-statistics_tab about catalog_sales.cs_ext_sales_price - all                       2978.69            1910.28
-statistics_tab about catalog_sales.cs_ext_wholesale_cost - all                    2662.74            1596.99
-statistics_tab about catalog_sales.cs_ext_list_price - all                        3381.99            2420.14
-statistics_tab about catalog_sales.cs_ext_tax - all                               1544.32             833.61
-statistics_tab about catalog_sales.cs_coupon_amt - all                            2137.34             948.71
-statistics_tab about catalog_sales.cs_ext_ship_cost - all                         2289.57            1396.40
-statistics_tab about catalog_sales.cs_net_paid - all                              3133.21            1904.50
-statistics_tab about catalog_sales.cs_net_paid_inc_tax - all                      3304.83            2127.88
-statistics_tab about catalog_sales.cs_net_paid_inc_ship - all                     3090.33            1874.56
-statistics_tab about catalog_sales.cs_net_paid_inc_ship_tax - all                 3674.22            2087.77
-statistics_tab about catalog_sales.cs_net_profit - all                            3765.78            2691.74
-statistics_tab about customer.c_customer_sk - all                                   68.41              12.16
-statistics_tab about customer.c_customer_id - all                                  341.02             182.75
-statistics_tab about customer.c_current_cdemo_sk - all                             104.71              59.19
-statistics_tab about customer.c_current_hdemo_sk - all                              69.89              26.02
-statistics_tab about customer.c_current_addr_sk - all                              231.34              61.20
-statistics_tab about customer.c_first_shipto_date_sk - all                          70.45              26.56
-statistics_tab about customer.c_first_sales_date_sk - all                           84.17              27.02
-statistics_tab about customer.c_salutation - all                                   226.92              10.00
-statistics_tab about customer.c_first_name - all                                   221.26              57.54
-statistics_tab about customer.c_last_name - all                                    173.39              66.15
-statistics_tab about customer.c_preferred_cust_flag - all                          214.51              10.39
-statistics_tab about customer.c_birth_day - all                                     67.58              22.02
-statistics_tab about customer.c_birth_month - all                                   62.38              27.32
-statistics_tab about customer.c_birth_year - all                                    99.17              24.83
-statistics_tab about customer.c_birth_country - all                                 59.67              10.86
-statistics_tab about customer.c_login - all                                        213.79               8.75
-statistics_tab about customer.c_email_address - all                                672.27             196.38
-statistics_tab about customer.c_last_review_date - all                              61.76              10.65
-statistics_tab about customer_address.ca_address_sk - all                           57.66               9.72
-statistics_tab about customer_address.ca_address_id - all                          292.06              70.08
-statistics_tab about customer_address.ca_street_number - all                        50.97               8.82
-statistics_tab about customer_address.ca_street_name - all                          92.29              35.15
-statistics_tab about customer_address.ca_street_type - all                         205.68               8.98
-statistics_tab about customer_address.ca_suite_number - all                        214.38               9.13
-statistics_tab about customer_address.ca_city - all                                410.92               8.37
-statistics_tab about customer_address.ca_county - all                              141.12               8.87
-statistics_tab about customer_address.ca_state - all                                58.54              17.62
-statistics_tab about customer_address.ca_zip - all                                 139.77              30.76
-statistics_tab about customer_address.ca_country - all                             148.43               7.79
-statistics_tab about customer_address.ca_gmt_offset - all                           64.09              12.32
-statistics_tab about customer_address.ca_location_type - all                        76.13               7.42
-statistics_tab about customer_demographics.cd_demo_sk - all                        277.19              11.98
-statistics_tab about customer_demographics.cd_gender - all                          98.39              19.73
-statistics_tab about customer_demographics.cd_marital_status - all                 231.72              20.67
-statistics_tab about customer_demographics.cd_education_status - all               163.28              20.97
-statistics_tab about customer_demographics.cd_purchase_estimate - all              225.80             106.84
-statistics_tab about customer_demographics.cd_credit_rating - all                  279.53              20.83
-statistics_tab about customer_demographics.cd_dep_count - all                      428.70              75.76
-statistics_tab about customer_demographics.cd_dep_employed_count - all             292.96             100.21
-statistics_tab about customer_demographics.cd_dep_college_count - all              131.49              91.33
-statistics_tab about date_dim.d_date_sk - all                                       44.62               5.83
-statistics_tab about date_dim.d_date_id - all                                      154.23              17.83
-statistics_tab about date_dim.d_date - all                                          55.10               7.14
-statistics_tab about date_dim.d_month_seq - all                                     94.46               5.39
-statistics_tab about date_dim.d_week_seq - all                                     129.24               7.21
-statistics_tab about date_dim.d_quarter_seq - all                                  104.26               5.54
-statistics_tab about date_dim.d_year - all                                          27.26               6.67
-statistics_tab about date_dim.d_dow - all                                           33.60               5.37
-statistics_tab about date_dim.d_moy - all                                           34.23               6.38
-statistics_tab about date_dim.d_dom - all                                          100.23               6.56
-statistics_tab about date_dim.d_qoy - all                                           63.10               5.97
-statistics_tab about date_dim.d_fy_year - all                                       24.89               5.85
-statistics_tab about date_dim.d_fy_quarter_seq - all                               106.10               5.93
-statistics_tab about date_dim.d_fy_week_seq - all                                   39.31               5.10
-statistics_tab about date_dim.d_day_name - all                                      63.38               6.16
-statistics_tab about date_dim.d_quarter_name - all                                  92.13               6.17
-statistics_tab about date_dim.d_holiday - all                                      121.36               6.76
-statistics_tab about date_dim.d_weekend - all                                       56.56               6.45
-statistics_tab about date_dim.d_following_holiday - all                            120.75               6.19
-statistics_tab about date_dim.d_first_dom - all                                     40.14               5.86
-statistics_tab about date_dim.d_last_dom - all                                      33.52               6.37
-statistics_tab about date_dim.d_same_day_ly - all                                  107.27               6.13
-statistics_tab about date_dim.d_same_day_lq - all                                   56.23               6.23
-statistics_tab about date_dim.d_current_day - all                                   75.05               6.52
-statistics_tab about date_dim.d_current_week - all                                 128.60               5.87
-statistics_tab about date_dim.d_current_month - all                                 79.32               6.65
-statistics_tab about date_dim.d_current_quarter - all                               49.82              10.80
-statistics_tab about date_dim.d_current_year - all                                  98.37               6.25
-statistics_tab about dbgen_version.dv_version - all                                 64.34               4.75
-statistics_tab about dbgen_version.dv_create_date - all                             25.94               5.10
-statistics_tab about dbgen_version.dv_create_time - all                             40.23               5.42
-statistics_tab about dbgen_version.dv_cmdline_args - all                           101.68               5.61
-statistics_tab about household_demographics.hd_demo_sk - all                        72.97               3.84
-statistics_tab about household_demographics.hd_income_band_sk - all                 18.39               3.49
-statistics_tab about household_demographics.hd_buy_potential - all                 334.42               5.05
-statistics_tab about household_demographics.hd_dep_count - all                      21.85               3.23
-statistics_tab about household_demographics.hd_vehicle_count - all                  16.88               3.57
-statistics_tab about income_band.ib_income_band_sk - all                           232.71               3.51
-statistics_tab about income_band.ib_lower_bound - all                               86.36               3.28
-statistics_tab about income_band.ib_upper_bound - all                               41.94               3.11
-statistics_tab about inventory.inv_date_sk - all                                 15528.54            5356.14
-statistics_tab about inventory.inv_item_sk - all                                 17476.30            5438.38
-statistics_tab about inventory.inv_warehouse_sk - all                            15354.57            5304.41
-statistics_tab about inventory.inv_quantity_on_hand - all                        18162.04            5613.06
-statistics_tab about item.i_item_sk - all                                          192.84               6.06
-statistics_tab about item.i_item_id - all                                           95.74              21.39
-statistics_tab about item.i_rec_start_date - all                                    47.23               8.08
-statistics_tab about item.i_rec_end_date - all                                     113.28               8.62
-statistics_tab about item.i_item_desc - all                                        296.48              63.99
-statistics_tab about item.i_current_price - all                                     32.23               7.20
-statistics_tab about item.i_wholesale_cost - all                                    24.20               7.17
-statistics_tab about item.i_brand_id - all                                          76.37               8.23
-statistics_tab about item.i_brand - all                                            146.87               6.62
-statistics_tab about item.i_class_id - all                                          20.18               7.20
-statistics_tab about item.i_class - all                                             98.00               6.90
-statistics_tab about item.i_category_id - all                                       54.16               6.72
-statistics_tab about item.i_category - all                                          74.97              16.53
-statistics_tab about item.i_manufact_id - all                                       47.63               7.32
-statistics_tab about item.i_manufact - all                                          77.76               6.86
-statistics_tab about item.i_size - all                                             129.64               7.01
-statistics_tab about item.i_formulation - all                                      116.94              29.37
-statistics_tab about item.i_color - all                                             43.04               6.91
-statistics_tab about item.i_units - all                                             76.20               6.24
-statistics_tab about item.i_container - all                                        181.78               5.86
-statistics_tab about item.i_manager_id - all                                        52.67               7.06
-statistics_tab about item.i_product_name - all                                     135.83              34.88
-statistics_tab about promotion.p_promo_sk - all                                     27.19               2.89
-statistics_tab about promotion.p_promo_id - all                                    124.35               4.89
-statistics_tab about promotion.p_start_date_sk - all                                56.70               2.87
-statistics_tab about promotion.p_end_date_sk - all                                  31.38               3.05
-statistics_tab about promotion.p_item_sk - all                                      20.13               2.84
-statistics_tab about promotion.p_cost - all                                         33.69               4.21
-statistics_tab about promotion.p_response_target - all                              17.26               3.54
-statistics_tab about promotion.p_promo_name - all                                  166.10               5.02
-statistics_tab about promotion.p_channel_dmail - all                                64.70               5.34
-statistics_tab about promotion.p_channel_email - all                               243.86               5.06
-statistics_tab about promotion.p_channel_catalog - all                              67.45               4.66
-statistics_tab about promotion.p_channel_tv - all                                   79.62               5.33
-statistics_tab about promotion.p_channel_radio - all                                70.52               5.10
-statistics_tab about promotion.p_channel_press - all                                79.46               5.56
-statistics_tab about promotion.p_channel_event - all                                61.34               5.48
-statistics_tab about promotion.p_channel_demo - all                                253.92               5.52
-statistics_tab about promotion.p_channel_details - all                             168.26               5.33
-statistics_tab about promotion.p_purpose - all                                      67.12               6.72
-statistics_tab about promotion.p_discount_active - all                              34.18               5.76
-statistics_tab about reason.r_reason_sk - all                                       35.20               3.10
-statistics_tab about reason.r_reason_id - all                                      203.78               5.06
-statistics_tab about reason.r_reason_desc - all                                     56.53               6.52
-statistics_tab about ship_mode.sm_ship_mode_sk - all                                50.04               4.23
-statistics_tab about ship_mode.sm_ship_mode_id - all                                99.13               5.60
-statistics_tab about ship_mode.sm_type - all                                        90.33               5.07
-statistics_tab about ship_mode.sm_code - all                                        56.34               5.55
-statistics_tab about ship_mode.sm_carrier - all                                     54.86               5.68
-statistics_tab about ship_mode.sm_contract - all                                    84.66               4.98
-statistics_tab about store.s_store_sk - all                                         25.21               3.47
-statistics_tab about store.s_store_id - all                                        155.48               5.51
-statistics_tab about store.s_rec_start_date - all                                    8.09               4.66
-statistics_tab about store.s_rec_end_date - all                                     13.96               4.50
-statistics_tab about store.s_closed_date_sk - all                                   16.63               3.12
-statistics_tab about store.s_store_name - all                                      371.80               8.62
-statistics_tab about store.s_number_employees - all                                  5.99               3.78
-statistics_tab about store.s_floor_space - all                                      40.66               3.46
-statistics_tab about store.s_hours - all                                            48.28               5.19
-statistics_tab about store.s_manager - all                                          28.93               5.70
-statistics_tab about store.s_market_id - all                                        39.67               2.88
-statistics_tab about store.s_geography_class - all                                  75.77               4.89
-statistics_tab about store.s_market_desc - all                                      52.44               5.10
-statistics_tab about store.s_market_manager - all                                   34.77               4.41
-statistics_tab about store.s_division_id - all                                     123.95               3.10
-statistics_tab about store.s_division_name - all                                   254.96               5.63
-statistics_tab about store.s_company_id - all                                       84.10               3.77
-statistics_tab about store.s_company_name - all                                     43.16               5.86
-statistics_tab about store.s_street_number - all                                    52.78               5.15
-statistics_tab about store.s_street_name - all                                      26.97               5.01
-statistics_tab about store.s_street_type - all                                      78.54               6.04
-statistics_tab about store.s_suite_number - all                                     34.87               7.16
-statistics_tab about store.s_city - all                                             45.09               4.88
-statistics_tab about store.s_county - all                                          125.72               4.91
-statistics_tab about store.s_state - all                                            60.93               4.66
-statistics_tab about store.s_zip - all                                             145.24               4.88
-statistics_tab about store.s_country - all                                          48.11               5.07
-statistics_tab about store.s_gmt_offset - all                                       31.70               3.72
-statistics_tab about store.s_tax_precentage - all                                   41.50               3.16
-statistics_tab about store_returns.sr_returned_date_sk - all                       331.03             148.99
-statistics_tab about store_returns.sr_return_time_sk - all                         986.80             137.97
-statistics_tab about store_returns.sr_item_sk - all                                587.34             172.83
-statistics_tab about store_returns.sr_customer_sk - all                            483.55             283.34
-statistics_tab about store_returns.sr_cdemo_sk - all                               650.14             455.19
-statistics_tab about store_returns.sr_hdemo_sk - all                               311.31             124.14
-statistics_tab about store_returns.sr_addr_sk - all                                430.19             199.80
-statistics_tab about store_returns.sr_store_sk - all                               404.37             123.52
-statistics_tab about store_returns.sr_reason_sk - all                              417.75             107.71
-statistics_tab about store_returns.sr_ticket_number - all                          412.74             153.91
-statistics_tab about store_returns.sr_return_quantity - all                        311.18             114.44
-statistics_tab about store_returns.sr_return_amt - all                             449.92             231.31
-statistics_tab about store_returns.sr_return_tax - all                             372.45             139.92
-statistics_tab about store_returns.sr_return_amt_inc_tax - all                     533.15             222.43
-statistics_tab about store_returns.sr_fee - all                                    597.26             122.94
-statistics_tab about store_returns.sr_return_ship_cost - all                       556.51             188.34
-statistics_tab about store_returns.sr_refunded_cash - all                          512.77             206.26
-statistics_tab about store_returns.sr_reversed_charge - all                        688.53             173.08
-statistics_tab about store_returns.sr_store_credit - all                           483.34             177.14
-statistics_tab about store_returns.sr_net_loss - all                               711.24             214.42
-statistics_tab about store_sales.ss_sold_date_sk - all                            3225.17            1149.75
-statistics_tab about store_sales.ss_sold_time_sk - all                            3430.67            1267.56
-statistics_tab about store_sales.ss_item_sk - all                                 3364.10            1406.77
-statistics_tab about store_sales.ss_customer_sk - all                             4220.98            1780.94
-statistics_tab about store_sales.ss_cdemo_sk - all                                3893.32            1754.21
-statistics_tab about store_sales.ss_hdemo_sk - all                                3257.67            1178.38
-statistics_tab about store_sales.ss_addr_sk - all                                 4242.48            1562.23
-statistics_tab about store_sales.ss_store_sk - all                                3585.38            1152.45
-statistics_tab about store_sales.ss_promo_sk - all                                3182.10            1223.27
-statistics_tab about store_sales.ss_ticket_number - all                           3399.91            1344.79
-statistics_tab about store_sales.ss_quantity - all                                3726.29            1214.92
-statistics_tab about store_sales.ss_wholesale_cost - all                          3547.23            1256.89
-statistics_tab about store_sales.ss_list_price - all                              3720.34            1329.70
-statistics_tab about store_sales.ss_sales_price - all                             3696.62            1309.91
-statistics_tab about store_sales.ss_ext_discount_amt - all                        4040.04            1830.24
-statistics_tab about store_sales.ss_ext_sales_price - all                         5645.82            3420.94
-statistics_tab about store_sales.ss_ext_wholesale_cost - all                      5553.22            3043.89
-statistics_tab about store_sales.ss_ext_list_price - all                          7711.16            4019.82
-statistics_tab about store_sales.ss_ext_tax - all                                 3734.90            1537.74
-statistics_tab about store_sales.ss_coupon_amt - all                              4700.96            1839.49
-statistics_tab about store_sales.ss_net_paid - all                                5785.81            3178.05
-statistics_tab about store_sales.ss_net_paid_inc_tax - all                        5955.50            3671.30
-statistics_tab about store_sales.ss_net_profit - all                              7709.77            5682.20
-statistics_tab about time_dim.t_time_sk - all                                       39.48               8.08
-statistics_tab about time_dim.t_time_id - all                                      107.61              30.62
-statistics_tab about time_dim.t_time - all                                          45.85               7.56
-statistics_tab about time_dim.t_hour - all                                          99.39               6.96
-statistics_tab about time_dim.t_minute - all                                        98.20               6.58
-statistics_tab about time_dim.t_second - all                                       173.51               6.32
-statistics_tab about time_dim.t_am_pm - all                                        122.71               5.91
-statistics_tab about time_dim.t_shift - all                                        296.84               6.96
-statistics_tab about time_dim.t_sub_shift - all                                     45.61               7.01
-statistics_tab about time_dim.t_meal_time - all                                    200.92               7.20
-statistics_tab about warehouse.w_warehouse_sk - all                                 17.03               3.66
-statistics_tab about warehouse.w_warehouse_id - all                                108.09               4.66
-statistics_tab about warehouse.w_warehouse_name - all                              124.95               5.45
-statistics_tab about warehouse.w_warehouse_sq_ft - all                              61.57               3.34
-statistics_tab about warehouse.w_street_number - all                               191.26               5.34
-statistics_tab about warehouse.w_street_name - all                                  50.93              10.35
-statistics_tab about warehouse.w_street_type - all                                  33.07               5.01
-statistics_tab about warehouse.w_suite_number - all                                 40.79               4.94
-statistics_tab about warehouse.w_city - all                                         89.33               5.49
-statistics_tab about warehouse.w_county - all                                       75.80               4.56
-statistics_tab about warehouse.w_state - all                                        36.11               4.97
-statistics_tab about warehouse.w_zip - all                                         106.94               4.98
-statistics_tab about warehouse.w_country - all                                      26.58               4.90
-statistics_tab about warehouse.w_gmt_offset - all                                  114.36               3.26
-statistics_tab about web_page.wp_web_page_sk - all                                  30.85               3.03
-statistics_tab about web_page.wp_web_page_id - all                                  63.85               5.03
-statistics_tab about web_page.wp_rec_start_date - all                               22.26               4.67
-statistics_tab about web_page.wp_rec_end_date - all                                  7.66               5.73
-statistics_tab about web_page.wp_creation_date_sk - all                             37.41               3.09
-statistics_tab about web_page.wp_access_date_sk - all                                5.90               2.92
-statistics_tab about web_page.wp_autogen_flag - all                                 85.52               4.68
-statistics_tab about web_page.wp_customer_sk - all                                  19.95               3.72
-statistics_tab about web_page.wp_url - all                                         128.26               5.24
-statistics_tab about web_page.wp_type - all                                         42.35               5.13
-statistics_tab about web_page.wp_char_count - all                                   69.63               3.13
-statistics_tab about web_page.wp_link_count - all                                    6.85               2.84
-statistics_tab about web_page.wp_image_count - all                                  36.87               2.90
-statistics_tab about web_page.wp_max_ad_count - all                                 17.97               3.04
-statistics_tab about web_returns.wr_returned_date_sk - all                         114.73              37.13
-statistics_tab about web_returns.wr_returned_time_sk - all                         108.51              40.42
-statistics_tab about web_returns.wr_item_sk - all                                   89.56              45.69
-statistics_tab about web_returns.wr_refunded_customer_sk - all                     110.38              55.95
-statistics_tab about web_returns.wr_refunded_cdemo_sk - all                        194.95              82.33
-statistics_tab about web_returns.wr_refunded_hdemo_sk - all                         90.42              33.64
-statistics_tab about web_returns.wr_refunded_addr_sk - all                         130.03              54.25
-statistics_tab about web_returns.wr_returning_customer_sk - all                    128.02              56.80
-statistics_tab about web_returns.wr_returning_cdemo_sk - all                       172.61              87.45
-statistics_tab about web_returns.wr_returning_hdemo_sk - all                        94.42              32.94
-statistics_tab about web_returns.wr_returning_addr_sk - all                        128.19              49.13
-statistics_tab about web_returns.wr_web_page_sk - all                              168.47              29.60
-statistics_tab about web_returns.wr_reason_sk - all                                124.92              43.24
-statistics_tab about web_returns.wr_order_number - all                              99.99              27.81
-statistics_tab about web_returns.wr_return_quantity - all                          101.39              31.54
-statistics_tab about web_returns.wr_return_amt - all                               153.23              58.45
-statistics_tab about web_returns.wr_return_tax - all                               137.93              38.22
-statistics_tab about web_returns.wr_return_amt_inc_tax - all                       164.10              65.48
-statistics_tab about web_returns.wr_fee - all                                      288.41              32.15
-statistics_tab about web_returns.wr_return_ship_cost - all                         213.61              56.35
-statistics_tab about web_returns.wr_refunded_cash - all                            113.58              51.39
-statistics_tab about web_returns.wr_reversed_charge - all                          141.07              50.31
-statistics_tab about web_returns.wr_account_credit - all                           128.79              47.68
-statistics_tab about web_returns.wr_net_loss - all                                 123.13              51.10
-statistics_tab about web_sales.ws_sold_date_sk - all                              1456.93             298.05
-statistics_tab about web_sales.ws_sold_time_sk - all                               709.41             349.01
-statistics_tab about web_sales.ws_ship_date_sk - all                              1152.64             286.21
-statistics_tab about web_sales.ws_item_sk - all                                    737.99             351.47
-statistics_tab about web_sales.ws_bill_customer_sk - all                           813.63             404.03
-statistics_tab about web_sales.ws_bill_cdemo_sk - all                             1333.50             423.31
-statistics_tab about web_sales.ws_bill_hdemo_sk - all                             1071.19             330.57
-statistics_tab about web_sales.ws_bill_addr_sk - all                              1251.45             384.43
-statistics_tab about web_sales.ws_ship_customer_sk - all                          1188.26             404.85
-statistics_tab about web_sales.ws_ship_cdemo_sk - all                              854.55             468.25
-statistics_tab about web_sales.ws_ship_hdemo_sk - all                              719.75             314.61
-statistics_tab about web_sales.ws_ship_addr_sk - all                              1139.33             378.91
-statistics_tab about web_sales.ws_web_page_sk - all                               1111.52             312.94
-statistics_tab about web_sales.ws_web_site_sk - all                                922.97             289.11
-statistics_tab about web_sales.ws_ship_mode_sk - all                              1008.08             310.80
-statistics_tab about web_sales.ws_warehouse_sk - all                               954.37             332.11
-statistics_tab about web_sales.ws_promo_sk - all                                   647.76             308.42
-statistics_tab about web_sales.ws_order_number - all                               583.41             253.24
-statistics_tab about web_sales.ws_quantity - all                                  1120.19             308.31
-statistics_tab about web_sales.ws_wholesale_cost - all                             694.44             302.59
-statistics_tab about web_sales.ws_list_price - all                                 752.48             337.20
-statistics_tab about web_sales.ws_sales_price - all                                886.38             314.08
-statistics_tab about web_sales.ws_ext_discount_amt - all                          1706.22             850.21
-statistics_tab about web_sales.ws_ext_sales_price - all                           1556.26             860.59
-statistics_tab about web_sales.ws_ext_wholesale_cost - all                        1361.97             765.00
-statistics_tab about web_sales.ws_ext_list_price - all                            1711.67            1307.70
-statistics_tab about web_sales.ws_ext_tax - all                                   1051.68             391.78
-statistics_tab about web_sales.ws_coupon_amt - all                                1021.52             387.81
-statistics_tab about web_sales.ws_ext_ship_cost - all                             1632.42             634.26
-statistics_tab about web_sales.ws_net_paid - all                                  1463.10             804.00
-statistics_tab about web_sales.ws_net_paid_inc_tax - all                          1911.86             916.61
-statistics_tab about web_sales.ws_net_paid_inc_ship - all                         1365.19            1020.93
-statistics_tab about web_sales.ws_net_paid_inc_ship_tax - all                     1328.35            1017.54
-statistics_tab about web_sales.ws_net_profit - all                                1691.80            1304.24
-statistics_tab about web_site.web_site_sk - all                                    130.03               3.53
-statistics_tab about web_site.web_site_id - all                                     53.09               5.16
-statistics_tab about web_site.web_rec_start_date - all                              38.36               4.68
-statistics_tab about web_site.web_rec_end_date - all                                32.44               5.44
-statistics_tab about web_site.web_name - all                                        53.18               4.94
-statistics_tab about web_site.web_open_date_sk - all                                16.59               3.19
-statistics_tab about web_site.web_close_date_sk - all                              106.66               3.03
-statistics_tab about web_site.web_class - all                                       43.66               4.86
-statistics_tab about web_site.web_manager - all                                    115.10               5.81
-statistics_tab about web_site.web_mkt_id - all                                      12.39               2.82
-statistics_tab about web_site.web_mkt_class - all                                  147.50               5.58
-statistics_tab about web_site.web_mkt_desc - all                                    79.36               5.08
-statistics_tab about web_site.web_market_manager - all                              74.65               5.72
-statistics_tab about web_site.web_company_id - all                                  68.89               3.53
-statistics_tab about web_site.web_company_name - all                               330.56               4.96
-statistics_tab about web_site.web_street_number - all                              206.24               5.31
-statistics_tab about web_site.web_street_name - all                                 49.25               5.41
-statistics_tab about web_site.web_street_type - all                                 22.74               5.66
-statistics_tab about web_site.web_suite_number - all                                71.81               5.23
-statistics_tab about web_site.web_city - all                                       112.83               5.09
-statistics_tab about web_site.web_county - all                                     123.62               5.00
-statistics_tab about web_site.web_state - all                                       95.76               4.71
-statistics_tab about web_site.web_zip - all                                         90.14               7.48
-statistics_tab about web_site.web_country - all                                     42.84               5.13
-statistics_tab about web_site.web_gmt_offset - all                                  23.93               2.94
-statistics_tab about web_site.web_tax_percentage - all                              26.92               3.24
+statistics_tab about call_center.cc_call_center_sk - all                           112.70              39.00
+statistics_tab about call_center.cc_call_center_id - all                            87.18               5.92
+statistics_tab about call_center.cc_rec_start_date - all                            11.38               5.37
+statistics_tab about call_center.cc_rec_end_date - all                              40.11               5.51
+statistics_tab about call_center.cc_closed_date_sk - all                            22.57               3.09
+statistics_tab about call_center.cc_open_date_sk - all                              37.15               3.38
+statistics_tab about call_center.cc_name - all                                      69.24               5.08
+statistics_tab about call_center.cc_class - all                                     64.64               5.96
+statistics_tab about call_center.cc_employees - all                                 63.17               3.71
+statistics_tab about call_center.cc_sq_ft - all                                     15.07               3.11
+statistics_tab about call_center.cc_hours - all                                     66.14               5.53
+statistics_tab about call_center.cc_manager - all                                   30.50               5.25
+statistics_tab about call_center.cc_mkt_id - all                                    16.62               3.32
+statistics_tab about call_center.cc_mkt_class - all                                 50.87               5.68
+statistics_tab about call_center.cc_mkt_desc - all                                  55.90               5.18
+statistics_tab about call_center.cc_market_manager - all                            49.94               5.23
+statistics_tab about call_center.cc_division - all                                  29.09               3.96
+statistics_tab about call_center.cc_division_name - all                             33.94               6.73
+statistics_tab about call_center.cc_company - all                                   54.65               3.97
+statistics_tab about call_center.cc_company_name - all                              67.04               5.51
+statistics_tab about call_center.cc_street_number - all                             69.50               5.11
+statistics_tab about call_center.cc_street_name - all                               60.74               5.21
+statistics_tab about call_center.cc_street_type - all                               22.82               5.29
+statistics_tab about call_center.cc_suite_number - all                              38.82               5.58
+statistics_tab about call_center.cc_city - all                                      59.42               5.14
+statistics_tab about call_center.cc_county - all                                    32.95               4.72
+statistics_tab about call_center.cc_state - all                                    130.31               5.96
+statistics_tab about call_center.cc_zip - all                                       44.41               5.96
+statistics_tab about call_center.cc_country - all                                   14.84               5.47
+statistics_tab about call_center.cc_gmt_offset - all                                20.89               3.59
+statistics_tab about call_center.cc_tax_percentage - all                            12.22               3.68
+statistics_tab about catalog_page.cp_catalog_page_sk - all                          69.92               3.86
+statistics_tab about catalog_page.cp_catalog_page_id - all                          50.14               6.97
+statistics_tab about catalog_page.cp_start_date_sk - all                            19.56               4.04
+statistics_tab about catalog_page.cp_end_date_sk - all                              32.72               5.42
+statistics_tab about catalog_page.cp_department - all                              101.78               5.00
+statistics_tab about catalog_page.cp_catalog_number - all                           25.46               4.68
+statistics_tab about catalog_page.cp_catalog_page_number - all                      19.20               7.55
+statistics_tab about catalog_page.cp_description - all                              71.44              10.62
+statistics_tab about catalog_page.cp_type - all                                     54.11               5.26
+statistics_tab about catalog_returns.cr_returned_date_sk - all                     201.54              56.80
+statistics_tab about catalog_returns.cr_returned_time_sk - all                     200.31              85.91
+statistics_tab about catalog_returns.cr_item_sk - all                              158.74              84.99
+statistics_tab about catalog_returns.cr_refunded_customer_sk - all                 429.20             113.40
+statistics_tab about catalog_returns.cr_refunded_cdemo_sk - all                    297.17             160.13
+statistics_tab about catalog_returns.cr_refunded_hdemo_sk - all                    175.92              62.03
+statistics_tab about catalog_returns.cr_refunded_addr_sk - all                     336.87              96.25
+statistics_tab about catalog_returns.cr_returning_customer_sk - all                417.48             128.77
+statistics_tab about catalog_returns.cr_returning_cdemo_sk - all                   532.36             197.41
+statistics_tab about catalog_returns.cr_returning_hdemo_sk - all                   141.05              63.36
+statistics_tab about catalog_returns.cr_returning_addr_sk - all                    189.64             100.19
+statistics_tab about catalog_returns.cr_call_center_sk - all                       292.42              53.92
+statistics_tab about catalog_returns.cr_catalog_page_sk - all                      223.55              61.17
+statistics_tab about catalog_returns.cr_ship_mode_sk - all                         123.21              65.94
+statistics_tab about catalog_returns.cr_warehouse_sk - all                         159.13              57.03
+statistics_tab about catalog_returns.cr_reason_sk - all                            147.99              54.46
+statistics_tab about catalog_returns.cr_order_number - all                         174.68              66.69
+statistics_tab about catalog_returns.cr_return_quantity - all                      119.45              54.12
+statistics_tab about catalog_returns.cr_return_amount - all                        200.14             125.80
+statistics_tab about catalog_returns.cr_return_tax - all                           221.94              76.27
+statistics_tab about catalog_returns.cr_return_amt_inc_tax - all                   289.58             125.32
+statistics_tab about catalog_returns.cr_fee - all                                  218.76              60.12
+statistics_tab about catalog_returns.cr_return_ship_cost - all                     168.08             100.62
+statistics_tab about catalog_returns.cr_refunded_cash - all                        186.72             104.37
+statistics_tab about catalog_returns.cr_reversed_charge - all                      181.28              97.89
+statistics_tab about catalog_returns.cr_store_credit - all                         167.25              84.75
+statistics_tab about catalog_returns.cr_net_loss - all                             242.76              98.53
+statistics_tab about catalog_sales.cs_sold_date_sk - all                          1689.32             585.53
+statistics_tab about catalog_sales.cs_sold_time_sk - all                          1929.51             706.82
+statistics_tab about catalog_sales.cs_ship_date_sk - all                          1634.84             603.12
+statistics_tab about catalog_sales.cs_bill_customer_sk - all                      1778.08             908.19
+statistics_tab about catalog_sales.cs_bill_cdemo_sk - all                         2636.00             867.18
+statistics_tab about catalog_sales.cs_bill_hdemo_sk - all                         1623.83             588.63
+statistics_tab about catalog_sales.cs_bill_addr_sk - all                          1710.00             758.88
+statistics_tab about catalog_sales.cs_ship_customer_sk - all                      2037.14             898.24
+statistics_tab about catalog_sales.cs_ship_cdemo_sk - all                         1854.23             918.19
+statistics_tab about catalog_sales.cs_ship_hdemo_sk - all                         2526.76             592.18
+statistics_tab about catalog_sales.cs_ship_addr_sk - all                          1809.28             824.02
+statistics_tab about catalog_sales.cs_call_center_sk - all                        1530.30             567.71
+statistics_tab about catalog_sales.cs_catalog_page_sk - all                       1948.03             580.13
+statistics_tab about catalog_sales.cs_ship_mode_sk - all                          1516.66             605.35
+statistics_tab about catalog_sales.cs_warehouse_sk - all                          1390.40             611.83
+statistics_tab about catalog_sales.cs_item_sk - all                               2163.23             719.95
+statistics_tab about catalog_sales.cs_promo_sk - all                              1859.47             608.82
+statistics_tab about catalog_sales.cs_order_number - all                          1701.32             681.87
+statistics_tab about catalog_sales.cs_quantity - all                              1372.68             621.68
+statistics_tab about catalog_sales.cs_wholesale_cost - all                        1474.59             637.83
+statistics_tab about catalog_sales.cs_list_price - all                            1682.04             695.76
+statistics_tab about catalog_sales.cs_sales_price - all                           1696.15             678.78
+statistics_tab about catalog_sales.cs_ext_discount_amt - all                      2900.87            1766.89
+statistics_tab about catalog_sales.cs_ext_sales_price - all                       2677.49            1621.36
+statistics_tab about catalog_sales.cs_ext_wholesale_cost - all                    2696.78            1543.04
+statistics_tab about catalog_sales.cs_ext_list_price - all                        3455.93            2436.23
+statistics_tab about catalog_sales.cs_ext_tax - all                               1916.85             844.14
+statistics_tab about catalog_sales.cs_coupon_amt - all                            1775.94             964.74
+statistics_tab about catalog_sales.cs_ext_ship_cost - all                         2258.33            1322.84
+statistics_tab about catalog_sales.cs_net_paid - all                              2751.30            1763.91
+statistics_tab about catalog_sales.cs_net_paid_inc_tax - all                      2763.24            2035.56
+statistics_tab about catalog_sales.cs_net_paid_inc_ship - all                     3019.47            1986.82
+statistics_tab about catalog_sales.cs_net_paid_inc_ship_tax - all                 3490.73            2087.81
+statistics_tab about catalog_sales.cs_net_profit - all                            4486.38            3154.13
+statistics_tab about customer.c_customer_sk - all                                  109.40              13.48
+statistics_tab about customer.c_customer_id - all                                  355.48             193.44
+statistics_tab about customer.c_current_cdemo_sk - all                              96.12              57.61
+statistics_tab about customer.c_current_hdemo_sk - all                              75.45              22.70
+statistics_tab about customer.c_current_addr_sk - all                              108.57              65.09
+statistics_tab about customer.c_first_shipto_date_sk - all                         163.26              28.81
+statistics_tab about customer.c_first_sales_date_sk - all                           64.52              29.82
+statistics_tab about customer.c_salutation - all                                    54.18              10.06
+statistics_tab about customer.c_first_name - all                                   138.50              55.37
+statistics_tab about customer.c_last_name - all                                    181.26              68.58
+statistics_tab about customer.c_preferred_cust_flag - all                           82.61              10.83
+statistics_tab about customer.c_birth_day - all                                     75.22              26.10
+statistics_tab about customer.c_birth_month - all                                  145.44              21.09
+statistics_tab about customer.c_birth_year - all                                    91.84              24.44
+statistics_tab about customer.c_birth_country - all                                 56.79              11.87
+statistics_tab about customer.c_login - all                                         52.73               8.86
+statistics_tab about customer.c_email_address - all                                541.08             189.63
+statistics_tab about customer.c_last_review_date - all                              88.88              12.33
+statistics_tab about customer_address.ca_address_sk - all                           98.05              11.00
+statistics_tab about customer_address.ca_address_id - all                          181.41              86.11
+statistics_tab about customer_address.ca_street_number - all                        48.76               9.89
+statistics_tab about customer_address.ca_street_name - all                         128.24              39.80
+statistics_tab about customer_address.ca_street_type - all                         134.16               8.87
+statistics_tab about customer_address.ca_suite_number - all                         80.21               8.30
+statistics_tab about customer_address.ca_city - all                                112.29               9.14
+statistics_tab about customer_address.ca_county - all                               64.33              11.95
+statistics_tab about customer_address.ca_state - all                                58.11               9.54
+statistics_tab about customer_address.ca_zip - all                                 258.88              37.47
+statistics_tab about customer_address.ca_country - all                             393.03               9.19
+statistics_tab about customer_address.ca_gmt_offset - all                           56.14              17.51
+statistics_tab about customer_address.ca_location_type - all                        64.25               8.70
+statistics_tab about customer_demographics.cd_demo_sk - all                         98.36              13.59
+statistics_tab about customer_demographics.cd_gender - all                          54.20              23.48
+statistics_tab about customer_demographics.cd_marital_status - all                  80.69              21.76
+statistics_tab about customer_demographics.cd_education_status - all                94.63              22.46
+statistics_tab about customer_demographics.cd_purchase_estimate - all              183.38              96.37
+statistics_tab about customer_demographics.cd_credit_rating - all                  104.02              22.32
+statistics_tab about customer_demographics.cd_dep_count - all                      170.93              98.97
+statistics_tab about customer_demographics.cd_dep_employed_count - all             169.73              75.06
+statistics_tab about customer_demographics.cd_dep_college_count - all              142.20             111.54
+statistics_tab about date_dim.d_date_sk - all                                       36.97               7.64
+statistics_tab about date_dim.d_date_id - all                                       65.24              18.94
+statistics_tab about date_dim.d_date - all                                          27.50               7.12
+statistics_tab about date_dim.d_month_seq - all                                     29.78               8.14
+statistics_tab about date_dim.d_week_seq - all                                     201.19               6.49
+statistics_tab about date_dim.d_quarter_seq - all                                   74.55               7.70
+statistics_tab about date_dim.d_year - all                                          31.19               5.95
+statistics_tab about date_dim.d_dow - all                                           37.93               6.71
+statistics_tab about date_dim.d_moy - all                                           33.57               6.02
+statistics_tab about date_dim.d_dom - all                                           61.61               6.37
+statistics_tab about date_dim.d_qoy - all                                           96.43               5.89
+statistics_tab about date_dim.d_fy_year - all                                       59.16               8.84
+statistics_tab about date_dim.d_fy_quarter_seq - all                               108.25               8.19
+statistics_tab about date_dim.d_fy_week_seq - all                                   39.32               8.15
+statistics_tab about date_dim.d_day_name - all                                      43.59               7.01
+statistics_tab about date_dim.d_quarter_name - all                                 120.73               8.48
+statistics_tab about date_dim.d_holiday - all                                       62.11               7.85
+statistics_tab about date_dim.d_weekend - all                                      108.72               6.55
+statistics_tab about date_dim.d_following_holiday - all                            110.39               6.28
+statistics_tab about date_dim.d_first_dom - all                                     35.18               7.51
+statistics_tab about date_dim.d_last_dom - all                                      29.99               6.67
+statistics_tab about date_dim.d_same_day_ly - all                                   28.17               7.20
+statistics_tab about date_dim.d_same_day_lq - all                                   32.74               7.28
+statistics_tab about date_dim.d_current_day - all                                  130.26               6.10
+statistics_tab about date_dim.d_current_week - all                                  82.78              10.87
+statistics_tab about date_dim.d_current_month - all                                 79.16               6.79
+statistics_tab about date_dim.d_current_quarter - all                               28.43               6.31
+statistics_tab about date_dim.d_current_year - all                                  72.74               8.60
+statistics_tab about dbgen_version.dv_version - all                                 49.79               5.45
+statistics_tab about dbgen_version.dv_create_date - all                             23.81               4.89
+statistics_tab about dbgen_version.dv_create_time - all                             31.53               4.84
+statistics_tab about dbgen_version.dv_cmdline_args - all                            57.33               4.91
+statistics_tab about household_demographics.hd_demo_sk - all                        33.85               3.09
+statistics_tab about household_demographics.hd_income_band_sk - all                 37.94               7.18
+statistics_tab about household_demographics.hd_buy_potential - all                 130.84               5.16
+statistics_tab about household_demographics.hd_dep_count - all                      15.97               3.88
+statistics_tab about household_demographics.hd_vehicle_count - all                  16.24               3.25
+statistics_tab about income_band.ib_income_band_sk - all                            78.19               2.83
+statistics_tab about income_band.ib_lower_bound - all                               33.33               3.72
+statistics_tab about income_band.ib_upper_bound - all                               19.87               3.16
+statistics_tab about inventory.inv_date_sk - all                                 13808.15            5260.30
+statistics_tab about inventory.inv_item_sk - all                                 15485.13            5511.30
+statistics_tab about inventory.inv_warehouse_sk - all                            15042.62            5093.93
+statistics_tab about inventory.inv_quantity_on_hand - all                        15668.53            5504.64
+statistics_tab about item.i_item_sk - all                                           30.33               8.98
+statistics_tab about item.i_item_id - all                                           57.49              22.90
+statistics_tab about item.i_rec_start_date - all                                    26.83               8.96
+statistics_tab about item.i_rec_end_date - all                                      38.29               8.75
+statistics_tab about item.i_item_desc - all                                        304.93              66.18
+statistics_tab about item.i_current_price - all                                     22.88               8.74
+statistics_tab about item.i_wholesale_cost - all                                   126.54              10.37
+statistics_tab about item.i_brand_id - all                                          30.15               9.23
+statistics_tab about item.i_brand - all                                             93.96               7.12
+statistics_tab about item.i_class_id - all                                          46.67               8.47
+statistics_tab about item.i_class - all                                            183.66               8.01
+statistics_tab about item.i_category_id - all                                      136.53               7.65
+statistics_tab about item.i_category - all                                          48.66               6.86
+statistics_tab about item.i_manufact_id - all                                       63.28               7.23
+statistics_tab about item.i_manufact - all                                          75.69               6.56
+statistics_tab about item.i_size - all                                             126.14               6.95
+statistics_tab about item.i_formulation - all                                      178.59              27.96
+statistics_tab about item.i_color - all                                             98.20               7.61
+statistics_tab about item.i_units - all                                            137.63               7.37
+statistics_tab about item.i_container - all                                         93.62               6.54
+statistics_tab about item.i_manager_id - all                                        57.31               7.03
+statistics_tab about item.i_product_name - all                                     174.46              38.03
+statistics_tab about promotion.p_promo_sk - all                                     35.70               3.05
+statistics_tab about promotion.p_promo_id - all                                     68.56               5.00
+statistics_tab about promotion.p_start_date_sk - all                                56.63               3.30
+statistics_tab about promotion.p_end_date_sk - all                                  21.32               2.72
+statistics_tab about promotion.p_item_sk - all                                      34.33               2.77
+statistics_tab about promotion.p_cost - all                                         16.27               2.94
+statistics_tab about promotion.p_response_target - all                              19.98               3.28
+statistics_tab about promotion.p_promo_name - all                                   78.58               4.30
+statistics_tab about promotion.p_channel_dmail - all                                44.40               4.50
+statistics_tab about promotion.p_channel_email - all                                48.74               4.45
+statistics_tab about promotion.p_channel_catalog - all                              61.23               4.35
+statistics_tab about promotion.p_channel_tv - all                                   37.29               4.72
+statistics_tab about promotion.p_channel_radio - all                                43.40               4.71
+statistics_tab about promotion.p_channel_press - all                               455.12               5.04
+statistics_tab about promotion.p_channel_event - all                                50.52               4.75
+statistics_tab about promotion.p_channel_demo - all                                 75.41               4.72
+statistics_tab about promotion.p_channel_details - all                             132.03               4.79
+statistics_tab about promotion.p_purpose - all                                      43.29               8.93
+statistics_tab about promotion.p_discount_active - all                              38.39               5.58
+statistics_tab about reason.r_reason_sk - all                                       40.98               2.93
+statistics_tab about reason.r_reason_id - all                                       43.73               4.65
+statistics_tab about reason.r_reason_desc - all                                    146.69               4.93
+statistics_tab about ship_mode.sm_ship_mode_sk - all                                17.64               3.59
+statistics_tab about ship_mode.sm_ship_mode_id - all                                37.63               4.84
+statistics_tab about ship_mode.sm_type - all                                        88.90               4.89
+statistics_tab about ship_mode.sm_code - all                                        46.23               4.41
+statistics_tab about ship_mode.sm_carrier - all                                     34.63               5.24
+statistics_tab about ship_mode.sm_contract - all                                    99.41               5.80
+statistics_tab about store.s_store_sk - all                                          6.80               3.03
+statistics_tab about store.s_store_id - all                                        129.79               5.14
+statistics_tab about store.s_rec_start_date - all                                    8.15               4.64
+statistics_tab about store.s_rec_end_date - all                                     19.83              11.09
+statistics_tab about store.s_closed_date_sk - all                                   17.05               3.22
+statistics_tab about store.s_store_name - all                                       99.34               4.62
+statistics_tab about store.s_number_employees - all                                 21.22               3.28
+statistics_tab about store.s_floor_space - all                                      43.25               3.22
+statistics_tab about store.s_hours - all                                            90.67               4.98
+statistics_tab about store.s_manager - all                                          18.17               5.05
+statistics_tab about store.s_market_id - all                                        54.55               3.25
+statistics_tab about store.s_geography_class - all                                  18.84               4.89
+statistics_tab about store.s_market_desc - all                                      19.93               4.89
+statistics_tab about store.s_market_manager - all                                  146.37               5.33
+statistics_tab about store.s_division_id - all                                      78.30               2.76
+statistics_tab about store.s_division_name - all                                    19.90               4.33
+statistics_tab about store.s_company_id - all                                       27.72               2.66
+statistics_tab about store.s_company_name - all                                     57.86               4.72
+statistics_tab about store.s_street_number - all                                   215.64               4.57
+statistics_tab about store.s_street_name - all                                     113.59               4.86
+statistics_tab about store.s_street_type - all                                      49.51               5.58
+statistics_tab about store.s_suite_number - all                                     99.15               5.78
+statistics_tab about store.s_city - all                                             31.92               4.75
+statistics_tab about store.s_county - all                                           82.47               4.60
+statistics_tab about store.s_state - all                                            59.79               5.26
+statistics_tab about store.s_zip - all                                              39.19               4.68
+statistics_tab about store.s_country - all                                          64.20               4.70
+statistics_tab about store.s_gmt_offset - all                                       21.23               3.59
+statistics_tab about store.s_tax_precentage - all                                    7.65               3.11
+statistics_tab about store_returns.sr_returned_date_sk - all                       418.47             129.66
+statistics_tab about store_returns.sr_return_time_sk - all                         449.66             129.36
+statistics_tab about store_returns.sr_item_sk - all                                477.84             164.00
+statistics_tab about store_returns.sr_customer_sk - all                            470.14             261.65
+statistics_tab about store_returns.sr_cdemo_sk - all                               645.72             523.39
+statistics_tab about store_returns.sr_hdemo_sk - all                               474.45             121.21
+statistics_tab about store_returns.sr_addr_sk - all                                362.35             209.89
+statistics_tab about store_returns.sr_store_sk - all                               288.16             127.75
+statistics_tab about store_returns.sr_reason_sk - all                              697.13             127.28
+statistics_tab about store_returns.sr_ticket_number - all                          351.02             157.98
+statistics_tab about store_returns.sr_return_quantity - all                        337.69             107.53
+statistics_tab about store_returns.sr_return_amt - all                             448.60             241.34
+statistics_tab about store_returns.sr_return_tax - all                             296.48             147.03
+statistics_tab about store_returns.sr_return_amt_inc_tax - all                     507.68             244.66
+statistics_tab about store_returns.sr_fee - all                                    320.13             119.90
+statistics_tab about store_returns.sr_return_ship_cost - all                       431.69             199.74
+statistics_tab about store_returns.sr_refunded_cash - all                          640.23             202.22
+statistics_tab about store_returns.sr_reversed_charge - all                        574.90             171.20
+statistics_tab about store_returns.sr_store_credit - all                           740.70             189.04
+statistics_tab about store_returns.sr_net_loss - all                               684.20             201.10
+statistics_tab about store_sales.ss_sold_date_sk - all                            3177.84            1179.41
+statistics_tab about store_sales.ss_sold_time_sk - all                            3154.27            1278.18
+statistics_tab about store_sales.ss_item_sk - all                                 2985.53            1412.26
+statistics_tab about store_sales.ss_customer_sk - all                             3535.18            1696.84
+statistics_tab about store_sales.ss_cdemo_sk - all                                3596.40            1677.64
+statistics_tab about store_sales.ss_hdemo_sk - all                                3049.08            1190.35
+statistics_tab about store_sales.ss_addr_sk - all                                 3502.70            1572.23
+statistics_tab about store_sales.ss_store_sk - all                                3029.17            1170.05
+statistics_tab about store_sales.ss_promo_sk - all                                3062.83            1230.85
+statistics_tab about store_sales.ss_ticket_number - all                           2855.82            1547.16
+statistics_tab about store_sales.ss_quantity - all                                3574.35            1230.64
+statistics_tab about store_sales.ss_wholesale_cost - all                          3197.94            1272.84
+statistics_tab about store_sales.ss_list_price - all                              3626.31            1312.80
+statistics_tab about store_sales.ss_sales_price - all                             3452.03            1298.02
+statistics_tab about store_sales.ss_ext_discount_amt - all                        4060.61            1889.29
+statistics_tab about store_sales.ss_ext_sales_price - all                         5706.67            3151.15
+statistics_tab about store_sales.ss_ext_wholesale_cost - all                      4957.82            3168.46
+statistics_tab about store_sales.ss_ext_list_price - all                          6246.81            4141.11
+statistics_tab about store_sales.ss_ext_tax - all                                 3619.66            1557.08
+statistics_tab about store_sales.ss_coupon_amt - all                              4060.60            1864.47
+statistics_tab about store_sales.ss_net_paid - all                                5435.06            3106.79
+statistics_tab about store_sales.ss_net_paid_inc_tax - all                        5616.72            3642.88
+statistics_tab about store_sales.ss_net_profit - all                              7491.44            5555.77
+statistics_tab about time_dim.t_time_sk - all                                       43.64               6.84
+statistics_tab about time_dim.t_time_id - all                                      164.52              21.03
+statistics_tab about time_dim.t_time - all                                          20.94               5.97
+statistics_tab about time_dim.t_hour - all                                          47.93               5.81
+statistics_tab about time_dim.t_minute - all                                       168.15               6.61
+statistics_tab about time_dim.t_second - all                                        38.26               6.03
+statistics_tab about time_dim.t_am_pm - all                                         36.33               5.94
+statistics_tab about time_dim.t_shift - all                                         52.37               6.49
+statistics_tab about time_dim.t_sub_shift - all                                     74.60               5.86
+statistics_tab about time_dim.t_meal_time - all                                     51.54               6.56
+statistics_tab about warehouse.w_warehouse_sk - all                                 25.02               3.22
+statistics_tab about warehouse.w_warehouse_id - all                                 97.41               4.90
+statistics_tab about warehouse.w_warehouse_name - all                               41.67               4.72
+statistics_tab about warehouse.w_warehouse_sq_ft - all                              27.86               3.59
+statistics_tab about warehouse.w_street_number - all                                50.74               4.72
+statistics_tab about warehouse.w_street_name - all                                 110.31               4.57
+statistics_tab about warehouse.w_street_type - all                                  66.25               4.77
+statistics_tab about warehouse.w_suite_number - all                                115.85               4.65
+statistics_tab about warehouse.w_city - all                                         38.88               4.50
+statistics_tab about warehouse.w_county - all                                       54.55               4.40
+statistics_tab about warehouse.w_state - all                                        38.48               4.41
+statistics_tab about warehouse.w_zip - all                                          55.41               4.24
+statistics_tab about warehouse.w_country - all                                      38.01               5.59
+statistics_tab about warehouse.w_gmt_offset - all                                  231.57               3.75
+statistics_tab about web_page.wp_web_page_sk - all                                  25.45               3.37
+statistics_tab about web_page.wp_web_page_id - all                                  71.44               4.80
+statistics_tab about web_page.wp_rec_start_date - all                               22.24               4.99
+statistics_tab about web_page.wp_rec_end_date - all                                  7.24               4.53
+statistics_tab about web_page.wp_creation_date_sk - all                             20.53               2.69
+statistics_tab about web_page.wp_access_date_sk - all                               27.36               2.85
+statistics_tab about web_page.wp_autogen_flag - all                                 97.38               5.49
+statistics_tab about web_page.wp_customer_sk - all                                  14.48               3.36
+statistics_tab about web_page.wp_url - all                                          36.22               4.57
+statistics_tab about web_page.wp_type - all                                         42.30               4.84
+statistics_tab about web_page.wp_char_count - all                                   41.38               3.61
+statistics_tab about web_page.wp_link_count - all                                    5.37               3.32
+statistics_tab about web_page.wp_image_count - all                                  33.57               3.85
+statistics_tab about web_page.wp_max_ad_count - all                                 17.95               3.46
+statistics_tab about web_returns.wr_returned_date_sk - all                          99.92              36.84
+statistics_tab about web_returns.wr_returned_time_sk - all                         189.51              43.76
+statistics_tab about web_returns.wr_item_sk - all                                  126.91              64.33
+statistics_tab about web_returns.wr_refunded_customer_sk - all                     136.26              58.18
+statistics_tab about web_returns.wr_refunded_cdemo_sk - all                        155.84              97.83
+statistics_tab about web_returns.wr_refunded_hdemo_sk - all                        149.35              34.41
+statistics_tab about web_returns.wr_refunded_addr_sk - all                         127.02              53.56
+statistics_tab about web_returns.wr_returning_customer_sk - all                    138.48              58.66
+statistics_tab about web_returns.wr_returning_cdemo_sk - all                       177.23              83.55
+statistics_tab about web_returns.wr_returning_hdemo_sk - all                        93.71              33.69
+statistics_tab about web_returns.wr_returning_addr_sk - all                        173.55              54.42
+statistics_tab about web_returns.wr_web_page_sk - all                              130.20              29.49
+statistics_tab about web_returns.wr_reason_sk - all                                166.83              34.74
+statistics_tab about web_returns.wr_order_number - all                              91.27              32.02
+statistics_tab about web_returns.wr_return_quantity - all                           71.77              32.01
+statistics_tab about web_returns.wr_return_amt - all                               118.73              68.21
+statistics_tab about web_returns.wr_return_tax - all                               105.33              38.68
+statistics_tab about web_returns.wr_return_amt_inc_tax - all                       115.60              59.86
+statistics_tab about web_returns.wr_fee - all                                      149.37              35.84
+statistics_tab about web_returns.wr_return_ship_cost - all                         329.61              46.87
+statistics_tab about web_returns.wr_refunded_cash - all                            232.70              48.08
+statistics_tab about web_returns.wr_reversed_charge - all                          120.31              48.02
+statistics_tab about web_returns.wr_account_credit - all                            97.77              43.32
+statistics_tab about web_returns.wr_net_loss - all                                  89.44              54.33
+statistics_tab about web_sales.ws_sold_date_sk - all                              1001.37             298.83
+statistics_tab about web_sales.ws_sold_time_sk - all                               726.74             353.40
+statistics_tab about web_sales.ws_ship_date_sk - all                              1017.33             295.65
+statistics_tab about web_sales.ws_item_sk - all                                    779.32             351.41
+statistics_tab about web_sales.ws_bill_customer_sk - all                           803.89             371.85
+statistics_tab about web_sales.ws_bill_cdemo_sk - all                             1116.73             404.51
+statistics_tab about web_sales.ws_bill_hdemo_sk - all                              670.22             286.75
+statistics_tab about web_sales.ws_bill_addr_sk - all                              1257.05             378.09
+statistics_tab about web_sales.ws_ship_customer_sk - all                           995.86             370.55
+statistics_tab about web_sales.ws_ship_cdemo_sk - all                              992.36             354.94
+statistics_tab about web_sales.ws_ship_hdemo_sk - all                              929.24             275.56
+statistics_tab about web_sales.ws_ship_addr_sk - all                              1124.67             375.10
+statistics_tab about web_sales.ws_web_page_sk - all                               1130.42             304.53
+statistics_tab about web_sales.ws_web_site_sk - all                                844.84             315.87
+statistics_tab about web_sales.ws_ship_mode_sk - all                               986.76             266.43
+statistics_tab about web_sales.ws_warehouse_sk - all                               875.03             318.06
+statistics_tab about web_sales.ws_promo_sk - all                                   696.20             293.21
+statistics_tab about web_sales.ws_order_number - all                               849.97             266.64
+statistics_tab about web_sales.ws_quantity - all                                   674.28             304.47
+statistics_tab about web_sales.ws_wholesale_cost - all                             858.94             309.14
+statistics_tab about web_sales.ws_list_price - all                                 804.16             334.18
+statistics_tab about web_sales.ws_sales_price - all                                876.06             349.08
+statistics_tab about web_sales.ws_ext_discount_amt - all                          1530.84             835.69
+statistics_tab about web_sales.ws_ext_sales_price - all                           1667.39             785.00
+statistics_tab about web_sales.ws_ext_wholesale_cost - all                        1286.63             739.82
+statistics_tab about web_sales.ws_ext_list_price - all                            1618.70            1252.48
+statistics_tab about web_sales.ws_ext_tax - all                                    807.52             398.71
+statistics_tab about web_sales.ws_coupon_amt - all                                 845.90             452.73
+statistics_tab about web_sales.ws_ext_ship_cost - all                             1422.11             629.83
+statistics_tab about web_sales.ws_net_paid - all                                  1277.82             819.60
+statistics_tab about web_sales.ws_net_paid_inc_tax - all                          1376.43             872.82
+statistics_tab about web_sales.ws_net_paid_inc_ship - all                         1270.72             995.02
+statistics_tab about web_sales.ws_net_paid_inc_ship_tax - all                     1459.21             945.69
+statistics_tab about web_sales.ws_net_profit - all                                1676.48            1173.58
+statistics_tab about web_site.web_site_sk - all                                     12.09               3.70
+statistics_tab about web_site.web_site_id - all                                     88.01               5.33
+statistics_tab about web_site.web_rec_start_date - all                              47.05               4.90
+statistics_tab about web_site.web_rec_end_date - all                                20.72               4.81
+statistics_tab about web_site.web_name - all                                        62.16               4.98
+statistics_tab about web_site.web_open_date_sk - all                                27.00               3.29
+statistics_tab about web_site.web_close_date_sk - all                               33.25               4.47
+statistics_tab about web_site.web_class - all                                       47.17               5.88
+statistics_tab about web_site.web_manager - all                                     32.39               5.86
+statistics_tab about web_site.web_mkt_id - all                                      13.01               3.23
+statistics_tab about web_site.web_mkt_class - all                                   32.04               5.40
+statistics_tab about web_site.web_mkt_desc - all                                    97.94              10.76
+statistics_tab about web_site.web_market_manager - all                              21.04               5.90
+statistics_tab about web_site.web_company_id - all                                  88.38               3.24
+statistics_tab about web_site.web_company_name - all                                80.27               5.28
+statistics_tab about web_site.web_street_number - all                               60.58               4.96
+statistics_tab about web_site.web_street_name - all                                 53.42               5.12
+statistics_tab about web_site.web_street_type - all                                113.08               5.16
+statistics_tab about web_site.web_suite_number - all                                56.28               4.89
+statistics_tab about web_site.web_city - all                                        48.24               5.44
+statistics_tab about web_site.web_county - all                                      60.63               5.38
+statistics_tab about web_site.web_state - all                                      468.43               5.18
+statistics_tab about web_site.web_zip - all                                         53.20               5.29
+statistics_tab about web_site.web_country - all                                    124.32               6.18
+statistics_tab about web_site.web_gmt_offset - all                                  22.55               3.43
+statistics_tab about web_site.web_tax_percentage - all                              11.82               3.34
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
@@ -501,20 +501,20 @@ MonetDB-BHT-8-2-1           1.0          339.0         9.0      695.0    1051.0
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1           0.18
+MonetDB-BHT-8-1-1           0.15
 MonetDB-BHT-8-2-1           0.03
 
 ### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1          201828.09
-MonetDB-BHT-8-2-1         1189101.13
+MonetDB-BHT-8-1-1          236821.96
+MonetDB-BHT-8-2-1         1177926.60
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                               time [s]  count  SF  Throughput@Size
 DBMS            SF num_experiment num_client                                      
-MonetDB-BHT-8-1 10 1              1                400      1  10         38610.00
-MonetDB-BHT-8-2 10 1              2                188      1  10         82148.94
+MonetDB-BHT-8-1 10 1              1                343      1  10         45026.24
+MonetDB-BHT-8-2 10 1              2                176      1  10         87750.00
 
 ### Workflow
 
@@ -526,13 +526,13 @@ DBMS MonetDB-BHT-8 - Pods [[1, 1]]
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      407.56     1.52          2.30                12.58
-MonetDB-BHT-8-2      406.16     1.47         10.79                14.73
+MonetDB-BHT-8-1      397.09     1.41          2.11                12.28
+MonetDB-BHT-8-2      332.08     3.02          9.16                14.51
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       27.12     0.07          0.26                 0.28
-MonetDB-BHT-8-2       27.12     0.09          0.51                 0.54
+MonetDB-BHT-8-1       24.49     0.02          0.25                 0.26
+MonetDB-BHT-8-2       24.49     0.07          0.50                 0.54
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN

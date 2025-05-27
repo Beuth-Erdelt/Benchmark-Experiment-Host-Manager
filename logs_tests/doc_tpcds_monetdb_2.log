@@ -1,23 +1,23 @@
-nohup: Eingabe wird ignoriert
 Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1731457093
-Experiment                    : starts at 2024-11-13 01:18:13.699367 (1141895.106496597)
+Experiment                    : has code 1748374315
+Experiment                    : starts at 2025-05-27 21:31:55.114596 (12566478.585145757)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=100) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
 All instances use the same query parameters.
 Timeout per query is 7200.
 Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['MonetDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 500Gi.
+Database is persisted to disk of type shared and size 1000Gi.
 Loading is tested with [8] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1, 1] times the number of benchmarking pods.
@@ -25,106 +25,34 @@ Experiment is run 2 times.
 Cluster monitoring            : is running
 done
 MonetDB-BHT-8                 : will start now
+MonetDB-BHT-8                 : Name of SUT pods = bexhoma-sut-monetdb-bht-8-1748374315
+MonetDB-BHT-8                 : Name of SUT service = bexhoma-sut-monetdb-bht-8-1748374315
+MonetDB-BHT-8                 : Name of SUT PVC name = bexhoma-storage-monetdb-tpcds-100
 MonetDB-BHT-8                 : storage exists bexhoma-storage-monetdb-tpcds-100
+MonetDB-BHT-8                 : label loaded copied value True
+MonetDB-BHT-8                 : label timeLoading copied value 7028
+MonetDB-BHT-8                 : label timeLoadingStart copied value 1748361712
+MonetDB-BHT-8                 : label timeLoadingEnd copied value 1748368784
+MonetDB-BHT-8                 : label indexed copied value True
+MonetDB-BHT-8                 : label time_generated copied value 1
+MonetDB-BHT-8                 : label time_indexed copied value 5226
+MonetDB-BHT-8                 : label time_ingested copied value 1782
+MonetDB-BHT-8                 : label time_initconstraints copied value 2865
+MonetDB-BHT-8                 : label time_initindexes copied value 319
+MonetDB-BHT-8                 : label time_initschema copied value 12
+MonetDB-BHT-8                 : label time_initstatistics copied value 2042
+MonetDB-BHT-8                 : label time_loaded copied value 12
 MonetDB-BHT-8                 : loading is set to finished
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2024-11-13 00:20:14 (that is in 60 secs)
+MonetDB-BHT-8                 : will start benchmarking but not before 2025-05-27 19:33:55 (that is in 60 secs)
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2024-11-13 00:20:14
+MonetDB-BHT-8                 : will start benchmarking but not before 2025-05-27 19:33:55
 done
 MonetDB-BHT-8                 : benchmarks done 0 of 2. This will be client 1
 MonetDB-BHT-8-1-1             : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1731457093
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748374315
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1731457093-1-1-nwpxg: found
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1748374315-1-1-xbt2n: found
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -510,105 +438,19 @@ MonetDB-BHT-8                 : has running benchmarks
 done
 MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8-1-1             : showing benchmarker times
-MonetDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 7110
-MonetDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1731457229, 1731464294)]
-MonetDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1731457229, 1731464294)]}
-MonetDB-BHT-8-1-1             : collecting execution metrics of SUT
-MonetDB-BHT-8-1-1             : collecting metrics of benchmarker
+MonetDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 5809
+MonetDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1748374446, 1748380232)]
+MonetDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1748374446, 1748380232)]}
+MonetDB-BHT-8-1-1             : collecting execution metrics of SUT at connection MonetDB-BHT-8-1-1
+MonetDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-1-1             : collecting metrics of benchmarker at connection MonetDB-BHT-8-1-1
+MonetDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MonetDB-BHT-8                 : benchmarks done 0 of 2. This will be client 2
 MonetDB-BHT-8-1-2             : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1731457093
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748374315
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1731457093-1-2-6prjz: found
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1748374315-1-2-p7tb7: .found
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -912,11 +754,13 @@ MonetDB-BHT-8                 : has running benchmarks
 done
 MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8-1-2             : showing benchmarker times
-MonetDB-BHT-8-1-2             : benchmarker timespan (start to end single container [s]) = 5876
-MonetDB-BHT-8-1-2             : benchmarker times (start/end per pod and container) = [(1731464389, 1731470232)]
-MonetDB-BHT-8-1-2             : found and updated times {'benchmarker': [(1731464389, 1731470232)]}
-MonetDB-BHT-8-1-2             : collecting execution metrics of SUT
-MonetDB-BHT-8-1-2             : collecting metrics of benchmarker
+MonetDB-BHT-8-1-2             : benchmarker timespan (start to end single container [s]) = 4584
+MonetDB-BHT-8-1-2             : benchmarker times (start/end per pod and container) = [(1748380314, 1748384858)]
+MonetDB-BHT-8-1-2             : found and updated times {'benchmarker': [(1748380314, 1748384858)]}
+MonetDB-BHT-8-1-2             : collecting execution metrics of SUT at connection MonetDB-BHT-8-1-2
+MonetDB-BHT-8-1-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-1-2             : collecting metrics of benchmarker at connection MonetDB-BHT-8-1-2
+MonetDB-BHT-8-1-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MonetDB-BHT-8                 : can be stopped
 MonetDB-BHT-8                 : still being removed
@@ -924,19 +768,35 @@ MonetDB-BHT-8                 : still being removed
 MonetDB-BHT-8                 : still being removed
 done
 MonetDB-BHT-8                 : starts again
+MonetDB-BHT-8                 : Name of SUT pods = bexhoma-sut-monetdb-bht-8-1748374315
+MonetDB-BHT-8                 : Name of SUT service = bexhoma-sut-monetdb-bht-8-1748374315
+MonetDB-BHT-8                 : Name of SUT PVC name = bexhoma-storage-monetdb-tpcds-100
 MonetDB-BHT-8                 : storage exists bexhoma-storage-monetdb-tpcds-100
+MonetDB-BHT-8                 : label loaded copied value True
+MonetDB-BHT-8                 : label timeLoading copied value 7028
+MonetDB-BHT-8                 : label timeLoadingStart copied value 1748361712
+MonetDB-BHT-8                 : label timeLoadingEnd copied value 1748368784
+MonetDB-BHT-8                 : label indexed copied value True
+MonetDB-BHT-8                 : label time_generated copied value 1
+MonetDB-BHT-8                 : label time_indexed copied value 5226
+MonetDB-BHT-8                 : label time_ingested copied value 1782
+MonetDB-BHT-8                 : label time_initconstraints copied value 2865
+MonetDB-BHT-8                 : label time_initindexes copied value 319
+MonetDB-BHT-8                 : label time_initschema copied value 12
+MonetDB-BHT-8                 : label time_initstatistics copied value 2042
+MonetDB-BHT-8                 : label time_loaded copied value 12
 MonetDB-BHT-8                 : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2024-11-13 04:01:08 (that is in 60 secs)
+MonetDB-BHT-8                 : will start benchmarking but not before 2025-05-27 22:31:29 (that is in 60 secs)
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2024-11-13 04:01:08
+MonetDB-BHT-8                 : will start benchmarking but not before 2025-05-27 22:31:29
 done
 MonetDB-BHT-8                 : benchmarks done 1 of 2. This will be client 1
 MonetDB-BHT-8-2-1             : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1731457093
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748374315
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1731457093-2-1-plgcd: .found
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1748374315-2-1-rvklw: found
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -1322,283 +1182,23 @@ MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-done
 MonetDB-BHT-8                 : has running benchmarks
 done
 MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8-2-1             : showing benchmarker times
-MonetDB-BHT-8-2-1             : benchmarker timespan (start to end single container [s]) = 7571
-MonetDB-BHT-8-2-1             : benchmarker times (start/end per pod and container) = [(1731470487, 1731478008)]
-MonetDB-BHT-8-2-1             : found and updated times {'benchmarker': [(1731470487, 1731478008)]}
-MonetDB-BHT-8-2-1             : collecting execution metrics of SUT
-MonetDB-BHT-8-2-1             : collecting metrics of benchmarker
+MonetDB-BHT-8-2-1             : benchmarker timespan (start to end single container [s]) = 5871
+MonetDB-BHT-8-2-1             : benchmarker times (start/end per pod and container) = [(1748385104, 1748390938)]
+MonetDB-BHT-8-2-1             : found and updated times {'benchmarker': [(1748385104, 1748390938)]}
+MonetDB-BHT-8-2-1             : collecting execution metrics of SUT at connection MonetDB-BHT-8-2-1
+MonetDB-BHT-8-2-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-2-1             : collecting metrics of benchmarker at connection MonetDB-BHT-8-2-1
+MonetDB-BHT-8-2-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MonetDB-BHT-8                 : benchmarks done 1 of 2. This will be client 2
 MonetDB-BHT-8-2-2             : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1731457093
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748374315
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1731457093-2-2-lsw7m: .found
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1748374315-2-2-pt8xl: found
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -1872,14 +1472,16 @@ MonetDB-BHT-8                 : has running benchmarks
 done
 MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8-2-2             : showing benchmarker times
-MonetDB-BHT-8-2-2             : benchmarker timespan (start to end single container [s]) = 6337
-MonetDB-BHT-8-2-2             : benchmarker times (start/end per pod and container) = [(1731478110, 1731484412)]
-MonetDB-BHT-8-2-2             : found and updated times {'benchmarker': [(1731478110, 1731484412)]}
-MonetDB-BHT-8-2-2             : collecting execution metrics of SUT
-MonetDB-BHT-8-2-2             : collecting metrics of benchmarker
+MonetDB-BHT-8-2-2             : benchmarker timespan (start to end single container [s]) = 4118
+MonetDB-BHT-8-2-2             : benchmarker times (start/end per pod and container) = [(1748391020, 1748395102)]
+MonetDB-BHT-8-2-2             : found and updated times {'benchmarker': [(1748391020, 1748395102)]}
+MonetDB-BHT-8-2-2             : collecting execution metrics of SUT at connection MonetDB-BHT-8-2-2
+MonetDB-BHT-8-2-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-2-2             : collecting metrics of benchmarker at connection MonetDB-BHT-8-2-2
+MonetDB-BHT-8-2-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748374315(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MonetDB-BHT-8                 : can be stopped
-Experiment                    : ends at 2024-11-13 08:54:44.840934 (1169286.24806818) - 27391.14s total
+Experiment                    : ends at 2025-05-28 03:19:38.554352 (12587342.024906373) - 20863.44s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -1891,8 +1493,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-DS Queries SF=100
     Type: tpcds
-    Duration: 27392s 
-    Code: 1731457093
+    Duration: 20864s 
+    Code: 1748374315
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=100) data is loaded and benchmark is executed.
@@ -1900,13 +1502,14 @@ TPC-DS Queries SF=100
     All instances use the same query parameters.
     Timeout per query is 7200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 500Gi.
+    Database is persisted to disk of type shared and size 1000Gi.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1, 1] times the number of benchmarking pods.
@@ -1914,192 +1517,201 @@ TPC-DS Queries SF=100
 
 ### Connections
 MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352155636
-    datadisk:329919870
-    volume_size:500G
+    disk:300889844
+    datadisk:322157
+    volume_size:1000G
     volume_used:315G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352155976
-    datadisk:324691593
-    volume_size:500G
+    disk:300890260
+    datadisk:317050
+    volume_size:1000G
     volume_used:316G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352156316
-    datadisk:324691595
-    volume_size:500G
+    disk:300890492
+    datadisk:317050
+    volume_size:1000G
     volume_used:310G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352156656
-    datadisk:324691596
-    volume_size:500G
-    volume_used:310G
+    disk:300890920
+    datadisk:317050
+    volume_size:1000G
+    volume_used:316G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 
 ### Errors (failed queries)
 No errors
 
 ### Warnings (result mismatch)
-No warnings
+               MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1
+TPC-DS Q39a+b                 True                False                 True                 True
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1
-TPC-DS Q1                 10042.83              3142.23             10066.88              3106.77
-TPC-DS Q2                 38941.88             15221.96             37757.17             14824.72
-TPC-DS Q3                 86152.05             49772.01             91159.66             44731.60
-TPC-DS Q4                280885.78            164190.88            286666.18            172818.27
-TPC-DS Q5                187593.44             36049.82            205495.44             35878.49
-TPC-DS Q6                 11155.97              9205.10             11981.31             10068.37
-TPC-DS Q7                 91499.99              6222.42             99746.70              7403.79
-TPC-DS Q8                 28529.43             27814.84             30964.75             27327.52
-TPC-DS Q9                 20413.45              7078.24             20975.67              7141.95
-TPC-DS Q10               310701.94              4726.84            317842.08              4764.86
-TPC-DS Q11                80958.04             80707.20             83997.91             80224.78
-TPC-DS Q12                 1557.36              1468.54              1854.46              1524.94
-TPC-DS Q13                 3279.95              6345.54              9428.36              5342.05
-TPC-DS Q14a+b            328629.87            289573.01            346603.23            317076.54
-TPC-DS Q15                 1198.75              1141.26              2572.32              1671.84
-TPC-DS Q16                20492.62              2500.10             20345.71              2391.60
-TPC-DS Q17                55439.96             46887.60             63496.67             85714.70
-TPC-DS Q18                25551.22             21728.05             23217.82             23278.58
-TPC-DS Q19                 3303.20              2273.43              3011.99              4223.77
-TPC-DS Q20                 1119.25               542.63              1222.06              1013.35
-TPC-DS Q21                84854.21              5123.28             88569.15              4834.70
-TPC-DS Q22                99613.49             88131.05            100370.52             92833.07
-TPC-DS Q23a+b           3092717.58           2995302.50           3650757.98           3336709.77
-TPC-DS Q24a+b            264477.61            264066.18            263438.51            255409.33
-TPC-DS Q25                21620.90             22624.07             22503.89             21699.67
-TPC-DS Q26                 2617.10              1905.62              2771.65              3101.46
-TPC-DS Q27                19320.31             20145.53             20491.50             35080.52
-TPC-DS Q28                 4987.18              5176.54              5159.88              5262.15
-TPC-DS Q29                37262.69             35118.51             24962.49             29726.66
-TPC-DS Q30                 3157.56              2617.68              2993.22              2370.24
-TPC-DS Q31                26124.20             26269.90             22075.62             21878.51
-TPC-DS Q32                 1867.46              1130.99              1335.18              1545.65
-TPC-DS Q33                13231.11              5728.70              1567.42              7221.50
-TPC-DS Q34                 4082.24              2374.89              2345.54              3247.86
-TPC-DS Q35                16233.54             15759.48              8075.05             15905.18
-TPC-DS Q36                32499.33             33827.07             17889.56             11981.64
-TPC-DS Q37                24663.16              9341.11             11582.14             23849.47
-TPC-DS Q38                63332.96             60565.18             62859.91             47671.33
-TPC-DS Q39a+b            128982.49             77365.62             74252.36            128500.54
-TPC-DS Q40                 6020.77              5255.56              5361.19              6193.66
-TPC-DS Q41                  374.92               375.43               349.16               262.82
-TPC-DS Q42                 4786.15              3433.94              4058.70              3454.72
-TPC-DS Q43                 2729.13              2672.01              2810.49              2288.61
-TPC-DS Q44                46051.42             43953.90             48506.05             42922.52
-TPC-DS Q45                 3204.80              1752.25              1981.56              1970.14
-TPC-DS Q46                 6603.64              5962.95              6941.91              5491.72
-TPC-DS Q47                 7303.30              7476.95             10587.58              7134.99
-TPC-DS Q48                 3969.03              3613.91              4569.20              3772.23
-TPC-DS Q49                43389.10             25201.64             46138.10             27188.42
-TPC-DS Q50                 7831.25              4968.77              8852.95              8686.45
-TPC-DS Q51                49185.36             51153.55             48884.66             48338.78
-TPC-DS Q52                 4685.09              3957.21              4809.77              3715.90
-TPC-DS Q53                 3237.10              2755.29              3419.08              2818.72
-TPC-DS Q54                12911.58               843.33             12218.18             11616.70
-TPC-DS Q55                 1187.22               137.84              1213.45               931.26
-TPC-DS Q56                28470.57             16073.42             17949.09             21736.21
-TPC-DS Q57                 2477.18              1638.65              2209.00              2313.56
-TPC-DS Q58                11721.32              5405.34              6271.57             10224.70
-TPC-DS Q59                12982.20             11904.19             13186.38             12071.46
-TPC-DS Q60                 3105.21              4547.07              3686.25              2595.11
-TPC-DS Q61                  294.78               283.63               483.92               345.34
-TPC-DS Q62                 2795.81              2316.54              2714.24              2693.73
-TPC-DS Q63                 2037.15              2337.53              3433.96              1627.89
-TPC-DS Q64                75201.74             67313.12             71450.21             58697.14
-TPC-DS Q65                22822.27             22580.22             23365.80             25123.18
-TPC-DS Q66                23858.73             17720.11             19497.85             18461.09
-TPC-DS Q67               123815.67            128032.23            125112.47            127174.29
-TPC-DS Q68                 7787.53              4242.00              3767.74              7801.41
-TPC-DS Q69                13047.73              6999.57             13120.27             12667.00
-TPC-DS Q70                 6620.94              4934.47              6482.53              4258.97
-TPC-DS Q71                 5560.56              5344.54              5528.70              4871.44
-TPC-DS Q72                21778.54             18940.42             20479.85             21657.24
-TPC-DS Q73                 4930.95              3681.16              2275.21              4476.78
-TPC-DS Q74                32767.41             31481.66             28188.10             27366.61
-TPC-DS Q75               159530.36            129357.12            147711.82            165584.57
-TPC-DS Q76                71612.24             71624.21             69445.23             69871.08
-TPC-DS Q77                27300.99             26833.67             26490.84             24393.92
-TPC-DS Q78               200308.90            194687.76            199010.08            178800.85
-TPC-DS Q79                11819.46             11353.41             10708.80             11273.51
-TPC-DS Q80               115257.62            119283.36            115940.39             97591.82
-TPC-DS Q81                 3566.42              3234.76              3467.94              3075.99
-TPC-DS Q82                53321.08             50213.70             50808.41             54344.65
-TPC-DS Q83                 3140.56              2721.72              2725.85              2993.31
-TPC-DS Q84                 1378.39               756.11               940.35              1172.78
-TPC-DS Q85                 3649.66              2783.87              3486.61              3024.29
-TPC-DS Q86                 9469.77              9615.71              9611.84              9518.13
-TPC-DS Q87                70336.52             70123.90             57991.45             58439.67
-TPC-DS Q88                 9570.35              6034.67              7032.46              8503.33
-TPC-DS Q89                 4844.72              4033.63              3798.53              4468.22
-TPC-DS Q90                 1376.42               963.74              1166.89              1156.22
-TPC-DS Q91                 1174.76               915.00              1287.03              1070.36
-TPC-DS Q92                 1997.35              1762.89              2255.26              2414.42
-TPC-DS Q93                21644.82             20215.81             22430.29             18995.41
-TPC-DS Q94                 4569.07              4076.63              4078.65              3907.82
-TPC-DS Q95                15080.58             15031.61             15250.04             16359.60
-TPC-DS Q96                 7146.36              4265.69              3901.74              4987.36
-TPC-DS Q97                47546.39             42913.71             47851.72             45226.89
-TPC-DS Q98                 7070.69              5057.15              4754.93              4437.88
-TPC-DS Q99                 3728.52              2602.84              2969.50              3426.07
+TPC-DS Q1                 10904.81              1352.03              9901.93              1348.35
+TPC-DS Q2                 51489.32             14557.18             46446.74             13278.68
+TPC-DS Q3                120653.04              6777.71            114318.50              7929.78
+TPC-DS Q4                311777.32            167573.60            306934.30            161539.60
+TPC-DS Q5                225504.20             24223.44            232864.89             25229.96
+TPC-DS Q6                 10889.72              8368.32             13320.43              8260.00
+TPC-DS Q7                115641.50              2029.28            114523.74              1964.57
+TPC-DS Q8                 35707.40              3827.72             37130.19              3723.03
+TPC-DS Q9                 24372.10              3906.10             20527.53              5348.19
+TPC-DS Q10               374243.44              2838.67            371704.39              2228.05
+TPC-DS Q11                93190.84             78779.70             82520.08             74712.26
+TPC-DS Q12                 1705.40               695.00              1773.42               662.24
+TPC-DS Q13                 2561.94              2743.26              2713.58              3170.96
+TPC-DS Q14a+b            359374.60            308801.62            319509.01            311527.06
+TPC-DS Q15                 1873.77              1718.39              1638.29              1676.62
+TPC-DS Q16                25209.54              1279.67             23601.25              1324.00
+TPC-DS Q17                45375.49             36448.08             43223.89             33698.96
+TPC-DS Q18                25321.64              8928.83             26768.06              8223.27
+TPC-DS Q19                 2375.33              2313.53              2716.17              2605.62
+TPC-DS Q20                 1286.75               729.90              1207.05               744.14
+TPC-DS Q21               101462.80              2161.39            101032.31              2218.40
+TPC-DS Q22               108842.70             67772.51            101136.33             65702.80
+TPC-DS Q23a+b           2091759.26           2022871.68           2315934.41           1909392.23
+TPC-DS Q24a+b            306361.68            398768.27            261103.37            262275.87
+TPC-DS Q25                26568.13             20393.10             20786.73             12043.68
+TPC-DS Q26                 1560.41              1383.51              1796.41              1237.06
+TPC-DS Q27                13793.56             13035.05             14251.62             13603.37
+TPC-DS Q28                 4343.33              3234.34              5333.42              5362.64
+TPC-DS Q29                15774.73             16851.59             13889.33             13087.10
+TPC-DS Q30                  958.14              1181.86               907.45               362.97
+TPC-DS Q31                25284.10             36529.71             24821.07             19929.00
+TPC-DS Q32                  813.29               860.83               814.24               814.61
+TPC-DS Q33                 1768.43              1783.52              2469.47              1518.13
+TPC-DS Q34                 3507.67              1618.43              2603.10              1363.38
+TPC-DS Q35                 9201.65              9645.38              8044.87              8883.01
+TPC-DS Q36                11029.02             11051.45             11332.44             12576.23
+TPC-DS Q37                21802.03              3422.73             24983.11              4071.75
+TPC-DS Q38                31111.62             30073.89             30151.31             30279.28
+TPC-DS Q39a+b             77397.97             76773.33             77824.80             71404.67
+TPC-DS Q40                 4136.33              4478.14              3634.45              3294.53
+TPC-DS Q41                   20.13                39.53                41.69                33.92
+TPC-DS Q42                 1999.16              1989.36              2238.03              2201.05
+TPC-DS Q43                 1394.18              1370.88              1339.87              1330.72
+TPC-DS Q44                  125.90                71.59               117.12                69.17
+TPC-DS Q45                  654.97               642.61               771.86               733.16
+TPC-DS Q46                 2839.05              2751.05              3079.43              2612.81
+TPC-DS Q47                 7520.64              7302.91              7255.58              6387.04
+TPC-DS Q48                 1638.89             21557.14              1447.42             10663.95
+TPC-DS Q49                31126.79             10747.06             30730.99              9581.53
+TPC-DS Q50                 3379.85              2793.56              3686.27              2039.17
+TPC-DS Q51                47360.46             48835.04             45475.11             47215.94
+TPC-DS Q52                 1988.19              2003.49              2246.14              2214.85
+TPC-DS Q53                 1713.94              1693.28              1760.14              1747.88
+TPC-DS Q54                  428.14              2832.40               444.04             11366.42
+TPC-DS Q55                  161.26               157.76               158.74               156.02
+TPC-DS Q56                 1769.63              1652.07              2002.50              1716.37
+TPC-DS Q57                 1815.17              2898.21              1614.87              1346.02
+TPC-DS Q58                 5420.43              5247.72              5048.72              5701.47
+TPC-DS Q59                13996.60             12810.58             11845.29             11496.10
+TPC-DS Q60                 2235.12              3034.58              1754.40              1231.60
+TPC-DS Q61                 1695.06              2116.67              1909.84              1709.60
+TPC-DS Q62                 2741.80              4040.34              2676.77              1447.72
+TPC-DS Q63                 2319.98              2201.95              1594.96              1493.53
+TPC-DS Q64                43543.28             29724.27             38257.13             25264.07
+TPC-DS Q65                23533.95             26963.64             22266.78             21110.60
+TPC-DS Q66                 9113.54              4512.01              8639.02              4279.82
+TPC-DS Q67               110468.74            106361.54            102108.11            102762.08
+TPC-DS Q68                 2281.20              2334.19              2750.34              2756.76
+TPC-DS Q69                 3392.75              3477.12              3343.56              5048.33
+TPC-DS Q70                 4828.28              4656.49              4985.86              3946.66
+TPC-DS Q71                 1717.05              2323.08              1476.57              1573.63
+TPC-DS Q72                15425.84              8440.21             14190.01             10957.44
+TPC-DS Q73                 1994.49              1133.51              2258.62              2239.25
+TPC-DS Q74                25175.00             24230.50             24659.84             23145.59
+TPC-DS Q75               109733.72            129790.39            114130.04            116399.20
+TPC-DS Q76                66961.70            110892.62             68739.89             13516.90
+TPC-DS Q77                 9478.52             13589.86              9044.33              6182.89
+TPC-DS Q78               176578.51            176591.73            160347.11            174063.35
+TPC-DS Q79                 7333.02             15247.42              6771.19              9364.31
+TPC-DS Q80               112814.47            108045.40             95400.05            104351.20
+TPC-DS Q81                 2391.58              2028.63              2028.15              2595.69
+TPC-DS Q82                15446.04             21499.45             23742.17             17634.71
+TPC-DS Q83                 1944.60               522.80              1958.27               329.47
+TPC-DS Q84                  712.75               224.24               465.95               152.64
+TPC-DS Q85                 1637.07              1467.32              1667.91               741.50
+TPC-DS Q86                 3207.51              3226.77              3081.94              3095.99
+TPC-DS Q87                43042.21             40343.56             41008.98             40362.45
+TPC-DS Q88                 5804.04             20951.42              5937.42             18973.08
+TPC-DS Q89                 2805.83              3533.73              3223.14              3920.89
+TPC-DS Q90                  540.35              2677.86               679.32               453.96
+TPC-DS Q91                  794.40               274.70               893.82               138.28
+TPC-DS Q92                  560.85               582.67               572.07               611.29
+TPC-DS Q93                22710.15             22534.21             18529.48             17593.24
+TPC-DS Q94                 4060.43              3612.02              3599.67              1805.88
+TPC-DS Q95                17132.26             17532.72             16924.43             17340.93
+TPC-DS Q96                 1815.50              1737.36              1914.22              1918.25
+TPC-DS Q97                46241.42             45808.23             47074.06             47514.31
+TPC-DS Q98                 2508.92              2472.47              2597.59              2699.35
+TPC-DS Q99                 2781.97              2775.45              2867.33              1999.41
 
 ### Loading [s]
                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1-1           1.0         1572.0         5.0     5760.0    7346.0
-MonetDB-BHT-8-1-2-1           1.0         1572.0         5.0     5760.0    7346.0
-MonetDB-BHT-8-2-1-1           1.0         1572.0         5.0     5760.0    7346.0
-MonetDB-BHT-8-2-2-1           1.0         1572.0         5.0     5760.0    7346.0
+MonetDB-BHT-8-1-1-1           1.0         1782.0        12.0     5226.0    7028.0
+MonetDB-BHT-8-1-2-1           1.0         1782.0        12.0     5226.0    7028.0
+MonetDB-BHT-8-2-1-1           1.0         1782.0        12.0     5226.0    7028.0
+MonetDB-BHT-8-2-2-1           1.0         1782.0        12.0     5226.0    7028.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                      Geo Times [s]
 DBMS                              
-MonetDB-BHT-8-1-1-1          13.79
-MonetDB-BHT-8-1-2-1           9.36
-MonetDB-BHT-8-2-1-1          12.72
-MonetDB-BHT-8-2-2-1          10.61
+MonetDB-BHT-8-1-1-1           8.26
+MonetDB-BHT-8-1-2-1           5.99
+MonetDB-BHT-8-2-1-1           8.17
+MonetDB-BHT-8-2-2-1           5.20
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                      Power@Size [~Q/h]
 DBMS                                  
-MonetDB-BHT-8-1-1-1           26319.01
-MonetDB-BHT-8-1-2-1           38884.44
-MonetDB-BHT-8-2-1-1           28565.42
-MonetDB-BHT-8-2-2-1           34315.93
+MonetDB-BHT-8-1-1-1           44447.76
+MonetDB-BHT-8-1-2-1           61041.84
+MonetDB-BHT-8-2-1-1           44872.33
+MonetDB-BHT-8-2-2-1           70523.98
 
-### Throughput@Size
-                                                 time [s]  count   SF  Throughput@Size [~GB/h]
-DBMS              SF  num_experiment num_client                                               
-MonetDB-BHT-8-1-1 100 1              1               7065      1  100                  1121.02
-MonetDB-BHT-8-1-2 100 1              2               5843      1  100                  1355.47
-MonetDB-BHT-8-2-1 100 2              1               7521      1  100                  1053.05
-MonetDB-BHT-8-2-2 100 2              2               6302      1  100                  1256.74
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                 time [s]  count   SF  Throughput@Size
+DBMS              SF  num_experiment num_client                                       
+MonetDB-BHT-8-1-1 100 1              1               5786      1  100          6159.70
+MonetDB-BHT-8-1-2 100 1              2               4544      1  100          7843.31
+MonetDB-BHT-8-2-1 100 2              1               5834      1  100          6109.02
+MonetDB-BHT-8-2-2 100 2              2               4082      1  100          8731.01
 
 ### Workflow
 
@@ -2111,24 +1723,24 @@ DBMS MonetDB-BHT-8 - Pods [[1, 1], [1, 1]]
 
 ### Execution - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1    31061.13    54.22        296.38               317.47
-MonetDB-BHT-8-1-2    30906.08    57.92        305.11               331.89
-MonetDB-BHT-8-2-1    62141.22    19.61        293.91               313.24
-MonetDB-BHT-8-2-2    31748.58    43.41        299.14               302.68
+MonetDB-BHT-8-1-1    29618.87    24.02        287.72               352.21
+MonetDB-BHT-8-1-2    28483.56    30.07        374.37               414.51
+MonetDB-BHT-8-2-1    58470.69    32.85        317.91               382.31
+MonetDB-BHT-8-2-2    31838.36    58.96        377.89               411.75
 
 ### Execution - Benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1       61.75     0.10          0.40                 0.41
-MonetDB-BHT-8-1-2       61.75     0.24          0.64                 0.67
-MonetDB-BHT-8-2-1       62.25     0.21          0.63                 0.67
-MonetDB-BHT-8-2-2       62.42     0.22          0.65                 0.68
+MonetDB-BHT-8-1-1       49.92     0.03          0.36                 0.38
+MonetDB-BHT-8-1-2       49.92     0.11          0.60                 0.64
+MonetDB-BHT-8-2-1       47.25     0.18          0.61                 0.65
+MonetDB-BHT-8-2-2       48.66     0.27          0.61                 0.65
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
-TEST passed: No SQL warnings
+TEST failed: SQL warnings (result mismatch)
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned

@@ -2,15 +2,15 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1748293672
-Experiment                    : starts at 2025-05-26 23:07:51.834385 (12485835.304934544)
+Experiment                    : has code 1748358770
+Experiment                    : starts at 2025-05-27 17:12:50.111932 (12550933.5824847)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
 All instances use the same query parameters.
 Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.8.5.
+Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['MonetDB'].
 Import is handled by 8 processes (pods).
@@ -24,14 +24,14 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 MonetDB-BHT-8                 : will start now
-MonetDB-BHT-8                 : Name of SUT pods = bexhoma-sut-monetdb-bht-8-1748293672
-MonetDB-BHT-8                 : Name of SUT service = bexhoma-sut-monetdb-bht-8-1748293672
+MonetDB-BHT-8                 : Name of SUT pods = bexhoma-sut-monetdb-bht-8-1748358770
+MonetDB-BHT-8                 : Name of SUT service = bexhoma-sut-monetdb-bht-8-1748358770
 - waiting 30s -               : done
 MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2025-05-26 21:09:52 (that is in 60 secs)
+MonetDB-BHT-8                 : will start loading but not before 2025-05-27 15:14:50 (that is in 60 secs)
 - waiting 30s -               : done
 MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2025-05-26 21:09:52
+MonetDB-BHT-8                 : will start loading but not before 2025-05-27 15:14:50
 done
 MonetDB-BHT-8                 : is not loaded yet
 MonetDB-BHT-8                 : start asynch loading scripts of type loaded
@@ -59,9 +59,11 @@ MonetDB-BHT-8                 : is loading
 done
 MonetDB-BHT-8                 : showing loader times
 MonetDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MonetDB-BHT-8                 : loader timespan (first to last [s]) = 290
-MonetDB-BHT-8                 : total timespan (first to last [s]) = 300
+MonetDB-BHT-8                 : loader timespan (first to last [s]) = 294
+MonetDB-BHT-8                 : total timespan (first to last [s]) = 302
 MonetDB-BHT-8                 : start asynch loading scripts of type indexed
+MonetDB-BHT-8                 : is loading
+- waiting 30s -               : done
 MonetDB-BHT-8                 : is loading
 - waiting 30s -               : done
 MonetDB-BHT-8                 : is loading
@@ -78,30 +80,32 @@ MonetDB-BHT-8                 : is loading
 done
 MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
 MonetDB-BHT-8-1               : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748293672
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748358770
 - waiting 10s -               : done
 found
 MonetDB-BHT-8-1               : collecting loading metrics of SUT at connection MonetDB-BHT-8-1
-MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748293672(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748358770(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 MonetDB-BHT-8-1               : collecting metrics of data generator at connection MonetDB-BHT-8-1
-MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748293672(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748358770(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 MonetDB-BHT-8-1               : collecting metrics of data injector at connection MonetDB-BHT-8-1
-MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748293672(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748358770(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 done
 MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8-1               : showing benchmarker times
-MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 87
-MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1748294364, 1748294440)]
-MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1748294364, 1748294440)]}
+MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 128
+MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1748359498, 1748359581)]
+MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1748359498, 1748359581)]}
 MonetDB-BHT-8-1               : collecting execution metrics of SUT at connection MonetDB-BHT-8-1
-MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748293672(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748358770(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 MonetDB-BHT-8-1               : collecting metrics of benchmarker at connection MonetDB-BHT-8-1
-MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748293672(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MonetDB-BHT-8-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1748358770(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MonetDB-BHT-8                 : can be stopped
-Experiment                    : ends at 2025-05-26 23:21:28.457308 (12486651.927861279) - 816.62s total
+Experiment                    : ends at 2025-05-27 17:27:37.838884 (12551821.309438808) - 887.73s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -113,8 +117,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-DS Queries SF=3
     Type: tpcds
-    Duration: 817s 
-    Code: 1748293672
+    Duration: 888s 
+    Code: 1748358770
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=3) data is loaded and benchmark is executed.
@@ -122,7 +126,7 @@ TPC-DS Queries SF=3
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
@@ -141,12 +145,12 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:311417752
-    datadisk:12891
+    disk:314090284
+    datadisk:12892
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748293672
+        code:1748358770
 
 ### Errors (failed queries)
 No errors
@@ -156,124 +160,124 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1
-TPC-DS Q1                  73.19
-TPC-DS Q2                 559.30
-TPC-DS Q3                  43.08
-TPC-DS Q4                3892.92
-TPC-DS Q5                 635.07
-TPC-DS Q6                 163.41
-TPC-DS Q7                  91.91
-TPC-DS Q8                 106.77
-TPC-DS Q9                 136.61
-TPC-DS Q10                133.09
-TPC-DS Q11               1960.68
-TPC-DS Q12                 39.70
-TPC-DS Q13                175.00
-TPC-DS Q14a+b            6554.92
-TPC-DS Q15                 51.57
-TPC-DS Q16                273.42
-TPC-DS Q17                407.71
-TPC-DS Q18                253.09
-TPC-DS Q19                 88.69
-TPC-DS Q20                 54.95
-TPC-DS Q21                103.08
-TPC-DS Q22               2846.45
-TPC-DS Q23a+b            6554.82
-TPC-DS Q24a+b             905.17
-TPC-DS Q25                375.80
-TPC-DS Q26                 68.36
-TPC-DS Q27                335.96
-TPC-DS Q28                175.81
-TPC-DS Q29                384.49
-TPC-DS Q30                 35.26
-TPC-DS Q31                512.82
-TPC-DS Q32                 38.41
-TPC-DS Q33                 54.45
-TPC-DS Q34                 50.51
-TPC-DS Q35                227.54
-TPC-DS Q36                253.98
-TPC-DS Q37                232.11
-TPC-DS Q38                679.68
-TPC-DS Q39a+b            3030.21
-TPC-DS Q40                222.91
-TPC-DS Q41                  9.88
-TPC-DS Q42                 49.14
-TPC-DS Q43                 94.40
-TPC-DS Q44                 84.20
-TPC-DS Q45                 49.62
-TPC-DS Q46                 89.24
-TPC-DS Q47                622.86
-TPC-DS Q48                146.49
-TPC-DS Q49                243.69
-TPC-DS Q50                242.27
-TPC-DS Q51               1907.59
-TPC-DS Q52                 37.75
-TPC-DS Q53                 51.30
-TPC-DS Q54                 56.13
-TPC-DS Q55                 31.13
-TPC-DS Q56                 56.85
-TPC-DS Q57                154.40
-TPC-DS Q58                134.11
-TPC-DS Q59                316.89
-TPC-DS Q60                 55.01
-TPC-DS Q61                 80.64
-TPC-DS Q62                 49.53
-TPC-DS Q63                 55.80
-TPC-DS Q64               1125.45
-TPC-DS Q65                387.26
-TPC-DS Q66                277.43
-TPC-DS Q67               2203.88
-TPC-DS Q68                 86.68
-TPC-DS Q69                 44.35
-TPC-DS Q70                169.20
-TPC-DS Q71                 63.76
-TPC-DS Q72                264.27
-TPC-DS Q73                 50.11
-TPC-DS Q74               1842.58
-TPC-DS Q75               2296.02
-TPC-DS Q76                 69.41
-TPC-DS Q77                173.46
-TPC-DS Q78               3356.02
-TPC-DS Q79                 80.69
-TPC-DS Q80               2299.65
-TPC-DS Q81                 53.50
-TPC-DS Q82                359.57
-TPC-DS Q83                 27.90
-TPC-DS Q84                 20.76
-TPC-DS Q85                 72.20
-TPC-DS Q86                 70.27
-TPC-DS Q87                799.99
-TPC-DS Q88                201.89
-TPC-DS Q89                 73.63
-TPC-DS Q90                 24.84
-TPC-DS Q91                 25.40
-TPC-DS Q92                 25.75
-TPC-DS Q93                348.22
-TPC-DS Q94                 60.50
-TPC-DS Q95                212.18
-TPC-DS Q96                 27.40
-TPC-DS Q97                894.57
-TPC-DS Q98                 87.66
-TPC-DS Q99                 94.31
+TPC-DS Q1                  80.50
+TPC-DS Q2                 529.56
+TPC-DS Q3                  62.08
+TPC-DS Q4                4502.64
+TPC-DS Q5                 956.12
+TPC-DS Q6                 289.11
+TPC-DS Q7                 112.88
+TPC-DS Q8                 142.04
+TPC-DS Q9                 173.16
+TPC-DS Q10                116.82
+TPC-DS Q11               2077.35
+TPC-DS Q12                 45.35
+TPC-DS Q13                228.51
+TPC-DS Q14a+b            7106.75
+TPC-DS Q15                 75.40
+TPC-DS Q16                335.89
+TPC-DS Q17                711.30
+TPC-DS Q18                324.69
+TPC-DS Q19                 95.47
+TPC-DS Q20                 60.81
+TPC-DS Q21                107.80
+TPC-DS Q22               3400.54
+TPC-DS Q23a+b            7581.13
+TPC-DS Q24a+b            1165.39
+TPC-DS Q25                577.06
+TPC-DS Q26                 92.65
+TPC-DS Q27                474.24
+TPC-DS Q28                204.69
+TPC-DS Q29                553.92
+TPC-DS Q30                 45.89
+TPC-DS Q31                620.44
+TPC-DS Q32                 49.87
+TPC-DS Q33                 56.59
+TPC-DS Q34                 67.81
+TPC-DS Q35                258.44
+TPC-DS Q36                313.73
+TPC-DS Q37                261.93
+TPC-DS Q38                784.55
+TPC-DS Q39a+b            3494.23
+TPC-DS Q40                310.12
+TPC-DS Q41                 11.37
+TPC-DS Q42                 52.24
+TPC-DS Q43                179.59
+TPC-DS Q44                137.19
+TPC-DS Q45                 47.86
+TPC-DS Q46                125.35
+TPC-DS Q47                633.76
+TPC-DS Q48                203.14
+TPC-DS Q49                305.92
+TPC-DS Q50                259.73
+TPC-DS Q51               2250.12
+TPC-DS Q52                 46.94
+TPC-DS Q53                 70.32
+TPC-DS Q54                 61.75
+TPC-DS Q55                 40.77
+TPC-DS Q56                 79.15
+TPC-DS Q57                250.45
+TPC-DS Q58                129.78
+TPC-DS Q59                450.25
+TPC-DS Q60                 69.90
+TPC-DS Q61                 91.11
+TPC-DS Q62                 63.01
+TPC-DS Q63                 61.48
+TPC-DS Q64               1443.05
+TPC-DS Q65                504.92
+TPC-DS Q66                298.74
+TPC-DS Q67               2888.01
+TPC-DS Q68                109.31
+TPC-DS Q69                 54.79
+TPC-DS Q70                234.20
+TPC-DS Q71                 78.56
+TPC-DS Q72                360.59
+TPC-DS Q73                 68.75
+TPC-DS Q74                655.56
+TPC-DS Q75               2762.70
+TPC-DS Q76                212.11
+TPC-DS Q77                201.36
+TPC-DS Q78               4093.02
+TPC-DS Q79                139.37
+TPC-DS Q80               2676.81
+TPC-DS Q81                 63.59
+TPC-DS Q82                108.71
+TPC-DS Q83                 39.57
+TPC-DS Q84                127.33
+TPC-DS Q85                123.37
+TPC-DS Q86                 86.23
+TPC-DS Q87               1113.49
+TPC-DS Q88                263.51
+TPC-DS Q89                 81.08
+TPC-DS Q90                 30.35
+TPC-DS Q91                 32.19
+TPC-DS Q92                 30.71
+TPC-DS Q93                508.38
+TPC-DS Q94                 90.07
+TPC-DS Q95                274.36
+TPC-DS Q96                 31.60
+TPC-DS Q97               1143.17
+TPC-DS Q98                108.30
+TPC-DS Q99                123.28
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1           1.0          290.0         9.0      192.0     501.0
+MonetDB-BHT-8-1-1           1.0          294.0         9.0      230.0     541.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1           0.18
+MonetDB-BHT-8-1-1           0.23
 
 ### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1           63139.23
+MonetDB-BHT-8-1-1           50246.87
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                               time [s]  count  SF  Throughput@Size
 DBMS            SF num_experiment num_client                                      
-MonetDB-BHT-8-1 3  1              1                 76      1   3         14068.42
+MonetDB-BHT-8-1 3  1              1                 83      1   3         12881.93
 
 ### Workflow
 
@@ -285,19 +289,19 @@ DBMS MonetDB-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      721.88     2.22          3.31                10.94
+MonetDB-BHT-8-1      748.32     2.09           4.5                14.27
 
 ### Ingestion - Loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       56.38     0.25          1.12                 2.28
+MonetDB-BHT-8-1       56.37     0.22          1.12                 2.28
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      216.13     4.55          7.26                16.63
+MonetDB-BHT-8-1      314.58     0.42          7.98                17.07
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       20.22        0          0.26                 0.27
+MonetDB-BHT-8-1       21.61     0.14          0.26                 0.27
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN

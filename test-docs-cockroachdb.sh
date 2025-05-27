@@ -85,7 +85,7 @@ kubectl delete pvc bxw-bexhoma-worker-cockroachdb-ycsb-1-2
 #### YCSB PVC (Example-CockroachDB.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
-  -sfo 10 \
+  -sfo 1 \
   -nw 3 \
   -nwr 3 \
   --workload a \
@@ -129,7 +129,7 @@ wait_process "benchbase"
 #### Benchbase Complex (Example-CockroachDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
-  -sd 60 \
+  -sd 20 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \

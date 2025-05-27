@@ -154,7 +154,7 @@ nohup python tpch.py -ms 1 \
   -nc 1 -ne 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 3600 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
 
@@ -173,7 +173,7 @@ nohup python tpch.py -ms 1 \
   -nc 2 -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 3600 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
 
@@ -192,7 +192,7 @@ nohup python tpch.py -ms 1 \
   -nc 1 -ne 1,1,3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 3600 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
 

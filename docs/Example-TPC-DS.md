@@ -52,7 +52,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-nohup python tpcds.py -ms 3 -dt -tr \
+nohup python tpcds.py -ms 1 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -81,8 +81,6 @@ This
   * data transfer is also measured (`-dt`)
 * shows a summary
 
-Make sure your cluster can handle 4 DBMS at the same time.
-Otherwise adjust die parameter `-ms`.
 
 ### Status
 
@@ -124,8 +122,8 @@ doc_tpcds_testcase_compare.log
 ### Workload
 TPC-DS Queries SF=1
     Type: tpcds
-    Duration: 1162s 
-    Code: 1748292351
+    Duration: 1205s 
+    Code: 1748357389
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -133,7 +131,7 @@ TPC-DS Queries SF=1
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -150,47 +148,47 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:310180844
+    disk:312594112
     datadisk:165
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748292351
+        code:1748357389
 MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:309033592
+    disk:312156252
     datadisk:5600
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748292351
+        code:1748357389
 MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
     RAM:541008568320
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:312649668
+    disk:315320580
     datadisk:8290
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748292351
+        code:1748357389
 PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:312635112
-    datadisk:5805
+    disk:306844676
+    datadisk:5804
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748292351
+        code:1748357389
 
 ### Errors (failed queries)
 No errors
@@ -215,10 +213,10 @@ TPC-DS Q19                 False               True             False           
 TPC-DS Q20                 False               True             False                  True
 TPC-DS Q21                 False               True             False                  True
 TPC-DS Q22                 False               True             False                  True
+TPC-DS Q25                 False               True             False                  True
 TPC-DS Q26                 False               True             False                  True
 TPC-DS Q27                 False               True             False                  True
 TPC-DS Q28                 False               True             False                  True
-TPC-DS Q29                 False               True             False                  True
 TPC-DS Q30                 False               True             False                  True
 TPC-DS Q31                 False               True             False                  True
 TPC-DS Q32                 False               True             False                  True
@@ -231,7 +229,9 @@ TPC-DS Q39a+b              False               True              True           
 TPC-DS Q40                 False               True             False                  True
 TPC-DS Q41                 False               True             False                  True
 TPC-DS Q42                 False               True             False                  True
+TPC-DS Q44                 False               True             False                  True
 TPC-DS Q45                 False               True             False                  True
+TPC-DS Q46                 False               True             False                  True
 TPC-DS Q47                 False               True             False                  True
 TPC-DS Q48                 False               True             False                  True
 TPC-DS Q49                 False               True             False                  True
@@ -263,129 +263,131 @@ TPC-DS Q80                 False               True             False           
 TPC-DS Q81                 False               True             False                  True
 TPC-DS Q82                 False               True             False                  True
 TPC-DS Q83                 False               True             False                  True
+TPC-DS Q84                 False               True             False                  True
+TPC-DS Q85                 False               True             False                  True
 TPC-DS Q86                 False               True             False                  True
 TPC-DS Q87                 False               True             False                  True
-TPC-DS Q88                 False               True             False                 False
-TPC-DS Q89                 False               True             False                 False
-TPC-DS Q90                 False               True             False                 False
-TPC-DS Q91                 False               True             False                 False
-TPC-DS Q92                 False               True             False                 False
-TPC-DS Q93                 False               True             False                 False
-TPC-DS Q94                 False               True             False                 False
-TPC-DS Q95                 False               True             False                 False
-TPC-DS Q96                 False               True             False                 False
-TPC-DS Q97                 False               True             False                 False
-TPC-DS Q98                 False               True             False                 False
-TPC-DS Q99                 False               True             False                 False
+TPC-DS Q88                 False               True             False                  True
+TPC-DS Q89                 False               True             False                  True
+TPC-DS Q90                 False               True             False                  True
+TPC-DS Q91                 False               True             False                  True
+TPC-DS Q92                 False               True             False                  True
+TPC-DS Q93                 False               True             False                  True
+TPC-DS Q94                 False               True             False                  True
+TPC-DS Q95                 False               True             False                  True
+TPC-DS Q96                 False               True             False                  True
+TPC-DS Q97                 False               True             False                  True
+TPC-DS Q98                 False               True             False                  True
+TPC-DS Q99                 False               True             False                  True
 
 ### Latency of Timer Execution [ms]
 DBMS           MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-TPC-DS Q1                  18.90              41.01             78.23                320.85
-TPC-DS Q2                   2.57             152.04              7.11                864.82
-TPC-DS Q3                   1.01              22.22              3.19                499.23
-TPC-DS Q4                   6.97            1198.62             23.02              15674.01
-TPC-DS Q5                   2.33             254.59             12.39               1438.48
-TPC-DS Q6                   1.16              86.78              2.93             219192.79
-TPC-DS Q7                   0.92              59.19              2.93               1098.18
-TPC-DS Q8                   2.14              42.42              4.95                150.14
-TPC-DS Q9                   1.40              67.89              4.31               6408.73
-TPC-DS Q10                  1.79             156.10              5.83               3022.64
-TPC-DS Q11                  2.84             636.91             10.54              12083.55
-TPC-DS Q12                  0.93             159.28             20.56                203.98
-TPC-DS Q13                  1.29             100.93              4.18               1870.03
-TPC-DS Q14a+b               8.15            2461.57             22.99               7781.78
-TPC-DS Q15                  0.88              22.79              2.43                340.26
-TPC-DS Q16                  1.19              43.56              3.08                719.30
-TPC-DS Q17                  1.39             118.14              3.24               1033.52
-TPC-DS Q18                  1.34             146.76              3.29               1225.23
-TPC-DS Q19                  0.86             274.72              3.12                497.45
-TPC-DS Q20                  0.95              35.80              3.13                300.16
-TPC-DS Q21                  1.34             270.34              3.72                680.43
-TPC-DS Q22                  0.90            1025.02              2.13               9864.75
-TPC-DS Q23a+b               4.57            2631.44             12.46              10806.92
-TPC-DS Q24a+b               3.03             223.28              8.64               1270.01
-TPC-DS Q25                  1.24             104.69              2.87               1030.71
-TPC-DS Q26                  0.93              24.36              2.29                714.30
-TPC-DS Q27                  1.03             152.91              2.37                138.77
-TPC-DS Q28                  2.82              62.46              3.96               4707.54
-TPC-DS Q29                  1.70             101.30              2.93               1077.52
-TPC-DS Q30                  1.70              66.53              3.38              28719.48
-TPC-DS Q31                  2.21             144.30              5.81               6224.65
-TPC-DS Q32                  1.38              23.84              1.66                232.04
-TPC-DS Q33                  2.23              23.46              4.24               1203.66
-TPC-DS Q34                  1.50              32.61              1.95                 58.57
-TPC-DS Q35                  1.57              89.19              2.97               3374.74
-TPC-DS Q36                  1.18             131.97              2.45               2119.36
-TPC-DS Q37                  1.08             128.21              2.05                817.08
-TPC-DS Q38                  1.09             198.48              2.58               3316.18
-TPC-DS Q39a+b               3.11            1033.30              8.57               7454.21
-TPC-DS Q40                  1.09              75.71              2.74                353.86
-TPC-DS Q41                  1.11              13.80              2.60               3958.61
-TPC-DS Q42                  0.80              19.90              2.19                265.33
-TPC-DS Q43                  0.97              43.24              2.48                 59.16
-TPC-DS Q44                  1.36              30.61              3.21                  2.68
-TPC-DS Q45                  1.10              25.76              2.79                226.67
-TPC-DS Q46                  1.06              49.17              3.13                 54.49
-TPC-DS Q47                  2.36             259.73              6.56               4658.73
-TPC-DS Q48                  0.99              99.52              3.02               1877.16
-TPC-DS Q49                  2.02             117.67              5.48               2165.68
-TPC-DS Q50                  1.03              91.64              2.80                727.11
-TPC-DS Q51                  1.33             591.30              4.19               2953.97
-TPC-DS Q52                  0.74              22.71              2.37                266.66
-TPC-DS Q53                  0.93              27.63              2.43                339.52
-TPC-DS Q54                  1.42              24.59              3.82                205.42
-TPC-DS Q55                  0.76              16.50              1.95                267.58
-TPC-DS Q56                  1.68              28.20              4.84                928.07
-TPC-DS Q57                  1.93             102.75              5.03               2192.78
-TPC-DS Q58                  1.73              58.71              8.54               1308.44
-TPC-DS Q59                  1.61             116.82              4.60               1266.15
-TPC-DS Q60                  1.77              24.95              4.53               1223.55
-TPC-DS Q61                  1.38              32.64              2.59               3285.94
-TPC-DS Q62                  1.13              26.71              3.20                295.93
-TPC-DS Q63                  1.15              25.90              2.41                319.27
-TPC-DS Q64                  4.03             383.41              7.02               2279.52
-TPC-DS Q65                  1.20              94.91              2.27               1599.88
-TPC-DS Q66                  2.53              97.65              5.63                608.27
-TPC-DS Q67                  0.98             677.28              2.32               7045.12
-TPC-DS Q68                  1.12              41.46              2.31                 56.81
-TPC-DS Q69                  1.25              47.95              2.42                718.78
-TPC-DS Q70                  1.24              70.52              2.36               1267.81
-TPC-DS Q71                  1.09              32.83              2.47                924.69
-TPC-DS Q72                  1.98             161.60              2.64               2999.07
-TPC-DS Q73                  1.16              25.42              2.78                 58.31
-TPC-DS Q74                  2.20             179.86              4.74               3745.40
-TPC-DS Q75                  2.90             626.61              5.33               2497.34
-TPC-DS Q76                  1.54              74.11              2.86                677.82
-TPC-DS Q77                  2.68              54.07              5.95               5272.74
-TPC-DS Q78                  1.99             777.68              4.22               4550.08
-TPC-DS Q79                  1.39              43.04              2.80                457.35
-TPC-DS Q80                  2.05             415.30              4.20               1485.00
-TPC-DS Q81                  1.28              31.02              2.76             125082.90
-TPC-DS Q82                  0.74             149.92              1.92                877.78
-TPC-DS Q83                  1.46              16.55              3.12                301.16
-TPC-DS Q84                  0.86              36.86              1.83                263.31
-TPC-DS Q85                  1.27              35.06              2.56                909.04
-TPC-DS Q86                  0.96              26.87              1.90                483.50
-TPC-DS Q87                  1.10             248.62              2.24               3295.03
-TPC-DS Q88                  2.73              89.58              7.45               6791.86
-TPC-DS Q89                  1.15              35.32              3.16                316.26
-TPC-DS Q90                  1.04              16.41              2.11               2135.82
-TPC-DS Q91                  1.04              25.23              2.33                437.99
-TPC-DS Q92                  0.91              12.99              2.41                206.34
-TPC-DS Q93                  0.84              91.26              2.72                370.10
-TPC-DS Q94                  0.95              16.52              2.20                467.56
-TPC-DS Q95                  1.14             145.25              2.81               9692.89
-TPC-DS Q96                  0.63              14.02              1.71                275.54
-TPC-DS Q97                  1.09             232.02              2.93               1040.37
-TPC-DS Q98                  0.86              40.01              2.03                506.25
-TPC-DS Q99                  0.90              55.84              2.62                416.13
+TPC-DS Q1                  21.90              36.53            102.51                272.86
+TPC-DS Q2                   3.00             185.99              9.64                885.29
+TPC-DS Q3                   1.80             100.01              3.76                485.42
+TPC-DS Q4                   7.81            1287.65             24.34              15763.61
+TPC-DS Q5                   2.86             251.14              9.84               1454.51
+TPC-DS Q6                   1.45              97.06              2.70             195769.23
+TPC-DS Q7                   1.29              67.99              2.48               1091.75
+TPC-DS Q8                   2.43              43.44              3.64                148.25
+TPC-DS Q9                   1.84              70.30              3.03               6179.49
+TPC-DS Q10                  2.45              57.16              3.74               3024.89
+TPC-DS Q11                  3.62             655.54              7.99              11505.92
+TPC-DS Q12                  1.42              23.81             17.05                207.75
+TPC-DS Q13                  2.11             126.79              2.63               1910.02
+TPC-DS Q14a+b               9.22            2611.46             17.26               7862.42
+TPC-DS Q15                  1.54              34.25              1.79                328.44
+TPC-DS Q16                  2.02              46.90              2.87                708.01
+TPC-DS Q17                  2.52             185.90              2.93               1032.28
+TPC-DS Q18                  2.20             126.81              2.53               1223.69
+TPC-DS Q19                  2.16              40.75              1.90                460.09
+TPC-DS Q20                  1.90              27.47              1.62                311.68
+TPC-DS Q21                  2.09              68.15              2.82                707.06
+TPC-DS Q22                  1.65            1097.26              1.79              10079.91
+TPC-DS Q23a+b               6.39            2069.42              8.69              10923.88
+TPC-DS Q24a+b               4.34             255.16              5.37               1246.86
+TPC-DS Q25                  2.15             124.52              1.96               1032.74
+TPC-DS Q26                  1.77              24.36              1.40                718.75
+TPC-DS Q27                  2.69             120.97              1.84                140.53
+TPC-DS Q28                  2.35              65.69              2.72               4795.53
+TPC-DS Q29                  2.15             121.72              2.04               1076.78
+TPC-DS Q30                  2.49              28.76              2.80              28499.49
+TPC-DS Q31                  3.62             152.87              5.27               6106.62
+TPC-DS Q32                  1.67              18.52              1.39                247.65
+TPC-DS Q33                  2.24              25.79              3.70               1053.37
+TPC-DS Q34                  2.78              27.39              1.73                 68.92
+TPC-DS Q35                  2.58              95.34              2.49               3309.00
+TPC-DS Q36                  2.03             144.05              1.69               2157.43
+TPC-DS Q37                  1.62             118.44              1.22                839.86
+TPC-DS Q38                  1.88             207.39              1.68               3365.95
+TPC-DS Q39a+b               5.07            1172.42              5.97               7333.16
+TPC-DS Q40                  1.77              77.97              1.52                341.32
+TPC-DS Q41                  1.76               9.49              2.33               3071.48
+TPC-DS Q42                  1.18              21.64              2.28                268.24
+TPC-DS Q43                  1.36              48.71              2.33                 64.56
+TPC-DS Q44                  1.65              91.54              3.15               1387.95
+TPC-DS Q45                  1.35              28.30              2.45                209.28
+TPC-DS Q46                  2.08              58.30              2.99                646.16
+TPC-DS Q47                  2.98             240.60              6.33               4133.60
+TPC-DS Q48                  1.67             101.66              3.17               1852.73
+TPC-DS Q49                  2.95             122.17              4.90               2129.06
+TPC-DS Q50                  1.83              99.98              2.68                692.06
+TPC-DS Q51                  2.03             628.91              3.63               2855.69
+TPC-DS Q52                  1.54              20.17              1.76                269.50
+TPC-DS Q53                  1.71              28.23              2.59                311.39
+TPC-DS Q54                  2.21              23.32              3.58                216.39
+TPC-DS Q55                  1.52              19.24              2.16                270.98
+TPC-DS Q56                  2.72              30.57              6.62               1163.22
+TPC-DS Q57                  2.95              90.78              5.01               2023.48
+TPC-DS Q58                  2.49              45.74              4.93               1355.18
+TPC-DS Q59                  2.32             120.77              6.77               1237.94
+TPC-DS Q60                  2.71              42.72              5.13               1141.79
+TPC-DS Q61                  2.33              37.37              2.57               3358.25
+TPC-DS Q62                  2.00              26.35              3.24                298.89
+TPC-DS Q63                  2.45              32.50              2.37                324.38
+TPC-DS Q64                  4.93             411.70              6.80               2262.71
+TPC-DS Q65                  1.72             109.31              2.26               1615.30
+TPC-DS Q66                  3.28             100.24              5.20                584.04
+TPC-DS Q67                  1.76             696.21              2.39               7014.87
+TPC-DS Q68                  1.49              45.51              2.59                 60.44
+TPC-DS Q69                  2.40              46.04              2.70                734.99
+TPC-DS Q70                  2.31              77.05              2.14               1220.64
+TPC-DS Q71                  2.01              43.47              2.77                969.36
+TPC-DS Q72                  2.12             174.16              2.59               2923.54
+TPC-DS Q73                  1.86              25.95              2.65                 68.05
+TPC-DS Q74                  3.05             219.26              4.07               4275.47
+TPC-DS Q75                  3.29             656.24              5.79               2446.02
+TPC-DS Q76                  1.87              84.61              2.69                680.76
+TPC-DS Q77                  2.86              68.57              5.25               5262.14
+TPC-DS Q78                  2.38             911.66              3.83               5055.72
+TPC-DS Q79                  1.92              57.14              2.44                544.63
+TPC-DS Q80                  2.92             457.37              3.54               1459.89
+TPC-DS Q81                  2.09              42.69              2.34             120064.91
+TPC-DS Q82                  1.54             162.37              1.84                928.82
+TPC-DS Q83                  2.35              18.05              2.98                291.77
+TPC-DS Q84                  1.58              39.50              1.74                264.04
+TPC-DS Q85                  2.05              39.12              3.27               1339.50
+TPC-DS Q86                  1.54              29.69              2.62                478.23
+TPC-DS Q87                  2.51             290.15              2.63               3312.53
+TPC-DS Q88                  3.56              97.49              5.84               6841.30
+TPC-DS Q89                  1.88              39.51              2.45                316.61
+TPC-DS Q90                  1.82              18.95              2.02               2166.51
+TPC-DS Q91                  1.70              27.27              2.99                268.79
+TPC-DS Q92                  1.41              14.80              1.84               1899.10
+TPC-DS Q93                  1.49             101.10              3.36                373.82
+TPC-DS Q94                  1.65              19.02              1.91                441.36
+TPC-DS Q95                  1.94             152.56              1.98               9522.98
+TPC-DS Q96                  1.21              14.32              1.34                277.50
+TPC-DS Q97                  1.83             254.88              2.77               1022.39
+TPC-DS Q98                  1.53              46.02              1.88                489.58
+TPC-DS Q99                  1.52              59.78              1.60                418.97
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              1.0            3.0         4.0      169.0     188.0
-MonetDB-BHT-8-1-1              1.0          108.0         9.0       98.0     225.0
-MySQL-BHT-64-1-1               1.0           11.0         8.0      127.0     156.0
-PostgreSQL-BHT-8-1-1           1.0          153.0         1.0      138.0     303.0
+MariaDB-BHT-8-1-1              1.0            4.0         4.0      125.0     143.0
+MonetDB-BHT-8-1-1              1.0          104.0         9.0       92.0     213.0
+MySQL-BHT-64-1-1               1.0           11.0         8.0      122.0     149.0
+PostgreSQL-BHT-8-1-1           1.0          145.0         1.0      142.0     297.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
@@ -393,24 +395,45 @@ DBMS
 MariaDB-BHT-8-1-1              0.00
 MonetDB-BHT-8-1-1              0.09
 MySQL-BHT-64-1-1               0.00
-PostgreSQL-BHT-8-1-1           1.06
+PostgreSQL-BHT-8-1-1           1.18
 
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1            2484156.22
-MonetDB-BHT-8-1-1              44504.06
-MySQL-BHT-64-1-1              991792.76
-PostgreSQL-BHT-8-1-1            3436.83
+MariaDB-BHT-8-1-1            1611522.34
+MonetDB-BHT-8-1-1              43670.41
+MySQL-BHT-64-1-1             1126744.64
+PostgreSQL-BHT-8-1-1            3084.91
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-Traceback (most recent call last):
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/tpcds.py", line 353, in <module>
-    experiment.show_summary()
-  File "/home/perdelt/repositories/Benchmark-Experiment-Host-Manager/bexhoma/experiments.py", line 1847, in show_summary
-    df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
-                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
-KeyError: 'time_end'
+                                                 time [s]  count  SF  Throughput@Size
+DBMS               SF num_experiment num_client                                      
+MariaDB-BHT-8-1    1  1              1                 11      1   1         32400.00
+MonetDB-BHT-8-1    1  1              1                 38      1   1          9378.95
+MySQL-BHT-64-1     1  1              1                  4      1   1         89100.00
+PostgreSQL-BHT-8-1 1  1              1                569      1   1           626.36
+
+### Workflow
+
+#### Actual
+DBMS MariaDB-BHT-8 - Pods [[1]]
+DBMS MonetDB-BHT-8 - Pods [[1]]
+DBMS MySQL-BHT-64 - Pods [[1]]
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+DBMS MonetDB-BHT-8 - Pods [[1]]
+DBMS MariaDB-BHT-8 - Pods [[1]]
+DBMS MySQL-BHT-64 - Pods [[1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST failed: SQL warnings (result mismatch)
+TEST passed: Workflow as planned
 ```
 
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
@@ -584,8 +607,8 @@ doc_tpcds_testcase_monitoring.log
 ### Workload
 TPC-DS Queries SF=3
     Type: tpcds
-    Duration: 817s 
-    Code: 1748293672
+    Duration: 888s 
+    Code: 1748358770
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=3) data is loaded and benchmark is executed.
@@ -593,7 +616,7 @@ TPC-DS Queries SF=3
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
@@ -612,12 +635,12 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:311417752
-    datadisk:12891
+    disk:314090284
+    datadisk:12892
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748293672
+        code:1748358770
 
 ### Errors (failed queries)
 No errors
@@ -627,124 +650,124 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1
-TPC-DS Q1                  73.19
-TPC-DS Q2                 559.30
-TPC-DS Q3                  43.08
-TPC-DS Q4                3892.92
-TPC-DS Q5                 635.07
-TPC-DS Q6                 163.41
-TPC-DS Q7                  91.91
-TPC-DS Q8                 106.77
-TPC-DS Q9                 136.61
-TPC-DS Q10                133.09
-TPC-DS Q11               1960.68
-TPC-DS Q12                 39.70
-TPC-DS Q13                175.00
-TPC-DS Q14a+b            6554.92
-TPC-DS Q15                 51.57
-TPC-DS Q16                273.42
-TPC-DS Q17                407.71
-TPC-DS Q18                253.09
-TPC-DS Q19                 88.69
-TPC-DS Q20                 54.95
-TPC-DS Q21                103.08
-TPC-DS Q22               2846.45
-TPC-DS Q23a+b            6554.82
-TPC-DS Q24a+b             905.17
-TPC-DS Q25                375.80
-TPC-DS Q26                 68.36
-TPC-DS Q27                335.96
-TPC-DS Q28                175.81
-TPC-DS Q29                384.49
-TPC-DS Q30                 35.26
-TPC-DS Q31                512.82
-TPC-DS Q32                 38.41
-TPC-DS Q33                 54.45
-TPC-DS Q34                 50.51
-TPC-DS Q35                227.54
-TPC-DS Q36                253.98
-TPC-DS Q37                232.11
-TPC-DS Q38                679.68
-TPC-DS Q39a+b            3030.21
-TPC-DS Q40                222.91
-TPC-DS Q41                  9.88
-TPC-DS Q42                 49.14
-TPC-DS Q43                 94.40
-TPC-DS Q44                 84.20
-TPC-DS Q45                 49.62
-TPC-DS Q46                 89.24
-TPC-DS Q47                622.86
-TPC-DS Q48                146.49
-TPC-DS Q49                243.69
-TPC-DS Q50                242.27
-TPC-DS Q51               1907.59
-TPC-DS Q52                 37.75
-TPC-DS Q53                 51.30
-TPC-DS Q54                 56.13
-TPC-DS Q55                 31.13
-TPC-DS Q56                 56.85
-TPC-DS Q57                154.40
-TPC-DS Q58                134.11
-TPC-DS Q59                316.89
-TPC-DS Q60                 55.01
-TPC-DS Q61                 80.64
-TPC-DS Q62                 49.53
-TPC-DS Q63                 55.80
-TPC-DS Q64               1125.45
-TPC-DS Q65                387.26
-TPC-DS Q66                277.43
-TPC-DS Q67               2203.88
-TPC-DS Q68                 86.68
-TPC-DS Q69                 44.35
-TPC-DS Q70                169.20
-TPC-DS Q71                 63.76
-TPC-DS Q72                264.27
-TPC-DS Q73                 50.11
-TPC-DS Q74               1842.58
-TPC-DS Q75               2296.02
-TPC-DS Q76                 69.41
-TPC-DS Q77                173.46
-TPC-DS Q78               3356.02
-TPC-DS Q79                 80.69
-TPC-DS Q80               2299.65
-TPC-DS Q81                 53.50
-TPC-DS Q82                359.57
-TPC-DS Q83                 27.90
-TPC-DS Q84                 20.76
-TPC-DS Q85                 72.20
-TPC-DS Q86                 70.27
-TPC-DS Q87                799.99
-TPC-DS Q88                201.89
-TPC-DS Q89                 73.63
-TPC-DS Q90                 24.84
-TPC-DS Q91                 25.40
-TPC-DS Q92                 25.75
-TPC-DS Q93                348.22
-TPC-DS Q94                 60.50
-TPC-DS Q95                212.18
-TPC-DS Q96                 27.40
-TPC-DS Q97                894.57
-TPC-DS Q98                 87.66
-TPC-DS Q99                 94.31
+TPC-DS Q1                  80.50
+TPC-DS Q2                 529.56
+TPC-DS Q3                  62.08
+TPC-DS Q4                4502.64
+TPC-DS Q5                 956.12
+TPC-DS Q6                 289.11
+TPC-DS Q7                 112.88
+TPC-DS Q8                 142.04
+TPC-DS Q9                 173.16
+TPC-DS Q10                116.82
+TPC-DS Q11               2077.35
+TPC-DS Q12                 45.35
+TPC-DS Q13                228.51
+TPC-DS Q14a+b            7106.75
+TPC-DS Q15                 75.40
+TPC-DS Q16                335.89
+TPC-DS Q17                711.30
+TPC-DS Q18                324.69
+TPC-DS Q19                 95.47
+TPC-DS Q20                 60.81
+TPC-DS Q21                107.80
+TPC-DS Q22               3400.54
+TPC-DS Q23a+b            7581.13
+TPC-DS Q24a+b            1165.39
+TPC-DS Q25                577.06
+TPC-DS Q26                 92.65
+TPC-DS Q27                474.24
+TPC-DS Q28                204.69
+TPC-DS Q29                553.92
+TPC-DS Q30                 45.89
+TPC-DS Q31                620.44
+TPC-DS Q32                 49.87
+TPC-DS Q33                 56.59
+TPC-DS Q34                 67.81
+TPC-DS Q35                258.44
+TPC-DS Q36                313.73
+TPC-DS Q37                261.93
+TPC-DS Q38                784.55
+TPC-DS Q39a+b            3494.23
+TPC-DS Q40                310.12
+TPC-DS Q41                 11.37
+TPC-DS Q42                 52.24
+TPC-DS Q43                179.59
+TPC-DS Q44                137.19
+TPC-DS Q45                 47.86
+TPC-DS Q46                125.35
+TPC-DS Q47                633.76
+TPC-DS Q48                203.14
+TPC-DS Q49                305.92
+TPC-DS Q50                259.73
+TPC-DS Q51               2250.12
+TPC-DS Q52                 46.94
+TPC-DS Q53                 70.32
+TPC-DS Q54                 61.75
+TPC-DS Q55                 40.77
+TPC-DS Q56                 79.15
+TPC-DS Q57                250.45
+TPC-DS Q58                129.78
+TPC-DS Q59                450.25
+TPC-DS Q60                 69.90
+TPC-DS Q61                 91.11
+TPC-DS Q62                 63.01
+TPC-DS Q63                 61.48
+TPC-DS Q64               1443.05
+TPC-DS Q65                504.92
+TPC-DS Q66                298.74
+TPC-DS Q67               2888.01
+TPC-DS Q68                109.31
+TPC-DS Q69                 54.79
+TPC-DS Q70                234.20
+TPC-DS Q71                 78.56
+TPC-DS Q72                360.59
+TPC-DS Q73                 68.75
+TPC-DS Q74                655.56
+TPC-DS Q75               2762.70
+TPC-DS Q76                212.11
+TPC-DS Q77                201.36
+TPC-DS Q78               4093.02
+TPC-DS Q79                139.37
+TPC-DS Q80               2676.81
+TPC-DS Q81                 63.59
+TPC-DS Q82                108.71
+TPC-DS Q83                 39.57
+TPC-DS Q84                127.33
+TPC-DS Q85                123.37
+TPC-DS Q86                 86.23
+TPC-DS Q87               1113.49
+TPC-DS Q88                263.51
+TPC-DS Q89                 81.08
+TPC-DS Q90                 30.35
+TPC-DS Q91                 32.19
+TPC-DS Q92                 30.71
+TPC-DS Q93                508.38
+TPC-DS Q94                 90.07
+TPC-DS Q95                274.36
+TPC-DS Q96                 31.60
+TPC-DS Q97               1143.17
+TPC-DS Q98                108.30
+TPC-DS Q99                123.28
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1           1.0          290.0         9.0      192.0     501.0
+MonetDB-BHT-8-1-1           1.0          294.0         9.0      230.0     541.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1           0.18
+MonetDB-BHT-8-1-1           0.23
 
 ### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1           63139.23
+MonetDB-BHT-8-1-1           50246.87
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                               time [s]  count  SF  Throughput@Size
 DBMS            SF num_experiment num_client                                      
-MonetDB-BHT-8-1 3  1              1                 76      1   3         14068.42
+MonetDB-BHT-8-1 3  1              1                 83      1   3         12881.93
 
 ### Workflow
 
@@ -756,19 +779,19 @@ DBMS MonetDB-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      721.88     2.22          3.31                10.94
+MonetDB-BHT-8-1      748.32     2.09           4.5                14.27
 
 ### Ingestion - Loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       56.38     0.25          1.12                 2.28
+MonetDB-BHT-8-1       56.37     0.22          1.12                 2.28
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      216.13     4.55          7.26                16.63
+MonetDB-BHT-8-1      314.58     0.42          7.98                17.07
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       20.22        0          0.26                 0.27
+MonetDB-BHT-8-1       21.61     0.14          0.26                 0.27
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -815,8 +838,8 @@ doc_tpcds_testcase_throughput.log
 ### Workload
 TPC-DS Queries SF=1
     Type: tpcds
-    Duration: 600s 
-    Code: 1748294632
+    Duration: 590s 
+    Code: 1748359790
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -824,7 +847,7 @@ TPC-DS Queries SF=1
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -842,36 +865,36 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:303952520
-    datadisk:5601
+    disk:306624692
+    datadisk:5602
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748294632
+        code:1748359790
 MonetDB-BHT-8-2-1 uses docker image monetdb/monetdb:Aug2024
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:304034260
-    datadisk:5681
+    disk:306682912
+    datadisk:5659
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748294632
+        code:1748359790
 MonetDB-BHT-8-2-2 uses docker image monetdb/monetdb:Aug2024
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:304034260
-    datadisk:5681
+    disk:306682912
+    datadisk:5659
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748294632
+        code:1748359790
 
 ### Errors (failed queries)
 No errors
@@ -882,111 +905,111 @@ TPC-DS Q39a+b              False               True               True
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-2-2
-TPC-DS Q1                  49.09              46.93              40.81
-TPC-DS Q2                 167.78             187.02             170.66
-TPC-DS Q3                  22.90              31.04              32.03
-TPC-DS Q4                1199.91            1300.36            1248.91
-TPC-DS Q5                 235.54             250.01             236.18
-TPC-DS Q6                  70.27              61.24              64.11
-TPC-DS Q7                  49.62              46.89              57.51
-TPC-DS Q8                  40.54              43.81              40.19
-TPC-DS Q9                  53.37              52.76              51.68
-TPC-DS Q10                 39.72              46.99              52.26
-TPC-DS Q11                584.45             561.83             590.17
-TPC-DS Q12                 20.21              20.61              30.79
-TPC-DS Q13                100.93             110.32              89.28
-TPC-DS Q14a+b            2123.34            2263.32            2325.81
-TPC-DS Q15                 21.67              22.17              28.77
-TPC-DS Q16                 36.26              34.60              37.47
-TPC-DS Q17                103.72             103.88             117.06
-TPC-DS Q18                116.50              66.64              78.35
-TPC-DS Q19                 43.46              37.22              35.95
-TPC-DS Q20                 33.94              27.33              31.38
-TPC-DS Q21                 69.44              67.30              61.91
-TPC-DS Q22               1073.43            1024.23            1062.44
-TPC-DS Q23a+b            2039.89            2158.43            2242.29
-TPC-DS Q24a+b             186.98             186.46             179.71
-TPC-DS Q25                136.09             111.94             114.00
-TPC-DS Q26                 22.32              23.24              24.13
-TPC-DS Q27                148.09             104.64             109.31
-TPC-DS Q28                 70.81              74.43              77.77
-TPC-DS Q29                 87.38              88.25              91.86
-TPC-DS Q30                 22.51              23.22              23.02
-TPC-DS Q31                170.70             145.37             154.42
-TPC-DS Q32                 22.75              19.40              19.08
-TPC-DS Q33                 31.04              22.30              23.06
-TPC-DS Q34                 26.69              35.36              34.58
-TPC-DS Q35                 97.84              72.64              93.62
-TPC-DS Q36                 77.75              59.29              88.50
-TPC-DS Q37                 81.08              63.37              48.45
-TPC-DS Q38                213.03             197.22             185.03
-TPC-DS Q39a+b            1053.98             961.82            1026.58
-TPC-DS Q40                 74.87             100.37              98.94
-TPC-DS Q41                 10.09              10.51               8.77
-TPC-DS Q42                 20.46              24.44              19.81
-TPC-DS Q43                 43.66              50.24              45.37
-TPC-DS Q44                 85.02              75.08              79.00
-TPC-DS Q45                 27.02              26.95              31.35
-TPC-DS Q46                 40.66              47.89              43.06
-TPC-DS Q47                258.90             275.40             256.80
-TPC-DS Q48                107.37             109.21             105.95
-TPC-DS Q49                108.05             107.45             103.73
-TPC-DS Q50                102.72             110.67              92.19
-TPC-DS Q51                618.44             615.81             597.22
-TPC-DS Q52                 22.00              20.31              19.52
-TPC-DS Q53                 26.99              25.48              26.39
-TPC-DS Q54                 27.51              23.75              24.31
-TPC-DS Q55                 17.07              16.57              18.35
-TPC-DS Q56                 27.84              28.08              21.65
-TPC-DS Q57                103.45              98.10              96.47
-TPC-DS Q58                 61.88              46.42              46.29
-TPC-DS Q59                116.23              99.29             111.47
-TPC-DS Q60                 23.27              22.36              23.56
-TPC-DS Q61                 35.38              32.36              32.04
-TPC-DS Q62                 23.49              23.58              23.69
-TPC-DS Q63                 26.06              27.27              25.21
-TPC-DS Q64                390.02             270.22             241.70
-TPC-DS Q65                 89.97              81.81              96.47
-TPC-DS Q66                 92.58              98.38             101.99
-TPC-DS Q67                632.48             670.40             650.69
-TPC-DS Q68                 37.85              40.37              41.70
-TPC-DS Q69                 23.34              24.64              22.66
-TPC-DS Q70                 70.72              76.14              73.48
-TPC-DS Q71                 30.92              31.44              30.45
-TPC-DS Q72                155.87             154.72             149.37
-TPC-DS Q73                 25.71              25.61              26.21
-TPC-DS Q74                183.08             203.63             197.01
-TPC-DS Q75                716.96             679.86             636.26
-TPC-DS Q76                 36.77              35.00              46.35
-TPC-DS Q77                 64.28              66.53              60.93
-TPC-DS Q78                802.19             833.13             836.99
-TPC-DS Q79                 53.63              46.41              46.43
-TPC-DS Q80                477.96             451.68             443.75
-TPC-DS Q81                 23.20              23.01              21.15
-TPC-DS Q82                168.76              76.97              56.75
-TPC-DS Q83                 15.07              13.83              13.00
-TPC-DS Q84                 30.73              15.36              19.83
-TPC-DS Q85                 37.39              36.15              34.15
-TPC-DS Q86                 30.78              24.82              26.35
-TPC-DS Q87                266.17             261.83             283.34
-TPC-DS Q88                 88.01              93.54              92.72
-TPC-DS Q89                 35.43              35.10              35.39
-TPC-DS Q90                 16.83              29.27              12.79
-TPC-DS Q91                 28.80              25.34              24.54
-TPC-DS Q92                 14.95              13.93              13.04
-TPC-DS Q93                 94.08              93.54             123.03
-TPC-DS Q94                 18.44              17.88              16.63
-TPC-DS Q95                133.13             151.89             130.49
-TPC-DS Q96                 14.78              14.38              14.42
-TPC-DS Q97                215.17             225.60             209.41
-TPC-DS Q98                 39.51              40.97              41.85
-TPC-DS Q99                 65.60              53.86              54.21
+TPC-DS Q1                  49.47             146.64              42.82
+TPC-DS Q2                 179.67             131.43             136.87
+TPC-DS Q3                  25.90              26.27              22.43
+TPC-DS Q4                1260.68            1279.07            1282.52
+TPC-DS Q5                 258.63             246.35             250.21
+TPC-DS Q6                  84.78              64.09              67.03
+TPC-DS Q7                  54.70              47.83              54.17
+TPC-DS Q8                  42.96              61.98              43.50
+TPC-DS Q9                  55.35              51.28              50.14
+TPC-DS Q10                 47.82              31.71              40.65
+TPC-DS Q11                627.49             557.56             667.35
+TPC-DS Q12                 26.98              20.80              22.27
+TPC-DS Q13                138.62              89.35              96.32
+TPC-DS Q14a+b            2316.95            2091.20            2165.90
+TPC-DS Q15                 26.73              21.71              21.76
+TPC-DS Q16                 41.74              39.95              41.12
+TPC-DS Q17                181.85             112.75             128.66
+TPC-DS Q18                143.66              63.22              57.49
+TPC-DS Q19                 42.70              45.36              43.43
+TPC-DS Q20                 28.48              27.32              52.50
+TPC-DS Q21                 74.60              71.05              69.72
+TPC-DS Q22               1089.04            1070.70            1121.73
+TPC-DS Q23a+b            2813.97            3026.25            2838.14
+TPC-DS Q24a+b             332.62             325.38             278.95
+TPC-DS Q25                128.49             102.76             154.32
+TPC-DS Q26                 24.93              19.79              47.02
+TPC-DS Q27                103.70              92.99             103.33
+TPC-DS Q28                 68.68              68.11              63.90
+TPC-DS Q29                113.48              93.08              98.16
+TPC-DS Q30                 17.92              15.27              17.26
+TPC-DS Q31                156.87             141.32             131.59
+TPC-DS Q32                 18.42              16.01              23.10
+TPC-DS Q33                 25.62              21.22              22.78
+TPC-DS Q34                 28.14              26.21              25.56
+TPC-DS Q35                 84.36              71.35              85.58
+TPC-DS Q36                102.35              85.81              69.41
+TPC-DS Q37                116.30              59.13              57.00
+TPC-DS Q38                203.38             178.73             204.25
+TPC-DS Q39a+b            1495.53            1308.62            1321.85
+TPC-DS Q40                 81.38              99.07             112.94
+TPC-DS Q41                  9.73               9.13               9.18
+TPC-DS Q42                 20.61              19.40              22.95
+TPC-DS Q43                 44.93              44.05              47.08
+TPC-DS Q44                 33.68              32.33              32.51
+TPC-DS Q45                 26.75              29.58              27.32
+TPC-DS Q46                 39.38              38.03              51.67
+TPC-DS Q47                225.77             238.90             222.09
+TPC-DS Q48                102.84              98.84             104.74
+TPC-DS Q49                 89.05              93.31              94.26
+TPC-DS Q50                 99.44              91.01             103.66
+TPC-DS Q51                625.38             574.59             585.06
+TPC-DS Q52                 21.68              21.63              19.99
+TPC-DS Q53                 33.55              28.91              31.43
+TPC-DS Q54                 26.73              24.65              23.24
+TPC-DS Q55                 18.78              17.29              17.13
+TPC-DS Q56                 26.33              20.73              28.48
+TPC-DS Q57                106.67             103.46             100.40
+TPC-DS Q58                 59.30              55.54              56.56
+TPC-DS Q59                111.02             103.78             100.05
+TPC-DS Q60                 25.29              23.13              24.70
+TPC-DS Q61                 33.53              32.39              32.91
+TPC-DS Q62                 27.52              25.71              81.48
+TPC-DS Q63                 26.71              43.77              26.92
+TPC-DS Q64                462.21             238.43             222.09
+TPC-DS Q65                 94.91              94.92              96.87
+TPC-DS Q66                101.15              95.67             102.42
+TPC-DS Q67                684.23             677.40             783.58
+TPC-DS Q68                 37.68              50.72              38.74
+TPC-DS Q69                 43.97              42.58              43.06
+TPC-DS Q70                 72.70              83.18              75.69
+TPC-DS Q71                 30.97              31.48              31.77
+TPC-DS Q72                172.74             148.42             158.88
+TPC-DS Q73                 29.96              26.04              24.36
+TPC-DS Q74                199.55             187.50             183.47
+TPC-DS Q75                699.16             685.26             645.00
+TPC-DS Q76                 48.71              44.51              48.86
+TPC-DS Q77                 57.52              57.44              58.54
+TPC-DS Q78                855.71             835.73             788.17
+TPC-DS Q79                 52.62              58.47              47.24
+TPC-DS Q80                445.35             419.79             458.99
+TPC-DS Q81                 32.32              31.02              31.69
+TPC-DS Q82                 71.38              49.88              49.51
+TPC-DS Q83                 17.25              14.74              14.38
+TPC-DS Q84                 30.78              25.49              15.20
+TPC-DS Q85                 39.26              61.23              35.01
+TPC-DS Q86                 28.78              25.05              28.48
+TPC-DS Q87                280.56             274.57             276.74
+TPC-DS Q88                 96.65              96.59              95.74
+TPC-DS Q89                 39.84              47.25              37.54
+TPC-DS Q90                 24.57              12.71              17.86
+TPC-DS Q91                 26.65              24.07              25.76
+TPC-DS Q92                 14.04              15.45              15.68
+TPC-DS Q93                 96.41              85.74             106.48
+TPC-DS Q94                 19.12              20.18              16.79
+TPC-DS Q95                118.50             108.23              91.16
+TPC-DS Q96                 16.65              15.39              14.65
+TPC-DS Q97                258.45             235.23             252.12
+TPC-DS Q98                 46.04              47.98              44.72
+TPC-DS Q99                 69.42              61.81              53.20
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1           1.0          108.0         8.0       70.0     194.0
-MonetDB-BHT-8-2-1           1.0          108.0         8.0       70.0     194.0
-MonetDB-BHT-8-2-2           1.0          108.0         8.0       70.0     194.0
+MonetDB-BHT-8-1-1           1.0          109.0         9.0       70.0     197.0
+MonetDB-BHT-8-2-1           1.0          109.0         9.0       70.0     197.0
+MonetDB-BHT-8-2-2           1.0          109.0         9.0       70.0     197.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
@@ -998,15 +1021,15 @@ MonetDB-BHT-8-2-2           0.08
 ### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1           49186.37
-MonetDB-BHT-8-2-1           51142.42
-MonetDB-BHT-8-2-2           51319.60
+MonetDB-BHT-8-1-1           46864.96
+MonetDB-BHT-8-2-1           50566.29
+MonetDB-BHT-8-2-2           49690.12
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                               time [s]  count  SF  Throughput@Size
 DBMS            SF num_experiment num_client                                      
-MonetDB-BHT-8-1 1  1              1                 32      1   1          11137.5
-MonetDB-BHT-8-2 1  1              2                 36      2   1          19800.0
+MonetDB-BHT-8-1 1  1              1                 40      1   1          8910.00
+MonetDB-BHT-8-2 1  1              2                 39      2   1         18276.92
 
 ### Workflow
 
@@ -1084,8 +1107,8 @@ doc_tpcds_testcase_storage.log
 ### Workload
 TPC-DS Queries SF=1
     Type: tpcds
-    Duration: 875s 
-    Code: 1748295382
+    Duration: 918s 
+    Code: 1748360541
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -1093,7 +1116,7 @@ TPC-DS Queries SF=1
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -1112,28 +1135,28 @@ MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Aug2024
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:298217920
-    datadisk:5599
+    disk:300889240
+    datadisk:5597
     volume_size:10G
-    volume_used:5.1G
+    volume_used:5.3G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748295382
+        code:1748360541
 MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Aug2024
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:298217856
-    datadisk:5680
+    disk:300889176
+    datadisk:5654
     volume_size:10G
     volume_used:5.6G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748295382
+        code:1748360541
 
 ### Errors (failed queries)
 No errors
@@ -1144,110 +1167,110 @@ TPC-DS Q39a+b                False                 True
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-2-1-1
-TPC-DS Q1                    39.70               789.01
-TPC-DS Q2                   159.29               914.43
-TPC-DS Q3                    32.44              1090.26
-TPC-DS Q4                  1197.60              3732.65
-TPC-DS Q5                   240.91              1540.81
-TPC-DS Q6                    69.30               664.23
-TPC-DS Q7                    58.22              1590.08
-TPC-DS Q8                    90.32               568.77
-TPC-DS Q9                    61.65               425.51
-TPC-DS Q10                   52.17              7134.99
-TPC-DS Q11                  543.38               607.54
-TPC-DS Q12                   24.83               464.93
-TPC-DS Q13                  101.86               279.29
-TPC-DS Q14a+b              2724.12              2975.03
-TPC-DS Q15                   28.05                25.28
-TPC-DS Q16                   44.79              1086.10
-TPC-DS Q17                  130.71               253.99
-TPC-DS Q18                  435.29               798.57
-TPC-DS Q19                   38.35               138.64
-TPC-DS Q20                   28.77                32.17
-TPC-DS Q21                  106.42              3716.57
-TPC-DS Q22                 1062.25              1550.63
-TPC-DS Q23a+b              2647.35              2692.20
-TPC-DS Q24a+b               223.03               495.46
-TPC-DS Q25                  108.86               105.08
-TPC-DS Q26                   25.06                23.21
-TPC-DS Q27                  148.14               106.31
-TPC-DS Q28                   64.07                69.05
-TPC-DS Q29                  114.73                96.24
-TPC-DS Q30                   32.27               136.77
-TPC-DS Q31                  160.69               136.95
-TPC-DS Q32                   28.27                17.95
-TPC-DS Q33                   23.61                77.31
-TPC-DS Q34                   38.67               295.50
-TPC-DS Q35                  100.90                94.75
-TPC-DS Q36                  120.22                79.30
-TPC-DS Q37                   74.52                54.27
-TPC-DS Q38                  200.20               204.36
-TPC-DS Q39a+b              1376.71              1552.82
-TPC-DS Q40                   86.17                58.13
-TPC-DS Q41                    9.77                 8.73
-TPC-DS Q42                   19.75                18.39
-TPC-DS Q43                   43.64                86.74
-TPC-DS Q44                   32.07                90.07
-TPC-DS Q45                   27.42                27.65
-TPC-DS Q46                   39.25               471.09
-TPC-DS Q47                  257.02               298.88
-TPC-DS Q48                   98.91                92.61
-TPC-DS Q49                  104.17               728.84
-TPC-DS Q50                  102.33               565.56
-TPC-DS Q51                  605.62               614.93
-TPC-DS Q52                   25.34                22.41
-TPC-DS Q53                   25.74                27.76
-TPC-DS Q54                   36.22               639.48
-TPC-DS Q55                   18.54                17.32
-TPC-DS Q56                   32.02                68.08
-TPC-DS Q57                   94.95               161.61
-TPC-DS Q58                   50.20                57.22
-TPC-DS Q59                   95.93               215.52
-TPC-DS Q60                   32.01                24.57
-TPC-DS Q61                   32.51               154.10
-TPC-DS Q62                   32.55               124.73
-TPC-DS Q63                   31.83                29.70
-TPC-DS Q64                  403.09              1125.19
-TPC-DS Q65                   92.21               156.12
-TPC-DS Q66                  120.44               141.73
-TPC-DS Q67                  701.99               681.73
-TPC-DS Q68                   41.31                40.50
-TPC-DS Q69                   26.86                24.35
-TPC-DS Q70                   73.90               544.70
-TPC-DS Q71                   30.80                33.84
-TPC-DS Q72                  379.99               972.60
-TPC-DS Q73                   29.26                26.25
-TPC-DS Q74                  208.21               188.89
-TPC-DS Q75                  931.26               740.54
-TPC-DS Q76                   35.64               259.07
-TPC-DS Q77                   75.95                63.31
-TPC-DS Q78                  849.19               826.89
-TPC-DS Q79                   53.79                52.92
-TPC-DS Q80                  417.80               426.14
-TPC-DS Q81                   28.78               220.16
-TPC-DS Q82                  232.96               303.61
-TPC-DS Q83                   62.66               108.60
-TPC-DS Q84                   45.42               297.33
-TPC-DS Q85                   44.75                70.29
-TPC-DS Q86                   31.90                27.24
-TPC-DS Q87                  265.49               278.05
-TPC-DS Q88                  117.31               169.59
-TPC-DS Q89                   40.84                38.85
-TPC-DS Q90                   17.77                13.50
-TPC-DS Q91                   29.70               233.45
-TPC-DS Q92                   15.61                13.87
-TPC-DS Q93                   96.33               100.55
-TPC-DS Q94                   24.43                19.75
-TPC-DS Q95                  149.71               155.45
-TPC-DS Q96                   14.72                13.93
-TPC-DS Q97                  226.66               241.90
-TPC-DS Q98                   43.46                41.53
-TPC-DS Q99                   63.01                65.35
+TPC-DS Q1                    46.63               966.94
+TPC-DS Q2                   198.61               775.30
+TPC-DS Q3                    34.85              1263.19
+TPC-DS Q4                  1308.21              3415.42
+TPC-DS Q5                   286.99              1196.30
+TPC-DS Q6                    88.46               502.87
+TPC-DS Q7                    74.27              1963.28
+TPC-DS Q8                    72.96               309.12
+TPC-DS Q9                    73.15                94.52
+TPC-DS Q10                   84.37              8510.05
+TPC-DS Q11                  628.53               670.48
+TPC-DS Q12                   26.05               302.00
+TPC-DS Q13                  117.00               399.34
+TPC-DS Q14a+b              2094.44              3165.19
+TPC-DS Q15                   25.09                29.51
+TPC-DS Q16                   42.41              1157.15
+TPC-DS Q17                  147.93               332.66
+TPC-DS Q18                  151.43               219.73
+TPC-DS Q19                   42.02               228.92
+TPC-DS Q20                   33.35                26.97
+TPC-DS Q21                  107.32              3838.91
+TPC-DS Q22                 1146.76              1243.02
+TPC-DS Q23a+b              3065.63              2886.36
+TPC-DS Q24a+b               303.07               647.71
+TPC-DS Q25                  133.20               116.78
+TPC-DS Q26                   26.45                21.17
+TPC-DS Q27                  149.90               116.36
+TPC-DS Q28                   93.41                71.78
+TPC-DS Q29                  123.43               117.32
+TPC-DS Q30                   26.51               142.49
+TPC-DS Q31                  183.40               177.86
+TPC-DS Q32                   20.00                17.78
+TPC-DS Q33                   25.11                62.84
+TPC-DS Q34                   34.69               233.45
+TPC-DS Q35                   89.82                89.99
+TPC-DS Q36                   82.53               102.35
+TPC-DS Q37                   86.66                75.10
+TPC-DS Q38                  223.83               196.33
+TPC-DS Q39a+b              1152.03              1222.93
+TPC-DS Q40                   86.75                55.12
+TPC-DS Q41                   10.60                 8.67
+TPC-DS Q42                   21.53                23.32
+TPC-DS Q43                   50.69                57.31
+TPC-DS Q44                  104.47              1061.03
+TPC-DS Q45                   27.46                28.39
+TPC-DS Q46                   47.90               477.64
+TPC-DS Q47                  279.14               298.96
+TPC-DS Q48                  105.67               119.09
+TPC-DS Q49                  135.79               436.65
+TPC-DS Q50                  112.51               400.99
+TPC-DS Q51                  639.02               603.91
+TPC-DS Q52                   25.70                19.89
+TPC-DS Q53                   31.56                29.31
+TPC-DS Q54                   25.30                23.19
+TPC-DS Q55                   17.48                16.97
+TPC-DS Q56                   34.64               100.97
+TPC-DS Q57                   89.87               120.32
+TPC-DS Q58                   51.42                54.81
+TPC-DS Q59                  125.16               130.58
+TPC-DS Q60                   25.00                22.33
+TPC-DS Q61                   39.35                70.82
+TPC-DS Q62                   63.72               173.57
+TPC-DS Q63                   26.47                28.22
+TPC-DS Q64                  541.82               736.03
+TPC-DS Q65                  109.39               122.59
+TPC-DS Q66                   96.42               435.99
+TPC-DS Q67                  720.97               673.69
+TPC-DS Q68                   40.25                38.64
+TPC-DS Q69                   41.72                41.69
+TPC-DS Q70                   71.99               758.83
+TPC-DS Q71                   33.25                40.70
+TPC-DS Q72                  194.98              1469.10
+TPC-DS Q73                   28.32                25.96
+TPC-DS Q74                  575.94               610.16
+TPC-DS Q75                  713.80               719.91
+TPC-DS Q76                   87.42               660.74
+TPC-DS Q77                   62.50               108.95
+TPC-DS Q78                  890.58               847.03
+TPC-DS Q79                   61.98               115.44
+TPC-DS Q80                  561.80               482.35
+TPC-DS Q81                   43.01               333.21
+TPC-DS Q82                   67.43               112.57
+TPC-DS Q83                   23.49                29.68
+TPC-DS Q84                   79.32                68.00
+TPC-DS Q85                   45.43                76.65
+TPC-DS Q86                   32.17                35.38
+TPC-DS Q87                  313.64               272.58
+TPC-DS Q88                  111.34               107.51
+TPC-DS Q89                   39.95                36.17
+TPC-DS Q90                   20.18                14.02
+TPC-DS Q91                   30.03               345.52
+TPC-DS Q92                   19.67                13.57
+TPC-DS Q93                  120.02               103.43
+TPC-DS Q94                   24.57                21.47
+TPC-DS Q95                  147.74               135.94
+TPC-DS Q96                   14.94                14.62
+TPC-DS Q97                  288.17               264.40
+TPC-DS Q98                   44.26                40.71
+TPC-DS Q99                   69.96                62.27
 
 ### Loading [s]
                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1-1           1.0          123.0        10.0       85.0     226.0
-MonetDB-BHT-8-2-1-1           1.0          123.0        10.0       85.0     226.0
+MonetDB-BHT-8-1-1-1           1.0          131.0        11.0      101.0     251.0
+MonetDB-BHT-8-2-1-1           1.0          131.0        11.0      101.0     251.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                      Geo Times [s]
@@ -1258,14 +1281,14 @@ MonetDB-BHT-8-2-1-1           0.18
 ### Power@Size ((3600*SF)/(geo times))
                      Power@Size [~Q/h]
 DBMS                                  
-MonetDB-BHT-8-1-1-1           43874.30
-MonetDB-BHT-8-2-1-1           21461.19
+MonetDB-BHT-8-1-1-1           41359.09
+MonetDB-BHT-8-2-1-1           21997.80
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                                 time [s]  count  SF  Throughput@Size
 DBMS              SF num_experiment num_client                                      
 MonetDB-BHT-8-1-1 1  1              1                 38      1   1          9378.95
-MonetDB-BHT-8-2-1 1  2              1                131      1   1          2720.61
+MonetDB-BHT-8-2-1 1  2              1                130      1   1          2741.54
 
 ### Workflow
 
@@ -1336,8 +1359,8 @@ doc_tpcds_testcase_profiling.log
 ### Workload
 TPC-DS Data Profiling SF=10
     Type: tpcds
-    Duration: 898s 
-    Code: 1748325602
+    Duration: 808s 
+    Code: 1748410145
     We compute for all columns: Minimum, maximum, average, count, count distinct, count NULL and non NULL entries and coefficient of variation.
     This experiment compares imported TPC-DS data sets in different DBMS.
     TPC-DS (SF=10) data is loaded and benchmark is executed.
@@ -1345,7 +1368,7 @@ TPC-DS Data Profiling SF=10
     All instances use the same query parameters.
     Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
@@ -1365,28 +1388,28 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:298915504
+    disk:301206216
     datadisk:40080
     volume_size:50G
     volume_used:40G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748325602
+        code:1748410145
 MonetDB-BHT-8-2-1 uses docker image monetdb/monetdb:Aug2024
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:298915508
+    disk:301206220
     datadisk:40080
     volume_size:50G
     volume_used:40G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748325602
+        code:1748410145
 
 ### Errors (failed queries)
 No errors
@@ -1396,435 +1419,435 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                                    MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1
-statistics_tab about call_center.cc_call_center_sk - all                            63.45              25.27
-statistics_tab about call_center.cc_call_center_id - all                            84.51               5.89
-statistics_tab about call_center.cc_rec_start_date - all                            18.83               6.21
-statistics_tab about call_center.cc_rec_end_date - all                              25.63               5.11
-statistics_tab about call_center.cc_closed_date_sk - all                            27.05               3.54
-statistics_tab about call_center.cc_open_date_sk - all                              44.72               3.23
-statistics_tab about call_center.cc_name - all                                      38.16               5.19
-statistics_tab about call_center.cc_class - all                                     74.30               4.81
-statistics_tab about call_center.cc_employees - all                                 35.57               2.88
-statistics_tab about call_center.cc_sq_ft - all                                     22.64               3.18
-statistics_tab about call_center.cc_hours - all                                     23.91               5.81
-statistics_tab about call_center.cc_manager - all                                   36.58               5.19
-statistics_tab about call_center.cc_mkt_id - all                                    15.84               3.26
-statistics_tab about call_center.cc_mkt_class - all                                 64.77               4.93
-statistics_tab about call_center.cc_mkt_desc - all                                 100.42               4.79
-statistics_tab about call_center.cc_market_manager - all                            39.44               5.00
-statistics_tab about call_center.cc_division - all                                  66.75               2.80
-statistics_tab about call_center.cc_division_name - all                             38.27               4.92
-statistics_tab about call_center.cc_company - all                                   31.23               2.94
-statistics_tab about call_center.cc_company_name - all                              61.64               4.85
-statistics_tab about call_center.cc_street_number - all                             27.50               4.66
-statistics_tab about call_center.cc_street_name - all                               69.65               4.92
-statistics_tab about call_center.cc_street_type - all                               47.05               4.99
-statistics_tab about call_center.cc_suite_number - all                              83.42               4.60
-statistics_tab about call_center.cc_city - all                                     289.15               5.44
-statistics_tab about call_center.cc_county - all                                    54.53               4.98
-statistics_tab about call_center.cc_state - all                                     32.53               4.96
-statistics_tab about call_center.cc_zip - all                                       35.32               5.77
-statistics_tab about call_center.cc_country - all                                   64.46               5.11
-statistics_tab about call_center.cc_gmt_offset - all                                38.39               4.29
-statistics_tab about call_center.cc_tax_percentage - all                            49.08               3.71
-statistics_tab about catalog_page.cp_catalog_page_sk - all                         126.32               3.96
-statistics_tab about catalog_page.cp_catalog_page_id - all                         206.39               6.74
-statistics_tab about catalog_page.cp_start_date_sk - all                            42.09               4.68
-statistics_tab about catalog_page.cp_end_date_sk - all                              20.13               4.16
-statistics_tab about catalog_page.cp_department - all                              352.86               6.73
-statistics_tab about catalog_page.cp_catalog_number - all                           29.82               4.09
-statistics_tab about catalog_page.cp_catalog_page_number - all                      16.69               3.95
-statistics_tab about catalog_page.cp_description - all                             128.38               9.64
-statistics_tab about catalog_page.cp_type - all                                     70.98               6.41
-statistics_tab about catalog_returns.cr_returned_date_sk - all                     124.90              65.63
-statistics_tab about catalog_returns.cr_returned_time_sk - all                     385.33              98.92
-statistics_tab about catalog_returns.cr_item_sk - all                              164.45              96.04
-statistics_tab about catalog_returns.cr_refunded_customer_sk - all                 301.67             115.56
-statistics_tab about catalog_returns.cr_refunded_cdemo_sk - all                    424.39             164.18
-statistics_tab about catalog_returns.cr_refunded_hdemo_sk - all                    158.20              65.39
-statistics_tab about catalog_returns.cr_refunded_addr_sk - all                     207.93              97.54
-statistics_tab about catalog_returns.cr_returning_customer_sk - all                272.27             132.38
-statistics_tab about catalog_returns.cr_returning_cdemo_sk - all                   351.84             200.58
-statistics_tab about catalog_returns.cr_returning_hdemo_sk - all                   175.43              65.33
-statistics_tab about catalog_returns.cr_returning_addr_sk - all                    214.02              98.64
-statistics_tab about catalog_returns.cr_call_center_sk - all                       406.25              57.35
-statistics_tab about catalog_returns.cr_catalog_page_sk - all                      202.16              61.07
-statistics_tab about catalog_returns.cr_ship_mode_sk - all                         136.87              61.21
-statistics_tab about catalog_returns.cr_warehouse_sk - all                         111.80              58.20
-statistics_tab about catalog_returns.cr_reason_sk - all                            303.06              63.85
-statistics_tab about catalog_returns.cr_order_number - all                         162.12              76.49
-statistics_tab about catalog_returns.cr_return_quantity - all                      165.45              60.58
-statistics_tab about catalog_returns.cr_return_amount - all                        191.44             113.02
-statistics_tab about catalog_returns.cr_return_tax - all                           171.35              75.20
-statistics_tab about catalog_returns.cr_return_amt_inc_tax - all                   422.03             114.37
-statistics_tab about catalog_returns.cr_fee - all                                  310.33              59.44
-statistics_tab about catalog_returns.cr_return_ship_cost - all                     238.35              96.79
-statistics_tab about catalog_returns.cr_refunded_cash - all                        203.15             103.51
-statistics_tab about catalog_returns.cr_reversed_charge - all                      154.53              85.29
-statistics_tab about catalog_returns.cr_store_credit - all                         195.30              99.03
-statistics_tab about catalog_returns.cr_net_loss - all                             216.56             100.31
-statistics_tab about catalog_sales.cs_sold_date_sk - all                          1668.59             642.14
-statistics_tab about catalog_sales.cs_sold_time_sk - all                          1930.41             731.75
-statistics_tab about catalog_sales.cs_ship_date_sk - all                          3251.02             612.76
-statistics_tab about catalog_sales.cs_bill_customer_sk - all                      2085.67             860.86
-statistics_tab about catalog_sales.cs_bill_cdemo_sk - all                         2070.20             916.40
-statistics_tab about catalog_sales.cs_bill_hdemo_sk - all                         2106.43             596.68
-statistics_tab about catalog_sales.cs_bill_addr_sk - all                          2078.11             784.80
-statistics_tab about catalog_sales.cs_ship_customer_sk - all                      1860.06             833.04
-statistics_tab about catalog_sales.cs_ship_cdemo_sk - all                         2123.86             875.46
-statistics_tab about catalog_sales.cs_ship_hdemo_sk - all                         2024.71             584.70
-statistics_tab about catalog_sales.cs_ship_addr_sk - all                          2117.58             794.25
-statistics_tab about catalog_sales.cs_call_center_sk - all                        1937.58             579.03
-statistics_tab about catalog_sales.cs_catalog_page_sk - all                       2208.67             582.62
-statistics_tab about catalog_sales.cs_ship_mode_sk - all                          1687.75             619.28
-statistics_tab about catalog_sales.cs_warehouse_sk - all                          1574.43             614.76
-statistics_tab about catalog_sales.cs_item_sk - all                               2105.89             796.93
-statistics_tab about catalog_sales.cs_promo_sk - all                              1864.29             619.70
-statistics_tab about catalog_sales.cs_order_number - all                          1903.47             855.18
-statistics_tab about catalog_sales.cs_quantity - all                              1813.11             611.83
-statistics_tab about catalog_sales.cs_wholesale_cost - all                        1670.30             642.59
-statistics_tab about catalog_sales.cs_list_price - all                            2225.29             691.94
-statistics_tab about catalog_sales.cs_sales_price - all                           2228.71             674.38
-statistics_tab about catalog_sales.cs_ext_discount_amt - all                      3346.39            1781.84
-statistics_tab about catalog_sales.cs_ext_sales_price - all                       2978.69            1910.28
-statistics_tab about catalog_sales.cs_ext_wholesale_cost - all                    2662.74            1596.99
-statistics_tab about catalog_sales.cs_ext_list_price - all                        3381.99            2420.14
-statistics_tab about catalog_sales.cs_ext_tax - all                               1544.32             833.61
-statistics_tab about catalog_sales.cs_coupon_amt - all                            2137.34             948.71
-statistics_tab about catalog_sales.cs_ext_ship_cost - all                         2289.57            1396.40
-statistics_tab about catalog_sales.cs_net_paid - all                              3133.21            1904.50
-statistics_tab about catalog_sales.cs_net_paid_inc_tax - all                      3304.83            2127.88
-statistics_tab about catalog_sales.cs_net_paid_inc_ship - all                     3090.33            1874.56
-statistics_tab about catalog_sales.cs_net_paid_inc_ship_tax - all                 3674.22            2087.77
-statistics_tab about catalog_sales.cs_net_profit - all                            3765.78            2691.74
-statistics_tab about customer.c_customer_sk - all                                   68.41              12.16
-statistics_tab about customer.c_customer_id - all                                  341.02             182.75
-statistics_tab about customer.c_current_cdemo_sk - all                             104.71              59.19
-statistics_tab about customer.c_current_hdemo_sk - all                              69.89              26.02
-statistics_tab about customer.c_current_addr_sk - all                              231.34              61.20
-statistics_tab about customer.c_first_shipto_date_sk - all                          70.45              26.56
-statistics_tab about customer.c_first_sales_date_sk - all                           84.17              27.02
-statistics_tab about customer.c_salutation - all                                   226.92              10.00
-statistics_tab about customer.c_first_name - all                                   221.26              57.54
-statistics_tab about customer.c_last_name - all                                    173.39              66.15
-statistics_tab about customer.c_preferred_cust_flag - all                          214.51              10.39
-statistics_tab about customer.c_birth_day - all                                     67.58              22.02
-statistics_tab about customer.c_birth_month - all                                   62.38              27.32
-statistics_tab about customer.c_birth_year - all                                    99.17              24.83
-statistics_tab about customer.c_birth_country - all                                 59.67              10.86
-statistics_tab about customer.c_login - all                                        213.79               8.75
-statistics_tab about customer.c_email_address - all                                672.27             196.38
-statistics_tab about customer.c_last_review_date - all                              61.76              10.65
-statistics_tab about customer_address.ca_address_sk - all                           57.66               9.72
-statistics_tab about customer_address.ca_address_id - all                          292.06              70.08
-statistics_tab about customer_address.ca_street_number - all                        50.97               8.82
-statistics_tab about customer_address.ca_street_name - all                          92.29              35.15
-statistics_tab about customer_address.ca_street_type - all                         205.68               8.98
-statistics_tab about customer_address.ca_suite_number - all                        214.38               9.13
-statistics_tab about customer_address.ca_city - all                                410.92               8.37
-statistics_tab about customer_address.ca_county - all                              141.12               8.87
-statistics_tab about customer_address.ca_state - all                                58.54              17.62
-statistics_tab about customer_address.ca_zip - all                                 139.77              30.76
-statistics_tab about customer_address.ca_country - all                             148.43               7.79
-statistics_tab about customer_address.ca_gmt_offset - all                           64.09              12.32
-statistics_tab about customer_address.ca_location_type - all                        76.13               7.42
-statistics_tab about customer_demographics.cd_demo_sk - all                        277.19              11.98
-statistics_tab about customer_demographics.cd_gender - all                          98.39              19.73
-statistics_tab about customer_demographics.cd_marital_status - all                 231.72              20.67
-statistics_tab about customer_demographics.cd_education_status - all               163.28              20.97
-statistics_tab about customer_demographics.cd_purchase_estimate - all              225.80             106.84
-statistics_tab about customer_demographics.cd_credit_rating - all                  279.53              20.83
-statistics_tab about customer_demographics.cd_dep_count - all                      428.70              75.76
-statistics_tab about customer_demographics.cd_dep_employed_count - all             292.96             100.21
-statistics_tab about customer_demographics.cd_dep_college_count - all              131.49              91.33
-statistics_tab about date_dim.d_date_sk - all                                       44.62               5.83
-statistics_tab about date_dim.d_date_id - all                                      154.23              17.83
-statistics_tab about date_dim.d_date - all                                          55.10               7.14
-statistics_tab about date_dim.d_month_seq - all                                     94.46               5.39
-statistics_tab about date_dim.d_week_seq - all                                     129.24               7.21
-statistics_tab about date_dim.d_quarter_seq - all                                  104.26               5.54
-statistics_tab about date_dim.d_year - all                                          27.26               6.67
-statistics_tab about date_dim.d_dow - all                                           33.60               5.37
-statistics_tab about date_dim.d_moy - all                                           34.23               6.38
-statistics_tab about date_dim.d_dom - all                                          100.23               6.56
-statistics_tab about date_dim.d_qoy - all                                           63.10               5.97
-statistics_tab about date_dim.d_fy_year - all                                       24.89               5.85
-statistics_tab about date_dim.d_fy_quarter_seq - all                               106.10               5.93
-statistics_tab about date_dim.d_fy_week_seq - all                                   39.31               5.10
-statistics_tab about date_dim.d_day_name - all                                      63.38               6.16
-statistics_tab about date_dim.d_quarter_name - all                                  92.13               6.17
-statistics_tab about date_dim.d_holiday - all                                      121.36               6.76
-statistics_tab about date_dim.d_weekend - all                                       56.56               6.45
-statistics_tab about date_dim.d_following_holiday - all                            120.75               6.19
-statistics_tab about date_dim.d_first_dom - all                                     40.14               5.86
-statistics_tab about date_dim.d_last_dom - all                                      33.52               6.37
-statistics_tab about date_dim.d_same_day_ly - all                                  107.27               6.13
-statistics_tab about date_dim.d_same_day_lq - all                                   56.23               6.23
-statistics_tab about date_dim.d_current_day - all                                   75.05               6.52
-statistics_tab about date_dim.d_current_week - all                                 128.60               5.87
-statistics_tab about date_dim.d_current_month - all                                 79.32               6.65
-statistics_tab about date_dim.d_current_quarter - all                               49.82              10.80
-statistics_tab about date_dim.d_current_year - all                                  98.37               6.25
-statistics_tab about dbgen_version.dv_version - all                                 64.34               4.75
-statistics_tab about dbgen_version.dv_create_date - all                             25.94               5.10
-statistics_tab about dbgen_version.dv_create_time - all                             40.23               5.42
-statistics_tab about dbgen_version.dv_cmdline_args - all                           101.68               5.61
-statistics_tab about household_demographics.hd_demo_sk - all                        72.97               3.84
-statistics_tab about household_demographics.hd_income_band_sk - all                 18.39               3.49
-statistics_tab about household_demographics.hd_buy_potential - all                 334.42               5.05
-statistics_tab about household_demographics.hd_dep_count - all                      21.85               3.23
-statistics_tab about household_demographics.hd_vehicle_count - all                  16.88               3.57
-statistics_tab about income_band.ib_income_band_sk - all                           232.71               3.51
-statistics_tab about income_band.ib_lower_bound - all                               86.36               3.28
-statistics_tab about income_band.ib_upper_bound - all                               41.94               3.11
-statistics_tab about inventory.inv_date_sk - all                                 15528.54            5356.14
-statistics_tab about inventory.inv_item_sk - all                                 17476.30            5438.38
-statistics_tab about inventory.inv_warehouse_sk - all                            15354.57            5304.41
-statistics_tab about inventory.inv_quantity_on_hand - all                        18162.04            5613.06
-statistics_tab about item.i_item_sk - all                                          192.84               6.06
-statistics_tab about item.i_item_id - all                                           95.74              21.39
-statistics_tab about item.i_rec_start_date - all                                    47.23               8.08
-statistics_tab about item.i_rec_end_date - all                                     113.28               8.62
-statistics_tab about item.i_item_desc - all                                        296.48              63.99
-statistics_tab about item.i_current_price - all                                     32.23               7.20
-statistics_tab about item.i_wholesale_cost - all                                    24.20               7.17
-statistics_tab about item.i_brand_id - all                                          76.37               8.23
-statistics_tab about item.i_brand - all                                            146.87               6.62
-statistics_tab about item.i_class_id - all                                          20.18               7.20
-statistics_tab about item.i_class - all                                             98.00               6.90
-statistics_tab about item.i_category_id - all                                       54.16               6.72
-statistics_tab about item.i_category - all                                          74.97              16.53
-statistics_tab about item.i_manufact_id - all                                       47.63               7.32
-statistics_tab about item.i_manufact - all                                          77.76               6.86
-statistics_tab about item.i_size - all                                             129.64               7.01
-statistics_tab about item.i_formulation - all                                      116.94              29.37
-statistics_tab about item.i_color - all                                             43.04               6.91
-statistics_tab about item.i_units - all                                             76.20               6.24
-statistics_tab about item.i_container - all                                        181.78               5.86
-statistics_tab about item.i_manager_id - all                                        52.67               7.06
-statistics_tab about item.i_product_name - all                                     135.83              34.88
-statistics_tab about promotion.p_promo_sk - all                                     27.19               2.89
-statistics_tab about promotion.p_promo_id - all                                    124.35               4.89
-statistics_tab about promotion.p_start_date_sk - all                                56.70               2.87
-statistics_tab about promotion.p_end_date_sk - all                                  31.38               3.05
-statistics_tab about promotion.p_item_sk - all                                      20.13               2.84
-statistics_tab about promotion.p_cost - all                                         33.69               4.21
-statistics_tab about promotion.p_response_target - all                              17.26               3.54
-statistics_tab about promotion.p_promo_name - all                                  166.10               5.02
-statistics_tab about promotion.p_channel_dmail - all                                64.70               5.34
-statistics_tab about promotion.p_channel_email - all                               243.86               5.06
-statistics_tab about promotion.p_channel_catalog - all                              67.45               4.66
-statistics_tab about promotion.p_channel_tv - all                                   79.62               5.33
-statistics_tab about promotion.p_channel_radio - all                                70.52               5.10
-statistics_tab about promotion.p_channel_press - all                                79.46               5.56
-statistics_tab about promotion.p_channel_event - all                                61.34               5.48
-statistics_tab about promotion.p_channel_demo - all                                253.92               5.52
-statistics_tab about promotion.p_channel_details - all                             168.26               5.33
-statistics_tab about promotion.p_purpose - all                                      67.12               6.72
-statistics_tab about promotion.p_discount_active - all                              34.18               5.76
-statistics_tab about reason.r_reason_sk - all                                       35.20               3.10
-statistics_tab about reason.r_reason_id - all                                      203.78               5.06
-statistics_tab about reason.r_reason_desc - all                                     56.53               6.52
-statistics_tab about ship_mode.sm_ship_mode_sk - all                                50.04               4.23
-statistics_tab about ship_mode.sm_ship_mode_id - all                                99.13               5.60
-statistics_tab about ship_mode.sm_type - all                                        90.33               5.07
-statistics_tab about ship_mode.sm_code - all                                        56.34               5.55
-statistics_tab about ship_mode.sm_carrier - all                                     54.86               5.68
-statistics_tab about ship_mode.sm_contract - all                                    84.66               4.98
-statistics_tab about store.s_store_sk - all                                         25.21               3.47
-statistics_tab about store.s_store_id - all                                        155.48               5.51
-statistics_tab about store.s_rec_start_date - all                                    8.09               4.66
-statistics_tab about store.s_rec_end_date - all                                     13.96               4.50
-statistics_tab about store.s_closed_date_sk - all                                   16.63               3.12
-statistics_tab about store.s_store_name - all                                      371.80               8.62
-statistics_tab about store.s_number_employees - all                                  5.99               3.78
-statistics_tab about store.s_floor_space - all                                      40.66               3.46
-statistics_tab about store.s_hours - all                                            48.28               5.19
-statistics_tab about store.s_manager - all                                          28.93               5.70
-statistics_tab about store.s_market_id - all                                        39.67               2.88
-statistics_tab about store.s_geography_class - all                                  75.77               4.89
-statistics_tab about store.s_market_desc - all                                      52.44               5.10
-statistics_tab about store.s_market_manager - all                                   34.77               4.41
-statistics_tab about store.s_division_id - all                                     123.95               3.10
-statistics_tab about store.s_division_name - all                                   254.96               5.63
-statistics_tab about store.s_company_id - all                                       84.10               3.77
-statistics_tab about store.s_company_name - all                                     43.16               5.86
-statistics_tab about store.s_street_number - all                                    52.78               5.15
-statistics_tab about store.s_street_name - all                                      26.97               5.01
-statistics_tab about store.s_street_type - all                                      78.54               6.04
-statistics_tab about store.s_suite_number - all                                     34.87               7.16
-statistics_tab about store.s_city - all                                             45.09               4.88
-statistics_tab about store.s_county - all                                          125.72               4.91
-statistics_tab about store.s_state - all                                            60.93               4.66
-statistics_tab about store.s_zip - all                                             145.24               4.88
-statistics_tab about store.s_country - all                                          48.11               5.07
-statistics_tab about store.s_gmt_offset - all                                       31.70               3.72
-statistics_tab about store.s_tax_precentage - all                                   41.50               3.16
-statistics_tab about store_returns.sr_returned_date_sk - all                       331.03             148.99
-statistics_tab about store_returns.sr_return_time_sk - all                         986.80             137.97
-statistics_tab about store_returns.sr_item_sk - all                                587.34             172.83
-statistics_tab about store_returns.sr_customer_sk - all                            483.55             283.34
-statistics_tab about store_returns.sr_cdemo_sk - all                               650.14             455.19
-statistics_tab about store_returns.sr_hdemo_sk - all                               311.31             124.14
-statistics_tab about store_returns.sr_addr_sk - all                                430.19             199.80
-statistics_tab about store_returns.sr_store_sk - all                               404.37             123.52
-statistics_tab about store_returns.sr_reason_sk - all                              417.75             107.71
-statistics_tab about store_returns.sr_ticket_number - all                          412.74             153.91
-statistics_tab about store_returns.sr_return_quantity - all                        311.18             114.44
-statistics_tab about store_returns.sr_return_amt - all                             449.92             231.31
-statistics_tab about store_returns.sr_return_tax - all                             372.45             139.92
-statistics_tab about store_returns.sr_return_amt_inc_tax - all                     533.15             222.43
-statistics_tab about store_returns.sr_fee - all                                    597.26             122.94
-statistics_tab about store_returns.sr_return_ship_cost - all                       556.51             188.34
-statistics_tab about store_returns.sr_refunded_cash - all                          512.77             206.26
-statistics_tab about store_returns.sr_reversed_charge - all                        688.53             173.08
-statistics_tab about store_returns.sr_store_credit - all                           483.34             177.14
-statistics_tab about store_returns.sr_net_loss - all                               711.24             214.42
-statistics_tab about store_sales.ss_sold_date_sk - all                            3225.17            1149.75
-statistics_tab about store_sales.ss_sold_time_sk - all                            3430.67            1267.56
-statistics_tab about store_sales.ss_item_sk - all                                 3364.10            1406.77
-statistics_tab about store_sales.ss_customer_sk - all                             4220.98            1780.94
-statistics_tab about store_sales.ss_cdemo_sk - all                                3893.32            1754.21
-statistics_tab about store_sales.ss_hdemo_sk - all                                3257.67            1178.38
-statistics_tab about store_sales.ss_addr_sk - all                                 4242.48            1562.23
-statistics_tab about store_sales.ss_store_sk - all                                3585.38            1152.45
-statistics_tab about store_sales.ss_promo_sk - all                                3182.10            1223.27
-statistics_tab about store_sales.ss_ticket_number - all                           3399.91            1344.79
-statistics_tab about store_sales.ss_quantity - all                                3726.29            1214.92
-statistics_tab about store_sales.ss_wholesale_cost - all                          3547.23            1256.89
-statistics_tab about store_sales.ss_list_price - all                              3720.34            1329.70
-statistics_tab about store_sales.ss_sales_price - all                             3696.62            1309.91
-statistics_tab about store_sales.ss_ext_discount_amt - all                        4040.04            1830.24
-statistics_tab about store_sales.ss_ext_sales_price - all                         5645.82            3420.94
-statistics_tab about store_sales.ss_ext_wholesale_cost - all                      5553.22            3043.89
-statistics_tab about store_sales.ss_ext_list_price - all                          7711.16            4019.82
-statistics_tab about store_sales.ss_ext_tax - all                                 3734.90            1537.74
-statistics_tab about store_sales.ss_coupon_amt - all                              4700.96            1839.49
-statistics_tab about store_sales.ss_net_paid - all                                5785.81            3178.05
-statistics_tab about store_sales.ss_net_paid_inc_tax - all                        5955.50            3671.30
-statistics_tab about store_sales.ss_net_profit - all                              7709.77            5682.20
-statistics_tab about time_dim.t_time_sk - all                                       39.48               8.08
-statistics_tab about time_dim.t_time_id - all                                      107.61              30.62
-statistics_tab about time_dim.t_time - all                                          45.85               7.56
-statistics_tab about time_dim.t_hour - all                                          99.39               6.96
-statistics_tab about time_dim.t_minute - all                                        98.20               6.58
-statistics_tab about time_dim.t_second - all                                       173.51               6.32
-statistics_tab about time_dim.t_am_pm - all                                        122.71               5.91
-statistics_tab about time_dim.t_shift - all                                        296.84               6.96
-statistics_tab about time_dim.t_sub_shift - all                                     45.61               7.01
-statistics_tab about time_dim.t_meal_time - all                                    200.92               7.20
-statistics_tab about warehouse.w_warehouse_sk - all                                 17.03               3.66
-statistics_tab about warehouse.w_warehouse_id - all                                108.09               4.66
-statistics_tab about warehouse.w_warehouse_name - all                              124.95               5.45
-statistics_tab about warehouse.w_warehouse_sq_ft - all                              61.57               3.34
-statistics_tab about warehouse.w_street_number - all                               191.26               5.34
-statistics_tab about warehouse.w_street_name - all                                  50.93              10.35
-statistics_tab about warehouse.w_street_type - all                                  33.07               5.01
-statistics_tab about warehouse.w_suite_number - all                                 40.79               4.94
-statistics_tab about warehouse.w_city - all                                         89.33               5.49
-statistics_tab about warehouse.w_county - all                                       75.80               4.56
-statistics_tab about warehouse.w_state - all                                        36.11               4.97
-statistics_tab about warehouse.w_zip - all                                         106.94               4.98
-statistics_tab about warehouse.w_country - all                                      26.58               4.90
-statistics_tab about warehouse.w_gmt_offset - all                                  114.36               3.26
-statistics_tab about web_page.wp_web_page_sk - all                                  30.85               3.03
-statistics_tab about web_page.wp_web_page_id - all                                  63.85               5.03
-statistics_tab about web_page.wp_rec_start_date - all                               22.26               4.67
-statistics_tab about web_page.wp_rec_end_date - all                                  7.66               5.73
-statistics_tab about web_page.wp_creation_date_sk - all                             37.41               3.09
-statistics_tab about web_page.wp_access_date_sk - all                                5.90               2.92
-statistics_tab about web_page.wp_autogen_flag - all                                 85.52               4.68
-statistics_tab about web_page.wp_customer_sk - all                                  19.95               3.72
-statistics_tab about web_page.wp_url - all                                         128.26               5.24
-statistics_tab about web_page.wp_type - all                                         42.35               5.13
-statistics_tab about web_page.wp_char_count - all                                   69.63               3.13
-statistics_tab about web_page.wp_link_count - all                                    6.85               2.84
-statistics_tab about web_page.wp_image_count - all                                  36.87               2.90
-statistics_tab about web_page.wp_max_ad_count - all                                 17.97               3.04
-statistics_tab about web_returns.wr_returned_date_sk - all                         114.73              37.13
-statistics_tab about web_returns.wr_returned_time_sk - all                         108.51              40.42
-statistics_tab about web_returns.wr_item_sk - all                                   89.56              45.69
-statistics_tab about web_returns.wr_refunded_customer_sk - all                     110.38              55.95
-statistics_tab about web_returns.wr_refunded_cdemo_sk - all                        194.95              82.33
-statistics_tab about web_returns.wr_refunded_hdemo_sk - all                         90.42              33.64
-statistics_tab about web_returns.wr_refunded_addr_sk - all                         130.03              54.25
-statistics_tab about web_returns.wr_returning_customer_sk - all                    128.02              56.80
-statistics_tab about web_returns.wr_returning_cdemo_sk - all                       172.61              87.45
-statistics_tab about web_returns.wr_returning_hdemo_sk - all                        94.42              32.94
-statistics_tab about web_returns.wr_returning_addr_sk - all                        128.19              49.13
-statistics_tab about web_returns.wr_web_page_sk - all                              168.47              29.60
-statistics_tab about web_returns.wr_reason_sk - all                                124.92              43.24
-statistics_tab about web_returns.wr_order_number - all                              99.99              27.81
-statistics_tab about web_returns.wr_return_quantity - all                          101.39              31.54
-statistics_tab about web_returns.wr_return_amt - all                               153.23              58.45
-statistics_tab about web_returns.wr_return_tax - all                               137.93              38.22
-statistics_tab about web_returns.wr_return_amt_inc_tax - all                       164.10              65.48
-statistics_tab about web_returns.wr_fee - all                                      288.41              32.15
-statistics_tab about web_returns.wr_return_ship_cost - all                         213.61              56.35
-statistics_tab about web_returns.wr_refunded_cash - all                            113.58              51.39
-statistics_tab about web_returns.wr_reversed_charge - all                          141.07              50.31
-statistics_tab about web_returns.wr_account_credit - all                           128.79              47.68
-statistics_tab about web_returns.wr_net_loss - all                                 123.13              51.10
-statistics_tab about web_sales.ws_sold_date_sk - all                              1456.93             298.05
-statistics_tab about web_sales.ws_sold_time_sk - all                               709.41             349.01
-statistics_tab about web_sales.ws_ship_date_sk - all                              1152.64             286.21
-statistics_tab about web_sales.ws_item_sk - all                                    737.99             351.47
-statistics_tab about web_sales.ws_bill_customer_sk - all                           813.63             404.03
-statistics_tab about web_sales.ws_bill_cdemo_sk - all                             1333.50             423.31
-statistics_tab about web_sales.ws_bill_hdemo_sk - all                             1071.19             330.57
-statistics_tab about web_sales.ws_bill_addr_sk - all                              1251.45             384.43
-statistics_tab about web_sales.ws_ship_customer_sk - all                          1188.26             404.85
-statistics_tab about web_sales.ws_ship_cdemo_sk - all                              854.55             468.25
-statistics_tab about web_sales.ws_ship_hdemo_sk - all                              719.75             314.61
-statistics_tab about web_sales.ws_ship_addr_sk - all                              1139.33             378.91
-statistics_tab about web_sales.ws_web_page_sk - all                               1111.52             312.94
-statistics_tab about web_sales.ws_web_site_sk - all                                922.97             289.11
-statistics_tab about web_sales.ws_ship_mode_sk - all                              1008.08             310.80
-statistics_tab about web_sales.ws_warehouse_sk - all                               954.37             332.11
-statistics_tab about web_sales.ws_promo_sk - all                                   647.76             308.42
-statistics_tab about web_sales.ws_order_number - all                               583.41             253.24
-statistics_tab about web_sales.ws_quantity - all                                  1120.19             308.31
-statistics_tab about web_sales.ws_wholesale_cost - all                             694.44             302.59
-statistics_tab about web_sales.ws_list_price - all                                 752.48             337.20
-statistics_tab about web_sales.ws_sales_price - all                                886.38             314.08
-statistics_tab about web_sales.ws_ext_discount_amt - all                          1706.22             850.21
-statistics_tab about web_sales.ws_ext_sales_price - all                           1556.26             860.59
-statistics_tab about web_sales.ws_ext_wholesale_cost - all                        1361.97             765.00
-statistics_tab about web_sales.ws_ext_list_price - all                            1711.67            1307.70
-statistics_tab about web_sales.ws_ext_tax - all                                   1051.68             391.78
-statistics_tab about web_sales.ws_coupon_amt - all                                1021.52             387.81
-statistics_tab about web_sales.ws_ext_ship_cost - all                             1632.42             634.26
-statistics_tab about web_sales.ws_net_paid - all                                  1463.10             804.00
-statistics_tab about web_sales.ws_net_paid_inc_tax - all                          1911.86             916.61
-statistics_tab about web_sales.ws_net_paid_inc_ship - all                         1365.19            1020.93
-statistics_tab about web_sales.ws_net_paid_inc_ship_tax - all                     1328.35            1017.54
-statistics_tab about web_sales.ws_net_profit - all                                1691.80            1304.24
-statistics_tab about web_site.web_site_sk - all                                    130.03               3.53
-statistics_tab about web_site.web_site_id - all                                     53.09               5.16
-statistics_tab about web_site.web_rec_start_date - all                              38.36               4.68
-statistics_tab about web_site.web_rec_end_date - all                                32.44               5.44
-statistics_tab about web_site.web_name - all                                        53.18               4.94
-statistics_tab about web_site.web_open_date_sk - all                                16.59               3.19
-statistics_tab about web_site.web_close_date_sk - all                              106.66               3.03
-statistics_tab about web_site.web_class - all                                       43.66               4.86
-statistics_tab about web_site.web_manager - all                                    115.10               5.81
-statistics_tab about web_site.web_mkt_id - all                                      12.39               2.82
-statistics_tab about web_site.web_mkt_class - all                                  147.50               5.58
-statistics_tab about web_site.web_mkt_desc - all                                    79.36               5.08
-statistics_tab about web_site.web_market_manager - all                              74.65               5.72
-statistics_tab about web_site.web_company_id - all                                  68.89               3.53
-statistics_tab about web_site.web_company_name - all                               330.56               4.96
-statistics_tab about web_site.web_street_number - all                              206.24               5.31
-statistics_tab about web_site.web_street_name - all                                 49.25               5.41
-statistics_tab about web_site.web_street_type - all                                 22.74               5.66
-statistics_tab about web_site.web_suite_number - all                                71.81               5.23
-statistics_tab about web_site.web_city - all                                       112.83               5.09
-statistics_tab about web_site.web_county - all                                     123.62               5.00
-statistics_tab about web_site.web_state - all                                       95.76               4.71
-statistics_tab about web_site.web_zip - all                                         90.14               7.48
-statistics_tab about web_site.web_country - all                                     42.84               5.13
-statistics_tab about web_site.web_gmt_offset - all                                  23.93               2.94
-statistics_tab about web_site.web_tax_percentage - all                              26.92               3.24
+statistics_tab about call_center.cc_call_center_sk - all                           112.70              39.00
+statistics_tab about call_center.cc_call_center_id - all                            87.18               5.92
+statistics_tab about call_center.cc_rec_start_date - all                            11.38               5.37
+statistics_tab about call_center.cc_rec_end_date - all                              40.11               5.51
+statistics_tab about call_center.cc_closed_date_sk - all                            22.57               3.09
+statistics_tab about call_center.cc_open_date_sk - all                              37.15               3.38
+statistics_tab about call_center.cc_name - all                                      69.24               5.08
+statistics_tab about call_center.cc_class - all                                     64.64               5.96
+statistics_tab about call_center.cc_employees - all                                 63.17               3.71
+statistics_tab about call_center.cc_sq_ft - all                                     15.07               3.11
+statistics_tab about call_center.cc_hours - all                                     66.14               5.53
+statistics_tab about call_center.cc_manager - all                                   30.50               5.25
+statistics_tab about call_center.cc_mkt_id - all                                    16.62               3.32
+statistics_tab about call_center.cc_mkt_class - all                                 50.87               5.68
+statistics_tab about call_center.cc_mkt_desc - all                                  55.90               5.18
+statistics_tab about call_center.cc_market_manager - all                            49.94               5.23
+statistics_tab about call_center.cc_division - all                                  29.09               3.96
+statistics_tab about call_center.cc_division_name - all                             33.94               6.73
+statistics_tab about call_center.cc_company - all                                   54.65               3.97
+statistics_tab about call_center.cc_company_name - all                              67.04               5.51
+statistics_tab about call_center.cc_street_number - all                             69.50               5.11
+statistics_tab about call_center.cc_street_name - all                               60.74               5.21
+statistics_tab about call_center.cc_street_type - all                               22.82               5.29
+statistics_tab about call_center.cc_suite_number - all                              38.82               5.58
+statistics_tab about call_center.cc_city - all                                      59.42               5.14
+statistics_tab about call_center.cc_county - all                                    32.95               4.72
+statistics_tab about call_center.cc_state - all                                    130.31               5.96
+statistics_tab about call_center.cc_zip - all                                       44.41               5.96
+statistics_tab about call_center.cc_country - all                                   14.84               5.47
+statistics_tab about call_center.cc_gmt_offset - all                                20.89               3.59
+statistics_tab about call_center.cc_tax_percentage - all                            12.22               3.68
+statistics_tab about catalog_page.cp_catalog_page_sk - all                          69.92               3.86
+statistics_tab about catalog_page.cp_catalog_page_id - all                          50.14               6.97
+statistics_tab about catalog_page.cp_start_date_sk - all                            19.56               4.04
+statistics_tab about catalog_page.cp_end_date_sk - all                              32.72               5.42
+statistics_tab about catalog_page.cp_department - all                              101.78               5.00
+statistics_tab about catalog_page.cp_catalog_number - all                           25.46               4.68
+statistics_tab about catalog_page.cp_catalog_page_number - all                      19.20               7.55
+statistics_tab about catalog_page.cp_description - all                              71.44              10.62
+statistics_tab about catalog_page.cp_type - all                                     54.11               5.26
+statistics_tab about catalog_returns.cr_returned_date_sk - all                     201.54              56.80
+statistics_tab about catalog_returns.cr_returned_time_sk - all                     200.31              85.91
+statistics_tab about catalog_returns.cr_item_sk - all                              158.74              84.99
+statistics_tab about catalog_returns.cr_refunded_customer_sk - all                 429.20             113.40
+statistics_tab about catalog_returns.cr_refunded_cdemo_sk - all                    297.17             160.13
+statistics_tab about catalog_returns.cr_refunded_hdemo_sk - all                    175.92              62.03
+statistics_tab about catalog_returns.cr_refunded_addr_sk - all                     336.87              96.25
+statistics_tab about catalog_returns.cr_returning_customer_sk - all                417.48             128.77
+statistics_tab about catalog_returns.cr_returning_cdemo_sk - all                   532.36             197.41
+statistics_tab about catalog_returns.cr_returning_hdemo_sk - all                   141.05              63.36
+statistics_tab about catalog_returns.cr_returning_addr_sk - all                    189.64             100.19
+statistics_tab about catalog_returns.cr_call_center_sk - all                       292.42              53.92
+statistics_tab about catalog_returns.cr_catalog_page_sk - all                      223.55              61.17
+statistics_tab about catalog_returns.cr_ship_mode_sk - all                         123.21              65.94
+statistics_tab about catalog_returns.cr_warehouse_sk - all                         159.13              57.03
+statistics_tab about catalog_returns.cr_reason_sk - all                            147.99              54.46
+statistics_tab about catalog_returns.cr_order_number - all                         174.68              66.69
+statistics_tab about catalog_returns.cr_return_quantity - all                      119.45              54.12
+statistics_tab about catalog_returns.cr_return_amount - all                        200.14             125.80
+statistics_tab about catalog_returns.cr_return_tax - all                           221.94              76.27
+statistics_tab about catalog_returns.cr_return_amt_inc_tax - all                   289.58             125.32
+statistics_tab about catalog_returns.cr_fee - all                                  218.76              60.12
+statistics_tab about catalog_returns.cr_return_ship_cost - all                     168.08             100.62
+statistics_tab about catalog_returns.cr_refunded_cash - all                        186.72             104.37
+statistics_tab about catalog_returns.cr_reversed_charge - all                      181.28              97.89
+statistics_tab about catalog_returns.cr_store_credit - all                         167.25              84.75
+statistics_tab about catalog_returns.cr_net_loss - all                             242.76              98.53
+statistics_tab about catalog_sales.cs_sold_date_sk - all                          1689.32             585.53
+statistics_tab about catalog_sales.cs_sold_time_sk - all                          1929.51             706.82
+statistics_tab about catalog_sales.cs_ship_date_sk - all                          1634.84             603.12
+statistics_tab about catalog_sales.cs_bill_customer_sk - all                      1778.08             908.19
+statistics_tab about catalog_sales.cs_bill_cdemo_sk - all                         2636.00             867.18
+statistics_tab about catalog_sales.cs_bill_hdemo_sk - all                         1623.83             588.63
+statistics_tab about catalog_sales.cs_bill_addr_sk - all                          1710.00             758.88
+statistics_tab about catalog_sales.cs_ship_customer_sk - all                      2037.14             898.24
+statistics_tab about catalog_sales.cs_ship_cdemo_sk - all                         1854.23             918.19
+statistics_tab about catalog_sales.cs_ship_hdemo_sk - all                         2526.76             592.18
+statistics_tab about catalog_sales.cs_ship_addr_sk - all                          1809.28             824.02
+statistics_tab about catalog_sales.cs_call_center_sk - all                        1530.30             567.71
+statistics_tab about catalog_sales.cs_catalog_page_sk - all                       1948.03             580.13
+statistics_tab about catalog_sales.cs_ship_mode_sk - all                          1516.66             605.35
+statistics_tab about catalog_sales.cs_warehouse_sk - all                          1390.40             611.83
+statistics_tab about catalog_sales.cs_item_sk - all                               2163.23             719.95
+statistics_tab about catalog_sales.cs_promo_sk - all                              1859.47             608.82
+statistics_tab about catalog_sales.cs_order_number - all                          1701.32             681.87
+statistics_tab about catalog_sales.cs_quantity - all                              1372.68             621.68
+statistics_tab about catalog_sales.cs_wholesale_cost - all                        1474.59             637.83
+statistics_tab about catalog_sales.cs_list_price - all                            1682.04             695.76
+statistics_tab about catalog_sales.cs_sales_price - all                           1696.15             678.78
+statistics_tab about catalog_sales.cs_ext_discount_amt - all                      2900.87            1766.89
+statistics_tab about catalog_sales.cs_ext_sales_price - all                       2677.49            1621.36
+statistics_tab about catalog_sales.cs_ext_wholesale_cost - all                    2696.78            1543.04
+statistics_tab about catalog_sales.cs_ext_list_price - all                        3455.93            2436.23
+statistics_tab about catalog_sales.cs_ext_tax - all                               1916.85             844.14
+statistics_tab about catalog_sales.cs_coupon_amt - all                            1775.94             964.74
+statistics_tab about catalog_sales.cs_ext_ship_cost - all                         2258.33            1322.84
+statistics_tab about catalog_sales.cs_net_paid - all                              2751.30            1763.91
+statistics_tab about catalog_sales.cs_net_paid_inc_tax - all                      2763.24            2035.56
+statistics_tab about catalog_sales.cs_net_paid_inc_ship - all                     3019.47            1986.82
+statistics_tab about catalog_sales.cs_net_paid_inc_ship_tax - all                 3490.73            2087.81
+statistics_tab about catalog_sales.cs_net_profit - all                            4486.38            3154.13
+statistics_tab about customer.c_customer_sk - all                                  109.40              13.48
+statistics_tab about customer.c_customer_id - all                                  355.48             193.44
+statistics_tab about customer.c_current_cdemo_sk - all                              96.12              57.61
+statistics_tab about customer.c_current_hdemo_sk - all                              75.45              22.70
+statistics_tab about customer.c_current_addr_sk - all                              108.57              65.09
+statistics_tab about customer.c_first_shipto_date_sk - all                         163.26              28.81
+statistics_tab about customer.c_first_sales_date_sk - all                           64.52              29.82
+statistics_tab about customer.c_salutation - all                                    54.18              10.06
+statistics_tab about customer.c_first_name - all                                   138.50              55.37
+statistics_tab about customer.c_last_name - all                                    181.26              68.58
+statistics_tab about customer.c_preferred_cust_flag - all                           82.61              10.83
+statistics_tab about customer.c_birth_day - all                                     75.22              26.10
+statistics_tab about customer.c_birth_month - all                                  145.44              21.09
+statistics_tab about customer.c_birth_year - all                                    91.84              24.44
+statistics_tab about customer.c_birth_country - all                                 56.79              11.87
+statistics_tab about customer.c_login - all                                         52.73               8.86
+statistics_tab about customer.c_email_address - all                                541.08             189.63
+statistics_tab about customer.c_last_review_date - all                              88.88              12.33
+statistics_tab about customer_address.ca_address_sk - all                           98.05              11.00
+statistics_tab about customer_address.ca_address_id - all                          181.41              86.11
+statistics_tab about customer_address.ca_street_number - all                        48.76               9.89
+statistics_tab about customer_address.ca_street_name - all                         128.24              39.80
+statistics_tab about customer_address.ca_street_type - all                         134.16               8.87
+statistics_tab about customer_address.ca_suite_number - all                         80.21               8.30
+statistics_tab about customer_address.ca_city - all                                112.29               9.14
+statistics_tab about customer_address.ca_county - all                               64.33              11.95
+statistics_tab about customer_address.ca_state - all                                58.11               9.54
+statistics_tab about customer_address.ca_zip - all                                 258.88              37.47
+statistics_tab about customer_address.ca_country - all                             393.03               9.19
+statistics_tab about customer_address.ca_gmt_offset - all                           56.14              17.51
+statistics_tab about customer_address.ca_location_type - all                        64.25               8.70
+statistics_tab about customer_demographics.cd_demo_sk - all                         98.36              13.59
+statistics_tab about customer_demographics.cd_gender - all                          54.20              23.48
+statistics_tab about customer_demographics.cd_marital_status - all                  80.69              21.76
+statistics_tab about customer_demographics.cd_education_status - all                94.63              22.46
+statistics_tab about customer_demographics.cd_purchase_estimate - all              183.38              96.37
+statistics_tab about customer_demographics.cd_credit_rating - all                  104.02              22.32
+statistics_tab about customer_demographics.cd_dep_count - all                      170.93              98.97
+statistics_tab about customer_demographics.cd_dep_employed_count - all             169.73              75.06
+statistics_tab about customer_demographics.cd_dep_college_count - all              142.20             111.54
+statistics_tab about date_dim.d_date_sk - all                                       36.97               7.64
+statistics_tab about date_dim.d_date_id - all                                       65.24              18.94
+statistics_tab about date_dim.d_date - all                                          27.50               7.12
+statistics_tab about date_dim.d_month_seq - all                                     29.78               8.14
+statistics_tab about date_dim.d_week_seq - all                                     201.19               6.49
+statistics_tab about date_dim.d_quarter_seq - all                                   74.55               7.70
+statistics_tab about date_dim.d_year - all                                          31.19               5.95
+statistics_tab about date_dim.d_dow - all                                           37.93               6.71
+statistics_tab about date_dim.d_moy - all                                           33.57               6.02
+statistics_tab about date_dim.d_dom - all                                           61.61               6.37
+statistics_tab about date_dim.d_qoy - all                                           96.43               5.89
+statistics_tab about date_dim.d_fy_year - all                                       59.16               8.84
+statistics_tab about date_dim.d_fy_quarter_seq - all                               108.25               8.19
+statistics_tab about date_dim.d_fy_week_seq - all                                   39.32               8.15
+statistics_tab about date_dim.d_day_name - all                                      43.59               7.01
+statistics_tab about date_dim.d_quarter_name - all                                 120.73               8.48
+statistics_tab about date_dim.d_holiday - all                                       62.11               7.85
+statistics_tab about date_dim.d_weekend - all                                      108.72               6.55
+statistics_tab about date_dim.d_following_holiday - all                            110.39               6.28
+statistics_tab about date_dim.d_first_dom - all                                     35.18               7.51
+statistics_tab about date_dim.d_last_dom - all                                      29.99               6.67
+statistics_tab about date_dim.d_same_day_ly - all                                   28.17               7.20
+statistics_tab about date_dim.d_same_day_lq - all                                   32.74               7.28
+statistics_tab about date_dim.d_current_day - all                                  130.26               6.10
+statistics_tab about date_dim.d_current_week - all                                  82.78              10.87
+statistics_tab about date_dim.d_current_month - all                                 79.16               6.79
+statistics_tab about date_dim.d_current_quarter - all                               28.43               6.31
+statistics_tab about date_dim.d_current_year - all                                  72.74               8.60
+statistics_tab about dbgen_version.dv_version - all                                 49.79               5.45
+statistics_tab about dbgen_version.dv_create_date - all                             23.81               4.89
+statistics_tab about dbgen_version.dv_create_time - all                             31.53               4.84
+statistics_tab about dbgen_version.dv_cmdline_args - all                            57.33               4.91
+statistics_tab about household_demographics.hd_demo_sk - all                        33.85               3.09
+statistics_tab about household_demographics.hd_income_band_sk - all                 37.94               7.18
+statistics_tab about household_demographics.hd_buy_potential - all                 130.84               5.16
+statistics_tab about household_demographics.hd_dep_count - all                      15.97               3.88
+statistics_tab about household_demographics.hd_vehicle_count - all                  16.24               3.25
+statistics_tab about income_band.ib_income_band_sk - all                            78.19               2.83
+statistics_tab about income_band.ib_lower_bound - all                               33.33               3.72
+statistics_tab about income_band.ib_upper_bound - all                               19.87               3.16
+statistics_tab about inventory.inv_date_sk - all                                 13808.15            5260.30
+statistics_tab about inventory.inv_item_sk - all                                 15485.13            5511.30
+statistics_tab about inventory.inv_warehouse_sk - all                            15042.62            5093.93
+statistics_tab about inventory.inv_quantity_on_hand - all                        15668.53            5504.64
+statistics_tab about item.i_item_sk - all                                           30.33               8.98
+statistics_tab about item.i_item_id - all                                           57.49              22.90
+statistics_tab about item.i_rec_start_date - all                                    26.83               8.96
+statistics_tab about item.i_rec_end_date - all                                      38.29               8.75
+statistics_tab about item.i_item_desc - all                                        304.93              66.18
+statistics_tab about item.i_current_price - all                                     22.88               8.74
+statistics_tab about item.i_wholesale_cost - all                                   126.54              10.37
+statistics_tab about item.i_brand_id - all                                          30.15               9.23
+statistics_tab about item.i_brand - all                                             93.96               7.12
+statistics_tab about item.i_class_id - all                                          46.67               8.47
+statistics_tab about item.i_class - all                                            183.66               8.01
+statistics_tab about item.i_category_id - all                                      136.53               7.65
+statistics_tab about item.i_category - all                                          48.66               6.86
+statistics_tab about item.i_manufact_id - all                                       63.28               7.23
+statistics_tab about item.i_manufact - all                                          75.69               6.56
+statistics_tab about item.i_size - all                                             126.14               6.95
+statistics_tab about item.i_formulation - all                                      178.59              27.96
+statistics_tab about item.i_color - all                                             98.20               7.61
+statistics_tab about item.i_units - all                                            137.63               7.37
+statistics_tab about item.i_container - all                                         93.62               6.54
+statistics_tab about item.i_manager_id - all                                        57.31               7.03
+statistics_tab about item.i_product_name - all                                     174.46              38.03
+statistics_tab about promotion.p_promo_sk - all                                     35.70               3.05
+statistics_tab about promotion.p_promo_id - all                                     68.56               5.00
+statistics_tab about promotion.p_start_date_sk - all                                56.63               3.30
+statistics_tab about promotion.p_end_date_sk - all                                  21.32               2.72
+statistics_tab about promotion.p_item_sk - all                                      34.33               2.77
+statistics_tab about promotion.p_cost - all                                         16.27               2.94
+statistics_tab about promotion.p_response_target - all                              19.98               3.28
+statistics_tab about promotion.p_promo_name - all                                   78.58               4.30
+statistics_tab about promotion.p_channel_dmail - all                                44.40               4.50
+statistics_tab about promotion.p_channel_email - all                                48.74               4.45
+statistics_tab about promotion.p_channel_catalog - all                              61.23               4.35
+statistics_tab about promotion.p_channel_tv - all                                   37.29               4.72
+statistics_tab about promotion.p_channel_radio - all                                43.40               4.71
+statistics_tab about promotion.p_channel_press - all                               455.12               5.04
+statistics_tab about promotion.p_channel_event - all                                50.52               4.75
+statistics_tab about promotion.p_channel_demo - all                                 75.41               4.72
+statistics_tab about promotion.p_channel_details - all                             132.03               4.79
+statistics_tab about promotion.p_purpose - all                                      43.29               8.93
+statistics_tab about promotion.p_discount_active - all                              38.39               5.58
+statistics_tab about reason.r_reason_sk - all                                       40.98               2.93
+statistics_tab about reason.r_reason_id - all                                       43.73               4.65
+statistics_tab about reason.r_reason_desc - all                                    146.69               4.93
+statistics_tab about ship_mode.sm_ship_mode_sk - all                                17.64               3.59
+statistics_tab about ship_mode.sm_ship_mode_id - all                                37.63               4.84
+statistics_tab about ship_mode.sm_type - all                                        88.90               4.89
+statistics_tab about ship_mode.sm_code - all                                        46.23               4.41
+statistics_tab about ship_mode.sm_carrier - all                                     34.63               5.24
+statistics_tab about ship_mode.sm_contract - all                                    99.41               5.80
+statistics_tab about store.s_store_sk - all                                          6.80               3.03
+statistics_tab about store.s_store_id - all                                        129.79               5.14
+statistics_tab about store.s_rec_start_date - all                                    8.15               4.64
+statistics_tab about store.s_rec_end_date - all                                     19.83              11.09
+statistics_tab about store.s_closed_date_sk - all                                   17.05               3.22
+statistics_tab about store.s_store_name - all                                       99.34               4.62
+statistics_tab about store.s_number_employees - all                                 21.22               3.28
+statistics_tab about store.s_floor_space - all                                      43.25               3.22
+statistics_tab about store.s_hours - all                                            90.67               4.98
+statistics_tab about store.s_manager - all                                          18.17               5.05
+statistics_tab about store.s_market_id - all                                        54.55               3.25
+statistics_tab about store.s_geography_class - all                                  18.84               4.89
+statistics_tab about store.s_market_desc - all                                      19.93               4.89
+statistics_tab about store.s_market_manager - all                                  146.37               5.33
+statistics_tab about store.s_division_id - all                                      78.30               2.76
+statistics_tab about store.s_division_name - all                                    19.90               4.33
+statistics_tab about store.s_company_id - all                                       27.72               2.66
+statistics_tab about store.s_company_name - all                                     57.86               4.72
+statistics_tab about store.s_street_number - all                                   215.64               4.57
+statistics_tab about store.s_street_name - all                                     113.59               4.86
+statistics_tab about store.s_street_type - all                                      49.51               5.58
+statistics_tab about store.s_suite_number - all                                     99.15               5.78
+statistics_tab about store.s_city - all                                             31.92               4.75
+statistics_tab about store.s_county - all                                           82.47               4.60
+statistics_tab about store.s_state - all                                            59.79               5.26
+statistics_tab about store.s_zip - all                                              39.19               4.68
+statistics_tab about store.s_country - all                                          64.20               4.70
+statistics_tab about store.s_gmt_offset - all                                       21.23               3.59
+statistics_tab about store.s_tax_precentage - all                                    7.65               3.11
+statistics_tab about store_returns.sr_returned_date_sk - all                       418.47             129.66
+statistics_tab about store_returns.sr_return_time_sk - all                         449.66             129.36
+statistics_tab about store_returns.sr_item_sk - all                                477.84             164.00
+statistics_tab about store_returns.sr_customer_sk - all                            470.14             261.65
+statistics_tab about store_returns.sr_cdemo_sk - all                               645.72             523.39
+statistics_tab about store_returns.sr_hdemo_sk - all                               474.45             121.21
+statistics_tab about store_returns.sr_addr_sk - all                                362.35             209.89
+statistics_tab about store_returns.sr_store_sk - all                               288.16             127.75
+statistics_tab about store_returns.sr_reason_sk - all                              697.13             127.28
+statistics_tab about store_returns.sr_ticket_number - all                          351.02             157.98
+statistics_tab about store_returns.sr_return_quantity - all                        337.69             107.53
+statistics_tab about store_returns.sr_return_amt - all                             448.60             241.34
+statistics_tab about store_returns.sr_return_tax - all                             296.48             147.03
+statistics_tab about store_returns.sr_return_amt_inc_tax - all                     507.68             244.66
+statistics_tab about store_returns.sr_fee - all                                    320.13             119.90
+statistics_tab about store_returns.sr_return_ship_cost - all                       431.69             199.74
+statistics_tab about store_returns.sr_refunded_cash - all                          640.23             202.22
+statistics_tab about store_returns.sr_reversed_charge - all                        574.90             171.20
+statistics_tab about store_returns.sr_store_credit - all                           740.70             189.04
+statistics_tab about store_returns.sr_net_loss - all                               684.20             201.10
+statistics_tab about store_sales.ss_sold_date_sk - all                            3177.84            1179.41
+statistics_tab about store_sales.ss_sold_time_sk - all                            3154.27            1278.18
+statistics_tab about store_sales.ss_item_sk - all                                 2985.53            1412.26
+statistics_tab about store_sales.ss_customer_sk - all                             3535.18            1696.84
+statistics_tab about store_sales.ss_cdemo_sk - all                                3596.40            1677.64
+statistics_tab about store_sales.ss_hdemo_sk - all                                3049.08            1190.35
+statistics_tab about store_sales.ss_addr_sk - all                                 3502.70            1572.23
+statistics_tab about store_sales.ss_store_sk - all                                3029.17            1170.05
+statistics_tab about store_sales.ss_promo_sk - all                                3062.83            1230.85
+statistics_tab about store_sales.ss_ticket_number - all                           2855.82            1547.16
+statistics_tab about store_sales.ss_quantity - all                                3574.35            1230.64
+statistics_tab about store_sales.ss_wholesale_cost - all                          3197.94            1272.84
+statistics_tab about store_sales.ss_list_price - all                              3626.31            1312.80
+statistics_tab about store_sales.ss_sales_price - all                             3452.03            1298.02
+statistics_tab about store_sales.ss_ext_discount_amt - all                        4060.61            1889.29
+statistics_tab about store_sales.ss_ext_sales_price - all                         5706.67            3151.15
+statistics_tab about store_sales.ss_ext_wholesale_cost - all                      4957.82            3168.46
+statistics_tab about store_sales.ss_ext_list_price - all                          6246.81            4141.11
+statistics_tab about store_sales.ss_ext_tax - all                                 3619.66            1557.08
+statistics_tab about store_sales.ss_coupon_amt - all                              4060.60            1864.47
+statistics_tab about store_sales.ss_net_paid - all                                5435.06            3106.79
+statistics_tab about store_sales.ss_net_paid_inc_tax - all                        5616.72            3642.88
+statistics_tab about store_sales.ss_net_profit - all                              7491.44            5555.77
+statistics_tab about time_dim.t_time_sk - all                                       43.64               6.84
+statistics_tab about time_dim.t_time_id - all                                      164.52              21.03
+statistics_tab about time_dim.t_time - all                                          20.94               5.97
+statistics_tab about time_dim.t_hour - all                                          47.93               5.81
+statistics_tab about time_dim.t_minute - all                                       168.15               6.61
+statistics_tab about time_dim.t_second - all                                        38.26               6.03
+statistics_tab about time_dim.t_am_pm - all                                         36.33               5.94
+statistics_tab about time_dim.t_shift - all                                         52.37               6.49
+statistics_tab about time_dim.t_sub_shift - all                                     74.60               5.86
+statistics_tab about time_dim.t_meal_time - all                                     51.54               6.56
+statistics_tab about warehouse.w_warehouse_sk - all                                 25.02               3.22
+statistics_tab about warehouse.w_warehouse_id - all                                 97.41               4.90
+statistics_tab about warehouse.w_warehouse_name - all                               41.67               4.72
+statistics_tab about warehouse.w_warehouse_sq_ft - all                              27.86               3.59
+statistics_tab about warehouse.w_street_number - all                                50.74               4.72
+statistics_tab about warehouse.w_street_name - all                                 110.31               4.57
+statistics_tab about warehouse.w_street_type - all                                  66.25               4.77
+statistics_tab about warehouse.w_suite_number - all                                115.85               4.65
+statistics_tab about warehouse.w_city - all                                         38.88               4.50
+statistics_tab about warehouse.w_county - all                                       54.55               4.40
+statistics_tab about warehouse.w_state - all                                        38.48               4.41
+statistics_tab about warehouse.w_zip - all                                          55.41               4.24
+statistics_tab about warehouse.w_country - all                                      38.01               5.59
+statistics_tab about warehouse.w_gmt_offset - all                                  231.57               3.75
+statistics_tab about web_page.wp_web_page_sk - all                                  25.45               3.37
+statistics_tab about web_page.wp_web_page_id - all                                  71.44               4.80
+statistics_tab about web_page.wp_rec_start_date - all                               22.24               4.99
+statistics_tab about web_page.wp_rec_end_date - all                                  7.24               4.53
+statistics_tab about web_page.wp_creation_date_sk - all                             20.53               2.69
+statistics_tab about web_page.wp_access_date_sk - all                               27.36               2.85
+statistics_tab about web_page.wp_autogen_flag - all                                 97.38               5.49
+statistics_tab about web_page.wp_customer_sk - all                                  14.48               3.36
+statistics_tab about web_page.wp_url - all                                          36.22               4.57
+statistics_tab about web_page.wp_type - all                                         42.30               4.84
+statistics_tab about web_page.wp_char_count - all                                   41.38               3.61
+statistics_tab about web_page.wp_link_count - all                                    5.37               3.32
+statistics_tab about web_page.wp_image_count - all                                  33.57               3.85
+statistics_tab about web_page.wp_max_ad_count - all                                 17.95               3.46
+statistics_tab about web_returns.wr_returned_date_sk - all                          99.92              36.84
+statistics_tab about web_returns.wr_returned_time_sk - all                         189.51              43.76
+statistics_tab about web_returns.wr_item_sk - all                                  126.91              64.33
+statistics_tab about web_returns.wr_refunded_customer_sk - all                     136.26              58.18
+statistics_tab about web_returns.wr_refunded_cdemo_sk - all                        155.84              97.83
+statistics_tab about web_returns.wr_refunded_hdemo_sk - all                        149.35              34.41
+statistics_tab about web_returns.wr_refunded_addr_sk - all                         127.02              53.56
+statistics_tab about web_returns.wr_returning_customer_sk - all                    138.48              58.66
+statistics_tab about web_returns.wr_returning_cdemo_sk - all                       177.23              83.55
+statistics_tab about web_returns.wr_returning_hdemo_sk - all                        93.71              33.69
+statistics_tab about web_returns.wr_returning_addr_sk - all                        173.55              54.42
+statistics_tab about web_returns.wr_web_page_sk - all                              130.20              29.49
+statistics_tab about web_returns.wr_reason_sk - all                                166.83              34.74
+statistics_tab about web_returns.wr_order_number - all                              91.27              32.02
+statistics_tab about web_returns.wr_return_quantity - all                           71.77              32.01
+statistics_tab about web_returns.wr_return_amt - all                               118.73              68.21
+statistics_tab about web_returns.wr_return_tax - all                               105.33              38.68
+statistics_tab about web_returns.wr_return_amt_inc_tax - all                       115.60              59.86
+statistics_tab about web_returns.wr_fee - all                                      149.37              35.84
+statistics_tab about web_returns.wr_return_ship_cost - all                         329.61              46.87
+statistics_tab about web_returns.wr_refunded_cash - all                            232.70              48.08
+statistics_tab about web_returns.wr_reversed_charge - all                          120.31              48.02
+statistics_tab about web_returns.wr_account_credit - all                            97.77              43.32
+statistics_tab about web_returns.wr_net_loss - all                                  89.44              54.33
+statistics_tab about web_sales.ws_sold_date_sk - all                              1001.37             298.83
+statistics_tab about web_sales.ws_sold_time_sk - all                               726.74             353.40
+statistics_tab about web_sales.ws_ship_date_sk - all                              1017.33             295.65
+statistics_tab about web_sales.ws_item_sk - all                                    779.32             351.41
+statistics_tab about web_sales.ws_bill_customer_sk - all                           803.89             371.85
+statistics_tab about web_sales.ws_bill_cdemo_sk - all                             1116.73             404.51
+statistics_tab about web_sales.ws_bill_hdemo_sk - all                              670.22             286.75
+statistics_tab about web_sales.ws_bill_addr_sk - all                              1257.05             378.09
+statistics_tab about web_sales.ws_ship_customer_sk - all                           995.86             370.55
+statistics_tab about web_sales.ws_ship_cdemo_sk - all                              992.36             354.94
+statistics_tab about web_sales.ws_ship_hdemo_sk - all                              929.24             275.56
+statistics_tab about web_sales.ws_ship_addr_sk - all                              1124.67             375.10
+statistics_tab about web_sales.ws_web_page_sk - all                               1130.42             304.53
+statistics_tab about web_sales.ws_web_site_sk - all                                844.84             315.87
+statistics_tab about web_sales.ws_ship_mode_sk - all                               986.76             266.43
+statistics_tab about web_sales.ws_warehouse_sk - all                               875.03             318.06
+statistics_tab about web_sales.ws_promo_sk - all                                   696.20             293.21
+statistics_tab about web_sales.ws_order_number - all                               849.97             266.64
+statistics_tab about web_sales.ws_quantity - all                                   674.28             304.47
+statistics_tab about web_sales.ws_wholesale_cost - all                             858.94             309.14
+statistics_tab about web_sales.ws_list_price - all                                 804.16             334.18
+statistics_tab about web_sales.ws_sales_price - all                                876.06             349.08
+statistics_tab about web_sales.ws_ext_discount_amt - all                          1530.84             835.69
+statistics_tab about web_sales.ws_ext_sales_price - all                           1667.39             785.00
+statistics_tab about web_sales.ws_ext_wholesale_cost - all                        1286.63             739.82
+statistics_tab about web_sales.ws_ext_list_price - all                            1618.70            1252.48
+statistics_tab about web_sales.ws_ext_tax - all                                    807.52             398.71
+statistics_tab about web_sales.ws_coupon_amt - all                                 845.90             452.73
+statistics_tab about web_sales.ws_ext_ship_cost - all                             1422.11             629.83
+statistics_tab about web_sales.ws_net_paid - all                                  1277.82             819.60
+statistics_tab about web_sales.ws_net_paid_inc_tax - all                          1376.43             872.82
+statistics_tab about web_sales.ws_net_paid_inc_ship - all                         1270.72             995.02
+statistics_tab about web_sales.ws_net_paid_inc_ship_tax - all                     1459.21             945.69
+statistics_tab about web_sales.ws_net_profit - all                                1676.48            1173.58
+statistics_tab about web_site.web_site_sk - all                                     12.09               3.70
+statistics_tab about web_site.web_site_id - all                                     88.01               5.33
+statistics_tab about web_site.web_rec_start_date - all                              47.05               4.90
+statistics_tab about web_site.web_rec_end_date - all                                20.72               4.81
+statistics_tab about web_site.web_name - all                                        62.16               4.98
+statistics_tab about web_site.web_open_date_sk - all                                27.00               3.29
+statistics_tab about web_site.web_close_date_sk - all                               33.25               4.47
+statistics_tab about web_site.web_class - all                                       47.17               5.88
+statistics_tab about web_site.web_manager - all                                     32.39               5.86
+statistics_tab about web_site.web_mkt_id - all                                      13.01               3.23
+statistics_tab about web_site.web_mkt_class - all                                   32.04               5.40
+statistics_tab about web_site.web_mkt_desc - all                                    97.94              10.76
+statistics_tab about web_site.web_market_manager - all                              21.04               5.90
+statistics_tab about web_site.web_company_id - all                                  88.38               3.24
+statistics_tab about web_site.web_company_name - all                                80.27               5.28
+statistics_tab about web_site.web_street_number - all                               60.58               4.96
+statistics_tab about web_site.web_street_name - all                                 53.42               5.12
+statistics_tab about web_site.web_street_type - all                                113.08               5.16
+statistics_tab about web_site.web_suite_number - all                                56.28               4.89
+statistics_tab about web_site.web_city - all                                        48.24               5.44
+statistics_tab about web_site.web_county - all                                      60.63               5.38
+statistics_tab about web_site.web_state - all                                      468.43               5.18
+statistics_tab about web_site.web_zip - all                                         53.20               5.29
+statistics_tab about web_site.web_country - all                                    124.32               6.18
+statistics_tab about web_site.web_gmt_offset - all                                  22.55               3.43
+statistics_tab about web_site.web_tax_percentage - all                              11.82               3.34
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
@@ -1834,20 +1857,20 @@ MonetDB-BHT-8-2-1           1.0          339.0         9.0      695.0    1051.0
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1           0.18
+MonetDB-BHT-8-1-1           0.15
 MonetDB-BHT-8-2-1           0.03
 
 ### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1          201828.09
-MonetDB-BHT-8-2-1         1189101.13
+MonetDB-BHT-8-1-1          236821.96
+MonetDB-BHT-8-2-1         1177926.60
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                               time [s]  count  SF  Throughput@Size
 DBMS            SF num_experiment num_client                                      
-MonetDB-BHT-8-1 10 1              1                400      1  10         38610.00
-MonetDB-BHT-8-2 10 1              2                188      1  10         82148.94
+MonetDB-BHT-8-1 10 1              1                343      1  10         45026.24
+MonetDB-BHT-8-2 10 1              2                176      1  10         87750.00
 
 ### Workflow
 
@@ -1859,13 +1882,13 @@ DBMS MonetDB-BHT-8 - Pods [[1, 1]]
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      407.56     1.52          2.30                12.58
-MonetDB-BHT-8-2      406.16     1.47         10.79                14.73
+MonetDB-BHT-8-1      397.09     1.41          2.11                12.28
+MonetDB-BHT-8-2      332.08     3.02          9.16                14.51
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       27.12     0.07          0.26                 0.28
-MonetDB-BHT-8-2       27.12     0.09          0.51                 0.54
+MonetDB-BHT-8-1       24.49     0.02          0.25                 0.26
+MonetDB-BHT-8-2       24.49     0.07          0.50                 0.54
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1971,8 +1994,8 @@ doc_tpcds_monetdb_1.log
 ### Workload
 TPC-DS Queries SF=100
     Type: tpcds
-    Duration: 13117s 
-    Code: 1731443469
+    Duration: 12332s 
+    Code: 1748361591
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=100) data is loaded and benchmark is executed.
@@ -1980,13 +2003,14 @@ TPC-DS Queries SF=100
     All instances use the same query parameters.
     Timeout per query is 7200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 500Gi.
+    Database is persisted to disk of type shared and size 1000Gi.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -1994,17 +2018,19 @@ TPC-DS Queries SF=100
 
 ### Connections
 MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352155532
-    datadisk:323280316
-    volume_size:500G
+    disk:300889676
+    datadisk:315690
+    volume_size:1000G
     volume_used:309G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748361591
 
 ### Errors (failed queries)
 No errors
@@ -2014,124 +2040,124 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1
-TPC-DS Q1                3977.58
-TPC-DS Q2               17384.02
-TPC-DS Q3                5168.18
-TPC-DS Q4              184584.63
-TPC-DS Q5               51097.76
-TPC-DS Q6               12621.57
-TPC-DS Q7                8077.35
-TPC-DS Q8               46097.48
-TPC-DS Q9                7052.68
-TPC-DS Q10              24790.37
-TPC-DS Q11              82027.21
-TPC-DS Q12               2124.69
-TPC-DS Q13               9384.45
-TPC-DS Q14a+b          363748.34
-TPC-DS Q15               2160.49
-TPC-DS Q16               7483.69
-TPC-DS Q17             111541.94
-TPC-DS Q18              24667.27
-TPC-DS Q19               7784.94
-TPC-DS Q20               1137.78
-TPC-DS Q21               4425.45
-TPC-DS Q22              98260.60
-TPC-DS Q23a+b         2196591.57
-TPC-DS Q24a+b          451613.98
-TPC-DS Q25              28300.73
-TPC-DS Q26               2363.96
-TPC-DS Q27              37048.68
-TPC-DS Q28               6486.65
-TPC-DS Q29              17075.58
-TPC-DS Q30               4569.33
-TPC-DS Q31              26897.11
-TPC-DS Q32               1494.90
-TPC-DS Q33               9898.11
-TPC-DS Q34               2324.71
-TPC-DS Q35              12144.28
-TPC-DS Q36              12921.38
-TPC-DS Q37              14521.68
-TPC-DS Q38              64601.86
-TPC-DS Q39a+b           81761.26
-TPC-DS Q40              13298.16
-TPC-DS Q41                 28.28
-TPC-DS Q42               3286.65
-TPC-DS Q43               1283.46
-TPC-DS Q44                192.90
-TPC-DS Q45               1996.05
-TPC-DS Q46               3975.10
-TPC-DS Q47               8047.82
-TPC-DS Q48               3077.32
-TPC-DS Q49              19676.25
-TPC-DS Q50               5506.01
-TPC-DS Q51              47738.73
-TPC-DS Q52               4660.72
-TPC-DS Q53               2581.62
-TPC-DS Q54              12764.94
-TPC-DS Q55               2163.44
-TPC-DS Q56              11108.39
-TPC-DS Q57               1983.69
-TPC-DS Q58              12059.22
-TPC-DS Q59              13378.30
-TPC-DS Q60               2777.83
-TPC-DS Q61               5049.56
-TPC-DS Q62               2461.30
-TPC-DS Q63               2120.53
-TPC-DS Q64              71980.05
-TPC-DS Q65              24200.06
-TPC-DS Q66              15389.70
-TPC-DS Q67             120844.40
-TPC-DS Q68               4832.98
-TPC-DS Q69               7260.66
-TPC-DS Q70               6350.04
-TPC-DS Q71               3727.16
-TPC-DS Q72              22622.18
-TPC-DS Q73               4333.65
-TPC-DS Q74              25569.79
-TPC-DS Q75             141933.40
-TPC-DS Q76              61149.38
-TPC-DS Q77              28583.39
-TPC-DS Q78             203927.50
-TPC-DS Q79              12952.43
-TPC-DS Q80             150508.84
-TPC-DS Q81               2888.61
-TPC-DS Q82              60326.83
-TPC-DS Q83               4198.52
-TPC-DS Q84               1978.71
-TPC-DS Q85               5263.93
-TPC-DS Q86               9732.69
-TPC-DS Q87              57722.86
-TPC-DS Q88               7182.01
-TPC-DS Q89               4266.72
-TPC-DS Q90               1668.58
-TPC-DS Q91               1259.29
-TPC-DS Q92               1693.92
-TPC-DS Q93              26996.48
-TPC-DS Q94               9621.58
-TPC-DS Q95              16178.75
-TPC-DS Q96               2167.87
-TPC-DS Q97              44732.91
-TPC-DS Q98               3540.66
-TPC-DS Q99               3674.52
+TPC-DS Q1                2637.88
+TPC-DS Q2               16764.28
+TPC-DS Q3                1918.33
+TPC-DS Q4              165305.06
+TPC-DS Q5               23933.02
+TPC-DS Q6               11482.90
+TPC-DS Q7                2830.86
+TPC-DS Q8                5504.10
+TPC-DS Q9                5874.06
+TPC-DS Q10               2100.43
+TPC-DS Q11              82490.57
+TPC-DS Q12                719.09
+TPC-DS Q13               2874.62
+TPC-DS Q14a+b          274520.90
+TPC-DS Q15               1200.84
+TPC-DS Q16               1769.05
+TPC-DS Q17              38280.43
+TPC-DS Q18               8892.97
+TPC-DS Q19               2175.67
+TPC-DS Q20               1207.08
+TPC-DS Q21               2371.85
+TPC-DS Q22              64545.85
+TPC-DS Q23a+b         1420883.33
+TPC-DS Q24a+b         1090365.04
+TPC-DS Q25             144393.47
+TPC-DS Q26               4972.95
+TPC-DS Q27              41497.92
+TPC-DS Q28               4921.31
+TPC-DS Q29              16622.60
+TPC-DS Q30               4905.84
+TPC-DS Q31              30967.47
+TPC-DS Q32               1767.50
+TPC-DS Q33              13230.04
+TPC-DS Q34               4432.81
+TPC-DS Q35              23996.74
+TPC-DS Q36              17233.46
+TPC-DS Q37              38518.46
+TPC-DS Q38              64598.41
+TPC-DS Q39a+b           82144.36
+TPC-DS Q40              19052.14
+TPC-DS Q41                674.80
+TPC-DS Q42               1984.63
+TPC-DS Q43               1403.81
+TPC-DS Q44                132.62
+TPC-DS Q45               1569.16
+TPC-DS Q46               3184.14
+TPC-DS Q47               7547.96
+TPC-DS Q48               3235.58
+TPC-DS Q49              46504.22
+TPC-DS Q50               3513.86
+TPC-DS Q51              48649.29
+TPC-DS Q52               2109.35
+TPC-DS Q53               1787.58
+TPC-DS Q54               4786.27
+TPC-DS Q55                210.19
+TPC-DS Q56               2722.33
+TPC-DS Q57               1938.84
+TPC-DS Q58              12032.30
+TPC-DS Q59              13143.44
+TPC-DS Q60               3724.71
+TPC-DS Q61                182.96
+TPC-DS Q62               3202.51
+TPC-DS Q63               1751.03
+TPC-DS Q64              76310.83
+TPC-DS Q65              26397.61
+TPC-DS Q66              12444.26
+TPC-DS Q67             105200.44
+TPC-DS Q68               2544.14
+TPC-DS Q69               4422.59
+TPC-DS Q70               5459.43
+TPC-DS Q71               3842.16
+TPC-DS Q72              19984.29
+TPC-DS Q73               2089.12
+TPC-DS Q74              24865.37
+TPC-DS Q75             127216.13
+TPC-DS Q76              82956.82
+TPC-DS Q77              34580.05
+TPC-DS Q78             198436.54
+TPC-DS Q79               4928.64
+TPC-DS Q80             144077.02
+TPC-DS Q81               2910.95
+TPC-DS Q82              25892.81
+TPC-DS Q83               3508.32
+TPC-DS Q84                599.91
+TPC-DS Q85               1600.58
+TPC-DS Q86               3346.72
+TPC-DS Q87              65159.52
+TPC-DS Q88               6268.49
+TPC-DS Q89               3189.81
+TPC-DS Q90               1192.39
+TPC-DS Q91               1262.45
+TPC-DS Q92               1160.22
+TPC-DS Q93              24331.82
+TPC-DS Q94               3965.59
+TPC-DS Q95              17793.74
+TPC-DS Q96               1693.31
+TPC-DS Q97              42108.78
+TPC-DS Q98               2518.05
+TPC-DS Q99               3900.43
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1           1.0         1572.0         5.0     5760.0    7346.0
+MonetDB-BHT-8-1-1           1.0         1782.0        12.0     5226.0    7028.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1          10.66
+MonetDB-BHT-8-1-1           8.09
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1           34173.49
+MonetDB-BHT-8-1-1           45069.94
 
-### Throughput@Size
-                                               time [s]  count   SF  Throughput@Size [~GB/h]
-DBMS            SF  num_experiment num_client                                               
-MonetDB-BHT-8-1 100 1              1               5452      1  100                  1452.68
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                               time [s]  count   SF  Throughput@Size
+DBMS            SF  num_experiment num_client                                       
+MonetDB-BHT-8-1 100 1              1               5042      1  100          7068.62
 
 ### Workflow
 
@@ -2143,24 +2169,24 @@ DBMS MonetDB-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1     22216.3    17.05         23.06                77.22
+MonetDB-BHT-8-1    23227.41    16.19        118.33               299.77
 
 ### Ingestion - Loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      1934.2     1.43         46.97                95.38
+MonetDB-BHT-8-1     2401.94     1.19         46.84                95.91
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1    36588.49    58.65        408.05               479.37
+MonetDB-BHT-8-1    41174.98     44.4         441.7               486.48
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       51.25     0.18          0.34                 0.35
+MonetDB-BHT-8-1       47.96     0.18          0.35                 0.36
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
@@ -2199,8 +2225,8 @@ doc_tpcds_monetdb_2.log
 ### Workload
 TPC-DS Queries SF=100
     Type: tpcds
-    Duration: 27392s 
-    Code: 1731457093
+    Duration: 20864s 
+    Code: 1748374315
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=100) data is loaded and benchmark is executed.
@@ -2208,13 +2234,14 @@ TPC-DS Queries SF=100
     All instances use the same query parameters.
     Timeout per query is 7200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 500Gi.
+    Database is persisted to disk of type shared and size 1000Gi.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1, 1] times the number of benchmarking pods.
@@ -2222,192 +2249,201 @@ TPC-DS Queries SF=100
 
 ### Connections
 MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352155636
-    datadisk:329919870
-    volume_size:500G
+    disk:300889844
+    datadisk:322157
+    volume_size:1000G
     volume_used:315G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352155976
-    datadisk:324691593
-    volume_size:500G
+    disk:300890260
+    datadisk:317050
+    volume_size:1000G
     volume_used:316G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352156316
-    datadisk:324691595
-    volume_size:500G
+    disk:300890492
+    datadisk:317050
+    volume_size:1000G
     volume_used:310G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Aug2024
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:352156656
-    datadisk:324691596
-    volume_size:500G
-    volume_used:310G
+    disk:300890920
+    datadisk:317050
+    volume_size:1000G
+    volume_used:316G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748374315
 
 ### Errors (failed queries)
 No errors
 
 ### Warnings (result mismatch)
-No warnings
+               MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1
+TPC-DS Q39a+b                 True                False                 True                 True
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1
-TPC-DS Q1                 10042.83              3142.23             10066.88              3106.77
-TPC-DS Q2                 38941.88             15221.96             37757.17             14824.72
-TPC-DS Q3                 86152.05             49772.01             91159.66             44731.60
-TPC-DS Q4                280885.78            164190.88            286666.18            172818.27
-TPC-DS Q5                187593.44             36049.82            205495.44             35878.49
-TPC-DS Q6                 11155.97              9205.10             11981.31             10068.37
-TPC-DS Q7                 91499.99              6222.42             99746.70              7403.79
-TPC-DS Q8                 28529.43             27814.84             30964.75             27327.52
-TPC-DS Q9                 20413.45              7078.24             20975.67              7141.95
-TPC-DS Q10               310701.94              4726.84            317842.08              4764.86
-TPC-DS Q11                80958.04             80707.20             83997.91             80224.78
-TPC-DS Q12                 1557.36              1468.54              1854.46              1524.94
-TPC-DS Q13                 3279.95              6345.54              9428.36              5342.05
-TPC-DS Q14a+b            328629.87            289573.01            346603.23            317076.54
-TPC-DS Q15                 1198.75              1141.26              2572.32              1671.84
-TPC-DS Q16                20492.62              2500.10             20345.71              2391.60
-TPC-DS Q17                55439.96             46887.60             63496.67             85714.70
-TPC-DS Q18                25551.22             21728.05             23217.82             23278.58
-TPC-DS Q19                 3303.20              2273.43              3011.99              4223.77
-TPC-DS Q20                 1119.25               542.63              1222.06              1013.35
-TPC-DS Q21                84854.21              5123.28             88569.15              4834.70
-TPC-DS Q22                99613.49             88131.05            100370.52             92833.07
-TPC-DS Q23a+b           3092717.58           2995302.50           3650757.98           3336709.77
-TPC-DS Q24a+b            264477.61            264066.18            263438.51            255409.33
-TPC-DS Q25                21620.90             22624.07             22503.89             21699.67
-TPC-DS Q26                 2617.10              1905.62              2771.65              3101.46
-TPC-DS Q27                19320.31             20145.53             20491.50             35080.52
-TPC-DS Q28                 4987.18              5176.54              5159.88              5262.15
-TPC-DS Q29                37262.69             35118.51             24962.49             29726.66
-TPC-DS Q30                 3157.56              2617.68              2993.22              2370.24
-TPC-DS Q31                26124.20             26269.90             22075.62             21878.51
-TPC-DS Q32                 1867.46              1130.99              1335.18              1545.65
-TPC-DS Q33                13231.11              5728.70              1567.42              7221.50
-TPC-DS Q34                 4082.24              2374.89              2345.54              3247.86
-TPC-DS Q35                16233.54             15759.48              8075.05             15905.18
-TPC-DS Q36                32499.33             33827.07             17889.56             11981.64
-TPC-DS Q37                24663.16              9341.11             11582.14             23849.47
-TPC-DS Q38                63332.96             60565.18             62859.91             47671.33
-TPC-DS Q39a+b            128982.49             77365.62             74252.36            128500.54
-TPC-DS Q40                 6020.77              5255.56              5361.19              6193.66
-TPC-DS Q41                  374.92               375.43               349.16               262.82
-TPC-DS Q42                 4786.15              3433.94              4058.70              3454.72
-TPC-DS Q43                 2729.13              2672.01              2810.49              2288.61
-TPC-DS Q44                46051.42             43953.90             48506.05             42922.52
-TPC-DS Q45                 3204.80              1752.25              1981.56              1970.14
-TPC-DS Q46                 6603.64              5962.95              6941.91              5491.72
-TPC-DS Q47                 7303.30              7476.95             10587.58              7134.99
-TPC-DS Q48                 3969.03              3613.91              4569.20              3772.23
-TPC-DS Q49                43389.10             25201.64             46138.10             27188.42
-TPC-DS Q50                 7831.25              4968.77              8852.95              8686.45
-TPC-DS Q51                49185.36             51153.55             48884.66             48338.78
-TPC-DS Q52                 4685.09              3957.21              4809.77              3715.90
-TPC-DS Q53                 3237.10              2755.29              3419.08              2818.72
-TPC-DS Q54                12911.58               843.33             12218.18             11616.70
-TPC-DS Q55                 1187.22               137.84              1213.45               931.26
-TPC-DS Q56                28470.57             16073.42             17949.09             21736.21
-TPC-DS Q57                 2477.18              1638.65              2209.00              2313.56
-TPC-DS Q58                11721.32              5405.34              6271.57             10224.70
-TPC-DS Q59                12982.20             11904.19             13186.38             12071.46
-TPC-DS Q60                 3105.21              4547.07              3686.25              2595.11
-TPC-DS Q61                  294.78               283.63               483.92               345.34
-TPC-DS Q62                 2795.81              2316.54              2714.24              2693.73
-TPC-DS Q63                 2037.15              2337.53              3433.96              1627.89
-TPC-DS Q64                75201.74             67313.12             71450.21             58697.14
-TPC-DS Q65                22822.27             22580.22             23365.80             25123.18
-TPC-DS Q66                23858.73             17720.11             19497.85             18461.09
-TPC-DS Q67               123815.67            128032.23            125112.47            127174.29
-TPC-DS Q68                 7787.53              4242.00              3767.74              7801.41
-TPC-DS Q69                13047.73              6999.57             13120.27             12667.00
-TPC-DS Q70                 6620.94              4934.47              6482.53              4258.97
-TPC-DS Q71                 5560.56              5344.54              5528.70              4871.44
-TPC-DS Q72                21778.54             18940.42             20479.85             21657.24
-TPC-DS Q73                 4930.95              3681.16              2275.21              4476.78
-TPC-DS Q74                32767.41             31481.66             28188.10             27366.61
-TPC-DS Q75               159530.36            129357.12            147711.82            165584.57
-TPC-DS Q76                71612.24             71624.21             69445.23             69871.08
-TPC-DS Q77                27300.99             26833.67             26490.84             24393.92
-TPC-DS Q78               200308.90            194687.76            199010.08            178800.85
-TPC-DS Q79                11819.46             11353.41             10708.80             11273.51
-TPC-DS Q80               115257.62            119283.36            115940.39             97591.82
-TPC-DS Q81                 3566.42              3234.76              3467.94              3075.99
-TPC-DS Q82                53321.08             50213.70             50808.41             54344.65
-TPC-DS Q83                 3140.56              2721.72              2725.85              2993.31
-TPC-DS Q84                 1378.39               756.11               940.35              1172.78
-TPC-DS Q85                 3649.66              2783.87              3486.61              3024.29
-TPC-DS Q86                 9469.77              9615.71              9611.84              9518.13
-TPC-DS Q87                70336.52             70123.90             57991.45             58439.67
-TPC-DS Q88                 9570.35              6034.67              7032.46              8503.33
-TPC-DS Q89                 4844.72              4033.63              3798.53              4468.22
-TPC-DS Q90                 1376.42               963.74              1166.89              1156.22
-TPC-DS Q91                 1174.76               915.00              1287.03              1070.36
-TPC-DS Q92                 1997.35              1762.89              2255.26              2414.42
-TPC-DS Q93                21644.82             20215.81             22430.29             18995.41
-TPC-DS Q94                 4569.07              4076.63              4078.65              3907.82
-TPC-DS Q95                15080.58             15031.61             15250.04             16359.60
-TPC-DS Q96                 7146.36              4265.69              3901.74              4987.36
-TPC-DS Q97                47546.39             42913.71             47851.72             45226.89
-TPC-DS Q98                 7070.69              5057.15              4754.93              4437.88
-TPC-DS Q99                 3728.52              2602.84              2969.50              3426.07
+TPC-DS Q1                 10904.81              1352.03              9901.93              1348.35
+TPC-DS Q2                 51489.32             14557.18             46446.74             13278.68
+TPC-DS Q3                120653.04              6777.71            114318.50              7929.78
+TPC-DS Q4                311777.32            167573.60            306934.30            161539.60
+TPC-DS Q5                225504.20             24223.44            232864.89             25229.96
+TPC-DS Q6                 10889.72              8368.32             13320.43              8260.00
+TPC-DS Q7                115641.50              2029.28            114523.74              1964.57
+TPC-DS Q8                 35707.40              3827.72             37130.19              3723.03
+TPC-DS Q9                 24372.10              3906.10             20527.53              5348.19
+TPC-DS Q10               374243.44              2838.67            371704.39              2228.05
+TPC-DS Q11                93190.84             78779.70             82520.08             74712.26
+TPC-DS Q12                 1705.40               695.00              1773.42               662.24
+TPC-DS Q13                 2561.94              2743.26              2713.58              3170.96
+TPC-DS Q14a+b            359374.60            308801.62            319509.01            311527.06
+TPC-DS Q15                 1873.77              1718.39              1638.29              1676.62
+TPC-DS Q16                25209.54              1279.67             23601.25              1324.00
+TPC-DS Q17                45375.49             36448.08             43223.89             33698.96
+TPC-DS Q18                25321.64              8928.83             26768.06              8223.27
+TPC-DS Q19                 2375.33              2313.53              2716.17              2605.62
+TPC-DS Q20                 1286.75               729.90              1207.05               744.14
+TPC-DS Q21               101462.80              2161.39            101032.31              2218.40
+TPC-DS Q22               108842.70             67772.51            101136.33             65702.80
+TPC-DS Q23a+b           2091759.26           2022871.68           2315934.41           1909392.23
+TPC-DS Q24a+b            306361.68            398768.27            261103.37            262275.87
+TPC-DS Q25                26568.13             20393.10             20786.73             12043.68
+TPC-DS Q26                 1560.41              1383.51              1796.41              1237.06
+TPC-DS Q27                13793.56             13035.05             14251.62             13603.37
+TPC-DS Q28                 4343.33              3234.34              5333.42              5362.64
+TPC-DS Q29                15774.73             16851.59             13889.33             13087.10
+TPC-DS Q30                  958.14              1181.86               907.45               362.97
+TPC-DS Q31                25284.10             36529.71             24821.07             19929.00
+TPC-DS Q32                  813.29               860.83               814.24               814.61
+TPC-DS Q33                 1768.43              1783.52              2469.47              1518.13
+TPC-DS Q34                 3507.67              1618.43              2603.10              1363.38
+TPC-DS Q35                 9201.65              9645.38              8044.87              8883.01
+TPC-DS Q36                11029.02             11051.45             11332.44             12576.23
+TPC-DS Q37                21802.03              3422.73             24983.11              4071.75
+TPC-DS Q38                31111.62             30073.89             30151.31             30279.28
+TPC-DS Q39a+b             77397.97             76773.33             77824.80             71404.67
+TPC-DS Q40                 4136.33              4478.14              3634.45              3294.53
+TPC-DS Q41                   20.13                39.53                41.69                33.92
+TPC-DS Q42                 1999.16              1989.36              2238.03              2201.05
+TPC-DS Q43                 1394.18              1370.88              1339.87              1330.72
+TPC-DS Q44                  125.90                71.59               117.12                69.17
+TPC-DS Q45                  654.97               642.61               771.86               733.16
+TPC-DS Q46                 2839.05              2751.05              3079.43              2612.81
+TPC-DS Q47                 7520.64              7302.91              7255.58              6387.04
+TPC-DS Q48                 1638.89             21557.14              1447.42             10663.95
+TPC-DS Q49                31126.79             10747.06             30730.99              9581.53
+TPC-DS Q50                 3379.85              2793.56              3686.27              2039.17
+TPC-DS Q51                47360.46             48835.04             45475.11             47215.94
+TPC-DS Q52                 1988.19              2003.49              2246.14              2214.85
+TPC-DS Q53                 1713.94              1693.28              1760.14              1747.88
+TPC-DS Q54                  428.14              2832.40               444.04             11366.42
+TPC-DS Q55                  161.26               157.76               158.74               156.02
+TPC-DS Q56                 1769.63              1652.07              2002.50              1716.37
+TPC-DS Q57                 1815.17              2898.21              1614.87              1346.02
+TPC-DS Q58                 5420.43              5247.72              5048.72              5701.47
+TPC-DS Q59                13996.60             12810.58             11845.29             11496.10
+TPC-DS Q60                 2235.12              3034.58              1754.40              1231.60
+TPC-DS Q61                 1695.06              2116.67              1909.84              1709.60
+TPC-DS Q62                 2741.80              4040.34              2676.77              1447.72
+TPC-DS Q63                 2319.98              2201.95              1594.96              1493.53
+TPC-DS Q64                43543.28             29724.27             38257.13             25264.07
+TPC-DS Q65                23533.95             26963.64             22266.78             21110.60
+TPC-DS Q66                 9113.54              4512.01              8639.02              4279.82
+TPC-DS Q67               110468.74            106361.54            102108.11            102762.08
+TPC-DS Q68                 2281.20              2334.19              2750.34              2756.76
+TPC-DS Q69                 3392.75              3477.12              3343.56              5048.33
+TPC-DS Q70                 4828.28              4656.49              4985.86              3946.66
+TPC-DS Q71                 1717.05              2323.08              1476.57              1573.63
+TPC-DS Q72                15425.84              8440.21             14190.01             10957.44
+TPC-DS Q73                 1994.49              1133.51              2258.62              2239.25
+TPC-DS Q74                25175.00             24230.50             24659.84             23145.59
+TPC-DS Q75               109733.72            129790.39            114130.04            116399.20
+TPC-DS Q76                66961.70            110892.62             68739.89             13516.90
+TPC-DS Q77                 9478.52             13589.86              9044.33              6182.89
+TPC-DS Q78               176578.51            176591.73            160347.11            174063.35
+TPC-DS Q79                 7333.02             15247.42              6771.19              9364.31
+TPC-DS Q80               112814.47            108045.40             95400.05            104351.20
+TPC-DS Q81                 2391.58              2028.63              2028.15              2595.69
+TPC-DS Q82                15446.04             21499.45             23742.17             17634.71
+TPC-DS Q83                 1944.60               522.80              1958.27               329.47
+TPC-DS Q84                  712.75               224.24               465.95               152.64
+TPC-DS Q85                 1637.07              1467.32              1667.91               741.50
+TPC-DS Q86                 3207.51              3226.77              3081.94              3095.99
+TPC-DS Q87                43042.21             40343.56             41008.98             40362.45
+TPC-DS Q88                 5804.04             20951.42              5937.42             18973.08
+TPC-DS Q89                 2805.83              3533.73              3223.14              3920.89
+TPC-DS Q90                  540.35              2677.86               679.32               453.96
+TPC-DS Q91                  794.40               274.70               893.82               138.28
+TPC-DS Q92                  560.85               582.67               572.07               611.29
+TPC-DS Q93                22710.15             22534.21             18529.48             17593.24
+TPC-DS Q94                 4060.43              3612.02              3599.67              1805.88
+TPC-DS Q95                17132.26             17532.72             16924.43             17340.93
+TPC-DS Q96                 1815.50              1737.36              1914.22              1918.25
+TPC-DS Q97                46241.42             45808.23             47074.06             47514.31
+TPC-DS Q98                 2508.92              2472.47              2597.59              2699.35
+TPC-DS Q99                 2781.97              2775.45              2867.33              1999.41
 
 ### Loading [s]
                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1-1           1.0         1572.0         5.0     5760.0    7346.0
-MonetDB-BHT-8-1-2-1           1.0         1572.0         5.0     5760.0    7346.0
-MonetDB-BHT-8-2-1-1           1.0         1572.0         5.0     5760.0    7346.0
-MonetDB-BHT-8-2-2-1           1.0         1572.0         5.0     5760.0    7346.0
+MonetDB-BHT-8-1-1-1           1.0         1782.0        12.0     5226.0    7028.0
+MonetDB-BHT-8-1-2-1           1.0         1782.0        12.0     5226.0    7028.0
+MonetDB-BHT-8-2-1-1           1.0         1782.0        12.0     5226.0    7028.0
+MonetDB-BHT-8-2-2-1           1.0         1782.0        12.0     5226.0    7028.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                      Geo Times [s]
 DBMS                              
-MonetDB-BHT-8-1-1-1          13.79
-MonetDB-BHT-8-1-2-1           9.36
-MonetDB-BHT-8-2-1-1          12.72
-MonetDB-BHT-8-2-2-1          10.61
+MonetDB-BHT-8-1-1-1           8.26
+MonetDB-BHT-8-1-2-1           5.99
+MonetDB-BHT-8-2-1-1           8.17
+MonetDB-BHT-8-2-2-1           5.20
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                      Power@Size [~Q/h]
 DBMS                                  
-MonetDB-BHT-8-1-1-1           26319.01
-MonetDB-BHT-8-1-2-1           38884.44
-MonetDB-BHT-8-2-1-1           28565.42
-MonetDB-BHT-8-2-2-1           34315.93
+MonetDB-BHT-8-1-1-1           44447.76
+MonetDB-BHT-8-1-2-1           61041.84
+MonetDB-BHT-8-2-1-1           44872.33
+MonetDB-BHT-8-2-2-1           70523.98
 
-### Throughput@Size
-                                                 time [s]  count   SF  Throughput@Size [~GB/h]
-DBMS              SF  num_experiment num_client                                               
-MonetDB-BHT-8-1-1 100 1              1               7065      1  100                  1121.02
-MonetDB-BHT-8-1-2 100 1              2               5843      1  100                  1355.47
-MonetDB-BHT-8-2-1 100 2              1               7521      1  100                  1053.05
-MonetDB-BHT-8-2-2 100 2              2               6302      1  100                  1256.74
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                 time [s]  count   SF  Throughput@Size
+DBMS              SF  num_experiment num_client                                       
+MonetDB-BHT-8-1-1 100 1              1               5786      1  100          6159.70
+MonetDB-BHT-8-1-2 100 1              2               4544      1  100          7843.31
+MonetDB-BHT-8-2-1 100 2              1               5834      1  100          6109.02
+MonetDB-BHT-8-2-2 100 2              2               4082      1  100          8731.01
 
 ### Workflow
 
@@ -2419,24 +2455,24 @@ DBMS MonetDB-BHT-8 - Pods [[1, 1], [1, 1]]
 
 ### Execution - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1    31061.13    54.22        296.38               317.47
-MonetDB-BHT-8-1-2    30906.08    57.92        305.11               331.89
-MonetDB-BHT-8-2-1    62141.22    19.61        293.91               313.24
-MonetDB-BHT-8-2-2    31748.58    43.41        299.14               302.68
+MonetDB-BHT-8-1-1    29618.87    24.02        287.72               352.21
+MonetDB-BHT-8-1-2    28483.56    30.07        374.37               414.51
+MonetDB-BHT-8-2-1    58470.69    32.85        317.91               382.31
+MonetDB-BHT-8-2-2    31838.36    58.96        377.89               411.75
 
 ### Execution - Benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1       61.75     0.10          0.40                 0.41
-MonetDB-BHT-8-1-2       61.75     0.24          0.64                 0.67
-MonetDB-BHT-8-2-1       62.25     0.21          0.63                 0.67
-MonetDB-BHT-8-2-2       62.42     0.22          0.65                 0.68
+MonetDB-BHT-8-1-1       49.92     0.03          0.36                 0.38
+MonetDB-BHT-8-1-2       49.92     0.11          0.60                 0.64
+MonetDB-BHT-8-2-1       47.25     0.18          0.61                 0.65
+MonetDB-BHT-8-2-2       48.66     0.27          0.61                 0.65
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
-TEST passed: No SQL warnings
+TEST failed: SQL warnings (result mismatch)
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned

@@ -65,7 +65,7 @@ wait_process "ycsb"
 
 
 #### TCP-DS Compare (Example-TPC-DS.md)
-nohup python tpcds.py -ms 3 -dt -tr \
+nohup python tpcds.py -ms 1 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
