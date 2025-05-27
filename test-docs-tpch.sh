@@ -55,13 +55,17 @@ wait_process "ycsb"
 
 
 
+
+
+
+
 ###########################################
 ################# TPC-H ###################
 ###########################################
 
 
 #### TCP-H Compare (Example-TPC-H.md)
-nohup python tpch.py -ms 4 -dt -tr \
+nohup python tpch.py -ms 1 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -71,7 +75,6 @@ nohup python tpch.py -ms 4 -dt -tr \
 
 
 #### Wait so that next experiment receives a different code
-#sleep 7200
 wait_process "tpch"
 
 
@@ -80,7 +83,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
+  -sf 10 \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -152,7 +155,7 @@ nohup python tpch.py -ms 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \
-  -rst shared -rss 300Gi \
+  -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
 
 
@@ -171,7 +174,7 @@ nohup python tpch.py -ms 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \
-  -rst shared -rss 300Gi \
+  -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
 
 
@@ -190,7 +193,7 @@ nohup python tpch.py -ms 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 1200 -dt \
-  -rst shared -rss 300Gi \
+  -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
 
 #### Wait so that next experiment receives a different code
