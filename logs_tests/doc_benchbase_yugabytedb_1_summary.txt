@@ -3,13 +3,13 @@
 ### Workload
 Benchbase Workload SF=16
     Type: benchbase
-    Duration: 1293s 
-    Code: 1747947107
+    Duration: 1266s 
+    Code: 1748462231
     Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['YugabyteDB'].
     Import is handled by 1 processes (pods).
@@ -23,36 +23,36 @@ Benchbase Workload SF=16
 
 ### Connections
 YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:257054308
+    disk:301261896
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1747947107
+                code:1748462231
 YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:257054308
+    disk:301261900
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1747947107
+                code:1748462231
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-YugabyteDB-1-1-1024-1               1         16   16384          1  300.0           0                        108.34                     107.88         0.0                                                     389656.0                                             147608.0
-YugabyteDB-1-1-1024-2               1         16   16384          2  300.0           0                        104.76                     104.25         0.0                                                     371714.0                                             152628.0
+YugabyteDB-1-1-1024-1               1         16   16384          1  300.0           0                        130.27                     129.72         0.0                                                     330908.0                                             122732.0
+YugabyteDB-1-1-1024-2               1         16   16384          2  300.0           0                        160.55                     159.73         0.0                                                     279105.0                                              99666.0
 
 ### Workflow
 
@@ -64,28 +64,28 @@ DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-YugabyteDB-1-1-1024-1      386.0        1.0   1.0         149.222798
-YugabyteDB-1-1-1024-2      386.0        1.0   2.0         149.222798
+YugabyteDB-1-1-1024-1      336.0        1.0   1.0         171.428571
+YugabyteDB-1-1-1024-2      336.0        1.0   2.0         171.428571
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1    11766.31    15.48           5.3                12.95
-YugabyteDB-1-1-1024-2    11766.31    15.48           5.3                12.95
+YugabyteDB-1-1-1024-1     8344.07    10.97          4.98                12.98
+YugabyteDB-1-1-1024-2     8344.07    10.97          4.98                12.98
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1      465.95     3.48          1.29                 1.29
-YugabyteDB-1-1-1024-2      465.95     3.48          1.29                 1.29
+YugabyteDB-1-1-1024-1     1014.93     9.53           1.3                  1.3
+YugabyteDB-1-1-1024-2     1014.93     9.53           1.3                  1.3
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1    12081.55    15.41          4.90                13.95
-YugabyteDB-1-1-1024-2    11908.76    15.88          5.08                14.46
+YugabyteDB-1-1-1024-1     9926.98    20.46          4.92                14.00
+YugabyteDB-1-1-1024-2    12709.70    14.19          5.19                14.85
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1      139.18     0.60          0.34                 0.34
-YugabyteDB-1-1-1024-2      125.99     0.26          0.76                 0.76
+YugabyteDB-1-1-1024-1      137.64     0.52          0.35                 0.35
+YugabyteDB-1-1-1024-2      119.33     0.29          0.81                 0.81
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
