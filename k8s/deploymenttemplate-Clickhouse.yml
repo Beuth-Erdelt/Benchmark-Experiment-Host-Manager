@@ -1,0 +1,142 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clickhouse
+spec:
+  clusterIP: None
+  selector:
+    app: clickhouse
+  ports:
+    - name: http
+      port: 8123
+    - name: native
+      port: 9000
+    - name: keeper
+      port: 9181
+    - name: keeper-raft
+      port: 9281
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clickhouse-config-template
+data:
+  config.xml: |
+    <clickhouse>
+      <logger>
+        <level>information</level>
+        <console>true</console>
+      </logger>
+      <macros>
+        <shard>1</shard>
+        <replica>clickhouse-${HOSTNAME}</replica>
+      </macros>
+    </clickhouse>
+
+  keeper.xml.template: |
+    <clickhouse>
+    </clickhouse>
+
+  users.xml: |
+    <clickhouse>
+      <users>
+        <default>
+          <password></password>
+          <networks>
+            <ip>::/0</ip>
+            <ip>0.0.0.0/0</ip>
+          </networks>
+          <profile>default</profile>
+          <quota>default</quota>
+        </default>
+        <admin>
+          <password>supersecret</password>
+          <networks>
+            <ip>0.0.0.0/0</ip>
+          </networks>
+          <profile>default</profile>
+          <quota>default</quota>
+        </admin>
+      </users>
+    </clickhouse>
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: clickhouse
+spec:
+  serviceName: clickhouse
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clickhouse
+  template:
+    metadata:
+      labels:
+        app: clickhouse
+    spec:
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - key: "nvidia.com/gpu"
+        effect: "NoSchedule"
+      containers:
+        - name: clickhouse
+          image: clickhouse/clickhouse-server:latest
+          #command: ['sh', '-c', 'sleep 30 && /entrypoint.sh']
+          ports:
+            - containerPort: 8123
+            - containerPort: 9000
+            - containerPort: 9181
+            - containerPort: 9281
+          volumeMounts:
+            - name: config
+              mountPath: /etc/clickhouse-server/config.d
+            - name: config
+              mountPath: /etc/clickhouse-server/users.d
+            - name: data
+              mountPath: /var/lib/clickhouse
+      initContainers:
+        - name: config-init
+          image: alpine:3.19
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              apk add --no-cache gettext bind-tools
+
+              ordinal=$(echo ${HOSTNAME##*-})
+              prev=$((ordinal - 1))
+
+              echo "Generating keeper.xml..."
+              export KEEPER_ID=$((ordinal + 1))
+              envsubst '${KEEPER_ID}' < /config-template/keeper.xml.template > /config/keeper.xml
+              echo "Generated keeper.xml:"
+              cat /config/keeper.xml
+
+              cp /config-template/config.xml /config/config.xml
+              cp /config-template/users.xml /config/users.xml
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: config-template
+              mountPath: /config-template
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config-template
+          configMap:
+            name: clickhouse-config-template
+        - name: config
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
