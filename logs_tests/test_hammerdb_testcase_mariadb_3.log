@@ -2,11 +2,12 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1729854531
-Experiment                    : starts at 2024-10-25 13:08:51.240717 (4590471.364692023)
+Experiment                    : has code 1748957864
+Experiment                    : starts at 2025-06-03 15:37:44.776781 (13150028.247329837)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
+Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['MariaDB'].
 Import is handled by 1 processes (pods).
@@ -21,75 +22,40 @@ Experiment is run 2 times.
 Cluster monitoring            : is running
 done
 MariaDB-BHT-8-1               : will start now
+MariaDB-BHT-8-1               : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1-1748957864
+MariaDB-BHT-8-1               : Name of SUT service = bexhoma-sut-mariadb-bht-8-1-1748957864
+MariaDB-BHT-8-1               : Name of SUT PVC name = bexhoma-storage-mariadb-hammerdb-16
 MariaDB-BHT-8-1               : storage exists bexhoma-storage-mariadb-hammerdb-16
+MariaDB-BHT-8-1               : label loaded copied value True
+MariaDB-BHT-8-1               : label timeLoading copied value 407
+MariaDB-BHT-8-1               : label timeLoadingStart copied value 1748956789
+MariaDB-BHT-8-1               : label timeLoadingEnd copied value 1748957216
+MariaDB-BHT-8-1               : label indexed copied value True
+MariaDB-BHT-8-1               : label time_generated copied value 0
+MariaDB-BHT-8-1               : label time_indexed copied value 1
+MariaDB-BHT-8-1               : label time_ingested copied value 404
+MariaDB-BHT-8-1               : label time_initschema copied value 1
+MariaDB-BHT-8-1               : label time_loaded copied value 2
 MariaDB-BHT-8-1               : loading is set to finished
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51 (that is in 900 secs)
+MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
+MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
+MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
+MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
+MariaDB-BHT-8-1               : will start benchmarking but not before 2025-06-03 13:41:47 (that is in 60 secs)
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 11:24:51
+MariaDB-BHT-8-1               : will start benchmarking but not before 2025-06-03 13:41:47
 done
 MariaDB-BHT-8-1               : benchmarks done 0 of 2. This will be client 1
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 16}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-1-1           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-1-1-wc69f: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-1-1-v2r7l: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -109,18 +75,20 @@ MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-1-1           : showing benchmarker times
-MariaDB-BHT-8-1-1-1           : benchmarker timespan (start to end single container [s]) = 281
-MariaDB-BHT-8-1-1-1           : benchmarker times (start/end per pod and container) = [(1729855499, 1729855761)]
-MariaDB-BHT-8-1-1-1           : found and updated times {'benchmarker': [(1729855499, 1729855761)]}
-MariaDB-BHT-8-1-1-1           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-1-1           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-1-1           : benchmarker timespan (start to end single container [s]) = 285
+MariaDB-BHT-8-1-1-1           : benchmarker times (start/end per pod and container) = [(1748958114, 1748958391)]
+MariaDB-BHT-8-1-1-1           : found and updated times {'benchmarker': [(1748958114, 1748958391)]}
+MariaDB-BHT-8-1-1-1           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-1-1
+MariaDB-BHT-8-1-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1-1           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-1-1
+MariaDB-BHT-8-1-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : benchmarks done 0 of 2. This will be client 2
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 16}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-1-2           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-1-2-bkrgq: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-1-2-dfp6c: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -140,18 +108,20 @@ MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-1-2           : showing benchmarker times
-MariaDB-BHT-8-1-1-2           : benchmarker timespan (start to end single container [s]) = 282
-MariaDB-BHT-8-1-1-2           : benchmarker times (start/end per pod and container) = [(1729855825, 1729856100), (1729855825, 1729856100)]
-MariaDB-BHT-8-1-1-2           : found and updated times {'benchmarker': [(1729855825, 1729856100), (1729855825, 1729856100)]}
-MariaDB-BHT-8-1-1-2           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-1-2           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-1-2           : benchmarker timespan (start to end single container [s]) = 285
+MariaDB-BHT-8-1-1-2           : benchmarker times (start/end per pod and container) = [(1748958450, 1748958729), (1748958450, 1748958727)]
+MariaDB-BHT-8-1-1-2           : found and updated times {'benchmarker': [(1748958450, 1748958729), (1748958450, 1748958727)]}
+MariaDB-BHT-8-1-1-2           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-1-2
+MariaDB-BHT-8-1-1-2           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1-2           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-1-2
+MariaDB-BHT-8-1-1-2           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : benchmarks done 0 of 2. This will be client 3
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 8}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 8, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-1-3           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-1-3-652zm: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-1-3-28v6d: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -167,22 +137,26 @@ MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
+MariaDB-BHT-8-1               : has running benchmarks
+done
 MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-1-3           : showing benchmarker times
-MariaDB-BHT-8-1-1-3           : benchmarker timespan (start to end single container [s]) = 282
-MariaDB-BHT-8-1-1-3           : benchmarker times (start/end per pod and container) = [(1729856150, 1729856419), (1729856151, 1729856419)]
-MariaDB-BHT-8-1-1-3           : found and updated times {'benchmarker': [(1729856150, 1729856419), (1729856151, 1729856419)]}
-MariaDB-BHT-8-1-1-3           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-1-3           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-1-3           : benchmarker timespan (start to end single container [s]) = 316
+MariaDB-BHT-8-1-1-3           : benchmarker times (start/end per pod and container) = [(1748958784, 1748959068), (1748958784, 1748959061)]
+MariaDB-BHT-8-1-1-3           : found and updated times {'benchmarker': [(1748958784, 1748959068), (1748958784, 1748959061)]}
+MariaDB-BHT-8-1-1-3           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-1-3
+MariaDB-BHT-8-1-1-3           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1-3           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-1-3
+MariaDB-BHT-8-1-1-3           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : benchmarks done 0 of 2. This will be client 4
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '4', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 8}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '4', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 8, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-1-4           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-1-4-2m6zf: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-1-4-4slqk: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -198,90 +172,57 @@ MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
+MariaDB-BHT-8-1               : has running benchmarks
+done
 MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-1-4           : showing benchmarker times
-MariaDB-BHT-8-1-1-4           : benchmarker timespan (start to end single container [s]) = 284
-MariaDB-BHT-8-1-1-4           : benchmarker times (start/end per pod and container) = [(1729856479, 1729856735), (1729856478, 1729856734), (1729856478, 1729856735), (1729856478, 1729856735)]
-MariaDB-BHT-8-1-1-4           : found and updated times {'benchmarker': [(1729856479, 1729856735), (1729856478, 1729856734), (1729856478, 1729856735), (1729856478, 1729856735)]}
-MariaDB-BHT-8-1-1-4           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-1-4           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-1-4           : benchmarker timespan (start to end single container [s]) = 318
+MariaDB-BHT-8-1-1-4           : benchmarker times (start/end per pod and container) = [(1748959152, 1748959428), (1748959152, 1748959433), (1748959152, 1748959433), (1748959152, 1748959433)]
+MariaDB-BHT-8-1-1-4           : found and updated times {'benchmarker': [(1748959152, 1748959428), (1748959152, 1748959433), (1748959152, 1748959433), (1748959152, 1748959433)]}
+MariaDB-BHT-8-1-1-4           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-1-4
+MariaDB-BHT-8-1-1-4           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1-4           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-1-4
+MariaDB-BHT-8-1-1-4           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : can be stopped
 MariaDB-BHT-8-1               : still being removed
 done
 MariaDB-BHT-8-1               : starts again
+MariaDB-BHT-8-1               : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1-1748957864
+MariaDB-BHT-8-1               : Name of SUT service = bexhoma-sut-mariadb-bht-8-1-1748957864
+MariaDB-BHT-8-1               : Name of SUT PVC name = bexhoma-storage-mariadb-hammerdb-16
 MariaDB-BHT-8-1               : storage exists bexhoma-storage-mariadb-hammerdb-16
+MariaDB-BHT-8-1               : label loaded copied value True
+MariaDB-BHT-8-1               : label timeLoading copied value 407
+MariaDB-BHT-8-1               : label timeLoadingStart copied value 1748956789
+MariaDB-BHT-8-1               : label timeLoadingEnd copied value 1748957216
+MariaDB-BHT-8-1               : label indexed copied value True
+MariaDB-BHT-8-1               : label time_generated copied value 0
+MariaDB-BHT-8-1               : label time_indexed copied value 1
+MariaDB-BHT-8-1               : label time_ingested copied value 404
+MariaDB-BHT-8-1               : label time_initschema copied value 1
+MariaDB-BHT-8-1               : label time_loaded copied value 2
 MariaDB-BHT-8-1               : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48 (that is in 900 secs)
+MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
+MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
+MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
+MariaDB-BHT-8-1               : will start benchmarking but not before 2025-06-03 14:08:53 (that is in 60 secs)
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : will start benchmarking but not before 2024-10-25 12:02:48
+MariaDB-BHT-8-1               : will start benchmarking but not before 2025-06-03 14:08:53
 done
 MariaDB-BHT-8-1               : benchmarks done 1 of 2. This will be client 1
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 16}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-2-1           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-2-1-8lsxv: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-2-1-s8lgt: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -301,18 +242,20 @@ MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-2-1           : showing benchmarker times
-MariaDB-BHT-8-1-2-1           : benchmarker timespan (start to end single container [s]) = 281
-MariaDB-BHT-8-1-2-1           : benchmarker times (start/end per pod and container) = [(1729857776, 1729858043)]
-MariaDB-BHT-8-1-2-1           : found and updated times {'benchmarker': [(1729857776, 1729858043)]}
-MariaDB-BHT-8-1-2-1           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-2-1           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-2-1           : benchmarker timespan (start to end single container [s]) = 285
+MariaDB-BHT-8-1-2-1           : benchmarker times (start/end per pod and container) = [(1748959740, 1748960013)]
+MariaDB-BHT-8-1-2-1           : found and updated times {'benchmarker': [(1748959740, 1748960013)]}
+MariaDB-BHT-8-1-2-1           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-2-1
+MariaDB-BHT-8-1-2-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-2-1           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-2-1
+MariaDB-BHT-8-1-2-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : benchmarks done 1 of 2. This will be client 2
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 16}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-2-2           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-2-2-ddtpr: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-2-2-jn4pr: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -332,18 +275,20 @@ MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-2-2           : showing benchmarker times
-MariaDB-BHT-8-1-2-2           : benchmarker timespan (start to end single container [s]) = 283
-MariaDB-BHT-8-1-2-2           : benchmarker times (start/end per pod and container) = [(1729858102, 1729858363), (1729858102, 1729858362)]
-MariaDB-BHT-8-1-2-2           : found and updated times {'benchmarker': [(1729858102, 1729858363), (1729858102, 1729858362)]}
-MariaDB-BHT-8-1-2-2           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-2-2           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-2-2           : benchmarker timespan (start to end single container [s]) = 285
+MariaDB-BHT-8-1-2-2           : benchmarker times (start/end per pod and container) = [(1748960076, 1748960330), (1748960076, 1748960330)]
+MariaDB-BHT-8-1-2-2           : found and updated times {'benchmarker': [(1748960076, 1748960330), (1748960076, 1748960330)]}
+MariaDB-BHT-8-1-2-2           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-2-2
+MariaDB-BHT-8-1-2-2           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-2-2           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-2-2
+MariaDB-BHT-8-1-2-2           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : benchmarks done 1 of 2. This will be client 3
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 8}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 8, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-2-3           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-2-3-n88tz: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-2-3-2khfw: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -359,24 +304,24 @@ MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : has running benchmarks
-done
 MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-2-3           : showing benchmarker times
-MariaDB-BHT-8-1-2-3           : benchmarker timespan (start to end single container [s]) = 313
-MariaDB-BHT-8-1-2-3           : benchmarker times (start/end per pod and container) = [(1729858427, 1729858704), (1729858428, 1729858705)]
-MariaDB-BHT-8-1-2-3           : found and updated times {'benchmarker': [(1729858427, 1729858704), (1729858428, 1729858705)]}
-MariaDB-BHT-8-1-2-3           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-2-3           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-2-3           : benchmarker timespan (start to end single container [s]) = 286
+MariaDB-BHT-8-1-2-3           : benchmarker times (start/end per pod and container) = [(1748960410, 1748960676), (1748960410, 1748960679)]
+MariaDB-BHT-8-1-2-3           : found and updated times {'benchmarker': [(1748960410, 1748960676), (1748960410, 1748960679)]}
+MariaDB-BHT-8-1-2-3           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-2-3
+MariaDB-BHT-8-1-2-3           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-2-3           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-2-3
+MariaDB-BHT-8-1-2-3           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : benchmarks done 1 of 2. This will be client 4
-MariaDB-BHT-8-1               : we will change parameters of benchmark as {'PARALLEL': '4', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 8}
+MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '4', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '2', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 8, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-2-4           : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1729854531
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748957864
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1729854531-2-4-967h7: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748957864-2-4-5hzgj: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -393,214 +338,24 @@ MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
-done
+- waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-2-4           : showing benchmarker times
-MariaDB-BHT-8-1-2-4           : benchmarker timespan (start to end single container [s]) = 314
-MariaDB-BHT-8-1-2-4           : benchmarker times (start/end per pod and container) = [(1729858786, 1729859059), (1729858786, 1729859063), (1729858785, 1729859063), (1729858785, 1729859063)]
-MariaDB-BHT-8-1-2-4           : found and updated times {'benchmarker': [(1729858786, 1729859059), (1729858786, 1729859063), (1729858785, 1729859063), (1729858785, 1729859063)]}
-MariaDB-BHT-8-1-2-4           : collecting execution metrics of SUT
-MariaDB-BHT-8-1-2-4           : collecting metrics of benchmarker
+MariaDB-BHT-8-1-2-4           : benchmarker timespan (start to end single container [s]) = 319
+MariaDB-BHT-8-1-2-4           : benchmarker times (start/end per pod and container) = [(1748960749, 1748961038), (1748960749, 1748961035), (1748960748, 1748961048), (1748960748, 1748961040)]
+MariaDB-BHT-8-1-2-4           : found and updated times {'benchmarker': [(1748960749, 1748961038), (1748960749, 1748961035), (1748960748, 1748961048), (1748960748, 1748961040)]}
+MariaDB-BHT-8-1-2-4           : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-2-4
+MariaDB-BHT-8-1-2-4           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-2-4           : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-2-4
+MariaDB-BHT-8-1-2-4           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748957864(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : can be stopped
-Experiment ends at 2024-10-25 14:25:35.734363 (4595075.858342674): 4604.493650650606s total
+Experiment ends at 2025-06-03 16:31:48.261478 (13153271.73203126): 3243.4847014229745s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-3                                        ...                
-0                    MariaDB-BHT-8-1-2-3  MariaDB-BHT-8-1  ...  29489  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-3
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-4                                        ...                
-0                    MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33862  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-4
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-2                                        ...                
-0                    MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-1  ...  25299  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-2
-['16']
-vusers 16
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-1                                        ...                
-0                    MariaDB-BHT-8-1-1-1  MariaDB-BHT-8-1  ...  31408  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-1
-['16']
-vusers 16
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-2                                        ...                
-0                    MariaDB-BHT-8-1-1-2  MariaDB-BHT-8-1  ...  22791  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-2
-['16']
-vusers 16
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-4                                        ...                
-0                    MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-4
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-4                                        ...                
-0                    MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33858  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-4
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-4                                        ...                
-0                    MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27528  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-4
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-4                                        ...                
-0                    MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-4
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-4                                        ...                
-0                    MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33859  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-4
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-1                                        ...                
-0                    MariaDB-BHT-8-1-2-1  MariaDB-BHT-8-1  ...  28812  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-1
-['16']
-vusers 16
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-2                                        ...                
-0                    MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-1  ...  25587  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-2
-['16']
-vusers 16
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-4                                        ...                
-0                    MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-4
-['8']
-vusers 8
-                                connection    configuration  ...    TPM     dbms
-connection_pod                                               ...                
-MariaDB-BHT-8-1-2-3-1  MariaDB-BHT-8-1-2-3  MariaDB-BHT-8-1  ...  29489  MariaDB
-MariaDB-BHT-8-1-2-4-1  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33862  MariaDB
-MariaDB-BHT-8-1-2-2-1  MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-1  ...  25299  MariaDB
-MariaDB-BHT-8-1-1-1-1  MariaDB-BHT-8-1-1-1  MariaDB-BHT-8-1  ...  31408  MariaDB
-MariaDB-BHT-8-1-1-2-1  MariaDB-BHT-8-1-1-2  MariaDB-BHT-8-1  ...  22791  MariaDB
-MariaDB-BHT-8-1-1-4-1  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-MariaDB-BHT-8-1-2-4-2  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33858  MariaDB
-MariaDB-BHT-8-1-1-4-2  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27528  MariaDB
-MariaDB-BHT-8-1-1-4-3  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-MariaDB-BHT-8-1-2-4-3  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33859  MariaDB
-MariaDB-BHT-8-1-2-1-1  MariaDB-BHT-8-1-2-1  MariaDB-BHT-8-1  ...  28812  MariaDB
-MariaDB-BHT-8-1-2-2-2  MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-1  ...  25587  MariaDB
-MariaDB-BHT-8-1-1-4-4  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-MariaDB-BHT-8-1-1-2-2  MariaDB-BHT-8-1-1-2  MariaDB-BHT-8-1  ...  22984  MariaDB
-MariaDB-BHT-8-1-1-3-1  MariaDB-BHT-8-1-1-3  MariaDB-BHT-8-1  ...  23669  MariaDB
-MariaDB-BHT-8-1-1-3-2  MariaDB-BHT-8-1-1-3  MariaDB-BHT-8-1  ...  23669  MariaDB
-MariaDB-BHT-8-1-2-4-4  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33858  MariaDB
-MariaDB-BHT-8-1-2-3-2  MariaDB-BHT-8-1-2-3  MariaDB-BHT-8-1  ...  29307  MariaDB
-
-[18 rows x 17 columns]
-connection_pod
-['8', '8', '16', '16', '16', '8', '8', '8', '8', '8', '16', '16', '8', '16', '8', '8', '8', '8']
-vusers 8 8 16 16 16 8 8 8 8 8 16 16 8 16 8 8 8 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-2                                        ...                
-0                    MariaDB-BHT-8-1-1-2  MariaDB-BHT-8-1  ...  22984  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-2
-['16']
-vusers 16
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-3                                        ...                
-0                    MariaDB-BHT-8-1-1-3  MariaDB-BHT-8-1  ...  23669  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-3
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-1-3                                        ...                
-0                    MariaDB-BHT-8-1-1-3  MariaDB-BHT-8-1  ...  23669  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-1-3
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-4                                        ...                
-0                    MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33858  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-4
-['8']
-vusers 8
-                              connection    configuration  ...    TPM     dbms
-MariaDB-BHT-8-1-2-3                                        ...                
-0                    MariaDB-BHT-8-1-2-3  MariaDB-BHT-8-1  ...  29307  MariaDB
-
-[1 rows x 17 columns]
-MariaDB-BHT-8-1-2-3
-['8']
-vusers 8
-Benchmarking                                 connection    configuration  ...    TPM     dbms
-connection_pod                                               ...                
-MariaDB-BHT-8-1-2-3-1  MariaDB-BHT-8-1-2-3  MariaDB-BHT-8-1  ...  29489  MariaDB
-MariaDB-BHT-8-1-2-4-1  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33862  MariaDB
-MariaDB-BHT-8-1-2-2-1  MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-1  ...  25299  MariaDB
-MariaDB-BHT-8-1-1-1-1  MariaDB-BHT-8-1-1-1  MariaDB-BHT-8-1  ...  31408  MariaDB
-MariaDB-BHT-8-1-1-2-1  MariaDB-BHT-8-1-1-2  MariaDB-BHT-8-1  ...  22791  MariaDB
-MariaDB-BHT-8-1-1-4-1  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-MariaDB-BHT-8-1-2-4-2  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33858  MariaDB
-MariaDB-BHT-8-1-1-4-2  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27528  MariaDB
-MariaDB-BHT-8-1-1-4-3  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-MariaDB-BHT-8-1-2-4-3  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33859  MariaDB
-MariaDB-BHT-8-1-2-1-1  MariaDB-BHT-8-1-2-1  MariaDB-BHT-8-1  ...  28812  MariaDB
-MariaDB-BHT-8-1-2-2-2  MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-1  ...  25587  MariaDB
-MariaDB-BHT-8-1-1-4-4  MariaDB-BHT-8-1-1-4  MariaDB-BHT-8-1  ...  27494  MariaDB
-MariaDB-BHT-8-1-1-2-2  MariaDB-BHT-8-1-1-2  MariaDB-BHT-8-1  ...  22984  MariaDB
-MariaDB-BHT-8-1-1-3-1  MariaDB-BHT-8-1-1-3  MariaDB-BHT-8-1  ...  23669  MariaDB
-MariaDB-BHT-8-1-1-3-2  MariaDB-BHT-8-1-1-3  MariaDB-BHT-8-1  ...  23669  MariaDB
-MariaDB-BHT-8-1-2-4-4  MariaDB-BHT-8-1-2-4  MariaDB-BHT-8-1  ...  33858  MariaDB
-MariaDB-BHT-8-1-2-3-2  MariaDB-BHT-8-1-2-3  MariaDB-BHT-8-1  ...  29307  MariaDB
-
-[18 rows x 17 columns]
-Workflow {'MariaDB-BHT-8-1': [[2, 4, 2, 1], [1, 2, 4, 2]]}
 Result workflow not complete
 
 ## Show Summary
@@ -608,12 +363,13 @@ Result workflow not complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 4605s 
-    Code: 1729854531
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 3244s 
+    Code: 1748957864
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
@@ -627,156 +383,172 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     Experiment is run 2 times.
 
 ### Connections
-MariaDB-BHT-8-1-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-BHT-8-1-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218488
-    datadisk:1769233
+    disk:332170552
+    datadisk:1701
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-1-2 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748957864
+MariaDB-BHT-8-1-1-2 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218656
-    datadisk:1838865
+    disk:332170556
+    datadisk:1737
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-1-3 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748957864
+MariaDB-BHT-8-1-1-3 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218656
-    datadisk:1903377
+    disk:332170560
+    datadisk:1757
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-1-4 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748957864
+MariaDB-BHT-8-1-1-4 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218656
-    datadisk:1948433
+    disk:332170656
+    datadisk:1785
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-2-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748957864
+MariaDB-BHT-8-1-2-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218656
-    datadisk:2011008
+    disk:332171792
+    datadisk:1810
     volume_size:30G
-    volume_used:2.0G
+    volume_used:1.8G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-2-2 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748957864
+MariaDB-BHT-8-1-2-2 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218656
-    datadisk:2064256
+    disk:332171796
+    datadisk:1846
     volume_size:30G
-    volume_used:2.0G
+    volume_used:1.8G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-2-3 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748957864
+MariaDB-BHT-8-1-2-3 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218656
-    datadisk:2117504
+    disk:332174248
+    datadisk:1862
     volume_size:30G
-    volume_used:2.0G
+    volume_used:1.8G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-2-4 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748957864
+MariaDB-BHT-8-1-2-4 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254218656
-    datadisk:2174848
+    disk:332174252
+    datadisk:1886
     volume_size:30G
-    volume_used:2.0G
+    volume_used:1.8G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748957864
 
 ### Execution
-                     experiment_run  vusers  client  pod_count      NOPM       TPM  duration  errors
-MariaDB-BHT-8-1-1-1               1      16       1          1  13566.00  31408.00         2       0
-MariaDB-BHT-8-1-1-2               1      32       2          2   9805.00  22887.50         2       0
-MariaDB-BHT-8-1-1-3               1      16       3          2  10214.00  23669.00         2       0
-MariaDB-BHT-8-1-1-4               1      32       4          4  11801.75  27502.50         2       0
-MariaDB-BHT-8-1-2-1               2      16       1          1  12505.00  28812.00         2       0
-MariaDB-BHT-8-1-2-2               2      32       2          2  10851.00  25443.00         2       0
-MariaDB-BHT-8-1-2-3               2      16       3          2  12703.50  29398.00         2       0
-MariaDB-BHT-8-1-2-4               2      32       4          4  14606.75  33859.25         2       0
+                     experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1-1               1      16       1          1         0.0  7796.0  18205.0         2       0
+MariaDB-BHT-8-1-1-2               1      32       2          2         0.0  5306.0  12450.0         2       0
+MariaDB-BHT-8-1-1-3               1      16       3          2         0.0  5185.0  11960.0         2       0
+MariaDB-BHT-8-1-1-4               1      32       4          4         0.0  5315.0  12280.5         2       0
+MariaDB-BHT-8-1-2-1               2      16       1          1         0.0  6297.0  14608.0         2       0
+MariaDB-BHT-8-1-2-2               2      32       2          2         0.0  3712.5   8581.0         2       0
+MariaDB-BHT-8-1-2-3               2      16       3          2         0.0  6334.5  14797.0         2       0
+MariaDB-BHT-8-1-2-4               2      32       4          4         0.0  5927.0  13791.0         2       0
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS MariaDB-BHT-8-1 - Pods [[2, 4, 2, 1], [1, 2, 4, 2]]
+DBMS MariaDB-BHT-8-1 - Pods [[4, 2, 1, 2], [2, 4, 2, 1]]
 
 #### Planned
 DBMS MariaDB-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                      time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1-1      250.0        1.0   1.0                      230.4
-MariaDB-BHT-8-1-1-2      250.0        1.0   2.0                      230.4
-MariaDB-BHT-8-1-1-3      250.0        1.0   2.0                      230.4
-MariaDB-BHT-8-1-1-4      250.0        1.0   4.0                      230.4
-MariaDB-BHT-8-1-2-1      250.0        1.0   1.0                      230.4
-MariaDB-BHT-8-1-2-2      250.0        1.0   2.0                      230.4
-MariaDB-BHT-8-1-2-3      250.0        1.0   2.0                      230.4
-MariaDB-BHT-8-1-2-4      250.0        1.0   4.0                      230.4
+MariaDB-BHT-8-1-1-1      404.0        1.0   1.0                 142.574257
+MariaDB-BHT-8-1-1-2      404.0        1.0   2.0                 142.574257
+MariaDB-BHT-8-1-1-3      404.0        1.0   2.0                 142.574257
+MariaDB-BHT-8-1-1-4      404.0        1.0   4.0                 142.574257
+MariaDB-BHT-8-1-2-1      404.0        1.0   1.0                 142.574257
+MariaDB-BHT-8-1-2-2      404.0        1.0   2.0                 142.574257
+MariaDB-BHT-8-1-2-3      404.0        1.0   2.0                 142.574257
+MariaDB-BHT-8-1-2-4      404.0        1.0   4.0                 142.574257
 
 ### Execution - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1-1      522.21     2.77          2.57                 2.85
-MariaDB-BHT-8-1-1-2      534.85     2.43          2.78                 3.06
-MariaDB-BHT-8-1-1-3      387.83     1.70          2.84                 3.12
-MariaDB-BHT-8-1-1-4      411.44     1.89          2.99                 3.27
-MariaDB-BHT-8-1-2-1      452.64     2.03          2.66                 2.98
-MariaDB-BHT-8-1-2-2      513.54     2.14          2.92                 3.24
-MariaDB-BHT-8-1-2-3      537.82     2.12          3.02                 3.34
-MariaDB-BHT-8-1-2-4      581.47     2.51          3.16                 3.48
+MariaDB-BHT-8-1-1-1      355.16     1.02          2.27                 2.60
+MariaDB-BHT-8-1-1-2      335.14     1.44          2.38                 2.71
+MariaDB-BHT-8-1-1-3      262.41     0.60          2.40                 2.73
+MariaDB-BHT-8-1-1-4      424.14     1.83          2.47                 2.80
+MariaDB-BHT-8-1-2-1     1460.46     1.45          4.75                 5.26
+MariaDB-BHT-8-1-2-2      286.80     1.15          2.50                 2.81
+MariaDB-BHT-8-1-2-3      285.42     1.49          2.53                 2.84
+MariaDB-BHT-8-1-2-4      418.14     1.32          2.61                 2.92
 
 ### Execution - Benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1-1       45.33     0.25          0.06                 0.06
-MariaDB-BHT-8-1-1-2       45.33     0.08          0.16                 0.16
-MariaDB-BHT-8-1-1-3       31.96     0.10          0.17                 0.18
-MariaDB-BHT-8-1-1-4       33.10     0.06          0.20                 0.20
-MariaDB-BHT-8-1-2-1       39.93     0.19          0.06                 0.06
-MariaDB-BHT-8-1-2-2       39.93     0.06          0.16                 0.16
-MariaDB-BHT-8-1-2-3       31.17     0.12          0.17                 0.17
-MariaDB-BHT-8-1-2-4       42.64     0.14          0.20                 0.20
+MariaDB-BHT-8-1-1-1       32.61     0.09          0.06                 0.06
+MariaDB-BHT-8-1-1-2       32.61     0.06          0.17                 0.17
+MariaDB-BHT-8-1-1-3       25.25     0.05          0.18                 0.19
+MariaDB-BHT-8-1-1-4       24.35     0.07          0.21                 0.21
+MariaDB-BHT-8-1-2-1       29.12     0.11          0.06                 0.06
+MariaDB-BHT-8-1-2-2       29.12     0.05          0.17                 0.17
+MariaDB-BHT-8-1-2-3       21.54     0.06          0.18                 0.18
+MariaDB-BHT-8-1-2-4       25.49     0.03          0.21                 0.21
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

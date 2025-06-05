@@ -3,18 +3,19 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1809s 
-    Code: 1744731317
+    Duration: 1601s 
+    Code: 1748850965
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
     Number of operations is 10000000.
     Batch size is ''.
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 8 processes (pods).
@@ -29,12 +30,12 @@ YCSB SF=1
 
 ### Connections
 Citus-64-8-65536-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:202342908
+    disk:316311664
     volume_size:50.0G
     volume_used:40.0M
     requests_cpu:4
@@ -42,44 +43,44 @@ Citus-64-8-65536-1-1 uses docker image citusdata/citus:13.0.2-alpine
     client:1
     numExperiment:1
     worker 0
-        RAM:1077382836224
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:6.8.0-1025-nvidia
-        node:cl-worker28
-        disk:982980992
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:223872664
         volume_size:50.0G
         volume_used:40.0M
     worker 1
-        RAM:2164173475840
-        CPU:INTEL(R) XEON(R) PLATINUM 8570
-        Cores:224
-        host:6.8.0-57-generic
-        node:cl-worker36
-        disk:115943464
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:325379820
         volume_size:50.0G
         volume_used:40.0M
     worker 2
-        RAM:540590919680
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-57-generic
-        node:cl-worker25
-        disk:163876460
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:361131272
         volume_size:50.0G
         volume_used:40.0M
     eval_parameters
-        code:1744731317
+        code:1748850965
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:3
 Citus-64-8-65536-2-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:202343068
+    disk:316311660
     volume_size:50.0G
     volume_used:40.0M
     requests_cpu:4
@@ -87,46 +88,46 @@ Citus-64-8-65536-2-1 uses docker image citusdata/citus:13.0.2-alpine
     client:1
     numExperiment:2
     worker 0
-        RAM:1077382836224
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:6.8.0-1025-nvidia
-        node:cl-worker28
-        disk:982977948
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:223877000
         volume_size:50.0G
         volume_used:1.4G
     worker 1
-        RAM:2164173475840
-        CPU:INTEL(R) XEON(R) PLATINUM 8570
-        Cores:224
-        host:6.8.0-57-generic
-        node:cl-worker36
-        disk:115944420
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:325381092
         volume_size:50.0G
         volume_used:1.4G
     worker 2
-        RAM:540590919680
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-57-generic
-        node:cl-worker25
-        disk:163876612
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:361131272
         volume_size:50.0G
         volume_used:1.4G
     eval_parameters
-        code:1744731317
+        code:1748850965
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:3
 
 ### Loading
                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Citus-64-8-65536               1       64   65536          8           0                   47203.424087                22102.0             1000000                              4681.0
+Citus-64-8-65536               1       64   65536          8           0                   32304.397529                33417.0             1000000                              5271.5
 
 ### Execution
                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Citus-64-8-65536-1-1               1       64   65536          1           0                       37347.16               267758.0           4998375                            4887.0             5001625                              5011.0
-Citus-64-8-65536-2-1               2       64   65536          1           0                       49968.27               200127.0           4998443                            4387.0             5001557                              4423.0
+Citus-64-8-65536-1-1               1       64   65536          1           0                       64620.36               154750.0           4996520                            3255.0             5003480                              3307.0
+Citus-64-8-65536-2-1               2       64   65536          1           0                       64634.14               154717.0           4999773                            2923.0             5000227                              2921.0
 
 ### Workflow
 
@@ -138,21 +139,21 @@ DBMS Citus-64-8-65536 - Pods [[1], [1]]
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1      159.24     0.55          9.06                10.06
+Citus-64-8-65536-1-1      424.12     2.44         12.93                 14.2
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1       85.26        0          2.89                 2.93
+Citus-64-8-65536-1-1        0.01        0           0.0                  0.0
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1     3905.95     9.84         13.41                14.93
-Citus-64-8-65536-2-1     3596.33     5.24         13.51                14.95
+Citus-64-8-65536-1-1     4476.36    14.18         17.37                18.88
+Citus-64-8-65536-2-1     3819.10    14.10         17.45                19.32
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1     1295.50     6.90          0.63                 0.67
-Citus-64-8-65536-2-1     1270.08     6.67          0.63                 0.63
+Citus-64-8-65536-1-1     1137.33     8.23          0.63                 0.63
+Citus-64-8-65536-2-1      964.66     8.67          0.63                 0.63
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -162,3 +163,4 @@ TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

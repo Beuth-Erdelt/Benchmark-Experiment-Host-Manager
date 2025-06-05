@@ -141,6 +141,78 @@ wait_process "tpch"
 
 
 
+###########################################
+############ TPC-H PostgreSQL #############
+###########################################
+
+
+
+### TPC-H Power Test - only PostgreSQL (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_1.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpch"
+
+
+### TPC-H Monitoring (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpch"
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+sleep 30
+
+
+### TPC-H Throughput Test (TestCases.md)
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpch"
+
+
+
+
 
 
 
@@ -242,7 +314,7 @@ wait_process "tpch"
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
   -dt \
-  -t 1200 \
+  -t 3600 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ii -ic -is \
@@ -250,13 +322,10 @@ nohup python tpcds.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_1.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpcds_testcase_1.log
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log &
 
 
 #### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpcds"
 
 
@@ -275,7 +344,7 @@ wait_process "tpcds"
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
   -dt \
-  -t 1200 \
+  -t 3600 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ii -ic -is \
@@ -306,7 +375,7 @@ wait_process "tpcds"
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
   -dt \
-  -t 1200 \
+  -t 3600 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ii -ic -is \
@@ -329,6 +398,11 @@ wait_process "tpcds"
 ######### TPC-DS Compare Storage ##########
 ###########################################
 
+kubectl delete pvc bexhoma-storage-mysql-tpcds-1 
+kubectl delete pvc bexhoma-storage-mariadb-tpcds-1 
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-1 
+kubectl delete pvc bexhoma-storage-postgresql-tpcds-1 
+sleep 30
 
 #### TCP-DS Compare with Persistent Storage
 nohup python tpcds.py -ms 4 -dt -tr \
@@ -352,18 +426,18 @@ wait_process "tpcds"
 
 
 #### TCP-DS Compare at SF=10
-nohup python tpcds.py -ms 6 -dt -tr \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 10 \
-  -t 3600 \
-  -ii -ic -is \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_10.log &
+#nohup python tpcds.py -ms 6 -dt -tr \
+#  -nlp 8 \
+#  -nlt 8 \
+#  -sf 10 \
+#  -t 3600 \
+#  -ii -ic -is \
+#  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+#  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_10.log &
 
 
 #### Wait so that next experiment receives a different code
-wait_process "tpcds"
+#wait_process "tpcds"
 
 
 

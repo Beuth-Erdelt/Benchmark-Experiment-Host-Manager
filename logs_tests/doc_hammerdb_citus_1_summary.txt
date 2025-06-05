@@ -3,12 +3,13 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1117s 
-    Code: 1743765273
+    Duration: 1153s 
+    Code: 1748883105
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -21,39 +22,44 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201377888
+    disk:317426456
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:151410852
-    worker 1
-        RAM:540587544576
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:234755912
+        disk:436861832
+    worker 1
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:345853416
     worker 2
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:977073952
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:226115648
+    eval_parameters
+        code:1748883105
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:3
 
 ### Execution
                  experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM       TPM  duration  errors
-Citus-BHT-8-1-1               1      16       1          1     30.12     60.59         0.0  47853.0  109891.0         5       0
+Citus-BHT-8-1-1               1      16       1          1      33.8     69.47         0.0  45897.0  105337.0         5       0
 
 Warehouses: 16
 
@@ -67,7 +73,7 @@ DBMS Citus-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-Citus-BHT-8-1-1      105.0        1.0   1.0                 548.571429
+Citus-BHT-8-1-1      115.0        1.0   1.0                 500.869565
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

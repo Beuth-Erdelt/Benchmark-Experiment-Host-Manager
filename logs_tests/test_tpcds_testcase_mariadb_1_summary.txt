@@ -3,14 +3,16 @@
 ### Workload
 TPC-DS Queries SF=1
     Type: tpcds
-    Duration: 15036s 
-    Code: 1729613835
+    Duration: 19290s 
+    Code: 1749023463
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q99.
     All instances use the same query parameters.
+    Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -22,140 +24,151 @@ TPC-DS Queries SF=1
     Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:256821020
-    datadisk:4315016
+    disk:339335560
+    datadisk:4563
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1749023463
 
 ### Errors (failed queries)
             MariaDB-BHT-8-1-1
-TPC-DS Q16               True
-TPC-DS Q27               True
-TPC-DS Q51               True
 TPC-DS Q72               True
 TPC-DS Q94               True
 TPC-DS Q95               True
-TPC-DS Q97               True
+TPC-DS Q72
+MariaDB-BHT-8-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=280) Query execution was interrupted (max_statement_time exceeded)
+TPC-DS Q94
+MariaDB-BHT-8-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=280) Query execution was interrupted (max_statement_time exceeded)
+TPC-DS Q95
+MariaDB-BHT-8-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=280) Query execution was interrupted (max_statement_time exceeded)
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS           MariaDB-BHT-8-1-1
-TPC-DS Q1                  90.11
-TPC-DS Q2               15635.43
-TPC-DS Q3                  69.23
-TPC-DS Q4              102814.01
-TPC-DS Q5               31036.60
-TPC-DS Q6                2975.98
-TPC-DS Q7               17018.64
-TPC-DS Q8               17253.11
-TPC-DS Q9               13340.76
-TPC-DS Q10              21845.88
-TPC-DS Q11              67773.05
-TPC-DS Q12               1021.78
-TPC-DS Q13               3236.50
-TPC-DS Q14a+b          264416.36
-TPC-DS Q15               8791.82
-TPC-DS Q17               2768.14
-TPC-DS Q18              10019.01
-TPC-DS Q19                 51.42
-TPC-DS Q20               1834.89
-TPC-DS Q21              81756.12
-TPC-DS Q22                319.14
-TPC-DS Q23a+b          284291.69
-TPC-DS Q24a+b              96.94
-TPC-DS Q25               2458.22
-TPC-DS Q26               9298.23
-TPC-DS Q28              10303.24
-TPC-DS Q29               2364.34
-TPC-DS Q30               1223.08
-TPC-DS Q31              74096.72
-TPC-DS Q32                 29.20
-TPC-DS Q33              18233.93
-TPC-DS Q34               3477.35
-TPC-DS Q35              22185.93
-TPC-DS Q37              14275.48
-TPC-DS Q38              33817.51
-TPC-DS Q39a+b          321706.48
-TPC-DS Q40                746.52
-TPC-DS Q41               1833.83
-TPC-DS Q42                247.52
-TPC-DS Q43              12131.51
-TPC-DS Q44                  2.07
-TPC-DS Q45               6664.90
-TPC-DS Q46               6213.90
-TPC-DS Q47              70185.42
-TPC-DS Q48               4377.79
-TPC-DS Q49                372.67
-TPC-DS Q50               2387.40
-TPC-DS Q52                249.03
-TPC-DS Q53                663.88
-TPC-DS Q54              24590.73
-TPC-DS Q55                120.62
-TPC-DS Q56               1350.02
-TPC-DS Q57              45937.41
-TPC-DS Q58              24040.34
-TPC-DS Q59              39954.66
-TPC-DS Q60               4746.58
-TPC-DS Q61               1670.36
-TPC-DS Q62               7417.09
-TPC-DS Q63                651.38
-TPC-DS Q64               2159.67
-TPC-DS Q65              23114.17
-TPC-DS Q66              14619.46
-TPC-DS Q67              28699.56
-TPC-DS Q68               6360.60
-TPC-DS Q69              22490.74
-TPC-DS Q71              20032.49
-TPC-DS Q73               3438.70
-TPC-DS Q74              60276.50
-TPC-DS Q75               5525.54
-TPC-DS Q76               1600.93
-TPC-DS Q77              24883.81
-TPC-DS Q78              46502.28
-TPC-DS Q79              17063.72
-TPC-DS Q80               2322.15
-TPC-DS Q81               3431.65
-TPC-DS Q82              15438.22
-TPC-DS Q83               3533.55
-TPC-DS Q84                165.36
-TPC-DS Q85                239.89
-TPC-DS Q87              33907.64
-TPC-DS Q88              50752.58
-TPC-DS Q89                189.41
-TPC-DS Q90                405.22
-TPC-DS Q91                374.00
-TPC-DS Q92                 15.90
-TPC-DS Q93                 99.39
-TPC-DS Q96               2271.69
-TPC-DS Q98               3533.36
-TPC-DS Q99              17214.30
+TPC-DS Q1                  36.22
+TPC-DS Q2               17410.95
+TPC-DS Q3                  47.61
+TPC-DS Q4               40418.00
+TPC-DS Q5               30848.90
+TPC-DS Q6                2818.08
+TPC-DS Q7               13196.90
+TPC-DS Q8                1134.65
+TPC-DS Q9               13114.64
+TPC-DS Q10                981.19
+TPC-DS Q11              25291.76
+TPC-DS Q12                940.02
+TPC-DS Q13               3030.42
+TPC-DS Q14a+b          160842.87
+TPC-DS Q15                535.72
+TPC-DS Q16              35406.70
+TPC-DS Q17               5757.56
+TPC-DS Q18               7241.02
+TPC-DS Q19                720.91
+TPC-DS Q20               1796.98
+TPC-DS Q21              93401.98
+TPC-DS Q22             273917.37
+TPC-DS Q23a+b          200347.95
+TPC-DS Q24a+b            7237.65
+TPC-DS Q25               1283.54
+TPC-DS Q26               2903.92
+TPC-DS Q27               5201.47
+TPC-DS Q28               9280.96
+TPC-DS Q29                383.28
+TPC-DS Q30                104.10
+TPC-DS Q31               4468.23
+TPC-DS Q32                 28.76
+TPC-DS Q33                454.03
+TPC-DS Q34              12702.10
+TPC-DS Q35               3475.58
+TPC-DS Q36               5463.72
+TPC-DS Q37              13614.99
+TPC-DS Q38              26137.67
+TPC-DS Q39a+b            4599.82
+TPC-DS Q40                740.15
+TPC-DS Q41               1728.00
+TPC-DS Q42                691.89
+TPC-DS Q43               5905.26
+TPC-DS Q44               4396.46
+TPC-DS Q45                401.15
+TPC-DS Q46              12539.75
+TPC-DS Q47              36365.81
+TPC-DS Q48               3654.35
+TPC-DS Q49               1056.13
+TPC-DS Q50                 97.97
+TPC-DS Q51              27207.32
+TPC-DS Q52                793.73
+TPC-DS Q53                542.87
+TPC-DS Q54               2849.20
+TPC-DS Q55                782.58
+TPC-DS Q56                784.41
+TPC-DS Q57              20701.92
+TPC-DS Q58              23773.66
+TPC-DS Q59              37072.18
+TPC-DS Q60                951.63
+TPC-DS Q61               1139.54
+TPC-DS Q62               6286.99
+TPC-DS Q63                562.81
+TPC-DS Q64               2035.19
+TPC-DS Q65              22916.50
+TPC-DS Q66               4279.22
+TPC-DS Q67              25425.05
+TPC-DS Q68              12411.82
+TPC-DS Q69               1323.74
+TPC-DS Q70              33329.28
+TPC-DS Q71               1293.41
+TPC-DS Q73              11382.37
+TPC-DS Q74              19187.77
+TPC-DS Q75              18214.04
+TPC-DS Q76               1488.34
+TPC-DS Q77              23824.11
+TPC-DS Q78              19149.50
+TPC-DS Q79              12910.25
+TPC-DS Q80               2266.50
+TPC-DS Q81                358.19
+TPC-DS Q82              13673.25
+TPC-DS Q83               2920.88
+TPC-DS Q84                359.98
+TPC-DS Q85                486.82
+TPC-DS Q86               3524.39
+TPC-DS Q87              26963.12
+TPC-DS Q88              34180.54
+TPC-DS Q89               4881.24
+TPC-DS Q90                362.78
+TPC-DS Q91                 63.22
+TPC-DS Q92                 16.17
+TPC-DS Q93                132.56
+TPC-DS Q96               3012.30
+TPC-DS Q97              19325.89
+TPC-DS Q98               3429.23
+TPC-DS Q99              21005.82
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1           1.0          865.0         3.0     6963.0    7842.0
+MariaDB-BHT-8-1-1           1.0          670.0         4.0    13091.0   13777.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MariaDB-BHT-8-1-1           4.06
+MariaDB-BHT-8-1-1           3.49
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MariaDB-BHT-8-1-1             889.48
+MariaDB-BHT-8-1-1            1036.87
 
-### Throughput@Size
-                                              time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS            SF num_experiment num_client                                              
-MariaDB-BHT-8-1 1  1              1               6938      1   1                    11.42
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                              time [s]  count  SF  Throughput@Size
+DBMS            SF num_experiment num_client                                      
+MariaDB-BHT-8-1 1  1              1               5180      1   1            66.72
 
 ### Workflow
 
@@ -168,7 +181,7 @@ DBMS MariaDB-BHT-8 - Pods [[1]]
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
 TEST failed: SQL errors
 TEST passed: No SQL warnings
 TEST passed: Workflow as planned

@@ -1,14 +1,15 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=128 (warehouses for TPC-C)
+Benchbase Workload SF=128
     Type: benchbase
-    Duration: 12524s 
-    Code: 1744225690
-    Benchbase runs the benchmark.
+    Duration: 12550s 
+    Code: 1748870442
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [4]. Benchmarking has keying and thinking times activated.
+    Benchmark is 'tpcc'. Scaling factor is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [4]. Benchmarking has keying and thinking times activated.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
@@ -23,491 +24,489 @@ Benchbase Workload SF=128 (warehouses for TPC-C)
 
 ### Connections
 Citus-1-1-1024-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979472
+    disk:317388476
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196110348
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275391888
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363180784
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317648696
+        disk:361486720
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.4G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224036232
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:362655184
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:434860384
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-1-2 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979644
+    disk:317382036
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196112900
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392008
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363189352
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317650884
+        disk:356977844
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.4G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224965112
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364360200
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:435663576
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-1-3 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979644
+    disk:317382048
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:3
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196115280
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392072
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363189740
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317652984
+        disk:358345232
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.4G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224961756
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364356364
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:435540052
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-1-4 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979644
+    disk:317382240
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:4
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196117652
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392136
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363198244
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317655140
+        disk:344722988
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.5G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224965136
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364360768
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:435528068
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979820
+    disk:317382260
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363199300
+        disk:435541456
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392292
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344738532
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196121040
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224988908
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351340
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364367480
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-2 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979820
+    disk:317382456
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363200180
+        disk:435541672
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392356
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344740640
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196123464
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224992160
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351424
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364372704
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-3 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979996
+    disk:317382468
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:3
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363208700
+        disk:435529284
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392480
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344730080
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196126044
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224982784
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351456
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364376000
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-4 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979996
+    disk:317382660
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:4
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363209068
+        disk:435529412
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392540
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344732060
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196128244
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224985936
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351488
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364380020
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 
 ### Execution
                     experiment_run  terminals  target  pod_count    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-Citus-1-1-1024-1-1               1       1280    4096          1  1200.0           0                         60.77                      60.49       99.22                                                     194436.0                                             137768.0
-Citus-1-1-1024-1-2               1       1280    4096          2  1200.0           0                         61.02                      60.73       99.61                                                     135335.0                                              44913.5
-Citus-1-1-1024-1-3               1       1280    4095          5  1200.0           0                         61.32                      61.03      100.10                                                     129204.0                                              45583.0
-Citus-1-1-1024-1-4               1       1280    4090         10  1200.0           0                         60.99                      60.72       99.60                                                     150526.0                                              46910.0
-Citus-1-1-1024-2-1               2       1280    4096          1  1200.0           0                         60.98                      60.73       99.61                                                     193737.0                                              58991.0
-Citus-1-1-1024-2-2               2       1280    4096          2  1200.0           0                         61.19                      60.89       99.88                                                     147501.0                                              45104.0
-Citus-1-1-1024-2-3               2       1280    4095          5  1200.0           0                         61.20                      60.93       99.95                                                     130050.0                                              42462.4
-Citus-1-1-1024-2-4               2       1280    4090         10  1200.0           0                         61.15                      60.88       99.86                                                     122215.0                                              43099.0
-
-Warehouses: 128
+Citus-1-1-1024-1-1               1       1280    4096          1  1200.0           0                         60.66                      60.38       99.04                                                     217944.0                                             135049.0
+Citus-1-1-1024-1-2               1       1280    4096          2  1200.0           0                         61.00                      60.70       99.56                                                     160434.0                                              52965.5
+Citus-1-1-1024-1-3               1       1280    4095          5  1200.0           0                         60.98                      60.69       99.55                                                     137720.0                                              51431.6
+Citus-1-1-1024-1-4               1       1280    4090         10  1200.0           0                         60.98                      60.73       99.62                                                     144851.0                                              51534.2
+Citus-1-1-1024-2-1               2       1280    4096          1  1200.0           0                         60.94                      60.66       99.50                                                     211963.0                                              65532.0
+Citus-1-1-1024-2-2               2       1280    4096          2  1200.0           0                         61.47                      61.19      100.37                                                     141000.0                                              50541.0
+Citus-1-1-1024-2-3               2       1280    4095          5  1200.0           0                         61.06                      60.78       99.70                                                     131773.0                                              48938.2
+Citus-1-1-1024-2-4               2       1280    4090         10  1200.0           0                         61.14                      60.86       99.83                                                     123939.0                                              54983.3
 
 ### Workflow
 
 #### Actual
-DBMS Citus-1-1-1024 - Pods [[10, 5, 2, 1], [5, 10, 2, 1]]
+DBMS Citus-1-1-1024 - Pods [[10, 2, 5, 1], [5, 2, 10, 1]]
 
 #### Planned
 DBMS Citus-1-1-1024 - Pods [[1, 2, 5, 10], [1, 2, 5, 10]]
 
 ### Loading
-                    time_load  terminals  pods  Imported warehouses [1/h]
-Citus-1-1-1024-1-1      840.0        1.0   1.0                 548.571429
-Citus-1-1-1024-1-2      840.0        1.0   2.0                 548.571429
-Citus-1-1-1024-1-3      840.0        1.0   5.0                 548.571429
-Citus-1-1-1024-1-4      840.0        1.0  10.0                 548.571429
-Citus-1-1-1024-2-1      840.0        1.0   1.0                 548.571429
-Citus-1-1-1024-2-2      840.0        1.0   2.0                 548.571429
-Citus-1-1-1024-2-3      840.0        1.0   5.0                 548.571429
-Citus-1-1-1024-2-4      840.0        1.0  10.0                 548.571429
+                    time_load  terminals  pods  Throughput [SF/h]
+Citus-1-1-1024-1-1      809.0        1.0   1.0         569.592089
+Citus-1-1-1024-1-2      809.0        1.0   2.0         569.592089
+Citus-1-1-1024-1-3      809.0        1.0   5.0         569.592089
+Citus-1-1-1024-1-4      809.0        1.0  10.0         569.592089
+Citus-1-1-1024-2-1      809.0        1.0   1.0         569.592089
+Citus-1-1-1024-2-2      809.0        1.0   2.0         569.592089
+Citus-1-1-1024-2-3      809.0        1.0   5.0         569.592089
+Citus-1-1-1024-2-4      809.0        1.0  10.0         569.592089
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-1-1-1024-1-1     3213.56     1.24         33.36                54.50
-Citus-1-1-1024-1-2     3148.25     0.99         34.48                56.97
-Citus-1-1-1024-1-3     3137.68     0.93         34.91                58.53
-Citus-1-1-1024-1-4     3160.31     1.54         35.07                59.37
-Citus-1-1-1024-2-1     3090.74     1.28         30.93                51.07
-Citus-1-1-1024-2-2     3116.33     1.65         32.42                54.01
-Citus-1-1-1024-2-3     3123.71     1.37         33.38                56.32
-Citus-1-1-1024-2-4     3114.01     1.17         33.95                57.72
+Citus-1-1-1024-1-1     5163.28     1.82         39.53                57.11
+Citus-1-1-1024-1-2     8203.95     1.45         40.17                59.40
+Citus-1-1-1024-1-3     5934.14     1.57         40.84                60.93
+Citus-1-1-1024-1-4     4074.21     1.59         41.34                62.06
+Citus-1-1-1024-2-1     3964.31     2.38         37.33                54.67
+Citus-1-1-1024-2-2     7189.77     1.87         38.84                57.53
+Citus-1-1-1024-2-3     3958.14     2.27         39.49                59.26
+Citus-1-1-1024-2-4     4007.93     1.85         40.28                60.71
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-1-1-1024-1-1      352.42     1.00          4.04                 4.04
-Citus-1-1-1024-1-2      352.42     0.60          7.90                 7.90
-Citus-1-1-1024-1-3      486.89     1.01         10.70                10.70
-Citus-1-1-1024-1-4      618.90     1.40         15.16                15.16
-Citus-1-1-1024-2-1      364.47     0.66          4.05                 4.05
-Citus-1-1-1024-2-2      364.47     1.00          7.95                 7.95
-Citus-1-1-1024-2-3      544.68     1.93          9.79                 9.79
-Citus-1-1-1024-2-4      636.80     1.04         14.26                14.26
+Citus-1-1-1024-1-1      299.42     0.21          5.11                 5.11
+Citus-1-1-1024-1-2      341.25     0.24          9.03                 9.03
+Citus-1-1-1024-1-3      530.53     3.19         10.99                10.99
+Citus-1-1-1024-1-4      812.79     2.35         13.35                13.35
+Citus-1-1-1024-2-1      313.08     0.79          4.03                 4.03
+Citus-1-1-1024-2-2      391.33     1.05          9.10                 9.10
+Citus-1-1-1024-2-3      505.76     1.24         13.11                13.11
+Citus-1-1-1024-2-4      775.80     3.07         14.32                14.32
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

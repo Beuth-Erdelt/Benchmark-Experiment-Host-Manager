@@ -702,7 +702,7 @@ The benchmark is run via
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
-  -sd 60 \
+  -sd 20 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \

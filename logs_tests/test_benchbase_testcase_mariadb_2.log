@@ -2,17 +2,18 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1729531508
-Experiment                    : starts at 2024-10-21 19:25:08.143360 (4267448.267341745)
+Experiment                    : has code 1748948081
+Experiment                    : starts at 2025-06-03 12:54:41.458510 (13140244.92906424)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+Experiment uses bexhoma version 0.8.7.
 Benchmark is limited to DBMS ['MariaDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 50Gi.
+Database is persisted to disk of type shared and size 30Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
@@ -20,12 +21,25 @@ Experiment is run 2 times.
 Cluster monitoring            : is running
 done
 MariaDB-1-1-1024              : will start now
+MariaDB-1-1-1024              : Name of SUT pods = bexhoma-sut-mariadb-1-1-1024-1748948081
+MariaDB-1-1-1024              : Name of SUT service = bexhoma-sut-mariadb-1-1-1024-1748948081
+MariaDB-1-1-1024              : Name of SUT PVC name = bexhoma-storage-mariadb-benchbase-tpcc-16
+- waiting 30s -               : done
+MariaDB-1-1-1024              : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-1-1-1024              : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-1-1-1024              : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-1-1-1024              : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-1-1-1024              : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-1-1-1024              : is not loaded yet
-MariaDB-1-1-1024              : will start loading but not before 2024-10-21 17:27:08 (that is in 60 secs)
+MariaDB-1-1-1024              : will start loading but not before 2025-06-03 10:59:14 (that is in 60 secs)
 - waiting 30s -               : done
 MariaDB-1-1-1024              : is not loaded yet
-MariaDB-1-1-1024              : will start loading but not before 2024-10-21 17:27:08
+MariaDB-1-1-1024              : will start loading but not before 2025-06-03 10:59:14
 done
 MariaDB-1-1-1024              : is not loaded yet
 MariaDB-1-1-1024              : start asynch loading scripts of type loaded
@@ -50,119 +64,153 @@ MariaDB-1-1-1024              : is loading
 MariaDB-1-1-1024              : is loading
 - waiting 30s -               : done
 MariaDB-1-1-1024              : is loading
+- waiting 30s -               : done
+MariaDB-1-1-1024              : is loading
+- waiting 30s -               : done
+MariaDB-1-1-1024              : is loading
+- waiting 30s -               : done
+MariaDB-1-1-1024              : is loading
+- waiting 30s -               : done
+MariaDB-1-1-1024              : is loading
+- waiting 30s -               : done
+MariaDB-1-1-1024              : is loading
 done
 MariaDB-1-1-1024              : showing loader times
-MariaDB-1-1-1024              : loader timespan (first to last [s]) = 325
+MariaDB-1-1-1024              : loader timespan (first to last [s]) = 471
+MariaDB-1-1-1024              : start asynch loading scripts of type indexed
+MariaDB-1-1-1024              : is loading
+done
 MariaDB-1-1-1024              : benchmarks done 0 of 2. This will be client 1
-MariaDB-1-1-1024              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 60, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
+MariaDB-1-1-1024              : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 60, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 MariaDB-1-1-1024-1-1          : start benchmarking
-MariaDB-1-1-1024              : benchmarking results in folder /home/perdelt/benchmarks/1729531508
+MariaDB-1-1-1024              : benchmarking results in folder /home/perdelt/benchmarks/1748948081
 - waiting 10s -               : done
-MariaDB-1-1-1024              : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1-1024-1729531508-1-1-x4w8g: found
+MariaDB-1-1-1024              : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1-1024-1748948081-1-1-ztstx: found
 - waiting 30s -               : done
 MariaDB-1-1-1024              : has running benchmarks
 done
 MariaDB-1-1-1024              : has running benchmarks
 MariaDB-1-1-1024-1-1          : showing benchmarker times
 MariaDB-1-1-1024-1-1          : benchmarker timespan (start to end single container [s]) = 71
-MariaDB-1-1-1024-1-1          : benchmarker times (start/end per pod and container) = [(1729531965, 1729532031)]
-MariaDB-1-1-1024-1-1          : found and updated times {'benchmarker': [(1729531965, 1729532031)]}
+MariaDB-1-1-1024-1-1          : benchmarker times (start/end per pod and container) = [(1748948876, 1748948938)]
+MariaDB-1-1-1024-1-1          : found and updated times {'benchmarker': [(1748948876, 1748948938)]}
 done
 MariaDB-1-1-1024              : can be stopped
 MariaDB-1-1-1024              : still being removed
 done
 MariaDB-1-1-1024              : starts again
-MariaDB-1-1-1024              : storage exists bexhoma-storage-mariadb-benchbase-16
+MariaDB-1-1-1024              : Name of SUT pods = bexhoma-sut-mariadb-1-1-1024-1748948081
+MariaDB-1-1-1024              : Name of SUT service = bexhoma-sut-mariadb-1-1-1024-1748948081
+MariaDB-1-1-1024              : Name of SUT PVC name = bexhoma-storage-mariadb-benchbase-tpcc-16
+MariaDB-1-1-1024              : storage exists bexhoma-storage-mariadb-benchbase-tpcc-16
+MariaDB-1-1-1024              : label loaded copied value True
+MariaDB-1-1-1024              : label timeLoading copied value 473
+MariaDB-1-1-1024              : label timeLoadingStart copied value 1748948356
+MariaDB-1-1-1024              : label timeLoadingEnd copied value 1748948841
+MariaDB-1-1-1024              : label indexed copied value True
+MariaDB-1-1-1024              : label time_generated copied value 0
+MariaDB-1-1-1024              : label time_indexed copied value 1
+MariaDB-1-1-1024              : label time_ingested copied value 471
+MariaDB-1-1-1024              : label time_initschema copied value 1
+MariaDB-1-1-1024              : label time_loaded copied value 1
 MariaDB-1-1-1024              : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-MariaDB-1-1-1024              : will start benchmarking but not before 2024-10-21 17:36:36 (that is in 60 secs)
+MariaDB-1-1-1024              : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-1-1-1024              : will start benchmarking but not before 2024-10-21 17:36:36
+MariaDB-1-1-1024              : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-1-1-1024              : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-1-1-1024              : will start benchmarking but not before 2025-06-03 11:13:18 (that is in 60 secs)
+- waiting 30s -               : done
+MariaDB-1-1-1024              : will start benchmarking but not before 2025-06-03 11:13:18
 done
 MariaDB-1-1-1024              : benchmarks done 1 of 2. This will be client 1
-MariaDB-1-1-1024              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 60, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED'}
+MariaDB-1-1-1024              : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 60, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 MariaDB-1-1-1024-2-1          : start benchmarking
-MariaDB-1-1-1024              : benchmarking results in folder /home/perdelt/benchmarks/1729531508
+MariaDB-1-1-1024              : benchmarking results in folder /home/perdelt/benchmarks/1748948081
 - waiting 10s -               : done
-MariaDB-1-1-1024              : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1-1024-1729531508-2-1-9q8jk: found
+MariaDB-1-1-1024              : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1-1024-1748948081-2-1-5642v: found
+- waiting 30s -               : done
+MariaDB-1-1-1024              : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1-1-1024              : has running benchmarks
 done
 MariaDB-1-1-1024              : has running benchmarks
 MariaDB-1-1-1024-2-1          : showing benchmarker times
-MariaDB-1-1-1024-2-1          : benchmarker timespan (start to end single container [s]) = 71
-MariaDB-1-1-1024-2-1          : benchmarker times (start/end per pod and container) = [(1729532201, 1729532263)]
-MariaDB-1-1-1024-2-1          : found and updated times {'benchmarker': [(1729532201, 1729532263)]}
+MariaDB-1-1-1024-2-1          : benchmarker timespan (start to end single container [s]) = 102
+MariaDB-1-1-1024-2-1          : benchmarker times (start/end per pod and container) = [(1748949203, 1748949281)]
+MariaDB-1-1-1024-2-1          : found and updated times {'benchmarker': [(1748949203, 1748949281)]}
 done
 MariaDB-1-1-1024              : can be stopped
-Experiment ends at 2024-10-21 19:38:21.570796 (4268241.69477506): 793.4274333147332s total
+Experiment ends at 2025-06-03 13:15:34.047611 (13141497.518164087): 1252.5890998467803s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Benchmarking                                   connection  ... Latency Distribution.Average Latency (microseconds)
-connection_pod                                ...                                                    
-MariaDB-1-1-1024-2-1-1  MariaDB-1-1-1024-2-1  ...                                               29917
-MariaDB-1-1-1024-1-1-1  MariaDB-1-1-1024-1-1  ...                                               40909
-
-[2 rows x 36 columns]
-Workflow {'MariaDB-1-1-1024': [[1], [1]]}
 Result workflow complete
 
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 794s 
-    Code: 1729531508
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 1253s 
+    Code: 1748948081
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 50Gi.
+    Database is persisted to disk of type shared and size 30Gi.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run 2 times.
 
 ### Connections
-MariaDB-1-1-1024-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-1-1-1024-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250323480
-    datadisk:1940452
-    volume_size:50G
+    disk:317590408
+    datadisk:1883
+    volume_size:30G
     volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-1-1-1024-2-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1748948081
+MariaDB-1-1-1024-2-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250323476
-    datadisk:1980233
-    volume_size:50G
+    disk:317590408
+    datadisk:1927
+    volume_size:30G
     volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:2
+    eval_parameters
+                code:1748948081
 
 ### Execution
-                      experiment_run  terminals  target  pod_count  time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MariaDB-1-1-1024-1-1               1         16    8192          1  60.0                        376.43                                                      35970.0                                              40909.0
-MariaDB-1-1-1024-2-1               2         16    8192          1  60.0                        534.45                                                      34873.0                                              29917.0
-
-Warehouses: 16
+                      experiment_run  terminals  target  pod_count  time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MariaDB-1-1-1024-1-1               1         16    8192          1  60.0           0                        319.82                     318.58         0.0                                                      39237.0                                              49543.0
+MariaDB-1-1-1024-2-1               2         16    8192          1  60.0           0                        424.30                     422.77         0.0                                                      22345.0                                              33410.0
 
 ### Workflow
 
@@ -173,9 +221,9 @@ DBMS MariaDB-1-1-1024 - Pods [[1], [1]]
 DBMS MariaDB-1-1-1024 - Pods [[1], [1]]
 
 ### Loading
-                      time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-1-1-1024-1-1      325.0        1.0   1.0                 177.230769
-MariaDB-1-1-1024-2-1      325.0        1.0   1.0                 177.230769
+                      time_load  terminals  pods  Throughput [SF/h]
+MariaDB-1-1-1024-1-1      471.0        1.0   1.0         122.292994
+MariaDB-1-1-1024-2-1      471.0        1.0   1.0         122.292994
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
