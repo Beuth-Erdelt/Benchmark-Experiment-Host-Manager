@@ -31,3 +31,18 @@ for filename in os.listdir(md_directory):
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(new_content)
 
+
+
+print("\n\n\nShow all failed tests\n\n\n")
+
+from pathlib import Path
+
+# Define the target directory
+docs_folder = Path("docs")
+
+# Search through all .md files recursively
+for md_file in docs_folder.rglob("*.md"):
+    with md_file.open("r", encoding="utf-8") as file:
+        for line_number, line in enumerate(file, start=1):
+            if "TEST failed: " in line:
+                print(f"{md_file}:{line_number}: {line.strip()}")

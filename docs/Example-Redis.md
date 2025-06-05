@@ -123,7 +123,7 @@ doc_ycsb_redis_1.log
 YCSB SF=1
     Type: ycsb
     Duration: 712s 
-    Code: 1747690113
+    Code: 1748907357
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -134,7 +134,7 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
@@ -148,26 +148,26 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254984080
+    disk:318281028
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1747690113
+        code:1748907357
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   11899.105997                84249.0             1000000                              8097.5
+Redis-64-8-196608               1       64  196608          8           0                   12594.269057                79590.0             1000000                              7997.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       24912.12               401411.0           5000411                            9551.0             4999589                              9551.0
+Redis-64-8-196608-1               1      128   65536          1           0                       25529.42               391705.0           5002509                            9759.0             4997491                              9775.0
 
 ### Workflow
 
@@ -179,19 +179,19 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 
 ### Ingestion - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       69.59     0.04          1.46                 1.47
+Redis-64-8-196608-1      104.49     0.51          1.75                 1.76
 
 ### Ingestion - Loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      144.24        0          4.05                 4.06
+Redis-64-8-196608-1      138.46        0          4.06                 4.07
 
 ### Execution - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      567.52      1.6          2.17                 2.18
+Redis-64-8-196608-1      489.24      1.6          2.83                 2.84
 
 ### Execution - Benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      971.66     2.66          0.59                 0.59
+Redis-64-8-196608-1       962.1      2.6          0.59                 0.59
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -260,8 +260,8 @@ doc_ycsb_redis_2.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 452s 
-    Code: 1747690894
+    Duration: 449s 
+    Code: 1748908137
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -272,7 +272,7 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
@@ -286,12 +286,12 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057220
+    disk:317384168
     requests_cpu:4
     requests_memory:16Gi
     client:1
@@ -302,34 +302,34 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
         Cores:128
         host:6.8.0-60-generic
         node:cl-worker37
-        disk:151082256
+        disk:225817900
     worker 1
-        RAM:541025353728
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-134-generic
-        node:cl-worker2
-        disk:237715268
+        RAM:1081965518848
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1075-nvidia
+        node:cl-worker27
+        disk:1384794732
     worker 2
-        RAM:540590923776
+        RAM:540595884032
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:6.8.0-60-generic
-        node:cl-worker25
-        disk:172713836
+        host:5.15.0-140-generic
+        node:cl-worker23
+        disk:538881496
     worker 3
-        node:cl-worker12
+        node:cl-worker13
     eval_parameters
-        code:1747690894
+        code:1748908137
         BEXHOMA_WORKERS:3
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   15558.581505                64564.0             1000000                              8001.5
+Redis-64-8-196608               1       64  196608          8           0                   25770.198578                39034.0             1000000                              4708.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       63117.77               158434.0           5001485                            7003.0             4998515                              7015.0
+Redis-64-8-196608-1               1      128   65536          1           0                       63071.19               158551.0           5001740                            2297.0             4998260                              2303.0
 
 ### Workflow
 
@@ -341,19 +341,19 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 
 ### Ingestion - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      134.72     1.21          1.52                 1.55
+Redis-64-8-196608-1        66.8      0.9          1.05                 1.07
 
 ### Ingestion - Loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      214.21        0          4.62                 4.64
+Redis-64-8-196608-1       69.74        0          3.46                 3.48
 
 ### Execution - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      421.01     1.21          1.88                 1.89
+Redis-64-8-196608-1      394.69     1.59          1.83                 1.85
 
 ### Execution - Benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      877.62     5.15          0.83                 0.83
+Redis-64-8-196608-1      745.46     4.55          0.83                 0.84
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -402,8 +402,8 @@ doc_ycsb_redis_3.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 488s 
-    Code: 1747691434
+    Duration: 521s 
+    Code: 1748908617
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -414,7 +414,7 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
@@ -428,12 +428,12 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057220
+    disk:317384172
     requests_cpu:4
     requests_memory:16Gi
     client:1
@@ -444,56 +444,56 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
         Cores:128
         host:6.8.0-60-generic
         node:cl-worker37
-        disk:151060968
+        disk:225821596
     worker 1
-        RAM:541025353728
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-134-generic
-        node:cl-worker2
-        disk:237274740
+        RAM:1081965518848
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1075-nvidia
+        node:cl-worker27
+        disk:1390953880
     worker 2
-        RAM:540590923776
+        RAM:540595884032
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:6.8.0-60-generic
-        node:cl-worker25
-        disk:172661580
+        host:5.15.0-140-generic
+        node:cl-worker23
+        disk:538881736
     worker 3
-        RAM:540579430400
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:6.8.0-59-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:434253636
+        disk:436304024
     worker 4
-        RAM:540595920896
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-139-generic
-        node:cl-worker23
-        disk:526525592
+        RAM:1081742848000
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker29
+        disk:543559412
     worker 5
-        RAM:541008584704
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-134-generic
-        node:cl-worker5
-        disk:476156040
+        RAM:1077382844416
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1414280788
     worker 6
-        node:cl-worker12
+        node:cl-worker13
     eval_parameters
-        code:1747691434
+        code:1748908617
         BEXHOMA_REPLICAS:1
         BEXHOMA_WORKERS:3
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   13754.355656                72955.0             1000000                              8899.0
+Redis-64-8-196608               1       64  196608          8           0                   24697.223422                40771.0             1000000                              5192.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       57528.46               173827.0           5001668                            7327.0             4998332                              7343.0
+Redis-64-8-196608-1               1      128   65536          1           0                       57502.33               173906.0           4999600                            3971.0             5000400                              3963.0
 
 ### Workflow
 
@@ -505,19 +505,19 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 
 ### Ingestion - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      499.59     0.71          2.91                 2.95
+Redis-64-8-196608-1      267.75     0.68          3.08                 3.11
 
 ### Ingestion - Loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       40.85        0          1.58                  1.6
+Redis-64-8-196608-1      165.43        0          4.05                 4.07
 
 ### Execution - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      504.59     1.13          4.24                 4.27
+Redis-64-8-196608-1       601.3     1.01          4.29                 4.33
 
 ### Execution - Benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      645.02        0          0.83                 0.83
+Redis-64-8-196608-1      512.26     5.73          0.83                 0.83
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -581,8 +581,8 @@ doc_ycsb_redis_4.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1264s 
-    Code: 1747691974
+    Duration: 1292s 
+    Code: 1748909218
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -593,7 +593,7 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
@@ -608,27 +608,27 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1-1 uses docker image redis:7.4.2
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057212
+    disk:317384168
     volume_size:50G
-    volume_used:816M
+    volume_used:832M
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1747691974
+        code:1748909218
 Redis-64-8-196608-2-1 uses docker image redis:7.4.2
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057384
+    disk:317384176
     volume_size:50G
     volume_used:1.1G
     requests_cpu:4
@@ -636,16 +636,16 @@ Redis-64-8-196608-2-1 uses docker image redis:7.4.2
     client:1
     numExperiment:2
     eval_parameters
-        code:1747691974
+        code:1748909218
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   12357.431474                81163.0             1000000                              7943.0
+Redis-64-8-196608               1       64  196608          8           0                   12550.222012                79852.0             1000000                              7735.0
 
 ### Execution
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1-1               1      128   65536          1           0                       27046.91               369728.0           5000467                            8967.0             4999533                              8967.0
-Redis-64-8-196608-2-1               2      128   65536          1           0                       26958.10               370946.0           5001911                            9039.0             4998089                              9039.0
+Redis-64-8-196608-1-1               1      128   65536          1           0                       25648.46               389887.0           5000251                            9383.0             4999749                              9383.0
+Redis-64-8-196608-2-1               2      128   65536          1           0                       25648.33               389889.0           5000930                            9663.0             4999070                              9671.0
 
 ### Workflow
 
@@ -657,21 +657,21 @@ DBMS Redis-64-8-196608 - Pods [[1], [1]]
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1       73.56     0.11          1.57                 1.58
+Redis-64-8-196608-1-1      103.72     1.14          1.74                 1.74
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      148.28        0          4.11                 4.12
+Redis-64-8-196608-1-1      154.51        0          4.17                 4.18
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      461.67     1.57          2.88                 2.89
-Redis-64-8-196608-2-1      633.54     1.41          4.44                 5.15
+Redis-64-8-196608-1-1      496.70     1.51          2.77                 2.78
+Redis-64-8-196608-2-1      689.41     1.57          4.47                 5.00
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      836.92     2.79          0.59                 0.59
-Redis-64-8-196608-2-1      903.53     2.75          0.59                 0.59
+Redis-64-8-196608-1-1      983.92     2.86          0.59                 0.59
+Redis-64-8-196608-2-1      997.07     2.71          0.59                 0.60
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -744,8 +744,8 @@ doc_ycsb_redis_5.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 923s 
-    Code: 1747693325
+    Duration: 826s 
+    Code: 1748910629
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -756,7 +756,7 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
@@ -771,12 +771,12 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1-1 uses docker image redis:7.4.2
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057392
+    disk:317384372
     requests_cpu:4
     requests_memory:16Gi
     client:1
@@ -787,39 +787,39 @@ Redis-64-8-196608-1-1 uses docker image redis:7.4.2
         Cores:128
         host:6.8.0-60-generic
         node:cl-worker37
-        disk:150398868
+        disk:225087852
         volume_size:50G
-        volume_used:652M
+        volume_used:708M
     worker 1
-        RAM:541025353728
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-134-generic
-        node:cl-worker2
-        disk:236520908
+        RAM:1081965518848
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1075-nvidia
+        node:cl-worker27
+        disk:1383982452
         volume_size:50G
-        volume_used:736M
+        volume_used:792M
     worker 2
-        RAM:540590923776
+        RAM:540595884032
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:6.8.0-60-generic
-        node:cl-worker25
-        disk:171975140
+        host:5.15.0-140-generic
+        node:cl-worker23
+        disk:538144968
         volume_size:50G
-        volume_used:652M
+        volume_used:716M
     worker 3
-        node:cl-worker12
+        node:cl-worker13
     eval_parameters
-        code:1747693325
+        code:1748910629
         BEXHOMA_WORKERS:3
 Redis-64-8-196608-2-1 uses docker image redis:7.4.2
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057392
+    disk:317384376
     requests_cpu:4
     requests_memory:16Gi
     client:1
@@ -830,41 +830,41 @@ Redis-64-8-196608-2-1 uses docker image redis:7.4.2
         Cores:128
         host:6.8.0-60-generic
         node:cl-worker37
-        disk:150399800
+        disk:225096840
         volume_size:50G
-        volume_used:980M
+        volume_used:1.0G
     worker 1
-        RAM:541025353728
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-134-generic
-        node:cl-worker2
-        disk:236520912
+        RAM:1081965518848
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1075-nvidia
+        node:cl-worker27
+        disk:1383987268
         volume_size:50G
-        volume_used:1.1G
+        volume_used:768M
     worker 2
-        RAM:540590923776
+        RAM:540595884032
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:6.8.0-60-generic
-        node:cl-worker25
-        disk:171975188
+        host:5.15.0-140-generic
+        node:cl-worker23
+        disk:538144968
         volume_size:50G
-        volume_used:720M
+        volume_used:992M
     worker 3
-        node:cl-worker12
+        node:cl-worker13
     eval_parameters
-        code:1747693325
+        code:1748910629
         BEXHOMA_WORKERS:3
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   13540.216537                74036.0             1000000                             17261.0
+Redis-64-8-196608               1       64  196608          8           0                   23633.086091                42657.0             1000000                              5581.0
 
 ### Execution
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1-1               1      128   65536          1           0                       60716.82               164699.0           5000499                            8911.0             4999501                              8911.0
-Redis-64-8-196608-2-1               2      128   65536          1           0                       60692.50               164765.0           5001935                            8399.0             4998065                              8439.0
+Redis-64-8-196608-1-1               1      128   65536          1           0                       63017.93               158685.0           4999339                            3859.0             5000661                              3851.0
+Redis-64-8-196608-2-1               2      128   65536          1           0                       63065.62               158565.0           5000613                            3595.0             4999387                              3573.0
 
 ### Workflow
 
@@ -876,21 +876,21 @@ DBMS Redis-64-8-196608 - Pods [[1], [1]]
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      102.87     0.73          1.37                  1.4
+Redis-64-8-196608-1-1       73.08     0.82          1.24                 1.26
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      274.78     2.42          4.63                 4.65
+Redis-64-8-196608-1-1       14.38        0          0.73                 0.74
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      359.02     0.86          2.19                 2.21
-Redis-64-8-196608-2-1      541.58     1.74          1.90                 2.61
+Redis-64-8-196608-1-1      365.14     0.90          1.88                 1.90
+Redis-64-8-196608-2-1      462.25     0.85          1.86                 2.38
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      718.31     6.97          0.83                 0.84
-Redis-64-8-196608-2-1      911.00     6.80          0.83                 0.84
+Redis-64-8-196608-1-1      822.92     6.27          0.83                 0.84
+Redis-64-8-196608-2-1      822.92     6.22          1.67                 1.67
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
