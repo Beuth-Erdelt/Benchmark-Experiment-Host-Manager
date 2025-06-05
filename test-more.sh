@@ -445,6 +445,106 @@ wait_process "tpcds"
 
 
 ###########################################
+########### Benchbase PostgreSQL ##########
+###########################################
+
+
+
+#### Benchbase Simple (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "benchbase"
+
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
+sleep 30
+
+
+### Benchbase Persistency (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "benchbase"
+
+
+### Benchbase Monitoring (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 8 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "benchbase"
+
+
+### Benchbase Complex (TestCases.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms PostgreSQL \
+  -tb 1024 \
+  -nbp 1,2 \
+  -nbt 8 \
+  -nbf 8 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1800
+wait_process "benchbase"
+
+
+
+
+
+
+
+###########################################
 ############# Benchbase MySQL #############
 ###########################################
 
@@ -664,6 +764,78 @@ wait_process "benchbase"
 
 
 ###########################################
+########## HammerDB PostgreSQL ############
+###########################################
+
+
+
+
+### HammerDB Simple (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "hammerdb"
+
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-mysql-hammerdb-16
+sleep 30
+
+
+### HammerDB Monitoring (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 16 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "hammerdb"
+
+
+### HammerDB Complex (TestCases.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 2 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "hammerdb"
+
+
+
+
+
+
+###########################################
 ############# HammerDB MySQL ##############
 ###########################################
 
@@ -826,6 +998,143 @@ wait_process "hammerdb"
 
 
 
+
+
+
+
+
+
+
+
+
+
+###########################################
+############ YCSB PostgreSQL ##############
+###########################################
+
+
+### YCSB Loader Test for Scaling the Driver (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 1024 \
+  -nlp 4,8 \
+  -nlt 32,64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-ycsb-1
+sleep 30
+
+
+### YCSB Loader Test for Persistency (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 1024 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+### YCSB Execution for Scaling and Repetition (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 1024 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+### YCSB Execution Different Workload (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload e \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 1024 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
+
+
+
+#### YCSB Execution Monitoring (TestCases.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 1024 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -rst shared -rss 50Gi \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_5.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "ycsb"
 
 
 
