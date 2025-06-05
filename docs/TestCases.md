@@ -158,7 +158,7 @@ TEST passed: Workflow as planned
 
 ```bash
 nohup python tpch.py -ms 1 -tr \
-  -sf 3 \
+  -sf 10 \
   -dt \
   -t 1200 \
   -dbms PostgreSQL \
@@ -312,7 +312,7 @@ kubectl delete pvc bexhoma-storage-postgresql-tpch-1
 
 ```bash
 nohup python tpch.py -ms 1 -tr \
-  -sf 3 \
+  -sf 10 \
   -dt \
   -t 1200 \
   -dbms PostgreSQL \
@@ -696,7 +696,7 @@ TEST passed: Workflow as planned
 
 ```bash
 nohup python tpch.py -ms 1 -tr \
-  -sf 3 \
+  -sf 10 \
   -dt \
   -t 1200 \
   -dbms MySQL \
@@ -848,7 +848,7 @@ kubectl delete pvc bexhoma-storage-mysql-tpch-1
 
 ```bash
 nohup python tpch.py -ms 1 -tr \
-  -sf 3 \
+  -sf 10 \
   -dt \
   -t 1200 \
   -dbms MySQL \
@@ -1226,7 +1226,7 @@ TEST passed: Workflow as planned
 
 ```bash
 nohup python tpch.py -ms 1 -tr \
-  -sf 3 \
+  -sf 1 \
   -dt \
   -t 1200 \
   -dbms MariaDB \
@@ -1379,7 +1379,7 @@ kubectl delete pvc bexhoma-storage-mariadb-tpch-1
 
 ```bash
 nohup python tpch.py -ms 1 -tr \
-  -sf 3 \
+  -sf 1 \
   -dt \
   -t 1200 \
   -dbms MariaDB \
@@ -1747,7 +1747,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
 ```
 
@@ -1953,7 +1953,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
 ```
 
@@ -2287,7 +2287,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_2.log &
 ```
 
@@ -2490,7 +2490,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_4.log &
 ```
 
@@ -2817,7 +2817,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log &
 ```
 
@@ -3023,7 +3023,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log &
 ```
 
@@ -3455,8 +3455,8 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1,2 \
   -nc 2 \
-    -m -mc \
-    -rst shared -rss 30Gi \
+  -m -mc \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
 ```
 
@@ -3842,8 +3842,8 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1,2 \
   -nc 2 \
-    -m -mc \
-    -rst shared -rss 30Gi \
+  -m -mc \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log &
 ```
 
@@ -4228,8 +4228,8 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1,2 \
   -nc 2 \
-    -m -mc \
-    -rst shared -rss 30Gi \
+  -m -mc \
+  -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log &
 ```
 
