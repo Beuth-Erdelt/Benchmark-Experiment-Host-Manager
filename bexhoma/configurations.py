@@ -2899,7 +2899,6 @@ scrape_configs:
                         fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
-                        # TODO: Also mark volume
                         use_storage = self.use_storage()
                         if use_storage:
                             if self.storage['storageConfiguration']:

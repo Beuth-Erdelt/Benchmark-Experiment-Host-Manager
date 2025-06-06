@@ -41,6 +41,8 @@ import json
 import ast
 from types import SimpleNamespace
 from importlib.metadata import version
+from pathlib import Path
+import platform
 
 from bexhoma import evaluators
 
@@ -146,6 +148,41 @@ class default():
         self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.set_eval_parameters(code = self.code)
+    def result_filename_local(self, filename: str) -> str:
+        """
+        Returns filename including path in result folder.
+
+        :param filename: name of a file in a result folder
+        :param posix: iff posix format should be used
+        :return: self.path / filename
+        """
+        return self.result_filename(filename, False)
+    def result_filename_remote(self, filename: str) -> str:
+        """
+        Returns filename including path in result folder.
+
+        :param filename: name of a file in a result folder
+        :param posix: iff posix format should be used
+        :return: self.path / filename
+        """
+        path = Path(r"/results") / filename
+        if posix:
+            return path.as_posix()
+        else:
+            return str(path)
+    def result_filename(self, filename: str, posix: bool = False) -> str:
+        """
+        Returns filename including path in a local result folder.
+
+        :param filename: name of a file in a result folder
+        :param posix: iff posix format should be used
+        :return: self.path / filename
+        """
+        path = Path(self.path) / filename
+        if posix:
+            return path.as_posix()
+        else:
+            return str(path)
     def get_parameter_as_list(self,
                               parameter):
         """
@@ -1056,7 +1093,7 @@ class default():
             if len(self.workload) > 0:
                 #configuration = self.configurations[0]
                 # write appended query config
-                filename = self.path+"/queries.config"
+                filename = self.result_filename_local("queries.config")#self.path+"/queries.config"
                 with open(filename,'r') as inp:
                     queryconfig = ast.literal_eval(inp.read())
                     for k,v in self.workload.items():
@@ -1069,9 +1106,12 @@ class default():
         cmd = {}
         # single file
         filename = 'queries.config'
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+        filename_local = self.result_filename_local(filename)
+        filename_remote = self.result_filename_remote(filename)
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
         self.cluster.kubectl(cmd['upload_results'])
-    def work_benchmark_list(self, intervals=30, stop=True):
+    def work_benchmark_list(self, intervals=30, stop_after_starting=False, stop_after_loading=False, stop_after_benchmarking=False):
         """
         Run typical workflow:
 
@@ -1080,9 +1120,12 @@ class default():
         3) start loading (at first scripts (schema or loading via pull), then optionally parallel loading pods)
         4) optionally start maintaining pods
         5) at the same time as 4. run benchmarker jobs corresponding to list given via add_benchmark_list()
+        6) remove everything when done
 
         :param intervals: Seconds to wait before checking change of status
-        :param stop: Tells if SUT should be removed when all benchmarking has finished. Set to False if we want to have loaded SUTs for inspection.
+        :param stop_after_starting: stops after phase 2)
+        :param stop_after_loading: stops after phase 3)
+        :param stop_after_benchmarking: stops after phase 5) This tells if SUT should not be removed when all benchmarking has finished. Set to True if we want to have loaded SUTs for inspection.
         """
         # test if there is a Pometheus server running in the cluster
         if self.cluster.test_if_monitoring_healthy():
@@ -1265,7 +1308,7 @@ class default():
                             #config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                         else:
                             # no list element left
-                            if stop:
+                            if not stop_after_benchmarking:
                                 print("{:30s}: can be stopped".format(config.configuration))
                                 app = self.cluster.appname
                                 component = 'sut'
@@ -1384,7 +1427,7 @@ class default():
                     if config.sut_is_pending():
                         self.cluster.logger.debug("{} pending".format(config.configuration))
                         do = True
-                    if not config.loading_started:
+                    if not config.loading_started or not config.loading_finished:
                         self.cluster.logger.debug("{} not loaded".format(config.configuration))
                         do = True
                     if len(config.benchmark_list) > 0:
@@ -1513,7 +1556,9 @@ class default():
             #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
             if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
                 self.cluster.logger.debug("Found jobcontainer file {filename}".format(filename=filename))
-                (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                filename_local = self.result_filename_local(filename)
+                (timing_start, timing_end) = get_job_timing(filename_local)
+                #(timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
                 self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
