@@ -1282,6 +1282,7 @@ class ycsb(logger):
                     df = df.iloc[remove_first:]
                 if remove_last > 0:
                     df = df.iloc[:-remove_last]
+                #print("total for aggregation", df) # index: second, column: metric value
                 if not aggregate:
                     df_total.append(df.copy())
                 else:
@@ -1301,33 +1302,50 @@ class ycsb(logger):
             df_total['avg'] = int(df_total[column].mean())
         return df_total
     def get_benchmark_logs_timeseries_df_aggregated(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
-        #code = "1737365651"
-        #code = "1737110896"
-        #path = "/home/perdelt/benchmarks"
-        #evaluation = evaluator.ycsb(code=code, path=path)
-        client = str(client)#'49'
+        """
+        Returns a dataframes of time series of a metric, aggregated all pods per second.
+        Gets result from self.get_df_benchmarking().
+        This is all raw data as a time series.
+        Restricts to a configuration, a client and an experiment run.
+        Aggregates given metrics per second (!) over all pods.
+        Percentiles and maximum are aggregated by max.
+        Minimum is aggregated by min.
+        Average is aggregated by average.
+        Aggregation is summation otherwise.
+
+        :param metric: Metric like 'current_ops_per_sec'
+        :param configuration: Name of configuration like 'PostgreSQL-64-8-196608'
+        :param client: Number of client like 1
+        :param experiment_run: Numer of experiment run like 1
+        :return: Dataframe, index is number of second, column is (constant) value of aggregated metric
+        """
+        client = str(client)
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
         #print(df)
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
-        #print(list_logs)
-        #list_logs = df[df['client'] == client]['pod'].tolist()
-        #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=True)
+        #print("get_benchmark_logs_timeseries_df_aggregated", df_total)
         return df_total
     def get_benchmark_logs_timeseries_df_single(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
-        #code = "1737365651"
-        #code = "1737110896"
-        #path = "/home/perdelt/benchmarks"
-        #evaluation = evaluator.ycsb(code=code, path=path)
-        client = str(client)#'49'
+        """
+        Returns list of dataframes of time series of a metric, one for each pod.
+        Gets result from self.get_df_benchmarking().
+        This is all raw data as a time series.
+        Restricts to a configuration, a client and an experiment run.
+
+        :param metric: Metric like 'current_ops_per_sec'
+        :param configuration: Name of configuration like 'PostgreSQL-64-8-196608'
+        :param client: Number of client like 1
+        :param experiment_run: Numer of experiment run like 1
+        :return: List of dataframes, index is number of second, column is value of aggregated metric
+        """
+        client = str(client)
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
-        #print(list_logs)
-        #list_logs = df[df['client'] == client]['pod'].tolist()
-        #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
+        #print("get_benchmark_logs_timeseries_df_single", df_total)
         return df_total
 
 
