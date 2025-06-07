@@ -52,7 +52,7 @@ if __name__ == '__main__':
     parser.add_argument('-mc',  '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
     parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
     parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="")
+    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
     parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
     parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
     parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
@@ -168,6 +168,8 @@ if __name__ == '__main__':
     ### prepare and configure experiment
     ##############
     experiment = experiments.ycsb(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    if mode=='load' or mode=='start':
+        experiment.benchmarking_active = False
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
     # remove running dbms
@@ -1007,20 +1009,28 @@ if __name__ == '__main__':
     if args.mode == 'start':
         experiment.start_sut()
     elif args.mode == 'load':
-        # start all DBMS
-        experiment.start_sut()
+        start = default_timer()
+        start_datetime = str(datetime.datetime.now())
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
+        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
         # configure number of clients per config = 0
         list_clients = []
-        # total time of experiment
         experiment.add_benchmark_list(list_clients)
+        experiment.benchmarking_active = False
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
         # run workflow
-        experiment.work_benchmark_list()
+        experiment.work_benchmark_list(stop_after_benchmarking=True)
         # total time of experiment
         end = default_timer()
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
+        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
+        experiment.workload['duration'] = math.ceil(duration_experiment)
+        experiment.evaluate_results()
+        experiment.store_workflow_results()
+        experiment.show_summary()
     elif args.mode == 'summary':
         #experiment.evaluate_results()
         #experiment.store_workflow_results()
@@ -1039,7 +1049,6 @@ if __name__ == '__main__':
         end = default_timer()
         end_datetime = str(datetime.datetime.now())
         duration_experiment = end - start
-        #print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
         print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
         experiment.workload['duration'] = math.ceil(duration_experiment)
         ##################

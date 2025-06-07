@@ -426,7 +426,10 @@ class logger(base):
             df = pd.read_pickle(filename_full)
         else:
             self.evaluate_results()
-            df = pd.read_pickle(filename_full)
+            if os.path.isfile(filename_full):
+                df = pd.read_pickle(filename_full)
+            else:
+                df = pd.DataFrame()
         #df#.sort_values(["configuration", "pod"])
         return df
     def get_df_loading(self):

@@ -116,6 +116,7 @@ class default():
         self.loading_parameters = {}                                    # dict of parameters for loading component
         self.sut_parameters = {}                                        # dict of parameters for sut and worker component
         self.loading_patch = ""                                         # YAML to patch manifest for loading component
+        self.benchmarking_active = True                                 # Bool, tells if benchmarking is active (False for mode=start and mode=load)
         self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
         self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
         self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
@@ -148,6 +149,17 @@ class default():
         self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.set_eval_parameters(code = self.code)
+    def benchmarking_is_active(self):
+        """
+        Returns True, when this is a benchmarking experiment.
+        Returns Fals in case of mode=start or mode=load.
+        In that case, benchmarking phase is skipped and no results are expected.
+
+        :return: Iff there is a benchmarking phase
+        """
+        if 'benchmarking_active' in self.workload:
+            self.benchmarking_active = self.workload['benchmarking_active']
+        return self.benchmarking_active
     def result_filename_local(self, filename: str) -> str:
         """
         Returns filename including path in result folder.
@@ -157,7 +169,7 @@ class default():
         :return: self.path / filename
         """
         return self.result_filename(filename, False)
-    def result_filename_remote(self, filename: str) -> str:
+    def result_filename_remote(self, filename: str, posix: bool = True) -> str:
         """
         Returns filename including path in result folder.
 
@@ -170,7 +182,7 @@ class default():
             return path.as_posix()
         else:
             return str(path)
-    def result_filename(self, filename: str, posix: bool = False) -> str:
+    def result_filename(self, filename: str, posix: bool = True) -> str:
         """
         Returns filename including path in a local result folder.
 
@@ -313,7 +325,7 @@ class default():
             #    # single DBMS
             #    dbms = args.dbms
             dbms = args.dbms
-            self.workload['info'] = self.workload['info']+"\nBenchmark is limited to DBMS {}.".format(dbms)
+            self.workload['info'] = self.workload['info']+"\nExperiment is limited to DBMS {}.".format(dbms)
         if len(num_loading_pods):
             # import uses several processes in pods
             self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
@@ -351,16 +363,19 @@ class default():
         if request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
         self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
-        self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
         if len(num_pooling_pods) > 0 and  len(num_pooling_in) > 0 and len(num_pooling_out) > 0:
             self.workload['info'] = self.workload['info']+"\nPooling is done with {} pods having {} inbound and {} outbound connections in total.".format(num_pooling_pods, num_pooling_in, num_pooling_out)
-        self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
         if self.max_sut is not None:
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
+        self.workload['benchmarking_active'] = self.benchmarking_is_active()
     def get_dashboard_pod(self,
                           pod_dashboard=''):
         """
@@ -1348,7 +1363,24 @@ class default():
                                 else:
                                     config.experiment_done = True
                             else:
-                                print("{} can be stopped, but we leave it running".format(config.configuration))
+                                print("{:30s}: can be stopped, but we leave it running".format(config.configuration))
+                                command = config.generate_port_forward()
+                                print("{:30s}: Ready: {}".format(config.configuration, command))
+                                print(config.num_experiment_to_apply_done, config.num_experiment_to_apply)
+                                # if we reach this point for the first time: simulate benchmarking
+                                # this collects loading metrics and prepares a connection.config and a query.config
+                                # this allows summaries like for "real" benchmarking experiments
+                                if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                    client = str(config.client)
+                                    config.client = config.client+1
+                                    if config.num_experiment_to_apply > 1:
+                                        connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
+                                    else:
+                                        connection=config.configuration+'-'+client
+                                    #print("{:30s}: start benchmarking".format(connection))
+                                    config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
+                                    config.num_experiment_to_apply_done = config.num_experiment_to_apply
+                                #print("{} can be stopped, but we leave it running".format(config.configuration))
                 else:
                     print("{:30s}: is loading".format(config.configuration))
             for config in self.configurations:
@@ -2843,12 +2875,14 @@ class ycsb(default):
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
         self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
         self.workload['info'] = self.workload['info']+"\nOrdering of inserts is {}.".format(extra_insert_order)
-        self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
-        self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
+            self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
         #self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
         self.workload['info'] = self.workload['info']+"\nTarget is based on multiples of '{}'.".format(target_base)
         self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
-        self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
         default.prepare_testbed(self, parameter)
     def test_results(self):
         """
@@ -2930,6 +2964,7 @@ class ycsb(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
+        print(workload_properties)
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
@@ -2997,6 +3032,7 @@ class ycsb(default):
         #####################
         contains_failed = False
         df = self.evaluator.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
             print("\n### Execution")
             df.fillna(0, inplace=True)
@@ -3027,17 +3063,18 @@ class ycsb(default):
             contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
-        print("\n### Workflow")
-        workflow_actual = self.evaluator.reconstruct_workflow(df)
-        workflow_planned = workload_properties['workflow_planned']
-        if len(workflow_actual) > 0:
-            print("\n#### Actual")
-            for c in workflow_actual:
-                print("DBMS", c, "- Pods", workflow_actual[c])
-        if len(workflow_planned) > 0:
-            print("\n#### Planned")
-            for c in workflow_planned:
-                print("DBMS", c, "- Pods", workflow_planned[c])
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            workflow_planned = workload_properties['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual")
+                for c in workflow_actual:
+                    print("DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned")
+                for c in workflow_planned:
+                    print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
@@ -3046,10 +3083,11 @@ class ycsb(default):
         self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
-        if self.test_workflow(workflow_actual, workflow_planned):
-            print("TEST passed: Workflow as planned")
-        else:
-            print("TEST failed: Workflow not as planned")
+        if self.benchmarking_is_active():
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("TEST passed: Workflow as planned")
+            else:
+                print("TEST failed: Workflow not as planned")
         silent = False
         if contains_failed:
             if not silent:

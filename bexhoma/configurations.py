@@ -1056,6 +1056,25 @@ scrape_configs:
             print(p, status)
             #if status == "Running":
             self.experiment.cluster.delete_pod(p)
+    def generate_port_forward(self):
+        """
+        Generates command to port-forward to this SUT.
+        Returns it as a string
+
+        :return: Command to port-forward to SUT as a string
+        """
+        context = self.experiment.cluster.context
+        app = self.appname
+        component = 'sut'
+        experiment = self.experiment_name # self.experiment.code
+        configuration = self.configuration
+        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+        ports = self.experiment.cluster.get_ports_of_service(app=app, component=component, experiment=experiment, configuration=configuration)
+        forward = ['kubectl', '--context {context}'.format(context=context), 'port-forward', 'service/'+name]
+        forward.extend(ports)
+        command = " ".join(forward)
+        #print("{:30s}: {}".format(configuration, command))
+        return command
     def DEPRECATED_get_instance_from_resources(self):
         """
         Generates an instance name out of the resource parameters that are set using `set_resources()`.
@@ -2273,7 +2292,8 @@ scrape_configs:
         experiment='',
         configuration='',
         client='1',
-        parallelism=1):
+        parallelism=1,
+        only_prepare=False):
         """
         Runs the benchmarker job.
         Sets meta data in the connection.config.
@@ -2289,6 +2309,7 @@ scrape_configs:
         :param configuration: Name of the dbms configuration
         :param client: Number of benchmarker this is in a sequence of
         :param parallelism: Number of parallel benchmarker pods we want to have
+        :param only_prepare: benchmarker pods will not be started. this makes a dry run
         """
         self.logger.debug('configuration.run_benchmarker_pod()')
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
@@ -2447,30 +2468,31 @@ scrape_configs:
         for i in range(1, parallelism+1):
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        # create pods
-        yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
-        # start pod
-        self.experiment.cluster.kubectl('create -f '+yamlfile)
-        pods = []
-        while len(pods) == 0:
-            self.wait(10)
-            pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
-        client_pod_name = pods[0]
-        status = self.experiment.cluster.get_pod_status(client_pod_name)
-        self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
-        print("{:30s}: benchmarking is waiting for job {}: ".format(configuration, client_pod_name), end="", flush=True)
-        while status != "Running" and status != "Succeeded":
-            self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
-            print(".", end="", flush=True)
-            #self.wait(10)
-            # maybe pod had to be restarted
+        if not only_prepare:
+            # create pods
+            yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
+            # start pod
+            self.experiment.cluster.kubectl('create -f '+yamlfile)
             pods = []
             while len(pods) == 0:
-                self.wait(10, silent=True)
+                self.wait(10)
                 pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
             client_pod_name = pods[0]
             status = self.experiment.cluster.get_pod_status(client_pod_name)
-        print("found")
+            self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+            print("{:30s}: benchmarking is waiting for job {}: ".format(configuration, client_pod_name), end="", flush=True)
+            while status != "Running" and status != "Succeeded":
+                self.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
+                print(".", end="", flush=True)
+                #self.wait(10)
+                # maybe pod had to be restarted
+                pods = []
+                while len(pods) == 0:
+                    self.wait(10, silent=True)
+                    pods = self.experiment.cluster.get_job_pods(component=component, configuration=configuration, experiment=self.code, client=client)
+                client_pod_name = pods[0]
+                status = self.experiment.cluster.get_pod_status(client_pod_name)
+            print("found")
         # get monitoring for loading
         """
         if self.monitoring_active:
