@@ -170,6 +170,8 @@ if __name__ == '__main__':
     experiment = experiments.ycsb(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     if mode=='load' or mode=='start':
         experiment.benchmarking_active = False
+    if mode=='start':
+        experiment.loading_deactivated = True
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
     # remove running dbms
@@ -1007,7 +1009,29 @@ if __name__ == '__main__':
     ### branch for workflows
     ##############
     if args.mode == 'start':
-        experiment.start_sut()
+        #experiment.start_sut()
+        start = default_timer()
+        start_datetime = str(datetime.datetime.now())
+        print("{:30s}: has code {}".format("Experiment",experiment.code))
+        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
+        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
+        # configure number of clients per config = 0
+        list_clients = []
+        experiment.add_benchmark_list(list_clients)
+        experiment.benchmarking_active = False
+        start = default_timer()
+        start_datetime = str(datetime.datetime.now())
+        # run workflow
+        experiment.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True, stop_after_starting=True)
+        # total time of experiment
+        end = default_timer()
+        end_datetime = str(datetime.datetime.now())
+        duration_experiment = end - start
+        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
+        experiment.workload['duration'] = math.ceil(duration_experiment)
+        experiment.evaluate_results()
+        experiment.store_workflow_results()
+        experiment.show_summary()
     elif args.mode == 'load':
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
@@ -1021,7 +1045,7 @@ if __name__ == '__main__':
         start = default_timer()
         start_datetime = str(datetime.datetime.now())
         # run workflow
-        experiment.work_benchmark_list(stop_after_benchmarking=True)
+        experiment.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True)
         # total time of experiment
         end = default_timer()
         end_datetime = str(datetime.datetime.now())

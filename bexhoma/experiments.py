@@ -128,6 +128,7 @@ class default():
         self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
         self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
         self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
+        self.loading_deactivated = False                                # Bool, tells if loading phase should be skipped
         self.num_loading = 0                                            # number of loading pods in parallel
         self.num_loading_pods = 0                                       # number of loading pods in total
         self.maintaining_active = False                                 # Bool, tells if maintaining is active
@@ -152,7 +153,7 @@ class default():
     def benchmarking_is_active(self):
         """
         Returns True, when this is a benchmarking experiment.
-        Returns Fals in case of mode=start or mode=load.
+        Returns False in case of mode=start or mode=load.
         In that case, benchmarking phase is skipped and no results are expected.
 
         :return: Iff there is a benchmarking phase
@@ -160,6 +161,17 @@ class default():
         if 'benchmarking_active' in self.workload:
             self.benchmarking_active = self.workload['benchmarking_active']
         return self.benchmarking_active
+    def loading_is_active(self):
+        """
+        Returns True, when this is an experiment including loading.
+        Returns False in case of mode=start.
+        In that case, loading and benchmarking phases are skipped and no results are expected.
+
+        :return: Iff there is a benchmarking phase
+        """
+        if 'loading_active' in self.workload:
+            self.loading_deactivated = not self.workload['loading_active']
+        return not self.loading_deactivated
     def result_filename_local(self, filename: str) -> str:
         """
         Returns filename including path in result folder.
@@ -326,19 +338,20 @@ class default():
             #    dbms = args.dbms
             dbms = args.dbms
             self.workload['info'] = self.workload['info']+"\nExperiment is limited to DBMS {}.".format(dbms)
-        if len(num_loading_pods):
-            # import uses several processes in pods
-            self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
-        # fix loading
-        if not request_node_loading is None:
-            self.patch_loading(patch="""
-            spec:
-              template:
+        if self.loading_is_active():
+            if len(num_loading_pods):
+                # import uses several processes in pods
+                self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
+            # fix loading
+            if not request_node_loading is None:
+                self.patch_loading(patch="""
                 spec:
-                  nodeSelector:
-                    kubernetes.io/hostname: {node}
-            """.format(node=request_node_loading))
-            self.workload['info'] = self.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
+                  template:
+                    spec:
+                      nodeSelector:
+                        kubernetes.io/hostname: {node}
+                """.format(node=request_node_loading))
+                self.workload['info'] = self.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
         # fix benchmarking
         if not request_node_benchmarking is None:
             self.patch_benchmarking(patch="""
@@ -362,7 +375,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
-        self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
         if len(num_pooling_pods) > 0 and  len(num_pooling_in) > 0 and len(num_pooling_out) > 0:
@@ -376,6 +390,7 @@ class default():
         if self.max_sut is not None:
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
         self.workload['benchmarking_active'] = self.benchmarking_is_active()
+        self.workload['loading_active'] = self.loading_is_active()
     def get_dashboard_pod(self,
                           pod_dashboard=''):
         """
@@ -1366,7 +1381,7 @@ class default():
                                 print("{:30s}: can be stopped, but we leave it running".format(config.configuration))
                                 command = config.generate_port_forward()
                                 print("{:30s}: Ready: {}".format(config.configuration, command))
-                                print(config.num_experiment_to_apply_done, config.num_experiment_to_apply)
+                                #print(config.num_experiment_to_apply_done, config.num_experiment_to_apply)
                                 # if we reach this point for the first time: simulate benchmarking
                                 # this collects loading metrics and prepares a connection.config and a query.config
                                 # this allows summaries like for "real" benchmarking experiments
@@ -1465,6 +1480,9 @@ class default():
                     if len(config.benchmark_list) > 0:
                         self.cluster.logger.debug("{} still benchmarks to run: {}".format(config.configuration, config.benchmark_list))
                         do = True
+                    if stop_after_starting:
+                        if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                            do = True
     def benchmark_list(self, list_clients):
         """
         DEPRECATED? Is not used anymore.
@@ -2859,7 +2877,7 @@ class ycsb(default):
                 type = 'ycsb',
                 defaultParameters = {'SF': SF}
             )
-        else:
+        elif mode == 'load':
             # we want to profile the import
             #self.set_queries_profiling()
             self.set_workload(
@@ -2868,19 +2886,30 @@ class ycsb(default):
                 type = 'ycsb',
                 defaultParameters = {'SF': SF}
             )
+        else:
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'YCSB Start DBMS',
+                info = 'This just starts a SUT.',
+                type = 'ycsb',
+                defaultParameters = {'SF': SF}
+            )
         self.loading_active = True
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.set_experiment(script='Schema')
         # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
-        self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
-        self.workload['info'] = self.workload['info']+"\nOrdering of inserts is {}.".format(extra_insert_order)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
+            self.workload['info'] = self.workload['info']+"\nOrdering of inserts is {}.".format(extra_insert_order)
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
             self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
         #self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
-        self.workload['info'] = self.workload['info']+"\nTarget is based on multiples of '{}'.".format(target_base)
-        self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nTarget is based on multiples of '{}'.".format(target_base)
+            self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
         default.prepare_testbed(self, parameter)
@@ -2964,7 +2993,8 @@ class ycsb(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
-        print(workload_properties)
+            self.workload = workload_properties
+        #print(workload_properties)
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))

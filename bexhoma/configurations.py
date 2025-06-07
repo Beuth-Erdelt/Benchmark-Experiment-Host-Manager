@@ -148,7 +148,7 @@ class default():
         self.prometheus_timeout = experiment.prometheus_timeout
         self.maintaining_active = experiment.maintaining_active
         self.loading_active = experiment.loading_active
-        self.loading_deactivated = False                                        #: Do not load at all and do not test for loading
+        self.loading_deactivated = experiment.loading_deactivated               #: Do not load at all and do not test for loading
         self.monitor_loading = True                                             #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
         self.monitoring_sut = True                                              #: Fetch metrics of SUT, if monítoring is active - this is set to False when a service outside of K8s is benchmarked
         self.jobtemplate_maintaining = ""
