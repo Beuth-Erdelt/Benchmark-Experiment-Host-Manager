@@ -3138,6 +3138,7 @@ class ycsb(default):
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
+        print("    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
         if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
@@ -3418,7 +3419,7 @@ class benchbase(default):
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             self.set_workload(
-                name = 'Benchbase Workload {} SF={}'.format(workload, SF),
+                name = 'Benchbase Workload {} SF={}'.format(type_of_benchmark, SF),
                 info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
                 type = 'benchbase',
                 defaultParameters = {'SF': SF}
@@ -3427,8 +3428,8 @@ class benchbase(default):
             # we want to profile the import
             #self.set_queries_profiling()
             self.set_workload(
-                name = 'Benchbase Data {} Loading SF={}'.format(workload, SF),
-                info = 'This imports Benchbase data sets.',
+                name = 'Benchbase Data {} Loading SF={}'.format(type_of_benchmark, SF),
+                info = 'This imports a Benchbase data set.',
                 type = 'benchbase',
                 defaultParameters = {'SF': SF}
             )
@@ -3452,10 +3453,10 @@ class benchbase(default):
                 self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
                 if type_of_benchmark == "ycsb":
                     self.workload['info'] = self.workload['info']+" Workload is '{}'.".format(workload)
-        if SF:
-            #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
-            self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
         if self.loading_is_active() or self.benchmarking_is_active():
+            if SF:
+                #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
+                self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
             self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
@@ -3564,6 +3565,7 @@ class benchbase(default):
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
+        print("    "+workload_properties['name'])
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
         if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
