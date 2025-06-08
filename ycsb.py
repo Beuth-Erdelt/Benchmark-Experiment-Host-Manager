@@ -165,10 +165,6 @@ if __name__ == '__main__':
     ### prepare and configure experiment
     ##############
     experiment = experiments.ycsb(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
-    if mode=='load' or mode=='start':
-        experiment.benchmarking_active = False
-    if mode=='start':
-        experiment.loading_deactivated = True
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
     # remove running dbms
