@@ -1356,6 +1356,13 @@ class default():
                             config.loading_after_time = now + timedelta(seconds=delay)
                             print("{:30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
                             continue
+                        else:
+                            # start loading now
+                            if config.loading_active:
+                                config.start_loading()
+                                config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                            else:
+                                config.start_loading()
                 # check if maintaining
                 if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
@@ -3030,6 +3037,7 @@ class ycsb(default):
             self.set_workload(
                 name = 'YCSB Start DBMS',
                 info = 'This just starts a SUT.',
+                intro = 'Start DBMS and do not load data.',
                 type = 'ycsb',
                 defaultParameters = {'SF': SF}
             )
@@ -3138,8 +3146,8 @@ class ycsb(default):
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
-        print("    "+workload_properties['name'])
-        print("    "+workload_properties['intro'])
+        #print("    Name: "+workload_properties['name'])
+        print("    Intro: "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
         if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
             for error, messages in workload_properties['workflow_errors'].items():
@@ -3439,6 +3447,7 @@ class benchbase(default):
             self.set_workload(
                 name = 'Benchbase Start DBMS',
                 info = 'This just starts a SUT.',
+                intro = 'Start DBMS and do not load data.',
                 type = 'benchbase',
                 defaultParameters = {'SF': SF}
             )
@@ -3565,8 +3574,8 @@ class benchbase(default):
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
-        print("    "+workload_properties['name'])
-        print("    "+workload_properties['intro'])
+        #print("    Name: "+workload_properties['name'])
+        print("    Intro: "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
         if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
             for error, messages in workload_properties['workflow_errors'].items():
