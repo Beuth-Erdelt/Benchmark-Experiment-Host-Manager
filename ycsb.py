@@ -22,12 +22,8 @@ import logging
 import urllib3
 import logging
 import argparse
-import time
-from timeit import default_timer
-import datetime
 import pandas as pd
 import types
-import math
 
 
 urllib3.disable_warnings()
@@ -117,8 +113,6 @@ if __name__ == '__main__':
     timeout = int(args.timeout)
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
-    # should results be tested for validity?
-    test_result = args.test_result
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -128,7 +122,7 @@ if __name__ == '__main__':
     # do not ingest, start benchmarking immediately
     skip_loading = args.skip_loading
     # do not remove SUTs after benchmarking
-    skip_shutdown = args.skip_shutdown
+    #skip_shutdown = args.skip_shutdown
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
@@ -1011,83 +1005,5 @@ if __name__ == '__main__':
     ##############
     ### branch for workflows
     ##############
-    if args.mode == 'start':
-        #experiment.start_sut()
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        print("{:30s}: has code {}".format("Experiment",experiment.code))
-        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
-        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
-        # configure number of clients per config = 0
-        list_clients = []
-        experiment.add_benchmark_list(list_clients)
-        experiment.benchmarking_active = False
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        # run workflow
-        experiment.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True, stop_after_starting=True)
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
-        experiment.workload['duration'] = math.ceil(duration_experiment)
-        experiment.evaluate_results()
-        experiment.store_workflow_results()
-        experiment.show_summary()
-    elif args.mode == 'load':
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        print("{:30s}: has code {}".format("Experiment",experiment.code))
-        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
-        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
-        # configure number of clients per config = 0
-        list_clients = []
-        experiment.add_benchmark_list(list_clients)
-        experiment.benchmarking_active = False
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        # run workflow
-        experiment.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True)
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
-        experiment.workload['duration'] = math.ceil(duration_experiment)
-        experiment.evaluate_results()
-        experiment.store_workflow_results()
-        experiment.show_summary()
-    elif args.mode == 'summary':
-        #experiment.evaluate_results()
-        #experiment.store_workflow_results()
-        experiment.show_summary()
-    else:
-        # total time of experiment
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        #print("Experiment starts at {} ({})".format(start_datetime, start))
-        print("{:30s}: has code {}".format("Experiment",experiment.code))
-        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
-        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
-        # run workflow
-        experiment.work_benchmark_list(stop_after_benchmarking=skip_shutdown)
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
-        experiment.workload['duration'] = math.ceil(duration_experiment)
-        ##################
-        experiment.evaluate_results()
-        experiment.store_workflow_results()
-        experiment.stop_benchmarker()
-        experiment.stop_sut()
-        #experiment.zip() # OOM? exit code 137
-        if test_result:
-            test_result_code = experiment.test_results()
-            if test_result_code == 0:
-                print("Test successful!")
-        #cluster.restart_dashboard()        # only for dbmsbenchmarker because of dashboard. Jupyter server does not need to restart
-        experiment.show_summary()
+    experiment.process()
 exit()

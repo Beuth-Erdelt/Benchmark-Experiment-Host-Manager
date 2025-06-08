@@ -33,6 +33,8 @@ import logging
 import urllib3
 from os import makedirs, path
 import time
+from timeit import default_timer
+#import datetime
 import os
 from datetime import datetime, timedelta
 import re
@@ -43,6 +45,7 @@ from types import SimpleNamespace
 from importlib.metadata import version
 from pathlib import Path
 import platform
+import math
 
 from bexhoma import evaluators
 
@@ -150,6 +153,88 @@ class default():
         self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.set_eval_parameters(code = self.code)
+    def process(self):
+        # should results be tested for validity?
+        test_result = self.args.test_result
+        if self.args.mode == 'start':
+            #self.start_sut()
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            print("{:30s}: has code {}".format("Experiment", self.code))
+            print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
+            print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # configure number of clients per config = 0
+            list_clients = []
+            self.add_benchmark_list(list_clients)
+            self.benchmarking_active = False
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            # run workflow
+            self.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True, stop_after_starting=True)
+            # total time of experiment
+            end = default_timer()
+            end_datetime = str(datetime.now())
+            duration_experiment = end - start
+            print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment", end_datetime, end, duration_experiment))
+            self.workload['duration'] = math.ceil(duration_experiment)
+            self.evaluate_results()
+            self.store_workflow_results()
+            self.show_summary()
+        elif self.args.mode == 'load':
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            print("{:30s}: has code {}".format("Experiment", self.code))
+            print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
+            print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # configure number of clients per config = 0
+            list_clients = []
+            self.add_benchmark_list(list_clients)
+            self.benchmarking_active = False
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            # run workflow
+            self.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True)
+            # total time of experiment
+            end = default_timer()
+            end_datetime = str(datetime.now())
+            duration_experiment = end - start
+            print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment", end_datetime, end, duration_experiment))
+            self.workload['duration'] = math.ceil(duration_experiment)
+            self.evaluate_results()
+            self.store_workflow_results()
+            self.show_summary()
+        elif self.args.mode == 'summary':
+            #self.evaluate_results()
+            #self.store_workflow_results()
+            self.show_summary()
+        else:
+            # total time of experiment
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            #print("Experiment starts at {} ({})".format(start_datetime, start))
+            print("{:30s}: has code {}".format("Experiment", self.code))
+            print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
+            print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # run workflow
+            self.work_benchmark_list(stop_after_benchmarking=self.args.skip_shutdown)
+            # total time of experiment
+            end = default_timer()
+            end_datetime = str(datetime.now())
+            duration_experiment = end - start
+            print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment", end_datetime, end, duration_experiment))
+            self.workload['duration'] = math.ceil(duration_experiment)
+            ##################
+            self.evaluate_results()
+            self.store_workflow_results()
+            self.stop_benchmarker()
+            self.stop_sut()
+            #self.zip() # OOM? exit code 137
+            if test_result:
+                test_result_code = self.test_results()
+                if test_result_code == 0:
+                    print("Test successful!")
+            #self.restart_dashboard()        # only for dbmsbenchmarker because of dashboard. Jupyter server does not need to restart
+            self.show_summary()
     def benchmarking_is_active(self):
         """
         Returns True, when this is a benchmarking experiment.
@@ -478,7 +563,8 @@ class default():
         #intervals = int(sec)
         #time.sleep(intervals)
         #print("done")
-        return self.cluster.wait(sec, silent)
+        if sec > 0:
+            return self.cluster.wait(sec, silent)
     def delay(self,
               sec,
               silent=False):
@@ -1163,10 +1249,12 @@ class default():
             print("{:30s}: is running".format("Cluster monitoring"))
         else:
             self.cluster.monitor_cluster_exists = False
+        intervals_wait = 0
         do = True
         while do:
             #time.sleep(intervals)
-            self.wait(intervals)
+            self.wait(intervals_wait)
+            intervals_wait = intervals
             # count number of running and pending pods
             num_pods_running_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
             num_pods_pending_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
@@ -1245,9 +1333,10 @@ class default():
                         if 'delay_prepare' in config.dockertemplate:
                             # config demands other delay
                             delay = config.dockertemplate['delay_prepare']
-                        config.loading_after_time = now + timedelta(seconds=delay)
-                        print("{:30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
-                        continue
+                        if delay > 0:
+                            config.loading_after_time = now + timedelta(seconds=delay)
+                            print("{:30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                            continue
                 # check if maintaining
                 if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
@@ -1293,9 +1382,10 @@ class default():
                         if 'delay_prepare' in config.dockertemplate:
                             # config demands other delay
                             delay = config.dockertemplate['delay_prepare']
-                        config.loading_after_time = now + timedelta(seconds=delay)
-                        print("{:30s}: will start benchmarking but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
-                        continue
+                        if delay > 0:
+                            config.loading_after_time = now + timedelta(seconds=delay)
+                            print("{:30s}: will start benchmarking but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                            continue
                     elif not now >= config.loading_after_time:
                         # system might not be ready yet
                         print("{:30s}: will start benchmarking but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
@@ -2997,7 +3087,7 @@ class ycsb(default):
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
             self.workload = workload_properties
-        #print(workload_properties)
+        #print(workload_properties) # sut_service
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
