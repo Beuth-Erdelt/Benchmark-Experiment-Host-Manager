@@ -476,6 +476,21 @@ class default():
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
         self.workload['benchmarking_active'] = self.benchmarking_is_active()
         self.workload['loading_active'] = self.loading_is_active()
+    def generate_port_forward(self, service):
+        """
+        Generates command to port-forward to a service.
+        Returns it as a string
+
+        :return: Command to port-forward to SUT service as a string
+        """
+        context = self.cluster.context
+        port = self.cluster.port
+        app = self.appname
+        forward = ['kubectl', '--context {context}'.format(context=context), 'port-forward', 'service/'+service]
+        forward.extend(f"{port}:{port}")
+        command = " ".join(forward)
+        #print("{:30s}: {}".format(configuration, command))
+        return command
     def get_dashboard_pod(self,
                           pod_dashboard=''):
         """
@@ -3099,6 +3114,11 @@ class ycsb(default):
                 print("    Error: "+error)
                 for message in messages:
                     print("        "+message)
+        if 'sut_service' in workload_properties:
+            print("\n### Services")
+            for c in sorted(workload_properties['sut_service']):
+                print(c)
+                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
