@@ -1380,6 +1380,9 @@ class default():
                             else:
                                 print("{:30s}: can be stopped, but we leave it running".format(config.configuration))
                                 command = config.generate_port_forward()
+                                if not 'sut_service' in self.workload:
+                                    self.workload['sut_service'] = dict()
+                                self.workload['sut_service'][config.configuration] = config.get_service_sut(config.configuration)
                                 print("{:30s}: Ready: {}".format(config.configuration, command))
                                 #print(config.num_experiment_to_apply_done, config.num_experiment_to_apply)
                                 # if we reach this point for the first time: simulate benchmarking
