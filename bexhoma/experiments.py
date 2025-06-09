@@ -3295,6 +3295,14 @@ class ycsb(default):
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             print(df_aggregated_loaded)
+            # Make a copy to format safely
+            #formatted_df = df_aggregated_loaded.copy()
+            # Select float columns
+            #float_cols = formatted_df.select_dtypes(include="float").columns
+            # Format float columns as strings with no dtype conflict
+            #for col in float_cols:
+            #    formatted_df[col] = formatted_df[col].map(lambda x: f"{x:.0f}")
+            #print(df_aggregated_loaded.to_markdown(index=False, disable_numparse=True)) #, floatfmt=".4f"))
             test_loading = True
         #####################
         contains_failed = False
@@ -3326,6 +3334,13 @@ class ycsb(default):
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             print(df_aggregated_reduced)
+            #formatted_df = df_aggregated_reduced.copy()
+            # Select float columns
+            #float_cols = formatted_df.select_dtypes(include="float").columns
+            # Format float columns as strings with no dtype conflict
+            #for col in float_cols:
+            #    formatted_df[col] = formatted_df[col].map(lambda x: f"{x:.0f}")
+            #print(formatted_df.to_markdown(index=False))
             #print(df_aggregated_reduced.columns)
             contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
         #evaluation = evaluators.ycsb(code=code, path=path)
