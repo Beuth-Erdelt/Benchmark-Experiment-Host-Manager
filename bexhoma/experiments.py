@@ -1505,7 +1505,7 @@ class default():
                                 # if we reach this point for the first time: simulate benchmarking
                                 # this collects loading metrics and prepares a connection.config and a query.config
                                 # this allows summaries like for "real" benchmarking experiments
-                                if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                if config.client == 1 and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
                                     client = str(config.client)
                                     config.client = config.client+1
                                     if config.num_experiment_to_apply > 1:
