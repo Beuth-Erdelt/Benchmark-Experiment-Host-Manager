@@ -3302,7 +3302,7 @@ class ycsb(default):
             # Format float columns as strings with no dtype conflict
             #for col in float_cols:
             #    formatted_df[col] = formatted_df[col].map(lambda x: f"{x:.0f}")
-            #print(df_aggregated_loaded.to_markdown(index=False, disable_numparse=True)) #, floatfmt=".4f"))
+            #print(df_aggregated_loaded.to_markdown(index=True)) #, disable_numparse=True)) #, floatfmt=".4f"))
             test_loading = True
         #####################
         contains_failed = False
