@@ -1,0 +1,112 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1749558582
+Experiment                    : starts at 2025-06-10 14:29:42.025758 (13750745.496308448)
+Experiment                    : This imports TPC-C data sets.
+TPC-C data is generated and loaded using several threads.
+Scaling factor (i.e., number of warehouses) is 1.
+Experiment uses bexhoma version 0.8.7.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [1] pods.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-BHT-1-1            : will start now
+PostgreSQL-BHT-1-1            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1-1749558582
+PostgreSQL-BHT-1-1            : Name of SUT service = bexhoma-sut-postgresql-bht-1-1-1749558582
+- waiting 30s -               : done
+PostgreSQL-BHT-1-1            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1-1            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1-1            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1-1            : is not loaded yet
+PostgreSQL-BHT-1-1            : will start loading but not before 2025-06-10 12:32:43 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-BHT-1-1            : is not loaded yet
+PostgreSQL-BHT-1-1            : will start loading but not before 2025-06-10 12:32:43
+done
+PostgreSQL-BHT-1-1            : is not loaded yet
+PostgreSQL-BHT-1-1            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-1            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-1            : is loading
+done
+PostgreSQL-BHT-1-1            : showing loader times
+PostgreSQL-BHT-1-1            : loader timespan (first to last [s]) = 36
+PostgreSQL-BHT-1-1            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-1            : is loading
+done
+PostgreSQL-BHT-1-1            : can be stopped, but we leave it running
+PostgreSQL-BHT-1-1            : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1-1749558582 9091
+PostgreSQL-BHT-1-1            : benchmarking results in folder /home/perdelt/benchmarks/1749558582
+PostgreSQL-BHT-1-1-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1749558582(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1749558582(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1749558582(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Experiment                    : ends at 2025-06-10 14:34:34.438991 (13751037.909545243) - 292.41s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+HammerDB Data Loading SF=1 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 293s 
+    Code: 1749558582
+    HammerDB runs the benchmark.
+    This imports TPC-C data sets.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 1.
+    Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Experiment is run once.
+
+### Services
+PostgreSQL-BHT-1-1
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1-1749558582 9091:9091
+
+### Connections
+PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:389223792
+    datadisk:281
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1749558582
+
+### Loading
+                      time_load  terminals  pods  Imported warehouses [1/h]
+PostgreSQL-BHT-1-1-1       36.0        1.0   1.0                        0.0
+
+### Ingestion - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-1-1        5.16     0.11          2.44                  2.5
+
+### Ingestion - Loader
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-1-1           0        0           0.0                  0.0
+
+### Tests
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]

@@ -1,0 +1,64 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1749482968
+Experiment                    : starts at 2025-06-09 17:29:31.236773 (380332.1475112)
+Experiment                    : This just starts a SUT.
+Experiment uses bexhoma version 0.8.7.
+Experiment is limited to DBMS ['PostgreSQL'].
+SUT is fixed to cl-worker11.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-BHT-1              : will start now
+PostgreSQL-BHT-1              : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1749482968
+PostgreSQL-BHT-1              : Name of SUT service = bexhoma-sut-postgresql-bht-1-1749482968
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : can be stopped, but we leave it running
+PostgreSQL-BHT-1              : Ready: kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749482968 9091
+PostgreSQL-BHT-1              : benchmarking results in folder C:\data\benchmarks/1749482968
+Experiment                    : ends at 2025-06-09 17:33:10.202420 (380551.1136006) - 218.97s total
+Build evaluation cube done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-DS Start DBMS
+    Type: tpcds
+    Duration: 219s 
+    Code: 1749482968
+    Start DBMS and do not load data.
+    This just starts a SUT.
+    Experiment uses bexhoma version 0.8.7.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    SUT is fixed to cl-worker11.
+    Experiment is run once.
+
+### Services
+PostgreSQL-BHT-1
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749482968 9091:9091
+
+### Connections
+PostgreSQL-BHT-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:379000608
+    datadisk:39
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1749482968
+
+### Tests

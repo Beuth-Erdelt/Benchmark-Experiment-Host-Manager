@@ -1,0 +1,181 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1749557610
+Experiment                    : starts at 2025-06-10 14:13:30.003845 (13749773.474395042)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 5 minutes.
+Experiment uses bexhoma version 0.8.7.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [64] threads, split into [1] pods.
+Benchmarking is tested with [64] threads, split into [8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-1-1-1024           : will start now
+PostgreSQL-1-1-1024           : Name of SUT pods = bexhoma-sut-postgresql-1-1-1024-1749557610
+PostgreSQL-1-1-1024           : Name of SUT service = bexhoma-sut-postgresql-1-1-1024-1749557610
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : will start loading but not before 2025-06-10 12:16:31 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : will start loading but not before 2025-06-10 12:16:31
+done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : start asynch loading scripts of type loaded
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+done
+PostgreSQL-1-1-1024           : showing loader times
+PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 66
+PostgreSQL-1-1-1024           : start asynch loading scripts of type indexed
+PostgreSQL-1-1-1024           : is loading
+done
+PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '1', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 128, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a'}
+PostgreSQL-1-1-1024-1         : start benchmarking
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1749557610
+- waiting 10s -               : done
+found
+PostgreSQL-1-1-1024-1         : collecting loading metrics of SUT at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749557610(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-1024-1         : collecting metrics of data generator at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749557610(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-1024-1         : collecting metrics of data injector at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749557610(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+done
+PostgreSQL-1-1-1024           : has running benchmarks
+PostgreSQL-1-1-1024-1         : showing benchmarker times
+PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 335
+PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1749557927, 1749558229), (1749557926, 1749558229), (1749557927, 1749558229), (1749557926, 1749558229), (1749557926, 1749558229), (1749557926, 1749558229), (1749557927, 1749558229), (1749557926, 1749558229)]
+PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1749557927, 1749558229), (1749557926, 1749558229), (1749557927, 1749558229), (1749557926, 1749558229), (1749557926, 1749558229), (1749557926, 1749558229), (1749557927, 1749558229), (1749557926, 1749558229)]}
+PostgreSQL-1-1-1024-1         : collecting execution metrics of SUT at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749557610(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-1024-1         : collecting metrics of benchmarker at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749557610(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-1-1-1024           : can be stopped, but we leave it running
+PostgreSQL-1-1-1024           : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749557610 9091
+Experiment                    : ends at 2025-06-10 14:24:54.985074 (13750458.45562866) - 684.98s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=1
+    Type: benchbase
+    Duration: 685s 
+    Code: 1749557610
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [64] threads, split into [1] pods.
+    Benchmarking is tested with [64] threads, split into [8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Services
+PostgreSQL-1-1-1024
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749557610 9091:9091
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:389204736
+    datadisk:331
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1749557610
+
+### Execution
+                       experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         64    1024          8  300.0           2                        403.38                     399.78         0.0                                                     831837.0                                             158444.5
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[8]]
+
+#### Planned
+DBMS PostgreSQL-1-1-1024 - Pods [[8]]
+
+### Loading
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1       66.0        1.0   8.0          54.545455
+
+### Ingestion - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1       31.34     0.58          2.45                 2.57
+
+### Ingestion - Loader
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1       13.45        0          0.27                 0.27
+
+### Execution - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      601.58     2.33          2.96                 3.22
+
+### Execution - Benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      281.83     0.52          2.02                 2.02
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

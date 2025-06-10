@@ -1,0 +1,38 @@
+## Show Summary
+
+### Workload
+YCSB Start DBMS
+    Type: ycsb
+    Duration: 186s 
+    Code: 1749546838
+    Intro: Start DBMS and do not load data.
+    This just starts a SUT.
+    Workload is 'C'.
+    Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    SUT is fixed to cl-worker11.
+    Experiment is run once.
+
+### Services
+PostgreSQL-1-1-16384
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749546838 9091:9091
+
+### Connections
+PostgreSQL-1-1-16384-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:386213960
+    datadisk:39
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749546838
+
+### Tests
+TEST passed: Result contains no FAILED column

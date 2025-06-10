@@ -22,12 +22,8 @@ import logging
 import urllib3
 import logging
 import argparse
-import time
-from timeit import default_timer
-import datetime
 import pandas as pd
 import types
-import math
 
 
 urllib3.disable_warnings()
@@ -46,13 +42,14 @@ if __name__ == '__main__':
     parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
+    parser.add_argument('-ss',  '--skip-shutdown', help='do not remove SUTs after benchmarking', action='store_true', default=False)
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
     parser.add_argument('-m',   '--monitoring', help='activates monitoring for sut', action='store_true')
     parser.add_argument('-mc',  '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
     parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
     parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="")
+    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
     parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
     parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
     parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
@@ -116,8 +113,6 @@ if __name__ == '__main__':
     timeout = int(args.timeout)
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
-    # should results be tested for validity?
-    test_result = args.test_result
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -126,6 +121,8 @@ if __name__ == '__main__':
         list_clients = []
     # do not ingest, start benchmarking immediately
     skip_loading = args.skip_loading
+    # do not remove SUTs after benchmarking
+    #skip_shutdown = args.skip_shutdown
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
@@ -1004,54 +1001,5 @@ if __name__ == '__main__':
     ##############
     ### branch for workflows
     ##############
-    if args.mode == 'start':
-        experiment.start_sut()
-    elif args.mode == 'load':
-        # start all DBMS
-        experiment.start_sut()
-        # configure number of clients per config = 0
-        list_clients = []
-        # total time of experiment
-        experiment.add_benchmark_list(list_clients)
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-    elif args.mode == 'summary':
-        #experiment.evaluate_results()
-        #experiment.store_workflow_results()
-        experiment.show_summary()
-    else:
-        # total time of experiment
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        #print("Experiment starts at {} ({})".format(start_datetime, start))
-        print("{:30s}: has code {}".format("Experiment",experiment.code))
-        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
-        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-        #print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
-        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
-        experiment.workload['duration'] = math.ceil(duration_experiment)
-        ##################
-        experiment.evaluate_results()
-        experiment.store_workflow_results()
-        experiment.stop_benchmarker()
-        experiment.stop_sut()
-        #experiment.zip() # OOM? exit code 137
-        if test_result:
-            test_result_code = experiment.test_results()
-            if test_result_code == 0:
-                print("Test successful!")
-        #cluster.restart_dashboard()        # only for dbmsbenchmarker because of dashboard. Jupyter server does not need to restart
-        experiment.show_summary()
+    experiment.process()
 exit()
