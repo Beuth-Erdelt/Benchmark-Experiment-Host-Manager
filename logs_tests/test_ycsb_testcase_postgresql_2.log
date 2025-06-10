@@ -2,99 +2,312 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1728373344
-Experiment                    : starts at 2024-10-08 09:42:24.221374 (3109284.345355281)
+Experiment                    : has code 1749135967
+Experiment                    : starts at 2025-06-05 17:06:06.939157 (13328130.409711204)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Ordering of inserts is hashed.
+Number of operations is 1000000.
+Batch size is ''.
+Target is based on multiples of '1024'.
+Factors for loading are [1].
+Factors for benchmarking are [1].
+Experiment uses bexhoma version 0.8.7.
 Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
+Database is persisted to disk of type shared and size 50Gi.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run 2 times.
 Cluster monitoring            : is running
 done
-PostgreSQL-64-8-131072        : will start now
+PostgreSQL-64-8-1024          : will start now
+PostgreSQL-64-8-1024          : Name of SUT pods = bexhoma-sut-postgresql-64-8-1024-1749135967
+PostgreSQL-64-8-1024          : Name of SUT service = bexhoma-sut-postgresql-64-8-1024-1749135967
+PostgreSQL-64-8-1024          : Name of SUT PVC name = bexhoma-storage-postgresql-ycsb-1
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : is not loaded yet
-PostgreSQL-64-8-131072        : will start loading but not before 2024-10-08 07:44:24 (that is in 60 secs)
+PostgreSQL-64-8-1024          : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : is not loaded yet
-PostgreSQL-64-8-131072        : will start loading but not before 2024-10-08 07:44:24
+PostgreSQL-64-8-1024          : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is not loaded yet
+PostgreSQL-64-8-1024          : will start loading but not before 2025-06-05 15:10:08 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is not loaded yet
+PostgreSQL-64-8-1024          : will start loading but not before 2025-06-05 15:10:08
 done
-PostgreSQL-64-8-131072        : is not loaded yet
-PostgreSQL-64-8-131072        : start asynch loading scripts of type loaded
-PostgreSQL-64-8-131072        : is loading
+PostgreSQL-64-8-1024          : is not loaded yet
+PostgreSQL-64-8-1024          : start asynch loading scripts of type loaded
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : is loading
 done
-PostgreSQL-64-8-131072        : showing loader times
-PostgreSQL-64-8-131072        : loader timespan (first to last [s]) = 12
-PostgreSQL-64-8-131072        : benchmarks done 0 of 2. This will be client 1
-PostgreSQL-64-8-131072        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
-PostgreSQL-64-8-131072-1-1    : start benchmarking
-PostgreSQL-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1728373344
+PostgreSQL-64-8-1024          : showing loader times
+PostgreSQL-64-8-1024          : loader timespan (first to last [s]) = 978
+PostgreSQL-64-8-1024          : start asynch loading scripts of type indexed
+PostgreSQL-64-8-1024          : is loading
+done
+PostgreSQL-64-8-1024          : benchmarks done 0 of 2. This will be client 1
+PostgreSQL-64-8-1024          : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram', 'YCSB_INSERTORDER': 'hashed'}
+PostgreSQL-64-8-1024-1-1      : start benchmarking
+PostgreSQL-64-8-1024          : benchmarking results in folder /home/perdelt/benchmarks/1749135967
 - waiting 10s -               : done
-PostgreSQL-64-8-131072        : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-131072-1728373344-1-1-z8xvx: found
+PostgreSQL-64-8-1024          : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-1024-1749135967-1-1-wlcxb: found
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
 done
-PostgreSQL-64-8-131072        : has running benchmarks
-PostgreSQL-64-8-131072-1-1    : showing benchmarker times
-PostgreSQL-64-8-131072-1-1    : benchmarker timespan (start to end single container [s]) = 41
-PostgreSQL-64-8-131072-1-1    : benchmarker times (start/end per pod and container) = [(1728373506, 1728373516)]
-PostgreSQL-64-8-131072-1-1    : found and updated times {'benchmarker': [(1728373506, 1728373516)]}
+PostgreSQL-64-8-1024          : has running benchmarks
+PostgreSQL-64-8-1024-1-1      : showing benchmarker times
+PostgreSQL-64-8-1024-1-1      : benchmarker timespan (start to end single container [s]) = 1009
+PostgreSQL-64-8-1024-1-1      : benchmarker times (start/end per pod and container) = [(1749137261, 1749138238)]
+PostgreSQL-64-8-1024-1-1      : found and updated times {'benchmarker': [(1749137261, 1749138238)]}
 done
-PostgreSQL-64-8-131072        : can be stopped
-PostgreSQL-64-8-131072        : still being removed
+PostgreSQL-64-8-1024          : can be stopped
+PostgreSQL-64-8-1024          : still being removed
 done
-PostgreSQL-64-8-131072        : starts again
-PostgreSQL-64-8-131072        : storage exists bexhoma-storage-postgresql-ycsb-1
-PostgreSQL-64-8-131072        : loading is set to finished
+PostgreSQL-64-8-1024          : starts again
+PostgreSQL-64-8-1024          : Name of SUT pods = bexhoma-sut-postgresql-64-8-1024-1749135967
+PostgreSQL-64-8-1024          : Name of SUT service = bexhoma-sut-postgresql-64-8-1024-1749135967
+PostgreSQL-64-8-1024          : Name of SUT PVC name = bexhoma-storage-postgresql-ycsb-1
+PostgreSQL-64-8-1024          : storage exists bexhoma-storage-postgresql-ycsb-1
+PostgreSQL-64-8-1024          : label loaded copied value True
+PostgreSQL-64-8-1024          : label timeLoading copied value 980
+PostgreSQL-64-8-1024          : label timeLoadingStart copied value 1749136209
+PostgreSQL-64-8-1024          : label timeLoadingEnd copied value 1749137225
+PostgreSQL-64-8-1024          : label indexed copied value True
+PostgreSQL-64-8-1024          : label time_generated copied value 0
+PostgreSQL-64-8-1024          : label time_indexed copied value 1
+PostgreSQL-64-8-1024          : label time_ingested copied value 978
+PostgreSQL-64-8-1024          : label time_initschema copied value 1
+PostgreSQL-64-8-1024          : label time_loaded copied value 1
+PostgreSQL-64-8-1024          : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-10-08 07:48:27 (that is in 60 secs)
+PostgreSQL-64-8-1024          : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-64-8-131072        : will start benchmarking but not before 2024-10-08 07:48:27
+PostgreSQL-64-8-1024          : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : will start benchmarking but not before 2025-06-05 15:48:41 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : will start benchmarking but not before 2025-06-05 15:48:41
 done
-PostgreSQL-64-8-131072        : benchmarks done 1 of 2. This will be client 1
-PostgreSQL-64-8-131072        : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
-PostgreSQL-64-8-131072-2-1    : start benchmarking
-PostgreSQL-64-8-131072        : benchmarking results in folder /home/perdelt/benchmarks/1728373344
+PostgreSQL-64-8-1024          : benchmarks done 1 of 2. This will be client 1
+PostgreSQL-64-8-1024          : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram', 'YCSB_INSERTORDER': 'hashed'}
+PostgreSQL-64-8-1024-2-1      : start benchmarking
+PostgreSQL-64-8-1024          : benchmarking results in folder /home/perdelt/benchmarks/1749135967
 - waiting 10s -               : done
-PostgreSQL-64-8-131072        : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-131072-1728373344-2-1-27z5d: found
+PostgreSQL-64-8-1024          : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-1024-1749135967-2-1-hp9s6: found
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-1024          : has running benchmarks
 done
-PostgreSQL-64-8-131072        : has running benchmarks
-PostgreSQL-64-8-131072-2-1    : showing benchmarker times
-PostgreSQL-64-8-131072-2-1    : benchmarker timespan (start to end single container [s]) = 41
-PostgreSQL-64-8-131072-2-1    : benchmarker times (start/end per pod and container) = [(1728373713, 1728373730)]
-PostgreSQL-64-8-131072-2-1    : found and updated times {'benchmarker': [(1728373713, 1728373730)]}
+PostgreSQL-64-8-1024          : has running benchmarks
+PostgreSQL-64-8-1024-2-1      : showing benchmarker times
+PostgreSQL-64-8-1024-2-1      : benchmarker timespan (start to end single container [s]) = 1010
+PostgreSQL-64-8-1024-2-1      : benchmarker times (start/end per pod and container) = [(1749138526, 1749139504)]
+PostgreSQL-64-8-1024-2-1      : found and updated times {'benchmarker': [(1749138526, 1749139504)]}
 done
-PostgreSQL-64-8-131072        : can be stopped
-Experiment                    : ends at 2024-10-08 09:49:43.364277 (3109723.48825656) - 439.14s total
+PostgreSQL-64-8-1024          : can be stopped
+Experiment                    : ends at 2025-06-05 18:06:06.257891 (13331729.72844321) - 3599.32s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Benchmarking                                               connection  ... [UPDATE].Return=OK
-connection_pod                                            ...                   
-PostgreSQL-64-8-131072-2-1-1  PostgreSQL-64-8-131072-2-1  ...             500482
-PostgreSQL-64-8-131072-1-1-1  PostgreSQL-64-8-131072-1-1  ...             500515
-
-[2 rows x 43 columns]
-Workflow {'PostgreSQL-64-8-131072': [[1], [1]]}
-Loading                                       connection  ... [INSERT].Return=OK
-connection_pod                                    ...                   
-PostgreSQL-64-8-131072-1  PostgreSQL-64-8-131072  ...             125000
-PostgreSQL-64-8-131072-2  PostgreSQL-64-8-131072  ...             125000
-PostgreSQL-64-8-131072-3  PostgreSQL-64-8-131072  ...             125000
-PostgreSQL-64-8-131072-4  PostgreSQL-64-8-131072  ...             125000
-PostgreSQL-64-8-131072-5  PostgreSQL-64-8-131072  ...             125000
-PostgreSQL-64-8-131072-6  PostgreSQL-64-8-131072  ...             125000
-PostgreSQL-64-8-131072-7  PostgreSQL-64-8-131072  ...             125000
-PostgreSQL-64-8-131072-8  PostgreSQL-64-8-131072  ...             125000
-
-[8 rows x 36 columns]
 Result workflow complete
 
 ## Show Summary
@@ -102,67 +315,83 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 440s 
-    Code: 1728373344
-    This includes no queries. YCSB runs the benchmark
+    Duration: 3600s 
+    Code: 1749135967
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run 2 times.
 
 ### Connections
-PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+PostgreSQL-64-8-1024-1-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973268
-    datadisk:2122664
-    volume_size:100G
-    volume_used:2.0G
+    disk:358550148
+    datadisk:2393
+    volume_size:50G
+    volume_used:2.4G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
-    RAM:541008605184
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749135967
+PostgreSQL-64-8-1024-2-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973260
-    datadisk:2907528
-    volume_size:100G
+    disk:358855468
+    datadisk:2822
+    volume_size:50G
     volume_used:2.8G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:2
+    eval_parameters
+        code:1749135967
 
 ### Loading
-                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-131072               1       64  131072          8                    95847.48652                10614.0             1000000                             3982.75
+                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-8-1024               1       64    1024          8           0                     1023.69024               976892.0             1000000                             792.875
 
 ### Execution
-                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                      114403.39                 8741.0            499485                            1400.0              500515                              2007.0
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       57683.43                17336.0            499518                            1456.0              500482                              2014.0
+                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-1024-1-1               1       64    1024          1           0                        1023.44               977095.0            500089                             658.0              499911                               802.0
+PostgreSQL-64-8-1024-2-1               2       64    1024          1           0                        1023.51               977026.0            500749                             710.0              499251                               837.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
+DBMS PostgreSQL-64-8-1024 - Pods [[1], [1]]
 
 #### Planned
-DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
+DBMS PostgreSQL-64-8-1024 - Pods [[1], [1]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

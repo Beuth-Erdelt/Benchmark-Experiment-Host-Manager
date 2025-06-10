@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1286s 
-    Code: 1749019742
+    Duration: 1336s 
+    Code: 1749161205
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'E'.
@@ -34,8 +34,8 @@ MariaDB-64-8-1024-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332236772
-    datadisk:1932
+    disk:359262872
+    datadisk:1872
     volume_size:30G
     volume_used:1.9G
     requests_cpu:4
@@ -43,11 +43,11 @@ MariaDB-64-8-1024-1 uses docker image mariadb:11.4.7
     client:1
     numExperiment:1
     eval_parameters
-        code:1749019742
+        code:1749161205
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)  [INSERT-FAILED].Operations  [INSERT-FAILED].99thPercentileLatency(us)
-MariaDB-64-8-1024-1               1       64    1024          8           0                        1023.67               976913.0               49706                              2691.0            950136                            2927.0                         158                                    15575.0
+MariaDB-64-8-1024-1               1       64    1024          8           0                        1023.68               976884.0               49863                              2629.0            949971                            3389.0                         166                                    15071.0
 
 ### Workflow
 

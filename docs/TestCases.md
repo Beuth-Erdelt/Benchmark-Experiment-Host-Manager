@@ -4483,12 +4483,19 @@ test_ycsb_testcase_postgresql_1.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 921s 
-    Code: 1728372434
-    This includes no queries. YCSB runs the benchmark
+    Duration: 2293s 
+    Code: 1749133596
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 4 and 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -4500,79 +4507,42 @@ YCSB SF=1
     Experiment is run once.
 
 ### Connections
-PostgreSQL-32-4-131072-1 uses docker image postgres:16.1
-    RAM:541008605184
+PostgreSQL-32-4-1024-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:251145412
-    datadisk:2172140
+    disk:360804960
+    datadisk:2393
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-32-8-131072-1 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:251105492
-    datadisk:2138756
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-4-131072-1 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:251129260
-    datadisk:2155988
-    requests_cpu:4
-    requests_memory:16Gi
-PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:251062676
-    datadisk:2105788
-    requests_cpu:4
-    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749133596
 
 ### Loading
-                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-32-4-131072               1       32  131072          4                   81569.178833                12610.0             1000000                             2384.50
-PostgreSQL-64-4-131072               1       64  131072          4                  100089.555728                10166.0             1000000                             3845.00
-PostgreSQL-32-8-131072               1       32  131072          8                   84950.617083                12602.0             1000000                             2431.75
-PostgreSQL-64-8-131072               1       64  131072          8                  101721.119844                10182.0             1000000                             4253.25
+                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-32-4-1024               1       32    1024          4           0                    1023.706483               976849.0             1000000                               744.5
 
 ### Execution
-                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-32-4-131072-1               1       64  131072          1                      114586.91                 8727.0            499976                            1243.0              500024                              1796.0
-PostgreSQL-32-8-131072-1               1       64  131072          1                      115620.30                 8649.0            499505                            1399.0              500495                              2289.0
-PostgreSQL-64-4-131072-1               1       64  131072          1                      116577.29                 8578.0            499190                            1392.0              500810                              2037.0
-PostgreSQL-64-8-131072-1               1       64  131072          1                      114390.30                 8742.0            499702                            1449.0              500298                              2749.0
+                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-32-4-1024-1               1       64    1024          1           0                        1023.48               977063.0            500067                             676.0              499933                               825.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-32-8-131072 - Pods [[1]]
-DBMS PostgreSQL-64-8-131072 - Pods [[1]]
-DBMS PostgreSQL-32-4-131072 - Pods [[1]]
-DBMS PostgreSQL-64-4-131072 - Pods [[1]]
+DBMS PostgreSQL-32-4-1024 - Pods [[1]]
 
 #### Planned
-DBMS PostgreSQL-32-4-131072 - Pods [[1]]
-DBMS PostgreSQL-32-8-131072 - Pods [[1]]
-DBMS PostgreSQL-64-4-131072 - Pods [[1]]
-DBMS PostgreSQL-64-8-131072 - Pods [[1]]
+DBMS PostgreSQL-32-4-1024 - Pods [[1]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column
 ```
 
 ### YCSB Loader Test for Persistency
@@ -4605,70 +4575,86 @@ test_ycsb_testcase_postgresql_2.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 440s 
-    Code: 1728373344
-    This includes no queries. YCSB runs the benchmark
+    Duration: 3600s 
+    Code: 1749135967
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run 2 times.
 
 ### Connections
-PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+PostgreSQL-64-8-1024-1-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973268
-    datadisk:2122664
-    volume_size:100G
-    volume_used:2.0G
+    disk:358550148
+    datadisk:2393
+    volume_size:50G
+    volume_used:2.4G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
-    RAM:541008605184
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749135967
+PostgreSQL-64-8-1024-2-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973260
-    datadisk:2907528
-    volume_size:100G
+    disk:358855468
+    datadisk:2822
+    volume_size:50G
     volume_used:2.8G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:2
+    eval_parameters
+        code:1749135967
 
 ### Loading
-                        experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-131072               1       64  131072          8                    95847.48652                10614.0             1000000                             3982.75
+                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+PostgreSQL-64-8-1024               1       64    1024          8           0                     1023.69024               976892.0             1000000                             792.875
 
 ### Execution
-                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                      114403.39                 8741.0            499485                            1400.0              500515                              2007.0
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       57683.43                17336.0            499518                            1456.0              500482                              2014.0
+                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-1024-1-1               1       64    1024          1           0                        1023.44               977095.0            500089                             658.0              499911                               802.0
+PostgreSQL-64-8-1024-2-1               2       64    1024          1           0                        1023.51               977026.0            500749                             710.0              499251                               837.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
+DBMS PostgreSQL-64-8-1024 - Pods [[1], [1]]
 
 #### Planned
-DBMS PostgreSQL-64-8-131072 - Pods [[1], [1]]
+DBMS PostgreSQL-64-8-1024 - Pods [[1], [1]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column
 ```
 
 
@@ -4702,143 +4688,183 @@ test_ycsb_testcase_postgresql_3.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 915s 
-    Code: 1728373944
-    This includes no queries. YCSB runs the benchmark
+    Duration: 6873s 
+    Code: 1749139628
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1, 8] pods.
     Benchmarking is run as [1, 2] times the number of benchmarking pods.
     Experiment is run 2 times.
 
 ### Connections
-PostgreSQL-64-8-131072-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+PostgreSQL-64-8-1024-1-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:2940752
-    volume_size:100G
-    volume_used:2.9G
+    disk:359045052
+    datadisk:2846
+    volume_size:50G
+    volume_used:2.8G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-1-2 uses docker image postgres:16.1
-    RAM:541008605184
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749139628
+PostgreSQL-64-8-1024-1-2 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:2949784
-    volume_size:100G
-    volume_used:2.9G
+    disk:359049596
+    datadisk:2853
+    volume_size:50G
+    volume_used:2.8G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-1-3 uses docker image postgres:16.1
-    RAM:541008605184
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1749139628
+PostgreSQL-64-8-1024-1-3 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:3137448
-    volume_size:100G
-    volume_used:2.9G
+    disk:359050772
+    datadisk:2856
+    volume_size:50G
+    volume_used:2.8G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-1-4 uses docker image postgres:16.1
-    RAM:541008605184
+    client:3
+    numExperiment:1
+    eval_parameters
+        code:1749139628
+PostgreSQL-64-8-1024-1-4 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:3287608
-    volume_size:100G
-    volume_used:2.9G
+    disk:359225168
+    datadisk:2923
+    volume_size:50G
+    volume_used:2.8G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-2-1 uses docker image postgres:16.1
-    RAM:541008605184
+    client:4
+    numExperiment:1
+    eval_parameters
+        code:1749139628
+PostgreSQL-64-8-1024-2-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:3603192
-    volume_size:100G
-    volume_used:3.5G
+    disk:359238984
+    datadisk:3046
+    volume_size:50G
+    volume_used:3.0G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-2-2 uses docker image postgres:16.1
-    RAM:541008605184
+    client:1
+    numExperiment:2
+    eval_parameters
+        code:1749139628
+PostgreSQL-64-8-1024-2-2 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:3606176
-    volume_size:100G
-    volume_used:3.5G
+    disk:359247344
+    datadisk:3048
+    volume_size:50G
+    volume_used:3.0G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-2-3 uses docker image postgres:16.1
-    RAM:541008605184
+    client:2
+    numExperiment:2
+    eval_parameters
+        code:1749139628
+PostgreSQL-64-8-1024-2-3 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:3746688
-    volume_size:100G
-    volume_used:3.5G
+    disk:359247068
+    datadisk:3050
+    volume_size:50G
+    volume_used:3.0G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-2-4 uses docker image postgres:16.1
-    RAM:541008605184
+    client:3
+    numExperiment:2
+    eval_parameters
+        code:1749139628
+PostgreSQL-64-8-1024-2-4 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:3749400
-    volume_size:100G
-    volume_used:3.5G
+    disk:359247796
+    datadisk:3052
+    volume_size:50G
+    volume_used:3.0G
     requests_cpu:4
     requests_memory:16Gi
+    client:4
+    numExperiment:2
+    eval_parameters
+        code:1749139628
 
 ### Execution
-                            experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1-1               1       64  131072          1                       66216.40                15102.0            500545                           1352.00              499455                             1709.00
-PostgreSQL-64-8-131072-1-3               1       64  131072          8                      112183.71                 9096.0            500166                            859.88              499834                             1405.62
-PostgreSQL-64-8-131072-1-2               1      128  262144          2                       86896.65                11590.0            499359                           2025.00              500641                            61167.00
-PostgreSQL-64-8-131072-1-4               1      128  262144         16                       95290.13                10945.0            498701                           2764.38              501299                            49865.00
-PostgreSQL-64-8-131072-2-1               2       64  131072          1                       43685.29                22891.0            499900                           1355.00              500100                             1694.00
-PostgreSQL-64-8-131072-2-3               2       64  131072          8                      125887.08                 8128.0            500524                           1014.38              499476                             1513.12
-PostgreSQL-64-8-131072-2-2               2      128  262144          2                       89067.91                11263.0            500138                           2071.00              499862                            55167.00
-PostgreSQL-64-8-131072-2-4               2      128  262144         16                      114367.93                 9263.0            499789                           3193.62              500211                            17544.00
+                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-1024-1-1               1       64    1024          1           0                        1023.49               977047.0            500515                             703.0              499485                               822.0
+PostgreSQL-64-8-1024-1-3               1       64    1024          8           0                        1023.68               976894.0            499822                             736.0              500178                               847.0
+PostgreSQL-64-8-1024-1-2               1      128    2048          2           0                        2046.08               488745.0            500438                             675.0              499562                               778.0
+PostgreSQL-64-8-1024-1-4               1      128    2048         16           0                        2046.67               488620.0            500818                             707.0              499182                               883.0
+PostgreSQL-64-8-1024-2-1               2       64    1024          1           0                        1023.51               977030.0            500306                             681.0              499694                               780.0
+PostgreSQL-64-8-1024-2-3               2       64    1024          8           0                        1023.68               976913.0            499483                             742.0              500517                               861.0
+PostgreSQL-64-8-1024-2-2               2      128    2048          2           0                        2046.10               488748.0            500244                             698.0              499756                               799.0
+PostgreSQL-64-8-1024-2-4               2      128    2048         16           0                        2046.71               488605.0            500349                             770.0              499651                               908.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-131072 - Pods [[16, 8, 1, 2], [16, 8, 1, 2]]
+DBMS PostgreSQL-64-8-1024 - Pods [[16, 8, 2, 1], [8, 16, 2, 1]]
 
 #### Planned
-DBMS PostgreSQL-64-8-131072 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+DBMS PostgreSQL-64-8-1024 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column
 ```
 
 
@@ -4872,52 +4898,64 @@ test_ycsb_testcase_postgresql_4.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 232s 
-    Code: 1728374844
-    This includes no queries. YCSB runs the benchmark
+    Duration: 1302s 
+    Code: 1749146590
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'E'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'E'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [8] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
-    RAM:541008605184
+PostgreSQL-64-8-1024-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:3822840
-    volume_size:100G
-    volume_used:3.7G
+    disk:359248556
+    datadisk:3047
+    volume_size:50G
+    volume_used:3.0G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749146590
 
 ### Execution
-                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          8                       25447.87                40124.0               50240                             2653.75            949760                            5053.5
+                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)  [INSERT-FAILED].Operations  [INSERT-FAILED].99thPercentileLatency(us)
+PostgreSQL-64-8-1024-1               1       64    1024          8           0                        1023.69               976884.0               49901                              1124.0            949867                            2323.0                         232                                    15863.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+DBMS PostgreSQL-64-8-1024 - Pods [[8]]
 
 #### Planned
-DBMS PostgreSQL-64-8-131072 - Pods [[8]]
+DBMS PostgreSQL-64-8-1024 - Pods [[8]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST failed: Result contains FAILED column
 ```
 
 ### YCSB Execution Monitoring
@@ -4949,80 +4987,96 @@ test_ycsb_testcase_postgresql_5.log
 ## Show Summary
 
 ### Workload
-YCSB SF=10
+YCSB SF=1
     Type: ycsb
-    Duration: 544s 
-    Code: 1728376053
-    This includes no queries. YCSB runs the benchmark
+    Duration: 2342s 
+    Code: 1749147910
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 10000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1, 8] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-PostgreSQL-64-8-131072-1 uses docker image postgres:16.1
-    RAM:541008605184
+PostgreSQL-64-8-1024-1 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:34189800
-    volume_size:100G
-    volume_used:33G
+    disk:359249228
+    datadisk:2752
+    volume_size:50G
+    volume_used:2.7G
     requests_cpu:4
     requests_memory:16Gi
-PostgreSQL-64-8-131072-2 uses docker image postgres:16.1
-    RAM:541008605184
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749147910
+PostgreSQL-64-8-1024-2 uses docker image postgres:16.1
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248973432
-    datadisk:34542952
-    volume_size:100G
-    volume_used:33G
+    disk:359249624
+    datadisk:2754
+    volume_size:50G
+    volume_used:2.7G
     requests_cpu:4
     requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1749147910
 
 ### Execution
-                          experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-131072-1               1       64  131072          1                       52891.86               189065.0           4999969                           1914.00             5000031                             3479.00
-PostgreSQL-64-8-131072-2               1       64  131072          8                      129612.95                77810.0           4998786                           1210.12             5001214                             1617.88
+                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+PostgreSQL-64-8-1024-1               1       64    1024          1           0                        1023.48               977059.0            499742                             690.0              500258                               814.0
+PostgreSQL-64-8-1024-2               1       64    1024          8           0                        1023.69               976880.0            500373                             722.0              499627                               852.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-131072 - Pods [[8, 1]]
+DBMS PostgreSQL-64-8-1024 - Pods [[8, 1]]
 
 #### Planned
-DBMS PostgreSQL-64-8-131072 - Pods [[1, 8]]
+DBMS PostgreSQL-64-8-1024 - Pods [[1, 8]]
 
 ### Execution - SUT
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-131072-1     2058.53     11.3         16.43                33.51
-PostgreSQL-64-8-131072-2      820.51      0.0         19.58                36.25
+                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-1024-1      233.34     0.26          4.05                 5.60
+PostgreSQL-64-8-1024-2      220.71     0.24          4.01                 5.58
 
 ### Execution - Benchmarker
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-131072-1      691.78     1.63          0.60                 0.61
-PostgreSQL-64-8-131072-2      282.36     0.00          4.86                 4.89
+                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-64-8-1024-1      229.65     0.35          0.57                 0.57
+PostgreSQL-64-8-1024-2      227.59     0.25          2.48                 2.50
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column
 ```
 
 

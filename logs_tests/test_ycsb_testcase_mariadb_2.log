@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1749008879
-Experiment                    : starts at 2025-06-04 05:47:59.013353 (13201042.48390687)
+Experiment                    : has code 1749150342
+Experiment                    : starts at 2025-06-05 21:05:42.127395 (13342505.597948715)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -27,8 +27,8 @@ Experiment is run 2 times.
 Cluster monitoring            : is running
 done
 MariaDB-64-8-1024             : will start now
-MariaDB-64-8-1024             : Name of SUT pods = bexhoma-sut-mariadb-64-8-1024-1749008879
-MariaDB-64-8-1024             : Name of SUT service = bexhoma-sut-mariadb-64-8-1024-1749008879
+MariaDB-64-8-1024             : Name of SUT pods = bexhoma-sut-mariadb-64-8-1024-1749150342
+MariaDB-64-8-1024             : Name of SUT service = bexhoma-sut-mariadb-64-8-1024-1749150342
 MariaDB-64-8-1024             : Name of SUT PVC name = bexhoma-storage-mariadb-ycsb-1
 - waiting 30s -               : done
 MariaDB-64-8-1024             : waits for health check to succeed
@@ -39,15 +39,11 @@ MariaDB-64-8-1024             : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-64-8-1024             : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-64-8-1024             : waits for health check to succeed
-- waiting 30s -               : done
-MariaDB-64-8-1024             : waits for health check to succeed
+MariaDB-64-8-1024             : is not loaded yet
+MariaDB-64-8-1024             : will start loading but not before 2025-06-05 19:09:43 (that is in 60 secs)
 - waiting 30s -               : done
 MariaDB-64-8-1024             : is not loaded yet
-MariaDB-64-8-1024             : will start loading but not before 2025-06-04 03:53:02 (that is in 60 secs)
-- waiting 30s -               : done
-MariaDB-64-8-1024             : is not loaded yet
-MariaDB-64-8-1024             : will start loading but not before 2025-06-04 03:53:02
+MariaDB-64-8-1024             : will start loading but not before 2025-06-05 19:09:43
 done
 MariaDB-64-8-1024             : is not loaded yet
 MariaDB-64-8-1024             : start asynch loading scripts of type loaded
@@ -116,28 +112,20 @@ MariaDB-64-8-1024             : is loading
 MariaDB-64-8-1024             : is loading
 - waiting 30s -               : done
 MariaDB-64-8-1024             : is loading
-- waiting 30s -               : done
-MariaDB-64-8-1024             : is loading
-- waiting 30s -               : done
-MariaDB-64-8-1024             : is loading
-- waiting 30s -               : done
-MariaDB-64-8-1024             : is loading
-- waiting 30s -               : done
-MariaDB-64-8-1024             : is loading
-- waiting 30s -               : done
-MariaDB-64-8-1024             : is loading
 done
 MariaDB-64-8-1024             : showing loader times
-MariaDB-64-8-1024             : loader timespan (first to last [s]) = 1150
+MariaDB-64-8-1024             : loader timespan (first to last [s]) = 991
 MariaDB-64-8-1024             : start asynch loading scripts of type indexed
 MariaDB-64-8-1024             : is loading
 done
 MariaDB-64-8-1024             : benchmarks done 0 of 2. This will be client 1
 MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
 MariaDB-64-8-1024-1-1         : start benchmarking
-MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1749008879
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1749150342
 - waiting 10s -               : done
-MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1749008879-1-1-zhgxv: found
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1749150342-1-1-4kbvs: found
+- waiting 30s -               : done
+MariaDB-64-8-1024             : has running benchmarks
 - waiting 30s -               : done
 MariaDB-64-8-1024             : has running benchmarks
 - waiting 30s -               : done
@@ -203,9 +191,9 @@ MariaDB-64-8-1024             : has running benchmarks
 done
 MariaDB-64-8-1024             : has running benchmarks
 MariaDB-64-8-1024-1-1         : showing benchmarker times
-MariaDB-64-8-1024-1-1         : benchmarker timespan (start to end single container [s]) = 983
-MariaDB-64-8-1024-1-1         : benchmarker times (start/end per pod and container) = [(1749010396, 1749011373)]
-MariaDB-64-8-1024-1-1         : found and updated times {'benchmarker': [(1749010396, 1749011373)]}
+MariaDB-64-8-1024-1-1         : benchmarker timespan (start to end single container [s]) = 1007
+MariaDB-64-8-1024-1-1         : benchmarker times (start/end per pod and container) = [(1749151632, 1749152609)]
+MariaDB-64-8-1024-1-1         : found and updated times {'benchmarker': [(1749151632, 1749152609)]}
 done
 MariaDB-64-8-1024             : can be stopped
 MariaDB-64-8-1024             : still being removed
@@ -213,20 +201,20 @@ MariaDB-64-8-1024             : still being removed
 MariaDB-64-8-1024             : still being removed
 done
 MariaDB-64-8-1024             : starts again
-MariaDB-64-8-1024             : Name of SUT pods = bexhoma-sut-mariadb-64-8-1024-1749008879
-MariaDB-64-8-1024             : Name of SUT service = bexhoma-sut-mariadb-64-8-1024-1749008879
+MariaDB-64-8-1024             : Name of SUT pods = bexhoma-sut-mariadb-64-8-1024-1749150342
+MariaDB-64-8-1024             : Name of SUT service = bexhoma-sut-mariadb-64-8-1024-1749150342
 MariaDB-64-8-1024             : Name of SUT PVC name = bexhoma-storage-mariadb-ycsb-1
 MariaDB-64-8-1024             : storage exists bexhoma-storage-mariadb-ycsb-1
 MariaDB-64-8-1024             : label loaded copied value True
-MariaDB-64-8-1024             : label timeLoading copied value 1152
-MariaDB-64-8-1024             : label timeLoadingStart copied value 1749009183
-MariaDB-64-8-1024             : label timeLoadingEnd copied value 1749010361
+MariaDB-64-8-1024             : label timeLoading copied value 994
+MariaDB-64-8-1024             : label timeLoadingStart copied value 1749150584
+MariaDB-64-8-1024             : label timeLoadingEnd copied value 1749151597
 MariaDB-64-8-1024             : label indexed copied value True
 MariaDB-64-8-1024             : label time_generated copied value 0
 MariaDB-64-8-1024             : label time_indexed copied value 1
-MariaDB-64-8-1024             : label time_ingested copied value 1150
-MariaDB-64-8-1024             : label time_initschema copied value 1
-MariaDB-64-8-1024             : label time_loaded copied value 1
+MariaDB-64-8-1024             : label time_ingested copied value 991
+MariaDB-64-8-1024             : label time_initschema copied value 2
+MariaDB-64-8-1024             : label time_loaded copied value 2
 MariaDB-64-8-1024             : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
@@ -240,18 +228,16 @@ MariaDB-64-8-1024             : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-64-8-1024             : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-64-8-1024             : will start benchmarking but not before 2025-06-04 04:35:20 (that is in 60 secs)
+MariaDB-64-8-1024             : will start benchmarking but not before 2025-06-05 19:49:39 (that is in 60 secs)
 - waiting 30s -               : done
-MariaDB-64-8-1024             : will start benchmarking but not before 2025-06-04 04:35:20
+MariaDB-64-8-1024             : will start benchmarking but not before 2025-06-05 19:49:39
 done
 MariaDB-64-8-1024             : benchmarks done 1 of 2. This will be client 1
 MariaDB-64-8-1024             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
 MariaDB-64-8-1024-2-1         : start benchmarking
-MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1749008879
+MariaDB-64-8-1024             : benchmarking results in folder /home/perdelt/benchmarks/1749150342
 - waiting 10s -               : done
-MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1749008879-2-1-fvw9q: found
-- waiting 30s -               : done
-MariaDB-64-8-1024             : has running benchmarks
+MariaDB-64-8-1024             : benchmarking is waiting for job bexhoma-benchmarker-mariadb-64-8-1024-1749150342-2-1-qns7w: found
 - waiting 30s -               : done
 MariaDB-64-8-1024             : has running benchmarks
 - waiting 30s -               : done
@@ -319,12 +305,12 @@ MariaDB-64-8-1024             : has running benchmarks
 done
 MariaDB-64-8-1024             : has running benchmarks
 MariaDB-64-8-1024-2-1         : showing benchmarker times
-MariaDB-64-8-1024-2-1         : benchmarker timespan (start to end single container [s]) = 1041
-MariaDB-64-8-1024-2-1         : benchmarker times (start/end per pod and container) = [(1749011725, 1749012757)]
-MariaDB-64-8-1024-2-1         : found and updated times {'benchmarker': [(1749011725, 1749012757)]}
+MariaDB-64-8-1024-2-1         : benchmarker timespan (start to end single container [s]) = 1007
+MariaDB-64-8-1024-2-1         : benchmarker times (start/end per pod and container) = [(1749152985, 1749153962)]
+MariaDB-64-8-1024-2-1         : found and updated times {'benchmarker': [(1749152985, 1749153962)]}
 done
 MariaDB-64-8-1024             : can be stopped
-Experiment                    : ends at 2025-06-04 06:53:16.875720 (13204960.346273024) - 3917.86s total
+Experiment                    : ends at 2025-06-05 22:07:01.861608 (13346185.332159895) - 3679.73s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -335,8 +321,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 3918s 
-    Code: 1749008879
+    Duration: 3680s 
+    Code: 1749150342
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -366,8 +352,8 @@ MariaDB-64-8-1024-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332207748
-    datadisk:1931
+    disk:359250416
+    datadisk:1871
     volume_size:30G
     volume_used:1.9G
     requests_cpu:4
@@ -375,15 +361,15 @@ MariaDB-64-8-1024-1-1 uses docker image mariadb:11.4.7
     client:1
     numExperiment:1
     eval_parameters
-        code:1749008879
+        code:1749150342
 MariaDB-64-8-1024-2-1 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332209276
-    datadisk:1932
+    disk:359250980
+    datadisk:1872
     volume_size:30G
     volume_used:1.9G
     requests_cpu:4
@@ -391,16 +377,16 @@ MariaDB-64-8-1024-2-1 uses docker image mariadb:11.4.7
     client:1
     numExperiment:2
     eval_parameters
-        code:1749008879
+        code:1749150342
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MariaDB-64-8-1024               1       64    1024          8           0                       869.8306              1150118.0             1000000                           1816959.0
+MariaDB-64-8-1024               1       64    1024          8           0                    1010.970402               989788.0             1000000                            828287.0
 
 ### Execution
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MariaDB-64-8-1024-1-1               1       64    1024          1           0                        1023.54               977006.0            500218                            1554.0              499782                              2557.0
-MariaDB-64-8-1024-2-1               2       64    1024          1           0                         969.43              1031537.0            499293                            1298.0              500707                              1575.0
+MariaDB-64-8-1024-1-1               1       64    1024          1           0                        1023.49               977045.0            499394                            1309.0              500606                              1635.0
+MariaDB-64-8-1024-2-1               2       64    1024          1           0                        1023.51               977027.0            499688                            1272.0              500312                              1494.0
 
 ### Workflow
 
