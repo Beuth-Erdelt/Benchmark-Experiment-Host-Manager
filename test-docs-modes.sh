@@ -45,23 +45,46 @@ wait_process "ycsb"
 
 
 ####################################################
-#################### YCSB Citus ####################
+#################### YCSB Modes ####################
 ####################################################
 
 
 
 
-bexperiments stop
-python .\ycsb.py start -m -mc --dbms PostgreSQL --workload c -rnn $BEXHOMA_NODE_SUT | Tee-Object -FilePath "$env:LOG_DIR/test_ycsb_start_postgresql.log"
-kubectl get all -l app=bexhoma,usecase=ycsb
+nohup python ycsb.py -ms 1 -tr \
+  --dbms Citus \
+  --workload c \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_ycsb_start_postgresql.log &
 
-bexperiments stop
-python .\ycsb.py load -m -mc --dbms PostgreSQL --workload c -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -nlp 8 -nlt 64 | Tee-Object -FilePath "$env:LOG_DIR/test_ycsb_load_postgresql.log"
+wait_process "ycsb"
 kubectl get all -l app=bexhoma,usecase=ycsb
+kubectl delete all -l app=bexhoma,usecase=ycsb
 
-bexperiments stop
-python .\ycsb.py run -m -mc --dbms PostgreSQL --workload c -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -nlp 8 -nlt 64 -nbp 8 -nbt 64 -ss | Tee-Object -FilePath "$env:LOG_DIR/test_ycsb_run_postgresql.log"
+nohup python ycsb.py -ms 1 -tr \
+  --dbms Citus \
+  --workload c \
+  -m -mc \
+  -nlp 8 -nlt 64 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_ycsb_load_postgresql.log &
+
+wait_process "ycsb"
 kubectl get all -l app=bexhoma,usecase=ycsb
+kubectl delete all -l app=bexhoma,usecase=ycsb
+
+nohup python ycsb.py -ms 1 -tr \
+  --dbms Citus \
+  --workload c \
+  -m -mc \
+  -nlp 8 -nlt 64 -nbp 8 -nbt 64 -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_ycsb_run_postgresql.log &
+
+wait_process "ycsb"
+kubectl get all -l app=bexhoma,usecase=ycsb
+kubectl delete all -l app=bexhoma,usecase=ycsb
 
 
 
