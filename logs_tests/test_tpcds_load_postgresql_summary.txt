@@ -3,8 +3,8 @@
 ### Workload
 TPC-DS Data Loading SF=1
     Type: tpcds
-    Duration: 267s 
-    Code: 1749625317
+    Duration: 268s 
+    Code: 1749632890
     This includes the reading queries of TPC-DS.
     This imports TPC-DS data sets.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -20,7 +20,7 @@ TPC-DS Data Loading SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749625317 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749632890 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -29,12 +29,12 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:387181832
+    disk:386611056
     datadisk:40
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749625317
+        code:1749632890
 
 ### Loading [s]
                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad

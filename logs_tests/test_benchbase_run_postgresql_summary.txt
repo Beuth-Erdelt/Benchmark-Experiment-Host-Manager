@@ -3,8 +3,8 @@
 ### Workload
 Benchbase Workload tpcc SF=1
     Type: benchbase
-    Duration: 685s 
-    Code: 1749557610
+    Duration: 686s 
+    Code: 1749629205
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -23,7 +23,7 @@ Benchbase Workload tpcc SF=1
 
 ### Services
 PostgreSQL-1-1-1024
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749557610 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749629205 9091:9091
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
@@ -32,18 +32,18 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:389204736
+    disk:387465804
     datadisk:331
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1749557610
+                code:1749629205
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         64    1024          8  300.0           2                        403.38                     399.78         0.0                                                     831837.0                                             158444.5
+PostgreSQL-1-1-1024-1               1         64    1024          8  300.0           0                        418.06                     414.25         0.0                                                     800425.0                                            152900.62
 
 ### Workflow
 
@@ -59,19 +59,19 @@ PostgreSQL-1-1-1024-1       66.0        1.0   8.0          54.545455
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1       31.34     0.58          2.45                 2.57
+PostgreSQL-1-1-1024-1       61.02     0.77          2.47                 2.61
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1       13.45        0          0.27                 0.27
+PostgreSQL-1-1-1024-1       11.48        0          0.23                 0.23
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      601.58     2.33          2.96                 3.22
+PostgreSQL-1-1-1024-1       712.8     2.26          2.96                 3.22
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      281.83     0.52          2.02                 2.02
+PostgreSQL-1-1-1024-1      279.33     0.36          1.95                 1.95
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

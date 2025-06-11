@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1749624420
-Experiment                    : starts at 2025-06-11 08:47:00.595582 (13816584.066135077)
+Experiment                    : has code 1749632089
+Experiment                    : starts at 2025-06-11 10:54:49.158265 (13824252.62881918)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -23,8 +23,8 @@ Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-BHT-1              : will start now
-PostgreSQL-BHT-1              : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1749624420
-PostgreSQL-BHT-1              : Name of SUT service = bexhoma-sut-postgresql-bht-1-1749624420
+PostgreSQL-BHT-1              : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1749632089
+PostgreSQL-BHT-1              : Name of SUT service = bexhoma-sut-postgresql-bht-1-1749632089
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : waits for health check to succeed
 - waiting 30s -               : done
@@ -33,10 +33,10 @@ PostgreSQL-BHT-1              : waits for health check to succeed
 PostgreSQL-BHT-1              : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : is not loaded yet
-PostgreSQL-BHT-1              : will start loading but not before 2025-06-11 06:50:02 (that is in 60 secs)
+PostgreSQL-BHT-1              : will start loading but not before 2025-06-11 08:57:50 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : is not loaded yet
-PostgreSQL-BHT-1              : will start loading but not before 2025-06-11 06:50:02
+PostgreSQL-BHT-1              : will start loading but not before 2025-06-11 08:57:50
 done
 PostgreSQL-BHT-1              : is not loaded yet
 PostgreSQL-BHT-1              : start asynch loading scripts of type loaded
@@ -47,16 +47,12 @@ PostgreSQL-BHT-1              : is loading
 PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-1              : is loading
 done
 PostgreSQL-BHT-1              : showing loader times
 PostgreSQL-BHT-1              : generator timespan (first to last [s]) = 0
-PostgreSQL-BHT-1              : loader timespan (first to last [s]) = 115
-PostgreSQL-BHT-1              : total timespan (first to last [s]) = 117
+PostgreSQL-BHT-1              : loader timespan (first to last [s]) = 87
+PostgreSQL-BHT-1              : total timespan (first to last [s]) = 88
 PostgreSQL-BHT-1              : start asynch loading scripts of type indexed
-PostgreSQL-BHT-1              : is loading
-- waiting 30s -               : done
 PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : is loading
@@ -65,29 +61,29 @@ PostgreSQL-BHT-1              : is loading
 done
 PostgreSQL-BHT-1              : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-1-1            : start benchmarking
-PostgreSQL-BHT-1              : benchmarking results in folder /home/perdelt/benchmarks/1749624420
+PostgreSQL-BHT-1              : benchmarking results in folder /home/perdelt/benchmarks/1749632089
 - waiting 10s -               : done
 found
 PostgreSQL-BHT-1-1            : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749624420(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749632089(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-1            : collecting metrics of data generator at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749624420(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749632089(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-1            : collecting metrics of data injector at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749624420(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749632089(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 PostgreSQL-BHT-1              : has running benchmarks
 PostgreSQL-BHT-1-1            : showing benchmarker times
-PostgreSQL-BHT-1-1            : benchmarker timespan (start to end single container [s]) = 56
-PostgreSQL-BHT-1-1            : benchmarker times (start/end per pod and container) = [(1749624883, 1749624916)]
-PostgreSQL-BHT-1-1            : found and updated times {'benchmarker': [(1749624883, 1749624916)]}
+PostgreSQL-BHT-1-1            : benchmarker timespan (start to end single container [s]) = 66
+PostgreSQL-BHT-1-1            : benchmarker times (start/end per pod and container) = [(1749632500, 1749632529)]
+PostgreSQL-BHT-1-1            : found and updated times {'benchmarker': [(1749632500, 1749632529)]}
 PostgreSQL-BHT-1-1            : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749624420(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749632089(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-1            : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749624420(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749632089(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : can be stopped, but we leave it running
-PostgreSQL-BHT-1              : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749624420 9091
-Experiment                    : ends at 2025-06-11 08:56:17.297676 (13817140.768230448) - 556.70s total
+PostgreSQL-BHT-1              : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749632089 9091
+Experiment                    : ends at 2025-06-11 11:03:14.865864 (13824758.336418187) - 505.71s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -99,8 +95,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 557s 
-    Code: 1749624420
+    Duration: 506s 
+    Code: 1749632089
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -122,7 +118,7 @@ TPC-H Queries SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749624420 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749632089 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
@@ -131,12 +127,12 @@ PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:392131340
+    disk:389393760
     datadisk:2757
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749624420
+        code:1749632089
 
 ### Errors (failed queries)
 No errors
@@ -146,47 +142,47 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-1-1-1
-Pricing Summary Report (TPC-H Q1)                                 2578.59
-Minimum Cost Supplier Query (TPC-H Q2)                             436.17
-Shipping Priority (TPC-H Q3)                                       762.57
-Order Priority Checking Query (TPC-H Q4)                          1277.13
-Local Supplier Volume (TPC-H Q5)                                   674.93
-Forecasting Revenue Change (TPC-H Q6)                              503.71
-Forecasting Revenue Change (TPC-H Q7)                              794.98
-National Market Share (TPC-H Q8)                                   626.29
-Product Type Profit Measure (TPC-H Q9)                            1090.04
-Forecasting Revenue Change (TPC-H Q10)                            1294.25
-Important Stock Identification (TPC-H Q11)                         256.94
-Shipping Modes and Order Priority (TPC-H Q12)                     1022.04
-Customer Distribution (TPC-H Q13)                                 2102.37
-Forecasting Revenue Change (TPC-H Q14)                             554.96
-Top Supplier Query (TPC-H Q15)                                     548.31
-Parts/Supplier Relationship (TPC-H Q16)                            571.49
-Small-Quantity-Order Revenue (TPC-H Q17)                          1970.46
-Large Volume Customer (TPC-H Q18)                                 7249.02
-Discounted Revenue (TPC-H Q19)                                     709.77
-Potential Part Promotion (TPC-H Q20)                              5024.21
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                949.99
-Global Sales Opportunity Query (TPC-H Q22)                         241.19
+Pricing Summary Report (TPC-H Q1)                                 2558.68
+Minimum Cost Supplier Query (TPC-H Q2)                             440.98
+Shipping Priority (TPC-H Q3)                                       772.87
+Order Priority Checking Query (TPC-H Q4)                          1290.26
+Local Supplier Volume (TPC-H Q5)                                   673.11
+Forecasting Revenue Change (TPC-H Q6)                              508.40
+Forecasting Revenue Change (TPC-H Q7)                              794.26
+National Market Share (TPC-H Q8)                                   636.57
+Product Type Profit Measure (TPC-H Q9)                            1154.01
+Forecasting Revenue Change (TPC-H Q10)                            1275.45
+Important Stock Identification (TPC-H Q11)                         254.67
+Shipping Modes and Order Priority (TPC-H Q12)                     1065.38
+Customer Distribution (TPC-H Q13)                                 1991.37
+Forecasting Revenue Change (TPC-H Q14)                             567.41
+Top Supplier Query (TPC-H Q15)                                     558.84
+Parts/Supplier Relationship (TPC-H Q16)                            570.01
+Small-Quantity-Order Revenue (TPC-H Q17)                          1884.79
+Large Volume Customer (TPC-H Q18)                                 7194.80
+Discounted Revenue (TPC-H Q19)                                     709.86
+Potential Part Promotion (TPC-H Q20)                               661.73
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                920.74
+Global Sales Opportunity Query (TPC-H Q22)                         248.82
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1-1           0.0          115.0         1.0       93.0     211.0
+PostgreSQL-BHT-1-1-1           0.0           87.0         1.0       88.0     177.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-1-1-1           0.95
+PostgreSQL-BHT-1-1-1           0.86
 
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-1-1-1            3806.53
+PostgreSQL-BHT-1-1-1            4163.28
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                                  time [s]  count  SF  Throughput@Size
 DBMS               SF num_experiment num_client                                      
-PostgreSQL-BHT-1-1 1  1              1                 33      1   1           2400.0
+PostgreSQL-BHT-1-1 1  1              1                 29      1   1          2731.03
 
 ### Workflow
 
@@ -198,15 +194,15 @@ DBMS PostgreSQL-BHT-1 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1      151.73      1.0          3.77                 5.32
+PostgreSQL-BHT-1-1      144.14     0.04          3.79                 5.33
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1        8.56        0           0.0                 0.73
+PostgreSQL-BHT-1-1        4.97        0           0.0                 0.73
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1      108.26        0          3.81                 5.35
+PostgreSQL-BHT-1-1      121.82        0          3.85                 5.39
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]

@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Start DBMS
     Type: tpch
-    Duration: 216s 
-    Code: 1749623589
+    Duration: 186s 
+    Code: 1749631401
     Start DBMS and do not load data.
     This just starts a SUT.
     Experiment uses bexhoma version 0.8.7.
@@ -15,7 +15,7 @@ TPC-H Start DBMS
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623589 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749631401 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -24,11 +24,11 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:392432036
+    disk:386626208
     datadisk:39
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749623589
+        code:1749631401
 
 ### Tests

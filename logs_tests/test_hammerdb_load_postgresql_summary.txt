@@ -4,7 +4,7 @@
 HammerDB Data Loading SF=1 (warehouses for TPC-C)
     Type: tpcc
     Duration: 293s 
-    Code: 1749558582
+    Code: 1749630175
     HammerDB runs the benchmark.
     This imports TPC-C data sets.
     TPC-C data is generated and loaded using several threads.
@@ -20,7 +20,7 @@ HammerDB Data Loading SF=1 (warehouses for TPC-C)
 
 ### Services
 PostgreSQL-BHT-1-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1-1749558582 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1-1749630175 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
@@ -29,12 +29,12 @@ PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:389223792
+    disk:387041488
     datadisk:281
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749558582
+        code:1749630175
 
 ### Loading
                       time_load  terminals  pods  Imported warehouses [1/h]
@@ -42,12 +42,12 @@ PostgreSQL-BHT-1-1-1       36.0        1.0   1.0                        0.0
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1-1        5.16     0.11          2.44                  2.5
+PostgreSQL-BHT-1-1-1        4.97        0          2.43                  2.5
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1-1           0        0           0.0                  0.0
+PostgreSQL-BHT-1-1-1       11.94        0          0.02                 0.02
 
 ### Tests
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]

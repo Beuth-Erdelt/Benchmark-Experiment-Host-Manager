@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1749546838
-Experiment                    : starts at 2025-06-10 11:13:58.784554 (13739002.255105518)
+Experiment                    : has code 1749627467
+Experiment                    : starts at 2025-06-11 09:37:47.560656 (13819631.03120706)
 Experiment                    : This just starts a SUT.
 Workload is 'C'.
 Experiment uses bexhoma version 0.8.7.
@@ -13,8 +13,8 @@ SUT is fixed to cl-worker11.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-1-1-16384          : will start now
-PostgreSQL-1-1-16384          : Name of SUT pods = bexhoma-sut-postgresql-1-1-16384-1749546838
-PostgreSQL-1-1-16384          : Name of SUT service = bexhoma-sut-postgresql-1-1-16384-1749546838
+PostgreSQL-1-1-16384          : Name of SUT pods = bexhoma-sut-postgresql-1-1-16384-1749627467
+PostgreSQL-1-1-16384          : Name of SUT service = bexhoma-sut-postgresql-1-1-16384-1749627467
 - waiting 30s -               : done
 PostgreSQL-1-1-16384          : waits for health check to succeed
 - waiting 30s -               : done
@@ -22,14 +22,14 @@ PostgreSQL-1-1-16384          : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1-1-16384          : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-1-1-16384          : will start benchmarking but not before 2025-06-10 09:17:00 (that is in 60 secs)
+PostgreSQL-1-1-16384          : will start benchmarking but not before 2025-06-11 07:40:48 (that is in 60 secs)
 - waiting 30s -               : done
-PostgreSQL-1-1-16384          : will start benchmarking but not before 2025-06-10 09:17:00
+PostgreSQL-1-1-16384          : will start benchmarking but not before 2025-06-11 07:40:48
 done
 PostgreSQL-1-1-16384          : can be stopped, but we leave it running
-PostgreSQL-1-1-16384          : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749546838 9091
-PostgreSQL-1-1-16384          : benchmarking results in folder /home/perdelt/benchmarks/1749546838
-Experiment                    : ends at 2025-06-10 11:17:04.204979 (13739187.675532836) - 185.42s total
+PostgreSQL-1-1-16384          : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749627467 9091
+PostgreSQL-1-1-16384          : benchmarking results in folder /home/perdelt/benchmarks/1749627467
+Experiment                    : ends at 2025-06-11 09:40:52.412571 (13819815.883125873) - 184.85s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -39,8 +39,8 @@ Experiment                    : uploading workload file
 ### Workload
 YCSB Start DBMS
     Type: ycsb
-    Duration: 186s 
-    Code: 1749546838
+    Duration: 185s 
+    Code: 1749627467
     Intro: Start DBMS and do not load data.
     This just starts a SUT.
     Workload is 'C'.
@@ -52,7 +52,7 @@ YCSB Start DBMS
 
 ### Services
 PostgreSQL-1-1-16384
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749546838 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749627467 9091:9091
 
 ### Connections
 PostgreSQL-1-1-16384-1 uses docker image postgres:16.1
@@ -61,14 +61,14 @@ PostgreSQL-1-1-16384-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:386213960
+    disk:387183600
     datadisk:39
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1749546838
+        code:1749627467
 
 ### Tests
 TEST passed: Result contains no FAILED column

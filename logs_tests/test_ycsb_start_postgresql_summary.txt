@@ -3,8 +3,8 @@
 ### Workload
 YCSB Start DBMS
     Type: ycsb
-    Duration: 186s 
-    Code: 1749546838
+    Duration: 185s 
+    Code: 1749627467
     Intro: Start DBMS and do not load data.
     This just starts a SUT.
     Workload is 'C'.
@@ -16,7 +16,7 @@ YCSB Start DBMS
 
 ### Services
 PostgreSQL-1-1-16384
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749546838 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749627467 9091:9091
 
 ### Connections
 PostgreSQL-1-1-16384-1 uses docker image postgres:16.1
@@ -25,14 +25,14 @@ PostgreSQL-1-1-16384-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:386213960
+    disk:387183600
     datadisk:39
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1749546838
+        code:1749627467
 
 ### Tests
 TEST passed: Result contains no FAILED column
