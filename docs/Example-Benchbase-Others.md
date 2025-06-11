@@ -83,7 +83,7 @@ This
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_twitter_simple
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -177,7 +177,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_testcase_twitter_scale.log
-```
+```markdown
 ## Show Summary
 
 ### Workload
@@ -359,7 +359,7 @@ This
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_chbenchmark_simple.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -450,7 +450,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_testcase_chbenchmark_scale.log
-```
+```markdown
 ## Show Summary
 
 ### Workload
@@ -623,7 +623,7 @@ This
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_c.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -728,7 +728,7 @@ nohup python benchbase.py -tr \
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_a.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -832,7 +832,7 @@ nohup python benchbase.py -tr \
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_b.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -941,7 +941,7 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_d.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1034,7 +1034,7 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_e.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1123,7 +1123,7 @@ nohup python benchbase.py -tr \
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_f.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload

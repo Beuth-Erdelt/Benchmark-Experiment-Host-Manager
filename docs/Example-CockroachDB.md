@@ -94,7 +94,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -120,7 +120,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_ycsb_cockroachdb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -300,7 +300,7 @@ The first volume is attached to the (dummy) coordinator and is used to persist i
 The other volumes (worker volumes) are attached to the worker pods and store the actual data.
 
 
-```
+```bash
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
@@ -321,7 +321,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 The result looks something like
 
 doc_ycsb_cockroachdb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -494,7 +494,7 @@ TEST failed: Result contains FAILED column
 
 In `cluster.config` there is a section:
 
-```
+```python
 'CockroachDB': {
     'loadData': 'cockroach sql --host {service_name} --port 9091 --insecure --file {scriptname}',
     'delay_prepare': 120,
@@ -559,7 +559,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_cockroachdb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -713,7 +713,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_cockroachdb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
